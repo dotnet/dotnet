@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -48,7 +49,7 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// <summary>
     /// The set of open documents.
     /// </summary>
-    private readonly HashSet<string> _openDocumentSet = new(FilePathComparer.Instance);
+    private readonly HashSet<string> _openDocumentSet = new(PathUtilities.OSSpecificPathComparer);
 
     /// <summary>
     /// Determines whether or not the solution is closing.
@@ -176,7 +177,7 @@ internal partial class ProjectSnapshotManager : IDisposable
 
             foreach (var (key, entry) in _projectMap)
             {
-                if (FilePathComparer.Instance.Equals(entry.State.HostProject.FilePath, filePath))
+                if (PathUtilities.OSSpecificPathComparer.Equals(entry.State.HostProject.FilePath, filePath))
                 {
                     projects.Add(key);
                 }
