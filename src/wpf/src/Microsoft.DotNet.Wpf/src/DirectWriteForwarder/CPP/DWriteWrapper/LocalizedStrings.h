@@ -306,23 +306,6 @@ namespace MS { namespace Internal { namespace Text { namespace TextInterface
             {
                 return GetEnumerator();
             }
-
-            //#region IReadOnlyDictionary Members
-            property IEnumerable<CultureInfo^>^ Keys2
-            {
-                virtual IEnumerable<CultureInfo^>^ get() sealed = System::Collections::Generic::IReadOnlyDictionary<CultureInfo^, String^>::Keys::get
-                {
-                    return Keys;
-                }
-            }
-
-            property IEnumerable<String^>^ Values2
-            {
-                virtual IEnumerable<String^>^ get() sealed = System::Collections::Generic::IReadOnlyDictionary<CultureInfo^, String^>::Values::get
-                {
-                    return Values;
-                }
-            }
     };    
 
 }}}}//MS::Internal::Text::TextInterface

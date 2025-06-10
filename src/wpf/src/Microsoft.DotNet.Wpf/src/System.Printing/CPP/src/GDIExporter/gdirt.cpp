@@ -861,17 +861,15 @@ private:
     // Gets a subset of points.
     static System::Collections::Generic::List<Point>^ GetSubPoints(System::Collections::Generic::IList<Point>^ points, int startIndex, int count)
     {
-        int pointCount = static_cast<IReadOnlyCollection<Point>^>(points)->Count;
-
-        if ((startIndex + count) > pointCount)
+        if ((startIndex + count) > points->Count)
         {
             // get rest of points
-            count = pointCount - startIndex;
+            count = points->Count - startIndex;
         }
 
         System::Collections::Generic::List<Point>^ subpoints = gcnew System::Collections::Generic::List<Point>(count);
 
-        for (int index = startIndex; index < (startIndex + count) && index < pointCount; index++)
+        for (int index = startIndex; index < (startIndex + count) && index < points->Count; index++)
         {
             Point point = points[index];
             subpoints->Add(point);
@@ -895,12 +893,10 @@ private:
         PolySegmentType segmentType
         )
     {
-        int pointCount = static_cast<IReadOnlyCollection<Point>^>(points)->Count;
-
-        if (pointCount == 0 || !BeginSegment(points[pointCount - 1], isStroked))
+        if (points->Count == 0 || !BeginSegment(points[points->Count - 1], isStroked))
             return;
 
-        pointCount = static_cast<IReadOnlyCollection<Point>^>(points)->Count;
+        int pointCount = points->Count;
 
         int groupSize = 1, rawPointsPerGroup = 1; 
         switch (segmentType)

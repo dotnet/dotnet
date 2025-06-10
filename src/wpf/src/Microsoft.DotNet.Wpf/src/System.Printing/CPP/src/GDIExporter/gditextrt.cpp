@@ -30,14 +30,12 @@ bool IsMappingConsistent(
 		return false;
 	}
 
-	int keyCount = static_cast<IReadOnlyCollection<Char>^>(keys)->Count;
-
-	if(keyCount != static_cast<IReadOnlyCollection<UInt16>^>(expectedValues)->Count)
+	if(keys->Count != expectedValues->Count)
 	{
 		return false;
 	}
 
-	for(int i = 0; i < keyCount; i++)
+	for(int i = 0; i < keys->Count; i++)
 	{
 		unsigned short int value;
 		if(map->TryGetValue(keys[i], value))
@@ -59,7 +57,7 @@ bool IsMappingConsistent(
 bool RenderUnicode(GlyphRun ^pGlyphRun)
 {
     bool renderCodepoints =
-	(pGlyphRun->Characters != nullptr && static_cast<IReadOnlyCollection<Char>^>(pGlyphRun->Characters)->Count > 0) &&
+	(pGlyphRun->Characters != nullptr && pGlyphRun->Characters->Count > 0) &&
 	// If there are no characters to render try passing GDI glyph indices
 
 	// When IsSideways is true, we need to access WPF's topsideBearings, which is glyph index based. So we need to pass GDI glyph indices
@@ -84,7 +82,7 @@ bool RenderUnicode(GlyphRun ^pGlyphRun)
     // and glyphs. otherwise we render glyphs.
     Debug::Assert(!renderCodepoints ||
         (  pGlyphRun->Characters != nullptr
-        && static_cast<IReadOnlyCollection<UInt16>^>(pGlyphRun->GlyphIndices)->Count == static_cast<IReadOnlyCollection<Char>^>(pGlyphRun->Characters)->Count
+        && pGlyphRun->GlyphIndices->Count == pGlyphRun->Characters->Count
         ), "Assertion failed: Condition for GlyphIndices and Characters count mismatch."
       );
 
@@ -97,9 +95,7 @@ bool RenderUnicode(GlyphRun ^pGlyphRun)
     //
     if (pGlyphRun->GlyphIndices != nullptr)
     {
-        int glyphRunIndexCount = static_cast<IReadOnlyCollection<UInt16>^>(pGlyphRun->GlyphIndices)->Count;
-
-        for (int index = 0; index < glyphRunIndexCount; index++)
+        for (int index = 0; index < pGlyphRun->GlyphIndices->Count; index++)
         {
             if (pGlyphRun->GlyphIndices[index] == 0)
             {
@@ -161,7 +157,7 @@ HRESULT CGDIRenderTarget::RenderGlyphRun(
     {
         // prevent the string from moving around. we end up duplicating the string through
         // the array conversion, but it's needed to call win32 api
-        glyphCount = static_cast<IReadOnlyCollection<Char>^>(pGlyphRun->Characters)->Count;
+        glyphCount = pGlyphRun->Characters->Count;
         array<Char> ^ characters = gcnew array<Char>(glyphCount);
         pGlyphRun->Characters->CopyTo(characters, 0);
 
@@ -169,7 +165,7 @@ HRESULT CGDIRenderTarget::RenderGlyphRun(
     }
     else
     {
-        glyphCount = static_cast<IReadOnlyCollection<UInt16>^>(pGlyphRun->GlyphIndices)->Count;
+        glyphCount = pGlyphRun->GlyphIndices->Count;
         array<unsigned short> ^ glyphIndices = gcnew array<unsigned short>(glyphCount);
         pGlyphRun->GlyphIndices->CopyTo(glyphIndices, 0);
 
@@ -314,7 +310,7 @@ HRESULT CGDIRenderTarget::RenderTextThroughGDI(
     )
 {
     // zero-length glyphrun
-    if (static_cast<IReadOnlyCollection<UInt16>^>(pGlyphRun->GlyphIndices)->Count == 0)
+    if (pGlyphRun->GlyphIndices->Count == 0)
     {
         return S_OK;
     }
