@@ -42,7 +42,9 @@ A simple version number is easier to understand/address than a more complex one.
 
 #### Compatibility with distributions not built by Microsoft
 
-All builds of .NET all have strong version dependencies between components. For instance, a package dependency references a specific version of another package. When stable branding is not in use, two successive builds of .NET with different official build ids will have different package ID for System.Text.Json. Therefore any references to System.Text.Json will also vary. This means that that builds of .NET with different official build ids will not necessarily work seamlessly with each other. This is an important consideration when we recognize that Microsoft is *not* the only builder of .NET. Our Linux distro partners also build their own SDKs and runtimes, and those SDKs and runtimes have dependencies on assets produced by Microsoft (e.g. packages on nuget.org).
+All builds of .NET have strong version dependencies between components. For instance, a package dependency references a specific version of another package. When stable branding is not in use, two successive builds of .NET with different official build IDs will have different package versions for System.Text.Json.
+
+Therefore any references to System.Text.Json will also vary. This means that builds of .NET with different official build IDs will not necessarily work seamlessly with each other. This is an important consideration when we recognize that Microsoft is *not* the only builder of .NET. Our Linux distro partners also build their own SDKs and runtimes, and those SDKs and runtimes have dependencies on assets produced by Microsoft (e.g. packages on nuget.org).
 
 In order for external partners to produce distributions that are compatible with Microsoft's, we need to either communicate the build-varying information to them (the official build ID), or we need to use stable branding to ensure that the build-varying information does not influence product functionality.
 
