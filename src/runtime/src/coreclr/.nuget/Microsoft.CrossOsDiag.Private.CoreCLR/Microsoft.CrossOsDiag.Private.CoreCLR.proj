@@ -34,7 +34,7 @@
          and seems to be an anti-pattern. -->
     <PackageDownload Condition="$(DotNetFinalVersionKind) == '' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
     <PackageDownload Condition="$(DotNetFinalVersionKind) == 'release' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(ProductVersion)]" />
-    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'prerelease' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(VersionPrefix)-$(_PreReleaseLabel).final)]" />
+    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'prerelease' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(VersionPrefix)-$(_PreReleaseLabel).final]" />
   </ItemGroup>
 
   <Target Name="BuildCrossOSDacs">
