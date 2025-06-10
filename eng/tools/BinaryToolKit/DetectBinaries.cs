@@ -2,8 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Microsoft.Extensions.FileSystemGlobbing;
 using System.Text.RegularExpressions;
+using Task = System.Threading.Tasks.Task;
 
 namespace BinaryToolKit;
 
@@ -14,11 +17,12 @@ public static class DetectBinaries
     private static readonly Regex GitCleanRegex = new Regex(@"Would (remove|skip)( repository)? (.*)");
 
     public static async Task<List<string>> ExecuteAsync(
+        TaskLoggingHelper log,
         string targetDirectory,
         string outputReportDirectory,
         string? allowedBinariesFile)
     {
-        Log.LogInformation($"Detecting binaries in '{targetDirectory}' not listed in '{allowedBinariesFile}'...");
+        log.LogMessage(MessageImportance.High, $"Detecting binaries in '{targetDirectory}' not listed in '{allowedBinariesFile}'...");
 
         var matcher = new Matcher(StringComparison.Ordinal);
         matcher.AddInclude("**/*");
@@ -28,23 +32,24 @@ public static class DetectBinaries
         var tasks = matchingFiles
             .Select(async file =>
             {
-                return await IsBinaryAsync(file) ? file.Substring(targetDirectory.Length + 1) : null;
+                return await IsBinaryAsync(log, file) ? file.Substring(targetDirectory.Length + 1) : null;
             });
 
         var binaryFiles = (await Task.WhenAll(tasks)).OfType<string>();
 
         var unmatchedBinaryFiles = GetUnmatchedBinaries(
+            log,
             binaryFiles,
             allowedBinariesFile,
             outputReportDirectory,
             targetDirectory).ToList();
 
-        Log.LogInformation($"Finished binary detection.");
+        log.LogMessage(MessageImportance.High, $"Finished binary detection.");
 
         return unmatchedBinaryFiles;
     }
 
-    private static async Task<bool> IsBinaryAsync(string filePath)
+    private static async Task<bool> IsBinaryAsync(TaskLoggingHelper log, string filePath)
     {
         // Using the GNU diff heuristic to determine if a file is binary or not.
         // For more details, refer to the GNU diff manual: 
@@ -61,18 +66,18 @@ public static class DetectBinaries
                 {
                     // Need to check that the file is not UTF-16 encoded
                     // because heuristic can return false positives
-                    return await IsNotUTF16Async(filePath);
+                    return await IsNotUTF16Async(log, filePath);
                 }
             }
         }
         return false;
     }
 
-    private static async Task<bool> IsNotUTF16Async(string file)
+    private static async Task<bool> IsNotUTF16Async(TaskLoggingHelper log, string file)
     {
         if (Environment.OSVersion.Platform == PlatformID.Unix)
         {
-            string output = await ExecuteProcessAsync("file",  $"\"{file}\"");
+            string output = await ExecuteProcessAsync(log, "file",  $"\"{file}\"");
             output = output.Split(":")[1].Trim();
 
             if (output.Contains(Utf16Marker))
@@ -83,7 +88,7 @@ public static class DetectBinaries
         return true;
     }
 
-    private static async Task<string> ExecuteProcessAsync(string executable, string arguments)
+    private static async Task<string> ExecuteProcessAsync(TaskLoggingHelper log, string executable, string arguments)
     {
         ProcessStartInfo psi = new ()
         {
@@ -103,13 +108,14 @@ public static class DetectBinaries
 
         if (!string.IsNullOrEmpty(error))
         {
-            Log.LogError(error);
+            log.LogError(error);
         }
 
         return output;
     }
 
     private static IEnumerable<string> GetUnmatchedBinaries(
+        TaskLoggingHelper log,
         IEnumerable<string> searchFiles,
         string? allowedBinariesFile,
         string outputReportDirectory,
@@ -118,7 +124,7 @@ public static class DetectBinaries
         HashSet<string> unmatchedFiles = new HashSet<string>(searchFiles);
 
         var filesToPatterns = new Dictionary<string, HashSet<string>>();
-        ParseAllowedBinariesFile(allowedBinariesFile, ref filesToPatterns);
+        ParseAllowedBinariesFile(log, allowedBinariesFile, ref filesToPatterns);
 
         foreach (var fileToPatterns in filesToPatterns)
         {
@@ -138,13 +144,13 @@ public static class DetectBinaries
                 }
             }
 
-            UpdateAllowedBinariesFile(fileToPatterns.Key, outputReportDirectory, unusedPatterns);
+            UpdateAllowedBinariesFile(log, fileToPatterns.Key, outputReportDirectory, unusedPatterns);
         }
 
         return unmatchedFiles;
     }
 
-    private static void ParseAllowedBinariesFile(string? file, ref Dictionary<string, HashSet<string>> result)
+    private static void ParseAllowedBinariesFile(TaskLoggingHelper log, string? file, ref Dictionary<string, HashSet<string>> result)
     {
         if (!File.Exists(file))
         {
@@ -174,11 +180,11 @@ public static class DetectBinaries
                 }
                 if (result.ContainsKey(importFile))
                 {
-                    Log.LogWarning($"    Duplicate import {importFile}. Skipping.");
+                    log.LogWarning($"    Duplicate import {importFile}. Skipping.");
                     continue;
                 }
 
-                ParseAllowedBinariesFile(importFile, ref result);
+                ParseAllowedBinariesFile(log, importFile, ref result);
             }
             else
             {
@@ -187,7 +193,7 @@ public static class DetectBinaries
         }
     }
 
-    private static void UpdateAllowedBinariesFile(string? file, string outputReportDirectory, HashSet<string> unusedPatterns)
+    private static void UpdateAllowedBinariesFile(TaskLoggingHelper log, string? file, string outputReportDirectory, HashSet<string> unusedPatterns)
     {
         if(File.Exists(file) && unusedPatterns.Any())
         {
@@ -198,7 +204,7 @@ public static class DetectBinaries
 
             File.WriteAllLines(updatedFile, newLines);
 
-            Log.LogInformation($"    Updated allowed binaries file '{Path.GetFileName(file)}' written to '{updatedFile}'");
+            log.LogMessage(MessageImportance.High, $"    Updated allowed binaries file '{Path.GetFileName(file)}' written to '{updatedFile}'");
         }
     }
 }

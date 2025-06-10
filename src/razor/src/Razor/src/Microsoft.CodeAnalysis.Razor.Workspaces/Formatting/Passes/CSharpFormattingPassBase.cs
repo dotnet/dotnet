@@ -339,7 +339,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
