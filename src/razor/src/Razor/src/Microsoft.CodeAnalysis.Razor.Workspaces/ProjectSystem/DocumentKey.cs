@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -19,13 +20,13 @@ internal readonly record struct DocumentKey : IComparable<DocumentKey>
 
     public bool Equals(DocumentKey other)
         => ProjectKey.Equals(other.ProjectKey) &&
-           FilePathComparer.Instance.Equals(FilePath, other.FilePath);
+           PathUtilities.OSSpecificPathComparer.Equals(FilePath, other.FilePath);
 
     public override int GetHashCode()
     {
         var hash = HashCodeCombiner.Start();
         hash.Add(ProjectKey);
-        hash.Add(FilePath, FilePathComparer.Instance);
+        hash.Add(FilePath, PathUtilities.OSSpecificPathComparer);
 
         return hash;
     }
@@ -38,6 +39,6 @@ internal readonly record struct DocumentKey : IComparable<DocumentKey>
             return comparison;
         }
 
-        return FilePathComparer.Instance.Compare(FilePath, other.FilePath);
+        return PathUtilities.OSSpecificPathComparer.Compare(FilePath, other.FilePath);
     }
 }

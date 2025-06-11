@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.Extensions.Internal;
 
@@ -28,15 +27,15 @@ internal class HostDocumentComparer : IEqualityComparer<HostDocument>
         }
 
         return x.FileKind == y.FileKind &&
-               FilePathComparer.Instance.Equals(x.FilePath, y.FilePath) &&
-               FilePathComparer.Instance.Equals(x.TargetPath, y.TargetPath);
+               PathUtilities.OSSpecificPathComparer.Equals(x.FilePath, y.FilePath) &&
+               PathUtilities.OSSpecificPathComparer.Equals(x.TargetPath, y.TargetPath);
     }
 
     public int GetHashCode(HostDocument hostDocument)
     {
         var combiner = HashCodeCombiner.Start();
-        combiner.Add(hostDocument.FilePath, FilePathComparer.Instance);
-        combiner.Add(hostDocument.TargetPath, FilePathComparer.Instance);
+        combiner.Add(hostDocument.FilePath, PathUtilities.OSSpecificPathComparer);
+        combiner.Add(hostDocument.TargetPath, PathUtilities.OSSpecificPathComparer);
         combiner.Add(hostDocument.FileKind);
 
         return combiner.CombinedHash;

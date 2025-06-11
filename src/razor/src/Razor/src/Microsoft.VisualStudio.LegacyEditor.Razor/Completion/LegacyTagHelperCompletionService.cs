@@ -357,6 +357,6 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
             }
         }
 
-        return filteredList.DrainToImmutable();
+        return filteredList.ToImmutableAndClear();
     }
 }
