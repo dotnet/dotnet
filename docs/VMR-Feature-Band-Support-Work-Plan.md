@@ -69,8 +69,7 @@ flowchart TD
 
 ### Toolset
 
-❓ Open Question:
-A policy is needed which defines what toolset version each feature band branch can have. For example, should all feature band branches be required to use only the 1xx toolset? Can there be a mix of some using 1xx while others use a higher version?
+Each feature band branch will start out using the N-1 toolset version and then build on top of itself for each subsequent release. For example, when 10.0.2xx branch is first created (for the 10.0.204 release, for example), it will use the 10.0.104 toolset from the 1xx branch. Then for the 10.0.205 release, the 10.0.2xx branch will be updated to reference the 10.0.204 toolset (the one from the previous 2xx release).
 
 ### Build
 
@@ -92,10 +91,10 @@ There are a variety of scenarios to consider:
     * If no:
       * Build 1xx branch using Microsoft artifacts and SDK
       * Rebuild 1xx branch using output of first build as input
-1. Is this the initial release of the feature band (e.g. 10.0.200)?
+1. Is this the initial release of the feature band?
     * If yes:
       * Build 2xx branch using output of 1xx artifacts and SDK as input
-    * If no (e.g. 10.0.201):
+    * If no:
       * Has the distro maintainer produced any 2xx assets before from the previous release?
         * If yes:
           * Build 2xx branch using artifacts and SDK from previous 2xx release and the shared component 1xx artifacts as input
