@@ -171,7 +171,7 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
             }
         }
 
-        return attributeNames.DrainToImmutable();
+        return attributeNames.ToImmutableAndClear();
     }
 
     private static void SplitAttributeNameIntoParts(

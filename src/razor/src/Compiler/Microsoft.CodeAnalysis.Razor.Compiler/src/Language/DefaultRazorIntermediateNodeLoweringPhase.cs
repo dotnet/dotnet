@@ -559,7 +559,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
                     builder.Add(node);
                 }
 
-                result = builder.DrainToImmutable();
+                result = builder.ToImmutableAndClear();
                 return true;
             }
         }
@@ -1122,18 +1122,24 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             var descriptors = element.TagHelperInfo.BindingResult.Descriptors;
             var attributeName = node.Name.GetContent();
             var attributeValueNode = node.Value;
-            var associatedDescriptors = descriptors.Where(descriptor =>
-                descriptor.BoundAttributes.Any(attributeDescriptor => TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor)));
 
-            if (associatedDescriptors.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            using var associatedDescriptorsWithSatisfyingAttribute = new PooledArrayBuilder<(TagHelperDescriptor, BoundAttributeDescriptor)>();
+            foreach (var descriptor in descriptors)
             {
-                foreach (var associatedDescriptor in associatedDescriptors)
+                foreach (var attributeDescriptor in descriptor.BoundAttributes)
                 {
-                    var associatedAttributeDescriptor = associatedDescriptor.BoundAttributes.First(a =>
+                    if (TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, attributeDescriptor))
                     {
-                        return TagHelperMatchingConventions.CanSatisfyBoundAttribute(attributeName, a);
-                    });
+                        associatedDescriptorsWithSatisfyingAttribute.Add((descriptor, attributeDescriptor));
+                        break;
+                    }
+                }
+            }
 
+            if (associatedDescriptorsWithSatisfyingAttribute.Any() && _renderedBoundAttributeNames.Add(attributeName))
+            {
+                foreach (var (associatedDescriptor, associatedAttributeDescriptor) in associatedDescriptorsWithSatisfyingAttribute)
+                {
                     var setTagHelperProperty = new TagHelperPropertyIntermediateNode()
                     {
                         AttributeName = attributeName,

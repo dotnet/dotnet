@@ -172,7 +172,7 @@ internal static class RazorProjectInfoFactory
             }
         }
 
-        return documents.DrainToImmutable();
+        return documents.ToImmutableAndClear();
     }
 
     private static string GetTargetPath(string documentFilePath, string normalizedProjectPath)

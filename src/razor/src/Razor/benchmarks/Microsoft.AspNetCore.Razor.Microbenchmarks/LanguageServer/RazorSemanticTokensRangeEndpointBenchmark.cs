@@ -97,7 +97,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
                 new SemanticRange(random.Next(), startLine, startChar, endLine, endChar, 0, fromRazor: false));
         }
 
-        PregeneratedRandomSemanticRanges = builder.DrainToImmutable();
+        PregeneratedRandomSemanticRanges = builder.ToImmutableAndClear();
     }
 
     [Benchmark(Description = "Razor Semantic Tokens Range Endpoint")]
