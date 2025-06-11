@@ -780,17 +780,54 @@
 
   <!-- BEGIN Metadata-->
 
-  <!-- Calculates the package version including any prerelease suffix -->
-  <Target Name="CalculatePackageVersion">
+  <!-- Walks every project gathering its AssemblyVersion, choosing the highest -->
+  <!-- Skipped if the package explicitly defines a version -->
+  <Target Name="GetAssemblyVersionFromProjects"
+          Condition="$(PackageVersion) == ''"
+          DependsOnTargets="GetFiles">
 
-    <Error Text="Expected that PackageVersion was already set."
-           Condition="'$(PackageVersion)' == ''" />
+    <GetPackageVersion Files="@(File)">
+      <Output TaskParameter="Version" PropertyName="_AssemblyVersion" />
+    </GetPackageVersion>
+
+    <Error Condition="'$(_AssemblyVersion)' == ''"
+           Text="No assembly version could be determined." />
+  </Target>
+
+  <!-- Calculates the package version including any prerelease suffix -->
+  <Target Name="CalculatePackageVersion"
+        DependsOnTargets="GetAssemblyVersionFromProjects">
+
+    <Error Text="No VersionSuffix was set. Ensure it is set before targets in packaging are ran."
+           Condition="'$(VersionSuffix)' == '' AND '$(StableVersion)' == ''" />
+
+    <Error Text="No version could be detected.  Either specify the Version property or provide at least one managed assembly."
+           Condition="'$(PackageVersion)' == '' AND '$(_AssemblyVersion)' == ''" />
+
+    <ItemGroup>
+      <_thisPackage Include="$(Id)">
+        <Version Condition="'$(PackageVersion)' != ''">$(PackageVersion)</Version>
+        <Version Condition="'$(PackageVersion)' == ''">$(_AssemblyVersion)</Version>
+      </_thisPackage>
+    </ItemGroup>
+
+    <ApplyPreReleaseSuffix Condition="'$(StableVersion)' == ''"
+                           OriginalPackages="@(_thisPackage)"
+                           StablePackages="@(StablePackage)"
+                           PackageIndexes="@(PackageIndex)"
+                           PreReleaseSuffix="-$(VersionSuffix)" >
+      <Output TaskParameter="UpdatedPackages" ItemName="_thisPackageFinal"/>
+    </ApplyPreReleaseSuffix>
+
+    <PropertyGroup Condition="'$(StableVersion)' == ''">
+      <PackageVersion>%(_thisPackageFinal.Version)</PackageVersion>
+    </PropertyGroup>
   </Target>
 
   <!-- Permit setting TargetFramework and add our own metadata (TargetRuntime) -->
   <Target Name="GetPackageIdentity"
           Returns="@(_PackageIdentity)"
-          DependsOnTargets="GetFiles">
+          DependsOnTargets="GetFiles;CalculatePackageVersion">
 
     <ItemGroup>
       <_referenceFrameworks Include="%(File.TargetFramework)" Condition="'%(File.IsReferenceAsset)' == 'true'" />
@@ -1256,7 +1293,8 @@
 
   <!-- Updates the packageIndex with information from the built package for this project -->
   <!-- Intentionally not sequenced, invoked directly through /t:UpdatePackageIndex -->
-  <Target Name="UpdatePackageIndex">
+  <Target Name="UpdatePackageIndex"
+          DependsOnTargets="CalculatePackageVersion">
 
     <Error Condition="'$(PackageIndexFile)' == ''"
            Text="The PackageIndexFile property is not set.  Please set this property to point to the path of the packageIndex.json file for your repo." />
