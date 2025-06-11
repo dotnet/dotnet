@@ -22,14 +22,5 @@ internal sealed partial class MarkupEndTagSyntax
     }
 
     public MarkupEndTagSyntax AsMarkupTransition()
-    {
-        var annotations = new List<SyntaxAnnotation>(GetAnnotations())
-            {
-                new SyntaxAnnotation(MarkupTransitionKey, new object())
-            };
-
-        var newGreen = this.WithAnnotationsGreen(annotations.ToArray());
-
-        return newGreen;
-    }
+        =>  this.WithAnnotationsGreen([.. GetAnnotations(), new(MarkupTransitionKey, new object())]);
 }

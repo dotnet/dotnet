@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Serialization;
@@ -46,7 +45,7 @@ internal class TestRazorProjectService(
             var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
             var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
 
-            var targetPath = normalizedFilePath.StartsWith(projectDirectory, FilePathComparison.Instance)
+            var targetPath = normalizedFilePath.StartsWith(projectDirectory, PathUtilities.OSSpecificPathComparison)
                 ? normalizedFilePath[projectDirectory.Length..]
                 : normalizedFilePath;
 

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -61,6 +62,6 @@ internal static class IDocumentSnapshotExtensions
         }
 
         var fileName = Path.GetFileNameWithoutExtension(documentSnapshot.FilePath);
-        return fileName.AsSpan().Equals(path.Span, FilePathComparison.Instance);
+        return fileName.AsSpan().Equals(path.Span, PathUtilities.OSSpecificPathComparison);
     }
 }

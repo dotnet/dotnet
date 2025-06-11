@@ -46,7 +46,7 @@ internal sealed class ProjectWorkspaceStateFormatter : ValueFormatter<ProjectWor
             builder.Add(tagHelper);
         }
 
-        var tagHelpers = builder.DrainToImmutable();
+        var tagHelpers = builder.ToImmutableAndClear();
 
         return ProjectWorkspaceState.Create(tagHelpers);
     }
