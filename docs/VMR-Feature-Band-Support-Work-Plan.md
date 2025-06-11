@@ -125,6 +125,8 @@ Poison leak detection influences the design choices around other questions:
 
 Some of the Microsoft build legs will need to be trimmed from the 2xx branch. Specifically, there are short stack and cross-OS DAC builds that only build the runtime repo. These would not be relevant for the 2xx branch and should be excluded in the pipeline.
 
+Darc publishing will need to be enabled at the VMR level to allow the packages produced from the 1xx build to flow and be consumed by the sources in the 2xx branch.
+
 #### Source-Only Build Legs
 
 Given that the packages outputted from the 1xx branch are needed in order to source build the 2xx branch, changes will be needed to the pipelines.
