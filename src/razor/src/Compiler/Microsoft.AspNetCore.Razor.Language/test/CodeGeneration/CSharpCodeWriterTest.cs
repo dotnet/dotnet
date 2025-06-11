@@ -292,7 +292,7 @@ public class CSharpCodeWriterTest
         var expected = $"#line 5 \"{filePath}\"" + writer.NewLine;
 
         // Act
-        writer.WriteLineNumberDirective(mappingLocation);
+        writer.WriteLineNumberDirective(mappingLocation, ensurePathBackslashes: false);
         var code = writer.GetText().ToString();
 
         // Assert
