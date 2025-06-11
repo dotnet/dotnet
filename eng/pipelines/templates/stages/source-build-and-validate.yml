@@ -219,7 +219,7 @@ stages:
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Binary Report
-              downloadFilePatterns: BuildLogs/artifacts/log/Release/binary-report/NewBinaries.txt
+              downloadFilePatterns: log/NewBinaries.txt
               copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
               flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
@@ -236,7 +236,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Source Build Poison Report
-                downloadFilePatterns: BuildLogs/artifacts/log/Release/poison-usage.xml
+                downloadFilePatterns: log/poison-usage.xml
                 copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:
