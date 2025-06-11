@@ -189,7 +189,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private static bool TryResolveInsertText(string baseInsertText, AttributeContext context, bool autoInsertAttributeQuotes, [NotNullWhen(true)] out string? snippetText)
@@ -244,7 +244,7 @@ internal class TagHelperCompletionProvider(ITagHelperCompletionService tagHelper
             completionItems.Add(razorCompletionItem);
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private const string BooleanTypeString = "System.Boolean";

@@ -92,7 +92,7 @@ internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args
                 builder.Add(tagHelper);
             }
 
-            tagHelpers = builder.DrainToImmutable();
+            tagHelpers = builder.ToImmutableAndClear();
             return true;
         }
     }
@@ -144,7 +144,7 @@ internal sealed partial class RemoteTagHelperProviderService(in ServiceArgs args
                 cache.TryAdd(checksum, tagHelper);
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -81,7 +80,21 @@ internal static class TagHelperParseTreeRewriter
 
         private bool CurrentParentIsTagHelper => CurrentTracker?.IsTagHelper ?? false;
 
-        private TagHelperTracker? CurrentTagHelperTracker => _trackerStack.FirstOrDefault(t => t.IsTagHelper) as TagHelperTracker;
+        private TagHelperTracker? CurrentTagHelperTracker
+        {
+            get
+            {
+                foreach (var tracker in _trackerStack)
+                {
+                    if (tracker.IsTagHelper)
+                    {
+                        return tracker as TagHelperTracker;
+                    }
+                }
+
+                return null;
+            }
+        }
 
         public override SyntaxNode VisitMarkupElement(MarkupElementSyntax node)
         {
@@ -437,7 +450,7 @@ internal static class TagHelperParseTreeRewriter
                 attributeValueBuilder.Clear();
             }
 
-            return attributes.DrainToImmutable();
+            return attributes.ToImmutableAndClear();
         }
 
         private void ValidateParentAllowsTagHelper(string tagName, MarkupStartTagSyntax tagBlock)
@@ -766,7 +779,7 @@ internal static class TagHelperParseTreeRewriter
                     }
                 }
 
-                return (result.DrainToImmutable(), distinctSet);
+                return (result.ToImmutableAndClear(), distinctSet);
             }
 
             private HashSet<string> CreatePrefixedAllowedChildren()

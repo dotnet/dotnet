@@ -6,8 +6,8 @@ using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -181,7 +181,7 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
         // that don't match
         var projectPath = FilePathNormalizer.GetNormalizedDirectoryName(projectFilePath);
         var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
-        if (!normalizedFilePath.StartsWith(projectPath, FilePathComparison.Instance))
+        if (!normalizedFilePath.StartsWith(projectPath, PathUtilities.OSSpecificPathComparison))
         {
             return null;
         }
