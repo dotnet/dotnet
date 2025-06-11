@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.107">
+    <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="9.0.108">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>a2da3a8446409db003c2868a6910c0323b113467</Sha>
+      <Sha>1a9d00e83cf92e2e508a27a899023b04866fc2a8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.107-servicing.25268.8">
+    <Dependency Name="Microsoft.TemplateEngine.Mocks" Version="9.0.108-servicing.25304.14">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>a2da3a8446409db003c2868a6910c0323b113467</Sha>
+      <Sha>1a9d00e83cf92e2e508a27a899023b04866fc2a8</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.107-servicing.25268.8">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.templating" Version="9.0.108-servicing.25304.14">
       <Uri>https://github.com/dotnet/templating</Uri>
-      <Sha>a2da3a8446409db003c2868a6910c0323b113467</Sha>
+      <Sha>1a9d00e83cf92e2e508a27a899023b04866fc2a8</Sha>
       <SourceBuild RepoName="templating" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.5">
@@ -325,20 +325,20 @@
       <Sha>ed74665e773dd1ebea3289c5662d71c590305932</Sha>
       <SourceBuild RepoName="aspnetcore" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.25256.3">
+    <Dependency Name="Microsoft.CodeAnalysis.Razor.Tooling.Internal" Version="9.0.0-preview.25275.1">
       <Uri>https://github.com/dotnet/razor</Uri>
       <Sha>44568f7817cd7c6daf90c9340c64c3b69277b7f6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.25256.3">
+    <Dependency Name="Microsoft.AspNetCore.Mvc.Razor.Extensions.Tooling.Internal" Version="9.0.0-preview.25275.1">
       <Uri>https://github.com/dotnet/razor</Uri>
       <Sha>44568f7817cd7c6daf90c9340c64c3b69277b7f6</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.25256.3">
+    <Dependency Name="Microsoft.NET.Sdk.Razor.SourceGenerators.Transport" Version="9.0.0-preview.25275.1">
       <Uri>https://github.com/dotnet/razor</Uri>
       <Sha>44568f7817cd7c6daf90c9340c64c3b69277b7f6</Sha>
     </Dependency>
     <!-- Intermediate is necessary for source build. -->
-    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.25256.3">
+    <Dependency Name="Microsoft.SourceBuild.Intermediate.razor" Version="9.0.0-preview.25275.1">
       <Uri>https://github.com/dotnet/razor</Uri>
       <Sha>44568f7817cd7c6daf90c9340c64c3b69277b7f6</Sha>
       <SourceBuild RepoName="razor" ManagedOnly="true" />
