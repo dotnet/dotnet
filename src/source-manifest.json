@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25302.1",
-      "barId": 270250,
+      "packageVersion": "10.0.0-beta.25305.3",
+      "barId": 270773,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "83c8fe20d45264a4d85ad8c83f46ea456948c209"
+      "commitSha": "aba421eb78276b26d1a24df7772474806b27aa13"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -64,11 +64,11 @@
       "commitSha": "2e84b71bab3db3811cccded0468b0d5fcf8f9a6b"
     },
     {
-      "packageVersion": "14.0.100-beta.25305.2",
-      "barId": 270767,
+      "packageVersion": "14.0.100-beta.25309.2",
+      "barId": 271030,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "7ce7d94f430be5a0f098868f55ebc17439f74ab0"
+      "commitSha": "8f339594ac6ddb2e2bceae0591c1c2cae3830c3c"
     },
     {
       "packageVersion": "17.15.0-preview-25306-09",
@@ -155,11 +155,11 @@
       "commitSha": "7af3fe9ede611e9f3202b373038ef2400518af5d"
     },
     {
-      "packageVersion": "10.0.100-preview.5.25305.1",
-      "barId": 270826,
+      "packageVersion": "10.0.100-preview.6.25309.1",
+      "barId": 271048,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "29575925a28c175356cf6ea01b3a36f90c92e845"
+      "commitSha": "1844f23ff256a8421662b7e6aed0d77840e3a46d"
     },
     {
       "packageVersion": "17.15.0-preview-25302-03",
@@ -176,18 +176,18 @@
       "commitSha": "5002f39499742498f3e509d79934801ad6b880b2"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25308.1",
-      "barId": 270989,
+      "packageVersion": "10.0.0-preview.6.25308.2",
+      "barId": 270990,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "94e240ed9c0c489a6548866650001bc8ab9c1d26"
+      "commitSha": "59367612e9f0ad716a28f0f8a69ebdfa0060bd85"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25305.1",
-      "barId": 270689,
+      "packageVersion": "10.0.0-preview.6.25308.2",
+      "barId": 271002,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "416cfa6c65dce9614f4a090ca9edf3f3ee269f32"
+      "commitSha": "9beecf369197ab2c2d13d86858e6370cfee60fb8"
     },
     {
       "packageVersion": "10.0.0-preview.25303.1",
