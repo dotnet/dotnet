@@ -35,6 +35,13 @@
                     MarkerFileName="$(PoisonMarkerFile)"
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)" />
 
+    <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
+    <Copy SourceFiles="$(PoisonUsageReportFile)"
+          DestinationFolder="$(ArtifactsPublishStagingDir)/log"
+          SkipUnchangedFiles="true">
+      <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
+    </Copy>
+
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done checking for poison." />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
@@ -115,6 +122,16 @@
     <Copy SourceFiles="$(SourceBuiltTarballName)"
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="PublishBinaryReport"
+          AfterTargets="PublishToAzureDevOpsArtifacts">
+    <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
+    <Copy SourceFiles="$(BinariesReportFile)"
+          DestinationFolder="$(ArtifactsPublishStagingDir)/log"
+          SkipUnchangedFiles="true">
+      <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
+    </Copy>
   </Target>
 
 </Project>

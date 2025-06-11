@@ -338,7 +338,8 @@ namespace Microsoft.DotNet.SignTool.Tests
             var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wixToolsPath: wixToolsPath, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
 
             var signTool = new FakeSignTool(signToolArgs, task.Log);
-            var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log);
+            // Passing null for the 3rd party check skip as this doesn't affect the generated project.
+            var configuration = new Configuration(signToolArgs.TempDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log);
             var signingInput = configuration.GenerateListOfFiles();
             var util = new BatchSignUtil(
                 task.BuildEngine,
@@ -379,12 +380,14 @@ namespace Microsoft.DotNet.SignTool.Tests
             string[] expected,
             string[] expectedCopyFiles = null,
             Dictionary<string, List<AdditionalCertificateInformation>> additionalCertificateInfo = null,
+            HashSet<string> skip3rdPartyCheckFiles = null,
             string[] expectedErrors = null,
             string[] expectedWarnings = null)
         {
             var engine = new FakeBuildEngine();
             var task = new SignToolTask { BuildEngine = engine };
-            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
+            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, extensionsSignInfo, additionalCertificateInfo,
+                skip3rdPartyCheckFiles, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Select(f => f.ToString()).Should().BeEquivalentTo(expected);
             signingInput.FilesToCopy.Select(f => $"{f.Key} -> {f.Value}").Should().BeEquivalentTo(expectedCopyFiles ?? Array.Empty<string>());
@@ -520,7 +523,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>();
 
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
-            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
+            var signingInput = new Configuration(_tmpDir, itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, null, null, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, snPath: s_snPath, task.Log).GenerateListOfFiles();
 
             signingInput.FilesToSign.Should().BeEmpty();
             signingInput.ZipDataMap.Should().BeEmpty();
@@ -982,6 +985,25 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "CoreLibCr
             {
                 $@"SIGN004: Signing 3rd party library '{Path.Combine(_tmpDir, "EmptyPKT.dll")}' with Microsoft certificate 'Microsoft400'. The library is considered 3rd party library due to its copyright: ''."
             });
+        }
+
+        [Fact]
+        public void NoWarnThirdPartyLibraryMicrosoftCertificate()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("EmptyPKT.dll"))
+            };
+
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>() { };
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>() { };
+            var noWarn3rdPartySet = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "EmptyPKT.dll" };
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'EmptyPKT.dll' TargetFramework='.NETCoreApp,Version=v2.1' Certificate='Microsoft400'",
+            }, skip3rdPartyCheckFiles: noWarn3rdPartySet);
         }
 
         [WindowsOnlyFact]
@@ -2857,6 +2879,7 @@ $@"
                 new Dictionary<ExplicitCertificateKey, string>(),
                 new Dictionary<string, List<SignInfo>>(),
                 new(),
+                null,
                 tarToolPath: s_tarToolPath,
                 pkgToolPath: s_pkgToolPath,
                 snPath: s_snPath,
@@ -2907,6 +2930,7 @@ $@"
                 new Dictionary<ExplicitCertificateKey, string>(),
                 extensionSignInfo,
                 new(),
+                null,
                 tarToolPath: s_tarToolPath,
                 pkgToolPath: s_pkgToolPath,
                 snPath: s_snPath,
