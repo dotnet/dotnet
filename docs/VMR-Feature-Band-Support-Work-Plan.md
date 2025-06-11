@@ -128,9 +128,18 @@ Darc publishing will need to be enabled at the VMR level to allow the packages p
 
 #### Source-Only Build Legs
 
-Given that the packages outputted from the 1xx branch are needed in order to source build the 2xx branch, changes will be needed to the pipelines.
+Given that the packages outputted from the 1xx branch are needed in order to source build the 2xx branch, changes will be needed to the pipelines. In order to make the build efficient, we can collect the output of the 1xx branch's official build and feed that in as input to the 2xx branch build. There's no need to build the 1xx branch again from source since it's already been done.
 
-In order to make the build efficient, we can collect the output of the 1xx branch's official build and feed that in as input to the 2xx branch build. There's no need to build the 1xx branch again from source since it's already been done. This requires publishing source build intermediate packages for each repo in the VMR pipeline. Those packages can then be restored as part of the repos that depend on them within the 2xx branch.
+In order to do this, there needs to be a mechanism to publish the source-built packages from a 1xx official build so that they can be consumed by a 2xx build. There are a variety of options that can be considered:
+* Publish each source-built NuGet package to a NuGet feed (probably specific to source build). These would then be downloaded all together by using [NuGet search functionality](https://learn.microsoft.com/nuget/reference/nuget-client-sdk#search-packages) by filtering on the package version.
+* Publish each source-built artifacts tarball to blob storage. This would then be downloaded by constructing a URL that contains the necessary version.
+* Reintroduce source-built intermediates but have them published at the VMR level for each repo built there. These would be published to a NuGet feed. These would be downloaded by enumerating each of the repos and downloading the specific version needed.
+
+One consideration to make here is for the scenario of internal builds. Whatever publishing mechanism is chosen will need to provide support for authenticated access to the published artifacts that comes with internal builds.
+
+Note that each distro/architecture combination needs to publish its own set of packages. For example, there needs to be a set of package published for AlmaLinux x64, CentOS Stream 9 x64, Ubuntu 24.04 arm64, etc.
+
+Once the 2xx branch gets updated with dependency flow with the output of the 1xx build, the dependency information can be used to determine which artifact version needs to be downloaded as part of the source build prep script. The logic really just needs to know the package version of a component that was produced by the 1xx build, such as a package from `runtime`. Once that version is known, that can be used to target the appropriate version of the artifact to download and include as input packages to the source-only build.
 
 ### Source Build Release
 
