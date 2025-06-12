@@ -91,6 +91,9 @@ extends:
       ${{ variables.centOSStreamContainerName }}:
         image: ${{ variables.centOSStreamContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.centOSStreamContainerNamePrevious }}:
+        image: ${{ variables.centOSStreamContainerImagePrevious }}
+        options: ${{ variables.defaultContainerOptions }}
       ${{ variables.fedoraContainerName }}:
         image: ${{ variables.fedoraContainerImage }}
         options: ${{ variables.defaultContainerOptions }}
