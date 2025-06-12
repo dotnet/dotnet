@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "59bc2927ba20a32a2cbdf9643fba57a46d81aa13"
+      "commitSha": "b0134a02b5c4cbafbd6e9eec696c54904ebd22b0"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -151,10 +151,10 @@
       "commitSha": "bc9161306b23641b0364b8f93d546da4d48da1eb"
     },
     {
-      "packageVersion": "9.0.6",
+      "packageVersion": "9.0.7",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "c7cc0b3d8bd0ee206eb06ba1ad7e201218fc3d32"
+      "commitSha": "bfa836ee9a9d4f1857de6f3d2f104d72be4b368a"
     },
     {
       "packageVersion": "9.0.6-servicing.25266.5",
@@ -163,10 +163,10 @@
       "commitSha": "f0fc61ead7dc20cbce05eb81a42089e28c90c409"
     },
     {
-      "packageVersion": "9.0.6-rtm.25267.1",
+      "packageVersion": "9.0.6-rtm.25269.2",
       "path": "wpf",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-wpf",
-      "commitSha": "620a20376852ae35038cd4251552ea8425f6cfe6"
+      "commitSha": "5a4e2343a2986271c9eec97862c2db4cdd15b08e"
     },
     {
       "packageVersion": "10.0.0-preview.24609.2",
