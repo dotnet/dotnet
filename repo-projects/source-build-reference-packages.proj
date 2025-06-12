@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- The SBRP repo produces ReferenceOnly packages which are copied to prereqs/package/reference. -->
-    <ReferenceOnlyRepoArtifacts>true</ReferenceOnlyRepoArtifacts>
-
     <!-- SBRP builds before Arcade so it also needs the bootstrap Arcade version -->
     <UseBootstrapArcade>true</UseBootstrapArcade>
 
@@ -17,4 +14,16 @@
     <BuiltSdkPackage Include="Microsoft.Build.Traversal" />
   </ItemGroup>
 
+  <!-- Copy reference only packages to prereqs/package/reference -->
+  <Target Name="CopyReferenceOnlyPackages"
+          AfterTargets="RepoBuild"
+          BeforeTargets="CleanupRepo" >
+    <ItemGroup>
+      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
+          DestinationFolder="$(ReferencePackagesDir)"
+          Condition="'@(_ReferenceOnlyPackages)' != ''" />
+  </Target>
 </Project>

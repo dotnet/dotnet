@@ -666,18 +666,6 @@
       UseHardlinksIfPossible="true" />
   </Target>
 
-  <!-- Copy reference only packages to prereqs/package/reference -->
-  <Target Name="CopyReferenceOnlyPackages"
-          Condition="'$(ReferenceOnlyRepoArtifacts)' == 'true'">
-    <ItemGroup>
-      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\**\*" />
-    </ItemGroup>
-
-    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
-          DestinationFolder="$(ReferencePackagesDir)"
-          Condition="'@(_ReferenceOnlyPackages)' != ''" />
-  </Target>
-
   <!-- Copy restored packages from inner build to ensure they're included in the
        main build prebuilt check -->
   <Target Name="CopyInnerBuildRestoredPackages"
@@ -835,7 +823,6 @@
     MoveDotNetBuildLogs;
     LogRepoArtifacts;
     CopyRepoSymbols;
-    CopyReferenceOnlyPackages;
     CopyInnerBuildRestoredPackages;
     ExtractToolPackage;
     CleanupRepo" />
