@@ -24,6 +24,11 @@ parameters:
   type: boolean
   default: true
 
+# List of verifications to run during PRs.
+- name: verifications
+  type: object
+  default: []
+
 stages:
 - template: source-build-and-validate.yml
   parameters:
@@ -42,24 +47,27 @@ stages:
     # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
     legs:
       
-      - buildNameFormat: '{0}_Online_MsftSdk'
-        distro: centos
-        targetArchitecture: x64
-        buildFromArchive: false            # 🚫
-        enablePoison: false                # 🚫
-        runOnline: true                    # ✅
-        useMonoRuntime: false              # 🚫
-        withPreviousSDK: false             # 🚫
-      
-      - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
-        distro: centos
-        targetArchitecture: x64
-        buildFromArchive: false            # 🚫
-        enablePoison: false                # 🚫
-        runOnline: false                   # 🚫
-        useMonoRuntime: false              # 🚫
-        withPreviousSDK: false             # 🚫
-        reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
+      ### Source-build verification legs ###
+      - ${{ if containsValue(parameters.verifications, 'source-build') }}:
+
+        - buildNameFormat: '{0}_Online_MsftSdk'
+          distro: centos
+          targetArchitecture: x64
+          buildFromArchive: false            # 🚫
+          enablePoison: false                # 🚫
+          runOnline: true                    # ✅
+          useMonoRuntime: false              # 🚫
+          withPreviousSDK: false             # 🚫
+
+        - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
+          distro: centos
+          targetArchitecture: x64
+          buildFromArchive: false            # 🚫
+          enablePoison: false                # 🚫
+          runOnline: false                   # 🚫
+          useMonoRuntime: false              # 🚫
+          withPreviousSDK: false             # 🚫
+          reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
       
       ### Additional legs for full build ###
       - ${{ if in(parameters.scope, 'full') }}:
