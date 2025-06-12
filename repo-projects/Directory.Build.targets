@@ -342,7 +342,7 @@
     </PropertyGroup>
 
     <!-- Write the build input properties, then save off a copy that will be used for generating usage reports later -->
-    <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage->WithMetadataValue('ReferenceOnly', 'false'))"
+    <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
@@ -366,7 +366,7 @@
          A B and C.
 
          A key element of this algorith is that we must write the full package version props and not the filtered version. -->
-    <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage->WithMetadataValue('ReferenceOnly', 'false'))"
+    <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(SnapshotPackageVersionPropsPath)" />
 
@@ -597,9 +597,6 @@
       <Output TaskParameter="KnownBlobs" ItemName="ProducedAssetFromDependentVertical" />
     </GetKnownArtifactsFromAssetManifests>
 
-    <ItemGroup>
-      <ProducedPackageFromDependentVertical ReferenceOnly="false" />
-    </ItemGroup>
   </Target>
 
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.GetKnownArtifactsFromAssetManifests" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
@@ -622,10 +619,6 @@
       <Output TaskParameter="KnownPackages" ItemName="ProducedPackage" />
       <Output TaskParameter="KnownBlobs" ItemName="ProducedAsset" />
     </GetKnownArtifactsFromAssetManifests>
-
-    <ItemGroup>
-      <ProducedPackage ReferenceOnly="false" />
-    </ItemGroup>
   </Target>
 
   <Target Name="GetProducedPackagesFromTransitiveReferencesFromPreviousBuildPasses"
