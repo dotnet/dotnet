@@ -361,7 +361,7 @@ internal sealed class ProjectState
         using var importTargetPaths = new PooledArrayBuilder<string>();
         CollectImportDocumentTargetPaths(hostDocument, ProjectEngine, ref importTargetPaths.AsRef());
 
-        return importTargetPaths.DrainToImmutable();
+        return importTargetPaths.ToImmutableAndClear();
     }
 
     private ImmutableDictionary<string, DocumentState> UpdateDocuments(Func<DocumentState, DocumentState> transformer)

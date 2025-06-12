@@ -35,7 +35,7 @@ internal class AutoInsertService(IEnumerable<IOnAutoInsertProvider> onAutoInsert
             }
         }
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     public ImmutableArray<string> TriggerCharacters => _triggerCharacters;

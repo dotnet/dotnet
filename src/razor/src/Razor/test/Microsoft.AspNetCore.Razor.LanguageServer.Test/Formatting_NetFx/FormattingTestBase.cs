@@ -65,13 +65,14 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool allowDiagnostics = false,
         bool codeBlockBraceOnNextLine = false,
         bool inGlobalNamespace = false,
-        bool debugAssertsEnabled = true)
+        bool debugAssertsEnabled = true,
+        Func<SourceText, SourceText>? csharpModifierFunc = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
         var razorLSPOptions = RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine };
 
-        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled);
+        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, csharpModifierFunc);
     }
 
     private async Task RunFormattingTestInternalAsync(
@@ -84,7 +85,8 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool allowDiagnostics,
         RazorLSPOptions? razorLSPOptions,
         bool inGlobalNamespace,
-        bool debugAssertsEnabled)
+        bool debugAssertsEnabled,
+        Func<SourceText, SourceText>? csharpModifierFunc)
     {
         // Arrange
         var fileKindValue = fileKind ?? RazorFileKind.Component;
@@ -111,7 +113,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled, csharpModifierFunc);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         var client = new FormattingLanguageServerClient(_htmlFormattingService, LoggerFactory);

@@ -2,6 +2,11 @@
   <PropertyGroup>
     <BuildIdentityPackage>false</BuildIdentityPackage>
     <SupportedRids>linux-x64;linux-musl-x64;linux-arm64;linux-musl-arm64;linux-arm;linux-musl-arm</SupportedRids>
+    <!-- SharedFramework runtime version. This package is non shipping but we need to know the shared framework version
+         to populate some metadata used later. This cannot be done in a target, since we need this info for PackageDownload. -->
+    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == ''">$(Version)</NetCoreRuntimeVersion>
+    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == 'release'">$(ProductVersion)</NetCoreRuntimeVersion>
+    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == 'prerelease'">$(VersionPrefix)-$(_PreReleaseLabel).final</NetCoreRuntimeVersion>
   </PropertyGroup>
 
   <!--
@@ -24,17 +29,7 @@
 
     <TargetRuntimePacks Include="@(SupportedRid->'Microsoft.NETCore.App.Runtime.%(Rid)')" />
 
-    <PackageDownload Condition="$(DotNetFinalVersionKind) == '' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
-    <!-- If building in the VMR, the runtime packages are coming from the previous pass.
-         We need to know what the versions are. This project is non-shipping, while the
-         targeting packages are shipping. There's not an easy way to get this before Restore
-         (where we could use a target to extract the version).
-         Instead. Manually construct the versions. There was some consideration of having arcade calculate
-         both shipping and non-shipping versions for every project, and choosing between, but it's ugly
-         and seems to be an anti-pattern. -->
-    <PackageDownload Condition="$(DotNetFinalVersionKind) == '' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(Version)]" />
-    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'release' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(ProductVersion)]" />
-    <PackageDownload Condition="$(DotNetFinalVersionKind) == 'prerelease' and '$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(VersionPrefix)-$(_PreReleaseLabel).final]" />
+    <PackageDownload Condition="'$(DotNetBuildFromVMR)' == 'true'" Include="@(TargetRuntimePacks)" Version="[$(NetCoreRuntimeVersion)]" />
   </ItemGroup>
 
   <Target Name="BuildCrossOSDacs">
@@ -77,7 +72,7 @@
     </JoinItems>
 
     <ItemGroup>
-      <_projectsToBuild CoreCLRRuntimePath="$(CrossRuntimeExtractionRoot)/microsoft.netcore.app.runtime.%(Rid)/$(Version)/runtimes/%(Rid)/native" />
+      <_projectsToBuild CoreCLRRuntimePath="$(CrossRuntimeExtractionRoot)/microsoft.netcore.app.runtime.%(Rid)/$(NetCoreRuntimeVersion)/runtimes/%(Rid)/native" />
 
       <_projectsToBuild AdditionalProperties="%(_projectsToBuild.AdditionalProperties);CrossDacOutputDir=%(CrossDacOutputDir);CoreCLRRuntimePath=%(CoreCLRRuntimePath)" />
     </ItemGroup>

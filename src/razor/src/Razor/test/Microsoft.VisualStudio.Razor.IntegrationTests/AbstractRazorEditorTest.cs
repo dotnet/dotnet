@@ -169,7 +169,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     private async Task EnsureExtensionInstalledAsync(CancellationToken cancellationToken)
     {
-        const string AssemblyName = "Microsoft.AspNetCore.Razor.LanguageServer";
+        const string AssemblyName = "Microsoft.CodeAnalysis.Razor.Workspaces";
         using var semaphore = new SemaphoreSlim(1);
         await semaphore.WaitAsync(cancellationToken);
 
