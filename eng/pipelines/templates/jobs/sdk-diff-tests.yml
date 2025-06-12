@@ -1,8 +1,14 @@
 parameters:
-- name: buildName
+- name: sbBuildName
   type: string
 
-- name: targetRid
+- name: msftBuildName
+  type: string
+
+- name: sbTargetRid
+  type: string
+
+- name: msftTargetRid
   type: string
 
 - name: architecture
@@ -16,7 +22,7 @@ parameters:
   default: false
 
 jobs:
-- job: ${{ parameters.buildName }}_${{ parameters.architecture }}
+- job: ${{ parameters.sbBuildName }}_${{ parameters.architecture }}
   timeoutInMinutes: 150
   variables:
   - template: ../variables/pipelines.yml
@@ -59,23 +65,25 @@ jobs:
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
 
-  - template: ../steps/download-pipeline-artifact.yml
+  - template: ../steps/download-vmr-artifact.yml
     parameters:
-      patterns: '**/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-linux*-${{ parameters.architecture }}.tar.gz'
+      buildName: ${{ parameters.msftBuildName }}
+      architecture: ${{ parameters.architecture }}
+      patterns: '**/assets/Release/Sdk/*/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.msftTargetRid }}.tar.gz'
       displayName: Download MSFT SDK
 
   - template: ../steps/download-vmr-artifact.yml
     parameters:
-      buildName: ${{ parameters.buildName }}
+      buildName: ${{ parameters.sbBuildName }}
       architecture: ${{ parameters.architecture }}
-      patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.targetRid }}.tar.gz' 
+      patterns: '**/assets/Release/dotnet-sdk-+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*)-${{ parameters.sbTargetRid }}.tar.gz' 
       displayName: Download Source Build SDK
 
   - template: ../steps/download-vmr-artifact.yml
     parameters:
-      buildName: ${{ parameters.buildName }}
+      buildName: ${{ parameters.sbBuildName }}
       architecture: ${{ parameters.architecture }}
-      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.targetRid }}.tar.gz' 
+      patterns: '**/assets/Release/Private.SourceBuilt.Artifacts.+([0-9]).+([0-9]).+([0-9])?(-@(alpha|preview|rc|rtm)*).${{ parameters.sbTargetRid }}.tar.gz' 
       displayName: Download Source Built Artifacts
 
   - script: |
@@ -83,25 +91,21 @@ jobs:
     displayName: Move Artifacts to root
 
   - script: |
-      platform="linux"
-      if [[ ${{ parameters.targetRid }} =~ "alpine" ]]; then
-        platform="$platform-musl"
-      fi
-      msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-$platform-${{ parameters.architecture }}.tar.gz" -exec basename {} \;)
+      msft_sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.msftTargetRid }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$msft_sdk_tarball_name" ]]; then
         echo "Microsoft SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed."
         exit 1
       fi
 
-      sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+      sdk_tarball_name=$(find "$(Pipeline.Workspace)/Artifacts" -name "dotnet-sdk-*-${{ parameters.sbTargetRid }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$sdk_tarball_name" ]]; then
         echo "Source-build SDK tarball does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed"
         exit 1
       fi
 
-      artifacts_path=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.targetRid }}.tar.gz" -exec basename {} \;)
+      artifacts_path=$(find "$(Pipeline.Workspace)/Artifacts" -name "Private.SourceBuilt.Artifacts.*.${{ parameters.sbTargetRid }}.tar.gz" -exec basename {} \;)
 
       if [[ -z "$artifacts_path" ]]; then
         echo "Source-build artifacts path does not exist in '$(Pipeline.Workspace)/Artifacts'. The associated build https://dev.azure.com/dnceng/internal/_build/results?buildId=$(DotnetDotnetBuildId) might have failed"
@@ -130,7 +134,7 @@ jobs:
       /p:MsftSdkTarballPath=$(MsftSdkTarballPath)
       /p:SdkTarballPath=$(SdkTarballPath)
       /p:SourceBuiltArtifactsPath=$(SourceBuiltArtifactsPath)
-      /p:TargetRid=${{ parameters.targetRid }}
+      /p:TargetRid=${{ parameters.sbTargetRid }}
       /p:PortableRid=$(Platform)-${{ parameters.architecture }}
     displayName: Run Tests
     workingDirectory: $(Build.SourcesDirectory)
