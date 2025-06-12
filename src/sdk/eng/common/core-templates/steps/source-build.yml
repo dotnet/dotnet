@@ -40,7 +40,7 @@ steps:
 
     baseRidArgs=
     if [ '${{ parameters.platform.baseRID }}' != '' ]; then
-      baseRidArgs='/p:BaseRid=${{ parameters.platform.baseRID }}'
+      baseRidArgs='/p:PortableTargetRid=${{ parameters.platform.baseRID }}'
     fi
 
     portableBuildArgs=
