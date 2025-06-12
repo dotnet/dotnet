@@ -33,7 +33,9 @@
     <TargetRid Condition="'$(TargetRid)' == ''">$(OSName)-$(TargetArchitecture)</TargetRid>
     <ProductMonikerRid>$(TargetRid)</ProductMonikerRid>
 
-    <PortableProductMonikerRid>$(PortableTargetRid)</PortableProductMonikerRid>
+    <PortableOSName Condition="'$(PortableOSName)' == ''">$(OSName)</PortableOSName>
+    <PortableRid>$(PortableOSName)-$(TargetArchitecture)</PortableRid>
+    <PortableProductMonikerRid>$(PortableRid)</PortableProductMonikerRid>
   </PropertyGroup>
 
   <PropertyGroup>
