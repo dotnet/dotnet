@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal sealed class RpmBuilder(string packageName, string version, string releaseVersion, Architecture architecture, OSPlatform os)
+    internal sealed class RpmBuilder(string packageName, string version, string releaseVersion, string architecture, OSPlatform os)
     {
         private readonly List<(string capability, string version)> _provides = [];
         private readonly List<string> _conflicts = [];
@@ -55,42 +55,38 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             new RpmHeader<RpmHeaderTag>.Entry(RpmHeaderTag.Group, RpmHeaderEntryType.String, "default"),
         ];
 
-        private static short GetRpmLeadArchitecture(Architecture architecture)
+        private static short GetRpmLeadArchitecture(string architecture)
         {
             // See /usr/lib/rpm/rpmrc for the canonical architecture mapping
             return architecture switch
             {
-                Architecture.X86 => 1,
-                Architecture.X64 => 1,
-                Architecture.Arm => 12,
-                Architecture.Arm64 => 19,
-#if NET
-                Architecture.Armv6 => 12,
-                Architecture.S390x => 15,
-                Architecture.Ppc64le => 16,
-                Architecture.RiscV64 => 22,
-                Architecture.LoongArch64 => 23,
-#endif
+                "x86" => 1,
+                "x64" => 1,
+                "arm" => 12,
+                "arm64" => 19,
+                "armv6" => 12,
+                "s390x" => 15,
+                "ppc64le" => 16,
+                "riscv64" => 22,
+                "loongarch64" => 23,
                 _ => throw new ArgumentException("Unsupported architecture", nameof(architecture))
             };
         }
 
-        public static string GetRpmHeaderArchitecture(Architecture architecture)
+        public static string GetRpmHeaderArchitecture(string architecture)
         {
             // See /usr/lib/rpm/rpmrc for valida architecture values
             return architecture switch
             {
-                Architecture.X86 => "i686",
-                Architecture.X64 => "x86_64",
-                Architecture.Arm => "armv7hl",
-                Architecture.Arm64 => "aarch64",
-#if NET
-                Architecture.Armv6 => "armv6hl",
-                Architecture.S390x => "s390x",
-                Architecture.Ppc64le => "ppc64le",
-                Architecture.RiscV64 => "riscv64",
-                Architecture.LoongArch64 => "loongarch64",
-#endif
+                "x86" => "i686",
+                "x64" => "x86_64",
+                "arm" => "armv7hl",
+                "arm64" => "aarch64",
+                "armv6" => "armv6hl",
+                "s390x" => "s390x",
+                "ppc64le" => "ppc64le",
+                "riscv64" => "riscv64",
+                "loongarch64" => "loongarch64",
                 _ => throw new ArgumentException("Unsupported architecture", nameof(architecture))
             };
         }

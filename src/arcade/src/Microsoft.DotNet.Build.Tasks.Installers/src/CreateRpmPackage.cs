@@ -66,22 +66,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            var arch = PackageArchitecture switch
-            {
-                "x86" => Architecture.X86,
-                "x64" => Architecture.X64,
-                "arm" => Architecture.Arm,
-                "arm64" => Architecture.Arm64,
-#if NET
-                "armv6" => Architecture.Armv6,
-                "s390x" => Architecture.S390x,
-                "ppc64le" => Architecture.Ppc64le,
-                "riscv64" => Architecture.RiscV64,
-                "loongarch64"  => Architecture.LoongArch64,
-#endif
-                _ => throw new ArgumentException($"Unknown architecture: {PackageArchitecture}")
-            };
-            RpmBuilder builder = new(PackageName, PackageVersion, PackageRelease, arch, OSPlatform.Create(PackageOS))
+            RpmBuilder builder = new(PackageName, PackageVersion, PackageRelease, PackageArchitecture, OSPlatform.Create(PackageOS))
             {
                 Vendor = Vendor,
                 Packager = Packager,
@@ -107,7 +92,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             builder.AddProvidedCapability(PackageName, PackageVersion);
-            builder.AddProvidedCapability($"{PackageName}({RpmBuilder.GetRpmHeaderArchitecture(arch)})", PackageVersion);
+            builder.AddProvidedCapability($"{PackageName}({RpmBuilder.GetRpmHeaderArchitecture(PackageArchitecture)})", PackageVersion);
 
             HashSet<string> ownedDirectories = new(OwnedDirectories.Select(d => d.ItemSpec));
 
