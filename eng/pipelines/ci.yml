@@ -145,7 +145,7 @@ extends:
 
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        ${{ if eq(variables.isScheduleTrigger, 'true') }}:
+        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on weekends') }}:
           desiredSigning: Signed
         ${{ else }}:
           desiredSigning: ${{ parameters.desiredSigning }}
