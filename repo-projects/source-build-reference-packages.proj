@@ -19,11 +19,11 @@
           AfterTargets="RepoBuild"
           BeforeTargets="CleanupRepo" >
     <ItemGroup>
-      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\**\*" />
+      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(_ReferenceOnlyPackages)"
-          DestinationFolder="$(ReferencePackagesDir)"
-          Condition="'@(_ReferenceOnlyPackages)' != ''" />
+          DestinationFolder="$(ReferencePackagesDir)" />
   </Target>
+
 </Project>
