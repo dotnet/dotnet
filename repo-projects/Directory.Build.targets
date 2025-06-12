@@ -9,13 +9,6 @@
     <!-- Force use of dotnet msbuild (ignoring global.json contents) unless ForceDotNetMSBuildEngine is explicitly set in the repo project. -->
     <CommonArgs Condition="'$(BuildOS)' == 'windows' and '$(ForceDotNetMSBuildEngine)' != 'false'">$(CommonArgs) $(FlagParameterPrefix)msbuildEngine dotnet</CommonArgs>
 
-    <!-- Add the overrides for the shipping and non-shipping packages here to allow repo projects to identify a project as reference-only -->
-    <RepoArtifactsShippingPackagesDir Condition="'$(ReferenceOnlyRepoArtifacts)' != 'true'">$([MSBuild]::NormalizeDirectory('$(ArtifactsShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsShippingPackagesDir>
-    <RepoArtifactsShippingPackagesDir Condition="'$(ReferenceOnlyRepoArtifacts)' == 'true'">$(ReferencePackagesDir)</RepoArtifactsShippingPackagesDir>
-    <RepoArtifactsNonShippingPackagesDir Condition="'$(ReferenceOnlyRepoArtifacts)' != 'true'">$([MSBuild]::NormalizeDirectory('$(ArtifactsNonShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsNonShippingPackagesDir>
-    <RepoArtifactsNonShippingPackagesDir Condition="'$(ReferenceOnlyRepoArtifacts)' == 'true'">$(ReferencePackagesDir)</RepoArtifactsNonShippingPackagesDir>
-    <RepoArtifactsPdbArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsSymStoreDirectory)', '$(RepositoryName)'))</RepoArtifactsPdbArtifactsDir>
-
     <!-- Pass down configuration properties -->
     <CommonArgs Condition="'$(SkipSetTargetArchitecture)' != 'true'">$(CommonArgs) /p:TargetArchitecture=$(TargetArchitecture)</CommonArgs>
     <CommonArgs Condition="'$(SkipSetTargetOS)' != 'true'">$(CommonArgs) /p:TargetOS=$(TargetOS)</CommonArgs>
@@ -25,7 +18,6 @@
     <!-- Trim the trailing slash as it breaks argument parsing on Windows if this is the last argument. -->
     <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltPdbArtifactsDir=$(RepoArtifactsPdbArtifactsDir.TrimEnd('\'))</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:SourceBuiltNonShippingPackagesDir=$(RepoArtifactsNonShippingPackagesDir.TrimEnd('\'))</CommonArgs>
     <!-- Force the "base path" for repos built within the VMR to be the repo root so all files can be found within it. -->
     <CommonArgs>$(CommonArgs) /p:SourceBuiltArtifactsBasePath=$(RepoRoot.TrimEnd('\'))</CommonArgs>
 
@@ -128,10 +120,8 @@
   <!-- Wraps the transitive repo references with additional metadata -->
   <Target Name="GetRepositoryReferenceInfo"
           DependsOnTargets="PrepareRepositoryReferences">
-    <!-- SBRP is explicitly excluded since it is output to its own special directory, $(ReferencePackagesDir). -->
     <ItemGroup Condition="'@(TransitiveRepositoryReference)' != ''">
-      <RepositoryReferenceInfo Include="@(TransitiveRepositoryReference)"
-                               Exclude="source-build-reference-packages">
+      <RepositoryReferenceInfo Include="@(TransitiveRepositoryReference)">
         <ShippingSourceName>$(SourceBuiltSourceNamePrefix)%(Identity)</ShippingSourceName>
         <NonShippingSourceName>$(SourceBuiltSourceNamePrefix)transport-%(Identity)</NonShippingSourceName>
         <ShippingPackagesPath>$(ArtifactsShippingPackagesDir)/%(Identity)/</ShippingPackagesPath>
@@ -608,7 +598,7 @@
     </GetKnownArtifactsFromAssetManifests>
 
     <ItemGroup>
-      <ProducedPackageFromDependentVertical ReferenceOnly="$([MSBuild]::ValueOrDefault('$(ReferenceOnlyRepoArtifacts)', 'false'))" />
+      <ProducedPackageFromDependentVertical ReferenceOnly="false" />
     </ItemGroup>
   </Target>
 
@@ -634,7 +624,7 @@
     </GetKnownArtifactsFromAssetManifests>
 
     <ItemGroup>
-      <ProducedPackage ReferenceOnly="$([MSBuild]::ValueOrDefault('$(ReferenceOnlyRepoArtifacts)', 'false'))" />
+      <ProducedPackage ReferenceOnly="false" />
     </ItemGroup>
   </Target>
 
@@ -681,6 +671,18 @@
       DestinationFolder="$(IntermediateSymbolsRepoDir)%(RecursiveDir)"
       SkipUnchangedFiles="true"
       UseHardlinksIfPossible="true" />
+  </Target>
+
+  <!-- Copy reference only packages to prereqs/package/reference -->
+  <Target Name="CopyReferenceOnlyPackages"
+          Condition="'$(ReferenceOnlyRepoArtifacts)' == 'true'">
+    <ItemGroup>
+      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\**\*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
+          DestinationFolder="$(ReferencePackagesDir)"
+          Condition="'@(_ReferenceOnlyPackages)' != ''" />
   </Target>
 
   <!-- Copy restored packages from inner build to ensure they're included in the
@@ -793,7 +795,8 @@
           Inputs="$(MSBuildProjectFullPath)"
           Outputs="$(BaseIntermediateOutputPath)ExtractToolPackage.complete">
     <PropertyGroup>
-      <_ToolPackagesRoot>$(RepoArtifactsNonShippingPackagesDir)</_ToolPackagesRoot>
+      <_ToolPackagesRoot>$(ToolPackagesRoot)</_ToolPackagesRoot>
+      <_ToolPackagesRoot Condition="'$(_ToolPackagesRoot)' == ''">$(RepoArtifactsNonShippingPackagesDir)</_ToolPackagesRoot>
     </PropertyGroup>
 
     <ItemGroup>
@@ -839,6 +842,7 @@
     MoveDotNetBuildLogs;
     LogRepoArtifacts;
     CopyRepoSymbols;
+    CopyReferenceOnlyPackages;
     CopyInnerBuildRestoredPackages;
     ExtractToolPackage;
     CleanupRepo" />
