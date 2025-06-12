@@ -4,11 +4,9 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -342,37 +340,6 @@ internal abstract class GreenNode
     #endregion
 
     #region Factories
-    public virtual GreenNode CreateList(IEnumerable<GreenNode> nodes, bool alwaysCreateListNode = false)
-    {
-        if (nodes == null)
-        {
-            return null;
-        }
-
-        var list = nodes.ToArray();
-
-        switch (list.Length)
-        {
-            case 0:
-                return null;
-            case 1:
-                if (alwaysCreateListNode)
-                {
-                    goto default;
-                }
-                else
-                {
-                    return list[0];
-                }
-            case 2:
-                return InternalSyntax.SyntaxList.List(list[0], list[1]);
-            case 3:
-                return InternalSyntax.SyntaxList.List(list[0], list[1], list[2]);
-            default:
-                return InternalSyntax.SyntaxList.List(list);
-        }
-    }
-
     public SyntaxNode CreateRed()
     {
         return CreateRed(null, 0);
