@@ -16,7 +16,7 @@
     <_TrueTargetRid>$(RuntimeIdentifier)</_TrueTargetRid>
     <!--
       NativeAOT's targets don't handle cross-targeting to a non-portable RID.
-      Change the RID when importing the NativeAOT targets to the corresponding portable RID if specified.
+      Change the RID when importing the NativeAOT targets to the corresponding portable RID.
     -->
     <RuntimeIdentifier>$(PortableTargetRid)</RuntimeIdentifier>
   </PropertyGroup>
