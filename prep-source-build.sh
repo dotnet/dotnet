@@ -185,6 +185,9 @@ function DownloadArchive {
             18)
               sleep 3
               ;;
+            *)
+              exit 1
+              ;;
           esac
         fi
       done
