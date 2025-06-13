@@ -241,7 +241,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 var mappings = bindings.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Node);
                 RewriteTypeNames(new GenericTypeNameRewriter(mappings), node, bindings: bindings);
 
-                node.Diagnostics.Add(ComponentDiagnosticFactory.Create_GenericComponentTypeInferenceUnderspecified(node.Source, node, node.Component.GetTypeParameters()));
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_GenericComponentTypeInferenceUnderspecified(node.Source, node, node.Component.GetTypeParameters()));
             }
 
             // Next we need to generate a type inference 'method' node. This represents a method that we will codegen that
@@ -300,7 +300,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 // We add our own error for this because its likely the user will see other errors due
                 // to incorrect codegen without the types. Our errors message will pretty clearly indicate
                 // what to do, whereas the other errors might be confusing.
-                node.Diagnostics.Add(ComponentDiagnosticFactory.Create_GenericComponentMissingTypeArgument(node.Source, node, missing));
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_GenericComponentMissingTypeArgument(node.Source, node, missing));
                 return false;
             }
 
@@ -314,7 +314,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var attribute in node.Attributes)
             {
-                attribute.Annotations[ComponentMetadata.Component.ConcreteContainingType] = node.TypeName;
+                attribute.ConcreteContainingType = node.TypeName;
 
                 var globallyQualifiedTypeName = attribute.BoundAttribute?.GetGloballyQualifiedTypeName();
 
@@ -340,7 +340,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     Debug.Assert(bindings != null || hasTypeArgumentSpecified == true);
                     if (hasTypeArgumentSpecified == true)
                     {
-                        attribute.Annotations.Add(ComponentMetadata.Component.ExplicitTypeNameKey, true);
+                        attribute.HasExplicitTypeName = true;
                     }
                     else if(attribute.BoundAttribute?.IsEventCallbackProperty() ?? false)
                     {
@@ -351,7 +351,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                             var parameter = typeParameters[i];
                             if (bindings!.ContainsKey(parameter))
                             {
-                                attribute.Annotations.Add(ComponentMetadata.Component.OpenGenericKey, true);
+                                attribute.IsOpenGeneric = true;
                                 break;
                             }
                         }
@@ -434,16 +434,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // Now we need to insert the type inference node into the tree.
             var namespaceNode = documentNode.Children
                 .OfType<NamespaceDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.Annotations.Contains(new KeyValuePair<object, object>(ComponentMetadata.Component.GenericTypedKey, bool.TrueString)));
+                .FirstOrDefault(n => n.IsGenericTyped);
             if (namespaceNode == null)
             {
                 namespaceNode = new NamespaceDeclarationIntermediateNode()
                 {
-                    Annotations =
-                        {
-                            { ComponentMetadata.Component.GenericTypedKey, bool.TrueString },
-                        },
                     Content = @namespace,
+                    IsGenericTyped = true,
                 };
 
                 documentNode.Children.Add(namespaceNode);

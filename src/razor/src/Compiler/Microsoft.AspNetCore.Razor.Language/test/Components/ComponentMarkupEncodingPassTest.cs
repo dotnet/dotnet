@@ -75,7 +75,7 @@ public class ComponentMarkupEncodingPassTest
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.False(node.IsEncoded());
+        Assert.False(node.HasEncodedContent);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ The time is ");
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.True(node.IsEncoded());
+        Assert.True(node.HasEncodedContent);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ The time is ");
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.True(node.IsEncoded());
+        Assert.True(node.HasEncodedContent);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ The time is ");
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.True(node.IsEncoded());
+        Assert.True(node.HasEncodedContent);
     }
 
     [Fact]
@@ -153,7 +153,7 @@ The time is ");
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.False(node.IsEncoded());
+        Assert.False(node.HasEncodedContent);
     }
 
     [Fact]
@@ -172,7 +172,7 @@ The time is ");
         // Assert
         var node = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>().Single();
         Assert.Equal(expected, GetHtmlContent(node));
-        Assert.False(node.IsEncoded());
+        Assert.False(node.HasEncodedContent);
     }
 
     private string NormalizeContent(string content)
