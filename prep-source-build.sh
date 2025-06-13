@@ -175,7 +175,20 @@ function DownloadArchive {
     archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/Private.SourceBuilt.$archiveType.$archiveVersion.$archiveRid.tar.gz"
 
     echo "  Downloading source-built $archiveType from $archiveUrl..."
-    (cd "$packagesArchiveDir" && curl -f --retry 5 -O "$archiveUrl")
+    (
+      cd "$packagesArchiveDir" &&
+      for i in {1..5}; do
+        if curl -f --retry 5 -O "$archiveUrl"; then
+          exit 0
+        else
+          case $? in
+            18)
+              sleep 3
+              ;;
+          esac
+        fi
+      done
+    )
   elif [ "$isRequired" == true ]; then
     echo "  ERROR: $notFoundMessage"
     exit 1
