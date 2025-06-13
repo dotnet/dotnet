@@ -28,7 +28,8 @@ parameters:
 - name: verifications
   type: object
   default:
-  - source-build
+  - source-build-stage1
+  - source-build-stage2
   - unified-build-android-arm64
   - unified-build-browser-wasm
   - unified-build-iossimulator-arm64
