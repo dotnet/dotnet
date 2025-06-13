@@ -468,8 +468,7 @@ jobs:
           fi
 
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Source-built artifacts are from CentOS 9 Stream. We want to download them without
-            # downloading portable versions from the internet.
+            # Using previous SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then

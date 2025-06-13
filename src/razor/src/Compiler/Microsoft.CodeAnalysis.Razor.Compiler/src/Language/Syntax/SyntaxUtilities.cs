@@ -153,6 +153,6 @@ internal static class SyntaxUtilities
             markupTransition = markupTransition.WithEditHandler(editHandler);
         }
 
-        return SyntaxList<RazorSyntaxNode>.Create(markupTransition, parent: node);
+        return new(markupTransition);
     }
 }
