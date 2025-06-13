@@ -4,9 +4,9 @@
     <SupportedRids>linux-x64;linux-musl-x64;linux-arm64;linux-musl-arm64;linux-arm;linux-musl-arm</SupportedRids>
     <!-- SharedFramework runtime version. This package is non shipping but we need to know the shared framework version
          to populate some metadata used later. This cannot be done in a target, since we need this info for PackageDownload. -->
-    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == ''">$(Version)</NetCoreRuntimeVersion>
-    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == 'release'">$(ProductVersion)</NetCoreRuntimeVersion>
-    <NetCoreRuntimeVersion Condition="$(DotNetFinalVersionKind) == 'prerelease'">$(VersionPrefix)-$(_PreReleaseLabel).final</NetCoreRuntimeVersion>
+    <NetCoreRuntimeVersion Condition="'$(DotNetFinalVersionKind)' == ''">$(Version)</NetCoreRuntimeVersion>
+    <NetCoreRuntimeVersion Condition="'$(DotNetFinalVersionKind)' == 'release'">$(ProductVersion)</NetCoreRuntimeVersion>
+    <NetCoreRuntimeVersion Condition="'$(DotNetFinalVersionKind)' == 'prerelease'">$(VersionPrefix)-$(_PreReleaseLabel).final</NetCoreRuntimeVersion>
   </PropertyGroup>
 
   <!--
