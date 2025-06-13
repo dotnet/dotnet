@@ -30,10 +30,7 @@ public sealed class ComponentTypeArgumentIntermediateNode : IntermediateNode
         };
         Children = [Value];
 
-        for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(propertyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(propertyNode);
     }
 
     public override IntermediateNodeCollection Children { get; }
