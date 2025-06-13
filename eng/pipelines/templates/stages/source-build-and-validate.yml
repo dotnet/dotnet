@@ -30,15 +30,20 @@ stages:
       parameters:
         # CentOS
         ${{ if eq(leg.distro, 'centos') }}:
-          buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}
-          container:
-            name: ${{ variables.centOSStreamContainerName }}
-            image: ${{ variables.centOSStreamContainerImage }}
+          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}
+            container:
+              name: ${{ variables.centOSStreamContainerNamePrevious }}
+              image: ${{ variables.centOSStreamContainerImagePrevious }}
+            artifactsRid: ${{ variables.centOSStreamX64RidPrevious }}
+          ${{ else }}:
+            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}
+            container:
+              name: ${{ variables.centOSStreamContainerName }}
+              image: ${{ variables.centOSStreamContainerImage }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-            artifactsRid: ${{ variables.centOSStreamX64Rid }}
         # Fedora
         ${{ elseif eq(leg.distro, 'fedora') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}
@@ -114,10 +119,16 @@ stages:
         parameters:
           # CentOS
           ${{ if eq(leg.distro, 'centos') }}:
-            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_Validation
-            container:
-              name: ${{ variables.centOSStreamContainerName }}
-              image: ${{ variables.centOSStreamContainerImage }}
+            ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+              buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_Validation
+              container:
+                name: ${{ variables.centOSStreamContainerNamePrevious }}
+                image: ${{ variables.centOSStreamContainerImagePrevious }}
+            ${{ else }}:
+              buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_Validation
+              container:
+                name: ${{ variables.centOSStreamContainerName }}
+                image: ${{ variables.centOSStreamContainerImage }}
           # Fedora
           ${{ elseif eq(leg.distro, 'fedora') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_Validation
@@ -219,7 +230,7 @@ stages:
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Binary Report
-              downloadFilePatterns: BuildLogs/artifacts/log/Release/binary-report/NewBinaries.txt
+              downloadFilePatterns: log/NewBinaries.txt
               copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
               flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
@@ -236,7 +247,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Source Build Poison Report
-                downloadFilePatterns: BuildLogs/artifacts/log/Release/poison-usage.xml
+                downloadFilePatterns: log/poison-usage.xml
                 copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:

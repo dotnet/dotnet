@@ -109,7 +109,7 @@ internal class RenameService(
             foreach (var documentPath in project.DocumentFilePaths)
             {
                 // We've already added refactoring edits for our document snapshot
-                if (FilePathComparer.Instance.Equals(documentPath, filePath))
+                if (PathUtilities.OSSpecificPathComparer.Equals(documentPath, filePath))
                 {
                     continue;
                 }

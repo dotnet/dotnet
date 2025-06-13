@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient;
 
@@ -24,7 +24,7 @@ internal sealed partial class ViewCodeCommandHandler
         public FileExistsHelper()
         {
             _watch = Stopwatch.StartNew();
-            _cache = new(FilePathComparer.Instance);
+            _cache = new(PathUtilities.OSSpecificPathComparer);
         }
 
         public bool FileExists(string filePath)
