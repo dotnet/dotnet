@@ -21,7 +21,7 @@
     <FileSignInfo Include="libbinaryen.dylib" CertificateName="None" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(PackageTargetOS)' == 'osx'">
+  <ItemGroup Condition="'$(TargetOS)' == 'osx'">
     <!-- sign macOS binaries from transport packages -->
     <FileSignInfo Include="node" CertificateName="MacDeveloper" />
     <FileSignInfo Include="python3" CertificateName="MacDeveloper" />
