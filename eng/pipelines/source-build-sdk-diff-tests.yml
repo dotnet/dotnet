@@ -73,8 +73,8 @@ extends:
       jobs:
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
-          msftBuildName: AzureLinux_x64_Cross
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
+          msftJobName: AzureLinux_x64_Cross
           sbTargetRid: ${{ variables.centOSStreamX64Rid }}
           msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
@@ -83,8 +83,8 @@ extends:
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
-          msftBuildName: AzureLinux_x64_Cross
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
+          msftJobName: AzureLinux_x64_Cross
           sbTargetRid: ${{ variables.almaLinuxX64Rid }}
           msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
@@ -92,8 +92,8 @@ extends:
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
-          msftBuildName: AzureLinux_x64_Cross_Alpine
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
+          msftJobName: AzureLinux_x64_Cross_Alpine
           sbTargetRid: ${{ variables.alpineX64Rid }}
           msftTargetRid: ${{ variables.linuxMuslX64Rid }}
           architecture: x64
@@ -101,8 +101,8 @@ extends:
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
-          msftBuildName: AzureLinux_x64_Cross
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
+          msftJobName: AzureLinux_x64_Cross
           sbTargetRid: ${{ variables.fedoraX64Rid }}
           msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
@@ -110,8 +110,8 @@ extends:
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
-          msftBuildName: AzureLinux_x64_Cross
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
+          msftJobName: AzureLinux_x64_Cross
           sbTargetRid: ${{ variables.ubuntuX64Rid }}
           msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
@@ -119,8 +119,8 @@ extends:
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          sbBuildName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
-          msftBuildName: AzureLinux_x64_Cross
+          sbJobName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
+          msftJobName: AzureLinux_x64_Cross
           sbTargetRid: ${{ variables.ubuntuArm64Rid }}
           msftTargetRid: ${{ variables.linuxArm64Rid }}
           architecture: arm64
