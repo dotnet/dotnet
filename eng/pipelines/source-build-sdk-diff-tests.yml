@@ -73,43 +73,55 @@ extends:
       jobs:
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
-          targetRid: ${{ variables.centOSStreamX64Rid }}
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
+          msftJobName: AzureLinux_x64_Cross
+          sbTargetRid: ${{ variables.centOSStreamX64Rid }}
+          msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
           publishTestResultsPr: true
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
-          targetRid: ${{ variables.almaLinuxX64Rid }}
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
+          msftJobName: AzureLinux_x64_Cross
+          sbTargetRid: ${{ variables.almaLinuxX64Rid }}
+          msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
-          targetRid: ${{ variables.alpineX64Rid }}
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
+          msftJobName: AzureLinux_x64_Cross_Alpine
+          sbTargetRid: ${{ variables.alpineX64Rid }}
+          msftTargetRid: ${{ variables.linuxMuslX64Rid }}
           architecture: x64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
-          targetRid: ${{ variables.fedoraX64Rid }}
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
+          msftJobName: AzureLinux_x64_Cross
+          sbTargetRid: ${{ variables.fedoraX64Rid }}
+          msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
-          targetRid: ${{ variables.ubuntuX64Rid }}
+          sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
+          msftJobName: AzureLinux_x64_Cross
+          sbTargetRid: ${{ variables.ubuntuX64Rid }}
+          msftTargetRid: ${{ variables.linuxX64Rid }}
           architecture: x64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
 
       - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
         parameters:
-          buildName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
-          targetRid: ${{ variables.ubuntuArm64Rid }}
+          sbJobName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
+          msftJobName: AzureLinux_x64_Cross
+          sbTargetRid: ${{ variables.ubuntuArm64Rid }}
+          msftTargetRid: ${{ variables.linuxArm64Rid }}
           architecture: arm64
           dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
