@@ -64,37 +64,6 @@ public static class IntermediateNodeAssert
         }
     }
 
-    public static void AnnotationEquals(IntermediateNode node, object value)
-    {
-        AnnotationEquals(node, value, value);
-    }
-
-    public static void AnnotationEquals(IntermediateNode node, object key, object value)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.Equal(value, node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
-    public static void HasAnnotation(IntermediateNode node, object key)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.NotNull(node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
     public static void Html(string expected, IntermediateNode node)
     {
         try

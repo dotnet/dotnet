@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -21,6 +23,12 @@ internal abstract class GreenNode
         new ConditionalWeakTable<GreenNode, RazorDiagnostic[]>();
     private static readonly ConditionalWeakTable<GreenNode, SyntaxAnnotation[]> AnnotationsTable =
         new ConditionalWeakTable<GreenNode, SyntaxAnnotation[]>();
+
+    /// <summary>
+    /// Pool of StringWriters for use in <see cref="ToString()"/>. Users should not dispose the StringWriter directly
+    /// (but should dispose of the PooledObject returned from Pool.GetPooledObject).
+    /// </summary>
+    private static readonly ObjectPool<StringWriter> StringWriterPool = DefaultPool.Create(Policy.Instance);
 
     private int _width;
     private byte _slotCount;
@@ -234,10 +242,11 @@ internal abstract class GreenNode
 
     public override string ToString()
     {
-        using var _ = StringBuilderPool.GetPooledObject(out var builder);
-        using var writer = new StringWriter(builder, CultureInfo.InvariantCulture);
+        using var _ = StringWriterPool.GetPooledObject(out var writer);
+
         WriteTo(writer);
-        return builder.ToString();
+
+        return writer.ToString();
     }
 
     public void WriteTo(TextWriter writer)
@@ -351,4 +360,30 @@ internal abstract class GreenNode
     public abstract TResult Accept<TResult>(InternalSyntax.SyntaxVisitor<TResult> visitor);
 
     public abstract void Accept(InternalSyntax.SyntaxVisitor visitor);
+
+    private sealed class Policy : IPooledObjectPolicy<StringWriter>
+    {
+        public static readonly Policy Instance = new();
+
+        private Policy()
+        {
+        }
+
+        public StringWriter Create()
+            => new StringWriter(new StringBuilder(), CultureInfo.InvariantCulture);
+
+        public bool Return(StringWriter writer)
+        {
+            var builder = writer.GetStringBuilder();
+
+            // Very similar to StringBuilderPool.Policy implementation.
+            builder.Clear();
+            if (builder.Capacity > DefaultPool.MaximumObjectSize)
+            {
+                builder.Capacity = DefaultPool.MaximumObjectSize;
+            }
+
+            return true;
+        }
+    }
 }
