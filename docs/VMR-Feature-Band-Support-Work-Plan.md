@@ -76,8 +76,7 @@ Each feature band branch will start out using the N-1 toolset version and then b
 * In addition to NuGet package, we also need to provide a way to have access to the runtime and ASP.NET Core artifacts (e.g. `dotnet-runtime-<version>-linux-x64.tar.gz`) from 2xx branches. This is necessary for the SDK to be able to bundle things together. This should be able to be done using https://ci.dot.net, just as it is done in product repo builds.
 * While the `scenario-tests` repo doesn't have differing code for each feature band, it will still need to exist in each of the VMR's feature band branches because it is built as part of the pipeline run and used to validate the product. This is ok since it is not part of the shipped binaries.
 
-❓ Open Question:
-There will need to be some way to detect when we are in one of these 2xx branches. What mechanism should be used for that? Maybe checking `packageVersion` of the sdk in `source-manifest.json`?
+There will need to be some way to detect when we are in one of these 2xx branches. For example, the [`sdk` needs different logic to determine from where it should target the artifacts it redistributes](https://github.com/dotnet/dotnet/issues/1109). It can determine this by checking the [`VersionSDKMinor` property in the `sdk`](https://github.com/dotnet/dotnet/blob/dce660c5e1445100011f2d528e64410f4afc2f60/src/sdk/eng/Versions.props#L8) which gets incremented for each feature band.
 
 #### Source-Only Builds
 
