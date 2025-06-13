@@ -1,6 +1,5 @@
 ### Supported Platforms
 
-
 --------------------------------------------------------------------------------------
 | Platform | main<br>(10.0.x&nbsp;Runtime) | 10.0.1xx-preview5<br>(10.0-preview5&nbsp;Runtime) |
 | :--------- | :----------: | :----------: |
@@ -20,6 +19,9 @@ Reference notes:
 > **1**: Our Debian packages are put together slightly differently than the other OS specific installers. Instead of combining everything, we have separate component packages that depend on each other. If you're installing the SDK from the .deb file (via dpkg or similar), then you'll need to install the corresponding dependencies first:
 > * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
 > * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
+
+#### Manually construct a link to download an SDK msi (example for dotnet-sdk msi for win-x64):
+> `https://ci.dot.net/public/Sdk/<version>/dotnet-sdk-<version>-win-x64.exe`
 
 [win-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
 [win-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x64.txt
