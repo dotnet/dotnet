@@ -11,6 +11,8 @@ public sealed class HtmlContentIntermediateNode : IntermediateNode
 {
     public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
 
+    public bool HasEncodedContent { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)

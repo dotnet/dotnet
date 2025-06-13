@@ -11,9 +11,6 @@ using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
-using CSharpSyntaxFacts = Microsoft.CodeAnalysis.CSharp.SyntaxFacts;
-using CSharpSyntaxKind = Microsoft.CodeAnalysis.CSharp.SyntaxKind;
-
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
 // Based on the DesignTimeNodeWriter from Razor repo.
@@ -663,7 +660,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         }
 
         // This attribute might only be here in order to allow us to generate code in WritePropertyAccess
-        if (node.IsDesignTimePropertyAccessHelper())
+        if (node.IsDesignTimePropertyAccessHelper)
         {
             return;
         }
@@ -683,7 +680,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
     private void WritePropertyAccess(CodeRenderingContext context, ComponentAttributeIntermediateNode node, ComponentIntermediateNode componentNode, string typeInferenceLocalName, bool shouldWriteBL0005Disable, out bool wrotePropertyAccess)
     {
         wrotePropertyAccess = false;
-        if (node?.TagHelper?.Name is null || node.Annotations[ComponentMetadata.Common.OriginalAttributeSpan] is null)
+        if (node?.TagHelper?.Name is null || node.OriginalAttributeSpan is null)
         {
             return;
         }
@@ -698,7 +695,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         // Write the name of the property, for rename support.
         // __o = ((global::ComponentName)default).PropertyName;
-        var originalAttributeName = node.Annotations[ComponentMetadata.Common.OriginalAttributeName]?.ToString() ?? node.AttributeName;
+        var originalAttributeName = node.OriginalAttributeName ?? node.AttributeName;
 
         int offset;
         if (originalAttributeName == node.PropertyName)
@@ -719,7 +716,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.WriteLine("#pragma warning disable BL0005");
         }
 
-        var attributeSourceSpan = (SourceSpan)node.Annotations[ComponentMetadata.Common.OriginalAttributeSpan];
+        var attributeSourceSpan = (SourceSpan)node.OriginalAttributeSpan;
         attributeSourceSpan = new SourceSpan(attributeSourceSpan.FilePath, attributeSourceSpan.AbsoluteIndex + offset, attributeSourceSpan.LineIndex, attributeSourceSpan.CharacterIndex + offset, node.PropertyName.Length, attributeSourceSpan.LineCount, attributeSourceSpan.CharacterIndex + offset + node.PropertyName.Length);
 
         if (componentNode.TypeInferenceNode == null)
@@ -823,8 +820,8 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 // An event callback can either be passed verbatim, or it can be created by the EventCallbackFactory.
                 // Since we don't look at the code the user typed inside the attribute value, this is always
                 // resolved via overloading.
-                var explicitType = (bool?)node.Annotations[ComponentMetadata.Component.ExplicitTypeNameKey];
-                var isInferred = (bool?)node.Annotations[ComponentMetadata.Component.OpenGenericKey];
+                var explicitType = node.HasExplicitTypeName;
+                var isInferred = node.IsOpenGeneric;
                 if (canTypeCheck && NeedsTypeCheck(node))
                 {
                     context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
@@ -845,7 +842,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 if (isInferred != true && node.TryParseEventCallbackTypeArgument(out ReadOnlyMemory<char> argument))
                 {
                     context.CodeWriter.Write("<");
-                    if (explicitType == true)
+                    if (explicitType)
                     {
                         context.CodeWriter.Write(argument);
                     }

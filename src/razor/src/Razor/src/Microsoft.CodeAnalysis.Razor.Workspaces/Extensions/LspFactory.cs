@@ -216,4 +216,14 @@ internal static class LspFactory
 
         return builder.Uri;
     }
+
+    public static FoldingRange CreateFoldingRange(FoldingRangeKind kind, LinePositionSpan linePositionSpan)
+        => new()
+        {
+            Kind = kind,
+            StartLine = linePositionSpan.Start.Line,
+            StartCharacter = linePositionSpan.Start.Character,
+            EndLine = linePositionSpan.End.Line,
+            EndCharacter = linePositionSpan.End.Character
+        };
 }

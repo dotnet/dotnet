@@ -201,6 +201,10 @@ variables:
 
 - name: almaLinuxX64Rid
   value: almalinux.8-x64
+- name: linuxX64Rid
+  value: linux-x64
+- name: linuxArm64Rid
+  value: linux-arm64
 - name: linuxMuslX64Rid
   value: linux-musl-x64
 - name: linuxMuslArmRid

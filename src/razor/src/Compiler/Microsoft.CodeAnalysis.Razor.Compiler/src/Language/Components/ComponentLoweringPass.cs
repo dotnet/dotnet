@@ -54,7 +54,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                     // the first one and ignore the others.
                     if (++count > 1)
                     {
-                        node.Diagnostics.Add(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, node.TagHelpers));
+                        node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, node.TagName, node.TagHelpers));
                         break;
                     }
                 }
@@ -118,17 +118,17 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             if (matched != null)
             {
                 matched.Add(candidate);
-                var diagnostic = ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, candidate.Name, matched);
+
                 // Iterate over existing diagnostics to avoid adding multiple diagnostics when we find an ambiguous tag.
-                for (var i = 0; i < node.Diagnostics.Count; i++)
+                foreach (var diagnostic in node.Diagnostics)
                 {
-                    var existing = node.Diagnostics[i];
-                    if (diagnostic.Id == existing.Id)
+                    if (diagnostic.Id == ComponentDiagnosticFactory.MultipleComponents.Id)
                     {
                         return null;
                     }
                 }
-                node.Diagnostics.Add(diagnostic);
+
+                node.AddDiagnostic(ComponentDiagnosticFactory.Create_MultipleComponents(node.Source, candidate.Name, matched));
 
                 return null;
             }
@@ -147,10 +147,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             TypeName = tagHelper.GetTypeName(),
         };
 
-        for (var i = 0; i < node.Diagnostics.Count; i++)
-        {
-            component.Diagnostics.Add(node.Diagnostics[i]);
-        }
+        component.AddDiagnosticsFromNode(node);
 
         var visitor = new ComponentRewriteVisitor(component);
         visitor.Visit(node);
@@ -180,7 +177,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         {
             if (!IsPresentAsAttribute(requiredAttribute.Name, intermediateNode))
             {
-                intermediateNode.Diagnostics.Add(
+                intermediateNode.AddDiagnostic(
                   RazorDiagnosticFactory.CreateComponent_EditorRequiredParameterNotSpecified(
                       node.Source,
                       intermediateNode.TagName,
@@ -244,10 +241,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             TagName = node.TagName,
         };
 
-        for (var i = 0; i < node.Diagnostics.Count; i++)
-        {
-            result.Diagnostics.Add(node.Diagnostics[i]);
-        }
+        result.AddDiagnosticsFromNode(node);
 
         var visitor = new ElementRewriteVisitor(result.Children);
         visitor.Visit(node);
@@ -343,7 +337,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 // If we get here then this is significant content inside a component with explicit child content.
-                child.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentMixedWithExplicitChildContent(child.Source, _component));
+                child.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentMixedWithExplicitChildContent(child.Source, _component));
                 _children.Add(child);
             }
 
@@ -400,22 +394,22 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                         }
 
                         // The parameter name is invalid.
-                        childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameter(property.Source, property.AttributeName, attribute.Name));
+                        childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameter(property.Source, property.AttributeName, attribute.Name));
                         continue;
                     }
 
                     // This is an unrecognized tag helper bound attribute. This will practically never happen unless the child content descriptor was misconfigured.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(property.Source, property.AttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(property.Source, property.AttributeName, attribute.Name));
                 }
                 else if (child is TagHelperHtmlAttributeIntermediateNode a)
                 {
                     // This is an HTML attribute on a child content.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(a.Source, a.AttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(a.Source, a.AttributeName, attribute.Name));
                 }
                 else if (child is TagHelperDirectiveAttributeIntermediateNode directiveAttribute)
                 {
                     // We don't support directive attributes inside child content, this is possible if you try to do something like put '@ref' on a child content.
-                    childContent.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(directiveAttribute.Source, directiveAttribute.OriginalAttributeName, attribute.Name));
+                    childContent.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidAttribute(directiveAttribute.Source, directiveAttribute.OriginalAttributeName, attribute.Name));
                 }
                 else
                 {
@@ -526,7 +520,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 // The parameter name is invalid.
-                _component.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameterOnComponent(node.Source, node.AttributeName, _component.TagName));
+                _component.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentHasInvalidParameterOnComponent(node.Source, node.AttributeName, _component.TagName));
                 return;
             }
 
@@ -579,12 +573,10 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 AttributeName = node.AttributeName,
                 Source = node.Source,
             };
+
             _children.Add(attribute);
 
-            for (var i = 0; i < node.Diagnostics.Count; i++)
-            {
-                attribute.Diagnostics.Add(node.Diagnostics[i]);
-            }
+            attribute.AddDiagnosticsFromNode(node);
 
             switch (node.AttributeStructure)
             {
@@ -624,10 +616,8 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                         value.Children.Add(html.Children[i]);
                     }
 
-                    for (var i = 0; i < html.Diagnostics.Count; i++)
-                    {
-                        value.Diagnostics.Add(html.Diagnostics[i]);
-                    }
+
+                    value.AddDiagnosticsFromNode(html);
 
                     return value;
                 }
