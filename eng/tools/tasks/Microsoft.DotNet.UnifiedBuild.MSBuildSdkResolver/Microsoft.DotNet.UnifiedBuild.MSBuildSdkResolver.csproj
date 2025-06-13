@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Use a NetStandard TFM bundled in the SDK to avoid prebuilts in source builds. -->
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <!-- SDK resolver is loaded in the repo level msbuild process for win* repos so netstandard2.0 is required.
+         Use NetCurrent on non-windows to be source build compatible. -->
+    <TargetFramework Condition="'$(TargetOS)' == 'windows'">netstandard2.0</TargetFramework>
+    <TargetFramework Condition="'$(TargetOS)' != 'windows'">$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
