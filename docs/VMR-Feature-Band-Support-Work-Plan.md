@@ -105,9 +105,7 @@ The assertion with these scenarios is that a minimum of 2 and maximum of 4 build
 
 In order to facilitate the actions that will need to be taken by a distro maintainer or developer, new scripts should be provided (or existing ones updated). Specifically, provide a way to combine the output artifacts from multiple builds to be used as input. An alternative to combining artifacts is to have separate tarball inputs. See the implications of this design choice in [poison leak detection](#poison-leak-detection).
 
-❓ Open Question:
-
-Should a distro maintainer be required to build the *entire* 1xx branch VMR (including the SDK)? That's easier to implement but also potentially wasteful if they're not going to be producing a release for that feature branch. Otherwise, there'd need to be some way to filter which repos get built such that only the repos excluded from the 2xx branch get built. Including all packages, including tools, rather than just shared components, has implications for [poison leak detection](#poison-leak-detection) which need to be considered.
+One could say that distro maintainers shouldn't be required to build the entire 1xx branch since only the shared component packages are needed as input to the 2xx build. But that's not true when you consider the servicing workflow. Distro maintainers will be required to build the entire 1xx branch of the VMR so that they can have a source-built version of the 1xx SDK that they can use for building the 1xx branch for the next release.
 
 ##### Poison Leak Detection
 
