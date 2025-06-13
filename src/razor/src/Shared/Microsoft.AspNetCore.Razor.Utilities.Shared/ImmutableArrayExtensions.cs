@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -27,6 +28,41 @@ internal static partial class ImmutableArrayExtensions
         if (builder.Capacity < newCapacity)
         {
             builder.Capacity = newCapacity;
+        }
+    }
+
+    public static void InsertRange<T>(this ImmutableArray<T>.Builder builder, int index, ReadOnlySpan<T> items)
+    {
+        // ImmutableArray<T>.Builder doesn't currently provide an overload of InsertRange(...) that takes
+        // a ReadOnlySpan<T>, so we add our own here.
+
+        ArgHelper.ThrowIfNegative(index);
+        ArgHelper.ThrowIfGreaterThan(index, builder.Count);
+
+        if (items.Length == 0)
+        {
+            // No items? Nothing to do.
+            return;
+        }
+
+        if (index == builder.Count)
+        {
+            // If we're inserting at the end of the builder, we can call AddRange(...) which *does* provide
+            // an overload that takes a ReadOnlySpan<T>.
+            builder.AddRange(items);
+        }
+        else if (items.Length == 1)
+        {
+            // If our span contains a single item, we can just insert that item.
+            builder.Insert(index, items[0]);
+        }
+        else
+        {
+            // As a general strategy, we create an ImmutableArray<T> for the ReadOnlySpan<T> and call
+            // the InsertRange(...) overload that takes an ImmutableArray<T>. This should be more efficient than
+            // calling the overload that takes an IEnumerable<T>.
+            var array = ImmutableArray.Create(items);
+            builder.InsertRange(index, array);
         }
     }
 

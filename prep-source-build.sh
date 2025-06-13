@@ -37,6 +37,7 @@ function print_help () {
 }
 
 # SB prep default arguments
+# Update to centos.10-x64 during the next rebootstrap - https://github.com/dotnet/source-build/issues/5238
 defaultArtifactsRid='centos.9-x64'
 
 # Binary Tooling default arguments
