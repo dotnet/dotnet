@@ -24,6 +24,22 @@ internal static partial class SyntaxFactory
         return new SyntaxToken(parent: null, InternalSyntax.SyntaxFactory.MissingToken(kind, diagnostics), position: 0, index: 0);
     }
 
+    public static SyntaxList<TNode> List<TNode>()
+        where TNode : SyntaxNode
+        => default;
+
+    public static SyntaxList<TNode> List<TNode>(TNode node)
+        where TNode : SyntaxNode
+        => new(node);
+
+    public static SyntaxList<TNode> List<TNode>(params ReadOnlySpan<TNode> nodes)
+        where TNode : SyntaxNode
+        => SyntaxList.Create(nodes);
+
+    public static SyntaxList<TNode> List<TNode>(IEnumerable<TNode> nodes)
+        where TNode : SyntaxNode
+        => SyntaxList.Create(nodes);
+
     public static SyntaxTokenList TokenList()
         => default;
 
@@ -31,10 +47,10 @@ internal static partial class SyntaxFactory
         => new(token);
 
     public static SyntaxTokenList TokenList(params ReadOnlySpan<SyntaxToken> tokens)
-        => new(tokens);
+        => SyntaxList.Create(tokens);
 
     public static SyntaxTokenList TokenList(IEnumerable<SyntaxToken> tokens)
-        => new(tokens);
+        => SyntaxList.Create(tokens);
 
     public static MarkupTextLiteralSyntax MarkupTextLiteral(SyntaxToken token, ISpanChunkGenerator? chunkGenerator)
         => MarkupTextLiteral(new SyntaxTokenList(token), chunkGenerator);
