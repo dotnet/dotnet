@@ -112,12 +112,6 @@ public class Command(Process? process, bool trimTrailingNewlines = false, IDicti
         return this;
     }
 
-    public ICommand StandardOutputEncoding(Encoding encoding)
-    {
-        _process.StartInfo.StandardOutputEncoding = encoding;
-        return this;
-    }
-
     public ICommand CaptureStdOut()
     {
         ThrowIfRunning();
