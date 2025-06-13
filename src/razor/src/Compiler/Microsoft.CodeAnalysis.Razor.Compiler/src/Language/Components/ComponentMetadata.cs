@@ -36,15 +36,7 @@ internal static class ComponentMetadata
 
     public static class Common
     {
-        public const string OriginalAttributeName = "Common.OriginalAttributeName";
-
         public const string DirectiveAttribute = "Common.DirectiveAttribute";
-
-        public const string AddAttributeMethodName = "Common.AddAttributeMethodName";
-
-        public const string OriginalAttributeSpan = "Common.OriginalAttributeSpan";
-
-        public const string IsDesignTimePropertyAccessHelper = "Common.IsDesignTimePropertyAccessHelper";
     }
 
     public static class Bind
@@ -68,24 +60,6 @@ internal static class ComponentMetadata
         public const string IsInvariantCulture = "Components.Bind.IsInvariantCulture";
 
         public const string Format = "Components.Bind.Format";
-
-        /// <summary>
-        /// Represents the sub-span of the bind node that actually represents the property
-        /// </summary>
-        /// <remarks>
-        /// <pre>
-        /// @bind-Value:get=""
-        /// ^----------------^ Regular node span
-        ///       ^---^        Property span
-        /// </pre>
-        /// </remarks>
-        public const string PropertySpan = "Components.Bind.PropertySpan";
-
-        /// <summary>
-        /// Used to track if this node was synthesized by the compiler and
-        /// not explicitly written by a user.
-        /// </summary>
-        public const string IsSynthesized = "Components.Bind.IsSynthesized";
     }
 
     public static class ChildContent
@@ -127,10 +101,6 @@ internal static class ComponentMetadata
 
         public const string GenericTypedKey = "Components.GenericTyped";
 
-        public const string ExplicitTypeNameKey = "Components.ExplicitTypeName";
-
-        public const string OpenGenericKey = "Components.OpenGeneric";
-
         public const string TypeParameterKey = "Components.TypeParameter";
 
         public const string TypeParameterIsCascadingKey = "Components.TypeParameterIsCascading";
@@ -150,12 +120,6 @@ internal static class ComponentMetadata
         public const string FullyQualifiedNameMatch = "Components.FullyQualifiedNameMatch";
 
         public const string InitOnlyProperty = "Components.InitOnlyProperty";
-
-        /// <summary>
-        /// When a generic component is re-written with its concrete implementation type
-        /// We use this metadata on its bound attributes to track the updated type.
-        /// </summary>
-        public const string ConcreteContainingType = "Components.ConcreteContainingType";
     }
 
     public static class EventHandler
