@@ -38,9 +38,9 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
         for (var i = 0; i < directives.Count; i++)
         {
             var directive = directives[i];
-            if (codeDocument.FileKind.IsComponentImport() || directive.Node.IsImported())
+            if (codeDocument.FileKind.IsComponentImport() || directive.Node.IsImported)
             {
-                directive.Node.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_CannotBeImported(directive.Node.Source.GetValueOrDefault()));
+                directive.Node.AddDiagnostic(ComponentDiagnosticFactory.CreatePageDirective_CannotBeImported(directive.Node.Source.GetValueOrDefault()));
             }
         }
 
@@ -63,10 +63,10 @@ internal class ComponentPageDirectivePass : IntermediateNodePassBase, IRazorDire
 
             if (routeToken is not { Content: ['"', '/', .., '"'] })
             {
-                pageDirective.Diagnostics.Add(ComponentDiagnosticFactory.CreatePageDirective_MustSpecifyRoute(pageDirective.Source));
+                pageDirective.AddDiagnostic(ComponentDiagnosticFactory.CreatePageDirective_MustSpecifyRoute(pageDirective.Source));
             }
 
-            if (!codeDocument.CodeGenerationOptions.DesignTime || pageDirective.Diagnostics.Count == 0)
+            if (!codeDocument.CodeGenerationOptions.DesignTime || !pageDirective.HasDiagnostics)
             {
                 @namespace.Children.Insert(index++, new RouteAttributeExtensionNode(routeToken.Content) { Source = routeToken.Source });
             }

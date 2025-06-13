@@ -212,6 +212,6 @@ public struct IntermediateNodeReference
 
     private string GetDebuggerDisplay()
     {
-        return $"ref: {Parent.DebuggerToString()} - {Node.DebuggerToString()}";
+        return $"ref: {Parent.GetDebuggerDisplay()} - {Node.GetDebuggerDisplay()}";
     }
 }

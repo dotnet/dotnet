@@ -195,10 +195,7 @@ internal class DefaultTagHelperOptimizationPass : IntermediateNodePassBase, IRaz
 
         context.Class.Children.Insert(i, new FieldDeclarationIntermediateNode()
         {
-            Annotations =
-                {
-                    { CommonAnnotations.DefaultTagHelperExtension.TagHelperField, bool.TrueString },
-                },
+            IsTagHelperField = true,
             Modifiers =
                 {
                     "private",

@@ -93,7 +93,7 @@ public class DirectiveRemovalOptimizationPassTest : RazorProjectEngineTestBase
 
         // Add the diagnostic to the directive node.
         var directiveNode = documentNode.FindDescendantNodes<DirectiveIntermediateNode>().Single();
-        directiveNode.Diagnostics.Add(expectedDiagnostic);
+        directiveNode.AddDiagnostic(expectedDiagnostic);
 
         // Act
         processor.ExecutePass<DirectiveRemovalOptimizationPass>();
