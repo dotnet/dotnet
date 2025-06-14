@@ -397,7 +397,7 @@ internal static partial class RazorEditHelper
                 cancellationToken.ThrowIfCancellationRequested();
 
                 if (node is RazorDirectiveSyntax razorDirective
-                    && razorDirective.IsUsingDirective(out var _))
+                    && razorDirective.IsUsingDirective())
                 {
                     if (!allUsingsInSameBlock)
                     {

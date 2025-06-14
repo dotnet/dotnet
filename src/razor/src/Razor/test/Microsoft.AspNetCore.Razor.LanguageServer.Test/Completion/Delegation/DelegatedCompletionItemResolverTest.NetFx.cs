@@ -86,7 +86,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var clientConnection = CreateClientConnectionForResolve(response: null);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var notContainingCompletionList = new RazorVSInternalCompletionList() { Items = [] };
         var originalRequestContext = StrictMock.Of<ICompletionResolveContext>();
@@ -106,7 +106,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var clientConnection = CreateClientConnectionForResolve(response: null);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item] };
         var originalRequestContext = StrictMock.Of<ICompletionResolveContext>();
@@ -127,7 +127,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var clientConnection = CreateClientConnectionForResolve(response: null, ValidateResolveParams);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem()
         {
             Data = expectedData,
@@ -155,7 +155,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
 
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item], Data = new object() };
         var originalRequestContext = new DelegatedCompletionResolutionContext(_csharpCompletionParams.Identifier, _csharpCompletionParams.ProjectedKind, expectedData);
@@ -223,7 +223,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
 
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(DocumentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var item = new VSInternalCompletionItem();
         var containingCompletionList = new RazorVSInternalCompletionList() { Items = [item] };
         var originalRequestContext = new DelegatedCompletionResolutionContext(_htmlCompletionParams.Identifier, _htmlCompletionParams.ProjectedKind, new object());
@@ -252,7 +252,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         var documentContextFactory = new TestDocumentContextFactory("C:/path/to/file.razor", codeDocument);
         var optionsMonitor = TestRazorLSPOptionsMonitor.Create();
         var formattingService = await _lazyFormattingService.GetValueAsync(DisposalToken);
-        var resolver = new DelegatedCompletionItemResolver(documentContextFactory, formattingService, optionsMonitor, clientConnection);
+        var resolver = new DelegatedCompletionItemResolver(documentContextFactory, formattingService, DocumentMappingService, optionsMonitor, clientConnection, LoggerFactory);
         var (containingCompletionList, csharpCompletionParams) = await GetCompletionListAndOriginalParamsAsync(
             cursorPosition, codeDocument, csharpServer);
 

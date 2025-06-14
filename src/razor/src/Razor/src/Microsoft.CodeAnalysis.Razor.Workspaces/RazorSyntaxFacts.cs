@@ -161,7 +161,7 @@ internal static class RazorSyntaxFacts
 
         foreach (var directive in directives)
         {
-            if (directive.IsUsingDirective(out var _))
+            if (directive.IsUsingDirective())
             {
                 return true;
             }

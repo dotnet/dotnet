@@ -81,7 +81,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
         {
             if (_avoidEncodingContent)
             {
-                node.SetEncoded();
+                node.HasEncodedContent = true;
                 return;
             }
 
@@ -100,7 +100,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
                     // ASCII range is 0 - 127
                     if (ch > 127 || EncodedCharacters.Contains(ch))
                     {
-                        node.SetEncoded();
+                        node.HasEncodedContent = true;
                         return;
                     }
                 }
@@ -124,7 +124,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
                 }
                 else
                 {
-                    node.SetEncoded();
+                    node.HasEncodedContent = true;
                     return;
                 }
             }
