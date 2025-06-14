@@ -13,6 +13,8 @@ namespace NuGet.Test.Utility
 {
     public class SimpleTestSettingsContext
     {
+        public const string DefaultPackageSourceName = "source";
+
         /// <summary>
         /// NuGet.Config path on disk
         /// </summary>
@@ -93,7 +95,7 @@ namespace NuGet.Test.Utility
             var doc = GetEmptyConfig();
 
             var packageSources = GetOrAddSection(doc, "packageSources");
-            AddEntry(packageSources, "source", packageSource);
+            AddEntry(packageSources, DefaultPackageSourceName, packageSource);
 
             var fallbackFolders = GetOrAddSection(doc, "fallbackPackageFolders");
             AddEntry(fallbackFolders, "shared", fallbackFolder);

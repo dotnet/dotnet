@@ -71,7 +71,7 @@ namespace NuGet.PackageManagement.UI
                     if (addedPackageId == topLevelPackageId)
                     {
                         // The top-level package is not already mapped to the selected source.
-                        if (configuredSource.Count == 0 || !configuredSource.Contains(userAction.SelectedSourceName))
+                        if (configuredSource.Count == 0 || !configuredSource.Contains(userAction.SelectedSourceName, StringComparer.OrdinalIgnoreCase))
                         {
                             countCreatedTopLevelSourceMappings++;
                             addedPackageIdsWithoutExistingMappings.Add(topLevelPackageId);

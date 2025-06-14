@@ -151,8 +151,8 @@ namespace NuGet.PackageManagement.UI.Test
         public void LaunchNuGetOptionsDialog_PackageSourceMappingNull_TelemetryNotEmitted()
         {
             // Arrange
-            SetupTelemetryListener();
-            NuGetUI nuGetUI = CreateNuGetUI();
+            INuGetTelemetryProvider telemetryProvider = SetupTelemetryListener();
+            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), activeFilter: ItemFilter.All, isSolution: false, mockPackageSourceMapping: null, telemetryProvider);
 
             // Act
             nuGetUI.LaunchNuGetOptionsDialog(packageSourceMappingActionViewModel: null);
@@ -165,14 +165,14 @@ namespace NuGet.PackageManagement.UI.Test
         public void LaunchNuGetOptionsDialog_PackageSourceMappingDisabled_TelemetryPropertiesMatchState()
         {
             // Arrange
-            SetupTelemetryListener();
+            var telemetryProvider = SetupTelemetryListener();
 
             ItemFilter currentTab = ItemFilter.All;
             ContractsItemFilter contractsItemFilter = UIUtility.ToContractsItemFilter(currentTab);
             bool isSolution = true;
             IReadOnlyDictionary<string, IReadOnlyList<string>> patterns = ImmutableDictionary.Create<string, IReadOnlyList<string>>();
             Mock<PackageSourceMapping> mockPackageSourceMapping = new(patterns);
-            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping);
+            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping, telemetryProvider);
 
             var packageSourceMappingActionViewModel = PackageSourceMappingActionViewModel.Create(nuGetUI);
 
@@ -192,7 +192,7 @@ namespace NuGet.PackageManagement.UI.Test
         public void LaunchNuGetOptionsDialog_PackageSourceMappingNotMapped_TelemetryPropertiesMatchState()
         {
             // Arrange
-            SetupTelemetryListener();
+            INuGetTelemetryProvider telemetryProvider = SetupTelemetryListener();
             // Enable Package Source Mapping by creating at least 1 source and pattern.
             var dictionary = new Dictionary<string, IReadOnlyList<string>>
             {
@@ -203,7 +203,7 @@ namespace NuGet.PackageManagement.UI.Test
             ItemFilter currentTab = ItemFilter.UpdatesAvailable;
             ContractsItemFilter contractsItemFilter = UIUtility.ToContractsItemFilter(currentTab);
             bool isSolution = false;
-            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping);
+            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping, telemetryProvider);
 
             var packageSourceMappingActionViewModel = PackageSourceMappingActionViewModel.Create(nuGetUI);
 
@@ -223,7 +223,7 @@ namespace NuGet.PackageManagement.UI.Test
         public void LaunchNuGetOptionsDialog_PackageSourceMappingIsMapped_TelemetryPropertiesMatchState()
         {
             // Arrange
-            SetupTelemetryListener();
+            INuGetTelemetryProvider telemetryProvider = SetupTelemetryListener();
             string packageId = "a";
             var dictionary = new Dictionary<string, IReadOnlyList<string>>
             {
@@ -234,7 +234,7 @@ namespace NuGet.PackageManagement.UI.Test
             ItemFilter currentTab = ItemFilter.Installed;
             ContractsItemFilter contractsItemFilter = UIUtility.ToContractsItemFilter(currentTab);
             bool isSolution = true;
-            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping);
+            NuGetUI nuGetUI = CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>(), currentTab, isSolution, mockPackageSourceMapping, telemetryProvider);
 
             var packageSourceMappingActionViewModel = PackageSourceMappingActionViewModel.Create(nuGetUI);
             packageSourceMappingActionViewModel.PackageId = packageId;
@@ -256,12 +256,13 @@ namespace NuGet.PackageManagement.UI.Test
         {
             return CreateNuGetUI(Mock.Of<INuGetUILogger>(), Mock.Of<INuGetUILogger>());
         }
+
         private NuGetUI CreateNuGetUI(INuGetUILogger defaultLogger, INuGetUILogger projectLogger)
         {
-            return CreateNuGetUI(defaultLogger, projectLogger, activeFilter: ItemFilter.All, isSolution: false, mockPackageSourceMapping: null);
+            return CreateNuGetUI(defaultLogger, projectLogger, activeFilter: ItemFilter.All, isSolution: false, mockPackageSourceMapping: null, Mock.Of<INuGetTelemetryProvider>());
         }
 
-        private NuGetUI CreateNuGetUI(INuGetUILogger defaultLogger, INuGetUILogger projectLogger, ItemFilter activeFilter, bool isSolution, Mock<PackageSourceMapping> mockPackageSourceMapping)
+        private NuGetUI CreateNuGetUI(INuGetUILogger defaultLogger, INuGetUILogger projectLogger, ItemFilter activeFilter, bool isSolution, Mock<PackageSourceMapping> mockPackageSourceMapping, INuGetTelemetryProvider nuGetTelemetryProvider)
         {
             var mockNuGetUIContext = new Mock<INuGetUIContext>();
 
@@ -285,20 +286,19 @@ namespace NuGet.PackageManagement.UI.Test
                     Mock.Of<ISourceControlManagerProvider>()),
                 defaultLogger,
                 mockNuGetUIContext.Object,
-                mockIPackageManagerControlViewModel.Object);
+                mockIPackageManagerControlViewModel.Object,
+                nuGetTelemetryProvider);
 
             return nugetUI;
         }
 
-        private Mock<ITelemetrySession> SetupTelemetryListener()
+        private INuGetTelemetryProvider SetupTelemetryListener()
         {
-            var telemetrySession = new Mock<ITelemetrySession>();
+            var telemetrySession = new Mock<INuGetTelemetryProvider>();
             telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+                .Setup(x => x.EmitEvent(It.IsAny<TelemetryEvent>()))
                 .Callback<TelemetryEvent>(x => _lastTelemetryEvent = x);
-            var telemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-            TelemetryActivity.NuGetTelemetryService = telemetryService;
-            return telemetrySession;
+            return telemetrySession.Object;
         }
     }
 }

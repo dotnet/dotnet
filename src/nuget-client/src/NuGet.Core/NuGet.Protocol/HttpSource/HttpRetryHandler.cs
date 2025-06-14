@@ -68,9 +68,9 @@ namespace NuGet.Protocol
             }
 
             // If specified via environment, override the default retry delay with the values provided
-            if (_enhancedHttpRetryHelper.IsEnabled)
+            if (_enhancedHttpRetryHelper.DelayInMilliseconds != null)
             {
-                request.RetryDelay = TimeSpan.FromMilliseconds(_enhancedHttpRetryHelper.DelayInMilliseconds);
+                request.RetryDelay = TimeSpan.FromMilliseconds((double)_enhancedHttpRetryHelper.DelayInMilliseconds!);
             }
 
             var tries = 0;
@@ -83,27 +83,15 @@ namespace NuGet.Protocol
                 // so the Delay() never actually occurs.
                 // When opted in to "enhanced retry", do the delay and have it increase exponentially where applicable
                 // (i.e. when "tries" is allowed to be > 1)
-                if (retryAfter != null && _enhancedHttpRetryHelper.ObserveRetryAfter)
+                if (retryAfter != null && _enhancedHttpRetryHelper.ObserveRetryAfterOrDefault)
                 {
                     await Task.Delay(retryAfter.Value, cancellationToken);
                 }
-                else if (tries > 0 || (_enhancedHttpRetryHelper.IsEnabled && request.IsRetry))
+                else if (tries > 0 || request.IsRetry)
                 {
-                    // "Enhanced" retry: In the case where this is actually a 2nd-Nth try, back off exponentially with some random.
+                    // In the case where this is actually a 2nd-Nth try, back off exponentially with some random.
                     // In many cases due to the external retry loop, this will be always be 1 * request.RetryDelay.TotalMilliseconds + 0-200 ms
-                    if (_enhancedHttpRetryHelper.IsEnabled)
-                    {
-                        if (tries >= 3 || (tries == 0 && request.IsRetry))
-                        {
-                            log.LogVerbose("Enhanced retry: HttpRetryHandler is in a state that retry would have been abandoned or not waited if it were not enabled.");
-                        }
-                        await Task.Delay(TimeSpan.FromMilliseconds((Math.Pow(2, tries) * request.RetryDelay.TotalMilliseconds) + new Random().Next(200)), cancellationToken);
-                    }
-                    // Old behavior; always delay a constant amount
-                    else
-                    {
-                        await Task.Delay(request.RetryDelay, cancellationToken);
-                    }
+                    await Task.Delay(TimeSpan.FromMilliseconds((Math.Pow(2, tries) * request.RetryDelay.TotalMilliseconds) + new Random().Next(200)), cancellationToken);
                 }
 
                 tries++;
@@ -222,9 +210,9 @@ namespace NuGet.Protocol
                             {
                                 retryAfter = null;
                             }
-                            else if (retryAfter.Value > _enhancedHttpRetryHelper.MaxRetryAfterDelay)
+                            else if (retryAfter.Value > _enhancedHttpRetryHelper.MaxRetryAfterDelayOrDefault)
                             {
-                                retryAfter = _enhancedHttpRetryHelper.MaxRetryAfterDelay;
+                                retryAfter = _enhancedHttpRetryHelper.MaxRetryAfterDelayOrDefault;
                             }
                         }
                         else
@@ -241,7 +229,7 @@ namespace NuGet.Protocol
                         // 5xx == server side failure
                         // 408 == request timeout
                         // 429 == too many requests
-                        if (statusCode >= 500 || ((statusCode == 408 || statusCode == 429) && _enhancedHttpRetryHelper.Retry429))
+                        if (statusCode >= 500 || ((statusCode == 408 || statusCode == 429) && _enhancedHttpRetryHelper.Retry429OrDefault))
                         {
                             if (tries == request.MaxTries)
                             {

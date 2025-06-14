@@ -23,7 +23,7 @@ namespace NuGet.Protocol
             CompletionOption = HttpCompletionOption.ResponseHeadersRead;
             MaxTries = DefaultMaxTries;
             RequestTimeout = TimeSpan.FromSeconds(100);
-            RetryDelay = TimeSpan.FromMilliseconds(200);
+            RetryDelay = TimeSpan.FromSeconds(1);
             DownloadTimeout = DefaultDownloadTimeout;
         }
 

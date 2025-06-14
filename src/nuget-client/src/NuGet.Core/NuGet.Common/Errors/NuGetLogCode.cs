@@ -129,6 +129,11 @@ namespace NuGet.Common
         NU1014 = 1014,
 
         /// <summary>
+        /// PackageReference without a version.
+        /// </summary>
+        NU1015 = 1015,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,

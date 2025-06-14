@@ -568,7 +568,7 @@ namespace NuGet.PackageManagement.UI.Test
             {
                 packageSourceMappingPatterns = new Dictionary<string, IReadOnlyList<string>>
                 {
-                    { remotePackageSourceName, new List<string>() { "transitiveA" } }
+                    { remotePackageSourceName.ToUpperInvariant(), new List<string>() { "transitiveA" } }
                 };
             }
 
