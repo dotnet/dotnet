@@ -20,7 +20,43 @@
     <!-- fails to sign via ESRP, skip for now -->
     <FileSignInfo Include="libbinaryen.dylib" CertificateName="None" />
   </ItemGroup>
-  
+
+  <ItemGroup Condition="'$(TargetOS)' == 'osx'">
+    <!-- sign macOS binaries from transport packages -->
+    <FileSignInfo Include="node" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="python3" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="python3.11" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="clang-19" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-addr2line" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-ar" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-cxxfilt" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-dwarfdump" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-dwp" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-nm" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-objcopy" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-objdump" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-ranlib" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-readobj" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-size" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-strings" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-strip" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="llvm-symbolizer" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-as" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-ctor-eval" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-dis" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-emscripten-finalize" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-fuzz-lattices" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-fuzz-types" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-ld" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-merge" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-metadce" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-opt" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-reduce" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-shell" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm-split" CertificateName="MacDeveloper" />
+    <FileSignInfo Include="wasm2js" CertificateName="MacDeveloper" />
+  </ItemGroup>
+
   <ItemGroup>
     <ItemsToSign Include="$(VisualStudioSetupInsertionPath)\**\*.msi" Condition="'$(PostBuildSign)' != 'true'" />
     <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.wixpack.zip" Condition="'$(PostBuildSign)' != 'true'" />

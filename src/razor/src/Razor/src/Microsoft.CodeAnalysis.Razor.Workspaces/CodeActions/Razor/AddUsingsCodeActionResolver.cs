@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -30,7 +31,25 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri };
 
-        return AddUsingsHelper.CreateAddUsingWorkspaceEdit(actionParams.Namespace, actionParams.AdditionalEdit, codeDocument, codeDocumentIdentifier);
+        using var documentChanges = new PooledArrayBuilder<TextDocumentEdit>();
+
+        // Need to add the additional edit first, as the actual usings go at the top of the file, and would
+        // change the ranges needed in the additional edit if they went in first
+        if (actionParams.AdditionalEdit is not null)
+        {
+            documentChanges.Add(actionParams.AdditionalEdit);
+        }
+
+        documentChanges.Add(new TextDocumentEdit()
+        {
+            TextDocument = codeDocumentIdentifier,
+            Edits = [AddUsingsHelper.CreateAddUsingTextEdit(actionParams.Namespace, codeDocument)]
+        });
+
+        return new WorkspaceEdit()
+        {
+            DocumentChanges = documentChanges.ToArray(),
+        };
     }
 
     internal static bool TryCreateAddUsingResolutionParams(string fullyQualifiedName, VSTextDocumentIdentifier textDocument, TextDocumentEdit? additionalEdit, Uri? delegatedDocumentUri, [NotNullWhen(true)] out string? @namespace, [NotNullWhen(true)] out RazorCodeActionResolutionParams? resolutionParams)

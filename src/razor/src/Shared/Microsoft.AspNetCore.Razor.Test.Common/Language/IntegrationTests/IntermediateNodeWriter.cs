@@ -328,9 +328,9 @@ public class IntermediateNodeWriter :
         if (node.HasDiagnostics)
         {
             _writer.Write("| ");
-            for (var i = 0; i < node.Diagnostics.Count; i++)
+
+            foreach (var diagnostic in node.Diagnostics)
             {
-                var diagnostic = node.Diagnostics[i];
                 _writer.Write("{");
                 WriteSourceRange(diagnostic.Span);
                 _writer.Write(": ");
@@ -356,6 +356,7 @@ public class IntermediateNodeWriter :
                     var stringHash = stringHashBuilder.ToString();
                     _writer.Write(stringHash);
                 }
+
                 _writer.Write("} ");
             }
         }
