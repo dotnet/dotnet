@@ -105,7 +105,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
         foreach (string artifactDirectory in Directory.EnumerateDirectories(ArtifactDownloadDirectory))
         {
-            foreach (string manifest in Directory.EnumerateFiles(Path.Combine(artifactDirectory, "manifests"), "*.xml", SearchOption.TopDirectoryOnly))
+            foreach (string manifest in Directory.EnumerateFiles(Path.Combine(artifactDirectory, "manifests"), "*.xml", SearchOption.AllDirectories))
             {
                 using (Stream xmlStream = File.OpenRead(manifest))
                 {
