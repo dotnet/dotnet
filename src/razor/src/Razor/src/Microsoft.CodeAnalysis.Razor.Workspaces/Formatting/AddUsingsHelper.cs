@@ -186,8 +186,8 @@ internal static class AddUsingsHelper
         var insertPosition = (0, 0);
 
         // If we don't have usings, insert after the last namespace or page directive, which ever comes later
-        var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
-        var lastNamespaceOrPageDirective = syntaxTreeRoot
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var lastNamespaceOrPageDirective = root
             .DescendantNodes()
             .LastOrDefault(IsNamespaceOrPageDirective);
 
@@ -214,8 +214,8 @@ internal static class AddUsingsHelper
 
     private static void CollectUsingDirectives(RazorCodeDocument codeDocument, ref PooledArrayBuilder<RazorUsingDirective> directives)
     {
-        var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
-        foreach (var node in syntaxTreeRoot.DescendantNodes())
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        foreach (var node in root.DescendantNodes())
         {
             if (node is RazorDirectiveSyntax directiveNode)
             {

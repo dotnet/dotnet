@@ -25,7 +25,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
     public async Task<ImmutableArray<TextChange>> FormatAsync(HostWorkspaceServices hostWorkspaceServices, Document csharpDocument, FormattingContext context, LinePositionSpan spanToFormat, CancellationToken cancellationToken)
     {
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetCSharpDocument(), spanToFormat, out var projectedSpan))
+        if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetRequiredCSharpDocument(), spanToFormat, out var projectedSpan))
         {
             return [];
         }
@@ -51,7 +51,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
     private ImmutableArray<TextChange> MapEditsToHostDocument(RazorCodeDocument codeDocument, ImmutableArray<TextChange> csharpEdits)
     {
-        var actualEdits = _documentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), csharpEdits);
+        var actualEdits = _documentMappingService.GetHostDocumentEdits(codeDocument.GetRequiredCSharpDocument(), csharpEdits);
 
         return actualEdits.ToImmutableArray();
     }

@@ -15,7 +15,7 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
 
     protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        var cssScope = codeDocument.GetCssScope();
+        var cssScope = codeDocument.CodeGenerationOptions.CssScope;
         if (string.IsNullOrEmpty(cssScope))
         {
             return;

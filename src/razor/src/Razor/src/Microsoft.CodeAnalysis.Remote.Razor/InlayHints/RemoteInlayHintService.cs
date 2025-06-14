@@ -36,7 +36,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
     private async ValueTask<InlayHint[]?> GetInlayHintsAsync(RemoteDocumentContext context, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         var span = inlayHintParams.Range.ToLinePositionSpan();
 
@@ -77,7 +77,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         using var inlayHintsBuilder = new PooledArrayBuilder<InlayHint>();
         var razorSourceText = codeDocument.Source.Text;
         var csharpSourceText = codeDocument.GetCSharpSourceText();
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
         foreach (var hint in hints)
         {
             if (csharpSourceText.TryGetAbsoluteIndex(hint.Position.ToLinePosition(), out var absoluteIndex) &&
@@ -86,7 +86,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                 // We know this C# maps to Razor, but does it map to Razor that we like?
 
                 // We don't want inlay hints in tag helper attributes
-                var node = syntaxTree.Root.FindInnermostNode(hostDocumentIndex);
+                var node = root.FindInnermostNode(hostDocumentIndex);
                 if (node?.FirstAncestorOrSelf<MarkupTagHelperAttributeValueSyntax>() is not null)
                 {
                     continue;

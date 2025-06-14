@@ -10,7 +10,6 @@ using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -18,18 +17,25 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-internal static class RazorCodeDocumentExtensions
+internal static partial class RazorCodeDocumentExtensions
 {
-    private static readonly object s_csharpSyntaxTreeKey = new();
+    public static bool TryGetSyntaxRoot(this RazorCodeDocument codeDocument, [NotNullWhen(true)] out Syntax.SyntaxNode? result)
+    {
+        if (codeDocument.TryGetSyntaxTree(out var syntaxTree))
+        {
+            result = syntaxTree.Root;
+            return true;
+        }
 
-    public static RazorSyntaxTree GetRequiredSyntaxTree(this RazorCodeDocument codeDocument)
-        => codeDocument.GetSyntaxTree().AssumeNotNull();
+        result = null;
+        return false;
+    }
 
     public static Syntax.SyntaxNode GetRequiredSyntaxRoot(this RazorCodeDocument codeDocument)
         => codeDocument.GetRequiredSyntaxTree().Root;
 
     public static SourceText GetCSharpSourceText(this RazorCodeDocument document)
-        => document.GetCSharpDocument().Text;
+        => document.GetRequiredCSharpDocument().Text;
 
     public static SourceText GetHtmlSourceText(this RazorCodeDocument document)
         => document.GetHtmlDocument().Text;
@@ -39,18 +45,7 @@ internal static class RazorCodeDocumentExtensions
     ///  If a tree has not yet been cached, a new one will be parsed and added to the cache.
     /// </summary>
     public static SyntaxTree GetOrParseCSharpSyntaxTree(this RazorCodeDocument document, CancellationToken cancellationToken)
-    {
-        if (!document.Items.TryGetValue(s_csharpSyntaxTreeKey, out SyntaxTree? syntaxTree))
-        {
-            var csharpText = document.GetCSharpSourceText();
-            syntaxTree = CSharpSyntaxTree.ParseText(csharpText, cancellationToken: cancellationToken);
-            document.Items[s_csharpSyntaxTreeKey] = syntaxTree;
-
-            return syntaxTree;
-        }
-
-        return syntaxTree.AssumeNotNull();
-    }
+        => GetCachedData(document).GetOrParseCSharpSyntaxTree(cancellationToken);
 
     public static bool TryGetGeneratedDocument(
         this RazorCodeDocument codeDocument,
@@ -60,7 +55,7 @@ internal static class RazorCodeDocumentExtensions
     {
         if (filePathService.IsVirtualCSharpFile(generatedDocumentUri))
         {
-            generatedDocument = codeDocument.GetCSharpDocument();
+            generatedDocument = codeDocument.GetRequiredCSharpDocument();
             return true;
         }
 
@@ -85,7 +80,7 @@ internal static class RazorCodeDocumentExtensions
     public static IRazorGeneratedDocument GetGeneratedDocument(this RazorCodeDocument document, RazorLanguageKind languageKind)
         => languageKind switch
         {
-            RazorLanguageKind.CSharp => document.GetCSharpDocument(),
+            RazorLanguageKind.CSharp => document.GetRequiredCSharpDocument(),
             RazorLanguageKind.Html => document.GetHtmlDocument(),
             _ => ThrowHelper.ThrowInvalidOperationException<IRazorGeneratedDocument>($"Unexpected language kind: {languageKind}"),
         };
@@ -97,7 +92,7 @@ internal static class RazorCodeDocumentExtensions
 
         var sourceText = codeDocument.Source.Text;
         var textSpan = sourceText.GetTextSpan(razorRange);
-        var csharpDoc = codeDocument.GetCSharpDocument();
+        var csharpDoc = codeDocument.GetRequiredCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
         foreach (var mapping in csharpDoc.SourceMappings)
@@ -139,7 +134,7 @@ internal static class RazorCodeDocumentExtensions
     public static bool ComponentNamespaceMatches(this RazorCodeDocument razorCodeDocument, string fullyQualifiedNamespace)
     {
         var namespaceNode = (NamespaceDeclarationIntermediateNode)razorCodeDocument
-            .GetDocumentIntermediateNode()
+            .GetRequiredDocumentNode()
             .FindDescendantNodes<IntermediateNode>()
             .First(static n => n is NamespaceDeclarationIntermediateNode);
 
@@ -156,36 +151,10 @@ internal static class RazorCodeDocumentExtensions
     }
 
     private static ImmutableArray<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)
-    {
-        // Since this service is called so often, we get a good performance improvement by caching these values
-        // for this code document. If the document changes, as the user types, then the document instance will be
-        // different, so we don't need to worry about invalidating the cache.
-        if (!document.Items.TryGetValue(typeof(ClassifiedSpanInternal), out ImmutableArray<ClassifiedSpanInternal> classifiedSpans))
-        {
-            var syntaxTree = document.GetSyntaxTree();
-            classifiedSpans = syntaxTree.GetClassifiedSpans();
-
-            document.Items[typeof(ClassifiedSpanInternal)] = classifiedSpans;
-        }
-
-        return classifiedSpans;
-    }
+        => GetCachedData(document).GetOrComputeClassifiedSpans(CancellationToken.None);
 
     private static ImmutableArray<TagHelperSpanInternal> GetTagHelperSpans(RazorCodeDocument document)
-    {
-        // Since this service is called so often, we get a good performance improvement by caching these values
-        // for this code document. If the document changes, as the user types, then the document instance will be
-        // different, so we don't need to worry about invalidating the cache.
-        if (!document.Items.TryGetValue(typeof(TagHelperSpanInternal), out ImmutableArray<TagHelperSpanInternal> tagHelperSpans))
-        {
-            var syntaxTree = document.GetSyntaxTree();
-            tagHelperSpans = syntaxTree.GetTagHelperSpans();
-
-            document.Items[typeof(TagHelperSpanInternal)] = tagHelperSpans;
-        }
-
-        return tagHelperSpans;
-    }
+        => GetCachedData(document).GetOrComputeTagHelperSpans(CancellationToken.None);
 
     private static RazorLanguageKind GetLanguageKindCore(
         ImmutableArray<ClassifiedSpanInternal> classifiedSpans,

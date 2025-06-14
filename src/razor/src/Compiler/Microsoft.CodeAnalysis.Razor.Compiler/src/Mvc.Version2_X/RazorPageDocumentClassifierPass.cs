@@ -80,7 +80,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         method.Modifiers.Add("override");
         method.ReturnType = $"global::{typeof(System.Threading.Tasks.Task).FullName}";
 
-        var document = codeDocument.GetDocumentIntermediateNode();
+        var document = codeDocument.GetRequiredDocumentNode();
         PageDirective.TryGetPageDirective(document, out var pageDirective);
 
         EnsureValidPageDirective(codeDocument, pageDirective);
@@ -130,7 +130,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             var leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.CreateCodeDocument(codeDocument.Source);
             LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
-            var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetDocumentIntermediateNode();
+            var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
             if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
             {
                 // The page directive is not the leading directive. Add an error.

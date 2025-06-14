@@ -127,8 +127,7 @@ internal sealed class MapCodeEndpoint(
         DocumentContext documentContext,
         CancellationToken cancellationToken)
     {
-        var syntaxTree = codeToMap.GetSyntaxTree();
-        if (syntaxTree is null)
+        if (!codeToMap.TryGetSyntaxTree(out var syntaxTree))
         {
             return false;
         }
@@ -358,7 +357,7 @@ internal sealed class MapCodeEndpoint(
                 var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
                 var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
                 var hostDocumentRange = potentialLocation.Range.ToLinePositionSpan();
-                var csharpDocument = codeDocument.GetCSharpDocument();
+                var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
                 if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
