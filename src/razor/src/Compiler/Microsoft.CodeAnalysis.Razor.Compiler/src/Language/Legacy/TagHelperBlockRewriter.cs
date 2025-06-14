@@ -561,11 +561,11 @@ internal static class TagHelperBlockRewriter
                     tokens = tokens.RemoveAt(0);
                     var children = createExpressionLiteral(tokens);
                     return SyntaxFactory.MarkupBlock(
-                        new SyntaxList<RazorSyntaxNode>(SyntaxFactory.CSharpCodeBlock(
-                            new SyntaxList<RazorSyntaxNode>(SyntaxFactory.CSharpImplicitExpression(
+                        [SyntaxFactory.CSharpCodeBlock(
+                            [SyntaxFactory.CSharpImplicitExpression(
                                 SyntaxFactory.CSharpTransition(transition, chunkGenerator: null),
                                 SyntaxFactory.CSharpImplicitExpressionBody(
-                                    SyntaxFactory.CSharpCodeBlock(children)))))));
+                                    SyntaxFactory.CSharpCodeBlock(children)))])]);
                 }
 
                 return node.Update(createExpressionLiteral(tokens));
@@ -577,7 +577,7 @@ internal static class TagHelperBlockRewriter
             {
                 var expression = SyntaxFactory.CSharpExpressionLiteral(tokens, chunkGenerator: null);
                 var rewrittenExpression = (CSharpExpressionLiteralSyntax)VisitCSharpExpressionLiteral(expression);
-                return new SyntaxList<RazorSyntaxNode>(rewrittenExpression);
+                return [rewrittenExpression];
             }
         }
 

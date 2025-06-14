@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -10,17 +9,12 @@ namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal static class VSInternalCompletionItemExtensions
 {
-    private const string ResultIdKey = "_resultId";
+    public const string ResultIdKey = "_resultId";
 
     private static readonly Dictionary<RazorCommitCharacter, VSInternalCommitCharacter> s_commitCharacterCache = [];
 
     public static bool TryGetCompletionListResultIds(this VSInternalCompletionItem completion, out ImmutableArray<int> resultIds)
     {
-        if (completion is null)
-        {
-            throw new ArgumentNullException(nameof(completion));
-        }
-
         if (!CompletionListMerger.TrySplit(completion.Data, out var splitData))
         {
             resultIds = default;
