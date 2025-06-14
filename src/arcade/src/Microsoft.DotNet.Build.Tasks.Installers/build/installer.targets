@@ -121,8 +121,8 @@
   <PropertyGroup>
     <InstallerRuntimeIdentifiers Condition="'$(InstallerRuntimeIdentifiers)' == ''">$(RuntimeIdentifiers)</InstallerRuntimeIdentifiers>
     <InstallerRuntimeIdentifier Condition="'$(InstallerRuntimeIdentifier)' == ''">$(RuntimeIdentifier)</InstallerRuntimeIdentifier>
-    <!-- When building a non-portable build, BaseRid can specify a known (portable) RID that is a parent of the curent runtime identifier. -->
-    <InstallerRuntimeIdentifier Condition="'$(PortableBuild)' == 'false' and '$(BaseRid)' != '' and '$(BaseRid)' != '$(RuntimeIdentifier)'">$(BaseRid)</InstallerRuntimeIdentifier>
+    <!-- When building a non-portable build, PortableTargetRid specifies a known (portable) RID that is a parent of the curent runtime identifier. -->
+    <InstallerRuntimeIdentifier Condition="'$(PortableTargetRid)' != ''">$(PortableTargetRid)</InstallerRuntimeIdentifier>
   </PropertyGroup>
   
   <Import Project="$(MSBuildThisFileDirectory)installer.singlerid.targets"

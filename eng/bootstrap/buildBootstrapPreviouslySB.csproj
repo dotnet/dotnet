@@ -39,7 +39,7 @@
             (e.g. Microsoft.AspNetCore.App.Runtime.linux-x64)
         -->
       <PackageWithName Include="@(RuntimePack)">
-        <PackageName>%(RuntimePack.Identity).$(PortableRid)</PackageName>
+        <PackageName>%(RuntimePack.Identity).$(PortableTargetRid)</PackageName>
       </PackageWithName>
 
       <!--
@@ -56,10 +56,10 @@
             Do this for two groups: native and non-native packages. They have different naming conventions.
         -->
       <PackageWithName Include="@(PortablePackage)" Condition=" '%(PortablePackage.IsNative)' != 'true' ">
-        <PackageName>runtime.$(PortableRid).%(PortablePackage.Identity)</PackageName>
+        <PackageName>runtime.$(PortableTargetRid).%(PortablePackage.Identity)</PackageName>
       </PackageWithName>
       <PackageWithName Include="@(PortablePackage)" Condition=" '%(PortablePackage.IsNative)' == 'true' ">
-        <PackageName>runtime.$(PortableRid).runtime.native.%(PortablePackage.Identity)</PackageName>
+        <PackageName>runtime.$(PortableTargetRid).runtime.native.%(PortablePackage.Identity)</PackageName>
       </PackageWithName>
     </ItemGroup>
 
