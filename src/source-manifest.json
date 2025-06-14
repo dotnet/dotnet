@@ -57,11 +57,11 @@
       "commitSha": "0b17ca47d38d79e2dae578300526d3c3a58384ba"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25312.3",
-      "barId": 271610,
+      "packageVersion": "10.0.0-preview.6.25313.3",
+      "barId": 271714,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "3ba237b98f1dbbd477dc3d07d64b7c6e379656fd"
+      "commitSha": "694f89e07cd21f9303404353a46bad016a0b3d4c"
     },
     {
       "packageVersion": "14.0.100-beta.25312.1",
@@ -107,10 +107,10 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 271196,
+      "barId": 271704,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "5415b7342d44af9c974905760539f198fad13682"
+      "commitSha": "3efbbe8b46d88bdc9786d7350d49c7536706136a"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
@@ -121,10 +121,10 @@
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 271391,
+      "barId": 271570,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1a2c7afed8912d5bf7ccf53a5e2b1e0c7ed25b27"
+      "commitSha": "fa2361b8f1b24bba222999f15b4ca914ba6d6f92"
     },
     {
       "packageVersion": "10.0.622801",
@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 271361,
+      "barId": 271527,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "56e736fb7e17e936ea0fde3ebe57a30539d87c55"
+      "commitSha": "69086c253839c845619688db86cfab73c61d50ce"
     },
     {
       "packageVersion": "10.0.0-beta.25302.1",
@@ -155,11 +155,11 @@
       "commitSha": "7af3fe9ede611e9f3202b373038ef2400518af5d"
     },
     {
-      "packageVersion": "10.0.100-preview.6.25310.4",
-      "barId": 271254,
+      "packageVersion": "10.0.100-preview.6.25311.5",
+      "barId": 271418,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "e37a790474d9a0a60403f20d36f49bd4f6ce15a2"
+      "commitSha": "070a381718605194d6d54cbc32feca1361129684"
     },
     {
       "packageVersion": "17.15.0-preview-25302-03",
