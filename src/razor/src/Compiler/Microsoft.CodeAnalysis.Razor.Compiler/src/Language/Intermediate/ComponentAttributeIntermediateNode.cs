@@ -11,6 +11,40 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class ComponentAttributeIntermediateNode : IntermediateNode
 {
+    public bool HasExplicitTypeName { get; set; }
+    public bool IsOpenGeneric { get; set; }
+
+    /// <summary>
+    /// Used to track if this node was synthesized by the compiler and not explicitly written by a user.
+    /// </summary>
+    public bool IsSynthesized { get; set; }
+
+    public bool IsDesignTimePropertyAccessHelper { get; set; }
+
+    /// <summary>
+    /// Represents the sub-span of the bind node that actually represents the property
+    /// </summary>
+    /// <remarks>
+    /// <pre>
+    /// @bind-Value:get=""
+    /// ^----------------^ Regular node span
+    ///       ^---^        Property span
+    /// </pre>
+    /// </remarks>
+    public SourceSpan? PropertySpan { get; set; }
+
+    public string OriginalAttributeName { get; set; }
+
+    public SourceSpan? OriginalAttributeSpan { get; set; }
+
+    public string AddAttributeMethodName { get; set; }
+
+    /// <summary>
+    /// When a generic component is re-written with its concrete implementation type
+    /// We use this metadata on its bound attributes to track the updated type.
+    /// </summary>
+    public string ConcreteContainingType { get; set; }
+
     public ComponentAttributeIntermediateNode()
     {
     }
@@ -26,20 +60,12 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeStructure = attributeNode.AttributeStructure;
         Source = attributeNode.Source;
 
-        foreach (var annotation in attributeNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
-
         for (var i = 0; i < attributeNode.Children.Count; i++)
         {
             Children.Add(attributeNode.Children[i]);
         }
 
-        for (var i = 0; i < attributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(attributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(attributeNode);
     }
 
     public ComponentAttributeIntermediateNode(TagHelperPropertyIntermediateNode propertyNode)
@@ -54,25 +80,18 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeName = attributeName;
         AttributeStructure = propertyNode.AttributeStructure;
         BoundAttribute = propertyNode.BoundAttribute;
+        OriginalAttributeSpan = propertyNode.OriginalAttributeSpan;
         PropertyName = propertyNode.BoundAttribute.GetPropertyName();
         Source = propertyNode.Source;
         TagHelper = propertyNode.TagHelper;
         TypeName = propertyNode.BoundAttribute.IsWeaklyTyped() ? null : propertyNode.BoundAttribute.TypeName;
-
-        foreach (var annotation in propertyNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
 
         for (var i = 0; i < propertyNode.Children.Count; i++)
         {
             Children.Add(propertyNode.Children[i]);
         }
 
-        for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(propertyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(propertyNode);
     }
 
     public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeIntermediateNode directiveAttributeNode)
@@ -85,25 +104,18 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeName = directiveAttributeNode.AttributeName;
         AttributeStructure = directiveAttributeNode.AttributeStructure;
         BoundAttribute = directiveAttributeNode.BoundAttribute;
+        OriginalAttributeSpan = directiveAttributeNode.OriginalAttributeSpan;
         PropertyName = directiveAttributeNode.BoundAttribute.GetPropertyName();
         Source = directiveAttributeNode.Source;
         TagHelper = directiveAttributeNode.TagHelper;
         TypeName = directiveAttributeNode.BoundAttribute.IsWeaklyTyped() ? null : directiveAttributeNode.BoundAttribute.TypeName;
-
-        foreach (var annotation in directiveAttributeNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
 
         for (var i = 0; i < directiveAttributeNode.Children.Count; i++)
         {
             Children.Add(directiveAttributeNode.Children[i]);
         }
 
-        for (var i = 0; i < directiveAttributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(directiveAttributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(directiveAttributeNode);
     }
 
     public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeParameterIntermediateNode directiveAttributeParameterNode)
@@ -116,25 +128,18 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeName = directiveAttributeParameterNode.AttributeNameWithoutParameter;
         AttributeStructure = directiveAttributeParameterNode.AttributeStructure;
         BoundAttribute = directiveAttributeParameterNode.BoundAttribute;
+        OriginalAttributeSpan = directiveAttributeParameterNode.OriginalAttributeSpan;
         PropertyName = directiveAttributeParameterNode.BoundAttributeParameter.GetPropertyName();
         Source = directiveAttributeParameterNode.Source;
         TagHelper = directiveAttributeParameterNode.TagHelper;
         TypeName = directiveAttributeParameterNode.BoundAttributeParameter.TypeName;
-
-        foreach (var annotation in directiveAttributeParameterNode.Annotations)
-        {
-            Annotations[annotation.Key] = annotation.Value;
-        }
 
         for (var i = 0; i < directiveAttributeParameterNode.Children.Count; i++)
         {
             Children.Add(directiveAttributeParameterNode.Children[i]);
         }
 
-        for (var i = 0; i < directiveAttributeParameterNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(directiveAttributeParameterNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(directiveAttributeParameterNode);
     }
 
     public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();

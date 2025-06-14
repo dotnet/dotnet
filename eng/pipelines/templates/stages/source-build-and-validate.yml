@@ -218,7 +218,10 @@ stages:
               downloadFilePatterns: assets/Release/**/*.tar.gz
               copyDestination: $(Build.SourcesDirectory)/artifacts
               ${{ if eq(leg.distro, 'centos') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
+                ${{ else }}:
+                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'ubuntu') }}:
@@ -234,7 +237,10 @@ stages:
               copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
               flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
-                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
+                ${{ else }}:
+                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'ubuntu') }}:
@@ -251,7 +257,10 @@ stages:
                 copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:
-                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                  ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+                    artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
+                  ${{ else }}:
+                    artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
                 ${{ elseif eq(leg.distro, 'fedora') }}:
                   artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
                 ${{ elseif eq(leg.distro, 'ubuntu') }}:

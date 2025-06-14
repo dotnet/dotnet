@@ -20,6 +20,8 @@ public sealed class FieldDeclarationIntermediateNode : MemberDeclarationIntermed
 
     public string FieldType { get; set; }
 
+    public bool IsTagHelperField { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)
