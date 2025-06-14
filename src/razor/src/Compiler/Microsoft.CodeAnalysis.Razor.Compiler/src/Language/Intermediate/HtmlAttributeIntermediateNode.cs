@@ -22,6 +22,8 @@ public sealed class HtmlAttributeIntermediateNode : IntermediateNode
 
     public string EventUpdatesAttributeName { get; set; }
 
+    public string OriginalAttributeName { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)

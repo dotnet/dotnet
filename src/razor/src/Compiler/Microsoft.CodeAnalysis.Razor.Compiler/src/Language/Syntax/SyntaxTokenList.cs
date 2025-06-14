@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 /// <summary>
 /// Represents a read-only list of <see cref="SyntaxToken"/>.
 /// </summary>
-[CollectionBuilder(typeof(SyntaxTokenList), methodName: "Create")]
+[CollectionBuilder(typeof(SyntaxList), methodName: "Create")]
 internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, IReadOnlyList<SyntaxToken>
 {
     public static SyntaxTokenList Empty => default;
@@ -48,58 +48,36 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
     }
 
     public SyntaxTokenList(params ReadOnlySpan<SyntaxToken> tokens)
-        : this(parent: null, CreateNodeFromSpan(tokens), position: 0, index: 0)
+        : this(parent: null, CreateGreenListNode(tokens), position: 0, index: 0)
     {
     }
 
     public SyntaxTokenList(IEnumerable<SyntaxToken> tokens)
-        : this(parent: null, CreateNode(tokens), position: 0, index: 0)
+        : this(parent: null, CreateGreenListNode(tokens), position: 0, index: 0)
     {
     }
 
-    public static SyntaxTokenList Create(ReadOnlySpan<SyntaxToken> tokens)
+    private static GreenNode? CreateGreenListNode(ReadOnlySpan<SyntaxToken> tokens)
     {
-        return tokens.Length == 0
-            ? default
-            : new(parent: null, CreateNodeFromSpan(tokens), position: 0, index: 0);
-    }
-
-    private static GreenNode? CreateNodeFromSpan(ReadOnlySpan<SyntaxToken> tokens)
-    {
-        return tokens.Length switch
-        {
-            0 => null,
-            1 => tokens[0].Node,
-            2 => InternalSyntax.SyntaxList.List(tokens[0].Node, tokens[1].Node),
-            3 => InternalSyntax.SyntaxList.List(tokens[0].Node, tokens[1].Node, tokens[2].Node),
-            _ => BuildAsArray(tokens)
-        };
-
-        static GreenNode BuildAsArray(ReadOnlySpan<SyntaxToken> tokens)
-        {
-            var copy = new ArrayElement<GreenNode>[tokens.Length];
-
-            for (var i = 0; i < tokens.Length; i++)
-            {
-                copy[i].Value = tokens[i].RequiredNode;
-            }
-
-            return InternalSyntax.SyntaxList.List(copy);
-        }
-    }
-
-    private static GreenNode? CreateNode(IEnumerable<SyntaxToken> tokens)
-    {
-        if (tokens == null)
+        if (tokens.Length == 0)
         {
             return null;
         }
 
+        using var builder = new PooledArrayBuilder<SyntaxToken>(tokens.Length);
+        builder.AddRange(tokens);
+
+        return builder.ToGreenListNode();
+    }
+
+    private static GreenNode? CreateGreenListNode(IEnumerable<SyntaxToken> tokens)
+    {
         using var builder = new PooledArrayBuilder<SyntaxToken>();
         builder.AddRange(tokens);
 
-        return builder.ToList().Node;
+        return builder.ToGreenListNode();
     }
+
     /// <summary>
     /// The number of nodes in the list.
     /// </summary>
@@ -208,30 +186,20 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
             return this;
         }
 
-        var array = new ArrayElement<GreenNode>[count + tokens.Length];
+        using var builder = new PooledArrayBuilder<SyntaxToken>(count + tokens.Length);
 
         // Add current tokens up to 'index'
-        int i;
-        for (i = 0; i < index; i++)
-        {
-            array[i].Value = this[i].RequiredNode;
-        }
+        builder.AddRange(this, 0, index);
 
         // Add new tokens
-        for (var j = 0; j < tokens.Length; i++, j++)
-        {
-            array[i].Value = tokens[j].RequiredNode;
-        }
+        builder.AddRange(tokens);
 
         // Add remaining tokens starting from 'index'
-        for (var j = index; j < count; i++, j++)
-        {
-            array[i].Value = this[j].RequiredNode;
-        }
+        builder.AddRange(this, index, count - index);
 
-        Debug.Assert(i == array.Length);
+        Debug.Assert(builder.Count == count + tokens.Length);
 
-        return new(parent: null, InternalSyntax.SyntaxList.List(array), position: 0, index: 0);
+        return builder.ToList();
     }
 
     public SyntaxTokenList InsertRange(int index, IEnumerable<SyntaxToken> tokens)
@@ -250,18 +218,12 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
         using var builder = new PooledArrayBuilder<SyntaxToken>(count);
 
         // Add current tokens up to 'index'
-        for (var i = 0; i < index; i++)
-        {
-            builder.Add(this[i]);
-        }
+        builder.AddRange(this, 0, index);
 
         var oldCount = builder.Count;
 
         // Add new tokens
-        foreach (var token in tokens)
-        {
-            builder.Add(token);
-        }
+        builder.AddRange(tokens);
 
         // If builder.Count == oldCount, there weren't any tokens added.
         // So, there's no need to continue.
@@ -271,12 +233,9 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
         }
 
         // Add remaining tokens starting from 'index'
-        for (var i = index; i < count; i++)
-        {
-            builder.Add(this[i]);
-        }
+        builder.AddRange(this, index, count - index);
 
-        return new(parent: null, builder.ToGreenListNode(), position: 0, index: 0);
+        return builder.ToList();
     }
 
     private SyntaxTokenList InsertRangeWithCount(int index, IEnumerable<SyntaxToken> tokens, int tokenCount)
@@ -287,32 +246,21 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
         }
 
         var count = Count;
-        var array = new ArrayElement<GreenNode>[count + tokenCount];
+
+        using var builder = new PooledArrayBuilder<SyntaxToken>(count + tokenCount);
 
         // Add current tokens up to 'index'
-        int i;
-        for (i = 0; i < index; i++)
-        {
-            array[i].Value = this[i].RequiredNode;
-        }
+        builder.AddRange(this, 0, index);
 
         // Add new tokens
-        foreach (var token in tokens)
-        {
-            array[i++].Value = token.RequiredNode;
-        }
-
-        Debug.Assert(i == index + tokenCount);
+        builder.AddRange(tokens);
 
         // Add remaining tokens starting from 'index'
-        for (var j = index; j < count; i++, j++)
-        {
-            array[i].Value = this[j].RequiredNode;
-        }
+        builder.AddRange(this, index, count - index);
 
-        Debug.Assert(i == array.Length);
+        Debug.Assert(builder.Count == count + tokenCount);
 
-        return new(parent: null, InternalSyntax.SyntaxList.List(array), position: 0, index: 0);
+        return builder.ToList();
     }
 
     public SyntaxTokenList RemoveAt(int index)
@@ -323,22 +271,17 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
         ArgHelper.ThrowIfGreaterThanOrEqual(index, count);
 
         // count - 1 because we're removing an item.
-        var array = new ArrayElement<GreenNode>[count - 1];
+        var newCount = count - 1;
+
+        using var builder = new PooledArrayBuilder<SyntaxToken>(newCount);
 
         // Add current tokens up to 'index'
-        int i;
-        for (i = 0; i < index; i++)
-        {
-            array[i].Value = this[i].RequiredNode;
-        }
+        builder.AddRange(this, 0, index);
 
         // Add remaining tokens starting *after* 'index'
-        for (var j = index + 1; j < count; i++, j++)
-        {
-            array[i].Value = this[j].RequiredNode;
-        }
+        builder.AddRange(this, index + 1, newCount - index);
 
-        return new(parent: null, InternalSyntax.SyntaxList.List(array), position: 0, index: 0);
+        return builder.ToList();
     }
 
     public SyntaxTokenList Remove(SyntaxToken tokenInList)
@@ -371,33 +314,21 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
             return RemoveAt(index);
         }
 
-        var count = Count;
+        // Count - 1 because we're removing an item.
+        var newCount = Count - 1;
 
-        // The length of the new array is -1 because an element will be replaced.
-        var array = new ArrayElement<GreenNode>[count + tokens.Length - 1];
+        using var builder = new PooledArrayBuilder<SyntaxToken>(newCount + tokens.Length);
 
         // Add current tokens up to 'index'
-        int i;
-        for (i = 0; i < index; i++)
-        {
-            array[i].Value = this[i].RequiredNode;
-        }
+        builder.AddRange(this, 0, index);
 
         // Add new tokens
-        for (var j = 0; j < tokens.Length; i++, j++)
-        {
-            array[i].Value = tokens[j].RequiredNode;
-        }
+        builder.AddRange(tokens);
 
         // Add remaining tokens starting *after* 'index'
-        for (var j = index + 1; j < count; i++, j++)
-        {
-            array[i].Value = this[j].RequiredNode;
-        }
+        builder.AddRange(this, index + 1, newCount - index);
 
-        Debug.Assert(i == array.Length);
-
-        return new(parent: null, InternalSyntax.SyntaxList.List(array), position: 0, index: 0);
+        return builder.ToList();
     }
 
     public SyntaxTokenList ReplaceRange(SyntaxToken tokenInList, IEnumerable<SyntaxToken> tokens)
@@ -416,28 +347,21 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
             return ReplaceRangeWithCount(index, tokens, tokenCount);
         }
 
-        var count = Count;
-        using var builder = new PooledArrayBuilder<SyntaxToken>(count);
+        // Count - 1 because we're removing an item.
+        var newCount = Count - 1;
+
+        using var builder = new PooledArrayBuilder<SyntaxToken>(newCount);
 
         // Add current tokens up to 'index'
-        for (var i = 0; i < index; i++)
-        {
-            builder.Add(this[i]);
-        }
+        builder.AddRange(this, 0, index);
 
         // Add new tokens
-        foreach (var token in tokens)
-        {
-            builder.Add(token);
-        }
+        builder.AddRange(tokens);
 
         // Add remaining tokens starting *after* 'index'
-        for (var i = index + 1; i < count; i++)
-        {
-            builder.Add(this[i]);
-        }
+        builder.AddRange(this, index + 1, newCount - index);
 
-        return new(parent: null, builder.ToGreenListNode(), position: 0, index: 0);
+        return builder.ToList();
     }
 
     private SyntaxTokenList ReplaceRangeWithCount(int index, IEnumerable<SyntaxToken> tokens, int tokenCount)
@@ -447,35 +371,25 @@ internal readonly partial struct SyntaxTokenList : IEquatable<SyntaxTokenList>, 
             return RemoveAt(index);
         }
 
-        var count = Count;
+        // Count - 1 because we're removing an item.
+        var newCount = Count - 1;
 
-        // The length of the new array is -1 because an element will be replaced.
-        var array = new ArrayElement<GreenNode>[count + tokenCount - 1];
+        using var builder = new PooledArrayBuilder<SyntaxToken>(newCount + tokenCount);
 
         // Add current tokens up to 'index'
-        int i;
-        for (i = 0; i < index; i++)
-        {
-            array[i].Value = this[i].RequiredNode;
-        }
+        builder.AddRange(this, 0, index);
 
         // Add new tokens
-        foreach (var token in tokens)
-        {
-            array[i++].Value = token.RequiredNode;
-        }
+        builder.AddRange(tokens);
 
-        Debug.Assert(i == index + tokenCount);
+        Debug.Assert(builder.Count == index + tokenCount);
 
         // Add remaining tokens starting *after* 'index'
-        for (var j = index + 1; j < count; i++, j++)
-        {
-            array[i].Value = this[j].RequiredNode;
-        }
+        builder.AddRange(this, index + 1, newCount - index);
 
-        Debug.Assert(i == array.Length);
+        Debug.Assert(builder.Count == newCount + tokenCount);
 
-        return new(parent: null, InternalSyntax.SyntaxList.List(array), position: 0, index: 0);
+        return builder.ToList();
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)

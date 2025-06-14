@@ -85,16 +85,17 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         };
         UpdateClientInitializationOptions(c => c);
 
-        var completionSetting = new CompletionSetting
+        var completionSetting = new VSInternalCompletionSetting
         {
             CompletionItem = new CompletionItemSetting(),
             CompletionItemKind = new CompletionItemKindSetting()
             {
                 ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
             },
+            CompletionList = new VSInternalCompletionListSetting() { Data = true },
             CompletionListSetting = new CompletionListSetting()
             {
-                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat"]
+                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat", "data"]
             },
             ContextSupport = false,
             InsertTextMode = InsertTextMode.AsIs,

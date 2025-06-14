@@ -1,7 +1,6 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
@@ -39,7 +38,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
                 {
                     CompletionItemKind = new CompletionItemKindSetting()
                     {
-                        ValueSet = new[] { CompletionItemKind.TagHelper }
+                        ValueSet = [CompletionItemKind.TagHelper]
                     },
                     CompletionList = new VSInternalCompletionListSetting()
                     {
@@ -54,21 +53,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
     }
 
-    private static IEnumerable<IRazorCompletionItemProvider> GetCompletionProviders()
-    {
-        // Working around strong naming restriction.
-        var tagHelperCompletionService = new TagHelperCompletionService();
-
-        var completionProviders = new IRazorCompletionItemProvider[]
-        {
+    private static IRazorCompletionItemProvider[] GetCompletionProviders()
+        => [
             new DirectiveCompletionItemProvider(),
             new DirectiveAttributeCompletionItemProvider(),
             new DirectiveAttributeParameterCompletionItemProvider(),
-            new TagHelperCompletionProvider(tagHelperCompletionService)
-        };
-
-        return completionProviders;
-    }
+            new TagHelperCompletionProvider(new TagHelperCompletionService())
+        ];
 
     [Fact]
     public void IsApplicableTriggerContext_Deletion_ReturnsFalse()
@@ -476,8 +467,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
             codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
-        Assert.NotNull(completionList);
-        Assert.Empty(completionList.Items);
+        Assert.Null(completionList);
     }
 
     [Fact]

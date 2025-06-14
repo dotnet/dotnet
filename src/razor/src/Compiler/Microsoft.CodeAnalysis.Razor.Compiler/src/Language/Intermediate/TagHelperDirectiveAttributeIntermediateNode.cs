@@ -15,6 +15,8 @@ public sealed class TagHelperDirectiveAttributeIntermediateNode : IntermediateNo
 
     public string OriginalAttributeName { get; set; }
 
+    public SourceSpan? OriginalAttributeSpan { get; set; }
+
     public AttributeStructure AttributeStructure { get; set; }
 
     public BoundAttributeDescriptor BoundAttribute { get; set; }
