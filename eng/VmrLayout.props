@@ -56,6 +56,7 @@
   <PropertyGroup>
     <MicrosoftDotNetUnifiedBuildTasksAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', 'Microsoft.DotNet.UnifiedBuild.Tasks', '$(Configuration)', 'Microsoft.DotNet.UnifiedBuild.Tasks.dll'))</MicrosoftDotNetUnifiedBuildTasksAssembly>
     <MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', 'Microsoft.DotNet.SourceBuild.Tasks.LeakDetection', '$(Configuration)', 'Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.dll'))</MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly>
+    <BinaryToolKitAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', 'BinaryToolKit', '$(Configuration)', 'BinaryToolKit.dll'))</BinaryToolKitAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">

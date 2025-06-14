@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.IO;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Internal;
 
@@ -55,8 +56,8 @@ internal sealed record class HostProject
 
         return other is not null &&
                EqualityContract == other.EqualityContract &&
-               FilePathComparer.Instance.Equals(FilePath, other.FilePath) &&
-               FilePathComparer.Instance.Equals(IntermediateOutputPath, other.IntermediateOutputPath) &&
+               PathUtilities.OSSpecificPathComparer.Equals(FilePath, other.FilePath) &&
+               PathUtilities.OSSpecificPathComparer.Equals(IntermediateOutputPath, other.IntermediateOutputPath) &&
                Configuration == other.Configuration &&
                RootNamespace == other.RootNamespace &&
                DisplayName == other.DisplayName;
@@ -66,8 +67,8 @@ internal sealed record class HostProject
     {
         var hash = HashCodeCombiner.Start();
 
-        hash.Add(FilePath, FilePathComparer.Instance);
-        hash.Add(IntermediateOutputPath, FilePathComparer.Instance);
+        hash.Add(FilePath, PathUtilities.OSSpecificPathComparer);
+        hash.Add(IntermediateOutputPath, PathUtilities.OSSpecificPathComparer);
         hash.Add(Configuration);
         hash.Add(RootNamespace);
         hash.Add(DisplayName);

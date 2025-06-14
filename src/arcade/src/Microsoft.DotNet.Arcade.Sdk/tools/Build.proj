@@ -221,7 +221,7 @@
              Targets="_IsProjectRestoreSupported"
              SkipNonexistentTargets="true"
              BuildInParallel="true"
-             Condition="'$(RestoreUsingNuGetTargets)' != 'false' and '%(ProjectToBuild.Extension)' != '.sln' and '%(ProjectToBuild.Extension)' != '.slnf' and '$(RestoreUseStaticGraphEvaluation)' != 'true' and '$(Restore)' == 'true'">
+             Condition="'$(RestoreUsingNuGetTargets)' != 'false' and '%(ProjectToBuild.Extension)' != '.sln' and '%(ProjectToBuild.Extension)' != '.slnf' and '%(ProjectToBuild.Extension)' != '.slnx' and '$(RestoreUseStaticGraphEvaluation)' != 'true' and '$(Restore)' == 'true'">
 
       <Output TaskParameter="TargetOutputs" ItemName="_ProjectToRestoreWithNuGet" />
     </MSBuild>
@@ -248,9 +248,18 @@
       </_ProjectToRestore>
     </ItemGroup>
 
+    <!--
+      Filter TreatWarningsAsErrors during Restore so CLI script builds and Visual Studio builds restore the same.
+      Don't ignore it when it set to 'false' to apply '-warnaserror false' from CLI script builds.
+    -->
+    <PropertyGroup>
+      <_RestoreRemoveProps>$(_RemoveProps)</_RestoreRemoveProps>
+      <_RestoreRemoveProps Condition="'$(TreatWarningsAsErrors)' != 'false'">$(_RestoreRemoveProps);TreatWarningsAsErrors</_RestoreRemoveProps>
+    </PropertyGroup>
+
     <MSBuild Projects="@(_ProjectToRestore)"
              Properties="@(_SolutionRestoreProps)"
-             RemoveProperties="$(_RemoveProps);TreatWarningsAsErrors"
+             RemoveProperties="$(_RestoreRemoveProps)"
              Targets="Restore"
              SkipNonexistentTargets="true"
              BuildInParallel="%(_ProjectToRestore.RestoreInParallel)"

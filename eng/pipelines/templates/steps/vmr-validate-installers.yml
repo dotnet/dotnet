@@ -30,13 +30,7 @@ steps:
   displayName: 'Authenticate to AzDO Feeds'
 
 - ${{ if eq(parameters.OS, 'Linux') }}:
-  - script: |
-      ./build.sh \
-      --ci \
-      -t \
-      --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj \
-      /p:TestRpmPackages=true \
-      /p:TestDebPackages=true
+  - script: ./build.sh --ci -t --projects $(Build.SourcesDirectory)/test/Microsoft.DotNet.Installer.Tests/Microsoft.DotNet.Installer.Tests.csproj /p:TestRpmPackages=true /p:TestDebPackages=true
     displayName: Validate installer packages
     workingDirectory: $(Build.SourcesDirectory)
 
@@ -72,3 +66,4 @@ steps:
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
       artifactType: Container
       parallel: true
+    condition: always()

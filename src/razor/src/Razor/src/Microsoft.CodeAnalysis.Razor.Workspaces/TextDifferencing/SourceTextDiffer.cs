@@ -100,7 +100,7 @@ internal abstract partial class SourceTextDiffer : TextDiffer, IDisposable
             minimalChanges.Add(new TextChange(TextSpan.FromBounds(start, end), builder.ToString()));
         }
 
-        return minimalChanges.DrainToImmutable();
+        return minimalChanges.ToImmutableAndClear();
     }
 
     public static ImmutableArray<TextChange> GetMinimalTextChanges(SourceText oldText, SourceText newText, DiffKind kind = DiffKind.Line)

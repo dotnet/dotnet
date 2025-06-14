@@ -4,22 +4,26 @@
     <TargetFramework>$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="$(ToolsDir)BinaryToolKit\BinaryToolKit.csproj" />
+  </ItemGroup>
+
+  <UsingTask TaskName="BinaryToolTask" AssemblyFile="$(BinaryToolKitAssembly)" TaskFactory="TaskHostFactory" />
+
+  <PropertyGroup>
+    <BinariesMode Condition="'$(BinariesMode)' == ''">Validate</BinariesMode>
+    <AllowedBinariesFile Condition="'$(AllowedBinariesFile)' == ''">$(RepositoryEngineeringDir)allowed-vmr-binaries.txt</AllowedBinariesFile>
+  </PropertyGroup>
+
   <Target Name="DetectBinaries"
-          BeforeTargets="Build"
-          Condition="'$(SkipDetectBinaries)' != 'true'">
-    
-    <PropertyGroup>
-      <DetectBinariesLogLevel Condition="'$(DetectBinariesLogLevel)' == ''">None</DetectBinariesLogLevel>
-      <DetectBinariesAdditionalArgs>--with-sdk $(DotNetRoot)</DetectBinariesAdditionalArgs>
-      <DetectBinariesAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(DetectBinariesAdditionalArgs) --with-packages $(PreviouslySourceBuiltPackagesPath)</DetectBinariesAdditionalArgs>
-    </PropertyGroup>
+          DependsOnTargets="ResolveProjectReferences"
+          BeforeTargets="Build">
 
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Detecting binaries." />
-
-    <Exec Command="$(RepositoryEngineeringDir)/detect-binaries.sh --output-dir &quot;$(BinariesReportDir)&quot; --log-level $(DetectBinariesLogLevel) $(DetectBinariesAdditionalArgs)"
-        IgnoreExitCode="true" />
-
-    <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done detecting binaries." />
+    <BinaryToolTask
+      Mode="$(BinariesMode)"
+      TargetDirectory="$(RepoRoot)"
+      AllowedBinariesFile="$(AllowedBinariesFile)"
+      OutputReportDirectory="$(BinariesReportDir)" />
   </Target>
 
 </Project>

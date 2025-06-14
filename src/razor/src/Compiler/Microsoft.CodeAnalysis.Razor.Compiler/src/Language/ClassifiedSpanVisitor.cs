@@ -6,11 +6,14 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal class ClassifiedSpanVisitor : SyntaxWalker
 {
+    private static readonly ObjectPool<ImmutableArray<ClassifiedSpanInternal>.Builder> Pool = DefaultPool.Create(Policy.Instance, size: 5);
+
     private readonly RazorSourceDocument _source;
     private readonly ImmutableArray<ClassifiedSpanInternal>.Builder _spans;
 
@@ -51,12 +54,12 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
 
     public static ImmutableArray<ClassifiedSpanInternal> VisitRoot(RazorSyntaxTree syntaxTree)
     {
-        using var _ = ArrayBuilderPool<ClassifiedSpanInternal>.GetPooledObject(out var builder);
+        using var _ = Pool.GetPooledObject(out var builder);
 
         var visitor = new ClassifiedSpanVisitor(syntaxTree.Source, builder);
         visitor.Visit(syntaxTree.Root);
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
@@ -362,5 +365,33 @@ internal class ClassifiedSpanVisitor : SyntaxWalker
 
         var span = new ClassifiedSpanInternal(spanSource, blockSource, kind, _currentBlockKind, acceptedCharacters.Value);
         _spans.Add(span);
+    }
+
+    private sealed class Policy : IPooledObjectPolicy<ImmutableArray<ClassifiedSpanInternal>.Builder>
+    {
+        public static readonly Policy Instance = new();
+
+        // Significantly larger than DefaultPool.MaximumObjectSize as there shouldn't be much concurrency
+        // of these arrays (we limit the number of pooled items to 5) and they are commonly large
+        public const int MaximumObjectSize = DefaultPool.MaximumObjectSize * 32;
+
+        private Policy()
+        {
+        }
+
+        public ImmutableArray<ClassifiedSpanInternal>.Builder Create() => ImmutableArray.CreateBuilder<ClassifiedSpanInternal>();
+
+        public bool Return(ImmutableArray<ClassifiedSpanInternal>.Builder builder)
+        {
+            builder.Clear();
+
+            if (builder.Capacity > MaximumObjectSize)
+            {
+                // Differs from ArrayBuilderPool.Policy's behavior as we allow our array to grow significantly larger
+                builder.Capacity = 0;
+            }
+
+            return true;
+        }
     }
 }

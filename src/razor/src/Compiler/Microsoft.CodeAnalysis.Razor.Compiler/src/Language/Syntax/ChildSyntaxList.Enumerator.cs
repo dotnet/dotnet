@@ -16,12 +16,14 @@ internal readonly partial struct ChildSyntaxList
         private SyntaxNode _node;
         private int _count;
         private int _childIndex;
+        private SlotData _slotData;
 
         internal Enumerator(SyntaxNode node, int count)
         {
             _node = node;
             _count = count;
             _childIndex = -1;
+            _slotData = new SlotData(node);
         }
 
         // PERF: Initialize an Enumerator directly from a SyntaxNode without going
@@ -31,6 +33,7 @@ internal readonly partial struct ChildSyntaxList
             _node = node;
             _count = CountNodes(node.Green);
             _childIndex = -1;
+            _slotData = new SlotData(node);
         }
 
         /// <summary>
@@ -58,8 +61,8 @@ internal readonly partial struct ChildSyntaxList
         /// <returns>
         ///  The element in the <see cref="ChildSyntaxList" /> at the current position of the enumerator.
         /// </returns>
-        public readonly SyntaxNodeOrToken Current
-            => ItemInternal(_node, _childIndex);
+        public SyntaxNodeOrToken Current
+            => ItemInternal(_node, _childIndex, ref _slotData);
 
         /// <summary>
         ///  Sets the enumerator to its initial position, which is before the first element in the collection.
@@ -77,7 +80,7 @@ internal readonly partial struct ChildSyntaxList
                 return false;
             }
 
-            current = ItemInternal(_node, _childIndex);
+            current = ItemInternal(_node, _childIndex, ref _slotData);
             return true;
         }
 
@@ -85,7 +88,7 @@ internal readonly partial struct ChildSyntaxList
         {
             while (MoveNext())
             {
-                var nodeValue = ItemInternalAsNode(_node, _childIndex);
+                var nodeValue = ItemInternalAsNode(_node, _childIndex, ref _slotData);
                 if (nodeValue != null)
                 {
                     return nodeValue;

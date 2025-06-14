@@ -32,6 +32,10 @@
       <_TestRunnerArgs>--results-directory "$(_TestResultDirectory)" $(_TestRunnerAdditionalArguments)</_TestRunnerArgs>
     </PropertyGroup>
 
+    <!-- Validate that non-Core workloads use executable files, not DLL files -->
+    <Error Condition="'$(_TestRuntime)' != 'Core' and !$(_TestAssembly.EndsWith('.exe', StringComparison.OrdinalIgnoreCase))" 
+           Text="Microsoft.Testing.Platform runner requires an executable (.exe) file (for non-.NET workloads), but was given: '$(_TestAssembly)'. Please set &lt;OutputType&gt;Exe&lt;/OutputType&gt; in your project file." />
+
     <PropertyGroup>
       <_TestRunnerCommand>"$(_TestRunner)" $(_TestRunnerArgs)</_TestRunnerCommand>
 
@@ -82,7 +86,7 @@
       Ideally we would set ContinueOnError="ErrorAndContinue" so that when a test fails in multi-targeted test project
       we'll still run tests for all target frameworks. ErrorAndContinue doesn't work well on Linux though: https://github.com/Microsoft/msbuild/issues/3961.
     -->
-    <Error Text="Tests failed: $(_ResultsFileToDisplay) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(_ErrorOnTestFailure)' != 'false'" File="TestingPlatform" />
+    <Error Text="Tests failed: $(_ResultsFileToDisplay) [$(_TestEnvironment)]" Condition="'$(_TestErrorCode)' != '0' and '$(_ErrorOnTestFailure)' != 'false'" File="Microsoft.Testing.Platform" />
 
     <ItemGroup>
       <FileWrites Include="@(_OutputFiles)"/>

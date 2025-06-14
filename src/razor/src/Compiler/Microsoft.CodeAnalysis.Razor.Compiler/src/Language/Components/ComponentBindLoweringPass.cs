@@ -101,7 +101,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             {
                 if (!_bindGetSetSupported)
                 {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_UnsupportedSyntaxBindGetSet(
+                    node.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_UnsupportedSyntaxBindGetSet(
                         node.Source,
                         node.AttributeName));
                 }
@@ -111,9 +111,9 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 }
                 else
                 {
-                    existingEntry.BindNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindAndBindGet(
-                            node.Source,
-                            existingEntry.BindNode.AttributeName));
+                    existingEntry.BindNode.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindAndBindGet(
+                        node.Source,
+                        existingEntry.BindNode.AttributeName));
                 }
             }
         }
@@ -139,14 +139,14 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                     if (node.BoundAttributeParameter.Name != "set")
                     {
                         // There is no corresponding bind node. Add a diagnostic and move on.
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBind(
+                        parameterReference.Parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBind(
                             node.Source,
                             node.AttributeName));
                     }
                     else
                     {
                         // There is no corresponding bind node. Add a diagnostic and move on.
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBindGet(
+                        parameterReference.Parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_MissingBindGet(
                             node.Source,
                             node.AttributeNameWithoutParameter));
                     }
@@ -176,7 +176,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 {
                     if (entry.BindNode != null)
                     {
-                        parameterReference.Parent.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_UseBindGet(
+                        parameterReference.Parent.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_UseBindGet(
                             node.Source,
                             node.BoundAttribute.Name));
                     }
@@ -200,7 +200,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             if (entry.Value.BindSetNode != null && entry.Value.BindAfterNode != null)
             {
                 var afterNode = entry.Value.BindAfterNode;
-                entry.Key.Item1.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindSetAfter(
+                entry.Key.Item1.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttributeParameter_InvalidSyntaxBindSetAfter(
                     afterNode.Source,
                     afterNode.AttributeNameWithoutParameter));
             }
@@ -316,7 +316,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
         foreach (var duplicate in duplicates)
         {
-            node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_Duplicates(
+            node.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_Duplicates(
                 node.Source,
                 duplicate.First().OriginalAttributeName,
                 duplicate.ToArray()));
@@ -368,14 +368,14 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             // the build.
             if (node != null)
             {
-                node.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_InvalidSyntax(
+                node.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_InvalidSyntax(
                     node.Source,
                     node.AttributeName));
                 return new[] { node };
             }
             else
             {
-                getNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateBindAttribute_MissingBindSet(
+                getNode.AddDiagnostic(ComponentDiagnosticFactory.CreateBindAttribute_MissingBindSet(
                     getNode.Source,
                     getNode.AttributeName,
                     $"{getNode.AttributeNameWithoutParameter}:set"));
@@ -483,10 +483,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         {
             var valueNode = new HtmlAttributeIntermediateNode()
             {
-                Annotations =
-                    {
-                        [ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName(),
-                    },
+                OriginalAttributeName = bindEntry.GetOriginalAttributeName(),
                 AttributeName = valueAttributeName,
                 Source = targetNode.Source,
 
@@ -494,10 +491,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 Suffix = "\"",
             };
 
-            for (var i = 0; i < targetNode.Diagnostics.Count; i++)
-            {
-                valueNode.Diagnostics.Add(targetNode.Diagnostics[i]);
-            }
+            valueNode.AddDiagnosticsFromNode(targetNode);
 
             valueNode.Children.Add(new CSharpExpressionAttributeValueIntermediateNode());
             for (var i = 0; i < valueExpressionTokens.Count; i++)
@@ -507,10 +501,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
             var changeNode = new HtmlAttributeIntermediateNode()
             {
-                Annotations =
-                    {
-                        [ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName(),
-                    },
+                OriginalAttributeName = bindEntry.GetOriginalAttributeName(),
                 AttributeName = changeAttributeName,
                 AttributeNameExpression = changeAttributeNode,
                 Source = targetNode.Source,
@@ -536,8 +527,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             var valuePropertyName = valueAttribute?.GetPropertyName();
 
             ComponentAttributeIntermediateNode valueNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-            valueNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
-            valueNode.Annotations[ComponentMetadata.Bind.PropertySpan] = GetOriginalPropertySpan(valueNode);
+            valueNode.OriginalAttributeName = bindEntry.GetOriginalAttributeName();
+            valueNode.PropertySpan = GetOriginalPropertySpan(valueNode);
             valueNode.AttributeName = valueAttributeName;
             valueNode.BoundAttribute = valueAttribute; // Might be null if it doesn't match a component attribute
             valueNode.PropertyName = valuePropertyName;
@@ -554,9 +545,9 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             builder.Add(valueNode);
 
             var changeNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-            changeNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
-            changeNode.Annotations[ComponentMetadata.Bind.PropertySpan] = GetOriginalPropertySpan(changeNode);
-            changeNode.Annotations[ComponentMetadata.Bind.IsSynthesized] = bool.TrueString;
+            changeNode.OriginalAttributeName = bindEntry.GetOriginalAttributeName();
+            changeNode.PropertySpan = GetOriginalPropertySpan(changeNode);
+            changeNode.IsSynthesized = true;
             changeNode.AttributeName = changeAttributeName;
             changeNode.BoundAttribute = changeAttribute; // Might be null if it doesn't match a component attribute
             changeNode.PropertyName = changeAttribute?.GetPropertyName();
@@ -577,9 +568,9 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             if (expressionAttribute != null)
             {
                 var expressionNode = node != null ? new ComponentAttributeIntermediateNode(node) : new ComponentAttributeIntermediateNode(getNode);
-                expressionNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = bindEntry.GetOriginalAttributeName();
-                expressionNode.Annotations[ComponentMetadata.Bind.PropertySpan] = GetOriginalPropertySpan(expressionNode);
-                expressionNode.Annotations[ComponentMetadata.Bind.IsSynthesized] = bool.TrueString;
+                expressionNode.OriginalAttributeName = bindEntry.GetOriginalAttributeName();
+                expressionNode.PropertySpan = GetOriginalPropertySpan(expressionNode);
+                expressionNode.IsSynthesized = true;
                 expressionNode.AttributeName = expressionAttributeName;
                 expressionNode.BoundAttribute = expressionAttribute;
                 expressionNode.PropertyName = expressionAttribute.GetPropertyName();
@@ -615,12 +606,14 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
             return;
         }
 
-        var helperNode = new ComponentAttributeIntermediateNode(intermediateNode);
-        helperNode.Annotations[ComponentMetadata.Common.OriginalAttributeName] = intermediateNode.OriginalAttributeName;
-        helperNode.Annotations[ComponentMetadata.Common.IsDesignTimePropertyAccessHelper] = bool.TrueString;
-        helperNode.Annotations[ComponentMetadata.Bind.PropertySpan] = GetOriginalPropertySpan(intermediateNode);
-        helperNode.BoundAttribute = valueAttribute;
-        helperNode.PropertyName = valueAttribute.GetPropertyName();
+        var helperNode = new ComponentAttributeIntermediateNode(intermediateNode)
+        {
+            OriginalAttributeName = intermediateNode.OriginalAttributeName,
+            IsDesignTimePropertyAccessHelper = true,
+            PropertySpan = GetOriginalPropertySpan(intermediateNode),
+            BoundAttribute = valueAttribute,
+            PropertyName = valueAttribute.GetPropertyName()
+        };
 
         builder.Add(helperNode);
     }
@@ -1109,7 +1102,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         if (template != null)
         {
             // See comments in TemplateDiagnosticPass
-            node.Diagnostics.Add(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
+            node.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
             return new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty, };
         }
 
@@ -1150,17 +1143,28 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
     private static SourceSpan? GetOriginalPropertySpan(IntermediateNode node)
     {
-        if (node?.Annotations[ComponentMetadata.Common.OriginalAttributeSpan] is SourceSpan attributeSourceSpan)
+        var originalSpan = node switch
+        {
+            ComponentAttributeIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperDirectiveAttributeIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperDirectiveAttributeParameterIntermediateNode n => n.OriginalAttributeSpan,
+            TagHelperPropertyIntermediateNode n => n.OriginalAttributeSpan,
+            _ => null
+        };
+
+        if (originalSpan is SourceSpan span)
         {
             var offset = "bind-".Length;
-            return new SourceSpan(attributeSourceSpan.FilePath,
-                                  attributeSourceSpan.AbsoluteIndex + offset,
-                                  attributeSourceSpan.LineIndex,
-                                  attributeSourceSpan.CharacterIndex + offset,
-                                  attributeSourceSpan.Length - offset,
-                                  attributeSourceSpan.LineCount,
-                                  attributeSourceSpan.EndCharacterIndex);
+
+            return new SourceSpan(span.FilePath,
+                                  span.AbsoluteIndex + offset,
+                                  span.LineIndex,
+                                  span.CharacterIndex + offset,
+                                  span.Length - offset,
+                                  span.LineCount,
+                                  span.EndCharacterIndex);
         }
+
         return null;
     }
 
