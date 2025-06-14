@@ -31,10 +31,7 @@ public sealed class DefaultTagHelperHtmlAttributeIntermediateNode : ExtensionInt
             Children.Add(htmlAttributeNode.Children[i]);
         }
 
-        for (var i = 0; i < htmlAttributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(htmlAttributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(htmlAttributeNode);
     }
 
     public string AttributeName { get; set; }
