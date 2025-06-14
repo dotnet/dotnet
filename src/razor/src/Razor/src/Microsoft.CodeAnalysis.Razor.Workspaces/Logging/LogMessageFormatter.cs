@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor;
-using static System.StringExtensions;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
@@ -23,7 +22,7 @@ internal static partial class LogMessageFormatter
                 ref messageLineRangeBuilder, ref exceptionLineRangeBuilder);
 
             // Create the final string.
-            return CreateString(state.Length, state, static (span, state) =>
+            return string.Create(state.Length, state, static (span, state) =>
             {
                 Write(state.CategoryNamePart, ref span);
 

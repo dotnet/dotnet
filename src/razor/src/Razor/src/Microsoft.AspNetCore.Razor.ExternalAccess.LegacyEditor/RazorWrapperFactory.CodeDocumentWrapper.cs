@@ -34,7 +34,7 @@ internal static partial class RazorWrapperFactory
 #pragma warning restore CS0618 // Type or member is obsolete
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<TagHelperSpan> GetTagHelperSpans()
@@ -50,7 +50,7 @@ internal static partial class RazorWrapperFactory
                     WrapAll(item.Binding.Descriptors, Wrap)));
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<RazorSourceMapping> GetSourceMappings()

@@ -44,7 +44,7 @@ internal sealed record TagHelperDeltaResult(
         }
 #endif
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 
     public bool Equals(TagHelperDeltaResult? other)

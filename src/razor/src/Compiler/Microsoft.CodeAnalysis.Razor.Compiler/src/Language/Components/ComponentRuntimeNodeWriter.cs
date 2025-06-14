@@ -5,7 +5,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -327,7 +326,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         // Text node
         var content = GetHtmlContent(node);
         var renderApi = ComponentsApi.RenderTreeBuilder.AddContent;
-        if (node.IsEncoded())
+        if (node.HasEncodedContent)
         {
             // This content is already encoded.
             renderApi = ComponentsApi.RenderTreeBuilder.AddMarkupContent;
@@ -636,13 +635,13 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             throw new ArgumentNullException(nameof(node));
         }
 
-        if (node.IsDesignTimePropertyAccessHelper())
+        if (node.IsDesignTimePropertyAccessHelper)
         {
             WriteDesignTimePropertyAccessor(context, node);
             return;
         }
 
-        var addAttributeMethod = node.Annotations[ComponentMetadata.Common.AddAttributeMethodName] as string ?? GetAddComponentParameterMethodName(context);
+        var addAttributeMethod = node.AddAttributeMethodName ?? GetAddComponentParameterMethodName(context);
 
         // _builder.AddComponentParameter(1, nameof(Component.Property), 42);
         context.CodeWriter.Write(_scopeStack.BuilderVarName);
@@ -728,8 +727,8 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             }
             else if (node.BoundAttribute?.IsEventCallbackProperty() ?? false)
             {
-                var explicitType = (bool?)node.Annotations[ComponentMetadata.Component.ExplicitTypeNameKey];
-                var isInferred = (bool?)node.Annotations[ComponentMetadata.Component.OpenGenericKey];
+                var explicitType = node.HasExplicitTypeName;
+                var isInferred = node.IsOpenGeneric;
                 if (canTypeCheck && NeedsTypeCheck(node))
                 {
                     context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
@@ -750,7 +749,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
                 if (isInferred != true && node.TryParseEventCallbackTypeArgument(out ReadOnlyMemory<char> argument))
                 {
                     context.CodeWriter.Write("<");
-                    if (explicitType == true)
+                    if (explicitType)
                     {
                         context.CodeWriter.Write(argument);
                     }

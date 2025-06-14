@@ -11,14 +11,11 @@ using Microsoft.VisualStudio.GraphModel;
 
 namespace Microsoft.VisualStudio.LanguageServices.Progression;
 
-/// <summary>
-/// A helper class that implements the creation of <see cref="GraphNode"/>s.
-/// </summary>
 public static class GraphNodeCreation
 {
     public static Task<GraphNodeId> CreateNodeIdAsync(ISymbol symbol, Solution solution, CancellationToken cancellationToken)
         => Task.FromResult(GraphNodeId.Empty);
 
     public static Task<GraphNode> CreateNodeAsync(this Graph graph, ISymbol symbol, Solution solution, CancellationToken cancellationToken)
-        => Task.FromResult(graph.Nodes.GetOrCreate(GraphNodeId.Empty));
+       => Task.FromResult(graph.Nodes.GetOrCreate(GraphNodeId.Empty));
 }

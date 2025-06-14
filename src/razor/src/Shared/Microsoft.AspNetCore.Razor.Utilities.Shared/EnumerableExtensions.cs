@@ -72,10 +72,10 @@ internal static class EnumerableExtensions
             results.Add(selector(item));
         }
 
-        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using ToImmutableAndClear()
         // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
         // to be the same as the number of items. This is uncommon, but still useful.
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     /// <summary>
@@ -143,10 +143,10 @@ internal static class EnumerableExtensions
             results.Add(selector(item, index++));
         }
 
-        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using DrainToImmutable()
+        // If the PooledArrayBuilder acquired an ImmutableArray<TResult>.Builder, using ToImmutableAndClear()
         // avoid's allocating a new array and copying the results into it if the builder's capacity *happens*
         // to be the same as the number of items. This is uncommon, but still useful.
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public static bool TryGetCount<T>(this IEnumerable<T> sequence, out int count)
