@@ -5,7 +5,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Symbols;
 using Microsoft.CodeAnalysis.PooledObjects;
 
@@ -113,7 +112,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        argumentRefKinds = argumentRefKinds.Insert(0, argumentRefKindFromReceiverRefKind(receiverRefKind)); // Tracked by https://github.com/dotnet/roslyn/issues/76130 : Test this code path
+                        argumentRefKinds = argumentRefKinds.Insert(0, argumentRefKindFromReceiverRefKind(receiverRefKind));
                     }
 
                     invokedAsExtensionMethod = true;

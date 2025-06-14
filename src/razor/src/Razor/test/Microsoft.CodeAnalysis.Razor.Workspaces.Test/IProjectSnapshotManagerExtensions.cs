@@ -36,6 +36,6 @@ file sealed class TestSolutionQueryOperations(ProjectSnapshotManager projectMana
             }
         }
 
-        return projects.DrainToImmutable();
+        return projects.ToImmutableAndClear();
     }
 }

@@ -194,7 +194,10 @@ internal class RazorFormattingService : IRazorFormattingService
             automaticallyAddUsings: false,
             validate: true,
             cancellationToken: cancellationToken).ConfigureAwait(false);
-        return razorChanges.SingleOrDefault();
+
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public async Task<TextChange?> TryGetCSharpCodeActionEditAsync(DocumentContext documentContext, ImmutableArray<TextChange> csharpChanges, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -215,7 +218,10 @@ internal class RazorFormattingService : IRazorFormattingService
             automaticallyAddUsings: true,
             validate: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
-        return razorChanges.SingleOrDefault();
+
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public async Task<TextChange?> TryGetCSharpSnippetFormattingEditAsync(DocumentContext documentContext, ImmutableArray<TextChange> csharpChanges, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -241,7 +247,9 @@ internal class RazorFormattingService : IRazorFormattingService
 
         razorChanges = UnwrapCSharpSnippets(razorChanges);
 
-        return razorChanges.SingleOrDefault();
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public bool TryGetOnTypeFormattingTriggerKind(RazorCodeDocument codeDocument, int hostDocumentIndex, string triggerCharacter, out RazorLanguageKind triggerCharacterKind)
@@ -373,7 +381,7 @@ internal class RazorFormattingService : IRazorFormattingService
             changes.Add(new(change.Span, newText.Replace(toFind, replacement)));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     internal TestAccessor GetTestAccessor() => new(this);

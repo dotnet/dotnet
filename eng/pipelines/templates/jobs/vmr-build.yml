@@ -300,7 +300,7 @@ jobs:
     # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
     # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
     - output: pipelineArtifact
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/artifacts
       artifact: $(successfulJobArtifactName)
       displayName: Publish Artifacts (On Success)
       condition: succeeded()
@@ -317,7 +317,7 @@ jobs:
     # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - output: buildArtifacts
-        PathtoPublish: $(Build.ArtifactStagingDirectory)/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+        PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
         ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
         sbomEnabled: false
@@ -465,8 +465,7 @@ jobs:
           fi
 
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Source-built artifacts are from CentOS 9 Stream. We want to download them without
-            # downloading portable versions from the internet.
+            # Using previous SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
@@ -672,7 +671,7 @@ jobs:
     # Both publishing steps are necessary to ensure artifacts are published on both success and failure.
     # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
     # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
-    - publish: $(Build.ArtifactStagingDirectory)
+    - publish: $(Build.ArtifactStagingDirectory)/artifacts
       artifact: $(successfulJobArtifactName)
       displayName: Publish Artifacts (On Success)
       condition: succeeded()
@@ -688,6 +687,6 @@ jobs:
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: $(Build.ArtifactStagingDirectory)/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest

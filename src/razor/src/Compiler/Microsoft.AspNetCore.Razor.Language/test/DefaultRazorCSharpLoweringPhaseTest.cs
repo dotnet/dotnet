@@ -76,7 +76,7 @@ public class DefaultRazorCSharpLoweringPhaseTest
         var expectedDiagnostic = RazorDiagnostic.Create(
                 new RazorDiagnosticDescriptor("1234", "I am an error.", RazorDiagnosticSeverity.Error),
                 new SourceSpan("SomeFile.cshtml", 11, 0, 11, 1));
-        irDocument.Diagnostics.Add(expectedDiagnostic);
+        irDocument.AddDiagnostic(expectedDiagnostic);
         codeDocument.SetDocumentIntermediateNode(irDocument);
 
         // Act

@@ -45,6 +45,7 @@ internal static class CompletionListMerger
         // We don't fully support merging continue characters currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedContinueWithCharacters = razorCompletionList.ContinueCharacters ?? delegatedCompletionList.ContinueCharacters;
 
+        var mergedItemDefaultsData = MergeData(razorCompletionList.ItemDefaults?.Data, delegatedCompletionList.ItemDefaults?.Data);
         // We don't fully support merging edit ranges currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedItemDefaultsEditRange = razorCompletionList.ItemDefaults?.EditRange ?? delegatedCompletionList.ItemDefaults?.EditRange;
 
@@ -58,6 +59,7 @@ internal static class CompletionListMerger
             ContinueCharacters = mergedContinueWithCharacters,
             ItemDefaults = new CompletionListItemDefaults()
             {
+                Data = mergedItemDefaultsData,
                 EditRange = mergedItemDefaultsEditRange,
             }
         };
@@ -152,14 +154,16 @@ internal static class CompletionListMerger
 
     private static void EnsureMergeableData(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
     {
-        if (completionListA.Data != completionListB.Data &&
-            (completionListA.Data is null || completionListB.Data is null))
+        var completionListAData = completionListA.Data ?? completionListA.ItemDefaults?.Data;
+        var completionListBData = completionListB.Data ?? completionListB.ItemDefaults?.Data;
+        if (completionListAData != completionListBData &&
+            (completionListAData is null || completionListBData is null))
         {
             // One of the completion lists have data while the other does not, we need to ensure that any non-data centric items don't get incorrect data associated
 
             // The candidate completion list will be one where we populate empty data for any `null` specifying data given we'll be merging
             // two completion lists together we don't want incorrect data to be inherited down
-            var candidateCompletionList = completionListA.Data is null ? completionListA : completionListB;
+            var candidateCompletionList = completionListAData is null ? completionListA : completionListB;
             for (var i = 0; i < candidateCompletionList.Items.Length; i++)
             {
                 var item = candidateCompletionList.Items[i];
@@ -206,11 +210,7 @@ internal static class CompletionListMerger
             }
 
             completionListToStopInheriting.CommitCharacters = null;
-
-            if (completionListToStopInheriting.ItemDefaults is not null)
-            {
-                completionListToStopInheriting.ItemDefaults.CommitCharacters = null;
-            }
+            completionListToStopInheriting.ItemDefaults?.CommitCharacters = null;
         }
     }
 
@@ -219,8 +219,7 @@ internal static class CompletionListMerger
         using var inheritableCompletions = new PooledArrayBuilder<VSInternalCompletionItem>();
         for (var i = 0; i < completionList.Items.Length; i++)
         {
-            var completionItem = completionList.Items[i] as VSInternalCompletionItem;
-            if (completionItem is null ||
+            if (completionList.Items[i] is not VSInternalCompletionItem completionItem ||
                 completionItem.CommitCharacters is not null ||
                 completionItem.VsCommitCharacters is not null)
             {

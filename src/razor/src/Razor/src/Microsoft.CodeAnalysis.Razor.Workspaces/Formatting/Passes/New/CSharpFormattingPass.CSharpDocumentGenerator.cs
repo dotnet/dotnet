@@ -88,7 +88,7 @@ internal partial class CSharpFormattingPass
 
             var text = SourceText.From(builder.ToString());
 
-            return new(text, lineInfoBuilder.DrainToImmutable());
+            return new(text, lineInfoBuilder.ToImmutableAndClear());
         }
 
         private static string GetAdditionalLineComment(SourceSpan originalSpan)
@@ -680,7 +680,7 @@ internal partial class CSharpFormattingPass
                 // so this method is handles way more cases that ideally it would. Sorry! I've split it up into separate methods
                 // so we can pretend, for readability of those methods, if not this one.
 
-                if (node.IsUsingDirective(out _))
+                if (node.IsUsingDirective())
                 {
                     return VisitUsingDirective();
                 }

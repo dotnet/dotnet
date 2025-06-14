@@ -114,7 +114,7 @@ internal static class FilePathNormalizer
         using var _2 = ArrayPool<char>.Shared.GetPooledArraySpan(filePathSpan2.Length, out var destination2);
         var normalizedSpan2 = NormalizeDirectoryNameCore(filePathSpan2, destination2);
 
-        return normalizedSpan1.Equals(normalizedSpan2, FilePathComparison.Instance);
+        return normalizedSpan1.Equals(normalizedSpan2, PathUtilities.OSSpecificPathComparison);
     }
 
     public static bool AreFilePathsEquivalent(string? filePath1, string? filePath2)
@@ -137,7 +137,7 @@ internal static class FilePathNormalizer
         using var _2 = ArrayPool<char>.Shared.GetPooledArraySpan(filePathSpan2.Length, out var destination2);
         var normalizedSpan2 = NormalizeCoreAndGetSpan(filePathSpan2, destination2);
 
-        return normalizedSpan1.Equals(normalizedSpan2, FilePathComparison.Instance);
+        return normalizedSpan1.Equals(normalizedSpan2, PathUtilities.OSSpecificPathComparison);
     }
 
     public static int GetHashCode(string filePath)
