@@ -354,7 +354,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
     {
         if (allowNameof && attribute.BoundAttribute?.ContainingType is string containingType)
         {
-            containingType = attribute.Annotations[ComponentMetadata.Component.ConcreteContainingType] as string ?? containingType;
+            containingType = attribute.ConcreteContainingType ?? containingType;
 
             // nameof(containingType.PropertyName)
             // This allows things like Find All References to work in the IDE as we have an actual reference to the parameter
@@ -362,10 +362,9 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             TypeNameHelper.WriteGloballyQualifiedName(context.CodeWriter, containingType);
             context.CodeWriter.Write(".");
 
-            var isSynthesized = attribute.Annotations.TryGetValue(ComponentMetadata.Bind.IsSynthesized, out string synthesizedString) && synthesizedString == bool.TrueString;
-            if (!isSynthesized)
+            if (!attribute.IsSynthesized)
             {
-                var attributeSourceSpan = (SourceSpan)(attribute.Annotations[ComponentMetadata.Bind.PropertySpan] ?? attribute.Annotations[ComponentMetadata.Common.OriginalAttributeSpan]);
+                var attributeSourceSpan = (SourceSpan)(attribute.PropertySpan ?? attribute.OriginalAttributeSpan);
                 var requiresEscaping = attribute.PropertyName.IdentifierRequiresEscaping();
                 using (context.CodeWriter.BuildEnhancedLinePragma(attributeSourceSpan, context, characterOffset: requiresEscaping ? 1 : 0))
                 {
@@ -395,7 +394,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             if (child is ComponentAttributeIntermediateNode attribute)
             {
                 // Some nodes just exist to help with property access at design time, and don't need anything else written
-                if (child.IsDesignTimePropertyAccessHelper())
+                if (attribute.IsDesignTimePropertyAccessHelper)
                 {
                     continue;
                 }
@@ -502,8 +501,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
     protected static void WriteGloballyQualifiedTypeName(CodeRenderingContext context, ComponentAttributeIntermediateNode node)
     {
-        var explicitType = (bool?)node.Annotations[ComponentMetadata.Component.ExplicitTypeNameKey];
-        if (explicitType == true)
+        if (node.HasExplicitTypeName)
         {
             context.CodeWriter.Write(node.TypeName);
         }

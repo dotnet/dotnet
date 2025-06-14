@@ -95,7 +95,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             @class.Modifiers.Add("public");
         }
 
-        @class.Annotations[CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext;
+        @class.NullableContext = true;
 
         method.MethodName = "ExecuteAsync";
         method.Modifiers.Clear();
@@ -140,9 +140,9 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     {
         Debug.Assert(pageDirective != null);
 
-        if (pageDirective.DirectiveNode.IsImported())
+        if (pageDirective.DirectiveNode.IsImported)
         {
-            pageDirective.DirectiveNode.Diagnostics.Add(
+            pageDirective.DirectiveNode.AddDiagnostic(
                 RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.Value));
         }
         else
@@ -158,7 +158,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
             {
                 // The page directive is not the leading directive. Add an error.
-                pageDirective.DirectiveNode.Diagnostics.Add(
+                pageDirective.DirectiveNode.AddDiagnostic(
                     RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.Value));
             }
         }

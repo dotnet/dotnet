@@ -94,7 +94,7 @@ internal class RazorCompletionEndpoint(
             }
 
             var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-            var supportsCompletionListData = completionCapability?.CompletionList?.Data ?? false;
+            var supportsCompletionListData = completionCapability.SupportsCompletionListData();
 
             RazorCompletionResolveData.Wrap(result, request.TextDocument, supportsCompletionListData: supportsCompletionListData);
             return result;

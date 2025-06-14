@@ -86,16 +86,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 #pragma warning restore VSTHRD108 // Assert thread affinity unconditionally
         }
 
-        var useLegacyEditorEnabled = _lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
-
-        if (useLegacyEditorEnabled)
-        {
-            _activityLog.LogInfo("Using legacy editor because the option was set to true");
-            return false;
-        }
-
-        _activityLog.LogInfo("LSP editor is enabled.");
-        return true;
+        return !_lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
     }
 
     /// <inheritdoc/>
