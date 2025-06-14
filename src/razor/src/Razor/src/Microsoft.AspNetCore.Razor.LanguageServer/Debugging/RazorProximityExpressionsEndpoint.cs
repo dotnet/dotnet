@@ -52,13 +52,13 @@ internal class RazorProximityExpressionsEndpoint(
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         // If we're in C#, then map to the right position in the generated document
         if (languageKind == RazorLanguageKind.CSharp &&
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }
         // Otherwise see if there is more C# on the line to map to
         else if (languageKind == RazorLanguageKind.Html &&
-            !_documentMappingService.TryMapToGeneratedDocumentOrNextCSharpPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToGeneratedDocumentOrNextCSharpPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }

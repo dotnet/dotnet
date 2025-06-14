@@ -4,7 +4,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Text;
@@ -41,7 +40,7 @@ internal static class FindAllReferencesHelper
         {
             var codeDoc = await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
             var line = codeDoc.Source.Text.Lines[lineNumber];
-            var csharpDocument = codeDoc.GetCSharpDocument();
+            var csharpDocument = codeDoc.GetRequiredCSharpDocument();
             if (!documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.Start, out _, out _) ||
                 !documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.End, out _, out _))
             {

@@ -51,14 +51,14 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
 
     private static ImmutableArray<TextChange> FilterIncomingChanges(FormattingContext context, ImmutableArray<TextChange> changes)
     {
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
 
         using var changesToKeep = new PooledArrayBuilder<TextChange>(capacity: changes.Length);
 
         foreach (var change in changes)
         {
             // Don't keep changes that start inside of a razor comment block.
-            var comment = syntaxTree.Root.FindInnermostNode(change.Span.Start)?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
+            var comment = root.FindInnermostNode(change.Span.Start)?.FirstAncestorOrSelf<RazorCommentBlockSyntax>();
             if (comment is not null)
             {
                 continue;
@@ -189,8 +189,8 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
 
     private static bool IsPartOfHtmlTag(FormattingContext context, int position)
     {
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true);
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(position, includeWhitespace: true);
         if (owner is null)
         {
             // Can't determine owner of this position.

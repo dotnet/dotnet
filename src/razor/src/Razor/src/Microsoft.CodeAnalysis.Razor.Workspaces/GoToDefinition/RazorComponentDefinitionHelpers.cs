@@ -29,9 +29,9 @@ internal static class RazorComponentDefinitionHelpers
         boundTagHelper = null;
         boundAttribute = null;
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
 
-        var innermostNode = syntaxTree.Root.FindInnermostNode(absoluteIndex);
+        var innermostNode = root.FindInnermostNode(absoluteIndex);
         if (innermostNode is null)
         {
             logger.LogInformation($"Could not locate innermost node at index, {absoluteIndex}.");
@@ -168,9 +168,9 @@ internal static class RazorComponentDefinitionHelpers
                 return null;
             }
 
-            var csharpText = codeDocument.GetCSharpSourceText();
-            var range = csharpText.GetRange(property.Identifier.Span);
-            if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+            var range = csharpDocument.Text.GetRange(property.Identifier.Span);
+            if (documentMappingService.TryMapToHostDocumentRange(csharpDocument, range, out var originalRange))
             {
                 return originalRange;
             }

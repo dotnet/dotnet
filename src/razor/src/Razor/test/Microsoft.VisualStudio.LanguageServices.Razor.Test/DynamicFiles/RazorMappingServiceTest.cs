@@ -34,7 +34,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
-        var generated = output.GetCSharpDocument();
+        var generated = output.GetRequiredCSharpDocument();
 
         var symbol = "SomeProperty";
         var generatedCode = generated.Text.ToString();
@@ -68,7 +68,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
-        var generated = output.GetCSharpDocument();
+        var generated = output.GetRequiredCSharpDocument();
 
         var symbol = "SomeProperty";
         // Second occurrence
@@ -103,7 +103,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
-        var generated = output.GetCSharpDocument();
+        var generated = output.GetRequiredCSharpDocument();
 
         var symbol = "SomeProperty";
         var generatedCode = generated.Text.ToString();
@@ -137,7 +137,7 @@ public class RazorMappingServiceTest(ITestOutputHelper testOutput) : WorkspaceTe
         var document = project.GetRequiredDocument(_hostDocument.FilePath);
 
         var output = await document.GetGeneratedOutputAsync(DisposalToken);
-        var generated = output.GetCSharpDocument();
+        var generated = output.GetRequiredCSharpDocument();
 
         var symbol = "ExecuteAsync";
         var generatedCode = generated.Text.ToString();

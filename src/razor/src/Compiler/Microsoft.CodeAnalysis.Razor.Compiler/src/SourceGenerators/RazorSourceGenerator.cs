@@ -91,7 +91,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     var codeGen = projectEngine.Process(sourceItem);
 
-                    var result = new SourceGeneratorText(codeGen.GetCSharpDocument().Text);
+                    var result = new SourceGeneratorText(codeGen.GetRequiredCSharpDocument().Text);
 
                     RazorSourceGeneratorEventSource.Log.GenerateDeclarationCodeStop(sourceItem.FilePath);
 
@@ -296,7 +296,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                 .Select(static (pair, _) =>
                 {
                     var (filePath, document) = pair;
-                    return (hintName: GetIdentifierFromPath(filePath), codeDocument: document.CodeDocument, csharpDocument: document.CodeDocument.GetCSharpDocument());
+                    return (hintName: GetIdentifierFromPath(filePath), codeDocument: document.CodeDocument, csharpDocument: document.CodeDocument.GetRequiredCSharpDocument());
                 })
                 .WithLambdaComparer(static (a, b) =>
                 {

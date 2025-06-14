@@ -202,7 +202,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
         codeDocument.SetSyntaxTree(originalTree);
-        codeDocument.SetTagHelpers(tagHelpers: null);
+        codeDocument.SetTagHelpers(value: null);
 
         // Act
         projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);
@@ -240,7 +240,7 @@ public class DefaultRazorTagHelperContextDiscoveryPhaseTest : RazorProjectEngine
         var codeDocument = projectEngine.CreateCodeDocument(source);
         var originalTree = RazorSyntaxTree.Parse(source);
         codeDocument.SetSyntaxTree(originalTree);
-        codeDocument.SetTagHelpers(tagHelpers: []);
+        codeDocument.SetTagHelpers(value: []);
 
         // Act
         projectEngine.ExecutePhase<DefaultRazorTagHelperContextDiscoveryPhase>(codeDocument);

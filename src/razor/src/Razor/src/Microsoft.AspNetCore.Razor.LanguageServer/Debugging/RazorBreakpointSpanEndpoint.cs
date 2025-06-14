@@ -51,13 +51,13 @@ internal class RazorBreakpointSpanEndpoint(
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         // If we're in C#, then map to the right position in the generated document
         if (languageKind == RazorLanguageKind.CSharp &&
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }
         // Otherwise see if there is more C# on the line to map to
         else if (languageKind == RazorLanguageKind.Html &&
-            !_documentMappingService.TryMapToGeneratedDocumentOrNextCSharpPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToGeneratedDocumentOrNextCSharpPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }
@@ -91,7 +91,7 @@ internal class RazorBreakpointSpanEndpoint(
         // This in turn results in a breakpoint span encompassing `|__o = DateTime.Now;|`. Problem is that if we're doing "strict" mapping
         // Razor only maps `DateTime.Now` so mapping would fail. Therefore we use inclusive mapping which allows C# mappings that intersect
         // to be acceptable mapping locations
-        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), projectedRange, MappingBehavior.Inclusive, out var hostDocumentRange))
+        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), projectedRange, MappingBehavior.Inclusive, out var hostDocumentRange))
         {
             return null;
         }
