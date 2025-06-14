@@ -1,12 +1,10 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- All packages built in SBRP repo are copied to prereqs/package/reference.
-         Nothing gets copied to the artifacts/packages folder. -->
-    <ReferenceOnlyRepoArtifacts>true</ReferenceOnlyRepoArtifacts>
-
     <!-- SBRP builds before Arcade so it also needs the bootstrap Arcade version -->
     <UseBootstrapArcade>true</UseBootstrapArcade>
+
+    <ToolPackagesRoot>$(RepoArtifactsShippingPackagesDir)</ToolPackagesRoot>
 
     <BuildArgs>$(BuildArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildArgs>
   </PropertyGroup>
@@ -15,5 +13,30 @@
     <BuiltSdkPackage Include="Microsoft.Build.NoTargets" />
     <BuiltSdkPackage Include="Microsoft.Build.Traversal" />
   </ItemGroup>
+
+  <Target Name="GetProducedReferenceOnlyPackages"
+          Returns="@(_ReferenceOnlyPackages)">
+    <ItemGroup>
+      <_ReferenceOnlyPackages Include="$(RepoArtifactsDir)packages\$(Configuration)\ReferenceOnly\*" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Copy reference only packages to prereqs/package/reference -->
+  <Target Name="CopyReferenceOnlyPackages"
+          DependsOnTargets="GetProducedReferenceOnlyPackages"
+          AfterTargets="RepoBuild"
+          BeforeTargets="CleanupRepo" >
+    <Copy SourceFiles="@(_ReferenceOnlyPackages)"
+          DestinationFolder="$(ReferencePackagesDir)" />
+  </Target>
+
+  <!-- Log the new repo artifacts -->
+  <Target Name="LogReferenceOnlyPackages"
+          DependsOnTargets="GetProducedReferenceOnlyPackages"
+          AfterTargets="LogRepoArtifacts"
+          BeforeTargets="CleanupRepo" >
+    <Message Importance="High" Text="New reference package(s) after building $(RepositoryName):" />
+    <Message Importance="High" Text="  -> %(_ReferenceOnlyPackages.Filename)" />
+  </Target>
 
 </Project>
