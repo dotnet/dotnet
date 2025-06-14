@@ -1,0 +1,85 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Microsoft.DotNet.Helix/">
+    <Project Path="src/Microsoft.DotNet.Helix/Client/CSharp/Microsoft.DotNet.Helix.Client.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/JobSender/Microsoft.DotNet.Helix.JobSender.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/Sdk/Microsoft.DotNet.Helix.Sdk.csproj" />
+  </Folder>
+  <Folder Name="/Microsoft.DotNet.SwaggerGenerator/">
+    <Project Path="src/Microsoft.DotNet.SwaggerGenerator/Microsoft.DotNet.SwaggerGenerator.CmdLine/Microsoft.DotNet.SwaggerGenerator.CmdLine.csproj" />
+    <Project Path="src/Microsoft.DotNet.SwaggerGenerator/Microsoft.DotNet.SwaggerGenerator.CodeGenerator/Microsoft.DotNet.SwaggerGenerator.CodeGenerator.csproj" />
+    <Project Path="src/Microsoft.DotNet.SwaggerGenerator/Microsoft.DotNet.SwaggerGenerator.MSBuild/Microsoft.DotNet.SwaggerGenerator.MSBuild.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="src/Common/Microsoft.Arcade.Common.Tests/Microsoft.Arcade.Common.Tests.csproj" />
+    <Project Path="src/Common/Microsoft.Arcade.Test.Common/Microsoft.Arcade.Test.Common.csproj" />
+    <Project Path="src/Microsoft.DotNet.Arcade.Sdk.Tests/Microsoft.DotNet.Arcade.Sdk.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Manifest.Tests/Microsoft.DotNet.Build.Manifest.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed.Tests/Microsoft.DotNet.Build.Tasks.Feed.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/tests/Microsoft.DotNet.Build.Tasks.Packaging.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.Templating/test/Microsoft.DotNet.Build.Tasks.Templating.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.Workloads.Tests/Microsoft.DotNet.Build.Tasks.Workloads.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/JobSender.Tests/Microsoft.DotNet.Helix.JobSender.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Helix/Sdk.Tests/Microsoft.DotNet.Helix.Sdk.Tests/Microsoft.DotNet.Helix.Sdk.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.MacOsPkg.Tests/Microsoft.DotNet.MacOsPkg.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.NuGetRepack/tests/Microsoft.DotNet.NuGetRepack.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.PackageTesting.Tests/Microsoft.DotNet.PackageTesting.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.RemoteExecutor/tests/Microsoft.DotNet.RemoteExecutor.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.SignTool.Tests/Microsoft.DotNet.SignTool.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.SourceBuild/tests/Microsoft.DotNet.SourceBuild.Tasks.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.XliffTasks.Tests/Microsoft.DotNet.XliffTasks.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.XUnitAssert/tests/Microsoft.DotNet.XUnitAssert.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.XUnitExtensions/tests/Microsoft.DotNet.XUnitExtensions.Tests.csproj" />
+    <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli.Tests/Microsoft.DotNet.VersionTools.Cli.Tests.csproj" />
+  </Folder>
+  <Folder Name="/VisualStudio/">
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.VisualStudio.Tests/Microsoft.DotNet.Build.Tasks.VisualStudio.Tests.csproj" />
+    <Project Path="src/Microsoft.DotNet.Build.Tasks.VisualStudio/Microsoft.DotNet.Build.Tasks.VisualStudio.csproj" />
+  </Folder>
+  <Project Path="src/Common/Microsoft.Arcade.Common/Microsoft.Arcade.Common.csproj" />
+  <Project Path="src/Microsoft.Cci.Extensions/Microsoft.Cci.Extensions.csproj" />
+  <Project Path="src/Microsoft.DotNet.Arcade.Sdk/Microsoft.DotNet.Arcade.Sdk.csproj" />
+  <Project Path="src/Microsoft.DotNet.ArcadeAzureIntegration/Microsoft.DotNet.ArcadeAzureIntegration.csproj" />
+  <Project Path="src/Microsoft.DotNet.ArcadeLogging/Microsoft.DotNet.ArcadeLogging.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Manifest/Microsoft.DotNet.Build.Manifest.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Archives/Microsoft.DotNet.Build.Tasks.Archives.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Feed/Microsoft.DotNet.Build.Tasks.Feed.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Installers/Microsoft.DotNet.Build.Tasks.Installers.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Packaging/src/Microsoft.DotNet.Build.Tasks.Packaging.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.TargetFramework/src/Microsoft.DotNet.Build.Tasks.TargetFramework.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Templating/src/Microsoft.DotNet.Build.Tasks.Templating.csproj" />
+  <Project Path="src/Microsoft.DotNet.Build.Tasks.Workloads/src/Microsoft.DotNet.Build.Tasks.Workloads.csproj" />
+  <Project Path="src/Microsoft.DotNet.CMake.Sdk/Microsoft.DotNet.CMake.Sdk.csproj" />
+  <Project Path="src/Microsoft.DotNet.CodeAnalysis/Microsoft.DotNet.CodeAnalysis.csproj" />
+  <Project Path="src/Microsoft.DotNet.Deployment.Tasks.Links/Microsoft.DotNet.Deployment.Tasks.Links.csproj" />
+  <Project Path="src/Microsoft.DotNet.GenAPI/Microsoft.DotNet.GenAPI.csproj" />
+  <Project Path="src/Microsoft.DotNet.GenFacades/Microsoft.DotNet.GenFacades.csproj" />
+  <Project Path="src/Microsoft.DotNet.Git.IssueManager/src/Microsoft.DotNet.Git.IssueManager.csproj" />
+  <Project Path="src/Microsoft.DotNet.Internal.DependencyInjection.Testing/Microsoft.DotNet.Internal.DependencyInjection.Testing.csproj" />
+  <Project Path="src/Microsoft.DotNet.Internal.SymbolHelper/Microsoft.DotNet.Internal.SymbolHelper.csproj" />
+  <Project Path="src/Microsoft.DotNet.MacOsPkg/Cli/Microsoft.DotNet.MacOsPkg.Cli.csproj" />
+  <Project Path="src/Microsoft.DotNet.MacOsPkg/Core/Microsoft.DotNet.MacOsPkg.Core.csproj" />
+  <Project Path="src/Microsoft.DotNet.NuGetRepack/tasks/Microsoft.DotNet.NuGetRepack.Tasks.csproj" />
+  <Project Path="src/Microsoft.DotNet.PackageTesting/Microsoft.DotNet.PackageTesting.csproj" />
+  <Project Path="src/Microsoft.DotNet.RemoteExecutor/src/Microsoft.DotNet.RemoteExecutor.csproj" />
+  <Project Path="src/Microsoft.DotNet.SharedFramework.Sdk/Microsoft.DotNet.SharedFramework.Sdk.csproj" />
+  <Project Path="src/Microsoft.DotNet.SignTool/Microsoft.DotNet.SignTool.csproj" />
+  <Project Path="src/Microsoft.DotNet.SourceBuild/tasks/Microsoft.DotNet.SourceBuild.Tasks.csproj" />
+  <Project Path="src/Microsoft.DotNet.StrongName/Microsoft.DotNet.StrongName.csproj" />
+  <Project Path="src/Microsoft.DotNet.Tar/Microsoft.DotNet.Tar.csproj" />
+  <Project Path="src/Microsoft.DotNet.XliffTasks/Microsoft.DotNet.XliffTasks.csproj" />
+  <Project Path="src/Microsoft.DotNet.XUnitAssert/src/Microsoft.DotNet.XUnitAssert.csproj" />
+  <Project Path="src/Microsoft.DotNet.XUnitConsoleRunner/src/Microsoft.DotNet.XUnitConsoleRunner.csproj" />
+  <Project Path="src/Microsoft.DotNet.XUnitExtensions.Shared/Microsoft.DotNet.XUnitExtensions.Shared.shproj" />
+  <Project Path="src/Microsoft.DotNet.XUnitExtensions/src/Microsoft.DotNet.XUnitExtensions.csproj" />
+  <Project Path="src/Microsoft.DotNet.XUnitV3Extensions/src/Microsoft.DotNet.XUnitV3Extensions.csproj" />
+  <Project Path="src/SignCheck/Microsoft.SignCheck/Microsoft.DotNet.SignCheckLibrary.csproj" />
+  <Project Path="src/SignCheck/SignCheck/Microsoft.DotNet.SignCheck.csproj" />
+  <Project Path="src/SignCheck/SignCheckTask/Microsoft.DotNet.SignCheckTask.csproj" />
+  <Project Path="src/VersionTools/Microsoft.DotNet.VersionTools.Cli/Microsoft.DotNet.VersionTools.Cli.csproj" />
+  <Project Path="src/WinShimmer/WinShimmer.csproj" />
+</Solution>
