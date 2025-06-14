@@ -32,6 +32,10 @@
       <_TestRunnerArgs>--results-directory "$(_TestResultDirectory)" $(_TestRunnerAdditionalArguments)</_TestRunnerArgs>
     </PropertyGroup>
 
+    <!-- Validate that non-Core workloads use executable files, not DLL files -->
+    <Error Condition="'$(_TestRuntime)' != 'Core' and !$(_TestAssembly.EndsWith('.exe', StringComparison.OrdinalIgnoreCase))" 
+           Text="Microsoft.Testing.Platform runner requires an executable (.exe) file (for non-.NET workloads), but was given: '$(_TestAssembly)'. Please set &lt;OutputType&gt;Exe&lt;/OutputType&gt; in your project file." />
+
     <PropertyGroup>
       <_TestRunnerCommand>"$(_TestRunner)" $(_TestRunnerArgs)</_TestRunnerCommand>
 
