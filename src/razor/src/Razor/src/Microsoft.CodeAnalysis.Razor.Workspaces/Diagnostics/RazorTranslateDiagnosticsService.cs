@@ -95,7 +95,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         LspDiagnostic[] unmappedDiagnostics,
         RazorCodeDocument codeDocument)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var sourceText = codeDocument.Source.Text;
 
         var processedAttributes = new Dictionary<TextSpan, bool>();
@@ -470,7 +470,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
     {
-        return codeDocument.GetSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
+        return codeDocument.GetRequiredSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
     }
 
     private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)
@@ -486,7 +486,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
 
         if (!_documentMappingService.TryMapToHostDocumentRange(
-            codeDocument.GetCSharpDocument(),
+            codeDocument.GetRequiredCSharpDocument(),
             diagnostic.Range,
             MappingBehavior.Inferred,
             out originalRange))
@@ -518,10 +518,10 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         // it's based on the runtime code generation of the Razor document therefore we need to re-map the already mapped diagnostic in a
         // semi-intelligent way.
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
         var sourceText = codeDocument.Source.Text;
         var span = sourceText.GetTextSpan(diagnosticRange);
-        var owner = syntaxTree.Root.FindNode(span, getInnermostNodeForTie: true);
+        var owner = syntaxRoot.FindNode(span, getInnermostNodeForTie: true);
 
         switch (owner?.Kind)
         {

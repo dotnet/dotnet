@@ -34,10 +34,7 @@ public sealed class DefaultTagHelperPropertyIntermediateNode : ExtensionIntermed
             Children.Add(propertyNode.Children[i]);
         }
 
-        for (var i = 0; i < propertyNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(propertyNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(propertyNode);
     }
 
     public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();

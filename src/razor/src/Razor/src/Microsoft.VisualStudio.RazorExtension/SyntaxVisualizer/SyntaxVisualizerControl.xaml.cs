@@ -193,9 +193,11 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
         {
             TagHelperDisplayMode.All => codeDocument.GetTagHelpers(),
             TagHelperDisplayMode.InScope => codeDocument.GetRequiredTagHelperContext().TagHelpers,
-            TagHelperDisplayMode.Referenced => (IEnumerable<TagHelperDescriptor>)codeDocument.GetReferencedTagHelpers(),
+            TagHelperDisplayMode.Referenced => (IEnumerable<TagHelperDescriptor>?)codeDocument.GetReferencedTagHelpers(),
             _ => []
         };
+
+        tagHelpers ??= [];
 
         var tempFileName = GetTempFileName(displayKind.ToString() + "TagHelpers.json");
 
@@ -412,7 +414,7 @@ internal partial class SyntaxVisualizerControl : UserControl, IVsRunningDocTable
             return;
         }
 
-        var tree = codeDocument.GetSyntaxTree();
+        var tree = codeDocument.GetRequiredSyntaxTree();
 
         AddNode(new RazorSyntaxNode(tree), parent: null);
 

@@ -234,10 +234,7 @@ public class DefaultDocumentWriterTest
                 new TypeParameter() { ParameterName = "TValue", },
             },
             ClassName = "TestClass",
-            Annotations =
-            {
-                [CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext,
-            },
+            NullableContext = true,
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();

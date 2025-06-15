@@ -41,7 +41,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         if (changes.Length == 0)
         {
-            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
+            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
             {
                 _logger.LogWarning($"Failed to map to projected position for document {context.OriginalSnapshot.FilePath}.");
                 return [];
@@ -192,7 +192,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
-        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextChanges);
+        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetRequiredCSharpDocument(), projectedTextChanges);
 
         return changes.ToImmutableArray();
     }
@@ -288,7 +288,7 @@ internal sealed class CSharpOnTypeFormattingPass(
     private static ImmutableArray<TextChange> CleanupDocument(FormattingContext context, LinePositionSpan spanAfterFormatting)
     {
         var text = context.SourceText;
-        var csharpDocument = context.CodeDocument.GetCSharpDocument();
+        var csharpDocument = context.CodeDocument.GetRequiredCSharpDocument();
 
         using var changes = new PooledArrayBuilder<TextChange>();
         foreach (var mapping in csharpDocument.SourceMappings)

@@ -11,7 +11,6 @@ public sealed class RazorCSharpDocument : IRazorGeneratedDocument
 {
     public RazorCodeDocument CodeDocument { get; }
     public SourceText Text { get; }
-    public RazorCodeGenerationOptions Options { get; }
     public ImmutableArray<RazorDiagnostic> Diagnostics { get; }
     public ImmutableArray<SourceMapping> SourceMappings { get; }
     public ImmutableArray<LinePragma> LinePragmas { get; }
@@ -19,18 +18,15 @@ public sealed class RazorCSharpDocument : IRazorGeneratedDocument
     public RazorCSharpDocument(
         RazorCodeDocument codeDocument,
         SourceText text,
-        RazorCodeGenerationOptions options,
         ImmutableArray<RazorDiagnostic> diagnostics,
         ImmutableArray<SourceMapping> sourceMappings = default,
         ImmutableArray<LinePragma> linePragmas = default)
     {
         ArgHelper.ThrowIfNull(codeDocument);
         ArgHelper.ThrowIfNull(text);
-        ArgHelper.ThrowIfNull(options);
 
         CodeDocument = codeDocument;
         Text = text;
-        Options = options;
 
         Diagnostics = diagnostics.NullToEmpty();
         SourceMappings = sourceMappings.NullToEmpty();

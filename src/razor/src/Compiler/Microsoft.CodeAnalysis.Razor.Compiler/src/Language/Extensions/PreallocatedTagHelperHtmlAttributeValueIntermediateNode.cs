@@ -29,10 +29,7 @@ internal sealed class PreallocatedTagHelperHtmlAttributeValueIntermediateNode : 
             Children.Add(htmlAttributeNode.Children[i]);
         }
 
-        for (var i = 0; i < htmlAttributeNode.Diagnostics.Count; i++)
-        {
-            Diagnostics.Add(htmlAttributeNode.Diagnostics[i]);
-        }
+        AddDiagnosticsFromNode(htmlAttributeNode);
     }
 
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;

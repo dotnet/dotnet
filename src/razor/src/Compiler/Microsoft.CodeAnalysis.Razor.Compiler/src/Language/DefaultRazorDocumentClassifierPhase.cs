@@ -17,14 +17,14 @@ internal class DefaultRazorDocumentClassifierPhase : RazorEnginePhaseBase, IRazo
 
     protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        var irDocument = codeDocument.GetDocumentIntermediateNode();
-        ThrowForMissingDocumentDependency(irDocument);
+        var documentNode = codeDocument.GetDocumentNode();
+        ThrowForMissingDocumentDependency(documentNode);
 
         foreach (var pass in Passes)
         {
-            pass.Execute(codeDocument, irDocument);
+            pass.Execute(codeDocument, documentNode);
         }
 
-        codeDocument.SetDocumentIntermediateNode(irDocument);
+        codeDocument.SetDocumentNode(documentNode);
     }
 }

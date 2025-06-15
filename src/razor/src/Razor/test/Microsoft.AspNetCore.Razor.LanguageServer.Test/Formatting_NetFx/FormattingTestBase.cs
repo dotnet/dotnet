@@ -293,7 +293,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
         if (!allowDiagnostics)
         {
-            Assert.False(codeDocument.GetCSharpDocument().Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, codeDocument.GetCSharpDocument().Diagnostics));
+            Assert.False(codeDocument.GetRequiredCSharpDocument().Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, codeDocument.GetRequiredCSharpDocument().Diagnostics));
         }
 
         var documentSnapshot = CreateDocumentSnapshot(

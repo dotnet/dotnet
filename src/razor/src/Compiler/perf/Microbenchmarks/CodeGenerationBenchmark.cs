@@ -37,7 +37,7 @@ public class CodeGenerationBenchmark
     public void CodeGeneration_DesignTime_LargeStaticFile()
     {
         var codeDocument = ProjectEngine.ProcessDesignTime(MSN);
-        var generated = codeDocument.GetCSharpDocument();
+        var generated = codeDocument.GetRequiredCSharpDocument();
 
         if (generated.Diagnostics.Length > 0)
         {
@@ -49,7 +49,7 @@ public class CodeGenerationBenchmark
     public void CodeGeneration_Runtime_LargeStaticFile()
     {
         var codeDocument = ProjectEngine.Process(MSN);
-        var generated = codeDocument.GetCSharpDocument();
+        var generated = codeDocument.GetRequiredCSharpDocument();
 
         if (generated.Diagnostics.Length > 0)
         {

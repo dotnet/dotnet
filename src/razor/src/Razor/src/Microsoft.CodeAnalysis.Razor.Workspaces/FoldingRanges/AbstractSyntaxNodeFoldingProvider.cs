@@ -15,7 +15,7 @@ internal abstract class AbstractSyntaxNodeFoldingProvider<TNode> : IRazorFolding
     public ImmutableArray<FoldingRange> GetFoldingRanges(RazorCodeDocument codeDocument)
     {
         var sourceText = codeDocument.Source.Text;
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var nodes = GetFoldableNodes(syntaxTree);
 
         using var builder = new PooledArrayBuilder<FoldingRange>(nodes.Length);

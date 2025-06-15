@@ -24,7 +24,7 @@ internal sealed class ComponentRenderModeLoweringPass : ComponentIntermediateNod
             {
                 if (parentNode is not ComponentIntermediateNode componentNode)
                 {
-                    node.Diagnostics.Add(ComponentDiagnosticFactory.CreateAttribute_ValidOnlyOnComponent(node.Source, node.OriginalAttributeName));
+                    node.AddDiagnostic(ComponentDiagnosticFactory.CreateAttribute_ValidOnlyOnComponent(node.Source, node.OriginalAttributeName));
                     continue;
                 }
 
@@ -35,11 +35,11 @@ internal sealed class ComponentRenderModeLoweringPass : ComponentIntermediateNod
                 };
 
                 var renderModeNode = new RenderModeIntermediateNode() { Source = node.Source, Children = { expression } };
-                renderModeNode.Diagnostics.AddRange(node.Diagnostics);
+                renderModeNode.AddDiagnosticsFromNode(node);
 
                 if (componentNode.Component.Metadata.ContainsKey(ComponentMetadata.Component.HasRenderModeDirectiveKey))
                 {
-                    renderModeNode.Diagnostics.Add(ComponentDiagnosticFactory.CreateRenderModeAttribute_ComponentDeclaredRenderMode(
+                    renderModeNode.AddDiagnostic(ComponentDiagnosticFactory.CreateRenderModeAttribute_ComponentDeclaredRenderMode(
                        node.Source,
                        componentNode.Component.Name));
                 }

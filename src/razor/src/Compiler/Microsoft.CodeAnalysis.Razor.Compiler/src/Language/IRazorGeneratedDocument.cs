@@ -10,6 +10,5 @@ internal interface IRazorGeneratedDocument
 {
     RazorCodeDocument CodeDocument { get; }
     SourceText Text { get; }
-    RazorCodeGenerationOptions Options { get; }
     ImmutableArray<SourceMapping> SourceMappings { get; }
 }
