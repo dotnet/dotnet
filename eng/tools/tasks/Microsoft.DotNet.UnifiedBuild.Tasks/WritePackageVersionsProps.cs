@@ -40,9 +40,6 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         private static readonly Regex InvalidElementNameCharRegex = new Regex(@"(^|[^A-Za-z0-9])(?<FirstPartChar>.)");
 
         public const string CreationTimePropertyName = "BuildOutputPropsCreationTime";
-        public const string VersionPropertySuffix = "Version";
-        private const string PreviousVersionPropertySuffix = "PreviousVersion";
-        private const string VersionPropertyAlternateSuffix = "PackageVersion";
         private const string PinnedAttributeName = "Pinned";
         private const string DependencyAttributeName = "Dependency";
         private const string NameAttributeName = "Name";
@@ -89,7 +86,11 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         /// </summary>
         public string VersionDetails { get; set; }
 
-        public bool IsPreviousPropsFile { get; set; }
+        /// <summary>
+        /// Suffixes to use for the package version property names.
+        /// </summary>
+        [Required]
+        public ITaskItem[] PropertySuffixes { get; set; }
 
         /// <summary>
         /// Retrieve the set of the dependencies from the repo's Version.Details.Xml file.
@@ -286,16 +287,17 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             sw.WriteLine(@"  <PropertyGroup>");
             foreach (var package in entries)
             {
-                string propertyName = GetPropertyName(package.Name, VersionPropertySuffix);
-                string alternatePropertyName = GetPropertyName(package.Name, VersionPropertyAlternateSuffix);
                 string pkgVersion = package.Version.ToString();
 
-                WriteProperty(sw, propertyName, pkgVersion);
-                WriteProperty(sw, alternatePropertyName, pkgVersion);
-
-                if (IsPreviousPropsFile)
+                foreach (var suffix in PropertySuffixes)
                 {
-                    WriteProperty(sw, GetPropertyName(package.Name, PreviousVersionPropertySuffix), pkgVersion);
+                    if (string.IsNullOrEmpty(suffix.ItemSpec))
+                    {
+                        continue;
+                    }
+
+                    string propertyName = GetPropertyName(package.Name, suffix.ItemSpec);
+                    WriteProperty(sw, propertyName, pkgVersion);
                 }
             }
             sw.WriteLine(@"  </PropertyGroup>");
