@@ -62,7 +62,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         ClassDeclarationIntermediateNode @class,
         MethodDeclarationIntermediateNode method)
     {
-        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var computedNamespace, out var computedNamespaceSpan))
+        if (!codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var computedNamespace, out var computedNamespaceSpan))
         {
             computedNamespace = FallbackRootNamespace;
         }
@@ -73,7 +73,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             computedClass = $"AspNetCore_{checksum}";
         }
 
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetRequiredDocumentNode();
         if (char.IsLower(computedClass, 0))
         {
             // We don't allow component names to start with a lowercase character.

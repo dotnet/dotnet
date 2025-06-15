@@ -61,7 +61,7 @@ internal sealed class SourceMappingTagger : ITagger<SourceMappingTag>
 
         static IEnumerable<ITagSpan<SourceMappingTag>> GetTagsWorker(RazorCodeDocument codeDocument, ITextSnapshot snapshot)
         {
-            var csharpDocument = codeDocument.GetCSharpDocument();
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
             var generatedCode = csharpDocument.Text.ToString();
             foreach (var mapping in csharpDocument.SourceMappings)
             {

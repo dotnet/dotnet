@@ -1,0 +1,72 @@
+id: ScheduledSearch.MarkNoRecentActivity
+name: GitOps.PullRequestIssueManagement
+description: Mark issues and pull requests with no recent activity
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    scheduledSearches:
+      - description: >-
+          Search for PR where -
+          * Pull Request is Open
+          * Pull request does not have the label "State: No Recent Activity"
+          * Pull request has the label "Needs: Author Feedback"
+          * Has not had activity in the last 7 days
+
+          Then -
+          * Add "State: No Recent Activity" label
+          * Warn user about pending closure
+        frequencies:
+          - hourly:
+              hour: 6
+        filters:
+          - isPullRequest
+          - isOpen
+          - isNotLabeledWith:
+              label: "State: No Recent Activity"
+          - hasLabel:
+              label: "Needs: Author Feedback"
+          - noActivitySince:
+              days: 7
+        actions:
+          - addLabel:
+              label: "State: No Recent Activity"
+          - addReply:
+              reply: >-
+                Hello @${issueAuthor},
+
+                This pull request has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **7 days**. It will be closed if no further activity occurs **within 7 days of this comment**.
+      - description: >-
+          Search for Issues where -
+          * Issue is Open
+          * Issue has the label "Needs: Author Feedback"
+          * Issue does not have the label "State: No Recent Activity"
+          * Has not had activity in the last 7 days
+
+          Then -
+          * Add "State: No Recent Activity" label
+          * Warn user about pending closure
+        frequencies:
+          - hourly:
+              hour: 6
+        filters:
+          - isIssue
+          - isOpen
+          - hasLabel:
+              label: "Needs: Author Feedback"
+          - isNotLabeledWith:
+              label: "State: No Recent Activity"
+          - noActivitySince:
+              days: 7
+        actions:
+          - addLabel:
+              label: "State: No Recent Activity"
+          - addReply:
+              reply: >-
+                Hello @${issueAuthor},
+
+                This issue has been automatically marked as stale because it has been marked as requiring author feedback but has not had any activity for **7 days**. It will be closed if no further activity occurs **within 7 days of this comment**.
+onFailure:
+onSuccess:

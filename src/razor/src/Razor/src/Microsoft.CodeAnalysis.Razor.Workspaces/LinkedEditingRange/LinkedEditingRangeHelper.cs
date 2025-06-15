@@ -24,7 +24,7 @@ internal static class LinkedEditingRangeHelper
             return null;
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
 
         // We only care if the user is within a TagHelper or HTML tag with a valid start and end tag.
         if (TryGetNearestMarkupNameTokens(syntaxTree, validLocation, out var startTagNameToken, out var endTagNameToken) &&

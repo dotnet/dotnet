@@ -37,7 +37,9 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
 
         // The import documents should be inserted logically before the main document.
         var imports = codeDocument.GetImportSyntaxTrees();
-        var importedUsings = ImportDirectives(documentNode, builder, syntaxTree.Options, imports);
+        var importedUsings = !imports.IsEmpty
+            ? ImportDirectives(documentNode, builder, syntaxTree.Options, imports)
+            : [];
 
         // Lower the main document, appending after the imported directives.
         //
@@ -129,18 +131,15 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
             documentNode.AddDiagnostic(diagnostic);
         }
 
-        if (!imports.IsDefaultOrEmpty)
+        foreach (var import in imports)
         {
-            foreach (var import in imports)
+            foreach (var diagnostic in import.Diagnostics)
             {
-                foreach (var diagnostic in import.Diagnostics)
-                {
-                    documentNode.AddDiagnostic(diagnostic);
-                }
+                documentNode.AddDiagnostic(diagnostic);
             }
         }
 
-        codeDocument.SetDocumentIntermediateNode(documentNode);
+        codeDocument.SetDocumentNode(documentNode);
 
         static bool TryRemoveGlobalPrefixFromDefaultUsing(in UsingReference usingReference, out ReadOnlySpan<char> trimmedNamespace)
         {
@@ -174,10 +173,7 @@ internal class DefaultRazorIntermediateNodeLoweringPhase : RazorEnginePhaseBase,
         RazorParserOptions options,
         ImmutableArray<RazorSyntaxTree> imports)
     {
-        if (imports.IsDefaultOrEmpty)
-        {
-            return Array.Empty<UsingReference>();
-        }
+        Debug.Assert(!imports.IsDefaultOrEmpty);
 
         var importsVisitor = new ImportsVisitor(document, builder, options);
         foreach (var import in imports)

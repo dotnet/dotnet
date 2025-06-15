@@ -15,6 +15,7 @@ public sealed partial class RazorCodeGenerationOptions
         indentSize: DefaultIndentSize,
         newLine: DefaultNewLine,
         rootNamespace: null,
+        cssScope: null,
         suppressUniqueIds: null,
         flags: Flags.DefaultFlags);
 
@@ -22,6 +23,7 @@ public sealed partial class RazorCodeGenerationOptions
         indentSize: DefaultIndentSize,
         newLine: DefaultNewLine,
         rootNamespace: null,
+        cssScope: null,
         suppressUniqueIds: null,
         flags: Flags.DefaultDesignTimeFlags);
 
@@ -34,6 +36,11 @@ public sealed partial class RazorCodeGenerationOptions
     public string? RootNamespace { get; }
 
     /// <summary>
+    /// A scope identifier that will be used on elements in the generated class, or <see langword="null""/>.
+    /// </summary>
+    public string? CssScope { get; }
+
+    /// <summary>
     /// Gets a value used for unique ids for testing purposes. Null for unique ids.
     /// </summary>
     public string? SuppressUniqueIds { get; }
@@ -44,12 +51,14 @@ public sealed partial class RazorCodeGenerationOptions
         int indentSize,
         string newLine,
         string? rootNamespace,
+        string? cssScope,
         string? suppressUniqueIds,
         Flags flags)
     {
         IndentSize = indentSize;
         NewLine = newLine;
         RootNamespace = rootNamespace;
+        CssScope = cssScope;
         SuppressUniqueIds = suppressUniqueIds;
         _flags = flags;
     }
@@ -154,22 +163,27 @@ public sealed partial class RazorCodeGenerationOptions
     public RazorCodeGenerationOptions WithIndentSize(int value)
         => IndentSize == value
             ? this
-            : new(value, NewLine, RootNamespace, SuppressUniqueIds, _flags);
+            : new(value, NewLine, RootNamespace, CssScope, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithNewLine(string value)
         => NewLine == value
             ? this
-            : new(IndentSize, value, RootNamespace, SuppressUniqueIds, _flags);
+            : new(IndentSize, value, RootNamespace, CssScope, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithRootNamespace(string? value)
         => RootNamespace == value
             ? this
-            : new(IndentSize, NewLine, value, SuppressUniqueIds, _flags);
+            : new(IndentSize, NewLine, value, CssScope, SuppressUniqueIds, _flags);
+
+    public RazorCodeGenerationOptions WithCssScope(string? value)
+        => CssScope == value
+            ? this
+            : new(IndentSize, NewLine, RootNamespace, value, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithSuppressUniqueIds(string? value)
         => RootNamespace == value
             ? this
-            : new(IndentSize, NewLine, RootNamespace, value, _flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, value, _flags);
 
     public RazorCodeGenerationOptions WithFlags(
         Optional<bool> designTime = default,
@@ -249,6 +263,6 @@ public sealed partial class RazorCodeGenerationOptions
 
         return flags == _flags
             ? this
-            : new(IndentSize, NewLine, RootNamespace, SuppressUniqueIds, flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, flags);
     }
 }

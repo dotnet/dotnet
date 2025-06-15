@@ -211,9 +211,9 @@ internal static class DelegatedCompletionHelper
 
     public static bool ShouldIncludeSnippets(RazorCodeDocument razorCodeDocument, int absoluteIndex)
     {
-        var tree = razorCodeDocument.GetSyntaxTree();
+        var root = razorCodeDocument.GetRequiredSyntaxRoot();
 
-        var token = tree.Root.FindToken(absoluteIndex, includeWhitespace: false);
+        var token = root.FindToken(absoluteIndex, includeWhitespace: false);
         if (token.Kind == SyntaxKind.EndOfFile &&
             token.GetPreviousToken().Parent is { } parent &&
             parent.FirstAncestorOrSelf<RazorSyntaxNode>(RazorSyntaxFacts.IsAnyStartTag) is not null)
@@ -302,7 +302,7 @@ internal static class DelegatedCompletionHelper
                     {
                         // nextCursorPosition is where VS Code will navigate to, so we translate it to our document, or set to 0 to do nothing.
                         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-                        args[3] = documentMappingService.TryMapToHostDocumentPosition(codeDocument.GetCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
+                        args[3] = documentMappingService.TryMapToHostDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
                             ? nextCursorPosition
                             : 0;
                     }

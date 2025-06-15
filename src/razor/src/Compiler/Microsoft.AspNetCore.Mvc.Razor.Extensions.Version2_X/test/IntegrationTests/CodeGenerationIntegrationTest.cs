@@ -41,7 +41,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
 
         var diagnostics = compiled.Compilation.GetDiagnostics().Where(d => d.Severity >= DiagnosticSeverity.Warning);
@@ -58,7 +58,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
 
         var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
@@ -81,7 +81,7 @@ public class MyService<TModel>
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
 
         // We expect this test to generate a bunch of errors.
@@ -115,7 +115,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -147,7 +147,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -161,7 +161,7 @@ public class MyModel
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
 
         var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
@@ -178,7 +178,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -201,7 +201,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -215,7 +215,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -236,7 +236,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -268,7 +268,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -301,7 +301,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -317,7 +317,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
 
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
@@ -341,7 +341,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -362,7 +362,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -376,7 +376,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -397,7 +397,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -411,7 +411,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -425,7 +425,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -455,7 +455,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
     }
 
@@ -469,7 +469,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
 
         var diagnotics = compiled.CodeDocument.GetCSharpDocument().Diagnostics;
@@ -489,7 +489,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
@@ -507,7 +507,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
@@ -531,7 +531,7 @@ public class MyService<TModel>
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
@@ -566,7 +566,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -600,7 +600,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -615,7 +615,7 @@ public class MyModel
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
@@ -633,7 +633,7 @@ public class MyModel
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -657,7 +657,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -672,7 +672,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -694,7 +694,7 @@ public class MyApp
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -725,7 +725,7 @@ public class MyApp
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -757,7 +757,7 @@ public class MyService<TModel>
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -772,7 +772,7 @@ public class MyService<TModel>
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -793,7 +793,7 @@ public class ThisShouldBeGenerated
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
@@ -820,7 +820,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -842,7 +842,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -857,7 +857,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -879,7 +879,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -894,7 +894,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -909,7 +909,7 @@ public class DivTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -940,7 +940,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
@@ -955,7 +955,7 @@ public class AllTagHelper : {{typeof(TagHelper).FullName}}
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
 
