@@ -41,13 +41,13 @@
     <PortableBuild Condition="'$(PortableBuild)' == '' and '$(DotNetBuildSourceOnly)' == 'true' and '$(BuildArchitecture)' == '$(TargetArchitecture)'">false</PortableBuild>
     <PortableBuild Condition="'$(PortableBuild)' == ''">true</PortableBuild>
 
-    <PortableRid Condition="'$(PortableRid)' == '' and '$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</PortableRid>
-    <PortableRid Condition="'$(PortableRid)' == '' and '$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</PortableRid>
-    <PortableRid Condition="'$(PortableRid)' == '' and '$(TargetOS)' == 'linux'">linux-$(TargetArchitecture)</PortableRid>
-    <PortableRid Condition="$(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine'))">linux-musl-$(TargetArchitecture)</PortableRid>
-    <PortableRid Condition="'$(PortableRid)' == '' and '$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</PortableRid>
+    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'freebsd'">freebsd-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'osx'">osx-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'linux'">linux-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="$(TargetRid.StartsWith('linux-musl')) or $(TargetRid.StartsWith('alpine'))">linux-musl-$(TargetArchitecture)</PortableTargetRid>
+    <PortableTargetRid Condition="'$(PortableTargetRid)' == '' and '$(TargetOS)' == 'windows'">win-$(TargetArchitecture)</PortableTargetRid>
 
-    <TargetRid Condition="'$(PortableBuild)' == 'true' and '$(PortableRid)' != ''">$(PortableRid)</TargetRid>
+    <TargetRid Condition="'$(PortableBuild)' == 'true' and '$(PortableTargetRid)' != ''">$(PortableTargetRid)</TargetRid>
   </PropertyGroup>
 
   <!-- Packaging properties -->

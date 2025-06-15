@@ -67,8 +67,8 @@
       We can't actually use the RID graph here as RID graph filtering is only possible in a task, and we need to do this during property evaluation.
     -->
     <_FilterRuntimeIdentifier>$(TargetRid)</_FilterRuntimeIdentifier>
-    <!-- If we're introducing a new runtime identifier with TargetRid, filter instead on BaseRid. -->
-    <_FilterRuntimeIdentifier Condition="'$(BaseRid)' != ''">$(BaseRid)</_FilterRuntimeIdentifier>
+    <!-- If we're building non-portable, filter instead on PortableTargetRid. -->
+    <_FilterRuntimeIdentifier Condition="'$(PortableTargetRid)' != ''">$(PortableTargetRid)</_FilterRuntimeIdentifier>
 
     <!-- If a project builds for a set of RIDs specified in the project file and this vertical isn't in the list, suppress building this project. -->
     <_SuppressAllTargets Condition="'$(DisableArcadeExcludeFromBuildSupport)' != 'true' and $(_ExplicitlySpecifiedRuntimeIdentifiers).Contains(';$(_FilterRuntimeIdentifier);')) == 'false'">true</_SuppressAllTargets>
