@@ -6,8 +6,8 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -251,62 +251,55 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
     {
         const int MaxStringLiteralLength = 1024;
 
-        var builder = new StringBuilder();
-        for (var i = 0; i < node.Children.Count; i++)
+        using var htmlContentBuilder = new PooledArrayBuilder<ReadOnlyMemory<char>>();
+
+        var length = 0;
+        foreach (var child in node.Children)
         {
-            if (node.Children[i] is IntermediateToken token && token.IsHtml)
+            if (child is IntermediateToken token && token.IsHtml)
             {
-                builder.Append(token.Content);
+                var htmlContent = token.Content.AsMemory();
+
+                htmlContentBuilder.Add(htmlContent);
+                length += htmlContent.Length;
             }
         }
 
-        var content = builder.ToString();
+        // Can't use a pooled builder here as the memory will be stored in the context.
+        var content = new char[length];
+        var contentIndex = 0;
+        foreach (var htmlContent in htmlContentBuilder)
+        {
+            htmlContent.Span.CopyTo(content.AsSpan(contentIndex));
+            contentIndex += htmlContent.Length;
+        }
 
-        WriteHtmlLiteral(context, MaxStringLiteralLength, content);
+        WriteHtmlLiteral(context, MaxStringLiteralLength, content.AsMemory());
     }
 
     // Internal for testing
-    internal void WriteHtmlLiteral(CodeRenderingContext context, int maxStringLiteralLength, string literal)
+    internal void WriteHtmlLiteral(CodeRenderingContext context, int maxStringLiteralLength, ReadOnlyMemory<char> literal)
     {
-        if (literal.Length <= maxStringLiteralLength)
+        while (literal.Length > maxStringLiteralLength)
         {
-            WriteLiteral(literal);
-            return;
+            // String is too large, render the string in pieces to avoid Roslyn OOM exceptions at compile time: https://github.com/aspnet/External/issues/54
+            var lastCharBeforeSplit = literal.Span[maxStringLiteralLength - 1];
+
+            // If character at splitting point is a high surrogate, take one less character this iteration
+            // as we're attempting to split a surrogate pair. This can happen when something like an
+            // emoji sits on the barrier between splits; if we were to split the emoji we'd end up with
+            // invalid bytes in our output.
+            var renderCharCount = char.IsHighSurrogate(lastCharBeforeSplit) ? maxStringLiteralLength - 1 : maxStringLiteralLength;
+
+            WriteLiteral(literal[..renderCharCount]);
+
+            literal = literal[renderCharCount..];
         }
 
-        // String is too large, render the string in pieces to avoid Roslyn OOM exceptions at compile time: https://github.com/aspnet/External/issues/54
-        var charactersConsumed = 0;
-        do
-        {
-            var charactersRemaining = literal.Length - charactersConsumed;
-            var charactersToSubstring = Math.Min(maxStringLiteralLength, charactersRemaining);
-            var lastCharBeforeSplitIndex = charactersConsumed + charactersToSubstring - 1;
-            var lastCharBeforeSplit = literal[lastCharBeforeSplitIndex];
+        WriteLiteral(literal);
+        return;
 
-            if (char.IsHighSurrogate(lastCharBeforeSplit))
-            {
-                if (charactersRemaining > 1)
-                {
-                    // Take one less character this iteration. We're attempting to split inbetween a surrogate pair.
-                    // This can happen when something like an emoji sits on the barrier between splits; if we were to
-                    // split the emoji we'd end up with invalid bytes in our output.
-                    charactersToSubstring--;
-                }
-                else
-                {
-                    // The user has an invalid file with a partial surrogate a the splitting point.
-                    // We'll let the invalid character flow but we'll explode later on.
-                }
-            }
-
-            var textToRender = literal.Substring(charactersConsumed, charactersToSubstring);
-
-            WriteLiteral(textToRender);
-
-            charactersConsumed += textToRender.Length;
-        } while (charactersConsumed < literal.Length);
-
-        void WriteLiteral(string content)
+        void WriteLiteral(ReadOnlyMemory<char> content)
         {
             context.CodeWriter
                 .WriteStartMethodInvocation(WriteHtmlContentMethod)

@@ -44,7 +44,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     protected void AssertDocumentNodeMatchesBaseline(RazorCodeDocument codeDocument, [CallerMemberName]string testName = "")
     {
-        var document = codeDocument.GetDocumentIntermediateNode();
+        var document = codeDocument.GetRequiredDocumentNode();
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".ir.txt", testName);
 
         if (GenerateBaselines.ShouldGenerate)
@@ -71,7 +71,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
     protected void AssertCSharpDocumentMatchesBaseline(RazorCodeDocument codeDocument, bool verifyLinePragmas = true, [CallerMemberName] string testName = "")
     {
-        var document = codeDocument.GetCSharpDocument();
+        var document = codeDocument.GetRequiredCSharpDocument();
 
         // Normalize newlines to match those in the baseline.
         var actualCode = document.Text.ToString().Replace("\r", "").Replace("\n", "\r\n");
@@ -182,7 +182,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
         }
         else
         {
-            var syntaxTree = codeDocument.GetSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
             var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)

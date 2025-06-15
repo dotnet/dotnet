@@ -73,7 +73,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     {
         var output = await primary.GetGeneratedOutputAsync(cancellationToken);
 
-        foreach (var mapping in output.GetCSharpDocument().SourceMappings)
+        foreach (var mapping in output.GetRequiredCSharpDocument().SourceMappings)
         {
             if (mapping.OriginalSpan.AbsoluteIndex <= primarySpan.Start &&
                 (mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length) >= primarySpan.End)

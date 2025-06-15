@@ -342,7 +342,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
 
         var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
 
-        return codeDocument.GetSyntaxTree();
+        return codeDocument.GetRequiredSyntaxTree();
     }
 
     private RazorCompletionContext CreateContext(int absoluteIndex, string documentContent, RazorFileKind? fileKind = null)
