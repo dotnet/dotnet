@@ -268,7 +268,7 @@ public static class RazorProjectEngineExtensions
         RazorCodeDocument codeDocument)
         where T : IntermediateNodePassBase, new()
     {
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetDocumentNode();
         Assert.NotNull(documentNode);
 
         projectEngine.ExecutePass<T>(codeDocument, documentNode);
@@ -280,7 +280,7 @@ public static class RazorProjectEngineExtensions
         Func<T> passFactory)
         where T : IntermediateNodePassBase
     {
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetDocumentNode();
         Assert.NotNull(documentNode);
 
         projectEngine.ExecutePass<T>(codeDocument, documentNode, passFactory);
