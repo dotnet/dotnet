@@ -6,6 +6,10 @@ parameters:
 - name: desiredIbc
   type: string
   default: ''
+
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
   
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
@@ -50,6 +54,7 @@ stages:
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredIbc: ${{ parameters.desiredIbc }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   - group: Release-Pipeline
   - group: DotNetBot-GitHub-AllBranches
   jobs:
