@@ -34,6 +34,9 @@
     <LangVersion>latest</LangVersion>
 
     <CommonSrc>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)', 'common'))</CommonSrc>
+
+    <IsShippingPackage>false</IsShippingPackage>
+    <ArtifactsNonShippingPackagesDir>$(ArtifactsReferenceOnlyPackagesDir)</ArtifactsNonShippingPackagesDir>
   </PropertyGroup>
 
   <PropertyGroup>
