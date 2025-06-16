@@ -2,15 +2,12 @@ Param(
     [Parameter(Mandatory=$true)][string] $ManifestDirPath    # Manifest directory where sbom will be placed
 )
 
-Write-Host "Creating dir $ManifestDirPath"
 # create directory for sbom manifest to be placed
 if (!(Test-Path -path $ManifestDirPath))
 {
+  Write-Host "Creating dir $ManifestDirPath"
   New-Item -ItemType Directory -path $ManifestDirPath
   Write-Host "Successfully created directory $ManifestDirPath"
-}
-else{
-  Write-PipelineTelemetryError -category 'Build'  "Unable to create sbom folder."
 }
 
 Write-Host "Updating artifact name"

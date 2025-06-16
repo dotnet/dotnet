@@ -6,13 +6,3 @@ steps:
     script: |
       ./eng/dotnet-build/build.sh --source-build
   condition: "always()"
-
-- task: PowerShell@2
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    targetType: "inline"
-    script: |
-      . $(Build.Repository.LocalPath)/scripts/utils/PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(System.JobDisplayName)"
-    failOnStderr: "true"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"

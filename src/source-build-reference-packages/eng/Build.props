@@ -45,6 +45,12 @@
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.Net.WebSockets.WebSocketProtocol.5.1.3.csproj" />
 
     <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\System.CodeDom.8.0.0.csproj" />
+
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.NET.StringTools.17.8.29.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Framework.17.8.29.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.17.8.29.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Utilities.Core.17.8.29.csproj" />
+    <DependencyPackageProjects Include="$(RepoRoot)src\referencePackages\src\**\Microsoft.Build.Tasks.Core.17.8.29.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(BuildDependencyPackageProjects)' == 'true'">

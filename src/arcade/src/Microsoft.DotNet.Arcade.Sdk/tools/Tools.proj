@@ -92,8 +92,13 @@
         Condition="'$(Restore)' == 'true'"/>
   </Target>
 
+  <PropertyGroup>
+    <SetUpSourceBuildIntermediateNupkgCache Condition="'$(SetUpSourceBuildIntermediateNupkgCache)' == ''">true</SetUpSourceBuildIntermediateNupkgCache>
+  </PropertyGroup>
+
   <Import Project="SourceBuild/SourceBuildArcadeTools.targets" Condition="'$(ArcadeBuildFromSource)' == 'true' or
-                                                                          '$(DotNetBuildRepo)' == 'true'" />
+                                                                          '$(DotNetBuildRepo)' == 'true' or
+                                                                          '$(SetUpSourceBuildIntermediateNupkgCache)' == 'true'" />
 
   <!-- Repository extensibility point -->
   <Import Project="$(RepositoryEngineeringDir)Tools.props" Condition="Exists('$(RepositoryEngineeringDir)Tools.props')" />

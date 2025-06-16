@@ -26,13 +26,3 @@ steps:
     testRunTitle: "NuGet.Client $(TestRunDisplayName) On Linux"
     searchFolder: "$(Build.Repository.LocalPath)/build/TestResults"
   condition: "succeededOrFailed()"
-
-- task: PowerShell@2
-  displayName: "Initialize Git Commit Status on GitHub"
-  inputs:
-    targetType: "inline"
-    script: |
-      . $(Build.Repository.LocalPath)/scripts/utils/PostGitCommitStatus.ps1
-      SetCommitStatusForTestResult -PersonalAccessToken $(NuGetLurkerPersonalAccessToken) -VstsPersonalAccessToken $(System.AccessToken) -CommitSha $(Build.SourceVersion) -TestName "$(TestRunDisplayName) On Linux"
-    failOnStderr: "true"
-  condition: "not(eq(variables['ManualGitHubChecks'], 'false'))"
