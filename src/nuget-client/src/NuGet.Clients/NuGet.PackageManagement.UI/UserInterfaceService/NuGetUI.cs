@@ -44,6 +44,7 @@ namespace NuGet.PackageManagement.UI
         private NuGetUI(
             ICommonOperations commonOperations,
             NuGetUIProjectContext projectContext,
+            INuGetTelemetryProvider nuGetTelemetryProvider,
             INuGetUILogger logger)
         {
             CommonOperations = commonOperations;
@@ -58,6 +59,7 @@ namespace NuGet.PackageManagement.UI
             Projects = Enumerable.Empty<IProjectContextInfo>();
             DisplayPreviewWindow = true;
             DisplayDeprecatedFrameworkWindow = true;
+            NuGetTelemetryProvider = nuGetTelemetryProvider ?? throw new ArgumentNullException(nameof(nuGetTelemetryProvider));
         }
 
         // For testing purposes only.
@@ -66,8 +68,9 @@ namespace NuGet.PackageManagement.UI
             NuGetUIProjectContext projectContext,
             INuGetUILogger logger,
             INuGetUIContext uiContext,
-            IPackageManagerControlViewModel packageManagerControlViewModel)
-            : this(commonOperations, projectContext, logger)
+            IPackageManagerControlViewModel packageManagerControlViewModel,
+            INuGetTelemetryProvider nuGetTelemetryProvider)
+            : this(commonOperations, projectContext, nuGetTelemetryProvider, logger)
         {
             UIContext = uiContext;
             PackageManagerControlViewModel = packageManagerControlViewModel;
@@ -88,6 +91,7 @@ namespace NuGet.PackageManagement.UI
             INuGetLockService lockService,
             INuGetUILogger logger,
             IRestoreProgressReporter restoreProgressReporter,
+            INuGetTelemetryProvider nuGetTelemetryProvider,
             CancellationToken cancellationToken,
             params IProjectContextInfo[] projects)
         {
@@ -111,6 +115,7 @@ namespace NuGet.PackageManagement.UI
             var nuGetUi = new NuGetUI(
                 commonOperations,
                 projectContext,
+                nuGetTelemetryProvider,
                 logger);
 
             nuGetUi.UIContext = await NuGetUIContext.CreateAsync(
@@ -272,7 +277,7 @@ namespace NuGet.PackageManagement.UI
                 UIUtility.ToContractsItemFilter(PackageManagerControlViewModel.ActiveFilter),
                 PackageManagerControlViewModel.IsSolution,
                 packageSourceMappingStatus);
-            TelemetryActivity.EmitTelemetryEvent(evt);
+            NuGetTelemetryProvider.EmitEvent(evt);
         }
 
         public void LaunchNuGetOptionsDialog(OptionsPage optionsPageToOpen)
@@ -345,6 +350,8 @@ namespace NuGet.PackageManagement.UI
         public INuGetUIContext UIContext { get; private set; }
 
         public INuGetUILogger UILogger { get; }
+
+        public INuGetTelemetryProvider NuGetTelemetryProvider { get; }
 
         public INuGetProjectContext ProjectContext => _projectContext;
 
