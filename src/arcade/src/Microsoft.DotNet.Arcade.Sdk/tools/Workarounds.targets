@@ -184,49 +184,4 @@
     </ItemGroup>
   </Target>
 
-  <!-- BEGIN workaround for https://github.com/dotnet/sdk/issues/43339; remove after updated to VS 17.12 or a future 17.11 patch -->
-  <Target Name="WorkaroundDotnetSdk43339" BeforeTargets="ResolvePackageAssets" Condition=" '$(MSBuildRuntimeType)' == 'Full' and $([MSBuild]::VersionLessThan($(MSBuildVersion), 17.11.5))">
-    <PrimeSystemTextJson804ForNET9SDK Condition="'$(NETCoreSdkVersion)' == '' or !$(NETCoreSdkVersion.StartsWith('10.0'))" />
-    <PrimeSystemTextJson804ForNET10SDK Condition="$(NETCoreSdkVersion.StartsWith('10.0'))" />
-  </Target>
-  <UsingTask
-    TaskName="PrimeSystemTextJson804ForNET9SDK"
-    TaskFactory="RoslynCodeTaskFactory"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
-    <Task>
-      <Code Type="Fragment" Language="cs">
-<![CDATA[
-try
-{
-    System.Reflection.Assembly.LoadFrom(@"$(MicrosoftNETBuildTasksDirectoryRoot)\..\..\..\DotnetTools\dotnet-format\BuildHost-net472\System.Text.Json.dll");
-}
-catch
-{
-    // Best effort: if something moves in the SDK don't break the build.
-}
-]]>
-      </Code>
-    </Task>
-  </UsingTask>
-  <UsingTask
-    TaskName="PrimeSystemTextJson804ForNET10SDK"
-    TaskFactory="RoslynCodeTaskFactory"
-    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
-    <Task>
-      <Code Type="Fragment" Language="cs">
-<![CDATA[
-try
-{
-    System.Reflection.Assembly.LoadFrom(@"$(MicrosoftNETBuildTasksDirectoryRoot)\..\..\..\Sdks\Microsoft.NET.Sdk.StaticWebAssets\tasks\net472\System.Text.Json.dll");
-}
-catch
-{
-    // Best effort: if something moves in the SDK don't break the build.
-}
-]]>
-      </Code>
-    </Task>
-  </UsingTask>
-  <!-- END workaround for https://github.com/dotnet/sdk/issues/43339 -->
-
 </Project>

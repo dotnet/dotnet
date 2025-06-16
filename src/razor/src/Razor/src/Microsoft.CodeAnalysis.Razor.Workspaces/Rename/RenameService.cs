@@ -109,7 +109,7 @@ internal class RenameService(
             foreach (var documentPath in project.DocumentFilePaths)
             {
                 // We've already added refactoring edits for our document snapshot
-                if (FilePathComparer.Instance.Equals(documentPath, filePath))
+                if (PathUtilities.OSSpecificPathComparer.Equals(documentPath, filePath))
                 {
                     continue;
                 }
@@ -130,7 +130,7 @@ internal class RenameService(
             }
         }
 
-        return documentSnapshots.DrainToImmutable();
+        return documentSnapshots.ToImmutableAndClear();
     }
 
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
@@ -184,7 +184,7 @@ internal class RenameService(
         RazorCodeDocument codeDocument)
     {
         var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = uri };
-        var tagHelperElements = codeDocument.GetSyntaxTree().Root
+        var tagHelperElements = codeDocument.GetRequiredSyntaxRoot()
             .DescendantNodes()
             .OfType<MarkupTagHelperElementSyntax>();
 

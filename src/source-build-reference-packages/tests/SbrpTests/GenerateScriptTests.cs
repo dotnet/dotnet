@@ -23,7 +23,7 @@ public class GenerateScriptTests
     {
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text },
         new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference },
-        new object[] { "NuGet.Packaging", "6.13.1", PackageType.Reference },
+        new object[] { "NuGet.Packaging", "6.13.2", PackageType.Reference },
         new object[] { "System.Buffers", "4.6.1", PackageType.Reference },
         new object[] { "System.Security.Cryptography.ProtectedData", "8.0.0", PackageType.Reference },
     };

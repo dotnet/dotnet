@@ -9,7 +9,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -67,7 +66,7 @@ internal partial class BackgroundDocumentGenerator : IRazorStartupService, IDisp
             equalityComparer: null,
             idleAction: RazorEventSource.Instance.BackgroundDocumentGeneratorIdle,
             _disposeTokenSource.Token);
-        _suppressedDocuments = ImmutableHashSet<string>.Empty.WithComparer(FilePathComparer.Instance);
+        _suppressedDocuments = ImmutableHashSet<string>.Empty.WithComparer(PathUtilities.OSSpecificPathComparer);
         _projectManager.Changed += ProjectManager_Changed;
     }
 

@@ -86,7 +86,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static RazorSyntaxTree GetSyntaxTreeCore(RazorCodeDocument codeDocument)
         {
-            return codeDocument.GetSyntaxTree().AssumeNotNull();
+            return codeDocument.GetRequiredSyntaxTree();
         }
 
         async ValueTask<RazorSyntaxTree> GetSyntaxTreeCoreAsync(CancellationToken cancellationToken)
@@ -158,11 +158,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static RazorSyntaxNode? GetSyntaxNodeCore(RazorCodeDocument codeDocument, int absoluteIndex)
         {
-            var syntaxTree = codeDocument.GetSyntaxTree().AssumeNotNull();
-
-            return syntaxTree.Root is RazorSyntaxNode root
-                ? root.FindInnermostNode(absoluteIndex)
-                : null;
+            return codeDocument.GetRequiredSyntaxRoot().FindInnermostNode(absoluteIndex);
         }
 
         async ValueTask<RazorSyntaxNode?> GetSyntaxNodeCoreAsync(int absoluteIndex, CancellationToken cancellationToken)

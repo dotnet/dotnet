@@ -40,7 +40,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var source = output.Source.Text;
 
-        var csharpDocument = output.GetCSharpDocument();
+        var csharpDocument = output.GetRequiredCSharpDocument();
         var filePath = output.Source.FilePath.AssumeNotNull();
 
         using var results = new PooledArrayBuilder<RazorMappedSpanResult>();
@@ -57,7 +57,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
             }
         }
 
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public async Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -91,7 +92,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var sourceText = codeDocument.Source.Text;
         if (range is { } span)
         {
-            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && span.OverlapsWith(sourceText.GetLinePositionSpan(d.Span))))
+            if (codeDocument.GetRequiredCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && span.OverlapsWith(sourceText.GetLinePositionSpan(d.Span))))
             {
                 return [];
             }
@@ -193,7 +194,10 @@ internal class RazorFormattingService : IRazorFormattingService
             automaticallyAddUsings: false,
             validate: true,
             cancellationToken: cancellationToken).ConfigureAwait(false);
-        return razorChanges.SingleOrDefault();
+
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public async Task<TextChange?> TryGetCSharpCodeActionEditAsync(DocumentContext documentContext, ImmutableArray<TextChange> csharpChanges, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -214,7 +218,10 @@ internal class RazorFormattingService : IRazorFormattingService
             automaticallyAddUsings: true,
             validate: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
-        return razorChanges.SingleOrDefault();
+
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public async Task<TextChange?> TryGetCSharpSnippetFormattingEditAsync(DocumentContext documentContext, ImmutableArray<TextChange> csharpChanges, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -240,7 +247,9 @@ internal class RazorFormattingService : IRazorFormattingService
 
         razorChanges = UnwrapCSharpSnippets(razorChanges);
 
-        return razorChanges.SingleOrDefault();
+        return razorChanges is [{ } change]
+            ? change
+            : null;
     }
 
     public bool TryGetOnTypeFormattingTriggerKind(RazorCodeDocument codeDocument, int hostDocumentIndex, string triggerCharacter, out RazorLanguageKind triggerCharacterKind)
@@ -372,7 +381,7 @@ internal class RazorFormattingService : IRazorFormattingService
             changes.Add(new(change.Span, newText.Replace(toFind, replacement)));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     internal TestAccessor GetTestAccessor() => new(this);
@@ -386,6 +395,15 @@ internal class RazorFormattingService : IRazorFormattingService
         {
             var contentValidationPass = service._validationPasses.OfType<FormattingContentValidationPass>().Single();
             contentValidationPass.DebugAssertsEnabled = debugAssertsEnabled;
+        }
+
+        public void SetFormattedCSharpDocumentModifierFunc(Func<SourceText, SourceText> func)
+        {
+            // This is only valid for the new formatting engine, so a test that sets it for the old formatter is probably written incorrectly.
+            Debug.Assert(service._languageServerFeatureOptions.UseNewFormattingEngine);
+
+            var pass = service._documentFormattingPasses.OfType<New.CSharpFormattingPass>().Single();
+            pass.GetTestAccessor().SetFormattedCSharpDocumentModifierFunc(func);
         }
     }
 }

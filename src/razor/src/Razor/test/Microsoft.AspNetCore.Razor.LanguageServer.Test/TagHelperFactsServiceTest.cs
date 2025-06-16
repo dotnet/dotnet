@@ -22,8 +22,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @test='abc' />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -43,8 +43,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @test:something='abc' />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -64,8 +64,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @minimized />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -85,8 +85,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     {
         // Arrange
         var codeDocument = CreateComponentDocument($"<TestElement @minimized:something />", DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(3);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(3);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -118,8 +118,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <test bound='true' />
             """, isRazorFile: false, tagHelper.Build());
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -151,8 +151,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <test bound />
             """, isRazorFile: false, tagHelper.Build());
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupTagHelperStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupTagHelperStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -175,8 +175,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound='hello world' />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -199,8 +199,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);
@@ -223,8 +223,8 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             @addTagHelper *, TestAssembly
             <input unbound @DateTime.Now />
             """, isRazorFile: false, DefaultTagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var startTag = (MarkupStartTagSyntax)syntaxTree.Root.FindInnermostNode(30 + Environment.NewLine.Length);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var startTag = (MarkupStartTagSyntax)root.FindInnermostNode(30 + Environment.NewLine.Length);
 
         // Act
         var attributes = TagHelperFacts.StringifyAttributes(startTag.Attributes);

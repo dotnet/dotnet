@@ -18,7 +18,7 @@ internal static partial class RazorWrapperFactory
 
         public ImmutableArray<ClassifiedSpan> GetClassifiedSpans()
         {
-            var result = Object.GetSyntaxTree().GetClassifiedSpans();
+            var result = Object.GetRequiredSyntaxTree().GetClassifiedSpans();
 
             using var builder = new PooledArrayBuilder<ClassifiedSpan>(capacity: result.Length);
 
@@ -34,12 +34,12 @@ internal static partial class RazorWrapperFactory
 #pragma warning restore CS0618 // Type or member is obsolete
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<TagHelperSpan> GetTagHelperSpans()
         {
-            var result = Object.GetSyntaxTree().GetTagHelperSpans();
+            var result = Object.GetRequiredSyntaxTree().GetTagHelperSpans();
 
             using var builder = new PooledArrayBuilder<TagHelperSpan>(capacity: result.Length);
 
@@ -50,19 +50,19 @@ internal static partial class RazorWrapperFactory
                     WrapAll(item.Binding.Descriptors, Wrap)));
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
 
         public ImmutableArray<RazorSourceMapping> GetSourceMappings()
         {
-            var mappings = Object.GetCSharpDocument().SourceMappings;
+            var mappings = Object.GetRequiredCSharpDocument().SourceMappings;
 
             return WrapAll<SourceMapping, RazorSourceMapping>(mappings, ConvertSourceMapping);
         }
 
         public ImmutableArray<IRazorDiagnostic> GetDiagnostics()
         {
-            var diagnostics = Object.GetCSharpDocument().Diagnostics;
+            var diagnostics = Object.GetRequiredCSharpDocument().Diagnostics;
             return WrapAll(diagnostics, Wrap);
         }
 
@@ -72,10 +72,10 @@ internal static partial class RazorWrapperFactory
                 : null;
 
         public int? GetDesiredIndentation(ITextSnapshot snapshot, ITextSnapshotLine line, int indentSize, int tabSize)
-            => RazorIndentationFacts.GetDesiredIndentation(Object.GetSyntaxTree(), snapshot, line, indentSize, tabSize);
+            => RazorIndentationFacts.GetDesiredIndentation(Object.GetRequiredSyntaxTree(), snapshot, line, indentSize, tabSize);
 
         public string GetGeneratedCode()
             => _csharpGeneratedCode ??=
-                InterlockedOperations.Initialize(ref _csharpGeneratedCode, Object.GetCSharpDocument().Text.ToString());
+                InterlockedOperations.Initialize(ref _csharpGeneratedCode, Object.GetRequiredCSharpDocument().Text.ToString());
     }
 }

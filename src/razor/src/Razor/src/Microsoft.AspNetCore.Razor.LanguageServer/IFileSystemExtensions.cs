@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -92,7 +91,7 @@ internal static class IFileSystemExtensions
         foreach (var path in directories)
         {
             var directory = Path.GetFileName(path);
-            if (!ignoredDirectories.Contains(directory, FilePathComparer.Instance))
+            if (!ignoredDirectories.Contains(directory, PathUtilities.OSSpecificPathComparer))
             {
                 foreach (var result in GetFilteredFiles(fileSystem, path, searchPattern, ignoredDirectories, logger))
                 {

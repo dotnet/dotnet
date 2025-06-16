@@ -105,4 +105,131 @@ public class ImmutableArrayExtensionsTests
         var actual = enumerable.SelectAsArray(static (x, index) => x + index);
         Assert.Equal<int>(expected, actual);
     }
+
+    [Fact]
+    public void InsertRange_EmptySpan_DoesNotModifyBuilder()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        builder.Add(2);
+        var originalCount = builder.Count;
+        
+        // Act
+        builder.InsertRange(1, ReadOnlySpan<int>.Empty);
+        
+        // Assert
+        Assert.Equal(originalCount, builder.Count);
+        Assert.Equal(1, builder[0]);
+        Assert.Equal(2, builder[1]);
+    }
+    
+    [Fact]
+    public void InsertRange_AtEndOfBuilder_AppendsItems()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        builder.Add(2);
+        var itemsToInsert = new[] { 3, 4, 5 };
+        
+        // Act
+        builder.InsertRange(builder.Count, itemsToInsert.AsSpan());
+        
+        // Assert
+        Assert.Equal(5, builder.Count);
+        Assert.Equal([1, 2, 3, 4, 5], builder.ToArray());
+    }
+    
+    [Fact]
+    public void InsertRange_SingleItem_InsertsCorrectly()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        builder.Add(3);
+        var itemToInsert = new[] { 2 };
+        
+        // Act
+        builder.InsertRange(1, itemToInsert.AsSpan());
+        
+        // Assert
+        Assert.Equal(3, builder.Count);
+        Assert.Equal([1, 2, 3], builder.ToArray());
+    }
+    
+    [Fact]
+    public void InsertRange_MultipleItems_InsertsCorrectly()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        builder.Add(6);
+        var itemsToInsert = new[] { 2, 3, 4, 5 };
+        
+        // Act
+        builder.InsertRange(1, itemsToInsert.AsSpan());
+        
+        // Assert
+        Assert.Equal(6, builder.Count);
+        Assert.Equal([1, 2, 3, 4, 5, 6], builder.ToArray());
+    }
+    
+    [Fact]
+    public void InsertRange_AtBeginning_InsertsCorrectly()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(3);
+        builder.Add(4);
+        var itemsToInsert = new[] { 1, 2 };
+        
+        // Act
+        builder.InsertRange(0, itemsToInsert.AsSpan());
+        
+        // Assert
+        Assert.Equal(4, builder.Count);
+        Assert.Equal([1, 2, 3, 4], builder.ToArray());
+    }
+    
+    [Fact]
+    public void InsertRange_NegativeIndex_ThrowsArgumentException()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        var itemsToInsert = new[] { 2, 3 };
+        
+        // Act & Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => builder.InsertRange(-1, itemsToInsert.AsSpan()));
+    }
+    
+    [Fact]
+    public void InsertRange_IndexGreaterThanCount_ThrowsArgumentException()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<int>();
+        builder.Add(1);
+        var itemsToInsert = new[] { 2, 3 };
+        
+        // Act & Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => builder.InsertRange(builder.Count + 1, itemsToInsert.AsSpan()));
+    }
+
+    [Fact]
+    public void InsertRange_WithReferenceTypes_InsertsCorrectly()
+    {
+        // Arrange
+        var builder = ImmutableArray.CreateBuilder<string>();
+        builder.Add("apple");
+        builder.Add("banana");
+        var itemsToInsert = new[] { "cherry", "date" };
+        
+        // Act
+        builder.InsertRange(1, itemsToInsert.AsSpan());
+        
+        // Assert
+        Assert.Equal(4, builder.Count);
+        Assert.Equal(["apple", "cherry", "date", "banana"], builder.ToArray());
+    }
 }

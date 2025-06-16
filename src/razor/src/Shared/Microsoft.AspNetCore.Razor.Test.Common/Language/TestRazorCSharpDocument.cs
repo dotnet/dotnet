@@ -13,13 +13,12 @@ internal static class TestRazorCSharpDocument
     public static RazorCSharpDocument Create(
         RazorCodeDocument codeDocument,
         string content,
-        RazorCodeGenerationOptions? options = null,
         ImmutableArray<RazorDiagnostic> diagnostics = default,
         ImmutableArray<SourceMapping> sourceMappings = default,
         ImmutableArray<LinePragma> linePragmas = default)
     {
         var text = SourceText.From(content, Encoding.UTF8);
-        return new RazorCSharpDocument(codeDocument, text, options ?? RazorCodeGenerationOptions.Default, diagnostics, sourceMappings, linePragmas);
+        return new RazorCSharpDocument(codeDocument, text, diagnostics, sourceMappings, linePragmas);
     }
 
     public static RazorCSharpDocument Create(
@@ -27,6 +26,6 @@ internal static class TestRazorCSharpDocument
         string content,
         ImmutableArray<SourceMapping> sourceMappings)
     {
-        return Create(codeDocument, content, options: null, diagnostics: default, sourceMappings, linePragmas: default);
+        return Create(codeDocument, content, diagnostics: default, sourceMappings, linePragmas: default);
     }
 }

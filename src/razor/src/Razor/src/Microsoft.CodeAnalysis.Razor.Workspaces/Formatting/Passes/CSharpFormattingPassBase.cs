@@ -45,7 +45,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         // 2. The indentation due to Razor and HTML constructs
 
         var text = context.SourceText;
-        var csharpDocument = context.CodeDocument.GetCSharpDocument();
+        var csharpDocument = context.CodeDocument.GetRequiredCSharpDocument();
 
         // To help with figuring out the correct indentation, first we will need the indentation
         // that the C# formatter wants to apply in the following locations,
@@ -168,7 +168,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
 
         // Build source mapping indentation scopes.
         var sourceMappingIndentations = new SortedDictionary<int, IndentationData>();
-        var syntaxTreeRoot = context.CodeDocument.GetSyntaxTree().Root;
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
         foreach (var originalLocation in sourceMappingMap.Keys)
         {
             var significantLocation = sourceMappingMap[originalLocation];
@@ -178,12 +178,12 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
                 continue;
             }
 
-            if (originalLocation > syntaxTreeRoot.EndPosition)
+            if (originalLocation > root.EndPosition)
             {
                 continue;
             }
 
-            var scopeOwner = syntaxTreeRoot.FindInnermostNode(originalLocation);
+            var scopeOwner = root.FindInnermostNode(originalLocation);
             if (!sourceMappingIndentations.ContainsKey(originalLocation))
             {
                 sourceMappingIndentations[originalLocation] = new IndentationData(indentation);
@@ -339,7 +339,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
@@ -362,8 +362,8 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             return true;
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindInnermostNode(mappingSpan.Start, includeWhitespace: true);
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(mappingSpan.Start, includeWhitespace: true);
         if (owner is null)
         {
             // Can't determine owner of this position. Optimistically allow formatting.
@@ -628,7 +628,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
 
     protected static string RenderSourceMappings(RazorCodeDocument codeDocument)
     {
-        var markers = codeDocument.GetCSharpDocument().SourceMappings.SelectMany(mapping =>
+        var markers = codeDocument.GetRequiredCSharpDocument().SourceMappings.SelectMany(mapping =>
             new[]
             {
                 (index: mapping.OriginalSpan.AbsoluteIndex, text: "<#" ),

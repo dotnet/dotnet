@@ -92,7 +92,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         // For CSharp we need to map the range to the generated document
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (!_documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), request.Range, out var projectedRange))
+            if (!_documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetRequiredCSharpDocument(), request.Range, out var projectedRange))
             {
                 return null;
             }
@@ -188,7 +188,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         {
             foreach (var edit in edits)
             {
-                if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), ((TextEdit)edit).Range, out var newRange))
+                if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), ((TextEdit)edit).Range, out var newRange))
                 {
                     return [];
                 }

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -467,7 +465,7 @@ public class ComponentMarkupBlockPassTest
             phase.Execute(codeDocument);
         }
 
-        var document = codeDocument.GetDocumentIntermediateNode();
+        var document = codeDocument.GetRequiredDocumentNode();
         Engine.GetFeatures<ComponentDocumentClassifierPass>().Single().Execute(codeDocument, document);
         Engine.GetFeatures<ComponentMarkupDiagnosticPass>().Single().Execute(codeDocument, document);
         return document;

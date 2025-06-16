@@ -80,7 +80,7 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
     public static RazorHtmlDocument GetHtmlDocument(RazorCodeDocument codeDocument)
     {
         using var writer = new RazorHtmlWriter(codeDocument.Source);
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
 
         writer.Visit(syntaxTree);
 
@@ -89,7 +89,7 @@ internal class RazorHtmlWriter : SyntaxWalker, IDisposable
             $"The backing HTML document should be the same length as the original document. Expected: {writer.Source.Text.Length} Actual: {writer.Builder.Length}");
         var text = writer.Builder.GetText();
 
-        return new RazorHtmlDocument(codeDocument, text, codeDocument.CodeGenerationOptions, writer.SourceMappings.DrainToImmutable());
+        return new RazorHtmlDocument(codeDocument, text, writer.SourceMappings.ToImmutableAndClear());
     }
 
     public void Visit(RazorSyntaxTree syntaxTree)

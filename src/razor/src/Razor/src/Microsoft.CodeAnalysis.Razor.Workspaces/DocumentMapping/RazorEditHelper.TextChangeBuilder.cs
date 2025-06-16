@@ -40,7 +40,7 @@ internal static partial class RazorEditHelper
         }
 
         public ImmutableArray<RazorTextChange> DrainToOrderedImmutable()
-            => _builder.DrainToImmutableOrderedBy(static e => e.Span.Start);
+            => _builder.ToImmutableOrderedByAndClear(static e => e.Span.Start);
 
         /// <summary>
         /// For all edits that are not mapped to using directives, add them directly to the builder.
@@ -48,9 +48,9 @@ internal static partial class RazorEditHelper
         /// </summary>
         public void AddDirectlyMappedEdits(ImmutableArray<RazorTextChange> csharpEdits, RazorCodeDocument codeDocument, CancellationToken cancellationToken)
         {
-            var root = codeDocument.GetSyntaxTree().Root;
+            var root = codeDocument.GetRequiredSyntaxRoot();
             var razorText = codeDocument.Source.Text;
-            var csharpDocument = codeDocument.GetCSharpDocument();
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
             var csharpText = csharpDocument.GetGeneratedSourceText();
 
             foreach (var edit in csharpEdits)
@@ -160,7 +160,7 @@ internal static partial class RazorEditHelper
 
             static TextSpan FindFirstTopLevelSpotForUsing(RazorCodeDocument codeDocument)
             {
-                var root = codeDocument.GetSyntaxTree().Root;
+                var root = codeDocument.GetRequiredSyntaxRoot();
                 var nodeToInsertAfter = root
                     .DescendantNodes()
                     .LastOrDefault(t => t is RazorDirectiveSyntax { DirectiveDescriptor: var descriptor }
@@ -387,17 +387,17 @@ internal static partial class RazorEditHelper
             // All usings that are in a continuous block are bulk replaced with the set containing them and the new using directives.
             // All usings outside of the continuous block are checked to see if they need to be removed
 
-            var syntaxTreeRoot = codeDocument.GetSyntaxTree().Root;
+            var root = codeDocument.GetRequiredSyntaxRoot();
             using var firstBlockOfUsingsBuilder = new PooledArrayBuilder<RazorDirectiveSyntax>();
             using var remainingUsingsBuilder = new PooledArrayBuilder<RazorDirectiveSyntax>();
             var allUsingsInSameBlock = true;
 
-            foreach (var node in syntaxTreeRoot.DescendantNodes())
+            foreach (var node in root.DescendantNodes())
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 if (node is RazorDirectiveSyntax razorDirective
-                    && razorDirective.IsUsingDirective(out var _))
+                    && razorDirective.IsUsingDirective())
                 {
                     if (!allUsingsInSameBlock)
                     {
@@ -421,7 +421,7 @@ internal static partial class RazorEditHelper
                 }
             }
 
-            return (firstBlockOfUsingsBuilder.DrainToImmutable(), remainingUsingsBuilder.DrainToImmutable());
+            return (firstBlockOfUsingsBuilder.ToImmutableAndClear(), remainingUsingsBuilder.ToImmutableAndClear());
         }
     }
 }

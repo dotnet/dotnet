@@ -110,7 +110,7 @@ internal sealed class RazorLSPMappingService(
             results.Add(new RazorMappedSpanResult(localFilePath, linePositionSpan, mappedSpan));
         }
 
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public TestAccessor GetTestAccessor() => new(this);

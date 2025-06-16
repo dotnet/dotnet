@@ -18,6 +18,11 @@ public sealed partial class RazorCodeGenerationOptions
         public string? RootNamespace { get; set; }
 
         /// <summary>
+        /// Gets or sets the scope identifier to be used on elements in the generated class.
+        /// </summary>
+        public string? CssScope { get; set; }
+
+        /// <summary>
         /// Gets or sets a value that determines if unique ids are suppressed for testing.
         /// </summary>
         public string? SuppressUniqueIds { get; set; }
@@ -154,6 +159,6 @@ public sealed partial class RazorCodeGenerationOptions
         }
 
         public RazorCodeGenerationOptions ToOptions()
-            => new(IndentSize, NewLine, RootNamespace, SuppressUniqueIds, _flags);
+            => new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, _flags);
     }
 }

@@ -37,9 +37,9 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
         var visitor = new SemanticTokensVisitor(builder, razorCodeDocument, textSpan, razorSemanticTokensLegendService, colorCodeBackground);
 
-        visitor.Visit(razorCodeDocument.GetSyntaxTree().Root);
+        visitor.Visit(razorCodeDocument.GetRequiredSyntaxRoot());
 
-        return builder.DrainToImmutable();
+        return builder.ToImmutableAndClear();
     }
 
     private void Visit(SyntaxList<RazorSyntaxNode> syntaxNodes)

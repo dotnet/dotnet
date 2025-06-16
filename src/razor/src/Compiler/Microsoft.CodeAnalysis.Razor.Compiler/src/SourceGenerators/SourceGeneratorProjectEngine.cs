@@ -70,9 +70,8 @@ internal sealed class SourceGeneratorProjectEngine
 
         int startIndex = _discoveryPhaseIndex;
         var codeDocument = sgDocument.CodeDocument;
-        var previousTagHelpers = codeDocument.GetTagHelpers();
 
-        if (checkForIdempotency && previousTagHelpers is not null)
+        if (checkForIdempotency && codeDocument.TryGetTagHelpers(out var previousTagHelpers))
         {
             // compare the tag helpers with the ones the document last used
             if (Enumerable.SequenceEqual(tagHelpers, previousTagHelpers))
@@ -84,7 +83,7 @@ internal sealed class SourceGeneratorProjectEngine
             {
                 // tag helpers have changed, figure out if we need to re-write
                 var previousTagHelpersInScope = codeDocument.GetRequiredTagHelperContext().TagHelpers;
-                var previousUsedTagHelpers = codeDocument.GetReferencedTagHelpers();
+                var previousUsedTagHelpers = codeDocument.GetRequiredReferencedTagHelpers();
 
                 // re-run discovery to figure out which tag helpers are now in scope for this document
                 codeDocument.SetTagHelpers(tagHelpers);

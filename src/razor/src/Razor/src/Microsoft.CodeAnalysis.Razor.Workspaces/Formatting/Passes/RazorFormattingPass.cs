@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -19,8 +18,8 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
-using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 using RazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode>;
+using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -44,7 +43,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
 
         // Format the razor bits of the file
-        var syntaxTree = changedContext.CodeDocument.GetSyntaxTree();
+        var syntaxTree = changedContext.CodeDocument.GetRequiredSyntaxTree();
         var razorChanges = FormatRazor(changedContext, syntaxTree);
 
         if (razorChanges.Length > 0)
@@ -107,7 +106,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                 // Fortunately for a Html-only section block, the indentation is entirely handled by the Html formatter, and we
                 // just need to push it out one level, because the Html formatter will have pushed it back to position 0.
                 if (children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */] &&
-                    !context.CodeDocument.GetCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
+                    !context.CodeDocument.GetRequiredCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
                 {
                     // The Html formatter will have "collapsed" the @section block contents to 0 indent, so we push it back out
                     // again because we're opinionated about section blocks
@@ -419,8 +418,15 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             {
                 var openBraceLineNumber = openBraceNode.GetLinePositionSpan(source).Start.Line;
                 var openBraceLine = source.Text.Lines[openBraceLineNumber];
-                Debug.Assert(openBraceLine.GetFirstNonWhitespacePosition().HasValue);
-                additionalIndentation = source.Text.GetSubTextString(TextSpan.FromBounds(openBraceLine.Start, openBraceLine.GetFirstNonWhitespacePosition().GetValueOrDefault()));
+
+                // The open brace node might actually start with a newline on the line before, which could be blank,
+                // so make sure we find some actual content.
+                while (!openBraceLine.GetFirstNonWhitespacePosition().HasValue)
+                {
+                    openBraceLine = source.Text.Lines[++openBraceLineNumber];
+                }
+
+                additionalIndentation = openBraceLine.GetLeadingWhitespace();
             }
         }
 

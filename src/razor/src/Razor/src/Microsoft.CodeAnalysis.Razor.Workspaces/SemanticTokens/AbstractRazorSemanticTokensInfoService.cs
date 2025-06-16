@@ -129,7 +129,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
         newList.Sort();
 
-        return newList.DrainToImmutable();
+        return newList.ToImmutableAndClear();
     }
 
     // Virtual for benchmarks
@@ -141,7 +141,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         Guid correlationId,
         CancellationToken cancellationToken)
     {
-        var generatedDocument = codeDocument.GetCSharpDocument();
+        var generatedDocument = codeDocument.GetRequiredCSharpDocument();
         ImmutableArray<LinePositionSpan> csharpRanges;
 
         // When the feature flag is enabled we try to get a list of precise ranges for the C# code embedded in the Razor document.
@@ -219,7 +219,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
             previousSemanticRange = semanticRange;
         }
 
-        return razorRanges.DrainToImmutable();
+        return razorRanges.ToImmutableAndClear();
     }
 
     private void AddAdditionalCSharpWhitespaceRanges(ImmutableArray<SemanticRange>.Builder razorRanges, int textClassification, SourceText razorSource, LinePositionSpan? previousRazorSemanticRange, LinePositionSpan originalRange)
@@ -266,7 +266,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var sourceText = codeDocument.Source.Text;
         var textSpan = sourceText.GetTextSpan(razorRange);
-        var csharpDoc = codeDocument.GetCSharpDocument();
+        var csharpDoc = codeDocument.GetRequiredCSharpDocument();
 
         // We want to find the min and max C# source mapping that corresponds with our Razor range.
         foreach (var mapping in csharpDoc.SourceMappings)
@@ -287,7 +287,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         }
 
         csharpRanges.Sort(CompareLinePositionSpans);
-        ranges = csharpRanges.DrainToImmutable();
+        ranges = csharpRanges.ToImmutableAndClear();
         return true;
     }
 

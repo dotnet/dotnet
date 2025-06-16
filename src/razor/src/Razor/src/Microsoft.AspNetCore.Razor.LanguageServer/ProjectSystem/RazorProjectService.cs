@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Serialization;
@@ -285,12 +284,6 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
                     filePath,
                     (project, textDocumentPath) =>
                     {
-                        if (!project.DocumentFilePaths.Contains(textDocumentPath, FilePathComparer.Instance))
-                        {
-                            _logger.LogInformation($"Containing project is not tracking document '{textDocumentPath}'");
-                            return;
-                        }
-
                         if (!project.TryGetDocument(textDocumentPath, out var document))
                         {
                             _logger.LogError($"Containing project does not contain document '{textDocumentPath}'");
@@ -454,7 +447,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
         var project = _projectManager.GetRequiredProject(projectKey);
         var currentProjectKey = project.Key;
         var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(project.FilePath);
-        var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), FilePathComparer.Instance);
+        var documentMap = documents.ToDictionary(document => EnsureFullPath(document.FilePath, projectDirectory), PathUtilities.OSSpecificPathComparer);
         var miscellaneousProject = _projectManager.GetMiscellaneousProject();
 
         // "Remove" any unnecessary documents by putting them into the misc project
@@ -503,7 +496,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
             // If the physical file name hasn't changed, we use the current document snapshot as the source of truth for text, in case
             // it has received text change info from LSP. eg, if someone changes the TargetPath of the file while its open in the editor
             // with unsaved changes, we don't want to reload it from disk.
-            var textLoader = FilePathComparer.Instance.Equals(currentHostDocument.FilePath, newHostDocument.FilePath)
+            var textLoader = PathUtilities.OSSpecificPathComparer.Equals(currentHostDocument.FilePath, newHostDocument.FilePath)
                 ? new DocumentSnapshotTextLoader(document)
                 : _remoteTextLoaderFactory.Create(newFilePath);
 
@@ -518,13 +511,13 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
         foreach (var documentKvp in documentMap)
         {
             var documentFilePath = documentKvp.Key;
-            if (project.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance))
+            if (project.ContainsDocument(documentFilePath))
             {
                 // Already know about this document
                 continue;
             }
 
-            if (miscellaneousProject.DocumentFilePaths.Contains(documentFilePath, FilePathComparer.Instance))
+            if (miscellaneousProject.ContainsDocument(documentFilePath))
             {
                 MoveDocument(updater, documentFilePath, fromProject: miscellaneousProject, toProject: project);
             }
@@ -580,7 +573,7 @@ internal partial class RazorProjectService : IRazorProjectService, IRazorProject
     private static string EnsureFullPath(string filePath, string projectDirectory)
     {
         var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
-        if (!normalizedFilePath.StartsWith(projectDirectory, FilePathComparison.Instance))
+        if (!normalizedFilePath.StartsWith(projectDirectory, PathUtilities.OSSpecificPathComparison))
         {
             var absolutePath = Path.Combine(projectDirectory, normalizedFilePath);
             normalizedFilePath = FilePathNormalizer.Normalize(absolutePath);

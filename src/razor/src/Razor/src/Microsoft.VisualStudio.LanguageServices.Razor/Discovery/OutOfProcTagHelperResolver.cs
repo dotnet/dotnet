@@ -125,7 +125,7 @@ internal class OutOfProcTagHelperResolver(
 
         if (checksumsToFetchBuilder.Count > 0)
         {
-            var checksumsToFetch = checksumsToFetchBuilder.DrainToImmutable();
+            var checksumsToFetch = checksumsToFetchBuilder.ToImmutableAndClear();
 
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
             var fetchResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
@@ -186,7 +186,7 @@ internal class OutOfProcTagHelperResolver(
                     }
                 }
 
-                return resultBuilder.DrainToImmutable();
+                return resultBuilder.ToImmutableAndClear();
             }
         }
 

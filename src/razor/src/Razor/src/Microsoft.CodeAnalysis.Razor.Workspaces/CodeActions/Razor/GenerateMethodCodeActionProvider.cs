@@ -28,8 +28,8 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindToken(context.StartAbsoluteIndex).Parent.AssumeNotNull();
+        var syntaxRoot = context.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = syntaxRoot.FindToken(context.StartAbsoluteIndex).Parent.AssumeNotNull();
 
         if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventParameterType, out var allowsAsync))
         {

@@ -24,7 +24,7 @@ internal sealed class HtmlFormattingPass(ILoggerFactory loggerFactory) : IFormat
 
         if (changes.Length > 0)
         {
-            var filteredChanges = FilterIncomingChanges(context.CodeDocument.GetSyntaxTree(), changes);
+            var filteredChanges = FilterIncomingChanges(context.CodeDocument.GetRequiredSyntaxTree(), changes);
             changedText = changedText.WithChanges(filteredChanges);
 
             _logger.LogTestOnly($"After FilterIncomingChanges:\r\n{changedText}");
@@ -76,6 +76,6 @@ internal sealed class HtmlFormattingPass(ILoggerFactory loggerFactory) : IFormat
             changesToKeep.Add(change);
         }
 
-        return changesToKeep.DrainToImmutable();
+        return changesToKeep.ToImmutableAndClear();
     }
 }

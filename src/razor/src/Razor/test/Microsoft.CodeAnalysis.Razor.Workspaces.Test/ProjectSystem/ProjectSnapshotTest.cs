@@ -4,6 +4,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
@@ -126,7 +127,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
         var importSource = Assert.Single(importSources);
 
         // The RazorSourceDocument for the import should use the paths from the document.
-        Assert.Equal(importDocument.FilePath, importSource.FilePath, FilePathComparer.Instance);
-        Assert.Equal(importDocument.TargetPath, importSource.RelativePath, FilePathComparer.Instance);
+        Assert.Equal(importDocument.FilePath, importSource.FilePath, PathUtilities.OSSpecificPathComparer);
+        Assert.Equal(importDocument.TargetPath, importSource.RelativePath, PathUtilities.OSSpecificPathComparer);
     }
 }

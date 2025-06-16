@@ -33,7 +33,7 @@ internal class FoldingRangeService(
         // but we will at least have one per html range so can avoid some initial resizing of the backing data store.
         mappedRanges.SetCapacityIfLarger(htmlRanges.Length);
 
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         foreach (var foldingRange in csharpRanges)
         {
