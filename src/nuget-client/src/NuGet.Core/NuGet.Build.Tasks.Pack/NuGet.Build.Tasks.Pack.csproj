@@ -135,9 +135,9 @@
         $(PathToBuiltNuGetPack) ^
         @(BuildArtifacts, ' ')</IlmergeCommand>
       <IlmergeCommand Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">$(IlmergeCommand) ^
-        /lib:$(PkgMicrosoft_Build_Utilities_Core)\lib\netstandard2.0 ^
-        /lib:$(PkgMicrosoft_Build_Tasks_Core)\lib\netstandard2.0 ^
-        /lib:$(PkgMicrosoft_Build_Framework)\lib\netstandard2.0
+        /lib:$(PkgMicrosoft_Build_Utilities_Core)\ref\netstandard2.0 ^
+        /lib:$(PkgMicrosoft_Build_Tasks_Core)\ref\netstandard2.0 ^
+        /lib:$(PkgMicrosoft_Build_Framework)\ref\netstandard2.0
       </IlmergeCommand>
 
     </PropertyGroup>

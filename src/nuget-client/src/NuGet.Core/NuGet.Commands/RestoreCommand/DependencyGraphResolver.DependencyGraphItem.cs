@@ -178,7 +178,7 @@ namespace NuGet.Commands
                     if (isRootProject && enablePruningWarnings && SdkAnalysisLevelMinimums.IsEnabled(
                         projectRestoreMetadata.SdkAnalysisLevel,
                         projectRestoreMetadata.UsingMicrosoftNETSdk,
-                        SdkAnalysisLevelMinimums.PruningWarnings))
+                        SdkAnalysisLevelMinimums.V10_0_100))
                     {
                         logger.Log(RestoreLogMessage.CreateWarning(NuGetLogCode.NU1511, string.Format(CultureInfo.CurrentCulture, Strings.Error_RestorePruningProjectReference, dependency.Name), dependency.Name,
                             targetGraphName));

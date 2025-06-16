@@ -16,6 +16,7 @@ using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 
 namespace NuGet.PackageManagement.UI
 {
@@ -57,6 +58,9 @@ namespace NuGet.PackageManagement.UI
 
         [Import]
         private Lazy<IRestoreProgressReporter> RestoreProgressReporter { get; set; }
+
+        [Import]
+        private INuGetTelemetryProvider NuGetTelemetryProvider { get; set; }
 
         [ImportingConstructor]
         public NuGetUIFactory(
@@ -105,6 +109,7 @@ namespace NuGet.PackageManagement.UI
                 LockService.Value,
                 OutputConsoleLogger,
                 RestoreProgressReporter.Value,
+                NuGetTelemetryProvider,
                 CancellationToken.None,
                 projects);
         }

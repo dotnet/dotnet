@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using NuGet.Common;
 using NuGet.Test.Utility;
 using Test.Utility;
 using Xunit;
@@ -209,23 +210,21 @@ namespace NuGet.Protocol.Tests
         {
             // Arrange
             TimeSpan retryDelay = SmallTimeout;
+            int maxTries = MaxTries;
 
-            TestEnvironmentVariableReader testEnvironmentVariableReader = GetEnhancedHttpRetryEnvironmentVariables();
             Func<HttpRequestMessage, HttpResponseMessage> handler = requestMessage =>
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(10));
-
                 return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
             };
 
-            var minTime = GetRetryMinTime(MaxTries, SmallTimeout);
+            var minTime = GetRetryMinTime(maxTries, retryDelay);
 
-            var retryHandler = new HttpRetryHandler(testEnvironmentVariableReader);
+            var retryHandler = new HttpRetryHandler(new EnvironmentVariableWrapper());
             var testHandler = new HttpRetryTestHandler(handler);
             var httpClient = new HttpClient(testHandler);
             var request = new HttpRetryHandlerRequest(httpClient, () => new HttpRequestMessage(HttpMethod.Get, TestUrl))
             {
-                MaxTries = MaxTries,
+                MaxTries = maxTries,
                 RequestTimeout = Timeout.InfiniteTimeSpan,
                 RetryDelay = retryDelay
             };
@@ -537,14 +536,18 @@ namespace NuGet.Protocol.Tests
 
         private static TimeSpan GetRetryMinTime(int tries, TimeSpan retryDelay)
         {
-            return TimeSpan.FromTicks((tries - 1) * retryDelay.Ticks);
+            int retryCount = 0;
+            for (int i = 1; i < tries; i++)
+            {
+                retryCount = (int)(retryCount + Math.Pow(2, i));
+            }
+            return TimeSpan.FromTicks(retryCount * retryDelay.Ticks);
         }
 
         private static TestEnvironmentVariableReader GetEnhancedHttpRetryEnvironmentVariables(bool? isEnabled = true, int? retryCount = MaxTries, int? delayMilliseconds = 0, bool? retry429 = true)
         => new TestEnvironmentVariableReader(
             new Dictionary<string, string>()
             {
-                [EnhancedHttpRetryHelper.IsEnabledEnvironmentVariableName] = isEnabled?.ToString(),
                 [EnhancedHttpRetryHelper.RetryCountEnvironmentVariableName] = retryCount?.ToString(),
                 [EnhancedHttpRetryHelper.DelayInMillisecondsEnvironmentVariableName] = delayMilliseconds?.ToString(),
                 [EnhancedHttpRetryHelper.Retry429EnvironmentVariableName] = retry429?.ToString(),

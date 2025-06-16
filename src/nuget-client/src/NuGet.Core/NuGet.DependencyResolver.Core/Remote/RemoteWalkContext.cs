@@ -82,7 +82,7 @@ namespace NuGet.DependencyResolver
                     var current = RemoteLibraryProviders[i];
                     for (int j = 0; j < sources.Count; ++j)
                     {
-                        if (StringComparer.Ordinal.Equals(sources[j], current.Source.Name))
+                        if (StringComparer.OrdinalIgnoreCase.Equals(sources[j], current.Source.Name))
                         {
                             filteredLibraryProviders.Add(current);
                             break;

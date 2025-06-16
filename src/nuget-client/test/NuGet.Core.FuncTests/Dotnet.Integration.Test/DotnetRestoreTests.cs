@@ -3178,6 +3178,39 @@ EndGlobal";
             assetsFile.PackageSpec.RestoreMetadata.RestoreAuditProperties.AuditMode.Should().Be(expectedAuditMode);
         }
 
+        [InlineData("9.0.100", "warning NU1604")]
+        [InlineData("10.0.100", "error NU1015")]
+        [Theory]
+        public void DotnetRestore_PackageReferenceWithNoVersion_OutputExpectedDiagnostic(string sdkAnalysisLevel, string expected)
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.AddProperty(xml, "SdkAnalysisLevel", sdkAnalysisLevel);
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "X",
+                    string.Empty,
+                    [],
+                    []);
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var result = _dotnetFixture.RunDotnetExpectFailure(workingDirectory, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+            result.Output.Should().Contain(expected);
+        }
+
         private void AssertRelatedProperty(IList<LockFileItem> items, string path, string related)
         {
             var item = items.Single(i => i.Path.Equals(path));

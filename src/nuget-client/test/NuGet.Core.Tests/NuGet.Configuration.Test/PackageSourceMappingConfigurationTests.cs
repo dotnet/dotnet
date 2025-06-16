@@ -85,5 +85,91 @@ namespace NuGet.Configuration.Test
             IReadOnlyList<string> contosoPattern = packageSourceMapping.Patterns["contoso"];
             contosoPattern.Should().BeEquivalentTo(new string[] { "moreStuff" });
         }
+
+        [Fact]
+        public void GetPackageSourceMappingConfiguration_WithMultipleConfigs_WhenMatchingKeys_PicksClosestOne()
+        {
+            // Arrange
+            using var mockBaseDirectory = TestDirectory.Create();
+            var configPath1 = Path.Combine(mockBaseDirectory, "closerPath", "NuGet.Config");
+            Directory.CreateDirectory(Path.GetDirectoryName(configPath1)!);
+            SettingsTestUtils.CreateConfigurationFile(configPath1, @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""nuget.org"">
+            <package pattern=""stuff"" />
+        </packageSource>
+        <packageSource key=""contoso"">
+            <package pattern=""moreStuff"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>");
+
+            var configPath2 = Path.Combine(mockBaseDirectory, "NuGet.Config");
+            SettingsTestUtils.CreateConfigurationFile(configPath2, @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""nuget.org"">
+            <package pattern=""nay"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>");
+
+            var settings = Settings.LoadSettingsGivenConfigPaths(new string[] { configPath1, configPath2 });
+
+            // Act & Assert
+            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+            packageSourceMapping.IsEnabled.Should().BeTrue();
+            packageSourceMapping.Patterns.Should().HaveCount(2);
+
+            IReadOnlyList<string> nugetPatterns = packageSourceMapping.Patterns["nuget.org"];
+            nugetPatterns.Should().BeEquivalentTo(new string[] { "stuff" });
+
+            IReadOnlyList<string> contosoPattern = packageSourceMapping.Patterns["contoso"];
+            contosoPattern.Should().BeEquivalentTo(new string[] { "moreStuff" });
+        }
+
+        [Fact]
+        public void GetPackageSourceMappingConfiguration_WithMultipleConfigs_WhenOrdinalIgnoreCaseMatchingKeys_PicksClosestOne()
+        {
+            // Arrange
+            using var mockBaseDirectory = TestDirectory.Create();
+            var configPath1 = Path.Combine(mockBaseDirectory, "closerPath", "NuGet.Config");
+            Directory.CreateDirectory(Path.GetDirectoryName(configPath1)!);
+            SettingsTestUtils.CreateConfigurationFile(configPath1, @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""nuget.org"">
+            <package pattern=""stuff"" />
+        </packageSource>
+        <packageSource key=""contoso"">
+            <package pattern=""moreStuff"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>");
+
+            var configPath2 = Path.Combine(mockBaseDirectory, "NuGet.Config");
+            SettingsTestUtils.CreateConfigurationFile(configPath2, @"<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+    <packageSourceMapping>
+        <packageSource key=""NuGet.org"">
+            <package pattern=""nay"" />
+        </packageSource>
+    </packageSourceMapping>
+</configuration>");
+
+            var settings = Settings.LoadSettingsGivenConfigPaths(new string[] { configPath1, configPath2 });
+
+            // Act & Assert
+            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+            packageSourceMapping.IsEnabled.Should().BeTrue();
+            packageSourceMapping.Patterns.Should().HaveCount(2);
+
+            IReadOnlyList<string> nugetPatterns = packageSourceMapping.Patterns["nuget.org"];
+            nugetPatterns.Should().BeEquivalentTo(new string[] { "stuff" });
+
+            IReadOnlyList<string> contosoPattern = packageSourceMapping.Patterns["contoso"];
+            contosoPattern.Should().BeEquivalentTo(new string[] { "moreStuff" });
+        }
     }
 }

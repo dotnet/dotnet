@@ -88,7 +88,7 @@ namespace NuGet.Protocol
             _httpSource = httpSource;
             _nupkgDownloader = new FindPackagesByIdNupkgDownloader(httpSource);
             _enhancedHttpRetryHelper = new EnhancedHttpRetryHelper(environmentVariableReader);
-            _maxRetries = _enhancedHttpRetryHelper.IsEnabled ? _enhancedHttpRetryHelper.RetryCount : DefaultMaxRetries;
+            _maxRetries = _enhancedHttpRetryHelper.RetryCountOrDefault;
         }
 
         /// <summary>
@@ -550,8 +550,7 @@ namespace NuGet.Protocol
                         + ExceptionUtilities.DisplayMessage(ex);
                     logger.LogMinimal(message);
 
-                    if (_enhancedHttpRetryHelper.IsEnabled &&
-                        ex.InnerException != null &&
+                    if (ex.InnerException != null &&
                         ex.InnerException is IOException &&
                         ex.InnerException.InnerException != null &&
                         ex.InnerException.InnerException is System.Net.Sockets.SocketException)
@@ -560,7 +559,7 @@ namespace NuGet.Protocol
                         // Azure DevOps feeds sporadically do this due to mandatory connection cycling.
                         // Stalling an extra <ExperimentalRetryDelayMilliseconds> gives Azure more of a chance to recover.
                         logger.LogVerbose("Enhanced retry: Encountered SocketException, delaying between tries to allow recovery");
-                        await Task.Delay(TimeSpan.FromMilliseconds(_enhancedHttpRetryHelper.DelayInMilliseconds), cancellationToken);
+                        await Task.Delay(TimeSpan.FromMilliseconds(_enhancedHttpRetryHelper.DelayInMillisecondsOrDefault), cancellationToken);
                     }
                 }
                 catch (Exception ex) when (retry == _maxRetries)

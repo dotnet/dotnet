@@ -1157,4 +1157,8 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
   <data name="Invalid_Framework" xml:space="preserve">
     <value>One or more invalid frameworks were detected.</value>
   </data>
+  <data name="Error_PackageReference_NoVersion" xml:space="preserve">
+    <value>The following PackageReference item(s) do not have a version specified: {0}</value>
+    <comment>0 - List of package names</comment>
+  </data>
 </root>

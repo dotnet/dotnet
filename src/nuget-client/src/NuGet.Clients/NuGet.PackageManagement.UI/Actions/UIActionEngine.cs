@@ -1108,7 +1108,7 @@ namespace NuGet.PackageManagement.UI
             return results;
         }
 
-        private async Task<List<IPackageSearchMetadata>> GetRemotePackageMetadataAsync(
+        private static async Task<List<IPackageSearchMetadata>> GetRemotePackageMetadataAsync(
             IEnumerable<SourceRepository> enabledSources,
             SourceCacheContext sourceCacheContext,
             IEnumerable<PackageIdentity> packages,
@@ -1167,7 +1167,7 @@ namespace NuGet.PackageManagement.UI
                         return Task.FromResult<IPackageSearchMetadata?>(null);
                     }
 
-                    var enabledAndMappedSources = enabledSources.Where(_ => mappedSources.Contains(_.PackageSource.Name));
+                    var enabledAndMappedSources = enabledSources.Where(_ => mappedSources.Contains(_.PackageSource.Name, StringComparer.OrdinalIgnoreCase));
 
                     return GetPackageMetadataAsync(enabledAndMappedSources, sourceCacheContext, p, t);
                 },
