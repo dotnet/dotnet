@@ -33,7 +33,6 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
         return new RazorCSharpDocument(
             codeDocument,
             text,
-            _options,
             context.GetDiagnostics(),
             context.GetSourceMappings(),
             context.GetLinePragmas());

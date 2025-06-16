@@ -281,7 +281,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     private RazorCompletionContext CreateRazorCompletionContext(int absoluteIndex, string documentContent)
     {
         var codeDocument = GetCodeDocument(documentContent);
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex, includeWhitespace: true, walkMarkersBack: true);

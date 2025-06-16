@@ -83,7 +83,7 @@ internal class SpellCheckService(
 
     private void AddCSharpSpellCheckRanges(ref PooledArrayBuilder<SpellCheckRange> ranges, ImmutableArray<SpellCheckRange> csharpRanges, RazorCodeDocument codeDocument)
     {
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         foreach (var range in csharpRanges)
         {

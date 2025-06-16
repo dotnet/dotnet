@@ -92,7 +92,7 @@ internal class RazorFormattingService : IRazorFormattingService
         var sourceText = codeDocument.Source.Text;
         if (range is { } span)
         {
-            if (codeDocument.GetCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && span.OverlapsWith(sourceText.GetLinePositionSpan(d.Span))))
+            if (codeDocument.GetRequiredCSharpDocument().Diagnostics.Any(d => d.Span != SourceSpan.Undefined && span.OverlapsWith(sourceText.GetLinePositionSpan(d.Span))))
             {
                 return [];
             }

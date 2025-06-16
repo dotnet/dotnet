@@ -1168,7 +1168,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             return csharpRanges;
         }
 
-        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out var range) &&
+        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetRequiredCSharpDocument(), razorRange, out var range) &&
             !codeDocument.TryGetMinimalCSharpRange(razorRange, out range))
         {
             // No C# in the range.

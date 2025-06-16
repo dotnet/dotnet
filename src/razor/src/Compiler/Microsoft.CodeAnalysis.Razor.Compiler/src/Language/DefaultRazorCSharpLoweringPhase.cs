@@ -14,7 +14,7 @@ internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSh
 {
     protected override void ExecuteCore(RazorCodeDocument codeDocument, CancellationToken cancellationToken)
     {
-        var documentNode = codeDocument.GetDocumentIntermediateNode();
+        var documentNode = codeDocument.GetDocumentNode();
         ThrowForMissingDocumentDependency(documentNode);
 
         var target = documentNode.Target;
@@ -28,7 +28,7 @@ internal class DefaultRazorCSharpLoweringPhase : RazorEnginePhaseBase, IRazorCSh
         }
 
         var writer = DocumentWriter.CreateDefault(documentNode.Target, documentNode.Options);
-        var cSharpDocument = writer.WriteDocument(codeDocument, documentNode);
-        codeDocument.SetCSharpDocument(cSharpDocument);
+        var csharpDocument = writer.WriteDocument(codeDocument, documentNode);
+        codeDocument.SetCSharpDocument(csharpDocument);
     }
 }
