@@ -114,12 +114,6 @@ variables:
 - name: centOSStreamContainerImage
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
 
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamContainerNamePrevious
-  value: centOSStreamContainerOld
-- name: centOSStreamContainerImagePrevious
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
-
 - name: fedoraContainerName
   value: fedoraContainer
 - name: fedoraContainerImage
@@ -191,9 +185,6 @@ variables:
   value: Alpine321
 - name: centOSStreamName
   value: CentOSStream10
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamNamePrevious
-  value: CentOSStream9
 - name: fedoraName
   value: Fedora41
 - name: ubuntuName
@@ -215,9 +206,6 @@ variables:
   value: alpine.3.21-x64
 - name: centOSStreamX64Rid
   value: centos.10-x64
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamX64RidPrevious
-  value: centos.9-x64
 - name: fedoraX64Rid
   value: fedora.41-x64
 - name: ubuntux64Rid
