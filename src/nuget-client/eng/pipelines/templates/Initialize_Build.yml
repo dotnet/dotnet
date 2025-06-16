@@ -1,13 +1,5 @@
 steps:
 - task: PowerShell@1
-  displayName: "Check VSTS Personal Access Token"
-  inputs:
-    scriptType: "inlineScript"
-    inlineScript: |
-      . $(Build.Repository.LocalPath)\\scripts\\utils\\PostGitCommitStatus.ps1
-      CheckVstsPersonalAccessToken -VstsPersonalAccessToken $(System.AccessToken)
-
-- task: PowerShell@1
   displayName: "Update Build Number"
   name: "updatebuildnumber"
   inputs:

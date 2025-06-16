@@ -102,8 +102,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: End_To_End_Tests_On_Windows Part1
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -130,8 +128,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: End_To_End_Tests_On_Windows Part2
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     DartLabEnvironment: ${{parameters.DartLabEnvironment}}
@@ -156,8 +152,6 @@ stages:
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.QBuildSessionId']]
     - name: RunSettingsDrop
       value: $[stageDependencies.Build.Build.outputs['dartlab_variables.RunSettingsDrop']]
-    - name: GitHubStatusName
-      value: Apex Tests On Windows
     baseBuildDrop: $(VsBaseBuildDrop)
     bootstrapperUrl: $(VsBootstrapperUrl)
     dartLabEnvironment: ${{parameters.DartLabEnvironment}}
