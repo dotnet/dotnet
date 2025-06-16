@@ -18,9 +18,11 @@ This document uses the following terminology:
 
 ### Major, Minor and Patch Versions
 
-.NET follows [Semantic Versioning](https://semver.org/) to communicate the nature of changes in each release. The package version numbers are structured as `MAJOR.MINOR.PATCH`, though since .NET Core 3.1, only the MAJOR and PATCH components are actively used. There is no plan to use MINOR versiosn going forward. The MAJOR version is incremented for yearly releases that introduce breaking changes or significant new features that may not be backward compatible, while the PATCH version is incremented for releases that include only backward-compatible bug fixes or small improvements.
+Most .NET components are versioned with a standard `MAJOR.MINOR.PATCH`, though since .NET Core 3.1, only the MAJOR and PATCH components are actively used. There is no plan to use MINOR version going forward. The MAJOR version is incremented for yearly releases that introduce breaking changes or significant new features that may not be backward compatible, while the PATCH version is incremented for releases that include only backward-compatible bug fixes or small improvements.
 
 Repos that make up the .NET product may choose their own `MAJOR.MINOR.PATCH` versions, and there is no strict enforcement across components. However, .NET does ensure that shared frameworks have their MAJOR.MINOR.PATCH aligned. The .NET SDK shares a major and minor version with the shared frameworks, but uses the patch version to communicate SDK band. SDK bands start at 100 for the patch version. Each new SDK band starts at the next multiple of 100 (for example, 200, 300, etc.).
+
+Additionally, some packages released by .NET may have versioning that does not align with the runtime version, or does not conform to SemVer2 standards. For instance, global tools often use a 3 part version, where the patch is determined by the date+build revision (e.g. 9.0.621003)
 
 ### Pre-release information
 
