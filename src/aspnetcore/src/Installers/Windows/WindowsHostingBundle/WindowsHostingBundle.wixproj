@@ -96,29 +96,13 @@
 
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.targets))\Directory.Build.targets" />
 
-  <Target Name="GetNonStableProductVersion" BeforeTargets="Build">
-    <!--
-      This target is defined in eng/targets/Packaging.targets and Npm.Common.targets and included in every C#, F#,
-      and npm project. We use Microsoft.AspNetCore.InternalTesting.csproj because it is non-shipping (we need a non-stable
-      version string to use as our publish location) non-packed (won't be shipped in the future).
-    -->
-    <MSBuild Projects="$(RepoRoot)src\Testing\src\Microsoft.AspNetCore.InternalTesting.csproj"
-        Properties="ExcludeFromBuild=false"
-        Targets="_GetPackageVersionInfo">
-      <Output TaskParameter="TargetOutputs" ItemName="_ResolvedPackageVersionInfo" />
-    </MSBuild>
-
-    <PropertyGroup>
-      <NonStableProductVersion>%(_ResolvedPackageVersionInfo.PackageVersion)</NonStableProductVersion>
-    </PropertyGroup>
-  </Target>
-
   <PropertyGroup>
     <PackageFileName>dotnet-hosting-$(PackageVersion)-win$(TargetExt)</PackageFileName>
 
     <BundleNameShort>Microsoft .NET $(PackageBrandingVersion)</BundleNameShort>
     <SharedFxPackageVersion>$(PackageVersion)</SharedFxPackageVersion>
     <SharedFxMsiVersion>$(PackageVersion)</SharedFxMsiVersion>
+    <NonStableVersion>$(VersionPrefix)-$(_PreReleaseLabel)$(_BuildNumberLabels)</NonStableVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -137,7 +121,7 @@
 
   <!-- CrossArchitectureInstallerBasePath is a global property, so use a new property instead of modifying it -->
   <PropertyGroup Condition="'$(AddVersionToCrossArchitectureInstallerBasePath)' == 'true'">
-    <CrossArchitectureInstallerBasePathNormalized>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime', '$(NonStableProductVersion)'))</CrossArchitectureInstallerBasePathNormalized>
+    <CrossArchitectureInstallerBasePathNormalized>$([MSBuild]::NormalizeDirectory('$(CrossArchitectureInstallerBasePath)', 'aspnetcore', 'Runtime', '$(NonStableVersion)'))</CrossArchitectureInstallerBasePathNormalized>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(AddVersionToCrossArchitectureInstallerBasePath)' != 'true'">
