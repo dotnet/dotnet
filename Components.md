@@ -46,7 +46,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@1bafa97](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC1bafa9761541b20cded99398ce1a8630d09f43fd)*
 - `src/scenario-tests`  
-*[dotnet/scenario-tests@45b8786](https://github.com/dotnet/scenario-tests/tree/45b878678cfbde6c460450ed1699de75a20d6e87)*
+*[dotnet/scenario-tests@5c769be](https://github.com/dotnet/scenario-tests/tree/5c769be3733c4ffa543fc7e7ec5fadd4fa8f8c9e)*
 - `src/sdk`  
 *[dotnet/sdk@83dd285](https://github.com/dotnet/sdk/tree/83dd285209df043959f124a6ed05780fe2fffcf6)*
 - `src/source-build-externals`  
