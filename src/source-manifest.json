@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25311.17",
-      "barId": 271403,
+      "packageVersion": "10.0.0-preview.6.25314.1",
+      "barId": 271817,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "16438b6e3e694a76186a49a8e700548423e549ea"
+      "commitSha": "ee0edc282eecb3d2040a549e275967a29c3465d5"
     },
     {
       "packageVersion": "0.11.5-alpha.25302.1",
@@ -92,11 +92,11 @@
       "commitSha": "67633105eb00449cca598c97b44f97c8771563da"
     },
     {
-      "packageVersion": "5.0.0-1.25313.1",
-      "barId": 271699,
+      "packageVersion": "5.0.0-1.25314.1",
+      "barId": 271796,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "029b0b431a462596b5abff2c387590c2e8b2d161"
+      "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
     },
     {
       "packageVersion": "10.0.0-preview.25312.1",
@@ -107,10 +107,10 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 271764,
+      "barId": 271816,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "1dd10350bbbfa5850709179df7a0ae70601adf28"
+      "commitSha": "9ed11b9729f17813247a8bebd39873c32305fc7e"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
@@ -176,11 +176,11 @@
       "commitSha": "d78740da3e8c0715652c28ba7b53022c2d10ac51"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25313.4",
-      "barId": 271768,
+      "packageVersion": "10.0.0-preview.6.25314.1",
+      "barId": 271807,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "3a9a6a2075350fe0d78ccf363e7387459e1f89a6"
+      "commitSha": "380e8517a4f63e0bb408e9e56bde4b5425b8e95c"
     },
     {
       "packageVersion": "10.0.0-preview.6.25310.4",
@@ -201,7 +201,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "7e2c425db2c2e024b2807bfe6d386f4ff068d0d6"
+      "commitSha": "175c1b55cfb3dbed519b94a370c083aac605009f"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
