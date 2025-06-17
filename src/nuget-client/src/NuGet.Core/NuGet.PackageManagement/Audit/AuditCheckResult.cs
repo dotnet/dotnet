@@ -12,6 +12,11 @@ namespace NuGet.PackageManagement
 {
     public record AuditCheckResult
     {
+        internal static readonly AuditCheckResult NoopAuditResult = new AuditCheckResult(Array.Empty<ILogMessage>())
+        {
+            IsAuditEnabled = false,
+        };
+
         public IReadOnlyList<ILogMessage> Warnings { get; }
         internal bool IsAuditEnabled { get; set; } = true;
 
