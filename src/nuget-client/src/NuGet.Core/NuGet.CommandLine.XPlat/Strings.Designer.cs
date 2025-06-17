@@ -629,6 +629,24 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid version range &apos;{0}&apos;.
+        /// </summary>
+        internal static string Error_InvalidVersionRange {
+            get {
+                return ResourceManager.GetString("Error_InvalidVersionRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing version from {0}.
+        /// </summary>
+        internal static string Error_MissingVersion {
+            get {
+                return ResourceManager.GetString("Error_MissingVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MsBuild was unable to open Project &apos;{0}&apos;..
         /// </summary>
         internal static string Error_MsBuildUnableToOpenProject {
@@ -1527,6 +1545,15 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Package reference in the form of a package identifier like &apos;Newtonsoft.Json&apos; or package identifier and version separated by &apos;@&apos; like &apos;Newtonsoft.Json@13.0.3&apos;..
+        /// </summary>
+        internal static string PackageUpdate_PackageArgumentDescription {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PackageArgumentDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview restore with updated packages was not successful. Force mode is not yet available..
         /// </summary>
         internal static string PackageUpdate_PreviewRestoreFailed {
@@ -2346,6 +2373,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Warning_AlreadyHighestVersion {
             get {
                 return ResourceManager.GetString("Warning_AlreadyHighestVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package {0} is already referencing version {1}.
+        /// </summary>
+        internal static string Warning_AlreadyUsingSameVersion {
+            get {
+                return ResourceManager.GetString("Warning_AlreadyUsingSameVersion", resourceCulture);
             }
         }
         
