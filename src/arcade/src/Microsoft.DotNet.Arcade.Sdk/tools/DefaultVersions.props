@@ -82,9 +82,9 @@
     <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">3.0.2</XUnitRunnerVisualStudioVersion>
 
     <XUnitV3Version Condition="'$(XUnitV3Version)' == ''">2.0.3</XUnitV3Version>
-    <MicrosoftTestingPlatformVersion Condition="'$(MicrosoftTestingPlatformVersion)' == ''">1.6.3</MicrosoftTestingPlatformVersion>
+    <MicrosoftTestingPlatformVersion Condition="'$(MicrosoftTestingPlatformVersion)' == ''">1.7.2</MicrosoftTestingPlatformVersion>
 
-    <MSTestVersion Condition="'$(MSTestVersion)' == ''">3.8.3</MSTestVersion>
+    <MSTestVersion Condition="'$(MSTestVersion)' == ''">3.9.2</MSTestVersion>
     <MSTestTestAdapterVersion Condition="'$(MSTestTestAdapterVersion)' == ''">$(MSTestVersion)</MSTestTestAdapterVersion>
     <MSTestTestFrameworkVersion Condition="'$(MSTestTestFrameworkVersion)' == ''">$(MSTestVersion)</MSTestTestFrameworkVersion>
     <MicrosoftDotNetBuildTasksFeedVersion Condition="'$(MicrosoftDotNetBuildTasksFeedVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksFeedVersion>
