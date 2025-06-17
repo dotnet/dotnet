@@ -23,11 +23,12 @@
     <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);SkipScenarioTestsDependencies</_GlobalPropertiesToRemoveFromProjectReferences>
   </PropertyGroup>
 
+  <!-- Use PrivateAssets="all" to not flow repo dependencies to consuming projects (for installer tests). -->
   <ItemGroup Condition="'$(SkipScenarioTestsDependencies)' != 'true'">
-    <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="arcade" PrivateAssets="all" />
+    <RepositoryReference Include="command-line-api" PrivateAssets="all" />
     <!-- Depend on NuGet packages from the sdk repo and transitive repositories. -->
-    <RepositoryReference Include="sdk" />
+    <RepositoryReference Include="sdk" PrivateAssets="all" />
   </ItemGroup>
 
   <Target Name="PrepareScenarioTestsInputs"
