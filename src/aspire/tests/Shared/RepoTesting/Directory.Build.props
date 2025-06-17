@@ -1,3 +1,0 @@
-<Project>
-  <Import Project="$(TestsSharedRepoTestingDir)Aspire.RepoTesting.props" />
-</Project>
