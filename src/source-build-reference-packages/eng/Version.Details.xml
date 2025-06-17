@@ -11,9 +11,9 @@
       <Sha>30ed464acd37779c64e9dc652d4460543ebf9966</Sha>
       <SourceBuild RepoName="source-build-reference-packages" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25263.4">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="8.0.0-beta.25310.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>20ab70a74d52b68f4271bd946884e24049b14f83</Sha>
+      <Sha>2ce3f8c7b2614c2b19985b669ffcd934bc39ffd1</Sha>
       <SourceBuild RepoName="arcade" ManagedOnly="true" />
     </Dependency>
     <Dependency Name="Microsoft.DotNet.GenAPI.Task" Version="8.0.100-rc.2.23460.8">
