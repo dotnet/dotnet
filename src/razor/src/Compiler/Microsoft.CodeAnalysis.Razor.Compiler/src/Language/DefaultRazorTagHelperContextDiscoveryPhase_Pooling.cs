@@ -58,7 +58,7 @@ internal partial class DefaultRazorTagHelperContextDiscoveryPhase
         {
             var componentDirectiveVisitor = s_componentDirectiveVisitorPool.Get();
 
-            codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var currentNamespace);
+            codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var currentNamespace);
             var filePath = codeDocument.Source.FilePath.AssumeNotNull();
             componentDirectiveVisitor.Initialize(filePath, tagHelpers, currentNamespace);
 

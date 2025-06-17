@@ -6164,8 +6164,6 @@ public:
 
     void fgCompactBlock(BasicBlock* block);
 
-    bool fgRenumberBlocks();
-
     bool fgExpandRarelyRunBlocks();
 
     bool fgEhAllowsMoveBlock(BasicBlock* bBefore, BasicBlock* bAfter);
@@ -10900,8 +10898,7 @@ public:
 
     //------------ Some utility functions --------------
 
-    void* compGetHelperFtn(CorInfoHelpFunc ftnNum, /* IN  */
-                           void**          ppIndirection);  /* OUT */
+    CORINFO_CONST_LOOKUP compGetHelperFtn(CorInfoHelpFunc ftnNum);
 
     // Several JIT/EE interface functions return a CorInfoType, and also return a
     // class handle as an out parameter if the type is a value class.  Returns the

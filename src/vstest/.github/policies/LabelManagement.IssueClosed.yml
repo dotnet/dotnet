@@ -1,0 +1,36 @@
+id:
+name: LabelManagement.IssueClosed
+description: Handlers when an issue gets closed
+owner:
+resource: repository
+disabled: false
+where:
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+      - description: Remove labels when an issue is closed
+        if:
+          - payloadType: Issues
+          - isAction:
+              action: Closed
+        then:
+          - removeLabel:
+              label: 'Needs: Triage :mag:'
+          - removeLabel:
+              label: 'Needs: Attention :wave:'
+          - removeLabel:
+              label: 'Needs: Author Feedback'
+          - removeLabel:
+              label: Help-Wanted
+      - description: Remove labels when a pull request is closed
+        if:
+          - payloadType: Pull_Request
+          - isAction:
+              action: Closed
+        then:
+          - removeLabel:
+              label: 'Needs: Attention :wave:'
+          - removeLabel:
+              label: 'Needs: Author Feedback'
+onFailure:
+onSuccess:

@@ -53,7 +53,7 @@ internal static class IDocumentMappingServiceExtensions
         if (languageKind is not RazorLanguageKind.Razor)
         {
             var generatedDocument = languageKind is RazorLanguageKind.CSharp
-                ? (IRazorGeneratedDocument)codeDocument.GetCSharpDocument()
+                ? (IRazorGeneratedDocument)codeDocument.GetRequiredCSharpDocument()
                 : codeDocument.GetHtmlDocument();
             if (service.TryMapToGeneratedDocumentPosition(generatedDocument, hostDocumentIndex, out Position? mappedPosition, out _))
             {

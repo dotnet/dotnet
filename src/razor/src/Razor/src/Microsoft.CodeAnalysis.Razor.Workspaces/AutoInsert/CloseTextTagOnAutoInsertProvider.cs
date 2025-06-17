@@ -46,8 +46,8 @@ internal class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
             return false;
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var token = syntaxTree.Root.FindToken(absoluteIndex - 1);
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
+        var token = syntaxRoot.FindToken(absoluteIndex - 1);
 
         // Make sure the end </text> tag doesn't already exist
         if (token.Parent is MarkupStartTagSyntax

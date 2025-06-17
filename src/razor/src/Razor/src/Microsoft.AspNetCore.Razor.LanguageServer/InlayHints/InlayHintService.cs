@@ -24,7 +24,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
     public async Task<InlayHint[]?> GetInlayHintsAsync(IClientConnection clientConnection, DocumentContext documentContext, LspRange range, CancellationToken cancellationToken)
     {
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         var span = range.ToLinePositionSpan();
 

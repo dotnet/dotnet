@@ -14,13 +14,9 @@
 
   <!-- MSBuild has vulnerable dependencies Microsoft.IO.Redist and System.Security.Cryptography.Xml. When it's upgraded, try removing pinned packages-->
   <PropertyGroup>
-    <!-- The last package version of MSBuild that works with netcoreapp3.1 or netstandard2.0 is 16.8.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
-    <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'netstandard2.0'">16.8.0</MicrosoftBuildVersion>
-    <!-- The last package version of MSBuild that works with net5.0 is 16.11.0.  Our assemblies are still compiled against MSBuild assembly version 15.1.0.0 which will work with all versions -->
-    <MicrosoftBuildVersion Condition="'$(TargetFramework)' == 'netcoreapp5.0'">16.11.0</MicrosoftBuildVersion>
-    <MicrosoftBuildVersion Condition="'$(DotNetBuildSourceOnly)' == 'true'">17.12.6</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">17.12.36</MicrosoftBuildVersion>
     <!-- Read docs/updating-packages.md before updating MSBuild's version -->
-    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.11.4</MicrosoftBuildVersion>
+    <MicrosoftBuildVersion Condition="'$(MicrosoftBuildVersion)' == ''">17.11.31</MicrosoftBuildVersion>
   </PropertyGroup>
 
     <!-- Overridden by source build to ensure the same version is used across products, do not remove these properties -->

@@ -22,8 +22,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         var syntaxTree = codeDocument.GetPreTagHelperSyntaxTree() ?? codeDocument.GetSyntaxTree();
         ThrowForMissingDocumentDependency(syntaxTree);
 
-        var tagHelpers = codeDocument.GetTagHelpers();
-        if (tagHelpers == null)
+        if (!codeDocument.TryGetTagHelpers(out var tagHelpers))
         {
             if (!Engine.TryGetFeature(out ITagHelperFeature? tagHelperFeature))
             {
@@ -41,7 +40,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         // The imports come logically before the main razor file and are in the order they
         // should be processed.
 
-        if (codeDocument.GetImportSyntaxTrees() is { IsDefault: false } imports)
+        if (codeDocument.TryGetImportSyntaxTrees(out var imports))
         {
             foreach (var import in imports)
             {

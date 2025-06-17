@@ -16,11 +16,11 @@ internal static class TaskListDiagnosticProvider
     public static ImmutableArray<LspDiagnostic> GetTaskListDiagnostics(RazorCodeDocument codeDocument, ImmutableArray<string> taskListDescriptors)
     {
         var source = codeDocument.Source.Text;
-        var tree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
 
         using var diagnostics = new PooledArrayBuilder<LspDiagnostic>();
 
-        foreach (var node in tree.Root.DescendantNodes())
+        foreach (var node in root.DescendantNodes())
         {
             if (node is RazorCommentBlockSyntax comment)
             {
