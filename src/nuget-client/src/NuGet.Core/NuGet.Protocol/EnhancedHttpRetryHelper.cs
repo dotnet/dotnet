@@ -19,11 +19,6 @@ namespace NuGet.Protocol
         public const int DefaultDelayMilliseconds = 1000;
 
         /// <summary>
-        /// The default value indicating whether or not enhanced HTTP retry is enabled.
-        /// </summary>
-        public const bool DefaultEnabled = true;
-
-        /// <summary>
         /// The default number of times to retry.
         /// </summary>
         public const int DefaultRetryCount = 6;
@@ -39,14 +34,14 @@ namespace NuGet.Protocol
         public const bool DefaultObserveRetryAfter = true;
 
         /// <summary>
+        /// The default maximum delay in milliseconds to observe for a Retry-After header.
+        /// </summary>
+        public const int DefaultMaximumRetryAfterDelayInSeconds = 3600;
+
+        /// <summary>
         /// The environment variable used to change the delay value.
         /// </summary>
         public const string DelayInMillisecondsEnvironmentVariableName = "NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS";
-
-        /// <summary>
-        /// The environment variable used to enable or disable the enhanced HTTP retry.
-        /// </summary>
-        public const string IsEnabledEnvironmentVariableName = "NUGET_ENABLE_ENHANCED_HTTP_RETRY";
 
         /// <summary>
         /// The environment variable used to change the retry value.
@@ -70,11 +65,9 @@ namespace NuGet.Protocol
 
         private readonly IEnvironmentVariableReader _environmentVariableReader;
 
-        private Lazy<bool> _isEnabled;
-
         private Lazy<int> _retryCount;
 
-        private Lazy<int> _delayInMilliseconds;
+        private Lazy<(bool, int)> _delayInMilliseconds;
 
         private Lazy<bool> _retry429;
 
@@ -90,44 +83,52 @@ namespace NuGet.Protocol
         public EnhancedHttpRetryHelper(IEnvironmentVariableReader environmentVariableReader)
         {
             _environmentVariableReader = environmentVariableReader ?? throw new ArgumentNullException(nameof(environmentVariableReader));
-            _isEnabled = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(IsEnabledEnvironmentVariableName, defaultValue: DefaultEnabled, _environmentVariableReader));
-            _retryCount = new Lazy<int>(() => GetIntFromEnvironmentVariable(RetryCountEnvironmentVariableName, defaultValue: DefaultRetryCount, _environmentVariableReader));
-            _delayInMilliseconds = new Lazy<int>(() => GetIntFromEnvironmentVariable(DelayInMillisecondsEnvironmentVariableName, defaultValue: DefaultDelayMilliseconds, _environmentVariableReader));
-            _retry429 = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: true, _environmentVariableReader));
+            _retryCount = new Lazy<int>(() => GetIntFromEnvironmentVariableOrDefault(RetryCountEnvironmentVariableName, defaultValue: DefaultRetryCount, _environmentVariableReader).Item2);
+            _delayInMilliseconds = new Lazy<(bool, int)>(() => GetIntFromEnvironmentVariableOrDefault(DelayInMillisecondsEnvironmentVariableName, defaultValue: DefaultDelayMilliseconds, _environmentVariableReader));
+            _retry429 = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(Retry429EnvironmentVariableName, defaultValue: DefaultRetry429, _environmentVariableReader));
             _observeRetryAfter = new Lazy<bool>(() => GetBoolFromEnvironmentVariable(ObserveRetryAfterEnvironmentVariableName, defaultValue: DefaultObserveRetryAfter, _environmentVariableReader));
             _maxRetryAfterDelay = new Lazy<TimeSpan>(() =>
             {
-                int maxRetryAfterDelay = GetIntFromEnvironmentVariable(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: (int)TimeSpan.FromHours(1).TotalSeconds, _environmentVariableReader);
+                int maxRetryAfterDelay = GetIntFromEnvironmentVariableOrDefault(MaximumRetryAfterDurationEnvironmentVariableName, defaultValue: DefaultMaximumRetryAfterDelayInSeconds, _environmentVariableReader).Item2;
                 return TimeSpan.FromSeconds(maxRetryAfterDelay);
             });
         }
 
         /// <summary>
-        /// Gets a value indicating whether or not enhanced HTTP retry should be enabled.  The default value is <see langword="true" />.
+        /// Gets a value indicating the maximum number of times to retry.
+        /// The default value is 6, see <see cref="DefaultRetryCount" />.
         /// </summary>
-        internal bool IsEnabled => _isEnabled.Value;
+        internal int RetryCountOrDefault => _retryCount.Value;
 
         /// <summary>
-        /// Gets a value indicating the maximum number of times to retry.  The default value is 6.
+        /// Gets a value indicating the delay in milliseconds to wait before retrying a connection.
+        /// The default value is 1000, <see cref="DefaultDelayMilliseconds" />.
         /// </summary>
-        internal int RetryCount => _retryCount.Value;
+        internal int DelayInMillisecondsOrDefault => _delayInMilliseconds.Value.Item2;
 
         /// <summary>
-        /// Gets a value indicating the delay in milliseconds to wait before retrying a connection.  The default value is 1000.
+        /// Gets a value indicating the delay in milliseconds to wait before retrying a connection.|
+        /// Will only have a value if the environment variable is set, otherwise it will be <see langword="null" />.
         /// </summary>
-        internal int DelayInMilliseconds => _delayInMilliseconds.Value;
+        internal int? DelayInMilliseconds => _delayInMilliseconds.Value.Item1 ? _delayInMilliseconds.Value.Item2 : null;
 
         /// <summary>
         /// Gets a value indicating whether or not retryable HTTP 4xx responses should be retried.
+        /// Default is <see langword="true" />, <see cref="DefaultObserveRetryAfter"/>.
         /// </summary>
-        internal bool Retry429 => _retry429.Value;
+        internal bool Retry429OrDefault => _retry429.Value;
 
         /// <summary>
         /// Gets a value indicating whether or not to observe the Retry-After header on HTTP responses.
+        /// Default is <see langword="true" />, <see cref="DefaultObserveRetryAfter"/>.
         /// </summary>
-        internal bool ObserveRetryAfter => _observeRetryAfter.Value;
+        internal bool ObserveRetryAfterOrDefault => _observeRetryAfter.Value;
 
-        internal TimeSpan MaxRetryAfterDelay => _maxRetryAfterDelay.Value;
+        /// <summary>
+        /// Gets a value indicating the maximum delay to observe for a Retry-After header.
+        /// Default is 1 hour, <see cref="DefaultMaximumRetryAfterDelayInSeconds" />.
+        /// </summary>
+        internal TimeSpan MaxRetryAfterDelayOrDefault => _maxRetryAfterDelay.Value;
 
         /// <summary>
         /// Gets a <see cref="bool" /> value from the specified environment variable.
@@ -156,19 +157,21 @@ namespace NuGet.Protocol
         /// <param name="variableName">The name of the environment variable to get the value.</param>
         /// <param name="defaultValue">The default value to return if the environment variable is not defined or is not a valid <see cref="int" />.</param>
         /// <param name="environmentVariableReader">An <see cref="IEnvironmentVariableReader" /> to use when reading the environment variable.</param>
-        /// <returns>The value of the specified as a <see cref="int" /> if the specified environment variable is defined and is a valid value for <see cref="int" />.</returns>
-        private static int GetIntFromEnvironmentVariable(string variableName, int defaultValue, IEnvironmentVariableReader environmentVariableReader)
+        /// <returns> A tuple containing a <see cref="bool" /> indicating if the value was provided through an environment variable parsed and a valid int.
+        /// the value of the specified as a <see cref="int" /> if the specified environment variable
+        /// is defined and is a valid value for <see cref="int" />.</returns>
+        private static (bool, int) GetIntFromEnvironmentVariableOrDefault(string variableName, int defaultValue, IEnvironmentVariableReader environmentVariableReader)
         {
             try
             {
                 if (int.TryParse(environmentVariableReader.GetEnvironmentVariable(variableName), out int parsedValue) && parsedValue >= 0)
                 {
-                    return parsedValue;
+                    return (true, parsedValue);
                 }
             }
             catch (Exception) { }
 
-            return defaultValue;
+            return (false, defaultValue);
         }
     }
 }
