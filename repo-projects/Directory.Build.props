@@ -39,6 +39,9 @@
 
     <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
     <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', '.packages'))</RepoArtifactsPackageCache>
+    <RepoArtifactsShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsShippingPackagesDir>
+    <RepoArtifactsNonShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsNonShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsNonShippingPackagesDir>
+    <RepoArtifactsPdbArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsSymStoreDirectory)', '$(RepositoryName)'))</RepoArtifactsPdbArtifactsDir>
 
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
 

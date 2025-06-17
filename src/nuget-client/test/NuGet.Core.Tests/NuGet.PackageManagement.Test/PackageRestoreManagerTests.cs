@@ -440,6 +440,41 @@ namespace NuGet.Test
             nuGetPackageManager.PackageExistsInPackagesFolder((packageA.Identity)).Should().BeTrue();
         }
 
+        [Fact]
+        public async Task RestoreMissingPackagesInSolutionAsync_WhenNoPackageReferences_ReturnsNoopRestoreResult()
+        {
+            // Arrange
+            using var testSolutionManager = new TestSolutionManager();
+
+            // Create an empty solution with no packages
+            testSolutionManager.AddNewMSBuildProject(); // Add a project with no packages
+
+            using var simpleTestPathContext = new SimpleTestPathContext();
+            var sourceRepositoryProvider = TestSourceRepositoryUtility.CreateSourceRepositoryProvider(new PackageSource(simpleTestPathContext.PackageSource));
+            var testSettings = Configuration.NullSettings.Instance;
+            var packageRestoreManager = new PackageRestoreManager(
+                sourceRepositoryProvider,
+                testSettings,
+                testSolutionManager);
+
+            var testNuGetProjectContext = new TestNuGetProjectContext();
+            var logger = new TestLogger();
+            var token = CancellationToken.None;
+
+            // Act
+            var result = await packageRestoreManager.RestoreMissingPackagesInSolutionAsync(
+                testSolutionManager.SolutionDirectory,
+                testNuGetProjectContext,
+                logger,
+                token);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeSameAs(PackageRestoreResult.NoopRestoreResult);
+            result.Restored.Should().BeFalse();
+            result.RestoredPackages.Should().BeEmpty();
+        }
+
         private static DownloadResourceResult GetDownloadResult(string source, FileInfo packageFileInfo)
         {
             return new DownloadResourceResult(packageFileInfo.OpenRead(), source);

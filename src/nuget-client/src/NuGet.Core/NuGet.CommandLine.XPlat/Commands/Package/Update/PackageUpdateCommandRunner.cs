@@ -61,7 +61,8 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             // Source provider will be needed to find the package version and to restore, so create it here.
             CachingSourceProvider sourceProvider = new CachingSourceProvider(new PackageSourceProvider(settings));
             using SourceCacheContext sourceCacheContext = new();
-            (PackageDependency? packageToUpdate, List<NuGetFramework>? packageTfms) = await GetPackageToUpdateAsync(args.Packages, dgSpec.Projects.Single(), sourceProvider, settings, sourceCacheContext, logger, cancellationToken);
+            var versionChooser = new VersionChooser(sourceProvider, settings, sourceCacheContext);
+            (PackageDependency? packageToUpdate, List<NuGetFramework>? packageTfms) = await GetPackageToUpdateAsync(args.Packages, dgSpec.Projects.Single(), versionChooser, settings, logger, cancellationToken);
 
             if (packageToUpdate is null)
             {
@@ -153,12 +154,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             return restoreResult.Single();
         }
 
-        private static async Task<(PackageDependency?, List<NuGetFramework>?)> GetPackageToUpdateAsync(
-            IReadOnlyList<string>? packages,
+        internal static async Task<(PackageDependency?, List<NuGetFramework>?)> GetPackageToUpdateAsync(
+            IReadOnlyList<Package> packages,
             PackageSpec project,
-            CachingSourceProvider sourceProvider,
+            IVersionChooser versionChooser,
             ISettings settings,
-            SourceCacheContext sourceCacheContext,
             ILoggerWithColor logger,
             CancellationToken cancellationToken)
         {
@@ -181,7 +181,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
                 return (null, null);
             }
 
-            var packageId = packages.Single();
+            var package = packages.Single();
 
             VersionRange? existingVersion = null;
             List<NuGetFramework>? frameworks = null;
@@ -189,7 +189,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             {
                 foreach (var dependency in tfm.Dependencies)
                 {
-                    if (string.Equals(packageId, dependency.Name, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(package.Id, dependency.Name, StringComparison.OrdinalIgnoreCase))
                     {
                         if (frameworks is null)
                         {
@@ -201,11 +201,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
                         if (project.RestoreMetadata.CentralPackageFloatingVersionsEnabled)
                         {
                             if (!tfm.CentralPackageVersions.TryGetValue(
-                                packageId,
+                                package.Id,
                                 out CentralPackageVersion? centralVersion))
                             {
                                 logger.LogMinimal(
-                                    Messages.Error_CouldNotFindPackageVersionForCpmPackage(packageId),
+                                    Messages.Error_CouldNotFindPackageVersionForCpmPackage(package.Id),
                                     ConsoleColor.Red);
                                 return (null, null);
                             }
@@ -225,7 +225,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
                             if (tfmVersionRange != existingVersion)
                             {
                                 logger.LogMinimal(
-                                    Messages.Unsupported_UpdatePackageWithDifferentPerTfmVersions(packageId, project.FilePath),
+                                    Messages.Unsupported_UpdatePackageWithDifferentPerTfmVersions(package.Id, project.FilePath),
                                     ConsoleColor.Red);
                                 return (null, null);
                             }
@@ -236,31 +236,43 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
 
             if (existingVersion is null)
             {
-                logger.LogMinimal(Messages.Error_PackageNotReferenced(packageId, project.FilePath), ConsoleColor.Red);
+                logger.LogMinimal(Messages.Error_PackageNotReferenced(package.Id, project.FilePath), ConsoleColor.Red);
                 return (null, null);
             }
 
-            NuGetVersion? highestVersion = await VersionChooser.GetLatestVersionAsync(
-                packageId,
-                sourceProvider,
-                settings,
-                sourceCacheContext,
-                logger,
-                cancellationToken);
-
-            if (highestVersion is null)
+            VersionRange newVersion;
+            if (package.VersionRange is null)
             {
-                logger.LogMinimal(Messages.Error_NoVersionsAvailable(packageId), ConsoleColor.Red);
-                return (null, null);
-            }
+                NuGetVersion? highestVersion = await versionChooser.GetLatestVersionAsync(
+                    package.Id,
+                    logger,
+                    cancellationToken);
 
-            if (existingVersion.MinVersion == highestVersion)
+                if (highestVersion is null)
+                {
+                    logger.LogMinimal(Messages.Error_NoVersionsAvailable(package.Id), ConsoleColor.Red);
+                    return (null, null);
+                }
+
+                if (existingVersion.MinVersion == highestVersion)
+                {
+                    logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, highestVersion.OriginalVersion, project.FilePath), ConsoleColor.Red);
+                    return (null, null);
+                }
+
+                newVersion = new VersionRange(highestVersion);
+            }
+            else
             {
-                logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(packageId, highestVersion.OriginalVersion, project.FilePath), ConsoleColor.Red);
-                return (null, null);
+                newVersion = package.VersionRange;
+                if (newVersion == existingVersion)
+                {
+                    logger.LogMinimal(Messages.Warning_AlreadyUsingSameVersion(package.Id, newVersion.OriginalString), ConsoleColor.Red);
+                    return (null, null);
+                }
             }
 
-            PackageDependency packageToUpdate = new(packageId, new VersionRange(highestVersion));
+            PackageDependency packageToUpdate = new(package.Id, newVersion);
 
             return (packageToUpdate, frameworks);
         }
