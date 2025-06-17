@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework Condition="'$(BuildProjectFramework)' != ''">$(BuildProjectFramework)</TargetFramework>
-    <TargetFrameworks Condition="'$(BuildProjectFramework)' == ''">$(SupportedSubProcessTargetFrameworks)</TargetFrameworks>
-  </PropertyGroup>
-
-</Project>
