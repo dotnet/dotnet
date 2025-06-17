@@ -19,7 +19,7 @@ namespace NuGetVSExtension {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -102,6 +102,33 @@ namespace NuGetVSExtension {
         internal static string DTE_ProjectUnsupported {
             get {
                 return ResourceManager.GetString("DTE_ProjectUnsupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A name must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceName_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceName_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A source must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceUri_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceUri_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A hostname must be provided after &apos;://&apos;..
+        /// </summary>
+        internal static string Error_PackageSourceUriHostname_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceUriHostname_Missing", resourceCulture);
             }
         }
         
@@ -309,6 +336,60 @@ namespace NuGetVSExtension {
         internal static string Text_FilePath_Header {
             get {
                 return ResourceManager.GetString("Text_FilePath_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are attempting to add an HTTP source, which is insecure..
+        /// </summary>
+        internal static string Text_HttpSource_Warning {
+            get {
+                return ResourceManager.GetString("Text_HttpSource_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        internal static string Text_PackageSourceEnabled_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceEnabled_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string Text_PackageSourceName_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceName_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Machine-wide package sources.
+        /// </summary>
+        internal static string Text_PackageSources_MachineWide {
+            get {
+                return ResourceManager.GetString("Text_PackageSources_MachineWide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package sources.
+        /// </summary>
+        internal static string Text_PackageSources_NotMachineWide {
+            get {
+                return ResourceManager.GetString("Text_PackageSources_NotMachineWide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        internal static string Text_PackageSourceUrl_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceUrl_Header", resourceCulture);
             }
         }
     }
