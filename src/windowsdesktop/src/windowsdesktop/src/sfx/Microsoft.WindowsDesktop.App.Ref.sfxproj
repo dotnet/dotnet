@@ -7,7 +7,6 @@
     <InstallerName>windowsdesktop-targeting-pack</InstallerName>
     <InstallerRuntimeIdentifiers>win-x64;win-x86;win-arm64</InstallerRuntimeIdentifiers>
     <VSInsertionShortComponentName>WindowsDesktop.TargetingPack</VSInsertionShortComponentName>
-    <CreatePlatformManifest Condition="'$(PreReleaseVersionLabel)' == 'servicing'">false</CreatePlatformManifest>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
   </PropertyGroup>
@@ -30,7 +29,4 @@
   <!-- Windows Forms validation and packaging -->
   <Import Project="WindowsForms.Packaging.targets" />
 
-  <ItemGroup Condition="'$(CreatePlatformManifest)' == 'false'">
-    <FilesToPackage Include="PlatformManifest.txt" TargetPath="data" GeneratedBuildFile="true" />
-  </ItemGroup>
 </Project>
