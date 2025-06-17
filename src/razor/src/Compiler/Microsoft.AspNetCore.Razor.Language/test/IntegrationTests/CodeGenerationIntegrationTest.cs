@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -317,7 +315,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/10426")]
     public void EscapedExpression() => RunTagHelpersTest(TestTagHelperDescriptors.SimpleTagHelperDescriptors);
 
-    public override string GetTestFileName(string testName)
+    public override string GetTestFileName([CallerMemberName] string? testName = null)
     {
         return base.GetTestFileName(testName) + (designTime ? "_DesignTime" : "_Runtime");
     }
@@ -345,9 +343,9 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var codeDocument = projectEngine.ProcessDesignTime(projectItem);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
         AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
         AssertSourceMappingsMatchBaseline(codeDocument, testName);
         AssertHtmlSourceMappingsMatchBaseline(codeDocument, testName);
         AssertLinePragmas(codeDocument, designTime: true);
@@ -365,8 +363,8 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var codeDocument = projectEngine.Process(projectItem);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
         AssertLinePragmas(codeDocument, designTime: false);
         AssertCSharpDiagnosticsMatchBaseline(codeDocument, testName);
     }
@@ -397,8 +395,8 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var codeDocument = projectEngine.Process(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, descriptors.ToList());
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
         AssertCSharpDiagnosticsMatchBaseline(codeDocument, testName);
     }
 
@@ -416,8 +414,8 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var codeDocument = projectEngine.ProcessDesignTime(RazorSourceDocument.ReadFrom(projectItem), RazorFileKind.Legacy, imports, descriptors.ToList());
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(codeDocument.GetDocumentIntermediateNode(), testName);
-        AssertCSharpDocumentMatchesBaseline(codeDocument.GetCSharpDocument(), testName);
+        AssertDocumentNodeMatchesBaseline(codeDocument.GetRequiredDocumentNode(), testName);
+        AssertCSharpDocumentMatchesBaseline(codeDocument.GetRequiredCSharpDocument(), testName);
         AssertHtmlDocumentMatchesBaseline(codeDocument.GetHtmlDocument(), testName);
         AssertHtmlSourceMappingsMatchBaseline(codeDocument, testName);
         AssertSourceMappingsMatchBaseline(codeDocument, testName);

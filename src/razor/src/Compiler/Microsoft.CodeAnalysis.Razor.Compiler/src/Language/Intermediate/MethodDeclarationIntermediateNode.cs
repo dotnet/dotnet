@@ -22,6 +22,8 @@ public sealed class MethodDeclarationIntermediateNode : MemberDeclarationInterme
 
     public string ReturnType { get; set; }
 
+    public bool IsPrimaryMethod { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)

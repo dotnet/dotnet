@@ -66,4 +66,4 @@ steps:
       artifactName: $(Agent.JobName)_BuildLogs_Attempt$(System.JobAttempt)
       artifactType: Container
       parallel: true
-    condition: succeededOrFailed()
+    condition: always()

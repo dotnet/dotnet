@@ -42,7 +42,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -60,7 +60,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -86,7 +86,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -123,7 +123,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -158,7 +158,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -178,7 +178,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -196,7 +196,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -214,7 +214,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -229,7 +229,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -254,7 +254,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -269,7 +269,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -293,7 +293,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -327,7 +327,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -362,7 +362,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
@@ -378,7 +378,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
 
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
@@ -403,7 +403,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -425,7 +425,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -440,7 +440,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
@@ -463,7 +463,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -478,7 +478,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -493,7 +493,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -524,7 +524,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -572,7 +572,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
     }
@@ -587,7 +587,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: false);
 
@@ -632,7 +632,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, cssScope: "TestCssScope");
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -675,7 +675,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, cssScope: "TestCssScope");
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -717,7 +717,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, cssScope: "TestCssScope");
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -755,7 +755,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -793,7 +793,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -831,7 +831,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -874,7 +874,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -898,7 +898,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -918,7 +918,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, designTime: false);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -940,7 +940,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -960,7 +960,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -988,7 +988,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1027,7 +1027,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1065,7 +1065,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1087,7 +1087,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true, throwOnFailure: false);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1107,7 +1107,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1127,7 +1127,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1144,7 +1144,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1170,7 +1170,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1187,7 +1187,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1213,7 +1213,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1248,7 +1248,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1284,7 +1284,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1301,7 +1301,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1326,7 +1326,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1355,7 +1355,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1379,7 +1379,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1396,7 +1396,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1420,7 +1420,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1437,7 +1437,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1454,7 +1454,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1487,7 +1487,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToAssembly(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1504,7 +1504,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
         var compiled = CompileToCSharp(projectItem, designTime: true);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentIntermediateNode());
+        AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertHtmlDocumentMatchesBaseline(compiled.CodeDocument.GetHtmlDocument());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
         AssertLinePragmas(compiled.CodeDocument, designTime: true);
@@ -1531,7 +1531,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, designTime: true);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -1551,7 +1551,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             """, designTime: true);
 
         // Assert
-        var intermediate = generated.CodeDocument.GetDocumentIntermediateNode();
+        var intermediate = generated.CodeDocument.GetDocumentNode();
         var csharp = generated.CodeDocument.GetCSharpDocument();
         AssertDocumentNodeMatchesBaseline(intermediate);
         AssertCSharpDocumentMatchesBaseline(csharp);
@@ -1603,7 +1603,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             designTime: designTime);
 
         // Assert
-        AssertDocumentNodeMatchesBaseline(generated.CodeDocument.GetDocumentIntermediateNode(), testName: testName);
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument.GetDocumentNode(), testName: testName);
         AssertHtmlDocumentMatchesBaseline(generated.CodeDocument.GetHtmlDocument(), testName: testName);
         AssertCSharpDocumentMatchesBaseline(generated.CodeDocument.GetCSharpDocument(), testName: testName);
         AssertLinePragmas(generated.CodeDocument, designTime: designTime);

@@ -27,6 +27,15 @@ internal static class RazorSyntaxNodeExtensions
         return false;
     }
 
+    internal static bool IsSectionDirective(this SyntaxNode node)
+        => (node as RazorDirectiveSyntax)?.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive;
+
+    internal static bool IsCodeBlockDirective(this SyntaxNode node)
+        => (node as RazorDirectiveSyntax)?.DirectiveDescriptor?.Kind == DirectiveKind.CodeBlock;
+
+    internal static bool IsUsingDirective(this SyntaxNode node)
+        => node.IsUsingDirective(out _);
+
     internal static bool IsUsingDirective(this SyntaxNode node, out SyntaxTokenList tokens)
     {
         // Using directives are weird, because the directive keyword ("using") is part of the C# statement it represents

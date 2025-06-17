@@ -36,10 +36,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode()
         {
             Content = string.Empty,
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
@@ -83,20 +80,14 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode()
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
 
         builder.Add(new ClassDeclarationIntermediateNode
         {
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            },
+            IsPrimaryClass = true,
         });
 
         // Act
@@ -125,10 +116,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);
@@ -158,10 +146,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
@@ -169,10 +154,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);
@@ -205,20 +187,14 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);
@@ -258,10 +234,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
@@ -269,10 +242,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);
@@ -319,10 +289,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
@@ -330,10 +297,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);
@@ -374,20 +338,14 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
             Content = "SomeNamespace",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryNamespace] = CommonAnnotations.PrimaryNamespace
-            }
+            IsPrimaryNamespace = true,
         };
         builder.Push(@namespace);
 
         var @class = new ClassDeclarationIntermediateNode
         {
             ClassName = "SomeName",
-            Annotations =
-            {
-                [CommonAnnotations.PrimaryClass] = CommonAnnotations.PrimaryClass,
-            }
+            IsPrimaryClass = true,
         };
 
         builder.Add(@class);

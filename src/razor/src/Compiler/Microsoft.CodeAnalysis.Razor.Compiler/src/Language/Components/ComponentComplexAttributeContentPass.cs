@@ -93,7 +93,7 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
 
         if (issueDiagnostic)
         {
-            node.Diagnostics.Add(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
+            node.AddDiagnostic(ComponentDiagnosticFactory.Create_UnsupportedComplexContent(
                 node,
                 attributeName));
         }

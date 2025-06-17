@@ -33,7 +33,7 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
     {
         base.OnDocumentStructureCreated(codeDocument, @namespace, @class, method);
 
-        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: false, out var namespaceName))
+        if (!codeDocument.TryGetNamespace(fallbackToRootNamespace: false, out var namespaceName))
         {
             @namespace.Content = _useConsolidatedMvcViews ? "AspNetCoreGeneratedDocument" : "AspNetCore";
         }
@@ -65,7 +65,7 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
             @class.Modifiers.Add("public");
         }
 
-        @class.Annotations[CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext;
+        @class.NullableContext = true;
 
         method.MethodName = "ExecuteAsync";
         method.Modifiers.Clear();

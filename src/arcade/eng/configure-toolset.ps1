@@ -1,6 +1,7 @@
 . $PSScriptRoot\common\pipeline-logging-functions.ps1
 function Test-FilesUseTelemetryOutput {
     $requireTelemetryExcludeFiles = @(
+        "dotnet.ps1",
         "enable-cross-org-publishing.ps1",
         "performance-setup.ps1",
         "retain-build.ps1",
