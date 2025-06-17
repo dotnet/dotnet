@@ -709,6 +709,15 @@ namespace NuGet.Commands {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The following PackageReference item(s) do not have a version specified: {0}.
+        /// </summary>
+        internal static string Error_PackageReference_NoVersion {
+            get {
+                return ResourceManager.GetString("Error_PackageReference_NoVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Package content hash validation failed for {0}. The package is different than the last restore..
         /// </summary>
         internal static string Error_PackageValidationFailed {
