@@ -14,6 +14,9 @@
 
     <RestoreIlTooling>true</RestoreIlTooling>
 
+    <IsShippingPackage>false</IsShippingPackage>
+    <ArtifactsNonShippingPackagesDir>$(ArtifactsReferenceOnlyPackagesDir)</ArtifactsNonShippingPackagesDir>
+
     <!-- Disable NU5131: unclear warning caused by ref-only (https://github.com/NuGet/Home/issues/8684) -->
     <NoWarn>$(NoWarn);NU5131</NoWarn>
     <!-- Don't warn on NU5125 - The 'licenseUrl' element will be deprecated. -->
