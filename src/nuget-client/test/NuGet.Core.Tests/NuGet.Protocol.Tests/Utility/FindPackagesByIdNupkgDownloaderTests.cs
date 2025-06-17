@@ -24,7 +24,7 @@ namespace NuGet.Protocol.Tests
         [Theory]
         [InlineData(HttpStatusCode.NoContent, 1)]
         [InlineData(HttpStatusCode.NotFound, 1)]
-        [InlineData(HttpStatusCode.InternalServerError, EnhancedHttpRetryHelper.DefaultEnabled ? EnhancedHttpRetryHelper.DefaultRetryCount : 3)]
+        [InlineData(HttpStatusCode.InternalServerError, EnhancedHttpRetryHelper.DefaultRetryCount)]
         public async Task CopyNupkgToStreamAsync_DoesNothingWithDestinationStreamWhenNupkgIsNotFoundAsync(
             HttpStatusCode statusCode,
             int expectedRequests)
@@ -56,7 +56,7 @@ namespace NuGet.Protocol.Tests
         [Theory]
         [InlineData(HttpStatusCode.NoContent, 1)]
         [InlineData(HttpStatusCode.NotFound, 1)]
-        [InlineData(HttpStatusCode.InternalServerError, EnhancedHttpRetryHelper.DefaultEnabled ? EnhancedHttpRetryHelper.DefaultRetryCount : 3)]
+        [InlineData(HttpStatusCode.InternalServerError, EnhancedHttpRetryHelper.DefaultRetryCount)]
         public async Task GetNuspecReaderFromNupkgAsync_ThrowsWhenNupkgIsNotFoundAsync(
             HttpStatusCode statusCode,
             int expectedRequests)

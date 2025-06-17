@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- Repos that use desktop msbuild target netstandard2.0.
+         Use NetCurrent on non-windows to be source build compatible. -->
+    <TargetFramework Condition="'$(TargetOS)' == 'windows'">netstandard2.0</TargetFramework>
+    <TargetFramework Condition="'$(TargetOS)' != 'windows'">$(NetCurrent)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
