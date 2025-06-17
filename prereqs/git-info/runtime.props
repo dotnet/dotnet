@@ -4,5 +4,7 @@
     <GitCommitHash>3875b54e7b10b10606b105340199946d0b877754</GitCommitHash>
     <OfficialBuildId>20250516.13</OfficialBuildId>
     <OutputPackageVersion>9.0.6-servicing.25266.13</OutputPackageVersion>
+    <PreReleaseVersionLabel>servicing</PreReleaseVersionLabel>
+    <IsStable>false</IsStable>
   </PropertyGroup>
 </Project>

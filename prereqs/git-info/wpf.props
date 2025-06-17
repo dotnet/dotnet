@@ -4,5 +4,7 @@
     <GitCommitHash>620a20376852ae35038cd4251552ea8425f6cfe6</GitCommitHash>
     <OfficialBuildId>20250517.1</OfficialBuildId>
     <OutputPackageVersion>9.0.6-rtm.25267.1</OutputPackageVersion>
+    <PreReleaseVersionLabel>rtm</PreReleaseVersionLabel>
+    <IsStable>false</IsStable>
   </PropertyGroup>
 </Project>

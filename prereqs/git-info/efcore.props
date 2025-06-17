@@ -4,5 +4,7 @@
     <GitCommitHash>8751e6d519fda94d5154187358765311ed4a4e84</GitCommitHash>
     <OfficialBuildId>20250617.1</OfficialBuildId>
     <OutputPackageVersion>9.0.6</OutputPackageVersion>
+    <PreReleaseVersionLabel></PreReleaseVersionLabel>
+    <IsStable>true</IsStable>
   </PropertyGroup>
 </Project>
