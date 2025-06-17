@@ -575,7 +575,6 @@ namespace NuGet.Protocol.Tests
             TestEnvironmentVariableReader testEnvironmentVariableReader = new TestEnvironmentVariableReader(
             new Dictionary<string, string>()
             {
-                [EnhancedHttpRetryHelper.IsEnabledEnvironmentVariableName] = bool.TrueString,
                 [EnhancedHttpRetryHelper.RetryCountEnvironmentVariableName] = testTryCount.ToString(),
                 [EnhancedHttpRetryHelper.DelayInMillisecondsEnvironmentVariableName] = "0"
             });
