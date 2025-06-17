@@ -73,8 +73,24 @@
   <Target Name="ExtractToolsetPackages" DependsOnTargets="UnpackTarballs">
     <ItemGroup>
       <ToolsetPackage Include="Microsoft.DotNet.Arcade.Sdk" SourceFolder="$(PreviouslySourceBuiltPackagesPath)" Version="$(ARCADE_BOOTSTRAP_VERSION)" />
-      <ToolsetPackage Include="Microsoft.Build.NoTargets" SourceFolder="$(PreviouslySourceBuiltReferencePackagesDir)" Version="$(NOTARGETS_BOOTSTRAP_VERSION)" />
-      <ToolsetPackage Include="Microsoft.Build.Traversal" SourceFolder="$(PreviouslySourceBuiltReferencePackagesDir)" Version="$(TRAVERSAL_BOOTSTRAP_VERSION)" />
+
+      <!-- Remove the entries referencing PreviouslySourceBuiltReferencePackagesDir after rebootstrapping to pick up https://github.com/dotnet/dotnet/pull/1132 -->
+      <ToolsetPackage Include="Microsoft.Build.NoTargets" 
+                      SourceFolder="$(PreviouslySourceBuiltPackagesPath)"
+                      Version="$(NOTARGETS_BOOTSTRAP_VERSION)"
+                      Condition="!Exists('$(PreviouslySourceBuiltReferencePackagesDir)')" />
+      <ToolsetPackage Include="Microsoft.Build.Traversal"
+                      SourceFolder="$(PreviouslySourceBuiltPackagesPath)"
+                      Version="$(TRAVERSAL_BOOTSTRAP_VERSION)"
+                      Condition="!Exists('$(PreviouslySourceBuiltReferencePackagesDir)')" />
+      <ToolsetPackage Include="Microsoft.Build.NoTargets"
+                      SourceFolder="$(PreviouslySourceBuiltReferencePackagesDir)"
+                      Version="$(NOTARGETS_BOOTSTRAP_VERSION)"
+                      Condition="Exists('$(PreviouslySourceBuiltReferencePackagesDir)')" />
+      <ToolsetPackage Include="Microsoft.Build.Traversal"
+                      SourceFolder="$(PreviouslySourceBuiltReferencePackagesDir)"
+                      Version="$(TRAVERSAL_BOOTSTRAP_VERSION)"
+                      Condition="Exists('$(PreviouslySourceBuiltReferencePackagesDir)')" />
     </ItemGroup>
 
     <ItemGroup>
