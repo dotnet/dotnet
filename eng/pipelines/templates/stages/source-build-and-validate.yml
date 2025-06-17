@@ -103,7 +103,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
 
-- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
