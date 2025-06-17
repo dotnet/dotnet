@@ -162,11 +162,11 @@
       "commitSha": "8c1b4400c5a4dedd69416cad324ea13baabf913b"
     },
     {
-      "packageVersion": "17.15.0-preview-25313-01",
-      "barId": 271741,
+      "packageVersion": "17.15.0-preview-25316-03",
+      "barId": 271888,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "0d4f9228496ffae756d4a1059600d4b04a6a96cc"
+      "commitSha": "0fb4bf85b14bdc3e18e5db83ea72ddce3e8862ba"
     },
     {
       "packageVersion": "10.0.0-preview.6.25315.1",
