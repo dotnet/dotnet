@@ -292,4 +292,16 @@
   <data name="VSOptions_Button_Open" xml:space="preserve">
     <value>_Open</value>
   </data>
+  <data name="Error_PackageSource_InvalidSource" xml:space="preserve">
+    <value>The source specified is invalid.</value>
+  </data>
+  <data name="Error_PackageSource_UniqueName" xml:space="preserve">
+    <value>The name specified has already been added to the list of available package sources.</value>
+  </data>
+  <data name="Error_PackageSource_UniqueSource" xml:space="preserve">
+    <value>The source specified has already been added to the list of available package sources.</value>
+  </data>
+  <data name="Error_NuGetConfig_InvalidState" xml:space="preserve">
+    <value>One or more NuGet.Config files contain an error.</value>
+  </data>
 </root>

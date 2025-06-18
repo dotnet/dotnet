@@ -120,6 +120,101 @@
           ]
         }
       }
+    },
+    "nuGetPackageManager.packageSources.externalSettings": {
+      "type": "external",
+      "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "backingStoreDescription": "@SettingsStoredInNuGetConfiguration;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+      "callback": {
+        "packageId": "5fcc8577-4feb-4d04-ad72-d6c629b083cc",
+        "serviceId": "15C605EC-4FD7-446B-BA4A-75ECF0C0B2D0"
+      },
+
+      "realtimeNotifications": true,
+
+      // Settings within this external settings region.  Unlike "normal" settings, these have no registered default values.
+      // Their values are retrieved via IExternalSettingsProvider.GetValueAsync; when the user edits them, the new values are passed to
+      // IExternalSettingsProvider.SetValueAsync.
+      "properties": {
+        "packageSources": {
+          "type": "array",
+          "title": "@Text_PackageSources_NotMachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "isEnabled": {
+                "type": "boolean",
+                "title": "@Text_PackageSourceEnabled_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "default": true
+              },
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "default": "Package source"
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                "default": "https://packagesource",
+                "messages": [
+                  {
+                    "text": "@Text_HttpSource_Warning;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+                    "visibleWhen": "${config:sourceUrl} ~= '(?i)^http\\\\:'",
+                    "severity": "warning"
+                  }
+                ]
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": true,
+          "allowAdditionsAndRemovals": true
+        },
+        "machineWidePackageSources": {
+          "type": "array",
+          "title": "@Text_PackageSources_MachineWide;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+          "uniqueItems": true,
+          // Don't show Machine-wide Package Sources section when empty.
+          "visibleWhen": "${config:machineWidePackageSources} != '[]'",
+
+          // Metadata about items in this array
+          "items": {
+            "type": "object",
+
+            // The properties of items in this array
+            "properties": {
+              "isEnabled": {
+                "type": "boolean",
+                "title": "@Text_PackageSourceEnabled_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              },
+              "sourceName": {
+                "type": "string",
+                "title": "@Text_PackageSourceName_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              },
+              "sourceUrl": {
+                "type": "string",
+                "format": "path",
+                "pathKind": "folderOrUri",
+                "title": "@Text_PackageSourceUrl_Header;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}"
+              }
+            }
+          },
+
+          // The actual items that appear by default; in most cases, you'd leave this array empty.
+          "default": [],
+          "allowItemEditing": false,
+          "allowAdditionsAndRemovals": false
+        }
+      }
     }
   },
   "categories": {
@@ -144,6 +239,11 @@
       "title": "@117;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
       "legacyOptionPageId": "C17B308A-00BB-446E-9212-2D14E1005985",
       "order": 1
+    },
+    "nuGetPackageManager.packageSources": {
+      "title": "@114;{5fcc8577-4feb-4d04-ad72-d6c629b083cc}",
+      "legacyOptionPageId": "2819C3B6-FC75-4CD5-8C77-877903DE864C",
+      "order": 2
     }
   }
 }
