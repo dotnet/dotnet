@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Testing;
@@ -325,13 +326,13 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             [resolver]
             );
 
-        var edits = changes.Where(change => change.TextDocument.Uri.AbsolutePath == componentFilePath).Single();
+        var edits = changes.Where(change => change.TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath == componentFilePath).Single();
         var actual = edits.Edits.Select(edit => ((TextEdit)edit).NewText).Single();
 
         AssertEx.EqualOrDiff(expectedNewComponent, actual);
 
         var originalDocumentEdits = changes
-            .Where(change => change.TextDocument.Uri.AbsolutePath == razorFilePath)
+            .Where(change => change.TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath == razorFilePath)
             .SelectMany(change => change.Edits.Select(e => sourceText.GetTextChange(((TextEdit)e))));
         var documentText = sourceText.WithChanges(originalDocumentEdits).ToString();
         AssertEx.EqualOrDiff(expectedOriginalDocument, documentText);

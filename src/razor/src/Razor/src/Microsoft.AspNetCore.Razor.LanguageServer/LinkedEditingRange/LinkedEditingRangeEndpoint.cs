@@ -37,7 +37,7 @@ internal class LinkedEditingRangeEndpoint(ILoggerFactory loggerFactory)
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null || cancellationToken.IsCancellationRequested)
         {
-            _logger.LogWarning($"Unable to resolve document for {request.TextDocument.Uri} or cancellation was requested.");
+            _logger.LogWarning($"Unable to resolve document for {request.TextDocument.DocumentUri} or cancellation was requested.");
             return null;
         }
 
@@ -54,7 +54,7 @@ internal class LinkedEditingRangeEndpoint(ILoggerFactory loggerFactory)
             };
         }
 
-        _logger.LogInformation($"LinkedEditingRange request was null at line {request.Position.Line}, column {request.Position.Character} for {request.TextDocument.Uri}");
+        _logger.LogInformation($"LinkedEditingRange request was null at line {request.Position.Line}, column {request.Position.Character} for {request.TextDocument.DocumentUri}");
 
         return null;
     }
