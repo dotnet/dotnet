@@ -288,6 +288,10 @@ namespace NuGet.PackageManagement
             if (nuGetProjectContext == null) throw new ArgumentNullException(nameof(nuGetProjectContext));
 
             var packageReferencesDictionary = await GetPackagesReferencesDictionaryAsync(token);
+            if (packageReferencesDictionary.Count == 0)
+            {
+                return PackageRestoreResult.NoopRestoreResult;
+            }
 
             // When this method is called, the step to compute if a package is missing is implicit. Assume it is true
             var packages = packageReferencesDictionary.Select(p =>
@@ -364,6 +368,11 @@ namespace NuGet.PackageManagement
                 throw new ArgumentNullException(nameof(packages));
             }
 
+            if (!packages.Any())
+            {
+                return PackageRestoreResult.NoopRestoreResult;
+            }
+
             var nuGetPackageManager = GetNuGetPackageManager(solutionDirectory);
             var auditProperties = await GetRestoreAuditProperties();
             var packageRestoreContext = new PackageRestoreContext(
@@ -426,6 +435,11 @@ namespace NuGet.PackageManagement
 
             ActivityCorrelationId.StartNew();
 
+            if (packageRestoreContext.Packages?.Any() == false)
+            {
+                return PackageRestoreResult.NoopRestoreResult;
+            }
+
             List<SourceRepository> sourceRepositories = packageRestoreContext.SourceRepositories.AsList();
             IReadOnlyList<SourceRepository> auditSources = packageRestoreContext.AuditSources;
 
@@ -451,7 +465,7 @@ namespace NuGet.PackageManagement
                 if (source.IsHttp && !source.IsHttps && !source.AllowInsecureConnections)
                 {
                     packageRestoreContext.Logger.Log(LogLevel.Error, string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source));
-                    return new PackageRestoreResult(false, []);
+                    return PackageRestoreResult.NoopRestoreResult;
                 }
             }
 

@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <NoWarn Condition=" $(TargetFramework.StartsWith('netcoreapp')) ">$(NoWarn);CS1998</NoWarn>
     <SkipShared>true</SkipShared>
@@ -11,6 +11,11 @@
     <SkipAnalyzers>true</SkipAnalyzers>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Dotnet.Integration.Test" />
