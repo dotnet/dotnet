@@ -3,10 +3,10 @@
 
   <!-- 
     Properties:
-      RepositoryName                   Current repository name (e.g. 'dotnet/roslyn').
+      VisualStudioIbcRepositoryName    Repository name to look up the IBC drop (e.g. roslyn). Defaults to RepositoryName
       VisualStudioIbcSourceBranchName  The name of the branch of the repository that was used to produce the IBC data to be acquired (e.g. 'master').
-      VisualStudioIbcDropId            The id of the drop. If specified, drop named 'OptimizationData/$(RepositoryName)/$(VisualStudioIbcSourceBranchName)/$(VisualStudioIbcDropId)' is used.
-                                       Otherwise, the most recent drop of name that matches 'OptimizationData/$(RepositoryName)/$(VisualStudioIbcSourceBranchName)/*' is used.
+      VisualStudioIbcDropId            The id of the drop. If specified, drop named 'OptimizationData/$(VisualStudioIbcRepositoryName)/$(VisualStudioIbcSourceBranchName)/$(VisualStudioIbcDropId)' is used.
+                                       Otherwise, the most recent drop of name that matches 'OptimizationData/$(VisualStudioIbcRepositoryName)/$(VisualStudioIbcSourceBranchName)/*' is used.
       VisualStudioIbcDrop              The explicit drop to use. Overrides VisualStudioIbcSourceBranchName and VisualStudioIbcDropId
   -->
   
@@ -18,6 +18,7 @@
 
   <PropertyGroup>
     <EnableNgenOptimization Condition="'$(EnableNgenOptimization)' == '' and '$(Configuration)' == 'Release' and '$(OfficialBuild)' == 'true'">true</EnableNgenOptimization>
+    <VisualStudioIbcRepositoryName Condition="'$(VisualStudioIbcRepositoryName)' == ''">$(RepositoryName)</VisualStudioIbcRepositoryName>
   </PropertyGroup>
   
   <!--
@@ -49,7 +50,7 @@
 
   <Target Name="_DownloadVisualStudioOptimizationDataOpt" Condition="$(_DropToolExists)">
     <Error Text="VisualStudioDropAccessToken property has to be specified when EnableNgenOptimization and OfficialBuild is true" Condition="'$(VisualStudioDropAccessToken)' == '' and '$(OfficialBuild)' == 'true'"/>
-    <Error Text="RepositoryName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(RepositoryName)' == ''"/>
+    <Error Text="VisualStudioIbcRepositoryName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcRepositoryName)' == ''"/>
     <Error Text="VisualStudioIbcSourceBranchName property has to be specified when EnableNgenOptimization is true and VisualStudioIbcDrop is not set" Condition="'$(VisualStudioIbcDrop)' == '' and '$(VisualStudioIbcSourceBranchName)' == ''"/>
     <Error Text="VisualStudioIbcSourceBranchName property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcSourceBranchName)' != ''" />
     <Error Text="VisualStudioIbcDropId property cannot be specified when using the VisualStudioIbcDrop property" Condition="'$(VisualStudioIbcDrop)' != '' and '$(VisualStudioIbcDropId)' != ''" />
@@ -60,7 +61,7 @@
       <_DestArg>$(IbcOptimizationDataDir.TrimEnd('\'))</_DestArg>
       <_DropsJsonPath>$(ArtifactsLogDir)OptimizationDataDrops.json</_DropsJsonPath>
       <_DropsLogPath>$(ArtifactsLogDir)OptimizationDataAcquisition.log</_DropsLogPath>
-      <_DropNamePrefix>OptimizationData/$(RepositoryName)/$(VisualStudioIbcSourceBranchName)</_DropNamePrefix>
+      <_DropNamePrefix>OptimizationData/$(VisualStudioIbcRepositoryName)/$(VisualStudioIbcSourceBranchName)</_DropNamePrefix>
       <_DropName>$(_DropNamePrefix)/$(VisualStudioIbcDropId)</_DropName>
       <_DropName Condition="'$(VisualStudioIbcDrop)' != ''">$(VisualStudioIbcDrop)</_DropName>
     </PropertyGroup>
