@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 271903,
+      "barId": 272222,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "5525c4c63c8cc900307839e8e013ad1f2c7f5e0f"
+      "commitSha": "398d037421f466104ffc5e73df9694eb68bc7239"
     },
     {
       "packageVersion": "10.0.0-beta.25302.1",
@@ -275,6 +275,71 @@
     },
     {
       "path": "source-build-externals/src/repos/src/xunit/tools/media",
+      "remoteUri": "https://github.com/xunit/media",
+      "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/abstractions-xunit",
+      "remoteUri": "https://github.com/xunit/abstractions.xunit",
+      "commitSha": "b75d54d73b141709f805c2001b16f3dd4d71539d"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/application-insights",
+      "remoteUri": "https://github.com/microsoft/ApplicationInsights-dotnet",
+      "commitSha": "2faa7e8b157a431daa2e71785d68abd5fa817b53"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet",
+      "remoteUri": "https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet.git",
+      "commitSha": "e67b25be77532af9ba405670b34b4d263d505fde"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/cssparser",
+      "remoteUri": "https://github.com/dotnet/cssparser",
+      "commitSha": "0d59611784841735a7778a67aa6e9d8d000c861f"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/docker-creds-provider",
+      "remoteUri": "https://github.com/mthalman/docker-creds-provider",
+      "commitSha": "6e1ecd0a80755f9f0e88dc23b98b52f51a77c65e"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/humanizer",
+      "remoteUri": "https://github.com/Humanizr/Humanizer",
+      "commitSha": "3ebc38de585fc641a04b0e78ed69468453b0f8a1"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/MSBuildLocator",
+      "remoteUri": "https://github.com/microsoft/MSBuildLocator",
+      "commitSha": "e0281df33274ac3c3e22acc9b07dcb4b31d57dc0"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
+      "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
+      "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
+      "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
+      "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/xunit",
+      "remoteUri": "https://github.com/xunit/xunit",
+      "commitSha": "82543a6df6f5f13b5b70f8a9f9ccb41cd676084f"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/xunit/src/xunit.assert/Asserts",
+      "remoteUri": "https://github.com/xunit/assert.xunit",
+      "commitSha": "cac8b688c193c0f244a0bedf3bb60feeb32d377a"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/builder/common",
+      "remoteUri": "https://github.com/xunit/build-tools-v3",
+      "commitSha": "90dba1f5638a4f00d4978a73e23edde5b85061d9"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/media",
       "remoteUri": "https://github.com/xunit/media",
       "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
     }
