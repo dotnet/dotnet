@@ -25,7 +25,6 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-preview.6.25317.108</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.6.25317.108</PrivateSourceBuiltArtifactsVersion>
-    <PrivateSourceBuiltPrebuiltsVersion>10.0.100-preview.6</PrivateSourceBuiltPrebuiltsVersion>
     <!-- arcade dependencies -->
     <MicrosoftDotNetBuildManifestVersion>10.0.0-beta.25317.108</MicrosoftDotNetBuildManifestVersion>
     <!-- command-line-api dependencies -->
