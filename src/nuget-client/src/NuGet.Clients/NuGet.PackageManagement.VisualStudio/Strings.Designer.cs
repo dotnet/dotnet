@@ -19,7 +19,7 @@ namespace NuGet.PackageManagement.VisualStudio {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -246,6 +246,42 @@ namespace NuGet.PackageManagement.VisualStudio {
         public static string Error_MultipleFrameworks {
             get {
                 return ResourceManager.GetString("Error_MultipleFrameworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more NuGet.Config files contain an error..
+        /// </summary>
+        public static string Error_NuGetConfig_InvalidState {
+            get {
+                return ResourceManager.GetString("Error_NuGetConfig_InvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source specified is invalid..
+        /// </summary>
+        public static string Error_PackageSource_InvalidSource {
+            get {
+                return ResourceManager.GetString("Error_PackageSource_InvalidSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name specified has already been added to the list of available package sources..
+        /// </summary>
+        public static string Error_PackageSource_UniqueName {
+            get {
+                return ResourceManager.GetString("Error_PackageSource_UniqueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source specified has already been added to the list of available package sources..
+        /// </summary>
+        public static string Error_PackageSource_UniqueSource {
+            get {
+                return ResourceManager.GetString("Error_PackageSource_UniqueSource", resourceCulture);
             }
         }
         

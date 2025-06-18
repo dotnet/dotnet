@@ -20,7 +20,6 @@ public class DotnetArchitectureSwitchTestsWindowsOnly : AcceptanceTestBase
 {
     [TestMethod]
     [DataRow("X64", "X86")]
-    [Ignore]
     // TODO: This test does not work on server, it occasionally fails with cryptic message around not being able to load MSBuild.Tasks.
     // [DataRow("X86", "X64")]
     public void Use_EnvironmentVariables(string architectureFrom, string architectureTo)
