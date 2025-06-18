@@ -927,6 +927,108 @@ namespace NuGet.PackageManagement.Test
             packagesWithReportedAdvisories[0].Should().Be(packageIdentity);
         }
 
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task CheckPackageVulnerabilitiesAsync_WithEmptyPackages_ReturnsNoopAuditResult(string enableAudit)
+        {
+            // Arrange
+            string packageId = "A";
+
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        packageId,
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string sourceWithVulnerabilityData = "https://contoso.com/vulnerability/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { sourceWithVulnerabilityData, new GetVulnerabilityInfoResult(knownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var sourceRepositories = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), providers)
+            };
+
+            var sourceCacheContext = new SourceCacheContext();
+            var logger = new TestLogger();
+            var auditChecker = new AuditChecker(sourceRepositories, sourceCacheContext, logger);
+
+            var packages = Enumerable.Empty<PackageRestoreData>();
+            var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>
+            {
+                { "C:\\project.csproj", new RestoreAuditProperties { EnableAudit = enableAudit } }
+            };
+
+            // Act
+            var result = await auditChecker.CheckPackageVulnerabilitiesAsync(packages, restoreAuditProperties, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().Be(AuditCheckResult.NoopAuditResult);
+
+            // Verify that we don't waste time fetching vulnerability data when there are no packages
+            logger.LogMessages.Should().BeEmpty();
+        }
+
+        [Theory]
+        [InlineData("true")]
+        [InlineData("false")]
+        public async Task CheckPackageVulnerabilitiesAsync_WithNullPackages_ThrowsArgumentNullException(string enableAudit)
+        {
+            // Arrange
+            string packageId = "A";
+
+            List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities = new List<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>>()
+            {
+                new Dictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>
+                {
+                    {
+                        packageId,
+                        new PackageVulnerabilityInfo[] {
+                            new PackageVulnerabilityInfo(new Uri("https://vulnerability1"), PackageVulnerabilitySeverity.Moderate, VersionRange.Parse("[1.0.0,2.0.0)"))
+                        }
+                    }
+                }
+            };
+
+            string sourceWithVulnerabilityData = "https://contoso.com/vulnerability/v3/index.json";
+            Dictionary<string, GetVulnerabilityInfoResult> vulnerabilityResults = new()
+            {
+                { sourceWithVulnerabilityData, new GetVulnerabilityInfoResult(knownVulnerabilities, exceptions: null) }
+            };
+
+            var providers = new List<INuGetResourceProvider> { new VulnerabilityInfoResourceProvider(vulnerabilityResults) };
+            var sourceRepositories = new List<SourceRepository>
+            {
+                new SourceRepository(new PackageSource("https://contoso.com/v3/index.json"), providers)
+            };
+
+            var sourceCacheContext = new SourceCacheContext();
+            var logger = new TestLogger();
+            var auditChecker = new AuditChecker(sourceRepositories, sourceCacheContext, logger);
+
+            IEnumerable<PackageRestoreData>? packages = null;
+            var restoreAuditProperties = new Dictionary<string, RestoreAuditProperties>
+            {
+                { "C:\\project.csproj", new RestoreAuditProperties { EnableAudit = enableAudit } }
+            };
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                async () => await auditChecker.CheckPackageVulnerabilitiesAsync(packages!, restoreAuditProperties, CancellationToken.None));
+        }
+
         [Fact]
         public async Task CheckVulnerabiltiesAsync_WithoutEnabledProjects_SkipsVulnerabilityCheckingAltogether()
         {

@@ -9,26 +9,36 @@ using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
 using NuGet.Configuration;
-using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package.Update
 {
-    internal static class VersionChooser
+    internal class VersionChooser : IVersionChooser
     {
-        internal static async Task<NuGetVersion?> GetLatestVersionAsync(
-            string packageId,
-            CachingSourceProvider sourceProvider,
+        private readonly ISourceRepositoryProvider _sourceProvider;
+        private readonly ISettings _settings;
+        private readonly SourceCacheContext _sourceCacheContext;
+
+        public VersionChooser(
+            ISourceRepositoryProvider sourceProvider,
             ISettings settings,
-            SourceCacheContext sourceCacheContext,
+            SourceCacheContext sourceCacheContext)
+        {
+            _sourceProvider = sourceProvider;
+            _settings = settings;
+            _sourceCacheContext = sourceCacheContext;
+        }
+
+        public async Task<NuGetVersion?> GetLatestVersionAsync(
+            string packageId,
             ILoggerWithColor logger,
             CancellationToken cancellationToken)
         {
             var sources = new List<SourceRepository>();
-            foreach (PackageSource packageSource in SettingsUtility.GetEnabledSources(settings).NoAllocEnumerate())
+            foreach (PackageSource packageSource in SettingsUtility.GetEnabledSources(_settings).NoAllocEnumerate())
             {
-                SourceRepository sourceRepository = sourceProvider.CreateRepository(packageSource);
+                SourceRepository sourceRepository = _sourceProvider.CreateRepository(packageSource);
                 sources.Add(sourceRepository);
             }
 
@@ -37,7 +47,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             {
                 SourceRepository sourceRepository = sources[source];
                 // If package source is a local folder feed, it might not actually be async
-                lookups[source] = Task.Run(() => FindHighestPackageVersionAsync(sourceRepository, packageId, sourceCacheContext, logger, cancellationToken));
+                lookups[source] = Task.Run(() => FindHighestPackageVersionAsync(sourceRepository, packageId, _sourceCacheContext, logger, cancellationToken));
             }
 
             await Task.WhenAll(lookups);
