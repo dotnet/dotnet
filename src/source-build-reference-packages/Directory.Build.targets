@@ -11,7 +11,8 @@
     contains everything. It's generated when the package is initially deconstructed and tends to be
     unique per package, so there's no benefit to this Arcade util.
   -->
-  <Target Name="InitializeStandardNuspecProperties" />
+  <Target Name="InitializeStandardNuspecProperties"
+          Condition="'$(IsPackable)' == 'true'" />
 
   <Target Name="GetProjectSrc">
     <ItemGroup>
@@ -67,11 +68,11 @@
           **\*.csproj;
           @(NuGetGeneratedMetadataFile);
           "
-        Condition="'$(TextOnlyPackage)' != 'true'" />
+        Condition="'$(IsTextOnlyPackage)' != 'true'" />
       <StructureFile
         Include="**\*"
         Exclude="$(MSBuildProjectFullPath)"
-        Condition="'$(TextOnlyPackage)' == 'true'"/>
+        Condition="'$(IsTextOnlyPackage)' == 'true'"/>
 
       <StaticAssetFile
         Include="@(StructureFile)"
@@ -81,7 +82,8 @@
 
   <Target Name="CopyStaticAssetsToOutput"
           BeforeTargets="GenerateNuspec"
-          DependsOnTargets="GetProjectSrc">
+          DependsOnTargets="GetProjectSrc"
+          Condition="'$(IsPackable)' == 'true'">
     <!-- Ensure TFMPackTempOutputDir defined, to avoid globbing entire machine... -->
     <Error Condition="'$(TFMPackTempOutputDir)' == ''" Text="TFMPackTempOutputDir not defined" />
 
@@ -98,7 +100,8 @@
     This target is also a nice place to enforce that we do actually have a nuspec.
   -->
   <Target Name="SetManualPackTaskInputs"
-          BeforeTargets="_CalculateInputsOutputsForPack;GenerateNuspec">
+          BeforeTargets="_CalculateInputsOutputsForPack;GenerateNuspec"
+          Condition="'$(IsPackable)' == 'true'">
     <ItemGroup>
       <NuspecFile Include="*.nuspec" />
     </ItemGroup>
