@@ -78,11 +78,11 @@
       "commitSha": "a1c160002eb10785a233cfa5b1fb72cd20dcb73b"
     },
     {
-      "packageVersion": "6.15.0-preview.1.78",
-      "barId": 270808,
+      "packageVersion": "6.15.0-preview.1.82",
+      "barId": 271771,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "1a0b6d016d825bf435eb081bbff91a0cec4ade77"
+      "commitSha": "772ee13d2bafaa1414d90dbfbd77e0941115ef19"
     },
     {
       "packageVersion": "10.0.0-preview.25313.2",
@@ -99,11 +99,11 @@
       "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
     },
     {
-      "packageVersion": "10.0.0-preview.25314.1",
-      "barId": 271824,
+      "packageVersion": "10.0.0-preview.25316.1",
+      "barId": 271899,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "b2dcdee91527bc4e6e0133657152b02a458c0e12"
+      "commitSha": "dc4858726e18153077521634c7e902484dfb3391"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
@@ -121,10 +121,10 @@
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 271843,
+      "barId": 271980,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "73d56338a99ad45c00a64992394266ddac588d51"
+      "commitSha": "5c1df1f5bac37e85018c3ed12ac331821335dc3b"
     },
     {
       "packageVersion": "10.0.622801",
