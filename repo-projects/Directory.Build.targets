@@ -642,8 +642,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-externals. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-externals'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-reference-packages. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>
