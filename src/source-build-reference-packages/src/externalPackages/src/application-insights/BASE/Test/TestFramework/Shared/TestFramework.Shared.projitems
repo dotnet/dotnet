@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f76c6cbd-29b0-4564-bdcb-c969f8fec136</SharedGUID>
+    <RootNamespace>Microsoft.ApplicationInsights.TestFramework</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.ApplicationInsights.TestFramework</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ActivityFormatHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AssertExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeterministicTaskScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventSourceTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExpectedExceptionWithMessageAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocalInProcHttpServer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MockProcessorModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubEnvironmentVariablePlatform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubSynchronizationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubSerializableTelemetry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubTelemetry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubTelemetryChannel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubDebugOutput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubTelemetryProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubTelemetryInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubWebResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubPlatform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StubStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TaskExceptionObserver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TelemetryAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TelemetryContextAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestEventListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnknownTelemetry.cs" />
+  </ItemGroup>
+</Project>

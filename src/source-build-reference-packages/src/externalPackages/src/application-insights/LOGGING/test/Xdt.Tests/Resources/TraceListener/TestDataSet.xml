@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<data>
+  <item>
+    <original>
+      
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+        </configSections>
+      </configuration>
+      
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <configSections>
+          <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+        </configSections>
+        <system.diagnostics>
+          <trace autoflush="true" indentsize="0">
+            <listeners>
+              <add name="myAppInsightsListener" type="Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener, Microsoft.ApplicationInsights.TraceListener" />
+            </listeners>
+          </trace>
+        </system.diagnostics>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+  <item>
+    <original>
+
+      <configuration>
+        <someSetting/>
+        <system.diagnostics>
+          <trace autoflush="true" indentsize="0">
+            <listeners>
+              <add name="someListener" type="SomeType" />
+            </listeners>
+          </trace>
+        </system.diagnostics>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <someSetting/>
+        <system.diagnostics>
+          <trace autoflush="true" indentsize="0">
+            <listeners>
+              <add name="someListener" type="SomeType" />
+              <add name="myAppInsightsListener" type="Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener, Microsoft.ApplicationInsights.TraceListener" />
+            </listeners>
+          </trace>
+        </system.diagnostics>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+
+  <item>
+    <original>
+
+      <configuration>
+        <someSetting/>
+        <system.diagnostics>
+          <someSetting/>
+        </system.diagnostics>
+      </configuration>
+
+    </original>
+    <expectedPostTransform>
+
+      <configuration>
+        <someSetting/>
+        <system.diagnostics>
+          <someSetting/>
+          <trace autoflush="true" indentsize="0">
+            <listeners>
+              <add name="myAppInsightsListener" type="Microsoft.ApplicationInsights.TraceListener.ApplicationInsightsTraceListener, Microsoft.ApplicationInsights.TraceListener" />
+            </listeners>
+          </trace>
+        </system.diagnostics>
+      </configuration>
+
+    </expectedPostTransform>
+  </item>
+</data>

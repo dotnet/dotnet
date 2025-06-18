@@ -1,0 +1,45 @@
+name: Build and test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: 
+      - master
+      - 'release/**'
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Nerdbank.GitVersioning requires non-shallow checkout
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: |
+          6.0.x
+    - name: Restore
+      run: dotnet restore -bl:restore.binlog
+    - name: Build
+      run: dotnet build --no-restore -bl:MSBuildLocator.binlog
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack --no-build
+    - name: Upload Packages
+      uses: actions/upload-artifact@v2
+      with:
+        name: package
+        path: '**/*.*nupkg'
+        if-no-files-found: error
+    - name: Upload logs
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: logs
+        path: '**/*.binlog'
+        if-no-files-found: error
