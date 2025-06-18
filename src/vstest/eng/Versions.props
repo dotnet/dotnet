@@ -48,7 +48,7 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.631602</MicrosoftDiagnosticsNETCoreClientVersion>
+    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.631703</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>6.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>17.12.0</MicrosoftFakesVersion>
