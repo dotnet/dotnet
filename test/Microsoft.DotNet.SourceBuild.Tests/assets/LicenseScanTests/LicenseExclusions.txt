@@ -182,21 +182,6 @@ src/sdk/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 # Configuration, doesn't apply to source directly
 
 #
-# source-build-externals
-#
-
-# False positive
-src/source-build-externals/src/repos/src/abstractions-xunit/README.md|free-unknown
-src/source-build-externals/src/repos/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown
-src/source-build-externals/src/repos/src/humanizer/NuSpecs/*.nuspec*
-src/source-build-externals/src/repos/src/xunit/README.md|free-unknown
-src/source-build-externals/src/repos/src/xunit/src/xunit.assert/Asserts/README.md|free-unknown
-src/source-build-externals/src/repos/src/xunit/tools/builder/common/README.md|free-unknown
-
-# Configuration, doesn't apply to source directly
-src/source-build-externals/src/repos/src/vs-solutionpersistence/stylecop.json
-
-#
 # source-build-reference-packages
 #
 

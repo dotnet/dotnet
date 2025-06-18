@@ -71,7 +71,6 @@ graph TD
     runtime --> efcore
     runtime --> winforms
     scenario-tests --> sdk
-    source-build-externals --> sdk
     source-build-reference-packages --> sdk
     sourcelink --> sdk
     symreader --> sdk

@@ -20,7 +20,6 @@
     <Dir>src/runtime</Dir>
     <Dir>src/scenario-tests</Dir>
     <Dir>src/sdk</Dir>
-    <Dir>src/source-build-externals</Dir>
     <Dir>src/source-build-reference-packages</Dir>
     <Dir>src/sourcelink</Dir>
     <Dir>src/symreader</Dir>

@@ -123,9 +123,6 @@ src/sdk/test/TestAssets/TestPackages/dotnet-new/nupkg_templates/*
 src/sdk/test/dotnet.Tests/ShellShimTests/WpfBinaryTestAssets/*.dll
 src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 
-# source-build-externals
-src/source-build-externals/src/repos/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
-
 # source-build-reference-packages
 src/source-build-reference-packages/src/externalPackages/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
 
