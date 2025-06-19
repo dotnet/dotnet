@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Matt Thalman <mthalman@microsoft.com>
+Date: Tue, 15 Aug 2023 09:49:47 -0500
+Subject: [PATCH] Newtonsoft.Json project updates
+
+---
+ Src/Newtonsoft.Json/Newtonsoft.Json.csproj | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/Src/Newtonsoft.Json/Newtonsoft.Json.csproj b/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
+index 47c63018..c939e71a 100644
+--- a/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
++++ b/Src/Newtonsoft.Json/Newtonsoft.Json.csproj
+@@ -4,10 +4,10 @@
+     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+     <LangVersion>9.0</LangVersion>
+     <!-- version numbers will be updated by build -->
+-    <AssemblyVersion>11.0.0.0</AssemblyVersion>
+-    <FileVersion>11.0.1</FileVersion>
+-    <VersionPrefix>11.0.1</VersionPrefix>
+-    <VersionSuffix>beta2</VersionSuffix>
++    <AssemblyVersion>13.0.0.0</AssemblyVersion>
++    <FileVersion>13.0.3</FileVersion>
++    <VersionPrefix>13.0.3</VersionPrefix>
++    <VersionSuffix></VersionSuffix>
+     <Authors>James Newton-King</Authors>
+     <Company>Newtonsoft</Company>
+     <Product>Json.NET</Product>
+@@ -31,10 +31,9 @@
+     <MinClientVersion>2.12</MinClientVersion>
+     <IncludeSymbols>true</IncludeSymbols>
+     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+-    <CodeAnalysisRuleset>Newtonsoft.Json.ruleset</CodeAnalysisRuleset>
+     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+     <!--Package Validation-->
+-    <EnablePackageValidation>true</EnablePackageValidation>
++    <EnablePackageValidation>false</EnablePackageValidation>
+     <PackageValidationBaselineVersion>13.0.1</PackageValidationBaselineVersion>
+     <!--CP0003 will be logged when the assembly identity between baseline package and current don't match.
+     Disable that warning since local builds do not strong-name sign the assembly, causing a mistmatch when comparing
+@@ -47,10 +46,6 @@
+     <None Include="packageIcon.png" Pack="true" PackagePath="\" />
+     <None Include="README.md" Pack="true" PackagePath="\" />
+   </ItemGroup>
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersPackageVersion)" PrivateAssets="All" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageVersion)" PrivateAssets="All" />
+-  </ItemGroup>
+   <PropertyGroup Condition="'$(TargetFramework)'=='net6.0'">
+     <AssemblyTitle>Json.NET .NET 6.0</AssemblyTitle>
+     <DefineConstants>HAVE_ADO_NET;HAVE_APP_DOMAIN;HAVE_ASYNC;HAVE_ASYNC_DISPOSABLE;HAVE_BIG_INTEGER;HAVE_BINARY_FORMATTER;HAVE_BINARY_SERIALIZATION;HAVE_BINARY_EXCEPTION_SERIALIZATION;HAVE_CHAR_TO_LOWER_WITH_CULTURE;HAVE_CHAR_TO_STRING_WITH_CULTURE;HAVE_COM_ATTRIBUTES;HAVE_COMPONENT_MODEL;HAVE_CONCURRENT_COLLECTIONS;HAVE_COVARIANT_GENERICS;HAVE_DATA_CONTRACTS;HAVE_DATE_TIME_OFFSET;HAVE_DB_NULL_TYPE_CODE;HAVE_DYNAMIC;HAVE_EMPTY_TYPES;HAVE_ENTITY_FRAMEWORK;HAVE_EXPRESSIONS;HAVE_FAST_REVERSE;HAVE_FSHARP_TYPES;HAVE_FULL_REFLECTION;HAVE_GUID_TRY_PARSE;HAVE_HASH_SET;HAVE_ICLONEABLE;HAVE_ICONVERTIBLE;HAVE_IGNORE_DATA_MEMBER_ATTRIBUTE;HAVE_INOTIFY_COLLECTION_CHANGED;HAVE_INOTIFY_PROPERTY_CHANGING;HAVE_ISET;HAVE_LINQ;HAVE_MEMORY_BARRIER;HAVE_METHOD_IMPL_ATTRIBUTE;HAVE_NON_SERIALIZED_ATTRIBUTE;HAVE_READ_ONLY_COLLECTIONS;HAVE_REFLECTION_EMIT;HAVE_REGEX_TIMEOUTS;HAVE_SECURITY_SAFE_CRITICAL_ATTRIBUTE;HAVE_SERIALIZATION_BINDER_BIND_TO_NAME;HAVE_STREAM_READER_WRITER_CLOSE;HAVE_STRING_JOIN_WITH_ENUMERABLE;HAVE_TIME_SPAN_PARSE_WITH_CULTURE;HAVE_TIME_SPAN_TO_STRING_WITH_CULTURE;HAVE_TIME_ZONE_INFO;HAVE_TRACE_WRITER;HAVE_TYPE_DESCRIPTOR;HAVE_UNICODE_SURROGATE_DETECTION;HAVE_VARIANT_TYPE_PARAMETERS;HAVE_VERSION_TRY_PARSE;HAVE_XLINQ;HAVE_XML_DOCUMENT;HAVE_XML_DOCUMENT_TYPE;HAVE_CONCURRENT_DICTIONARY;HAVE_INDEXOF_STRING_COMPARISON;HAVE_REPLACE_STRING_COMPARISON;HAVE_REPLACE_STRING_COMPARISON;HAVE_GETHASHCODE_STRING_COMPARISON;HAVE_NULLABLE_ATTRIBUTES;HAVE_DYNAMIC_CODE_COMPILED;HAS_ARRAY_EMPTY;HAVE_DATE_ONLY;$(AdditionalConstants)</DefineConstants>

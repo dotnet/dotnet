@@ -284,8 +284,12 @@ namespace NuGet.CommandLine.Xplat.Tests
             message.Should().Contain(_fixture.ExpectedSearchResultDetailed);
         }
 
-        [Fact]
-        public async Task RunAsync_ExactMatchOptionEnabled_OnePackageTableOutputted()
+        [Theory]
+        [InlineData(null)]
+        [InlineData("Minimal")]
+        [InlineData("Normal")]
+        [InlineData("Detailed")]
+        public async Task RunAsync_ExactMatchOptionEnabled_WithTableFormatDifferentVerbosity_OnePackageTableOutputted(string verbosity)
         {
             // Arrange
             using SimpleTestPathContext pathContext = new SimpleTestPathContext();
@@ -297,22 +301,47 @@ namespace NuGet.CommandLine.Xplat.Tests
             configFileName: pathContext.NuGetConfig,
             machineWideSettings: new XPlatMachineWideSetting());
             PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+
+            PackageSearchVerbosity packageSearchVerbosity = verbosity == null
+                ? PackageSearchVerbosity.Normal
+                : Enum.Parse<PackageSearchVerbosity>(verbosity, ignoreCase: true);
+
             var expectedDefaultColorMessage =
-               "| Package ID      | Version | Owners | Total Downloads |" +
-               "| --------------- | ------- | ------ | --------------- |" +
-               "|  | 13.0.3  |        | N/A             |" +
-               "| --------------- | ------- | ------ | --------------- |";
-            var expectedRedColorMessage = "Newtonsoft.Json";
-            PackageSearchArgs packageSearchArgs = new()
+                    "| Package ID      | Version | Owners | Total Downloads |" +
+                    "| --------------- | ------- | ------ | --------------- |" +
+                    "|  | 13.0.3  |        | N/A             |" +
+                    "| --------------- | ------- | ------ | --------------- |";
+            if (packageSearchVerbosity == PackageSearchVerbosity.Minimal)
             {
-                Skip = 0,
-                Take = 20,
+                expectedDefaultColorMessage =
+               "| Package ID      | Version |" +
+               "| --------------- | ------- |" +
+               "|  | 13.0.3  |" +
+               "| --------------- | ------- |";
+            }
+            else if (packageSearchVerbosity == PackageSearchVerbosity.Detailed)
+            {
+                expectedDefaultColorMessage =
+                    "| Package ID      | Version | Owners | Total Downloads | Vulnerable | Deprecation | Project URL                     | Description                                                    |" +
+                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------------------- | -------------------------------------------------------------- |" +
+                    "|  | 13.0.3  |        | N/A             | N/A        | N/A         | https://www.newtonsoft.com/json | Json.NET is a popular high-performance JSON framework for .NET |" +
+                    "| --------------- | ------- | ------ | --------------- | ---------- | ----------- | ------------------------------- | -------------------------------------------------------------- |";
+            }
+            var expectedRedColorMessage = "Newtonsoft.Json";
+            PackageSearchArgs packageSearchArgs = new PackageSearchArgs()
+            {
                 Prerelease = false,
                 ExactMatch = true,
                 Logger = GetLogger(),
                 SearchTerm = "Newtonsoft.Json",
-                Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" }
+                Sources = new List<string> { $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json" },
+                Format = PackageSearchFormat.Table
             };
+
+            if (verbosity != null)
+            {
+                packageSearchArgs.Verbosity = packageSearchVerbosity;
+            }
 
             // Act
             await PackageSearchRunner.RunAsync(

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <RootNamespace>Microsoft.ApplicationInsights.DiagnosticSourceListener</RootNamespace>
+    <AssemblyName>Microsoft.ApplicationInsights.DiagnosticSourceListener</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.DiagnosticSourceListener</PackageId>
+    <Title>Application Insights DiagnosticSourceListener</Title>
+    <Description>Application Insights DiagnosticSourceListener allows forwarding events from DiagnosticSource to Application Insights. Application Insights will collect your logs from multiple sources and provide rich powerful search capabilities. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>$(PackageTags) DiagnosticsSource</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ApplicationInsights.config.install.xdt" />
+    <Content Include="ApplicationInsights.config.uninstall.xdt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourcePkgVer)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Import Project="..\CommonShared\CommonShared.projitems" Label="Shared" />
+</Project>
