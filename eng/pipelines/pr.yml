@@ -46,3 +46,27 @@ stages:
       scope: lite
     ${{ else }}:
       scope: full
+
+- stage: ValidateSubmodules
+  displayName: 'Validate VMR Submodules'
+  dependsOn: []
+  condition: and(eq(variables['isPRTrigger'], 'true'), ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'))
+  jobs:
+  - job: RunValidationTool
+    displayName: 'Run ValidateVmrChanges Tool'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - script: |
+        echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
+        git fetch origin $(System.PullRequest.TargetBranch)
+      displayName: 'Fetch PR target branch'
+
+    - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+      displayName: 'Execute ChangeValidation Tool'
+      env:
+        SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
+

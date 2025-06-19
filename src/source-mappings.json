@@ -22,7 +22,10 @@
     "mappings": [
         {
             "name": "arcade",
-            "defaultRemote": "https://github.com/dotnet/arcade"
+            "defaultRemote": "https://github.com/dotnet/arcade",
+            "exclude": [
+                "eng/tools/ChangeValidation/**"
+            ]
         },
         {
             "name": "aspnetcore",

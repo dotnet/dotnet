@@ -139,3 +139,9 @@ public class Program
         }
     }
 }
+internal enum WarningLevel
+{
+    None,
+    Warning,
+    Error
+}
