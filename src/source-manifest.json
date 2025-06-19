@@ -92,11 +92,11 @@
       "commitSha": "67633105eb00449cca598c97b44f97c8771563da"
     },
     {
-      "packageVersion": "5.0.0-1.25314.1",
-      "barId": 271796,
+      "packageVersion": "5.0.0-1.25318.6",
+      "barId": 272355,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
+      "commitSha": "f4686b910ed27a49807baf0cdfe309c4a0c0ab4a"
     },
     {
       "packageVersion": "10.0.0-preview.25312.1",
