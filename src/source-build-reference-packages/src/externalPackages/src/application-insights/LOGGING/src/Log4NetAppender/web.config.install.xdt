@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <!--
+  Complex workaround to make sure configSections is the first child of configuration (otherwise it throws)
+  see http://stackoverflow.com/questions/18737022/xdt-transform-insertbefore-locator-condition-is-ignored for details
+  -->
+  <configSections xdt:Transform="InsertBefore(/configuration/*[1])" />
+  <configSections xdt:Locator="XPath(/configuration/configSections[last()])">
+    <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)" />
+  </configSections>
+  <configSections xdt:Transform="RemoveAll" xdt:Locator="Condition(count(*)=0)" />
+  
+  <log4net xdt:Transform="InsertIfMissing">
+    <root xdt:Transform="InsertIfMissing">
+      <level value="ALL" xdt:Transform="InsertIfMissing" />
+      <appender-ref ref="aiAppender" xdt:Transform="InsertIfMissing" xdt:Locator="Match(ref)" />
+    </root>
+    <appender name="aiAppender" type="Microsoft.ApplicationInsights.Log4NetAppender.ApplicationInsightsAppender, Microsoft.ApplicationInsights.Log4NetAppender" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)">
+      <layout type="log4net.Layout.PatternLayout" xdt:Transform="InsertIfMissing">
+        <conversionPattern value="%message%newline" />
+      </layout>
+    </appender>
+  </log4net>
+
+</configuration >

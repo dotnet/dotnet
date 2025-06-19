@@ -1,0 +1,32 @@
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-2019'
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
+  displayName: 'dotnet build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Test/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+  displayName: 'dotnet test'
+- script: dotnet pack --configuration $(buildConfiguration) /p:VersionSuffix=$(Build.BuildNumber)
+  workingDirectory: src/Microsoft.Css.Parser
+  displayName: 'dotnet pack'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'src/Microsoft.Css.Parser/bin/$(buildConfiguration)'
+    ArtifactName: 'artifacts'
+    publishLocation: 'Container'

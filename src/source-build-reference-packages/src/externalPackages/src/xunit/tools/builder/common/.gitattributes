@@ -1,0 +1,10 @@
+* text=auto eol=lf
+
+*.cs text diff=csharp
+*.csproj text merge=union
+*.ico binary
+*.resx text merge=union
+*.sln text eol=crlf merge=union
+*.snk binary
+*.vbproj text merge=union
+*.xls binary

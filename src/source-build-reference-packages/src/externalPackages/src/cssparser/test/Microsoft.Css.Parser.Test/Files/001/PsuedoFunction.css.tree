@@ -1,0 +1,361 @@
+StyleSheet
+    CComment
+        OpenCComment    /*
+        CommentText    Simple
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    html
+                Separator    |
+                Name    *
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    link
+                        CloseFunctionBrace    )
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    visited
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    html
+                Separator    |
+                Name    *
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    link
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    visited
+                        CloseFunctionBrace    )
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    visited
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    Multiple parameters
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                IdSelector
+                                    HashName    #bar
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    baz
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                AttributeSelector
+                                    OpenSquareBracket    [
+                                    Namespace    
+                                    Separator    
+                                    Name    foo
+                                    Equals    =
+                                    Identifier    bar
+                                    CloseSquareBracket    ]
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                                IdSelector
+                                    HashName    #bar
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    baz
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector (FunctionArgumentCommaMissing:AfterItem)
+                                Namespace    
+                                Separator    
+                                Name    body
+                        PseudoSelectorArgument
+                            SimpleSelector (FunctionArgumentCommaMissing:AfterItem)
+                                Namespace    
+                                Separator    
+                                Name    table
+                        Greater (UnexpectedToken:WholeItem)    >
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                Namespace    
+                                Separator    
+                                Name    td
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                            Comma    ,
+                        PseudoSelectorArgument
+                            Comma (FunctionArgumentMissing:BeforeItem)    ,
+                        PseudoSelectorArgument (FunctionArgumentMissing:AfterItem)
+                            SimpleSelector
+                                IdSelector
+                                    HashName    #bar
+                            Comma    ,
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                IdSelector
+                                    HashName    #bar
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    baz
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                AttributeSelector
+                                    OpenSquareBracket    [
+                                    Namespace    
+                                    Separator    
+                                    Name    foo
+                                    Equals    =
+                                    Identifier    bar
+                                    CloseSquareBracket    ]
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                                IdSelector
+                                    HashName    #bar
+                                PseudoClassSelector
+                                    Colon    :
+                                    Identifier    baz
+                            Comma    ,
+                        PseudoSelectorArgument
+                            SimpleSelector (FunctionArgumentCommaMissing:AfterItem)
+                                Namespace    
+                                Separator    
+                                Name    body
+                        PseudoSelectorArgument
+                            SimpleSelector (FunctionArgumentCommaMissing:AfterItem)
+                                Namespace    
+                                Separator    
+                                Name    table
+                        Greater (UnexpectedToken:WholeItem)    >
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                Namespace    
+                                Separator    
+                                Name    td
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                ClassSelector
+                                    Dot    .
+                                    Identifier    foo
+                            Comma    ,
+                        PseudoSelectorArgument
+                            Comma (FunctionArgumentMissing:BeforeItem)    ,
+                        PseudoSelectorArgument (FunctionArgumentMissing:AfterItem)
+                            SimpleSelector
+                                IdSelector
+                                    HashName    #bar
+                            Comma    ,
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    nested ()
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                AttributeSelector
+                                    OpenSquareBracket    [
+                                    Namespace    
+                                    Separator    
+                                    Name    bar
+                                    Equals    =
+                                    Identifier    baz
+                                    CloseSquareBracket    ]
+                                PseudoClassFunctionSelector
+                                    Colon    :
+                                    PseudoFunctionNot
+                                        Function    not(
+                                        PseudoSelectorArgument
+                                            SimpleSelector
+                                                ClassSelector
+                                                    Dot    .
+                                                    Identifier    foo
+                                                PseudoClassFunctionSelector
+                                                    Colon    :
+                                                    PseudoFunctionNot
+                                                        Function    not(
+                                                        CloseFunctionBrace    )
+                                            Comma    ,
+                                        PseudoSelectorArgument
+                                            SimpleSelector
+                                                Namespace    
+                                                Separator    
+                                                Name    label
+                                        CloseFunctionBrace    )
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionMatches
+                        Function    matches(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                AttributeSelector
+                                    OpenSquareBracket    [
+                                    Namespace    
+                                    Separator    
+                                    Name    bar
+                                    Equals    =
+                                    Identifier    baz
+                                    CloseSquareBracket    ]
+                                PseudoClassFunctionSelector
+                                    Colon    :
+                                    PseudoFunctionNot
+                                        Function    not(
+                                        PseudoSelectorArgument
+                                            SimpleSelector
+                                                ClassSelector
+                                                    Dot    .
+                                                    Identifier    foo
+                                                PseudoClassFunctionSelector
+                                                    Colon    :
+                                                    PseudoFunctionMatches
+                                                        Function    matches(
+                                                        CloseFunctionBrace    )
+                                            Comma    ,
+                                        PseudoSelectorArgument
+                                            SimpleSelector
+                                                Namespace    
+                                                Separator    
+                                                Name    label
+                                        CloseFunctionBrace    )
+                        CloseFunctionBrace    )
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }

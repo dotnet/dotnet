@@ -1,0 +1,34 @@
+<Project>
+
+  <Import Condition=" '$(MSBuildProjectName)' != 'test.utility' " Project="..\src\xunit.core\build\xunit.core.props" />
+
+  <Import Condition=" '$(_Xunit_ImportPropsFile)' != '' " Project="$(_Xunit_ImportPropsFile)" />
+
+  <PropertyGroup>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <LangVersion>12.0</LangVersion>
+    <MSBuildCopyContentTransitively>false</MSBuildCopyContentTransitively>
+    <NoWarn>$(NoWarn);NU1603;NU1903;CS1701;MSB3277</NoWarn>
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <WarningsAsErrors>true</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalTestAssemblyInfo.cs" LinkBase="Properties" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'test.utility' AND '$(MSBuildProjectName)' != 'test.xunit1' ">
+    <Content Include="$(MSBuildThisFileDirectory)xunit.runner.json" Link="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'test.utility' AND '$(MSBuildProjectName)' != 'test.xunit1' ">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)test.utility\test.utility.csproj" />
+  </ItemGroup>
+
+</Project>

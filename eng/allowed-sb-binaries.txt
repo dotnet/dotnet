@@ -60,3 +60,11 @@ src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-ext
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
 src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer
+
+# source-build-reference-packages
+src/source-build-reference-packages/src/externalPackages/src/humanizer/src/Humanizer.Tests**/*.pfx
+src/source-build-reference-packages/src/externalPackages/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
+src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer

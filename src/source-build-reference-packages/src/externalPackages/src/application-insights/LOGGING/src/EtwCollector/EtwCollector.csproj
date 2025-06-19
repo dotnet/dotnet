@@ -1,0 +1,44 @@
+﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net452</TargetFrameworks>
+    <RootNamespace>Microsoft.ApplicationInsights.EtwCollector</RootNamespace>
+    <AssemblyName>Microsoft.ApplicationInsights.EtwCollector</AssemblyName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.EtwCollector</PackageId>
+    <Title>Application Insights EtwCollector</Title>
+    <Description>Application Insights EtwCollector allows sending data from Event Tracing for Windows (ETW) to Application Insights. Application Insights will collect your logs from multiple sources and provide rich powerful search capabilities. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156.</Description>
+    <PackageTags>$(PackageTags) ASP.NET ASMX Web Azure Server Services ASPX Websites Role Logging Log Tracing ETW EtwCollector Tracing</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ApplicationInsights.config.install.xdt" />
+    <Content Include="ApplicationInsights.config.uninstall.xdt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.EventRegister" Version="1.1.28">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="1.0.41" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Import Project="..\CommonShared\CommonShared.projitems" Label="Shared" />
+
+  <Import Project="..\EventSource.Shared\EventSource.Shared\EventSource.Shared.projitems" Label="Shared" />
+</Project>
+
