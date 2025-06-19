@@ -97,6 +97,10 @@ stages:
         runOnline: ${{ leg.runOnline }}
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
+        
+        # We only want to publish SB artifacts for each distinct distro/version/arch combination
+        ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+          extraProperties: /p:DotNetSourceOnlyPublishArtifacts=true
 
 - ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation

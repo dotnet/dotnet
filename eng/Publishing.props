@@ -15,6 +15,7 @@
     <SourceBuiltPdbArtifactsDir>$(ArtifactsPublishStagingDir)/PDB/$(Configuration)</SourceBuiltPdbArtifactsDir>
     <PublishingUseHardlinksIfPossible>true</PublishingUseHardlinksIfPossible>
     <AssetManifestFileName Condition="'$(MergedAssetManifestName)' != ''">$(MergedAssetManifestName)</AssetManifestFileName>
+    <IsPublishPass2>false</IsPublishPass2>
     <!--
       FutureArtifactName is the name that the runner (ie Azure DevOps job) that runs this job will upload the artifacts to.
       This goes into the asset manifest.
@@ -70,7 +71,7 @@
     </ItemGroup>
 
     <!-- Create Artifact items for produced packages and assets -->
-    <ItemGroup>
+    <ItemGroup Condition="'$(IsPublishPass2)' == 'false'">
       <Artifact Include="@(PackageToPublish)" />
       <Artifact Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')">
         <Kind>Blob</Kind>
@@ -81,7 +82,7 @@
       </Artifact>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <ItemGroup Condition="'$(IsPublishPass2)' == 'false' and '$(DotNetBuildSourceOnly)' == 'true'">
       <!-- Copy SDK archive to assets root as source-only build partners expect the file to be there. -->
       <SdkTarball Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')" Condition="$([System.String]::new('%(ProducedAsset.Filename)').StartsWith('dotnet-sdk-'))">
         <Kind>Blob</Kind>
@@ -107,6 +108,15 @@
         <IsShipping>true</IsShipping>
         <Kind>Blob</Kind>
         <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
+      </Artifact>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IsPublishPass2)' == 'true' and '$(DotNetBuildSourceOnly)' == 'true'">
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <Artifact Include="@(SourceBuildArtifact)">
+        <IsShipping>true</IsShipping>
+        <Kind>Blob</Kind>
+        <RelativeBlobPath>source-build/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
 

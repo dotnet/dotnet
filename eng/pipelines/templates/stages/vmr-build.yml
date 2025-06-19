@@ -103,7 +103,7 @@ stages:
         publishingVersion: 4
         assetManifestsPattern: |
           **/manifests/**/*.xml
-          !*Sdk_*_Artifacts/**/*.xml
+          !*Sdk_*_Artifacts/**/VerticalManifest.xml
 
   - template: vmr-validation.yml
     parameters:
