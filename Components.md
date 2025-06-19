@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@1988c37](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC1988c37e68bc83b1a0d3d230276a1ae8f89da38b)*
+*[_git/dotnet-aspnetcore@cea5fa6](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GCcea5fa610dba4e0c024727f4c528a66018b820a3)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@e9092b1](https://github.com/google/googletest/tree/e9092b12dc3cf617d47578f13a1f64285cfa5b2f)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -28,13 +28,13 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/emsdk`  
 *[dotnet/emsdk@976b101](https://github.com/dotnet/emsdk/tree/976b101e5539557c20e2ac39885ac879531bcf82)*
 - `src/format`  
-*[dotnet/format@664013f](https://github.com/dotnet/format/tree/664013fbe5e68941be81f9a710058db028da788f)*
+*[dotnet/format@a9a546e](https://github.com/dotnet/format/tree/a9a546ec24f105c72492bee017fec902ee99dc3e)*
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@13ee164](https://github.com/dotnet/installer/tree/13ee164c3ebdfd9198ec3f1901564ee6b61480da)*
+*[dotnet/installer@bb6afe3](https://github.com/dotnet/installer/tree/bb6afe309042cc029bf6a042620dcd3c5b2591d1)*
 - `src/msbuild`  
-*[dotnet/msbuild@d832838](https://github.com/dotnet/msbuild/tree/d832838517d47acce1d644b872ae7599c655b4e2)*
+*[dotnet/msbuild@af11d4f](https://github.com/dotnet/msbuild/tree/af11d4f253ee5c813bfd4f9d5902772638014572)*
 - `src/nuget-client`  
 *[_git/NuGet-NuGet.Client-Trusted@550277e](https://dev.azure.com/devdiv/DevDiv/_git/NuGet-NuGet.Client-Trusted/?version=GC550277e0616e549446f03fda35d3e23dff75dc01)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/runtime`  
 *[_git/dotnet-runtime@ef853a7](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCef853a71052646a42abf17e888ec6d9a69614ad9)*
 - `src/sdk`  
-*[_git/dotnet-sdk@1b20fdc](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC1b20fdc982f2cc23edc732b272b5a63c5e36e748)*
+*[_git/dotnet-sdk@3a31eda](https://dev.azure.com/dnceng/internal/_git/dotnet-sdk/?version=GC3a31eda5633be843d1f908d254d418db60528792)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@16bcad1](https://github.com/dotnet/source-build-externals/tree/16bcad1c13be082bd52ce178896d1119a73081a9)*
     - `src/source-build-externals/src/abstractions-xunit`  
