@@ -99,11 +99,11 @@
       "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
     },
     {
-      "packageVersion": "10.0.0-preview.25314.1",
-      "barId": 271824,
+      "packageVersion": "10.0.0-preview.25316.1",
+      "barId": 271899,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "b2dcdee91527bc4e6e0133657152b02a458c0e12"
+      "commitSha": "dc4858726e18153077521634c7e902484dfb3391"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
@@ -121,10 +121,10 @@
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 271981,
+      "barId": 272335,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "39ee3c45e092fdf861bdf12506a05fefb7ac471d"
+      "commitSha": "5700da892cbca720fa779f57d283910a24996d6b"
     },
     {
       "packageVersion": "10.0.622801",
@@ -176,11 +176,11 @@
       "commitSha": "d78740da3e8c0715652c28ba7b53022c2d10ac51"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25315.1",
-      "barId": 271846,
+      "packageVersion": "10.0.0-preview.6.25318.5",
+      "barId": 272391,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "75ff80c3943aff36b3ed090c9fb32da247bc4ea3"
+      "commitSha": "f5019d2ddbcbafd4bfa3eda8a4714bf81f7d34e4"
     },
     {
       "packageVersion": "10.0.0-preview.6.25310.4",
