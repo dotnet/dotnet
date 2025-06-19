@@ -37,8 +37,7 @@ function print_help () {
 }
 
 # SB prep default arguments
-# Update to centos.10-x64 during the next rebootstrap - https://github.com/dotnet/source-build/issues/5238
-defaultArtifactsRid='centos.9-x64'
+defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
 defaultDotnetSdk="$REPO_ROOT/.dotnet"
@@ -175,7 +174,23 @@ function DownloadArchive {
     archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/Private.SourceBuilt.$archiveType.$archiveVersion.$archiveRid.tar.gz"
 
     echo "  Downloading source-built $archiveType from $archiveUrl..."
-    (cd "$packagesArchiveDir" && curl -f --retry 5 --retry-all-errors --retry-delay 3 -O "$archiveUrl")
+    (
+      cd "$packagesArchiveDir" &&
+      for i in {1..5}; do
+        if curl -f --retry 5 -O "$archiveUrl"; then
+          exit 0
+        else
+          case $? in
+            18)
+              sleep 3
+              ;;
+            *)
+              exit 1
+              ;;
+          esac
+        fi
+      done
+    )
   elif [ "$isRequired" == true ]; then
     echo "  ERROR: $notFoundMessage"
     exit 1
@@ -207,7 +222,7 @@ function BootstrapArtifacts {
 
   properties=( "/p:ArchiveDir=$packagesArchiveDir" )
   if [[ -n "$bootstrap_rid" ]]; then
-    properties+=( "/p:PortableRid=$bootstrap_rid" )
+    properties+=( "/p:PortableTargetRid=$bootstrap_rid" )
   fi
 
   # Run restore on project to initiate download of bootstrap packages

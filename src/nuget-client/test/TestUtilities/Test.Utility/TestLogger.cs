@@ -173,7 +173,7 @@ namespace NuGet.Test.Utility
         {
             LogMessages.Enqueue(message);
 
-            Log(message.Level, message.Message);
+            Log(message.Level, message.FormatWithCode());
         }
 
         public async Task LogAsync(ILogMessage message)

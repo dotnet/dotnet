@@ -1,0 +1,178 @@
+Token Type           Length     Token Text
+OpenCComment         2          /*
+CommentText          21         BEGIN EXTERNAL SOURCE
+CloseCComment        2          */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+Semicolon            1          ;
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+OpenCComment         2          /*
+CommentText          21         BEGIN EXTERNAL SOURCE
+CloseCComment        2          */
+Identifier           16         background-color
+Colon                1          :
+Identifier           4          blue
+Semicolon            1          ;
+CloseCurlyBrace      1          }
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+OpenCComment         2          /*
+CommentText          16         Unclosed comment
+CloseCComment        2          */
+OpenCComment         2          /*
+CommentText          8          Comment1
+CloseCComment        2          */
+OpenCComment         2          /*
+CommentText          8          Comment2
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+OpenCComment         2          /*
+CommentText          15         Unclosed string
+CloseCComment        2          */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+InvalidString        5          "red\
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+InvalidString        4          "red
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+OpenCComment         2          /*
+CommentText          13         Nested blocks
+CloseCComment        2          */
+At                   1          @
+Identifier           5          media
+Identifier           6          screen
+OpenCurlyBrace       1          {
+At                   1          @
+Identifier           5          media
+Identifier           5          print
+OpenCurlyBrace       1          {
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+Semicolon            1          ;
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          bar
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           4          blue
+Semicolon            1          ;
+CloseCurlyBrace      1          }
+At                   1          @
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           7          charset
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           7          charset
+InvalidString        1          "
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           7          charset
+InvalidString        4          "foo
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           7          charset
+String               5          "foo"
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           7          charset
+String               5          "foo"
+Semicolon            1          ;
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           9          keyframes
+Identifier           3          foo
+OpenCurlyBrace       1          {
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           9          font-face
+OpenCurlyBrace       1          {
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           6          import
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           6          import
+Url                  4          url(
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+UnquotedUrlString    7          @import
+Url                  4          url(
+InvalidString        8          'foo.jpg
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           6          import
+Url                  4          url(
+String               9          'foo.jpg'
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           6          import
+Url                  4          url(
+String               9          'foo.jpg'
+CloseFunctionBrace   1          )
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+At                   1          @
+Identifier           6          import
+Url                  4          url(
+String               9          'foo.jpg'
+CloseFunctionBrace   1          )
+Semicolon            1          ;
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+Semicolon            1          ;
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+Dot                  1          .
+Identifier           3          foo
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           3          red
+Semicolon            1          ;
+CloseCurlyBrace      1          }
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+ScopeBlocker         25         /* END EXTERNAL SOURCE */
+EndOfFile            0          

@@ -44,7 +44,8 @@
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
 
-    <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
+    <BaselineDataFile Condition="'$(OfficialBuild)' == 'false' and !$(ARCADE_BOOTSTRAP_VERSION.Contains('ci'))">$(ToolsDir)prebuilt-baseline-ci-stage1.xml</BaselineDataFile>
+    <BaselineDataFile Condition="'$(BaselineDataFile)' == ''">$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
 
     <!-- Binary detection -->

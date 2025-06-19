@@ -116,10 +116,9 @@
   <Import Project="$(MSBuildThisFileDirectory)\..\src\Microsoft.DotNet.Helix\Sdk\sdk\Sdk.targets"/>
 
   <ItemGroup>
-    <!-- TODO: Re-enable aspnetcore version branding test: https://github.com/dotnet/arcade/issues/15249 -->
-    <!-- <HelixWorkItem Condition="$(HelixTargetQueue.StartsWith('Windows'))" Include="AspNetCoreTest">
+    <HelixWorkItem Condition="$(HelixTargetQueue.StartsWith('Windows'))" Include="AspNetCoreTest">
       <Command>powershell %HELIX_WORKITEM_PAYLOAD%\aspnet-versioncheck.ps1 -aspNetCoreVersion $(AspNetCoreRuntimeVersion)</Command>
       <PayloadDirectory>$(MSBuildThisFileDirectory)\AspNetVersionCheck</PayloadDirectory>
-    </HelixWorkItem> -->
+    </HelixWorkItem>
   </ItemGroup>
 </Project>

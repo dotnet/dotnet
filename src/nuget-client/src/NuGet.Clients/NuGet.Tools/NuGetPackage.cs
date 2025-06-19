@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using NuGet.Configuration;
 using NuGet.PackageManagement;
 using NuGet.PackageManagement.UI;
 using NuGet.PackageManagement.UI.Options;
@@ -57,7 +58,7 @@ namespace NuGetVSExtension
     [ProvideOptionPage(typeof(GeneralOptionPage), "NuGet Package Manager", "General", 113, 115, true, IsInUnifiedSettings = true)]
     [ProvideOptionPage(typeof(StubGeneralOptionsPage), "NuGet Package Manager", "GeneralStub", 113, 115, true, IsInUnifiedSettings = false, Sort = 0)]
     [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, IsInUnifiedSettings = true, Sort = 1)]
-    [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, Sort = 2)]
+    [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, IsInUnifiedSettings = true, Sort = 2)]
     [ProvideOptionPage(typeof(PackageSourceMappingOptionsPage), "NuGet Package Manager", "Package Source Mapping", 113, 116, true, Sort = 3)]
     [ProvideSettingsManifest]
     [ProvideSearchProvider(typeof(NuGetSearchProvider), "NuGet Search")]
@@ -86,6 +87,7 @@ namespace NuGetVSExtension
     [ProvideBrokeredService(BrokeredServicesUtilities.SearchServiceName, BrokeredServicesUtilities.SearchServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideService(typeof(GeneralPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
     [ProvideService(typeof(ConfigurationFilesPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
+    [ProvideService(typeof(PackageSourcesPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
     [Guid(GuidList.guidNuGetPkgString)]
     public sealed partial class NuGetPackage : AsyncPackage, IVsPackageExtensionProvider, IVsPersistSolutionOpts
     {
@@ -207,12 +209,16 @@ namespace NuGetVSExtension
             componentModel.DefaultCompositionService.SatisfyImportsOnce(this);
 
             VSSettings vsSettings = Settings.Value as VSSettings;
+            PackageSourceProvider packageSourceProvider = new(Settings.Value);
 
             AddService(typeof(GeneralPage),
                 (container, ct, serviceType) => Task.FromResult<object>(new GeneralPage(vsSettings)),
                 promote: true);
             AddService(typeof(ConfigurationFilesPage),
                 (container, ct, serviceType) => Task.FromResult<object>(new ConfigurationFilesPage(vsSettings)),
+                promote: true);
+            AddService(typeof(PackageSourcesPage),
+                (container, ct, serviceType) => Task.FromResult<object>(new PackageSourcesPage(vsSettings, packageSourceProvider)),
                 promote: true);
 
             ClearNuGetLocalResourcesCommand clearNuGetLocalResourcesCommand = new(oleMenuCommandService: _mcs, OutputConsoleLogger);

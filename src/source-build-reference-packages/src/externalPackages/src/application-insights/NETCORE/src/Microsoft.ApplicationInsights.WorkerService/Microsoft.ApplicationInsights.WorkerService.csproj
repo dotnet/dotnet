@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Microsoft.ApplicationInsights.WorkerService</AssemblyName>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <DefineConstants>$(DefineConstants);AI_ASPNETCORE_WORKER;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.WorkerService</PackageId>
+    <AssemblyTitle>Application Insights for .NET Core Worker Service Applications</AssemblyTitle>
+    <Title>Application Insights for .NET Core Worker Service Applications</Title>
+    <Description>Application Insights for .NET Core Worker Service (messaging, background tasks, and any non-HTTP workloads) applications. See https://docs.microsoft.com/azure/azure-monitor/app/worker-service for more information. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>$(PackageTags)worker;console;backgroundtasks;</PackageTags>
+  </PropertyGroup>
+
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <ProjectReference Include="..\..\..\BASE\src\ServerTelemetryChannel\TelemetryChannel.csproj" />
+    <ProjectReference Include="..\..\..\LOGGING\src\ILogger\ILogger.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\DependencyCollector\DependencyCollector\DependencyCollector.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\EventCounterCollector\EventCounterCollector\EventCounterCollector.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\PerformanceCollector\PerformanceCollector\Perf.csproj" />
+    <ProjectReference Include="..\..\..\WEB\Src\WindowsServer\WindowsServer\WindowsServer.csproj" />
+
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+</Project>
