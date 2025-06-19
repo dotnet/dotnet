@@ -20,6 +20,7 @@
   <PropertyGroup>
     <!-- Non-maestro versions -->
     <SystemFormatsAsn1Version>9.0.0</SystemFormatsAsn1Version>
+    <SystemTextJsonVersion>9.0.3</SystemTextJsonVersion>
     <MicrosoftExtensionsLoggingVersion>9.0.3</MicrosoftExtensionsLoggingVersion>
     <MicrosoftExtensionsLoggingAbstractionsVersion>9.0.3</MicrosoftExtensionsLoggingAbstractionsVersion>
     <MicrosoftExtensionsLoggingConsoleVersion>9.0.3</MicrosoftExtensionsLoggingConsoleVersion>
