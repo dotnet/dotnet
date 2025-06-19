@@ -1,0 +1,43 @@
+.custom.dashes {
+    font: normal;
+    -font: custom1;
+    --font: custom2;
+    - -font: custom2;
+    ---font: custom3;
+    - - -font: custom3;
+}
+
+.custom.stars {
+    color: normal;
+    *color: custom1;
+    **color: custom2;
+    * *color: custom2;
+    ***color: custom3;
+    * * *color: custom3;
+}
+
+.custom.mixed {
+    color: normal;
+    *-color: custom1;
+    * -color: custom1;
+    -*color: custom2;
+    - *color: custom2;
+    -*--color: custom3;
+    - * --color: custom3;
+    *-**color: custom4;
+    * - **color: custom4;
+}
+
+.progid.functions {
+    filter: progid;
+    filter: progid:;
+    filter: progid:foo;
+    filter: progid:foo.;
+    filter: progid:foo.bar;
+    filter: progid:foo.bar(;
+    filter: progid:foo.bar(param1;
+    filter: progid:foo.bar(param1, 2, 3px);
+    filter: progid:foo:bar();
+    filter: progid:foo,bar();
+    filter: progid:foo bar();
+}

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Rows>
+  <Row>
+    <TraceEventType>Warning</TraceEventType>
+    <Expect>true</Expect>
+  </Row>
+  <Row>
+    <TraceEventType>Verbose</TraceEventType>
+    <Expect>false</Expect>
+  </Row>
+</Rows>

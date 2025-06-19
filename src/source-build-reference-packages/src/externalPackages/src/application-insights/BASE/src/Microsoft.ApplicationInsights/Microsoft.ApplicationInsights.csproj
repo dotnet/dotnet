@@ -1,0 +1,38 @@
+﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <RootNamespace>Microsoft.ApplicationInsights</RootNamespace>
+    <AssemblyName>Microsoft.ApplicationInsights</AssemblyName>
+    <TargetFrameworks>net452;net46;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks Condition="$(OS) != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights</PackageId>
+    <Title>Application Insights API</Title>
+    <Description>Application Insights Base API. This package provides core functionality for transmission of all Application Insights Telemetry Types and is a dependent package for all other Application Insights packages. Please install the platform specific package for the best experience. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageReleaseNotes>
+      You should not use this nuget package for Win Phone, WinStore and UWP applications. It is not supported starting 2.0.0.
+      For the release notes please follow http://go.microsoft.com/fwlink/?LinkId=535037
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.EventRegister" Version="1.1.28" Condition="$(OS) == 'Windows_NT'">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourcePkgVer)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+ 
+</Project>

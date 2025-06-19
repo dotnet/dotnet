@@ -1,0 +1,27 @@
+@page { @top-left { content: string(entry, first) }}
+@page { @top-right { content: string(entry, last) }}
+@page { @top-center { content: string(index, first) }}
+
+dt { string-set: index first-letter, entry self }
+
+@page :left { 
+  margin-left: 10em;
+  @sidenote { position: fixed; left: -8em; width: 6em }
+}
+
+@page :right { 
+  margin-right: 10em;
+  @sidenote { position: fixed; right: -8em; width: 6em }
+}
+
+img { float: sidenote }
+
+::footnote-call {
+    content: counter(footnote, symbols('*', '+', '!'))
+}
+::line-number-left(5) { 
+   font: 10pt serif; 
+   content: counter(line);
+}
+
+@page { counter-reset: line }

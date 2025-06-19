@@ -1,0 +1,901 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Michael Simons <msimons@microsoft.com>
+Date: Fri, 26 Jul 2024 14:09:52 +0000
+Subject: [PATCH] Tfm updates and eliminate prebuilts
+
+Backport: Drop NetStandard 1.x support - https://github.com/Humanizr/Humanizer/issues/1530
+---
+ NuSpecs/Humanizer.Core.af.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ar.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.az.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.bg.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.bn-BD.nuspec      |  3 +--
+ NuSpecs/Humanizer.Core.cs.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.da.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.de.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.el.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.es.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.fa.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.fi-FI.nuspec      |  3 +--
+ NuSpecs/Humanizer.Core.fil-PH.nuspec     |  3 +--
+ NuSpecs/Humanizer.Core.fr-BE.nuspec      |  3 +--
+ NuSpecs/Humanizer.Core.fr.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.he.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.hr.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.hu.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.hy.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.id.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.is.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.it.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ja.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ko-KR.nuspec      |  1 -
+ NuSpecs/Humanizer.Core.ku.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.lv.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ms-MY.nuspec      |  1 -
+ NuSpecs/Humanizer.Core.mt.nuspec         |  1 -
+ NuSpecs/Humanizer.Core.nb-NO.nuspec      |  3 +--
+ NuSpecs/Humanizer.Core.nb.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.nl.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.nuspec            | 11 +++--------
+ NuSpecs/Humanizer.Core.pl.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.pt.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ro.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ru.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.sk.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.sl.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.sr-Latn.nuspec    |  3 +--
+ NuSpecs/Humanizer.Core.sr.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.sv.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.ta.nuspec.unused  |  3 +--
+ NuSpecs/Humanizer.Core.th-TH.nuspec      |  1 -
+ NuSpecs/Humanizer.Core.tr.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.uk.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec |  3 +--
+ NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec |  3 +--
+ NuSpecs/Humanizer.Core.vi.nuspec         |  3 +--
+ NuSpecs/Humanizer.Core.zh-CN.nuspec      |  3 +--
+ NuSpecs/Humanizer.Core.zh-Hans.nuspec    |  3 +--
+ NuSpecs/Humanizer.Core.zh-Hant.nuspec    |  3 +--
+ src/Directory.build.props                |  5 -----
+ src/Humanizer/Humanizer.csproj           |  2 +-
+ 53 files changed, 50 insertions(+), 110 deletions(-)
+
+diff --git a/NuSpecs/Humanizer.Core.af.nuspec b/NuSpecs/Humanizer.Core.af.nuspec
+index a69e3a94..5f20c850 100644
+--- a/NuSpecs/Humanizer.Core.af.nuspec
++++ b/NuSpecs/Humanizer.Core.af.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\af\*.*" target="lib\netstandard1.0\af" />
+     <file src="Humanizer\bin\Release\netstandard2.0\af\*.*" target="lib\netstandard2.0\af" />
+-    <file src="Humanizer\bin\Release\net6.0\af\*.*" target="lib\net6.0\af" />
++    <file src="Humanizer\bin\Release\net10.0\af\*.*" target="lib\net10.0\af" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ar.nuspec b/NuSpecs/Humanizer.Core.ar.nuspec
+index 3abb6425..228e1b00 100644
+--- a/NuSpecs/Humanizer.Core.ar.nuspec
++++ b/NuSpecs/Humanizer.Core.ar.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ar\*.*" target="lib\netstandard1.0\ar" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ar\*.*" target="lib\netstandard2.0\ar" />
+-    <file src="Humanizer\bin\Release\net6.0\ar\*.*" target="lib\net6.0\ar" />
++    <file src="Humanizer\bin\Release\net10.0\ar\*.*" target="lib\net10.0\ar" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.az.nuspec b/NuSpecs/Humanizer.Core.az.nuspec
+index d6c4a004..6dabb04f 100644
+--- a/NuSpecs/Humanizer.Core.az.nuspec
++++ b/NuSpecs/Humanizer.Core.az.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\az\*.*" target="lib\netstandard1.0\az" />
+     <file src="Humanizer\bin\Release\netstandard2.0\az\*.*" target="lib\netstandard2.0\az" />
+-    <file src="Humanizer\bin\Release\net6.0\az\*.*" target="lib\net6.0\az" />
++    <file src="Humanizer\bin\Release\net10.0\az\*.*" target="lib\net10.0\az" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.bg.nuspec b/NuSpecs/Humanizer.Core.bg.nuspec
+index 93924d00..9fe91384 100644
+--- a/NuSpecs/Humanizer.Core.bg.nuspec
++++ b/NuSpecs/Humanizer.Core.bg.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\bg\*.*" target="lib\netstandard1.0\bg" />
+     <file src="Humanizer\bin\Release\netstandard2.0\bg\*.*" target="lib\netstandard2.0\bg" />
+-    <file src="Humanizer\bin\Release\net6.0\bg\*.*" target="lib\net6.0\bg" />
++    <file src="Humanizer\bin\Release\net10.0\bg\*.*" target="lib\net10.0\bg" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.bn-BD.nuspec b/NuSpecs/Humanizer.Core.bn-BD.nuspec
+index 27585ce6..a1021509 100644
+--- a/NuSpecs/Humanizer.Core.bn-BD.nuspec
++++ b/NuSpecs/Humanizer.Core.bn-BD.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\bn-BD\*.*" target="lib\netstandard1.0\bn-BD" />
+     <file src="Humanizer\bin\Release\netstandard2.0\bn-BD\*.*" target="lib\netstandard2.0\bn-BD" />
+-    <file src="Humanizer\bin\Release\net6.0\bn-BD\*.*" target="lib\net6.0\bn-BD" />
++    <file src="Humanizer\bin\Release\net10.0\bn-BD\*.*" target="lib\net10.0\bn-BD" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.cs.nuspec b/NuSpecs/Humanizer.Core.cs.nuspec
+index 8a5fb02f..4656e6ba 100644
+--- a/NuSpecs/Humanizer.Core.cs.nuspec
++++ b/NuSpecs/Humanizer.Core.cs.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\cs\*.*" target="lib\netstandard1.0\cs" />
+     <file src="Humanizer\bin\Release\netstandard2.0\cs\*.*" target="lib\netstandard2.0\cs" />
+-    <file src="Humanizer\bin\Release\net6.0\cs\*.*" target="lib\net6.0\cs" />
++    <file src="Humanizer\bin\Release\net10.0\cs\*.*" target="lib\net10.0\cs" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.da.nuspec b/NuSpecs/Humanizer.Core.da.nuspec
+index 4eeaf71d..447058cb 100644
+--- a/NuSpecs/Humanizer.Core.da.nuspec
++++ b/NuSpecs/Humanizer.Core.da.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\da\*.*" target="lib\netstandard1.0\da" />
+     <file src="Humanizer\bin\Release\netstandard2.0\da\*.*" target="lib\netstandard2.0\da" />
+-    <file src="Humanizer\bin\Release\net6.0\da\*.*" target="lib\net6.0\da" />
++    <file src="Humanizer\bin\Release\net10.0\da\*.*" target="lib\net10.0\da" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.de.nuspec b/NuSpecs/Humanizer.Core.de.nuspec
+index 3e248dff..7fbb42fc 100644
+--- a/NuSpecs/Humanizer.Core.de.nuspec
++++ b/NuSpecs/Humanizer.Core.de.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\de\*.*" target="lib\netstandard1.0\de" />
+     <file src="Humanizer\bin\Release\netstandard2.0\de\*.*" target="lib\netstandard2.0\de" />
+-    <file src="Humanizer\bin\Release\net6.0\de\*.*" target="lib\net6.0\de" />
++    <file src="Humanizer\bin\Release\net10.0\de\*.*" target="lib\net10.0\de" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.el.nuspec b/NuSpecs/Humanizer.Core.el.nuspec
+index 7bb205df..87509bc5 100644
+--- a/NuSpecs/Humanizer.Core.el.nuspec
++++ b/NuSpecs/Humanizer.Core.el.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\el\*.*" target="lib\netstandard1.0\el" />
+     <file src="Humanizer\bin\Release\netstandard2.0\el\*.*" target="lib\netstandard2.0\el" />
+-    <file src="Humanizer\bin\Release\net6.0\el\*.*" target="lib\net6.0\el" />
++    <file src="Humanizer\bin\Release\net10.0\el\*.*" target="lib\net10.0\el" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.es.nuspec b/NuSpecs/Humanizer.Core.es.nuspec
+index cd050bdb..4928460f 100644
+--- a/NuSpecs/Humanizer.Core.es.nuspec
++++ b/NuSpecs/Humanizer.Core.es.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\es\*.*" target="lib\netstandard1.0\es" />
+     <file src="Humanizer\bin\Release\netstandard2.0\es\*.*" target="lib\netstandard2.0\es" />
+-    <file src="Humanizer\bin\Release\net6.0\es\*.*" target="lib\net6.0\es" />
++    <file src="Humanizer\bin\Release\net10.0\es\*.*" target="lib\net10.0\es" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.fa.nuspec b/NuSpecs/Humanizer.Core.fa.nuspec
+index 3a8cc941..7196bf10 100644
+--- a/NuSpecs/Humanizer.Core.fa.nuspec
++++ b/NuSpecs/Humanizer.Core.fa.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\fa\*.*" target="lib\netstandard1.0\fa" />
+     <file src="Humanizer\bin\Release\netstandard2.0\fa\*.*" target="lib\netstandard2.0\fa" />
+-    <file src="Humanizer\bin\Release\net6.0\fa\*.*" target="lib\net6.0\fa" />
++    <file src="Humanizer\bin\Release\net10.0\fa\*.*" target="lib\net10.0\fa" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.fi-FI.nuspec b/NuSpecs/Humanizer.Core.fi-FI.nuspec
+index 35796ee3..b183c3d8 100644
+--- a/NuSpecs/Humanizer.Core.fi-FI.nuspec
++++ b/NuSpecs/Humanizer.Core.fi-FI.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\fi-FI\*.*" target="lib\netstandard1.0\fi-FI" />
+     <file src="Humanizer\bin\Release\netstandard2.0\fi-FI\*.*" target="lib\netstandard2.0\fi-FI" />
+-    <file src="Humanizer\bin\Release\net6.0\fi-FI\*.*" target="lib\net6.0\fi-FI" />
++    <file src="Humanizer\bin\Release\net10.0\fi-FI\*.*" target="lib\net10.0\fi-FI" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.fil-PH.nuspec b/NuSpecs/Humanizer.Core.fil-PH.nuspec
+index 0cd678b4..d23bd01f 100644
+--- a/NuSpecs/Humanizer.Core.fil-PH.nuspec
++++ b/NuSpecs/Humanizer.Core.fil-PH.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\fil-PH\*.*" target="lib\netstandard1.0\fil-PH" />
+     <file src="Humanizer\bin\Release\netstandard2.0\fil-PH\*.*" target="lib\netstandard2.0\fil-PH" />
+-    <file src="Humanizer\bin\Release\net6.0\fil-PH\*.*" target="lib\net6.0\fil-PH" />
++    <file src="Humanizer\bin\Release\net10.0\fil-PH\*.*" target="lib\net10.0\fil-PH" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.fr-BE.nuspec b/NuSpecs/Humanizer.Core.fr-BE.nuspec
+index 6d2851e3..4e891ba3 100644
+--- a/NuSpecs/Humanizer.Core.fr-BE.nuspec
++++ b/NuSpecs/Humanizer.Core.fr-BE.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\fr-BE\*.*" target="lib\netstandard1.0\fr-BE" />
+     <file src="Humanizer\bin\Release\netstandard2.0\fr-BE\*.*" target="lib\netstandard2.0\fr-BE" />
+-    <file src="Humanizer\bin\Release\net6.0\fr-BE\*.*" target="lib\net6.0\fr-BE" />
++    <file src="Humanizer\bin\Release\net10.0\fr-BE\*.*" target="lib\net10.0\fr-BE" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.fr.nuspec b/NuSpecs/Humanizer.Core.fr.nuspec
+index 5d84bd3c..ade764d0 100644
+--- a/NuSpecs/Humanizer.Core.fr.nuspec
++++ b/NuSpecs/Humanizer.Core.fr.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\fr\*.*" target="lib\netstandard1.0\fr" />
+     <file src="Humanizer\bin\Release\netstandard2.0\fr\*.*" target="lib\netstandard2.0\fr" />
+-    <file src="Humanizer\bin\Release\net6.0\fr\*.*" target="lib\net6.0\fr" />
++    <file src="Humanizer\bin\Release\net10.0\fr\*.*" target="lib\net10.0\fr" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.he.nuspec b/NuSpecs/Humanizer.Core.he.nuspec
+index 4bd3936f..b4792ad3 100644
+--- a/NuSpecs/Humanizer.Core.he.nuspec
++++ b/NuSpecs/Humanizer.Core.he.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\he\*.*" target="lib\netstandard1.0\he" />
+     <file src="Humanizer\bin\Release\netstandard2.0\he\*.*" target="lib\netstandard2.0\he" />
+-    <file src="Humanizer\bin\Release\net6.0\he\*.*" target="lib\net6.0\he" />
++    <file src="Humanizer\bin\Release\net10.0\he\*.*" target="lib\net10.0\he" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.hr.nuspec b/NuSpecs/Humanizer.Core.hr.nuspec
+index 736a05a3..6dc57145 100644
+--- a/NuSpecs/Humanizer.Core.hr.nuspec
++++ b/NuSpecs/Humanizer.Core.hr.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\hr\*.*" target="lib\netstandard1.0\hr" />
+     <file src="Humanizer\bin\Release\netstandard2.0\hr\*.*" target="lib\netstandard2.0\hr" />
+-    <file src="Humanizer\bin\Release\net6.0\hr\*.*" target="lib\net6.0\hr" />
++    <file src="Humanizer\bin\Release\net10.0\hr\*.*" target="lib\net10.0\hr" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.hu.nuspec b/NuSpecs/Humanizer.Core.hu.nuspec
+index 3842c724..68e6f484 100644
+--- a/NuSpecs/Humanizer.Core.hu.nuspec
++++ b/NuSpecs/Humanizer.Core.hu.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\hu\*.*" target="lib\netstandard1.0\hu" />
+     <file src="Humanizer\bin\Release\netstandard2.0\hu\*.*" target="lib\netstandard2.0\hu" />
+-    <file src="Humanizer\bin\Release\net6.0\hu\*.*" target="lib\net6.0\hu" />
++    <file src="Humanizer\bin\Release\net10.0\hu\*.*" target="lib\net10.0\hu" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.hy.nuspec b/NuSpecs/Humanizer.Core.hy.nuspec
+index ac8827dc..9b7a7c66 100644
+--- a/NuSpecs/Humanizer.Core.hy.nuspec
++++ b/NuSpecs/Humanizer.Core.hy.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\hy\*.*" target="lib\netstandard1.0\hy" />
+     <file src="Humanizer\bin\Release\netstandard2.0\hy\*.*" target="lib\netstandard2.0\hy" />
+-    <file src="Humanizer\bin\Release\net6.0\hy\*.*" target="lib\net6.0\hy" />
++    <file src="Humanizer\bin\Release\net10.0\hy\*.*" target="lib\net10.0\hy" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+diff --git a/NuSpecs/Humanizer.Core.id.nuspec b/NuSpecs/Humanizer.Core.id.nuspec
+index c38c48cf..fbfebff0 100644
+--- a/NuSpecs/Humanizer.Core.id.nuspec
++++ b/NuSpecs/Humanizer.Core.id.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\id\*.*" target="lib\netstandard1.0\id" />
+     <file src="Humanizer\bin\Release\netstandard2.0\id\*.*" target="lib\netstandard2.0\id" />
+-    <file src="Humanizer\bin\Release\net6.0\id\*.*" target="lib\net6.0\id" />
++    <file src="Humanizer\bin\Release\net10.0\id\*.*" target="lib\net10.0\id" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.is.nuspec b/NuSpecs/Humanizer.Core.is.nuspec
+index 0cedfee5..e54b1a25 100644
+--- a/NuSpecs/Humanizer.Core.is.nuspec
++++ b/NuSpecs/Humanizer.Core.is.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\is\*.*" target="lib\netstandard1.0\is" />
+     <file src="Humanizer\bin\Release\netstandard2.0\is\*.*" target="lib\netstandard2.0\is" />
+-    <file src="Humanizer\bin\Release\net6.0\is\*.*" target="lib\net6.0\is" />
++    <file src="Humanizer\bin\Release\net10.0\is\*.*" target="lib\net10.0\is" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.it.nuspec b/NuSpecs/Humanizer.Core.it.nuspec
+index a6a1cc4b..215f127f 100644
+--- a/NuSpecs/Humanizer.Core.it.nuspec
++++ b/NuSpecs/Humanizer.Core.it.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\it\*.*" target="lib\netstandard1.0\it" />
+     <file src="Humanizer\bin\Release\netstandard2.0\it\*.*" target="lib\netstandard2.0\it" />
+-    <file src="Humanizer\bin\Release\net6.0\it\*.*" target="lib\net6.0\it" />
++    <file src="Humanizer\bin\Release\net10.0\it\*.*" target="lib\net10.0\it" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ja.nuspec b/NuSpecs/Humanizer.Core.ja.nuspec
+index 6da99ed6..3c77d2c7 100644
+--- a/NuSpecs/Humanizer.Core.ja.nuspec
++++ b/NuSpecs/Humanizer.Core.ja.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ja\*.*" target="lib\netstandard1.0\ja" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ja\*.*" target="lib\netstandard2.0\ja" />
+-    <file src="Humanizer\bin\Release\net6.0\ja\*.*" target="lib\net6.0\ja" />
++    <file src="Humanizer\bin\Release\net10.0\ja\*.*" target="lib\net10.0\ja" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ko-KR.nuspec b/NuSpecs/Humanizer.Core.ko-KR.nuspec
+index 864ca1f4..9f43bbb4 100644
+--- a/NuSpecs/Humanizer.Core.ko-KR.nuspec
++++ b/NuSpecs/Humanizer.Core.ko-KR.nuspec
+@@ -17,7 +17,6 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ko-KR\*.*" target="lib\netstandard1.0\ko-KR" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ko-KR\*.*" target="lib\netstandard2.0\ko-KR" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+diff --git a/NuSpecs/Humanizer.Core.ku.nuspec b/NuSpecs/Humanizer.Core.ku.nuspec
+index 5c99b9f4..af3e4cd8 100644
+--- a/NuSpecs/Humanizer.Core.ku.nuspec
++++ b/NuSpecs/Humanizer.Core.ku.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ku\*.*" target="lib\netstandard1.0\ku" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ku\*.*" target="lib\netstandard2.0\ku" />
+-    <file src="Humanizer\bin\Release\net6.0\ku\*.*" target="lib\net6.0\ku" />
++    <file src="Humanizer\bin\Release\net10.0\ku\*.*" target="lib\net10.0\ku" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.lv.nuspec b/NuSpecs/Humanizer.Core.lv.nuspec
+index f2a5d1fa..61deda01 100644
+--- a/NuSpecs/Humanizer.Core.lv.nuspec
++++ b/NuSpecs/Humanizer.Core.lv.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\lv\*.*" target="lib\netstandard1.0\lv" />
+     <file src="Humanizer\bin\Release\netstandard2.0\lv\*.*" target="lib\netstandard2.0\lv" />
+-    <file src="Humanizer\bin\Release\net6.0\lv\*.*" target="lib\net6.0\lv" />
++    <file src="Humanizer\bin\Release\net10.0\lv\*.*" target="lib\net10.0\lv" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ms-MY.nuspec b/NuSpecs/Humanizer.Core.ms-MY.nuspec
+index 05675d75..ca26be7a 100644
+--- a/NuSpecs/Humanizer.Core.ms-MY.nuspec
++++ b/NuSpecs/Humanizer.Core.ms-MY.nuspec
+@@ -17,7 +17,6 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ms-MY\*.*" target="lib\netstandard1.0\ms-MY" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ms-MY\*.*" target="lib\netstandard2.0\ms-MY" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+diff --git a/NuSpecs/Humanizer.Core.mt.nuspec b/NuSpecs/Humanizer.Core.mt.nuspec
+index 33bf18e9..245d2d41 100644
+--- a/NuSpecs/Humanizer.Core.mt.nuspec
++++ b/NuSpecs/Humanizer.Core.mt.nuspec
+@@ -18,7 +18,6 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\mt\*.*" target="lib\netstandard1.0\mt" />
+     <file src="Humanizer\bin\Release\netstandard2.0\mt\*.*" target="lib\netstandard2.0\mt" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+diff --git a/NuSpecs/Humanizer.Core.nb-NO.nuspec b/NuSpecs/Humanizer.Core.nb-NO.nuspec
+index 038c6f03..0e3a9b36 100644
+--- a/NuSpecs/Humanizer.Core.nb-NO.nuspec
++++ b/NuSpecs/Humanizer.Core.nb-NO.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\nb-NO\*.*" target="lib\netstandard1.0\nb-NO" />
+     <file src="Humanizer\bin\Release\netstandard2.0\nb-NO\*.*" target="lib\netstandard2.0\nb-NO" />
+-    <file src="Humanizer\bin\Release\net6.0\nb-NO\*.*" target="lib\net6.0\nb-NO" />
++    <file src="Humanizer\bin\Release\net10.0\nb-NO\*.*" target="lib\net10.0\nb-NO" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.nb.nuspec b/NuSpecs/Humanizer.Core.nb.nuspec
+index f0cb4ac9..122e3ddd 100644
+--- a/NuSpecs/Humanizer.Core.nb.nuspec
++++ b/NuSpecs/Humanizer.Core.nb.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\nb\*.*" target="lib\netstandard1.0\nb" />
+     <file src="Humanizer\bin\Release\netstandard2.0\nb\*.*" target="lib\netstandard2.0\nb" />
+-    <file src="Humanizer\bin\Release\net6.0\nb\*.*" target="lib\net6.0\nb" />
++    <file src="Humanizer\bin\Release\net10.0\nb\*.*" target="lib\net10.0\nb" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.nl.nuspec b/NuSpecs/Humanizer.Core.nl.nuspec
+index 8c495bc8..798b42c4 100644
+--- a/NuSpecs/Humanizer.Core.nl.nuspec
++++ b/NuSpecs/Humanizer.Core.nl.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\nl\*.*" target="lib\netstandard1.0\nl" />
+     <file src="Humanizer\bin\Release\netstandard2.0\nl\*.*" target="lib\netstandard2.0\nl" />
+-    <file src="Humanizer\bin\Release\net6.0\nl\*.*" target="lib\net6.0\nl" />
++    <file src="Humanizer\bin\Release\net10.0\nl\*.*" target="lib\net10.0\nl" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.nuspec b/NuSpecs/Humanizer.Core.nuspec
+index c6e3a0f1..daf62b97 100644
+--- a/NuSpecs/Humanizer.Core.nuspec
++++ b/NuSpecs/Humanizer.Core.nuspec
+@@ -14,20 +14,15 @@
+     <language>en</language>
+     <repository type="$RepositoryType$" url="$RepositoryUrl$" commit="$RepositoryCommit$" />
+     <dependencies>
+-      <group targetFramework="netstandard1.0">
+-        <dependency id="NETStandard.Library" version="1.6.1" />
+-      </group>
+       <group targetFramework="netstandard2.0" />
+-      <group targetFramework="net6.0" />
++      <group targetFramework="net10.0" />
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\*.dll" target="lib\netstandard1.0" />
+-    <file src="Humanizer\bin\Release\netstandard1.0\*.xml" target="lib\netstandard1.0" />
+     <file src="Humanizer\bin\Release\netstandard2.0\*.dll" target="lib\netstandard2.0" />
+     <file src="Humanizer\bin\Release\netstandard2.0\*.xml" target="lib\netstandard2.0" />
+-    <file src="Humanizer\bin\Release\net6.0\*.dll" target="lib\net6.0" />
+-    <file src="Humanizer\bin\Release\net6.0\*.xml" target="lib\net6.0" />
++    <file src="Humanizer\bin\Release\net10.0\*.dll" target="lib\net10.0" />
++    <file src="Humanizer\bin\Release\net10.0\*.xml" target="lib\net10.0" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.pl.nuspec b/NuSpecs/Humanizer.Core.pl.nuspec
+index 75593a0d..34c1c365 100644
+--- a/NuSpecs/Humanizer.Core.pl.nuspec
++++ b/NuSpecs/Humanizer.Core.pl.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\pl\*.*" target="lib\netstandard1.0\pl" />
+     <file src="Humanizer\bin\Release\netstandard2.0\pl\*.*" target="lib\netstandard2.0\pl" />
+-    <file src="Humanizer\bin\Release\net6.0\pl\*.*" target="lib\net6.0\pl" />
++    <file src="Humanizer\bin\Release\net10.0\pl\*.*" target="lib\net10.0\pl" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.pt.nuspec b/NuSpecs/Humanizer.Core.pt.nuspec
+index 084ff713..b99d79bf 100644
+--- a/NuSpecs/Humanizer.Core.pt.nuspec
++++ b/NuSpecs/Humanizer.Core.pt.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\pt\*.*" target="lib\netstandard1.0\pt" />
+     <file src="Humanizer\bin\Release\netstandard2.0\pt\*.*" target="lib\netstandard2.0\pt" />
+-    <file src="Humanizer\bin\Release\net6.0\pt\*.*" target="lib\net6.0\pt" />
++    <file src="Humanizer\bin\Release\net10.0\pt\*.*" target="lib\net10.0\pt" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ro.nuspec b/NuSpecs/Humanizer.Core.ro.nuspec
+index 4eb8746c..11e9b471 100644
+--- a/NuSpecs/Humanizer.Core.ro.nuspec
++++ b/NuSpecs/Humanizer.Core.ro.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ro\*.*" target="lib\netstandard1.0\ro" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ro\*.*" target="lib\netstandard2.0\ro" />
+-    <file src="Humanizer\bin\Release\net6.0\ro\*.*" target="lib\net6.0\ro" />
++    <file src="Humanizer\bin\Release\net10.0\ro\*.*" target="lib\net10.0\ro" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ru.nuspec b/NuSpecs/Humanizer.Core.ru.nuspec
+index 9c953e77..0c337ec8 100644
+--- a/NuSpecs/Humanizer.Core.ru.nuspec
++++ b/NuSpecs/Humanizer.Core.ru.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ru\*.*" target="lib\netstandard1.0\ru" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ru\*.*" target="lib\netstandard2.0\ru" />
+-    <file src="Humanizer\bin\Release\net6.0\ru\*.*" target="lib\net6.0\ru" />
++    <file src="Humanizer\bin\Release\net10.0\ru\*.*" target="lib\net10.0\ru" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.sk.nuspec b/NuSpecs/Humanizer.Core.sk.nuspec
+index 10ea8c0c..06f77fce 100644
+--- a/NuSpecs/Humanizer.Core.sk.nuspec
++++ b/NuSpecs/Humanizer.Core.sk.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\sk\*.*" target="lib\netstandard1.0\sk" />
+     <file src="Humanizer\bin\Release\netstandard2.0\sk\*.*" target="lib\netstandard2.0\sk" />
+-    <file src="Humanizer\bin\Release\net6.0\sk\*.*" target="lib\net6.0\sk" />
++    <file src="Humanizer\bin\Release\net10.0\sk\*.*" target="lib\net10.0\sk" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.sl.nuspec b/NuSpecs/Humanizer.Core.sl.nuspec
+index 3ba1e174..91e77402 100644
+--- a/NuSpecs/Humanizer.Core.sl.nuspec
++++ b/NuSpecs/Humanizer.Core.sl.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\sl\*.*" target="lib\netstandard1.0\sl" />
+     <file src="Humanizer\bin\Release\netstandard2.0\sl\*.*" target="lib\netstandard2.0\sl" />
+-    <file src="Humanizer\bin\Release\net6.0\sl\*.*" target="lib\net6.0\sl" />
++    <file src="Humanizer\bin\Release\net10.0\sl\*.*" target="lib\net10.0\sl" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.sr-Latn.nuspec b/NuSpecs/Humanizer.Core.sr-Latn.nuspec
+index 8312104d..884aa493 100644
+--- a/NuSpecs/Humanizer.Core.sr-Latn.nuspec
++++ b/NuSpecs/Humanizer.Core.sr-Latn.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\sr-Latn\*.*" target="lib\netstandard1.0\sr-Latn" />
+     <file src="Humanizer\bin\Release\netstandard2.0\sr-Latn\*.*" target="lib\netstandard2.0\sr-Latn" />
+-    <file src="Humanizer\bin\Release\net6.0\sr-Latn\*.*" target="lib\net6.0\sr-Latn" />
++    <file src="Humanizer\bin\Release\net10.0\sr-Latn\*.*" target="lib\net10.0\sr-Latn" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.sr.nuspec b/NuSpecs/Humanizer.Core.sr.nuspec
+index 464a316c..6dfc894d 100644
+--- a/NuSpecs/Humanizer.Core.sr.nuspec
++++ b/NuSpecs/Humanizer.Core.sr.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\sr\*.*" target="lib\netstandard1.0\sr" />
+     <file src="Humanizer\bin\Release\netstandard2.0\sr\*.*" target="lib\netstandard2.0\sr" />
+-    <file src="Humanizer\bin\Release\net6.0\sr\*.*" target="lib\net6.0\sr" />
++    <file src="Humanizer\bin\Release\net10.0\sr\*.*" target="lib\net10.0\sr" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.sv.nuspec b/NuSpecs/Humanizer.Core.sv.nuspec
+index 13215b74..1c63f8ac 100644
+--- a/NuSpecs/Humanizer.Core.sv.nuspec
++++ b/NuSpecs/Humanizer.Core.sv.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\sv\*.*" target="lib\netstandard1.0\sv" />
+     <file src="Humanizer\bin\Release\netstandard2.0\sv\*.*" target="lib\netstandard2.0\sv" />
+-    <file src="Humanizer\bin\Release\net6.0\sv\*.*" target="lib\net6.0\sv" />
++    <file src="Humanizer\bin\Release\net10.0\sv\*.*" target="lib\net10.0\sv" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.ta.nuspec.unused b/NuSpecs/Humanizer.Core.ta.nuspec.unused
+index 74c9d434..f0065339 100644
+--- a/NuSpecs/Humanizer.Core.ta.nuspec.unused
++++ b/NuSpecs/Humanizer.Core.ta.nuspec.unused
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\ta\*.*" target="lib\netstandard1.0\ta" />
+     <file src="Humanizer\bin\Release\netstandard2.0\ta\*.*" target="lib\netstandard2.0\ta" />
+-    <file src="Humanizer\bin\Release\net6.0\ta\*.*" target="lib\net6.0\ta" />
++    <file src="Humanizer\bin\Release\net10.0\ta\*.*" target="lib\net10.0\ta" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+diff --git a/NuSpecs/Humanizer.Core.th-TH.nuspec b/NuSpecs/Humanizer.Core.th-TH.nuspec
+index 42b1f963..f4c70d3b 100644
+--- a/NuSpecs/Humanizer.Core.th-TH.nuspec
++++ b/NuSpecs/Humanizer.Core.th-TH.nuspec
+@@ -17,7 +17,6 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\th-TH\*.*" target="lib\netstandard1.0\th-TH" />
+     <file src="Humanizer\bin\Release\netstandard2.0\th-TH\*.*" target="lib\netstandard2.0\th-TH" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+diff --git a/NuSpecs/Humanizer.Core.tr.nuspec b/NuSpecs/Humanizer.Core.tr.nuspec
+index c06ecea0..20b1dc40 100644
+--- a/NuSpecs/Humanizer.Core.tr.nuspec
++++ b/NuSpecs/Humanizer.Core.tr.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\tr\*.*" target="lib\netstandard1.0\tr" />
+     <file src="Humanizer\bin\Release\netstandard2.0\tr\*.*" target="lib\netstandard2.0\tr" />
+-    <file src="Humanizer\bin\Release\net6.0\tr\*.*" target="lib\net6.0\tr" />
++    <file src="Humanizer\bin\Release\net10.0\tr\*.*" target="lib\net10.0\tr" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.uk.nuspec b/NuSpecs/Humanizer.Core.uk.nuspec
+index 489d09eb..3602cba8 100644
+--- a/NuSpecs/Humanizer.Core.uk.nuspec
++++ b/NuSpecs/Humanizer.Core.uk.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\uk\*.*" target="lib\netstandard1.0\uk" />
+     <file src="Humanizer\bin\Release\netstandard2.0\uk\*.*" target="lib\netstandard2.0\uk" />
+-    <file src="Humanizer\bin\Release\net6.0\uk\*.*" target="lib\net6.0\uk" />
++    <file src="Humanizer\bin\Release\net10.0\uk\*.*" target="lib\net10.0\uk" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec b/NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec
+index 324e201a..3d09d801 100644
+--- a/NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec
++++ b/NuSpecs/Humanizer.Core.uz-Cyrl-UZ.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\uz-Cyrl-UZ\*.*" target="lib\netstandard1.0\uz-Cyrl-UZ" />
+     <file src="Humanizer\bin\Release\netstandard2.0\uz-Cyrl-UZ\*.*" target="lib\netstandard2.0\uz-Cyrl-UZ" />
+-    <file src="Humanizer\bin\Release\net6.0\uz-Cyrl-UZ\*.*" target="lib\net6.0\uz-Cyrl-UZ" />
++    <file src="Humanizer\bin\Release\net10.0\uz-Cyrl-UZ\*.*" target="lib\net10.0\uz-Cyrl-UZ" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec b/NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec
+index 98668f0f..691d0c6d 100644
+--- a/NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec
++++ b/NuSpecs/Humanizer.Core.uz-Latn-UZ.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\uz-Latn-UZ\*.*" target="lib\netstandard1.0\uz-Latn-UZ" />
+     <file src="Humanizer\bin\Release\netstandard2.0\uz-Latn-UZ\*.*" target="lib\netstandard2.0\uz-Latn-UZ" />
+-    <file src="Humanizer\bin\Release\net6.0\uz-Latn-UZ\*.*" target="lib\net6.0\uz-Latn-UZ" />
++    <file src="Humanizer\bin\Release\net10.0\uz-Latn-UZ\*.*" target="lib\net10.0\uz-Latn-UZ" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.vi.nuspec b/NuSpecs/Humanizer.Core.vi.nuspec
+index 1f7288b5..9d6218c5 100644
+--- a/NuSpecs/Humanizer.Core.vi.nuspec
++++ b/NuSpecs/Humanizer.Core.vi.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\vi\*.*" target="lib\netstandard1.0\vi" />
+     <file src="Humanizer\bin\Release\netstandard2.0\vi\*.*" target="lib\netstandard2.0\vi" />
+-    <file src="Humanizer\bin\Release\net6.0\vi\*.*" target="lib\net6.0\vi" />
++    <file src="Humanizer\bin\Release\net10.0\vi\*.*" target="lib\net10.0\vi" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.zh-CN.nuspec b/NuSpecs/Humanizer.Core.zh-CN.nuspec
+index d693eb77..a29fe464 100644
+--- a/NuSpecs/Humanizer.Core.zh-CN.nuspec
++++ b/NuSpecs/Humanizer.Core.zh-CN.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\zh-CN\*.*" target="lib\netstandard1.0\zh-CN" />
+     <file src="Humanizer\bin\Release\netstandard2.0\zh-CN\*.*" target="lib\netstandard2.0\zh-CN" />
+-    <file src="Humanizer\bin\Release\net6.0\zh-CN\*.*" target="lib\net6.0\zh-CN" />
++    <file src="Humanizer\bin\Release\net10.0\zh-CN\*.*" target="lib\net10.0\zh-CN" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.zh-Hans.nuspec b/NuSpecs/Humanizer.Core.zh-Hans.nuspec
+index daf32b8a..3d0dc105 100644
+--- a/NuSpecs/Humanizer.Core.zh-Hans.nuspec
++++ b/NuSpecs/Humanizer.Core.zh-Hans.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\zh-Hans\*.*" target="lib\netstandard1.0\zh-Hans" />
+     <file src="Humanizer\bin\Release\netstandard2.0\zh-Hans\*.*" target="lib\netstandard2.0\zh-Hans" />
+-    <file src="Humanizer\bin\Release\net6.0\zh-Hans\*.*" target="lib\net6.0\zh-Hans" />
++    <file src="Humanizer\bin\Release\net10.0\zh-Hans\*.*" target="lib\net10.0\zh-Hans" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/NuSpecs/Humanizer.Core.zh-Hant.nuspec b/NuSpecs/Humanizer.Core.zh-Hant.nuspec
+index 0a219d40..457072e0 100644
+--- a/NuSpecs/Humanizer.Core.zh-Hant.nuspec
++++ b/NuSpecs/Humanizer.Core.zh-Hant.nuspec
+@@ -18,9 +18,8 @@
+     </dependencies>
+   </metadata>
+   <files>
+-    <file src="Humanizer\bin\Release\netstandard1.0\zh-Hant\*.*" target="lib\netstandard1.0\zh-Hant" />
+     <file src="Humanizer\bin\Release\netstandard2.0\zh-Hant\*.*" target="lib\netstandard2.0\zh-Hant" />
+-    <file src="Humanizer\bin\Release\net6.0\zh-Hant\*.*" target="lib\net6.0\zh-Hant" />
++    <file src="Humanizer\bin\Release\net10.0\zh-Hant\*.*" target="lib\net10.0\zh-Hant" />
+     <file src="..\logo.png" target="logo.png" />
+   </files>
+ </package>
+\ No newline at end of file
+diff --git a/src/Directory.build.props b/src/Directory.build.props
+index 9312b001..e3ee1a4e 100644
+--- a/src/Directory.build.props
++++ b/src/Directory.build.props
+@@ -5,11 +5,6 @@
+     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+-  </ItemGroup>
+-
+   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+   </PropertyGroup>
+diff --git a/src/Humanizer/Humanizer.csproj b/src/Humanizer/Humanizer.csproj
+index 5b2f8ad9..d8e36f6c 100644
+--- a/src/Humanizer/Humanizer.csproj
++++ b/src/Humanizer/Humanizer.csproj
+@@ -1,6 +1,6 @@
+ ﻿<Project Sdk="Microsoft.NET.Sdk">  
+   <PropertyGroup>
+-    <TargetFrameworks>netstandard1.0;netstandard2.0;net6.0</TargetFrameworks>    
++    <TargetFrameworks>netstandard2.0;net10.0</TargetFrameworks>    
+     <Authors>Mehdi Khalili, Claire Novotny</Authors>
+     <PackageLicenseUrl>https://raw.githubusercontent.com/Humanizr/Humanizer/master/LICENSE</PackageLicenseUrl>
+     <PackageProjectUrl>https://github.com/Humanizr/Humanizer</PackageProjectUrl>

@@ -34,7 +34,7 @@ namespace Microsoft.DotNet.Tests
             Assert.True(
                 string.IsNullOrWhiteSpace(detectedBinaries),
                 "The following binaries were detected:\n" + detectedBinaries +
-                "\nSee https://github.com/dotnet/dotnet/blob/main/src/arcade/Documentation/UnifiedBuild/VMR-Permissible-Sources.md " +
+                "\nSee https://github.com/dotnet/dotnet/blob/main/docs/VMR-Permissible-Sources.md " +
                 "for information on how to resolve these failures.");
         }
     }

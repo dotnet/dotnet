@@ -1,0 +1,69 @@
+environment:
+  host:
+    os: 'windows'
+    flavor: 'server'
+    version: '2019'
+  runtime:
+    provider: 'appcontainer'
+    image: 'cdpxwin1809.azurecr.io/global/vse2019:latest'
+    source_mode: 'link'
+
+version:
+  name: 'ApplicationInsights-dotnet'
+  major: 0
+  minor: 0
+  system: 'custom'
+
+signing_options:
+  profile: 'external_distribution'
+
+restore:
+  commands:
+    - !!defaultcommand
+      name: 'Hello World'
+      command: '.pipelines/00_helloworld.cmd'
+      arguments: 'official'
+      fail_on_stderr: false
+    - !!defaultcommand
+      name: 'Show .NET versions'
+      command: '.pipelines/00_list_versions.cmd'
+      fail_on_stderr: false
+    - !!defaultcommand
+      name: 'Install dependencies'
+      command: '.pipelines/01_restore.cmd'
+      fail_on_stderr: false
+
+build:
+  commands:
+    - !!buildcommand
+      name: 'Dotnet Build'
+      command: '.pipelines/02_build.cmd'
+      arguments: '-p:PublicRelease=True -p:StableRelease=True -p:OfficialRelease=True'
+      fail_on_stderr: false
+      artifacts:
+        - from: './bin/Release/src'
+          include:
+            - '**/*.dll'
+          signing_options: 
+            sign_inline: true
+
+package:
+  commands:
+    - !!buildcommand
+      name: 'Dotnet Pack'
+      command: '.pipelines/03_pack.cmd'
+      arguments: '-p:PublicRelease=True -p:StableRelease=True -p:OfficialRelease=True'
+      fail_on_stderr: false
+      artifacts:
+        - from: './bin/Release/NuGet'
+          include:
+            - '*.*'
+          signing_options: 
+            sign_inline: true
+
+test:
+  commands:
+    - !!defaultcommand
+      name: 'Custom tests'
+      command: '.pipelines/04_test.cmd'
+      fail_on_stderr: false
