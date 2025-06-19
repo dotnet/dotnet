@@ -55,7 +55,7 @@
         <Value>$(TargetRid)</Value>
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).PortableRid">
-        <Value>$(PortableRid)</Value>
+        <Value>$(PortableTargetRid)</Value>
       </RuntimeHostConfigurationOption>
 
       <!-- Optional values -->

@@ -1,0 +1,28 @@
+StyleSheet
+    ImportDirective
+        At    @
+        Identifier    import
+        String    "subs.css"
+        Semicolon    ;
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h1
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    blue
+            CloseCurlyBrace    }
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    import
+        String    ""
+        MediaQuery
+            Identifier    list
+            Dot (UnexpectedMediaQueryToken:WholeItem)    .
+            Identifier (UnexpectedMediaQueryToken:WholeItem)    css
+            InvalidString (UnexpectedMediaQueryToken:WholeItem)    ";

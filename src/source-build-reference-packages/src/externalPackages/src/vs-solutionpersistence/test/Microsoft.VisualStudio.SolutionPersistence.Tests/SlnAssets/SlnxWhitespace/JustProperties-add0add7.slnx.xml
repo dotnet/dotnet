@@ -1,0 +1,18 @@
+<Solution>
+    <Properties Name="TestProperties">
+        <Property Name="Prop0" Value="Value0" />
+        <Property Name="Prop1" Value="Value1" />
+        <Property Name="Prop2" Value="Value2" />
+        <Property Name="Prop3" Value="Value3" />
+
+        <!-- Comment on Prop 4 -->
+        <Property Name="Prop4" Value="Value4" />
+        <Property Name="Prop5" Value="Value5">
+        </Property>
+
+        <!-- Comment on Prop 6 -->
+        <Property Name="Prop6" Value="Value6">Just a value?</Property>
+        <!-- End of Properties -->
+        <Property Name="Prop7" Value="Value7" />
+    </Properties>
+</Solution>

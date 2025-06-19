@@ -1,0 +1,55 @@
+StyleSheet
+    NamespaceDirective
+        At    @
+        Identifier    namespace
+        Identifier    Q
+        String    "http://example.com/q-markup"
+        Semicolon    ;
+    NamespaceDirective
+        At    @
+        Identifier    namespace
+        Identifier    lq
+        String    "http://example.com/q-markup"
+        Semicolon    ;
+    NamespaceDirective
+        At    @
+        Identifier    namespace
+        Identifier    empty
+        String    ""
+        Semicolon    ;
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    toto
+                Separator    |
+                Name    A
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    |
+                Name    B
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    *
+                Separator    |
+                Name    C
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    D
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }

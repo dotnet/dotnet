@@ -1,0 +1,489 @@
+StyleSheet
+    CComment
+        OpenCComment    /*
+        CommentText    Attribute selectors
+        CloseCComment    */
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+                    Identifier    i
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+                    Identifier (UnexpectedToken:WholeItem)    I
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+                    Identifier (UnexpectedToken:WholeItem)    z
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector (AttributeSelectorCloseBracketMissing:AfterItem)
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    Identifier    bar
+            SimpleSelector
+                String (SimpleSelectorExpected:WholeItem)    "i"
+                CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    BeginsWith    ^=
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    EndsWith    $=
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    OneOf    ~=
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    ListBeginsWith    |=
+                    String    "bar baz"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    ContainsString    *=
+                    String    "bar baz"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar baz"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar baz"
+                    Identifier    i
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar baz"
+                    Identifier (UnexpectedToken:WholeItem)    I
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar baz"
+                    Identifier (UnexpectedToken:WholeItem)    z
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector (AttributeSelectorCloseBracketMissing:AfterItem)
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals    =
+                    String    "bar baz"
+            SimpleSelector
+                String (SimpleSelectorExpected:WholeItem)    "i"
+                CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    span
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    hello
+                    Equals    =
+                    String    "Cleveland"
+                    CloseSquareBracket    ]
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    goodbye
+                    Equals    =
+                    String    "Columbus"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    blue
+                Semicolon    ;
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    rel
+                    OneOf    ~=
+                    String    "copyright"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    a
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    href
+                    Equals    =
+                    String    "http://www.w3.org/"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    lang
+                    Equals    =
+                    Identifier    fr
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    display
+                Colon    :
+                Identifier    none
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    lang
+                    ListBeginsWith    |=
+                    String    "en"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    DIALOGUE
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    character
+                    Equals    =
+                    Identifier    romeo
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    voice-family
+                Colon    :
+                String    "Laurence Olivier"
+                Comma    ,
+                Identifier    charles
+                Comma    ,
+                Identifier    male
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    DIALOGUE
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    character
+                    Equals    =
+                    Identifier    juliet
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    voice-family
+                Colon    :
+                String    "Vivien Leigh"
+                Comma    ,
+                Identifier    victoria
+                Comma    ,
+                Identifier    female
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    example
+                    Equals    =
+                    MultilineString    "public class foo\
+            {\
+                private int x;\
+                \
+                foo(int x) {\
+                    this.x = x;\
+                }\
+            \
+            }"
+                    CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+            CloseCurlyBrace    }

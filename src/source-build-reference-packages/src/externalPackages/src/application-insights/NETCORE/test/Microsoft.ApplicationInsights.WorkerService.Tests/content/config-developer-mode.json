@@ -1,0 +1,7 @@
+﻿{
+  "ApplicationInsights": {
+    "TelemetryChannel": {
+      "DeveloperMode": true
+    }
+  }
+}
