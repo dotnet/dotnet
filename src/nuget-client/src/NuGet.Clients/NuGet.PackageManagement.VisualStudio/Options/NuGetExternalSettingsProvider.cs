@@ -15,6 +15,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
     public abstract class NuGetExternalSettingsProvider : IExternalSettingsProvider
     {
         protected readonly VSSettings _vsSettings;
+        protected bool _suppressSettingValuesChanged;
 
         protected NuGetExternalSettingsProvider(VSSettings vsSettings)
         {
@@ -39,7 +40,34 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
         internal virtual void VsSettings_SettingsChanged(object sender, EventArgs e)
         {
+            if (_suppressSettingValuesChanged && !IsSuppressionDisabledByEnvironment())
+            {
+                return; // Suppress the event invocation
+            }
+
             SettingValuesChanged?.Invoke(this, ExternalSettingsChangedEventArgs.SomeOrAll);
+        }
+
+        /// <summary>
+        /// For DEBUG purposes only. Expected to be removed by the next release.
+        /// </summary>
+        private static bool IsSuppressionDisabledByEnvironment()
+        {
+            try
+            {
+                const string envVarName = "NUGET_DISABLE_SUPPRESS_SETTING_VALUES_CHANGED";
+                return string.Equals(
+                    Common.EnvironmentVariableWrapper.Instance.GetEnvironmentVariable(envVarName),
+                    "true",
+                    StringComparison.OrdinalIgnoreCase);
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception)
+#pragma warning restore CA1031 // Do not catch general exception types
+            {
+                // Ignore errors since this is not a production feature.
+                return false;
+            }
         }
 
         public virtual Task<string> GetMessageTextAsync(string messageId, CancellationToken cancellationToken)
@@ -60,6 +88,16 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                 errorMessage,
                 scope: ExternalSettingsErrorScope.SingleSettingOnly,
                 isTransient: true);
+
+            return failure;
+        }
+
+        public static ExternalSettingOperationResult CreateSettingErrorResult(string errorMessage, bool isTransient)
+        {
+            var failure = new ExternalSettingOperationResult.Failure(
+                errorMessage,
+                scope: ExternalSettingsErrorScope.SingleSettingOnly,
+                isTransient);
 
             return failure;
         }

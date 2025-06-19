@@ -1,0 +1,539 @@
+StyleSheet
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    th
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-weight
+                Colon    :
+                Identifier    bolder
+                Semicolon    ;
+            Declaration
+                Identifier    text-align
+                Colon    :
+                Identifier    center
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    caption
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    text-align
+                Colon    :
+                Identifier    center
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    line-height
+                Colon    :
+                NumericalValue
+                    Number    1.33
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h1
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    2
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    .67
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h2
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    1.5
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    .83
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h3
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    1.17
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    1
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h4
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    p
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    blockquote
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    form
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    dl
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    1.33
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h5
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    .83
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    line-height
+                Colon    :
+                UnitValue
+                    Number    1.17
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    1.67
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h6
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    .67
+                    Units    em
+                Semicolon    ;
+            Declaration
+                Identifier    margin
+                Colon    :
+                UnitValue
+                    Number    2.33
+                    Units    em
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h1
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h2
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h3
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h4
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h5
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    h6
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    b
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    strong
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-weight
+                Colon    :
+                Identifier    bolder
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    blockquote
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin-left
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+                Semicolon    ;
+            Declaration
+                Identifier    margin-right
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    i
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    cite
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    em
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    var
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    address
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-style
+                Colon    :
+                Identifier    italic
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    pre
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    tt
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    code
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    kbd
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    samp
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-family
+                Colon    :
+                Identifier    monospace
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    pre
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    white-space
+                Colon    :
+                Identifier    pre
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    big
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    1.17
+                    Units    em
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    small
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    sub
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    sup
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    font-size
+                Colon    :
+                UnitValue
+                    Number    .83
+                    Units    em
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    dd
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin-left
+                Colon    :
+                UnitValue
+                    Number    40
+                    Units    px
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    list-style-type
+                Colon    :
+                Identifier    decimal
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ul
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    ol
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    margin-top
+                Colon    :
+                NumericalValue
+                    Number    0
+                Semicolon    ;
+            Declaration
+                Identifier    margin-bottom
+                Colon    :
+                NumericalValue
+                    Number    0
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    br
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    content
+                Colon    :
+                String    "\A"
+            CloseCurlyBrace    }

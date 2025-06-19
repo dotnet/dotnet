@@ -59,8 +59,8 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
 
     private static void TryAddNamespaceDirective(RazorCodeDocument codeDocument, Uri newComponentUri, ref PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var namespaceDirective = syntaxTree.Root.DescendantNodes()
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
+        var namespaceDirective = syntaxRoot.DescendantNodes()
             .OfType<RazorDirectiveSyntax>()
             .FirstOrDefault(static n => n.DirectiveDescriptor == NamespaceDirective.Directive);
 

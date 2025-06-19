@@ -1,0 +1,9 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+
+root = false
+
+# All cs files
+[*.cs]
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = silent

@@ -1,0 +1,20 @@
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.EtwListeningRequest() -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.Keywords.get -> ulong
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.Keywords.set -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.Level.get -> Microsoft.Diagnostics.Tracing.TraceEventLevel
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.Level.set -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.ProviderGuid.get -> System.Guid
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.ProviderGuid.set -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.ProviderName.get -> string
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.ProviderName.set -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest.Validate(out string errorMessage) -> bool
+Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule
+Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule.Dispose() -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule.EtwTelemetryModule() -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule.Initialize(Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration configuration) -> void
+Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule.Sources.get -> System.Collections.Generic.IList<Microsoft.ApplicationInsights.EtwCollector.EtwListeningRequest>
+Microsoft.ApplicationInsights.TraceEvent.Shared.Utilities.TplActivities
+static readonly Microsoft.ApplicationInsights.TraceEvent.Shared.Utilities.TplActivities.TaskFlowActivityIdsKeyword -> ulong
+static readonly Microsoft.ApplicationInsights.TraceEvent.Shared.Utilities.TplActivities.TplEventSourceGuid -> System.Guid
+virtual Microsoft.ApplicationInsights.EtwCollector.EtwTelemetryModule.Dispose(bool isDisposing) -> void

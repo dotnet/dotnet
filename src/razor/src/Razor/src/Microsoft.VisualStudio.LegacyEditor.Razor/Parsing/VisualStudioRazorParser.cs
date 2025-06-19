@@ -329,24 +329,15 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
                 return;
             }
 
-            var codeDocument = RazorCodeDocument.Create(
-                currentCodeDocument.Source,
-                currentCodeDocument.Imports,
-                currentCodeDocument.ParserOptions,
-                currentCodeDocument.CodeGenerationOptions);
+            Assumed.NotNull(partialParseSyntaxTree, $"Expected new {nameof(RazorSyntaxTree)} when parser result is not '{result}'.");
 
-            foreach (var item in currentCodeDocument.Items)
-            {
-                codeDocument.Items[item.Key] = item.Value;
-            }
+#pragma warning disable CS0618 // Type or member is obsolete
+            var newCodeDocument = currentCodeDocument.Clone();
+            currentCodeDocument.CloneCachedData(newCodeDocument);
+#pragma warning restore CS0618 // Type or member is obsolete
 
-            if (currentCodeDocument.TryGetTagHelperContext(out var tagHelperContext))
-            {
-                codeDocument.SetTagHelperContext(tagHelperContext);
-            }
-
-            codeDocument.SetSyntaxTree(partialParseSyntaxTree);
-            TryUpdateLatestParsedSyntaxTreeSnapshot(codeDocument, snapshot);
+            newCodeDocument.SetSyntaxTree(partialParseSyntaxTree);
+            TryUpdateLatestParsedSyntaxTreeSnapshot(newCodeDocument, snapshot);
         }
 
         if ((result & PartialParseResultInternal.Provisional) == PartialParseResultInternal.Provisional)
@@ -536,7 +527,7 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
 
             _codeDocument = codeDocument;
             _snapshot = snapshot;
-            _partialParser = new RazorSyntaxTreePartialParser(_codeDocument.GetSyntaxTree());
+            _partialParser = new RazorSyntaxTreePartialParser(_codeDocument.GetRequiredSyntaxTree());
             TryUpdateLatestParsedSyntaxTreeSnapshot(_codeDocument, _snapshot);
         }
     }

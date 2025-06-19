@@ -62,7 +62,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     {
         base.OnDocumentStructureCreated(codeDocument, @namespace, @class, method);
 
-        if (!codeDocument.TryComputeNamespace(fallbackToRootNamespace: false, out var namespaceName))
+        if (!codeDocument.TryGetNamespace(fallbackToRootNamespace: false, out var namespaceName))
         {
             @namespace.Content = _useConsolidatedMvcViews ? "AspNetCoreGeneratedDocument" : "AspNetCore";
         }
@@ -95,7 +95,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             @class.Modifiers.Add("public");
         }
 
-        @class.Annotations[CommonAnnotations.NullableContext] = CommonAnnotations.NullableContext;
+        @class.NullableContext = true;
 
         method.MethodName = "ExecuteAsync";
         method.Modifiers.Clear();
@@ -104,7 +104,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
         method.Modifiers.Add("override");
         method.ReturnType = $"global::{typeof(System.Threading.Tasks.Task).FullName}";
 
-        var document = codeDocument.GetDocumentIntermediateNode();
+        var document = codeDocument.GetRequiredDocumentNode();
         PageDirective.TryGetPageDirective(document, out var pageDirective);
 
         EnsureValidPageDirective(codeDocument, pageDirective);
@@ -140,9 +140,9 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     {
         Debug.Assert(pageDirective != null);
 
-        if (pageDirective.DirectiveNode.IsImported())
+        if (pageDirective.DirectiveNode.IsImported)
         {
-            pageDirective.DirectiveNode.Diagnostics.Add(
+            pageDirective.DirectiveNode.AddDiagnostic(
                 RazorExtensionsDiagnosticFactory.CreatePageDirective_CannotBeImported(pageDirective.DirectiveNode.Source.Value));
         }
         else
@@ -154,11 +154,11 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             var leadingDirectiveCodeDocument = LeadingDirectiveParsingEngine.CreateCodeDocument(codeDocument.Source);
             LeadingDirectiveParsingEngine.Engine.Process(leadingDirectiveCodeDocument);
 
-            var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetDocumentIntermediateNode();
+            var leadingDirectiveDocumentNode = leadingDirectiveCodeDocument.GetRequiredDocumentNode();
             if (!PageDirective.TryGetPageDirective(leadingDirectiveDocumentNode, out var _))
             {
                 // The page directive is not the leading directive. Add an error.
-                pageDirective.DirectiveNode.Diagnostics.Add(
+                pageDirective.DirectiveNode.AddDiagnostic(
                     RazorExtensionsDiagnosticFactory.CreatePageDirective_MustExistAtTheTopOfFile(pageDirective.DirectiveNode.Source.Value));
             }
         }

@@ -8,10 +8,15 @@
         <dependency id="Microsoft.TestPlatform.TestHost" version="$Version$" />
         <dependency id="Microsoft.CodeCoverage" version="$Version$" />
       </group>
+
       <group targetFramework="net462">
         <!-- TestHost gets shipped with vstest.console -->
         <dependency id="Microsoft.CodeCoverage" version="$Version$" />
       </group>
+
+      <group targetFramework="native0.0">
+      </group>
+      
     </dependencies>
   </metadata>
 
@@ -21,11 +26,27 @@
     <file src="netstandard2.0\netcoreapp\*" target="build\net8.0\" />
     <file src="netstandard2.0\netfx\*" target="build\net462\" />
 
-    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\net462\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\net8.0\" />
     <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\net8.0\" />
     <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\net462\" />
 
+    <!-- Add incompatibility error, and add the props, in case user decides to ignore it. -->
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\netcoreapp2.0\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.targets" target="buildMultiTargeting\netcoreapp2.0\" />
+
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\netcoreapp2.0\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.targets" target="build\netcoreapp2.0\" />
+
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="buildMultiTargeting\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.targets" target="buildMultiTargeting\netstandard2.0\" />
+
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.props" target="build\netstandard2.0\" />
+    <file src="netstandard2.0\Microsoft.NET.Test.Sdk.targets" target="build\netstandard2.0\" />
+
     <file src="netstandard2.0\_._" target="lib/net8.0" />
     <file src="netstandard2.0\_._" target="lib/net462" />
+
+    <file src="netstandard2.0\_._" target="lib/native" />
   </files>
 </package>

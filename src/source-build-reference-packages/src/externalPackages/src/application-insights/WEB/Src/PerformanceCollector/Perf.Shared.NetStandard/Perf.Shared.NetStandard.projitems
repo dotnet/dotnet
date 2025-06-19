@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>D13C3EC7-B300-4158-9054-216156B203BE</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\CounterFactoryXPlatform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\PerfLib\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\PerfLib\PerformanceMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\QuickPulseTopCpuCollector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\QuickPulseServiceClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\QuickPulseServiceClientHelpers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\PerformanceCollectorXPlatform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\XPlatProcessCPUPerformanceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\XPlatProcessCPUPerformanceCounterNormalized.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\XPlatProcessMemoryPerformanceCounter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Implementation\XPlatform\" />
+  </ItemGroup>
+</Project>

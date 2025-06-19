@@ -5,6 +5,16 @@
     <UseBootstrapArcade>true</UseBootstrapArcade>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetOS)' == 'linux' and '$(TargetArchitecture)' == 'x64' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
+    <!--
+      We have a BuildPass2 leg that has no dependencies on Windows artifacts except for Arcade.
+      To make sure that job doesn't need to wait for the Windows verticals,
+      we'll build all of Arcade with Internal visibility.
+    -->
+    <EnableDefaultRidSpecificArtifacts></EnableDefaultRidSpecificArtifacts>
+    <DefaultArtifactVisibility>Internal</DefaultArtifactVisibility>
+  </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="source-build-reference-packages" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>

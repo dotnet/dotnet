@@ -1,0 +1,5 @@
+html:lang(fr-ca) { quotes: '� ' ' �' }
+html:lang(de) { quotes: '�' '�' '\2039' '\203A' }
+:lang(fr) > Q { quotes: '� ' ' �' }
+:lang(de) > Q { quotes: '�' '�' '\2039' '\203A' }
+li { list-style: U+F00 U+A U+A-B U+A-C-D-E }
