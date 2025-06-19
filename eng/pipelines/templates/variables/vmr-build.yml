@@ -112,7 +112,7 @@ variables:
 - name: centOSStreamContainerName
   value: centOSStreamContainer
 - name: centOSStreamContainerImage
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
+  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
 
 - name: fedoraContainerName
   value: fedoraContainer
@@ -184,7 +184,7 @@ variables:
 - name: alpineName
   value: Alpine321
 - name: centOSStreamName
-  value: CentOSStream9
+  value: CentOSStream10
 - name: fedoraName
   value: Fedora41
 - name: ubuntuName
@@ -192,6 +192,10 @@ variables:
 
 - name: almaLinuxX64Rid
   value: almalinux.8-x64
+- name: linuxX64Rid
+  value: linux-x64
+- name: linuxArm64Rid
+  value: linux-arm64
 - name: linuxMuslX64Rid
   value: linux-musl-x64
 - name: linuxMuslArmRid
@@ -201,7 +205,7 @@ variables:
 - name: alpineX64Rid
   value: alpine.3.21-x64
 - name: centOSStreamX64Rid
-  value: centos.9-x64
+  value: centos.10-x64
 - name: fedoraX64Rid
   value: fedora.41-x64
 - name: ubuntux64Rid

@@ -4,32 +4,7 @@ This document describes the infrastructure provided by the Arcade SDK for publis
 
 ### What is V1 publishing?
 
-The publishing infrastructure has multiple stage(s), these stages represent available channels. Only the stages corresponding to the default channel will execute. This is for arcade3.x only.
-
-V1 came into existence when we branched for release/3.x in arcade. Main and arcade/3.x initially had the same publishing logic. Over time the publishing stage in arcade main evolved so that became V2 publishing.
-
-Asset manifest Example : 
-
-`publishingVersion` is not present in V1.
-
-```XML
-<Build Name="https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-arcade-validation"
-BuildId="20200915.7"
-Branch="refs/heads/release/3.x"
-Commit="0f733414ac0a5e5d4b7233d47851a400204a7cac"
-AzureDevOpsAccount="dnceng"
-AzureDevOpsBranch="refs/heads/release/3.x"
-AzureDevOpsBuildDefinitionId="282"
-AzureDevOpsBuildId="816405"
-AzureDevOpsBuildNumber="20200915.7"
-AzureDevOpsProject="internal"
-AzureDevOpsRepository="https://dnceng@dev.azure.com/dnceng/internal/_git/dotnet-arcade-validation"
-InitialAssetsLocation="https://dev.azure.com/dnceng/internal/_apis/build/builds/816405/artifacts"
-IsStable="False"
-Location="https://dotnetfeed.blob.core.windows.net/arcade-validation/index.json">
-
-```
-All the 3.1 servicing branches of repos use this version of the infrastructure.
+V1 is a legacy publishing infrastructure that is no longer utilized.
 
 ### What is V2 publishing?
 
@@ -44,6 +19,12 @@ The [maestro promotion pipeline](https://dnceng.visualstudio.com/internal/_build
 Example from arcade-validation:
 
 ![V3-publishing](./images/V3-publishing.PNG)
+
+### What is V4 publishing (In Development)?
+
+V4 publishing is functionally very similar to V3 publishing, with the following tweaks/breaking changes:
+- **Stable symbol packages are no longer published to NuGet feeds** -  https://github.com/dotnet/arcade/pull/15561 - Instead, symbol packages are always published to unique blob paths.
+- **IsStable manifest bit no longer used to determine whether to create stable feeds** -  https://github.com/dotnet/arcade/pull/15561 - Instead, CouldBeStable==true is used to determine whether to create these feeds, and identify which files should go on these feeds.
 
 ## Basic onboarding scenario for new repositories to the current publishing version (V3)
 
@@ -89,41 +70,6 @@ These steps are needed for Arcade versions before `10.0.0`. After that, V3 is th
                   publishUsingPipelines: true
                   ...
             ```
-
-1. You'll also need to pass the below MSBuild property to the Arcade build scripts.
-
-  | Name                           | Value |
-  | ------------------------------ | ----- |
-  | /p:DotNetPublishUsingPipelines | true  |
-
-  For example, if the repo has the following configuration for invoking `cibuild.cmd`:
-  
-  ```YAML
-    - _InternalBuildArgs: /p:DotNetSignType=$(_SignType) 
-        /p:TeamName=$(_TeamName)
-        /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-        /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-    
-    - script: eng\common\cibuild.cmd
-        -configuration $(_BuildConfig)
-        -prepareMachine
-         $(_InternalBuildArgs)
-  ```
-  after setting the needed MSBuild properties it should looks like this:
-  ```YAML
-    - _InternalBuildArgs: /p:DotNetSignType=$(_SignType) 
-        /p:TeamName=$(_TeamName)
-        /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
-        /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
-        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-        /p:DotNetPublishUsingPipelines=$(_PublishUsingPipelines)
-    
-    - script: eng\common\cibuild.cmd
-        -configuration $(_BuildConfig)
-        -prepareMachine
-         $(_InternalBuildArgs)
-  ```
 
 1. Transform your existing build-definition to a single stage. Do that by nesting the current job definition(s) under the `stages` keyword. For instance, this example build definition with a single job definition:
 
@@ -291,7 +237,7 @@ However, if for some reason the infra in the default publishing stages don't mee
 
 **Note:** We strongly suggest that you discuss with the *.Net Engineering* team the intended use case for this before starting your work. We might be able to give other options.
 
-## PublishingUsingPipelines & Deprecated Properties
+## Deprecated Properties
 
 Starting with Arcade SDK version **5.0.0-beta.20120.2** there is not support anymore for the old publishing infrastructure where the Arcade SDK handled publishing of all assets during the build stage. That means, that if:
 
@@ -304,16 +250,7 @@ Starting with Arcade SDK version **5.0.0-beta.20120.2** there is not support any
   | DotNetPublishToBlobFeed       |
   | DotNetSymbolServerTokenMsdl   |
   | DotNetSymbolServerTokenSymWeb |
-  
-- **The build definition doesn't set `/p:DotNetPublishingUsingPipelines` or set it to false:** only symbols will be published and they will be controlled by the Arcade SDK. The build definition still needs to inform the `DotNetSymbolServerToken[Msdl/SymWeb]` properties, but the following properties aren't required anymore:
-
-  | Property      |
-  | ----------------------------- |
-  | DotNetPublishBlobFeedKey      |
-  | DotNetPublishBlobFeedUrl      |
-  | DotNetPublishToBlobFeed       |
-
-Furthermore, starting with Arcade SDK version **5.0.0-beta.20120.2** the default value for the `DotNetArtifactsCategory` property is `.NETCore`, therefore you don't need to set that property anymore if you were setting it to `.NETCore`.
+  | DotNetPublishusingPipelines   |
 
 ## Frequently Asked Questions
 
@@ -370,10 +307,6 @@ Yes, that's possible. You need to [use Darc to do that](https://github.com/dotne
 ### Why the build assets aren't getting published anywhere?
 
 Most frequent cause of this is that there is no Default Channel configured for the build. [Take a look here](https://github.com/dotnet/arcade/blob/ec191f3d706d740bc7a87fbb98d94d916f81f0cb/Documentation/Darc.md#get-default-channels) to see how to check that.
-
-### Why do you need the DotNetPublishUsingPipelines parameter?
-
-The `DotNetPublishUsingPipelines` is a flag that Arcade SDK uses to determine if the repo wants Maestro++ to control all aspects of publishing. If that parameter is not set (not advisable)  Arcade SDK will only publish symbols produced by the build; publishing of other assets should be taken care of by the repo build definition.
 
 ### What's PackageArtifacts, BlobArtifacts, PdbArtifacts and ReleaseConfigs for?
 

@@ -66,7 +66,7 @@ internal sealed class InlineCompletionEndpoint(
 
         // Map to the location in the C# document.
         if (languageKind != RazorLanguageKind.CSharp ||
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
+            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
             _logger.LogInformation($"Unsupported location for {request.TextDocument.Uri}.");
             return null;
@@ -97,7 +97,7 @@ internal sealed class InlineCompletionEndpoint(
         {
             var range = item.Range ?? projectedPosition.ToZeroWidthRange();
 
-            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var rangeInRazorDoc))
+            if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), range, out var rangeInRazorDoc))
             {
                 _logger.LogWarning($"Could not remap projected range {range} to razor document");
                 continue;

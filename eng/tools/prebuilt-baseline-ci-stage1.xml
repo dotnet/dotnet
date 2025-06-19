@@ -1,0 +1,40 @@
+<UsageData>
+  <CreatedByRid>centos.10-x64</CreatedByRid>
+  <ProjectDirectories>
+    <Dir>src/arcade</Dir>
+    <Dir>src/aspire</Dir>
+    <Dir>src/aspnetcore</Dir>
+    <Dir>src/cecil</Dir>
+    <Dir>src/command-line-api</Dir>
+    <Dir>src/deployment-tools</Dir>
+    <Dir>src/diagnostics</Dir>
+    <Dir>src/dotnet</Dir>
+    <Dir>src/efcore</Dir>
+    <Dir>src/emsdk</Dir>
+    <Dir>src/fsharp</Dir>
+    <Dir>src/msbuild</Dir>
+    <Dir>src/nuget-client</Dir>
+    <Dir>src/razor</Dir>
+    <Dir>src/roslyn-analyzers</Dir>
+    <Dir>src/roslyn</Dir>
+    <Dir>src/runtime</Dir>
+    <Dir>src/scenario-tests</Dir>
+    <Dir>src/sdk</Dir>
+    <Dir>src/source-build-externals</Dir>
+    <Dir>src/source-build-reference-packages</Dir>
+    <Dir>src/sourcelink</Dir>
+    <Dir>src/symreader</Dir>
+    <Dir>src/templating</Dir>
+    <Dir>src/vstest</Dir>
+    <Dir>src/windowsdesktop</Dir>
+    <Dir>src/winforms</Dir>
+    <Dir>src/wpf</Dir>
+    <Dir>src/xdt</Dir>
+    <Dir>eng/tools/tasks/</Dir>
+    <Dir>artifacts/obj/</Dir>
+    <Dir></Dir>
+  </ProjectDirectories>
+  <Usages>
+    <Usage Id="Microsoft.CodeAnalysis.Analyzers" Version="5.0.0-1.25302.104" />
+  </Usages>
+</UsageData>

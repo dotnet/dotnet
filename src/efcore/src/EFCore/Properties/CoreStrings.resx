@@ -150,6 +150,9 @@
   <data name="AnnotationNotFound" xml:space="preserve">
     <value>The annotation '{annotation}' was not found. Ensure that the annotation has been added to the object {annotatable}</value>
   </data>
+  <data name="AnonymousAndNamedFiltersCombined" xml:space="preserve">
+    <value>Cannot apply both anonymous and named query filters simultaneously. Please specify either an anonymous filter or one or more named filters.</value>
+  </data>
   <data name="ArgumentNotConstant" xml:space="preserve">
     <value>The '{parameter}' value passed to '{methodName}' must be a constant.</value>
   </data>
@@ -1270,6 +1273,9 @@
   </data>
   <data name="NonIndexerEntityType" xml:space="preserve">
     <value>Cannot add indexer property '{property}' since there is no indexer on '{entityType}' taking a single argument of type assignable from '{type}'.</value>
+  </data>
+  <data name="NonListCollection" xml:space="preserve">
+    <value>The complex collection '{entityType}'.'{name}' is of type '{type}' which does not implement '{listInterface}'.</value>
   </data>
   <data name="NonNotifyingCollection" xml:space="preserve">
     <value>The collection type '{2_collectionType}' being used for navigation '{1_entityType}.{0_navigation}' does not implement 'INotifyCollectionChanged'. Any entity type configured to use the '{changeTrackingStrategy}' change tracking strategy must use collections that implement 'INotifyCollectionChanged'. Consider using 'ObservableCollection&lt;T&gt;' for this.</value>

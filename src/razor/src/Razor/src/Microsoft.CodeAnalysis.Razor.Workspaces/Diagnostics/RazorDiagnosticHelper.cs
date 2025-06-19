@@ -18,7 +18,7 @@ internal static class RazorDiagnosticHelper
     {
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var sourceText = codeDocument.Source.Text;
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         var diagnostics = csharpDocument.Diagnostics;
 
         if (diagnostics.Length == 0)

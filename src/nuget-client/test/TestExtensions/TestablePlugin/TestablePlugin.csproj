@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
     <OutputType>Exe</OutputType>
     <AssemblyName>Plugin.Testable</AssemblyName>

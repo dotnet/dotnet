@@ -51,7 +51,7 @@ internal sealed class RazorLanguageQueryEndpoint(IDocumentMappingService documen
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         if (languageKind == RazorLanguageKind.CSharp)
         {
-            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out var projectedIndex))
+            if (_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out var projectedIndex))
             {
                 // For C# locations, we attempt to return the corresponding position
                 // within the projected document

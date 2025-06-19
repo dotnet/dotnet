@@ -30,9 +30,9 @@ internal static class HoverFactory
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
 
-        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
+        var owner = root.FindInnermostNode(absoluteIndex);
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");

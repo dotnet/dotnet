@@ -23,8 +23,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25278.7</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25278.7</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25315.1</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25315.1</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta5.25210.1</SystemCommandLineVersion>
     <!-- corefx -->
@@ -99,6 +99,6 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25255.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25262.1</MicrosoftDotNetXHarnessCLIVersion>
   </PropertyGroup>
 </Project>

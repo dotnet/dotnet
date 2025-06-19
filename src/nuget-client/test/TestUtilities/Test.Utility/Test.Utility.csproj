@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>$(TargetFrameworksUnitTestForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <NoWarn Condition=" $(TargetFramework.StartsWith('netcoreapp')) ">$(NoWarn);CS1998</NoWarn>
     <SkipShared>true</SkipShared>

@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
-using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -18,7 +17,7 @@ public class FindTokenIntegrationTest() : IntegrationTestBase(layer: TestProject
 
         var codeDocument = projectEngine.Process(projectItem);
 
-        var root = codeDocument.GetSyntaxTree().Root;
+        var root = codeDocument.GetRequiredSyntaxTree().Root;
         var token = root.FindToken(27);
         AssertEx.Equal("Identifier;[<Missing>];", TestSyntaxSerializer.Serialize(token).Trim());
     }

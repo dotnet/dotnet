@@ -17,7 +17,6 @@ public class SigningComparer : BuildComparer
     public SigningComparer(
         bool clean,
         AssetType? assetType,
-        string vmrManifestPath,
         string vmrAssetBasePath,
         string baseBuildAssetBasePath,
         string issuesReportPath,
@@ -29,7 +28,6 @@ public class SigningComparer : BuildComparer
         : base(
             clean,
             assetType,
-            vmrManifestPath,
             vmrAssetBasePath,
             baseBuildAssetBasePath,
             issuesReportPath,

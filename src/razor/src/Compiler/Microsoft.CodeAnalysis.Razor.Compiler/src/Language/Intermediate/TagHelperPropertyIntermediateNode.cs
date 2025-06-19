@@ -21,6 +21,8 @@ public sealed class TagHelperPropertyIntermediateNode : IntermediateNode
 
     public bool IsIndexerNameMatch { get; set; }
 
+    public SourceSpan? OriginalAttributeSpan { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)

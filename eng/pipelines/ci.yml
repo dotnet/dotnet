@@ -10,6 +10,14 @@ trigger:
       - release/*
       - internal/release/*
 
+schedules:
+  - cron: "0 12 * * 0,6" # run every Saturday and Sunday at 12:00 (UTC)
+    displayName: Signed main build on weekends
+    branches:
+      include:
+      - main
+    always: true
+
 parameters:
 - name: desiredSigning
   displayName: 'Sign?'
@@ -137,11 +145,12 @@ extends:
 
     - template: /eng/pipelines/templates/stages/vmr-build.yml@self
       parameters:
-        desiredSigning: ${{ parameters.desiredSigning }}
+        ${{ if and(eq(variables.isScheduleTrigger, 'true'), eq(variables['Build.CronSchedule.DisplayName'], 'Signed main build on weekends')) }}:
+          desiredSigning: Signed
+        ${{ else }}:
+          desiredSigning: ${{ parameters.desiredSigning }}
         desiredIBC: ${{ parameters.desiredIBC }}
-        ${{ if eq(variables.isScheduleTrigger, 'true') }}:
-          scope: full
-        ${{ elseif eq(variables.isPRTrigger, 'true') }}:
+        ${{ if eq(variables.isPRTrigger, 'true') }}:
           scope: lite
         ${{ else }}:
           scope: full

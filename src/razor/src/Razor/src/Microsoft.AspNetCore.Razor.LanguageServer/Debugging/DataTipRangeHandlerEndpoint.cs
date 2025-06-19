@@ -69,7 +69,7 @@ internal sealed class DataTipRangeHandlerEndpoint(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         if (!DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, delegatedResponse.HoverRange, out var hoverRange))
         {

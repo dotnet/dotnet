@@ -275,7 +275,7 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         Assert.Equal(
             CoreStrings.RuntimeModelMissingData,
             Assert.Throws<InvalidOperationException>(joinType.GetComment).Message);
-        Assert.Null(joinType.GetQueryFilter());
+        Assert.Empty(joinType.GetDeclaredQueryFilters());
         Assert.Null(joinType[RelationalAnnotationNames.IsTableExcludedFromMigrations]);
         Assert.Equal(
             CoreStrings.RuntimeModelMissingData,
@@ -413,7 +413,6 @@ public abstract class CompiledModelRelationalTestBase(NonSharedFixture fixture) 
         modelBuilder.Entity<PrincipalDerived<DependentBase<byte?>>>(
             eb =>
             {
-                //eb.ComplexCollection(typeof(OwnedType).Name, "ManyOwned");
                 eb.ToTable("PrincipalBase");
                 eb.ToFunction((string?)null);
             });

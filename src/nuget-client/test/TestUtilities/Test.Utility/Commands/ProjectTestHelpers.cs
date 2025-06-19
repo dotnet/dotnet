@@ -11,6 +11,7 @@ using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
 using NuGet.ProjectModel;
+using NuGet.Protocol.Test;
 using NuGet.RuntimeModel;
 using NuGet.Test.Utility;
 
@@ -169,8 +170,9 @@ namespace NuGet.Commands.Test
                        [new PackageSource(pathContext.PackageSource)];
 
             var externalClosure = DependencyGraphSpecRequestProvider.GetExternalClosure(dgSpec, projectToRestore.RestoreMetadata.ProjectUniqueName).ToList();
+            var packageSourceMapping = PackageSourceMapping.GetPackageSourceMapping(Settings.LoadDefaultSettings(pathContext.SolutionRoot));
 
-            return new TestRestoreRequest(projectToRestore, sources, pathContext.UserPackagesFolder, logger)
+            return new TestRestoreRequest(projectToRestore, sources, pathContext.UserPackagesFolder, new TestSourceCacheContext(), packageSourceMapping, logger)
             {
                 LockFilePath = Path.Combine(projectToRestore.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName),
                 DependencyGraphSpec = dgSpec,

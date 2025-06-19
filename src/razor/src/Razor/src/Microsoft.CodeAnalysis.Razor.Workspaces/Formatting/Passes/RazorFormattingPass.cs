@@ -18,8 +18,8 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
-using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 using RazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode>;
+using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -43,7 +43,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
 
         // Format the razor bits of the file
-        var syntaxTree = changedContext.CodeDocument.GetSyntaxTree();
+        var syntaxTree = changedContext.CodeDocument.GetRequiredSyntaxTree();
         var razorChanges = FormatRazor(changedContext, syntaxTree);
 
         if (razorChanges.Length > 0)
@@ -106,7 +106,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                 // Fortunately for a Html-only section block, the indentation is entirely handled by the Html formatter, and we
                 // just need to push it out one level, because the Html formatter will have pushed it back to position 0.
                 if (children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */] &&
-                    !context.CodeDocument.GetCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
+                    !context.CodeDocument.GetRequiredCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
                 {
                     // The Html formatter will have "collapsed" the @section block contents to 0 indent, so we push it back out
                     // again because we're opinionated about section blocks

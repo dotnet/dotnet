@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
-using static System.StringExtensions;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -508,7 +507,7 @@ public sealed partial class CodeWriter : IDisposable
                 return string.Empty;
             }
 
-            var result = CreateString(_remainingLength, (_page, _chunkIndex, _charIndex), static (destination, state) =>
+            var result = string.Create(_remainingLength, (_page, _chunkIndex, _charIndex), static (destination, state) =>
             {
                 var (page, chunkIndex, charIndex) = state;
 
