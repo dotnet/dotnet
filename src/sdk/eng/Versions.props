@@ -273,12 +273,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/emsdk -->
-<<<<<<< attempt-stabilize-package-version
     <MicrosoftNETRuntimeEmscriptenSdkInternalVersion>10.0.0-preview.6.25315.102</MicrosoftNETRuntimeEmscriptenSdkInternalVersion>
     <MicrosoftNETRuntimeEmscripten3156Cachewinx64Version>10.0.0-preview.6.25315.102</MicrosoftNETRuntimeEmscripten3156Cachewinx64Version>
-=======
-    <MicrosoftNETRuntimeEmscriptenSdkInternalVersion>10.0.0-preview.6.25316.103</MicrosoftNETRuntimeEmscriptenSdkInternalVersion>
->>>>>>> main
     <!-- emscripten versions, these are are included in package IDs and need to be kept in sync with emsdk -->
     <EmscriptenVersionCurrent>3.1.56</EmscriptenVersionCurrent>
     <EmscriptenVersionNet9>3.1.56</EmscriptenVersionNet9>

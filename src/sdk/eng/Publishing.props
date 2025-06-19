@@ -14,7 +14,7 @@
        These packages have already been signed by the FSharp build so we don't need to re-include them for signing. -->
   <PropertyGroup Condition="'$(EnableDefaultArtifacts)' == 'true'">
     <FSharpCorePath Condition="'$(DotNetFinalVersionKind)' == ''">Shipping</FSharpCorePath>
-    <FSharpCorePath Condition="'$(DotNetFinalVersionKind)' == 'prerelease'">Prerelease</FSharpCorePath>
+    <FSharpCorePath Condition="'$(DotNetFinalVersionKind)' == 'prerelease'">PreRelease</FSharpCorePath>
     <FSharpCorePath Condition="'$(DotNetFinalVersionKind)' == 'release'">Release</FSharpCorePath>
 
     <!--
