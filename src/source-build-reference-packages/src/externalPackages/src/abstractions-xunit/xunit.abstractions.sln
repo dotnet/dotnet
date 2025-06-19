@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5670570F-2613-491C-82DE-EACA2CCF8E5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xunit.abstractions", "src\xunit.abstractions\xunit.abstractions.csproj", "{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB2FA4D4-F490-4ECA-B0A6-CCAE4D17C7A2} = {5670570F-2613-491C-82DE-EACA2CCF8E5F}
+	EndGlobalSection
+EndGlobal

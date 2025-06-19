@@ -196,14 +196,17 @@ src/source-build-externals/src/repos/src/xunit/tools/builder/common/README.md|fr
 # Configuration, doesn't apply to source directly
 src/source-build-externals/src/repos/src/vs-solutionpersistence/stylecop.json
 
-# Configuration, doesn't apply to source directly
-src/source-build-externals/src/repos/src/vs-solutionpersistence/stylecop.json
-
 #
 # source-build-reference-packages
 #
 
 # False positive
+src/source-build-reference-packages/src/externalPackages/src/abstractions-xunit/README.md|free-unknown
+src/source-build-reference-packages/src/externalPackages/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown
+src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
+src/source-build-reference-packages/src/externalPackages/src/xunit/README.md|free-unknown
+src/source-build-reference-packages/src/externalPackages/src/xunit/src/xunit.assert/Asserts/README.md|free-unknown
+src/source-build-reference-packages/src/externalPackages/src/xunit/tools/builder/common/README.md|free-unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/microsoft.aspnetcore.app.ref/8.0.0/THIRD-PARTY-NOTICES.TXT|unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
@@ -213,6 +216,9 @@ src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.i
 # Contains references to licenses which are not applicable to the source
 src/source-build-reference-packages/src/packageSourceGenerator/PackageSourceGeneratorTask/RewriteNuspec.cs|unknown-license-reference,ms-net-library-2018-11
 src/source-build-reference-packages/src/textOnlyPackages/src/microsoft.private.intellisense/*/IntellisenseFiles/windowsdesktop/1033/PresentationCore.xml|proprietary-license
+
+# Configuration, doesn't apply to source directly
+src/source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence/stylecop.json
 
 #
 # sourcelink
