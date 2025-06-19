@@ -1,0 +1,6 @@
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Microsoft.Build.Locator.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100adad416086fc859fe034cc45ba1ae17cbcaa8d471c5884ef08af87f7cd4e1bbb663e1387f24bbc479d913f125643e19d6da998b0b31a2979abcd36a858756676a65f36b27d6b6a3fd330e20ed5f73da134938bbbf90276d1fcf2f887e44e0eca4d767e147d95220433e5a4e14dcb6e6cea955e360a53642985b407a63e21f0ab")]

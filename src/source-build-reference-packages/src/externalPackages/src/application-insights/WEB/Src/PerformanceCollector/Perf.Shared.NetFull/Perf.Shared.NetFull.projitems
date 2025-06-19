@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>85238238-5ef0-40fa-ad3e-bd4b12a3dd1a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Helpers\QuickPulseThreadModuleScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\PerfLib\NativeMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\PerfLib\PerformanceMonitor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\PerfLib\SharedUtils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\Process\QuickPulseTopCpuCollector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Implementation\QuickPulse\QuickPulseServiceClient.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+  </ItemGroup>
+</Project>
