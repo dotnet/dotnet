@@ -1,0 +1,38 @@
+Token Type           Length     Token Text
+At                   1          @
+Identifier           13         counter-style
+Identifier           7          daggers
+String               3          "*"
+String               7          "\2020"
+String               7          "\2021"
+String               5          "\A7"
+String               3          "#"
+Semicolon            1          ;
+Identifier           2          ol
+OpenCurlyBrace       1          {
+Identifier           15         list-style-type
+Colon                1          :
+Identifier           7          daggers
+CloseCurlyBrace      1          }
+At                   1          @
+Identifier           13         counter-style
+Identifier           7          ordinal
+String               5          "1st"
+String               5          "2nd"
+String               5          "3rd"
+String               5          "4th"
+Semicolon            1          ;
+Identifier           2          h1
+Colon                1          :
+Identifier           6          before
+OpenCurlyBrace       1          {
+Identifier           7          content
+Colon                1          :
+Function             8          counter(
+Identifier           7          chapter
+Comma                1          ,
+Identifier           7          ordinal
+CloseFunctionBrace   1          )
+String               10         " chapter"
+CloseCurlyBrace      1          }
+EndOfFile            0          

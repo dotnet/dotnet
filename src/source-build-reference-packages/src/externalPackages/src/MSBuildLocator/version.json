@@ -1,0 +1,7 @@
+{
+  "version": "1.6",
+  "assemblyVersion": "1.0.0.0",
+  "publicReleaseRefSpec": [
+    "^refs/heads/release/.*"
+  ]
+}

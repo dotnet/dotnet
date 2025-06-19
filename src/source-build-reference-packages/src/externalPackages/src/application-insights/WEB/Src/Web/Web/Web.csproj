@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(PropsRoot)\Product.props" />
+
+  <PropertyGroup>
+    <RootNamespace>Microsoft.ApplicationInsights.Web</RootNamespace>
+    <AssemblyName>Microsoft.AI.Web</AssemblyName>
+    <TargetFrameworks>net452</TargetFrameworks>
+    <!-- Important: This project is exclusively NetFramework. This will not be upgraded to NetStandard nor NetCore. -->
+    <Prefer32Bit>false</Prefer32Bit>
+    <DefineConstants>$(DefineConstants);ALLOW_AGGRESSIVE_INLIGNING_ATTRIBUTE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Nupkg properties-->
+    <PackageId>Microsoft.ApplicationInsights.Web</PackageId>
+    <Title>Application Insights for Web Applications</Title>
+    <Description>Application Insights for .NET web applications. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <PackageTags>Azure Monitoring Analytics ApplicationInsights Telemetry AppInsights</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--Common Dependencies-->
+    <ProjectReference Include="..\..\..\..\BASE\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <PackageReference Include="Microsoft.AspNet.TelemetryCorrelation" Version="1.0.8" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="$(SystemDiagnosticsDiagnosticSourcePkgVer)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--Nuget Transforms (install.xdt, uninstall.xdt, config.transform): "nupkg\content\<framework>\*.*-->
+    <Content Include="net452\*" />
+    <Content Include="Microsoft.ApplicationInsights.Web.targets" PackagePath="build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\WindowsServer\WindowsServer\WindowsServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--Framework References-->
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(PublicApiRoot)\$(AssemblyName).dll\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <Import Project="..\..\Common\Common.projitems" Label="Shared" />
+</Project>

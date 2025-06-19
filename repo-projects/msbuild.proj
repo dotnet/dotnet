@@ -21,7 +21,7 @@
     <BuildArgs>$(BuildArgs) /p:VisualStudioIbcSourceBranchName=main</BuildArgs>
     <BuildArgs>$(BuildArgs) /p:VisualStudioDropAccessToken=$(IBCDropAccessToken)</BuildArgs>
     <!-- This is set to the name of the repository that msbuild builds its official build from. -->
-    <BuildArgs>$(BuildArgs) /p:RepositoryName=DotNet-msbuild-Trusted</BuildArgs>
+    <BuildArgs>$(BuildArgs) /p:VisualStudioIbcRepositoryName=DotNet-msbuild-Trusted</BuildArgs>
   </PropertyGroup>
 
 </Project>
