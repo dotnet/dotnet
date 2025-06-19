@@ -1,0 +1,58 @@
+﻿<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <TelemetryModules xdt:Transform="InsertIfMissing">
+    <Add xdt:Transform="InsertIfMissing" xdt:Locator="Match(Type)" Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.PerformanceCollectorModule, Microsoft.AI.PerfCounterCollector">
+      <!--
+      Use the following syntax here to collect additional performance counters:
+      
+      <Counters>
+        <Add PerformanceCounter="\Process(??APP_WIN32_PROC??)\Handle Count" ReportAs="Process handle count" />
+        ...
+      </Counters>
+      
+      PerformanceCounter must be either \CategoryName(InstanceName)\CounterName or \CategoryName\CounterName
+      
+      NOTE: performance counters configuration will be lost upon NuGet upgrade.
+      
+      The following placeholders are supported as InstanceName:
+        ??APP_WIN32_PROC?? - instance name of the application process  for Win32 counters.
+        ??APP_W3SVC_PROC?? - instance name of the application IIS worker process for IIS/ASP.NET counters.
+        ??APP_CLR_PROC?? - instance name of the application CLR process for .NET counters.
+      -->
+    </Add>
+    <Add xdt:Transform="InsertIfMissing" xdt:Locator="Match(Type)" Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryModule, Microsoft.AI.PerfCounterCollector" />
+  </TelemetryModules>
+
+  <TelemetryProcessors xdt:Transform="Remove"/>
+  <TelemetrySinks xdt:Transform="InsertIfMissing">
+  </TelemetrySinks>
+
+  <TelemetrySinks xdt:Transform="InsertIfMissing">
+    <Add Name="default" xdt:Transform="InsertIfMissing">
+    </Add>
+  </TelemetrySinks>
+
+  <TelemetrySinks>
+    <Add Name="default" xdt:Transform="InsertIfMissing">
+      <!-- 
+    QuickPulse telemetry processor must always be the first telemetry processor.
+    There is no syntax to allow insertion in the beginning of the list for when there are no siblings (we only have InsertBefore and InsertAfter), so do a trick:
+    1. Remove all previously existing QuickPulse telemetry processors (if any)
+    2. Add QuickPulse telemetry processor as the last telemetry processor
+    3. Add QuickPulse telemetry processor as the first telemetry processor (we can now use InsertBefore because we know there's at least one sibling present)
+    4. Remove the last QuickPulse telemetry processor
+    
+    Note that we have a default namespace in ApplicationInsights.config, and since XDT won't allow us to specify the namespace map, we'll have to use local-name() in XPath expressions
+  -->
+
+      <TelemetryProcessors xdt:Transform="InsertIfMissing">
+        <Add xdt:Transform="RemoveAll" xdt:Locator="Match(Type)" Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+        <Add xdt:Transform="Insert" Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+      </TelemetryProcessors>
+
+      <Add xdt:Transform="InsertBefore(/*[local-name()='ApplicationInsights']/*[local-name()='TelemetrySinks']/*[local-name()='Add'][1]/*[local-name()='TelemetryProcessors']/*[local-name()='Add'][1])" Type="Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor, Microsoft.AI.PerfCounterCollector" />
+
+      <Add xdt:Transform="Remove" xdt:Locator="XPath(/*[local-name()='ApplicationInsights']/*[local-name()='TelemetrySinks']/*[local-name()='Add'][1]/*[local-name()='TelemetryProcessors']/*[local-name()='Add' and starts-with(./@Type,'Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse.QuickPulseTelemetryProcessor') and contains(./@Type,' Microsoft.AI.PerfCounterCollector')][last()])"/>
+
+    </Add>
+  </TelemetrySinks>
+</ApplicationInsights>

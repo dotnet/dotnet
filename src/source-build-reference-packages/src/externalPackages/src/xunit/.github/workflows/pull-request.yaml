@@ -1,0 +1,48 @@
+name: xUnit.net PR Build (v2)
+on:
+  pull_request:
+    branches:
+    - v2
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: windows-2022
+    env:
+      DOTNET_NOLOGO: true
+    steps:
+      - name: Clone source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Replace global.json
+        run: cp .github/workflows/.global.json global.json
+        shell: bash
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            2.1.x
+            6.0.x
+            8.0.x
+
+      - name: Get .NET information
+        run: dotnet --info
+
+      - name: "Build target: BuildAll"
+        run: dotnet run --project tools/builder --no-launch-profile -- BuildAll --timing
+
+      - name: "Upload artifact: test"
+        uses: actions/upload-artifact@v4
+        with:
+          name: test
+          path: artifacts/test
+          compression-level: 9
+        if: always()
