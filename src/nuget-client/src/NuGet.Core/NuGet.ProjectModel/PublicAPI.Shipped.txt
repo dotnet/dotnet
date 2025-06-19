@@ -659,7 +659,6 @@ static NuGet.ProjectModel.BuildAction.operator ==(NuGet.ProjectModel.BuildAction
 ~static NuGet.ProjectModel.PackagesLockFileFormat.Write(string filePath, NuGet.ProjectModel.PackagesLockFile lockFile) -> void
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.GetNuGetLockFilePath(NuGet.ProjectModel.PackageSpec project) -> string
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.GetNuGetLockFilePath(string baseDirectory, string projectName) -> string
-~static NuGet.ProjectModel.PackagesLockFileUtilities.IsLockFileStillValid(NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectModel.PackagesLockFile nuGetLockFile) -> bool
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.IsLockFileStillValid(NuGet.ProjectModel.PackagesLockFile expected, NuGet.ProjectModel.PackagesLockFile actual) -> NuGet.ProjectModel.PackagesLockFileUtilities.LockFileValidityWithMatchedResults
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.IsLockFileValid(NuGet.ProjectModel.DependencyGraphSpec dgSpec, NuGet.ProjectModel.PackagesLockFile nuGetLockFile) -> NuGet.ProjectModel.LockFileValidationResult
 ~static NuGet.ProjectModel.PackagesLockFileUtilities.IsNuGetLockFileEnabled(NuGet.ProjectModel.PackageSpec project) -> bool
