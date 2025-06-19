@@ -93,7 +93,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
         var usingDirectives = razorCodeDocument
-            .GetDocumentIntermediateNode()
+            .GetRequiredDocumentNode()
             .FindDescendantNodes<UsingDirectiveIntermediateNode>();
 
         foreach (var usingDirective in usingDirectives)

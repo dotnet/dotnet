@@ -33,7 +33,6 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
         return new RazorCSharpDocument(
             codeDocument,
             text,
-            _options,
             context.GetDiagnostics(),
             context.GetSourceMappings(),
             context.GetLinePragmas());
@@ -140,7 +139,7 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
                 node.Interfaces,
                 node.TypeParameters,
                 _context,
-                useNullableContext: !Options.SuppressNullabilityEnforcement && node.Annotations[CommonAnnotations.NullableContext] is not null))
+                useNullableContext: !Options.SuppressNullabilityEnforcement && node.NullableContext))
             {
                 VisitDefault(node);
             }

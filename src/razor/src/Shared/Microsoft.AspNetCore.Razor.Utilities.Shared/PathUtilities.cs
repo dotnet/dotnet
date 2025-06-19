@@ -4,16 +4,24 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 #if !NET
 using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Razor.Utilities;
 #endif
 
 namespace Microsoft.AspNetCore.Razor;
 
 internal static class PathUtilities
 {
+    public static readonly StringComparer OSSpecificPathComparer = PlatformInformation.IsWindows
+        ? StringComparer.OrdinalIgnoreCase
+        : StringComparer.Ordinal;
+
+    public static readonly StringComparison OSSpecificPathComparison = PlatformInformation.IsWindows
+        ? StringComparison.OrdinalIgnoreCase
+        : StringComparison.Ordinal;
+
     [return: NotNullIfNotNull(nameof(path))]
     public static string? GetExtension(string? path)
         => Path.GetExtension(path);

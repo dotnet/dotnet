@@ -50,22 +50,10 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     private ConfigurationSource? _primaryKeyConfigurationSource;
     private ConfigurationSource? _isKeylessConfigurationSource;
     private ConfigurationSource? _baseTypeConfigurationSource;
-    private ConfigurationSource? _constructorBindingConfigurationSource;
-    private ConfigurationSource? _serviceOnlyConstructorBindingConfigurationSource;
 
     // Warning: Never access these fields directly as access needs to be thread-safe
     private PropertyCounts? _counts;
-
-    // _serviceOnlyConstructorBinding needs to be set as well whenever _constructorBinding is set
-    private InstantiationBinding? _constructorBinding;
-    private InstantiationBinding? _serviceOnlyConstructorBinding;
-
     private Func<IInternalEntry, ISnapshot>? _relationshipSnapshotFactory;
-    private Func<IInternalEntry, ISnapshot>? _originalValuesFactory;
-    private Func<IInternalEntry, ISnapshot>? _temporaryValuesFactory;
-    private Func<ISnapshot>? _storeGeneratedValuesFactory;
-    private Func<IDictionary<string, object?>, ISnapshot>? _shadowValuesFactory;
-    private Func<ISnapshot>? _emptyShadowValuesFactory;
     private IProperty[]? _foreignKeyProperties;
     private IProperty[]? _valueGeneratingProperties;
 
@@ -2252,13 +2240,13 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual PropertyCounts Counts
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _counts, this, static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return entityType.CalculateCounts();
-            });
+    public override PropertyCounts CalculateCounts() =>
+        NonCapturingLazyInitializer.EnsureInitialized(
+              ref _counts, this, static entityType =>
+              {
+                  entityType.EnsureReadOnly();
+                  return EntityTypeExtensions.CalculateCounts(entityType);
+              });   
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2267,7 +2255,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public override IEnumerable<PropertyBase> GetSnapshottableMembers()
-        => base.GetSnapshottableMembers().Concat(GetNavigations());
+        => base.GetSnapshottableMembers().Concat(GetNavigations()).Concat(GetSkipNavigations());
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2282,81 +2270,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
             {
                 entityType.EnsureReadOnly();
                 return RelationshipSnapshotFactoryFactory.Instance.Create(entityType);
-            });
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Func<IInternalEntry, ISnapshot> OriginalValuesFactory
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _originalValuesFactory, this,
-            static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return OriginalValuesFactoryFactory.Instance.Create(entityType);
-            });
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Func<ISnapshot> StoreGeneratedValuesFactory
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _storeGeneratedValuesFactory, this,
-            static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return StoreGeneratedValuesFactoryFactory.Instance.CreateEmpty(entityType);
-            });
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Func<IInternalEntry, ISnapshot> TemporaryValuesFactory
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _temporaryValuesFactory, this,
-            static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return TemporaryValuesFactoryFactory.Instance.Create(entityType);
-            });
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Func<IDictionary<string, object?>, ISnapshot> ShadowValuesFactory
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _shadowValuesFactory, this,
-            static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return ShadowValuesFactoryFactory.Instance.Create(entityType);
-            });
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Func<ISnapshot> EmptyShadowValuesFactory
-        => NonCapturingLazyInitializer.EnsureInitialized(
-            ref _emptyShadowValuesFactory, this,
-            static entityType =>
-            {
-                entityType.EnsureReadOnly();
-                return EmptyShadowValuesFactoryFactory.Instance.CreateEmpty(entityType);
             });
 
     /// <summary>
@@ -2870,7 +2783,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual LambdaExpression? SetQueryFilter(LambdaExpression? queryFilter, ConfigurationSource configurationSource)
+    public virtual IQueryFilter? SetQueryFilter(IQueryFilter queryFilter)
     {
         var errorMessage = CheckQueryFilter(queryFilter);
         if (errorMessage != null)
@@ -2878,7 +2791,22 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
             throw new InvalidOperationException(errorMessage);
         }
 
-        return (LambdaExpression?)SetOrRemoveAnnotation(CoreAnnotationNames.QueryFilter, queryFilter, configurationSource)?.Value;
+        var queryFilters = (QueryFilterCollection?)FindAnnotation(CoreAnnotationNames.QueryFilter)?.Value ?? new QueryFilterCollection();
+
+        queryFilters.Set(queryFilter);
+        var configSource = ((QueryFilter)queryFilter)?.ConfigurationSource ?? ConfigurationSource.Explicit;
+
+        if (queryFilters.Count == 0)
+        {
+            queryFilters = null;
+        }
+
+        if (FindAnnotation(CoreAnnotationNames.QueryFilter)?.Value != queryFilters) {
+
+            SetOrRemoveAnnotation(CoreAnnotationNames.QueryFilter, queryFilters, configSource);
+        }
+
+        return queryFilter;
     }
 
     /// <summary>
@@ -2887,14 +2815,15 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual string? CheckQueryFilter(LambdaExpression? queryFilter)
+    public virtual string? CheckQueryFilter(IQueryFilter queryFilter)
     {
-        if (queryFilter != null
-            && (queryFilter.Parameters.Count != 1
-                || queryFilter.Parameters[0].Type != ClrType
-                || queryFilter.ReturnType != typeof(bool)))
+        var expression = queryFilter?.Expression;
+        if (expression != null
+            && (expression.Parameters.Count != 1
+                || expression.Parameters[0].Type != ClrType
+                || expression.ReturnType != typeof(bool)))
         {
-            return CoreStrings.BadFilterExpression(queryFilter, DisplayName(), ClrType);
+            return CoreStrings.BadFilterExpression(expression, DisplayName(), ClrType);
         }
 
         return null;
@@ -2906,8 +2835,36 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
+    public virtual IReadOnlyCollection<IQueryFilter> GetDeclaredQueryFilters()
+        => (QueryFilterCollection?)this[CoreAnnotationNames.QueryFilter] ?? new QueryFilterCollection();
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    [Obsolete("Use GetDeclaredQueryFilters() instead.")]
     public virtual LambdaExpression? GetQueryFilter()
-        => (LambdaExpression?)this[CoreAnnotationNames.QueryFilter];
+        => GetDeclaredQueryFilters()?.FirstOrDefault(f => f.IsAnonymous)?.Expression;
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public virtual IQueryFilter? FindDeclaredQueryFilter(string? filterKey)
+        => ((QueryFilterCollection?)this[CoreAnnotationNames.QueryFilter])?[filterKey];
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    public virtual ConfigurationSource? GetQueryFilterConfigurationSource(string? filterKey)
+        => ((QueryFilter?)((QueryFilterCollection?)this[CoreAnnotationNames.QueryFilter])?[filterKey])?.ConfigurationSource;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2916,7 +2873,7 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual ConfigurationSource? GetQueryFilterConfigurationSource()
-        => FindAnnotation(CoreAnnotationNames.QueryFilter)?.GetConfigurationSource();
+        => GetQueryFilterConfigurationSource(null);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -2927,117 +2884,6 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     public virtual bool IsImplicitlyCreatedJoinEntityType
         => GetConfigurationSource() == ConfigurationSource.Convention
             && ClrType == Model.DefaultPropertyBagType;
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public override InstantiationBinding? ConstructorBinding
-    {
-        get => IsReadOnly && !ClrType.IsAbstract
-            ? NonCapturingLazyInitializer.EnsureInitialized(
-                ref _constructorBinding, this, static entityType =>
-                {
-                    ((IModel)entityType.Model).GetModelDependencies().ConstructorBindingFactory.GetBindings(
-                        (IReadOnlyEntityType)entityType,
-                        out entityType._constructorBinding,
-                        out entityType._serviceOnlyConstructorBinding);
-                })
-            : _constructorBinding;
-
-        set => SetConstructorBinding(value, ConfigurationSource.Explicit);
-    }
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual InstantiationBinding? SetConstructorBinding(
-        InstantiationBinding? constructorBinding,
-        ConfigurationSource configurationSource)
-    {
-        EnsureMutable();
-
-        _constructorBinding = constructorBinding;
-
-        if (_constructorBinding == null)
-        {
-            _constructorBindingConfigurationSource = null;
-        }
-        else
-        {
-            UpdateConstructorBindingConfigurationSource(configurationSource);
-        }
-
-        return constructorBinding;
-    }
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual ConfigurationSource? GetConstructorBindingConfigurationSource()
-        => _constructorBindingConfigurationSource;
-
-    private void UpdateConstructorBindingConfigurationSource(ConfigurationSource configurationSource)
-        => _constructorBindingConfigurationSource = configurationSource.Max(_constructorBindingConfigurationSource);
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual InstantiationBinding? ServiceOnlyConstructorBinding
-    {
-        get => _serviceOnlyConstructorBinding;
-        set => SetServiceOnlyConstructorBinding(value, ConfigurationSource.Explicit);
-    }
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual InstantiationBinding? SetServiceOnlyConstructorBinding(
-        InstantiationBinding? constructorBinding,
-        ConfigurationSource configurationSource)
-    {
-        EnsureMutable();
-
-        _serviceOnlyConstructorBinding = constructorBinding;
-
-        if (_serviceOnlyConstructorBinding == null)
-        {
-            _serviceOnlyConstructorBindingConfigurationSource = null;
-        }
-        else
-        {
-            UpdateServiceOnlyConstructorBindingConfigurationSource(configurationSource);
-        }
-
-        return constructorBinding;
-    }
-
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual ConfigurationSource? GetServiceOnlyConstructorBindingConfigurationSource()
-        => _serviceOnlyConstructorBindingConfigurationSource;
-
-    private void UpdateServiceOnlyConstructorBindingConfigurationSource(ConfigurationSource configurationSource)
-        => _serviceOnlyConstructorBindingConfigurationSource =
-            configurationSource.Max(_serviceOnlyConstructorBindingConfigurationSource);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -3179,7 +3025,27 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     /// </summary>
     [DebuggerStepThrough]
     void IMutableEntityType.SetQueryFilter(LambdaExpression? queryFilter)
-        => SetQueryFilter(queryFilter, ConfigurationSource.Explicit);
+        => SetQueryFilter(new QueryFilter(queryFilter, ConfigurationSource.Explicit));
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    [DebuggerStepThrough]
+    void IMutableEntityType.SetQueryFilter(string filterKey, LambdaExpression? filter)
+        => SetQueryFilter(new QueryFilter(filterKey, filter, ConfigurationSource.Explicit));
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    [DebuggerStepThrough]
+    IQueryFilter? IConventionEntityType.SetQueryFilter(string filterKey, LambdaExpression? filter, bool fromDataAnnotation)
+        => SetQueryFilter(new QueryFilter(filterKey, filter, fromDataAnnotation));
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -3189,7 +3055,8 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
     /// </summary>
     [DebuggerStepThrough]
     LambdaExpression? IConventionEntityType.SetQueryFilter(LambdaExpression? queryFilter, bool fromDataAnnotation)
-        => SetQueryFilter(queryFilter, fromDataAnnotation ? ConfigurationSource.DataAnnotation : ConfigurationSource.Convention);
+        => SetQueryFilter(new QueryFilter(queryFilter, fromDataAnnotation))
+            ?.Expression;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -4732,18 +4599,18 @@ public class EntityType : TypeBase, IMutableEntityType, IConventionEntityType, I
                 }
             }
 
-            if (EntityType._constructorBindingConfigurationSource != null)
+            if (EntityType.GetConstructorBindingConfigurationSource() != null)
             {
                 entityTypeBuilder.Metadata.SetConstructorBinding(
                     Create(EntityType.ConstructorBinding, entityTypeBuilder.Metadata),
-                    EntityType._constructorBindingConfigurationSource.Value);
+                    EntityType.GetConstructorBindingConfigurationSource()!.Value);
             }
 
-            if (EntityType._serviceOnlyConstructorBindingConfigurationSource != null)
+            if (EntityType.GetServiceOnlyConstructorBindingConfigurationSource() != null)
             {
                 entityTypeBuilder.Metadata.SetServiceOnlyConstructorBinding(
                     Create(EntityType.ServiceOnlyConstructorBinding, entityTypeBuilder.Metadata),
-                    EntityType._serviceOnlyConstructorBindingConfigurationSource.Value);
+                    EntityType.GetServiceOnlyConstructorBindingConfigurationSource()!.Value);
             }
 
             var rawData = EntityType._data;

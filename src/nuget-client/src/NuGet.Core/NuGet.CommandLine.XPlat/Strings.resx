@@ -1024,4 +1024,20 @@ Do not translate "PackageVersion"</comment>
   <data name="Unsupported_UpgradeAllPackages" xml:space="preserve">
     <value>Unsupported: Upgrading all packages in a project is not yet supported</value>
   </data>
+  <data name="Warning_AlreadyUsingSameVersion" xml:space="preserve">
+    <value>Package {0} is already referencing version {1}</value>
+    <comment>0 - package id
+1 - version string</comment>
+  </data>
+  <data name="Error_MissingVersion" xml:space="preserve">
+    <value>Missing version from {0}</value>
+    <comment>0 - package id </comment>
+  </data>
+  <data name="Error_InvalidVersionRange" xml:space="preserve">
+    <value>Invalid version range '{0}'</value>
+    <comment>0 - string provided by customer</comment>
+  </data>
+  <data name="PackageUpdate_PackageArgumentDescription" xml:space="preserve">
+    <value>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</value>
+  </data>
 </root>

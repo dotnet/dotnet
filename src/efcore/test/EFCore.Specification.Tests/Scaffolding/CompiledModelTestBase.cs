@@ -321,7 +321,7 @@ namespace TestNamespace
         Assert.IsType<ConstructorBinding>(principalBase.ConstructorBinding);
         Assert.Null(principalBase.FindIndexerPropertyInfo());
         Assert.Equal(ChangeTrackingStrategy.Snapshot, principalBase.GetChangeTrackingStrategy());
-        Assert.Null(principalBase.GetQueryFilter());
+        Assert.Empty(principalBase.GetDeclaredQueryFilters());
         Assert.Equal(
             CoreStrings.RuntimeModelMissingData,
             Assert.Throws<InvalidOperationException>(() => principalBase.GetSeedData()).Message);
@@ -378,7 +378,7 @@ namespace TestNamespace
         Assert.Equal(
             ChangeTrackingStrategy.ChangingAndChangedNotificationsWithOriginalValues,
             referenceOwnedType.GetChangeTrackingStrategy());
-        Assert.Null(referenceOwnedType.GetQueryFilter());
+        Assert.Empty(referenceOwnedType.GetDeclaredQueryFilters());
         Assert.Null(referenceOwnedType[CoreAnnotationNames.PropertyAccessMode]);
         Assert.Null(referenceOwnedType[CoreAnnotationNames.NavigationAccessMode]);
         Assert.Equal(
@@ -443,7 +443,7 @@ namespace TestNamespace
         Assert.Equal("ManyOwned", ownedCollectionNavigation.Name);
         Assert.Null(ownedCollectionNavigation.PropertyInfo);
         Assert.Equal("ManyOwned", ownedCollectionNavigation.FieldInfo!.Name);
-        Assert.Equal(typeof(ICollection<OwnedType>), ownedCollectionNavigation.ClrType);
+        Assert.Equal(typeof(IList<OwnedType>), ownedCollectionNavigation.ClrType);
         Assert.True(ownedCollectionNavigation.IsCollection);
         Assert.True(ownedCollectionNavigation.IsEagerLoaded);
         Assert.False(ownedCollectionNavigation.IsOnDependent);
@@ -501,7 +501,7 @@ namespace TestNamespace
         Assert.IsType<ConstructorBinding>(joinType.ConstructorBinding);
         Assert.Equal("Item", joinType.FindIndexerPropertyInfo()!.Name);
         Assert.Equal(ChangeTrackingStrategy.Snapshot, joinType.GetChangeTrackingStrategy());
-        Assert.Null(joinType.GetQueryFilter());
+        Assert.Empty(joinType.GetDeclaredQueryFilters());
 
         var rowid = joinType.FindProperty("rowid")!;
         Assert.Equal(typeof(byte[]), rowid.ClrType);
@@ -1218,7 +1218,7 @@ namespace TestNamespace
         modelBuilder.Entity<PrincipalDerived<DependentBase<byte?>>>(
             eb =>
             {
-                eb.ComplexCollection<ICollection<OwnedType>, OwnedType>(
+                eb.ComplexCollection<IList<OwnedType>, OwnedType>(
                     "ManyOwned", "OwnedCollection", eb =>
                     {
                         eb.UsePropertyAccessMode(PropertyAccessMode.Field)
@@ -1313,7 +1313,7 @@ namespace TestNamespace
         Assert.Equal("ManyOwned", complexCollection.Name);
         Assert.True(complexCollection.IsCollection);
         Assert.False(complexCollection.IsNullable);
-        Assert.Equal(typeof(ICollection<OwnedType>), complexCollection.ClrType);
+        Assert.Equal(typeof(IList<OwnedType>), complexCollection.ClrType);
         Assert.Null(complexCollection.PropertyInfo);
         Assert.Equal("ManyOwned", complexCollection.FieldInfo!.Name);
         Assert.Equal(principalDerived, complexCollection.DeclaringType);
@@ -1833,7 +1833,7 @@ namespace TestNamespace
         where TDependent : class
     {
         public TDependent? Dependent { get; set; }
-        protected ICollection<OwnedType> ManyOwned = null!;
+        protected IList<OwnedType> ManyOwned = null!;
         public ICollection<PrincipalBase> Principals { get; set; } = null!;
     }
 

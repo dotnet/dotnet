@@ -38,12 +38,6 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     public required string DotNetRootDirectory { get; init; }
 
     /// <summary>
-    /// Paths to the Merged Manifest
-    /// </summary>
-    [Required]
-    public required string MergedManifest { get; init; }
-
-    /// <summary>
     /// Path to the output logs directory
     /// </summary>
     [Required]
@@ -107,43 +101,33 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     {
         Log.LogMessage(MessageImportance.High, "Preparing files to sign check...");
 
-        IEnumerable<string> blobsToSignCheck = Enumerable.Empty<string>();
-        IEnumerable<string> packagesToSignCheck = Enumerable.Empty<string>();
+        List<(string artifactName, string fileName)> filesToSignCheck = [];
 
-        using (Stream xmlStream = File.OpenRead(MergedManifest))
+        foreach (string artifactDirectory in Directory.EnumerateDirectories(ArtifactDownloadDirectory))
         {
-            XDocument doc = XDocument.Load(xmlStream);
-
-            // Extract blobs
-            blobsToSignCheck = doc.Descendants("Blob")
-                .Where(blob => IsReleaseShipping(blob))
-                .Select(blob =>
+            foreach (string manifest in Directory.EnumerateFiles(Path.Combine(artifactDirectory, "manifests"), "*.xml", SearchOption.AllDirectories))
+            {
+                using (Stream xmlStream = File.OpenRead(manifest))
                 {
-                    string id = ExtractAttribute(blob, "Id");
-                    string filename = Path.GetFileName(id);
-                    return !string.IsNullOrEmpty(filename) ? filename : string.Empty;
-                })
-                .Where(blob => !string.IsNullOrEmpty(blob));
+                    XDocument doc = XDocument.Load(xmlStream);
 
-            // Extract packages
-            packagesToSignCheck = doc.Descendants("Package")
-                .Where(pkg => IsReleaseShipping(pkg))
-                .Select(pkg =>
-                {
-                    string id = ExtractAttribute(pkg, "Id");
-                    string version = ExtractAttribute(pkg, "Version");
+                    // Extract blobs
+                    filesToSignCheck.AddRange(doc.Descendants("Blob")
+                        .Where(blob => IsReleaseShipping(blob))
+                        .Select(blob => (artifactDirectory, ExtractAttribute(blob, "PipelineArtifactPath"))));
 
-                    return !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(version)
-                        ? $"{id}.{version}.nupkg"
-                        : string.Empty;
-                })
-                .Where(pkg => !string.IsNullOrEmpty(pkg));
+                    // Extract packages
+                    filesToSignCheck.AddRange(doc.Descendants("Package")
+                        .Where(pkg => IsReleaseShipping(pkg))
+                        .Select(pkg => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
+                }
+            }
         }
 
         ForceDirectory(_signCheckFilesDirectory);
 
         // Copy the shipping blobs and packages from the download directory to the signcheck directory
-        foreach (string file in blobsToSignCheck.Concat(packagesToSignCheck))
+        foreach ((string artifactDirectory, string file) in filesToSignCheck)
         {
             // Ignore files we don't care about
             if (Path.GetExtension(file) == ".txt" || Path.GetExtension(file) == ".sha512")
@@ -151,7 +135,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
                 continue;
             }
 
-            string? sourcePath = Directory.GetFiles(ArtifactDownloadDirectory, file, SearchOption.AllDirectories).FirstOrDefault();
+            string sourcePath = Path.Combine(artifactDirectory, file);
             string destinationPath = Path.Combine(_signCheckFilesDirectory, file);
 
             if (!string.IsNullOrEmpty(sourcePath))
@@ -167,7 +151,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
             }
             else
             {
-                Log.LogWarning($"File {file} not found in {ArtifactDownloadDirectory}");
+                Log.LogWarning($"File {file} not found in {artifactDirectory}");
             }
         }
     }

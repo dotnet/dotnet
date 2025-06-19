@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -76,7 +75,7 @@ internal sealed class CSharpFormattingPass(
         var sourceText = context.SourceText;
 
         using var csharpChanges = new PooledArrayBuilder<TextChange>();
-        foreach (var mapping in context.CodeDocument.GetCSharpDocument().SourceMappings)
+        foreach (var mapping in context.CodeDocument.GetRequiredCSharpDocument().SourceMappings)
         {
             var span = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
             if (!ShouldFormat(context, span, allowImplicitStatements: true))

@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
 using System.Linq;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
@@ -13,7 +13,7 @@ internal static class Extensions
 
     public static bool IsRazorFilePath(this string filePath)
     {
-        var comparison = FilePathComparison.Instance;
+        var comparison = PathUtilities.OSSpecificPathComparison;
 
         return filePath.EndsWith(RazorExtension, comparison) ||
                filePath.EndsWith(CSHtmlExtension, comparison);

@@ -63,7 +63,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
                 // add the items we've seen so far.
                 builder.SetCapacityIfLarger(count);
 
-                builder.AddRange(list, index: 0, count: i);
+                builder.AddRange(list, startIndex: 0, count: i);
 
                 isUpdating = true;
             }
@@ -109,7 +109,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
                 // add the items we've seen so far.
                 builder.SetCapacityIfLarger(count);
 
-                builder.AddRange(list, index: 0, count: i);
+                builder.AddRange(list, startIndex: 0, count: i);
 
                 isUpdating = true;
             }

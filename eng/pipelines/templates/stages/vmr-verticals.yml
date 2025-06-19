@@ -556,9 +556,6 @@ stages:
         targetArchitecture: x86
         buildPass: 2
         reuseBuildArtifactsFrom:
-        - Windows_x64
-        - Windows_x86
-        - Windows_arm64
         - AzureLinux_x64_Cross_x64
         - AzureLinux_x64_Cross_Alpine_x64
         - AzureLinux_x64_Cross_arm64

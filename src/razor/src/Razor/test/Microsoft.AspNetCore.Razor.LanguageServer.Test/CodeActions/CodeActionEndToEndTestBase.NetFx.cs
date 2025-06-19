@@ -61,7 +61,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         File.Create(codeBehindFilePath).Close();
         try
         {
-            codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace);
+            codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace);
             initialCodeBehindContent = initialCodeBehindContent.Replace(CodeBehindTestReplaceNamespace, @namespace);
             File.WriteAllText(codeBehindFilePath, initialCodeBehindContent);
 

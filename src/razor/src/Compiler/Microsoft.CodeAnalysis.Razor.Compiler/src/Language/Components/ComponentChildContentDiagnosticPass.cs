@@ -36,7 +36,7 @@ internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePa
                 {
                     if (attribute.AttributeName == childContent.AttributeName)
                     {
-                        node.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentSetByAttributeAndBody(
+                        node.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentSetByAttributeAndBody(
                             attribute.Source,
                             attribute.AttributeName));
                     }
@@ -61,7 +61,7 @@ internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePa
                     {
                         // Duplicate name. We report an error because this will almost certainly also lead to an error
                         // from the C# compiler that's way less clear.
-                        node.Diagnostics.Add(ComponentDiagnosticFactory.Create_ChildContentRepeatedParameterName(
+                        node.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentRepeatedParameterName(
                             node.Source,
                             node,
                             (ComponentIntermediateNode)Ancestors[0], // Enclosing component

@@ -96,7 +96,7 @@ internal class BraceSmartIndenter : IDisposable
             return;
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         if (TryCreateIndentationContext(changeInformation.firstChange.NewPosition, newText.Length, newText, syntaxTree, _documentTracker, out var context))
         {
             _context = context;

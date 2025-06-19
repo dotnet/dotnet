@@ -120,7 +120,7 @@ public abstract partial class RazorProjectFileSystem
         {
             pathMemory = pathMemory[..(index + 1)];
 
-            var itemPath = StringExtensions.CreateString(
+            var itemPath = string.Create(
                 length: pathMemory.Length + fileName.Length,
                 state: (pathMemory, fileName),
                 static (span, state) =>

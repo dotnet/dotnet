@@ -65,7 +65,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -130,7 +130,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -203,7 +203,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -286,7 +286,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -371,7 +371,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             </div>
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -444,7 +444,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -509,7 +509,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -576,7 +576,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var documentContext = CreateDocumentContext(documentPath, codeDocument);
         var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
@@ -642,7 +642,7 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
             }
             """;
         var codeDocument = CreateCodeDocument(contents);
-        Assert.True(codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace));
+        Assert.True(codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace));
 
         var clientConnection = TestClientConnection.Create(builder =>
         {

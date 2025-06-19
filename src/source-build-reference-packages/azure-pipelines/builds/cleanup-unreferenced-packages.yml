@@ -22,8 +22,8 @@ pool:
 
 resources:
   pipelines:
-  - pipeline: dotnet-source-build
-    source: dotnet-source-build-lite
+  - pipeline: dotnet-unified-build
+    source: dotnet-unified-build
 
 stages:
 - stage: Cleanup
@@ -47,9 +47,8 @@ stages:
   - name: TargetRepo
     value: dotnet/source-build-reference-packages
 
-  # https://dev.azure.com/dnceng/internal/_library?itemType=VariableGroups&view=VariableGroupView&variableGroupId=177&path=DotNet-Source-Build-Bot-Secrets-MVP
   # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
-  - group: DotNet-Source-Build-Bot-Secrets-MVP
+  - group: Dotnet-SourceBuild-Secrets
 
   jobs:
   - job: DownloadArtifact
@@ -61,8 +60,8 @@ stages:
         buildType: specific
         buildVersionToDownload: specific
         project: internal
-        definition: $(resources.pipeline.dotnet-source-build.pipelineName)
-        pipelineId: $(resources.pipeline.dotnet-source-build.runID)
+        definition: $(resources.pipeline.dotnet-unified-build.pipelineName)
+        pipelineId: $(resources.pipeline.dotnet-unified-build.runID)
         artifactName: ${{ parameters.artifactName }}
         itemPattern: '**/sbrpPackageUsage.json'
         targetPath: $(Pipeline.Workspace)
