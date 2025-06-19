@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Michael Simons <msimons@microsoft.com>
+Date: Fri, 26 Jul 2024 18:03:44 +0000
+Subject: [PATCH] Update System.Diagnostics.DiagnosticSource to eliminate
+ NetStandard1.* dependencies
+
+Backport: https://github.com/microsoft/ApplicationInsights-dotnet/issues/2872
+---
+ Directory.Build.props | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Directory.Build.props b/Directory.Build.props
+index da394914..4faf4d07 100644
+--- a/Directory.Build.props
++++ b/Directory.Build.props
+@@ -13,7 +13,7 @@
+   </PropertyGroup>
+ 
+   <PropertyGroup Label="Package versions for System.Diagnostics.DiagnosticSource">
+-    <SystemDiagnosticsDiagnosticSourcePkgVer>5.0.0</SystemDiagnosticsDiagnosticSourcePkgVer>
++    <SystemDiagnosticsDiagnosticSourcePkgVer>8.0.0</SystemDiagnosticsDiagnosticSourcePkgVer>
+     <SystemDiagnosticsDiagnosticSourcePkgVer Condition="'$(Redfield)' == 'True'">4.7.0</SystemDiagnosticsDiagnosticSourcePkgVer>
+   </PropertyGroup>
+ 

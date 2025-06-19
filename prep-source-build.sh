@@ -37,8 +37,7 @@ function print_help () {
 }
 
 # SB prep default arguments
-# Update to centos.10-x64 during the next rebootstrap - https://github.com/dotnet/source-build/issues/5238
-defaultArtifactsRid='centos.9-x64'
+defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
 defaultDotnetSdk="$REPO_ROOT/.dotnet"
@@ -223,7 +222,7 @@ function BootstrapArtifacts {
 
   properties=( "/p:ArchiveDir=$packagesArchiveDir" )
   if [[ -n "$bootstrap_rid" ]]; then
-    properties+=( "/p:PortableRid=$bootstrap_rid" )
+    properties+=( "/p:PortableTargetRid=$bootstrap_rid" )
   fi
 
   # Run restore on project to initiate download of bootstrap packages

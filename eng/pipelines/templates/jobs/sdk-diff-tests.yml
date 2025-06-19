@@ -134,7 +134,7 @@ jobs:
       /p:SdkTarballPath=$(SdkTarballPath)
       /p:SourceBuiltArtifactsPath=$(SourceBuiltArtifactsPath)
       /p:TargetRid=${{ parameters.sbTargetRid }}
-      /p:PortableRid=${{ parameters.msftTargetRid }}
+      /p:PortableTargetRid=${{ parameters.msftTargetRid }}
     displayName: Run Tests
     workingDirectory: $(Build.SourcesDirectory)
 

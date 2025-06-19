@@ -1,0 +1,59 @@
+﻿imports:
+  - https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.standard.yml?raw=true
+
+jobs:
+  benchmarks:
+    source:
+      repository: https://github.com/AzureAD/azure-activedirectory-identitymodel-extensions-for-dotnet
+      branchOrCommit: dev
+      project: benchmark\Microsoft.IdentityModel.Benchmarks\Microsoft.IdentityModel.Benchmarks.csproj
+    variables:
+      filterArg: "*"
+      jobArg: short
+    arguments: --job {{jobArg}} --filter {{filterArg}} --memory
+    options:
+      benchmarkDotNet: true
+
+profiles:
+  windows:
+    description: INTEL/Windows 28 Cores
+    arguments: --profile aspnet-citrine-win    
+    
+scenarios:
+
+  CreateJWE:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*CreateJWETests*"
+
+  CreateSHR:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*CreateSignedHttpRequestTests*"
+
+  CreateToken:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*CreateTokenTests*"
+
+  ValidateJWE:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateJWEAsyncTests*"
+
+  ValidateSHR:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateSignedHttpRequestAsyncTests*"
+
+  ValidateToken:
+    application:
+      job: benchmarks
+      variables:
+        filterArg: "*ValidateTokenAsyncTests*"
+
