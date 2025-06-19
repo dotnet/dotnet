@@ -7,14 +7,6 @@
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
 
-    <BuildArgs>$(BuildArgs) /p:PortableRid=$(PortableRid)</BuildArgs>
-
-    <!-- We need to extract the non-portable OS name from the non-portable RID and pass that to installer build script.
-         This should not happen except when building non-portable. installer generally extracts the OSName from the host OS,
-         or from the Rid if supplied. -->
-    <BuildArgs Condition="$(PortableBuild) != 'true'">$(BuildArgs) /p:OSName=$(TargetRid.Substring(0, $(TargetRid.IndexOf("-"))))</BuildArgs>
-    <BuildArgs>$(BuildArgs) /p:PortableOSName=$(__PortableTargetOS)</BuildArgs>
-
     <!-- sdk always wants to build portable on FreeBSD etc. -->
     <BuildArgs Condition="('$(TargetOS)' == 'freebsd' or '$(TargetOS)' == 'solaris') and '$(DotNetBuildSourceOnly)' == 'true'">$(BuildArgs) /p:PortableBuild=true</BuildArgs>
     <BuildArgs Condition="'$(TargetOS)' != 'windows'">$(BuildArgs) /p:NetRuntimeRid=$(TargetRid)</BuildArgs>

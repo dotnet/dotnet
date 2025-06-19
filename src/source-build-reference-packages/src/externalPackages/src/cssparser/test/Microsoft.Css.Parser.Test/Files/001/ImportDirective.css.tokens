@@ -1,0 +1,19 @@
+Token Type           Length     Token Text
+At                   1          @
+Identifier           6          import
+String               10         "subs.css"
+Semicolon            1          ;
+Identifier           2          h1
+OpenCurlyBrace       1          {
+Identifier           5          color
+Colon                1          :
+Identifier           4          blue
+CloseCurlyBrace      1          }
+At                   1          @
+Identifier           6          import
+String               2          ""
+Identifier           4          list
+Dot                  1          .
+Identifier           3          css
+InvalidString        2          ";
+EndOfFile            0          

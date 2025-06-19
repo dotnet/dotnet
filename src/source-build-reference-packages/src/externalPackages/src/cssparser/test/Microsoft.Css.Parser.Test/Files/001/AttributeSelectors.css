@@ -1,0 +1,47 @@
+/* Attribute selectors */
+
+p[foo=bar] { }
+p[foo="bar"] { }
+p[foo=bar] { }
+p[foo=bar i] { }
+p[foo=bar I] { }
+p[foo=bar z] { }
+p[foo=bar "i"] { }
+
+p[ foo ^= bar ] { }
+p[ foo $= bar ] { }
+p[ foo ~= bar ] { }
+p[ foo |= "bar baz" ] { }
+p[ foo *= "bar baz" ] { }
+p[ foo = "bar baz" ] { }
+p[ foo = "bar baz" i] { }
+p[ foo = "bar baz" I] { }
+p[ foo = "bar baz" z] { }
+p[ foo = "bar baz" "i"] { }
+
+span[hello="Cleveland"][goodbye="Columbus"] { color: blue; }
+a[rel~="copyright"] {}
+a[href="http://www.w3.org/"] {}
+*[lang=fr] { display : none }
+*[lang|="en"] { color : red }
+
+DIALOGUE[character=romeo] {
+     voice-family: "Laurence Olivier", charles, male
+}
+
+DIALOGUE[character=juliet] {
+     voice-family: "Vivien Leigh", victoria, female
+}
+
+
+
+p[example="public class foo\
+            {\
+                private int x;\
+                \
+                foo(int x) {\
+                    this.x = x;\
+                }\
+            \
+            }"] { color: red }
+            

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <nlog>
+    <extensions>
+      <add assembly="Microsoft.ApplicationInsights.NLogTarget" xdt:Transform="Remove" xdt:Locator="Match(assembly)"/>
+    </extensions>
+    <targets>
+      <target type="ApplicationInsightsTarget" name="aiTarget" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+    </targets>
+    <rules>
+      <logger name="*" minlevel="Trace" writeTo="aiTarget" xdt:Transform="Remove" xdt:Locator="Match(writeTo)"/>
+    </rules>
+
+    <extensions xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+    <targets xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+    <rules xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+  </nlog>
+
+  <nlog xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+
+  <configSections>
+    <section name="nlog" xdt:Transform="Remove" xdt:Locator="Condition(@name = 'nlog' and count(/configuration/nlog) = 0)"/>
+  </configSections>
+
+  <configSections xdt:Transform="Remove" xdt:Locator="Condition(count(child::*) = 0)"/>
+
+</configuration>
