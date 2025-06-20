@@ -26,6 +26,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
         public string DataFile { get; set; }
 
         /// <summary>
+        /// Suffix to use for the version property name.
+        /// </summary>
+        [Required]
+        public string VersionPropertySuffix { get; set; }
+
+        /// <summary>
         /// A set of "PackageVersions.{repo}.Snapshot.props" files. They are analyzed to find
         /// packages built during source-build, and which repo built them. This info is added to the
         /// report. New packages are associated to a repo by going through each PVP in ascending
@@ -75,7 +81,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport
                     string id = usage.PackageIdentity.Id;
                     string version = usage.PackageIdentity.Version.OriginalVersion;
 
-                    string pvpIdent = WritePackageVersionsProps.GetPropertyName(id, WritePackageVersionsProps.VersionPropertySuffix);
+                    string pvpIdent = WritePackageVersionsProps.GetPropertyName(id, VersionPropertySuffix);
 
                     var sourceBuildCreator = new StringBuilder();
                     foreach (RepoOutput output in sourceBuildRepoOutputs)
