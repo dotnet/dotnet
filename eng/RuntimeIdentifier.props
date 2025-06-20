@@ -1,5 +1,5 @@
 <Project>
-  <!-- TargetRID calculations should go in this file. -->
+  <!-- TargetRid calculations should go in this file. -->
   <PropertyGroup Label="CalculateTargetOS">
     <BuildOS>linux</BuildOS>
     <BuildOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">osx</BuildOS>
