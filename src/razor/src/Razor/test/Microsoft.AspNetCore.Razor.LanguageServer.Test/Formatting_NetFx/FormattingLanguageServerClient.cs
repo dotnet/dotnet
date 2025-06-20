@@ -33,9 +33,9 @@ internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormatti
 
     private async Task<RazorDocumentFormattingResponse> FormatAsync(DocumentOnTypeFormattingParams @params)
     {
-        var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
+        var generatedHtml = GetGeneratedHtml(@params.TextDocument.DocumentUri.GetRequiredParsedUri());
 
-        var edits = await _htmlFormattingService.GetOnTypeFormattingEditsAsync(_loggerFactory, @params.TextDocument.Uri, generatedHtml, @params.Position, @params.Options.InsertSpaces, @params.Options.TabSize);
+        var edits = await _htmlFormattingService.GetOnTypeFormattingEditsAsync(_loggerFactory, @params.TextDocument.DocumentUri.GetRequiredParsedUri(), generatedHtml, @params.Position, @params.Options.InsertSpaces, @params.Options.TabSize);
 
         return new()
         {
@@ -45,9 +45,9 @@ internal class FormattingLanguageServerClient(HtmlFormattingService htmlFormatti
 
     private async Task<RazorDocumentFormattingResponse> FormatAsync(DocumentFormattingParams @params)
     {
-        var generatedHtml = GetGeneratedHtml(@params.TextDocument.Uri);
+        var generatedHtml = GetGeneratedHtml(@params.TextDocument.DocumentUri.GetRequiredParsedUri());
 
-        var edits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(_loggerFactory, @params.TextDocument.Uri, generatedHtml, @params.Options.InsertSpaces, @params.Options.TabSize);
+        var edits = await _htmlFormattingService.GetDocumentFormattingEditsAsync(_loggerFactory, @params.TextDocument.DocumentUri.GetRequiredParsedUri(), generatedHtml, @params.Options.InsertSpaces, @params.Options.TabSize);
 
         return new()
         {

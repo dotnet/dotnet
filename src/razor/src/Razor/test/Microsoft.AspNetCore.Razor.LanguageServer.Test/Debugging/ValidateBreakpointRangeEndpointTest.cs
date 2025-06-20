@@ -144,7 +144,7 @@ public class ValidateBreakpointRangeEndpointTest(ITestOutputHelper testOutput) :
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Range = codeDocument.Source.Text.GetRange(breakpointSpan)
         };

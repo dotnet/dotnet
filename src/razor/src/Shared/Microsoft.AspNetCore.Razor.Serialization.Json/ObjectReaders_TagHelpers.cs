@@ -153,7 +153,6 @@ internal static partial class ObjectReaders
 
             static BoundAttributeDescriptor ReadFromProperties(JsonDataReader reader)
             {
-                var kind = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.Kind));
                 var name = reader.ReadString(nameof(BoundAttributeDescriptor.Name));
                 var typeName = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.TypeName));
                 var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeDescriptor.IsEnum));
@@ -171,7 +170,7 @@ internal static partial class ObjectReaders
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new BoundAttributeDescriptor(
-                    Cached(kind), Cached(name)!, Cached(typeName), isEnum,
+                    Cached(name)!, Cached(typeName), isEnum,
                     hasIndexer, Cached(indexerNamePrefix), Cached(indexerTypeName),
                     documentationObject, Cached(displayName), Cached(containingType),
                     caseSensitive, isEditorRequired, parameters, metadata, diagnostics);
@@ -184,7 +183,6 @@ internal static partial class ObjectReaders
 
             static BoundAttributeParameterDescriptor ReadFromProperties(JsonDataReader reader)
             {
-                var kind = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.Kind));
                 var name = reader.ReadString(nameof(BoundAttributeParameterDescriptor.Name));
                 var typeName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.TypeName));
                 var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeParameterDescriptor.IsEnum));
@@ -196,7 +194,7 @@ internal static partial class ObjectReaders
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeParameterDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new BoundAttributeParameterDescriptor(
-                    Cached(kind), Cached(name)!, Cached(typeName),
+                    Cached(name)!, Cached(typeName),
                     isEnum, documentationObject, Cached(displayName), caseSensitive,
                     metadata, diagnostics);
             }

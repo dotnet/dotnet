@@ -27,11 +27,11 @@ internal sealed class RoslynCodeActionHelpers(IClientConnection clientConnection
         {
             Project = new TextDocumentIdentifier
             {
-                Uri = new Uri(projectSnapshot.FilePath, UriKind.Absolute)
+                DocumentUri = new(new Uri(projectSnapshot.FilePath, UriKind.Absolute))
             },
             Document = new TextDocumentIdentifier
             {
-                Uri = csharpFileUri
+                DocumentUri = new(csharpFileUri)
             },
             Contents = newFileContent
         };
@@ -55,7 +55,7 @@ internal sealed class RoslynCodeActionHelpers(IClientConnection clientConnection
     {
         var tdi = codeBehindUri is null
             ? documentContext.GetTextDocumentIdentifierAndVersion()
-            : new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier() { Uri = codeBehindUri }, 1);
+            : new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier() { DocumentUri = new(codeBehindUri) }, 1);
         var delegatedParams = new DelegatedSimplifyMethodParams(
             tdi,
             RequiresVirtualDocument: codeBehindUri == null,

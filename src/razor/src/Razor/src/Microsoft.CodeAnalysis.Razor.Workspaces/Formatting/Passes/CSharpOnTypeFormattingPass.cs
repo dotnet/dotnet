@@ -58,6 +58,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 context.Options.ToIndentationOptions(),
                 autoFormattingOptions,
                 indentStyle: CodeAnalysis.Formatting.FormattingOptions.IndentStyle.Smart,
+                _csharpSyntaxFormattingOptionsOverride,
                 cancellationToken).ConfigureAwait(false);
 
             if (formattingChanges.IsEmpty)

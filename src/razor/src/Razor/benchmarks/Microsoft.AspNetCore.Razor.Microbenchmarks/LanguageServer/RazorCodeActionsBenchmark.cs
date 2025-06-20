@@ -131,7 +131,7 @@ public class RazorCodeActionsBenchmark : RazorLanguageServerBenchmarkBase
             Context = new VSInternalCodeActionContext(),
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = DocumentUri!
+                DocumentUri = new(DocumentUri!)
             },
         };
 

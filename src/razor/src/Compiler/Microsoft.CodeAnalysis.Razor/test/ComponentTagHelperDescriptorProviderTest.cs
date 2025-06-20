@@ -102,7 +102,7 @@ namespace Test
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal("Components.Component", attribute.Kind);
+        Assert.Equal("Components.Component", attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
 
         // Related to dictionaries/indexers, not supported currently, not sure if we ever will

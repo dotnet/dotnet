@@ -29,7 +29,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
     public TextDocumentIdentifier GetTextDocumentIdentifier()
         => new VSTextDocumentIdentifier()
         {
-            Uri = Uri,
+            DocumentUri = new(Uri),
             ProjectContext = _projectContext,
         };
 

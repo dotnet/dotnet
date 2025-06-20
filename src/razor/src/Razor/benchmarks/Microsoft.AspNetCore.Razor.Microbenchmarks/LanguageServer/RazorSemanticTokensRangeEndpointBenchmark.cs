@@ -103,7 +103,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     [Benchmark(Description = "Razor Semantic Tokens Range Endpoint")]
     public async Task RazorSemanticTokensRangeEndpointRangesAsync()
     {
-        var textDocumentIdentifier = new TextDocumentIdentifier { Uri = DocumentUri };
+        var textDocumentIdentifier = new TextDocumentIdentifier { DocumentUri = new(DocumentUri) };
         var request = new SemanticTokensRangeParams { Range = Range, TextDocument = textDocumentIdentifier };
 
         await SemanticTokensRangeEndpoint.HandleRequestAsync(request, RequestContext, CancellationToken);

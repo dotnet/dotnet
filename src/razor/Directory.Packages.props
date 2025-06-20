@@ -42,7 +42,6 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures" Version="$(MicrosoftCodeAnalysisEditorFeaturesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Common" Version="$(MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Text" Version="$(MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" Version="$(MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" Version="$(MicrosoftCodeAnalysisExternalAccessFSharpVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" Version="$(MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion)" />
     <PackageVersion Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" Version="$(MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion)" />

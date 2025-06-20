@@ -5,6 +5,7 @@ using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Endpoints;
 
@@ -20,7 +21,7 @@ internal class RazorDynamicFileChangedEndpoint : AbstractRazorNotificationHandle
     protected override Task HandleNotificationAsync(RazorDynamicFileChangedParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
         var dynamicFileInfoProvider = context.GetRequiredService<RazorLspDynamicFileInfoProvider>();
-        dynamicFileInfoProvider.Update(request.RazorDocument.Uri);
+        dynamicFileInfoProvider.Update(request.RazorDocument.DocumentUri.GetRequiredParsedUri());
 
         return Task.CompletedTask;
     }

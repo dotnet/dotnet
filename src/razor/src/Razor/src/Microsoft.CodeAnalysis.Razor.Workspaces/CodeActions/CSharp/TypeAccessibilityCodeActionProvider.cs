@@ -261,7 +261,7 @@ internal class TypeAccessibilityCodeActionProvider : ICSharpCodeActionProvider
         RazorVSInternalCodeAction nonFQNCodeAction,
         string fullyQualifiedName)
     {
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { DocumentUri = context.Request.TextDocument.DocumentUri };
 
         var fqnTextEdit = LspFactory.CreateTextEdit(fqnDiagnostic.Range, fullyQualifiedName);
 

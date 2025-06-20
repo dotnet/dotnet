@@ -102,21 +102,21 @@ internal sealed class FindAllReferencesEndpoint : AbstractRazorDelegatingEndpoin
             // Indicates the reference item is directly available in the code
             referenceItem.Origin = VSInternalItemOrigin.Exact;
 
-            if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.Uri) &&
-                !_filePathService.IsVirtualHtmlFile(referenceItem.Location.Uri))
+            if (!_filePathService.IsVirtualCSharpFile(referenceItem.Location.DocumentUri.GetRequiredParsedUri()) &&
+                !_filePathService.IsVirtualHtmlFile(referenceItem.Location.DocumentUri.GetRequiredParsedUri()))
             {
                 // This location doesn't point to a virtual file. No need to remap, but we might still want to fix the text,
                 // because Roslyn may have done the remapping for us
-                var resultText = await FindAllReferencesHelper.GetResultTextAsync(_documentMappingService, _projectSnapshotManager.GetQueryOperations(), referenceItem.Location.Range.Start.Line, referenceItem.Location.Uri.GetAbsoluteOrUNCPath(), cancellationToken).ConfigureAwait(false);
+                var resultText = await FindAllReferencesHelper.GetResultTextAsync(_documentMappingService, _projectSnapshotManager.GetQueryOperations(), referenceItem.Location.Range.Start.Line, referenceItem.Location.DocumentUri.GetAbsoluteOrUNCPath(), cancellationToken).ConfigureAwait(false);
                 referenceItem.Text = resultText ?? referenceItem.Text;
 
                 remappedLocations.Add(referenceItem);
                 continue;
             }
 
-            var (itemUri, mappedRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(referenceItem.Location.Uri, referenceItem.Location.Range, cancellationToken).ConfigureAwait(false);
+            var (itemUri, mappedRange) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(referenceItem.Location.DocumentUri.GetRequiredParsedUri(), referenceItem.Location.Range, cancellationToken).ConfigureAwait(false);
 
-            referenceItem.Location.Uri = itemUri;
+            referenceItem.Location.DocumentUri = new(itemUri);
             referenceItem.DisplayPath = itemUri.AbsolutePath;
             referenceItem.Location.Range = mappedRange;
 

@@ -50,8 +50,8 @@ internal class DocumentDidChangeEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            _logger.LogWarning($"Could not find a document context for didChange on '{request.TextDocument.Uri}'");
-            Debug.Fail($"Could not find a document context for didChange on '{request.TextDocument.Uri}'");
+            _logger.LogWarning($"Could not find a document context for didChange on '{request.TextDocument.DocumentUri}'");
+            Debug.Fail($"Could not find a document context for didChange on '{request.TextDocument.DocumentUri}'");
             return;
         }
 

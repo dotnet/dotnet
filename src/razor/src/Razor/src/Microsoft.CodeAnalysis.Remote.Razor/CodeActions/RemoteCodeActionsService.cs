@@ -51,7 +51,7 @@ internal sealed partial class RemoteCodeActionsService(in ServiceArgs args) : Ra
             {
                 // Since we're here, we may as well fill in the generated document Uri so the other caller won't have to calculate it
                 var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
-                csharpRequest.TextDocument.Uri = generatedDocument.CreateUri();
+                csharpRequest.TextDocument.DocumentUri = new(generatedDocument.CreateUri());
             }
         }
 

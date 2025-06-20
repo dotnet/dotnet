@@ -46,7 +46,7 @@ internal class DocumentOnTypeFormattingEndpoint(
 
     public async Task<TextEdit[]?> HandleRequestAsync(DocumentOnTypeFormattingParams request, RazorRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"Starting OnTypeFormatting request for {request.TextDocument.Uri}.");
+        _logger.LogInformation($"Starting OnTypeFormatting request for {request.TextDocument.DocumentUri}.");
 
         if (!_optionsMonitor.CurrentValue.Formatting.IsEnabled())
         {
@@ -69,7 +69,7 @@ internal class DocumentOnTypeFormattingEndpoint(
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
+            _logger.LogWarning($"Failed to find document {request.TextDocument.DocumentUri}.");
             return null;
         }
 

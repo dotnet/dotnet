@@ -33,7 +33,7 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
+            _logger.LogWarning($"Failed to find document {request.TextDocument.DocumentUri}.");
             return null;
         }
 
@@ -120,7 +120,7 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
 
         var versioned = new VersionedTextDocumentIdentifier
         {
-            Uri = request.TextDocument.Uri,
+            DocumentUri = request.TextDocument.DocumentUri,
             Version = documentContext.Snapshot.Version,
         };
         var parameter = new DelegatedWrapWithTagParams(versioned, request);

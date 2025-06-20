@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
@@ -13,7 +14,7 @@ internal static class IDocumentContextFactoryExtensions
         this IDocumentContextFactory service,
         TextDocumentIdentifier documentIdentifier,
         [NotNullWhen(true)] out DocumentContext? context)
-            => service.TryCreate(documentIdentifier.Uri, documentIdentifier.GetProjectContext(), out context);
+            => service.TryCreate(documentIdentifier.DocumentUri.GetRequiredParsedUri(), documentIdentifier.GetProjectContext(), out context);
 
     public static bool TryCreate(
         this IDocumentContextFactory service,

@@ -26,7 +26,7 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = new Uri(documentPath)
+                DocumentUri = new(new Uri(documentPath))
             },
             Position = LspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext(),
@@ -54,7 +54,7 @@ public class RazorCompletionEndpointTest(ITestOutputHelper testOutput) : Languag
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = uri
+                DocumentUri = new(uri)
             },
             Position = LspFactory.CreatePosition(0, 1),
             Context = new VSInternalCompletionContext() { InvokeKind = VSInternalCompletionInvokeKind.Typing },

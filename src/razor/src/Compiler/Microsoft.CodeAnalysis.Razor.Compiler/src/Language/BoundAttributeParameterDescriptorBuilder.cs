@@ -13,8 +13,6 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
 {
     [AllowNull]
     private BoundAttributeDescriptorBuilder _parent;
-    [AllowNull]
-    private string _kind;
     private DocumentationObject _documentationObject;
     private MetadataHolder _metadata;
 
@@ -22,10 +20,9 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
     {
     }
 
-    internal BoundAttributeParameterDescriptorBuilder(BoundAttributeDescriptorBuilder parent, string kind)
+    internal BoundAttributeParameterDescriptorBuilder(BoundAttributeDescriptorBuilder parent)
     {
         _parent = parent;
-        _kind = kind;
     }
 
     public string? Name { get; set; }
@@ -62,7 +59,6 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
     private protected override BoundAttributeParameterDescriptor BuildCore(ImmutableArray<RazorDiagnostic> diagnostics)
     {
         return new BoundAttributeParameterDescriptor(
-            _kind,
             Name ?? string.Empty,
             TypeName ?? string.Empty,
             IsEnum,

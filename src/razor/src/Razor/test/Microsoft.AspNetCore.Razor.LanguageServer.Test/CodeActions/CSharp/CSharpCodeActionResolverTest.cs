@@ -130,7 +130,7 @@ public class CSharpCodeActionResolverTest(ITestOutputHelper testOutput) : Langua
                 DocumentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[] {
                         new CreateFile()
                         {
-                            Uri = new Uri("c:/some/uri.razor")
+                            DocumentUri = new(new Uri("c:/some/uri.razor"))
                         }
                     }
             }

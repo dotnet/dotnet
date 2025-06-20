@@ -88,7 +88,7 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     {
         return new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
     }
 

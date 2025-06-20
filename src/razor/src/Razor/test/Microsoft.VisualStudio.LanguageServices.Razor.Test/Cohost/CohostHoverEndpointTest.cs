@@ -210,7 +210,7 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = LspFactory.CreatePosition(linePosition),
-            TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) },
         };
 
         return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);

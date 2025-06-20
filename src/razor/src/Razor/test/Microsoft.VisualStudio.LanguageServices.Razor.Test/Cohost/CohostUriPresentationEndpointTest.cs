@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -56,7 +57,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                     {
                         TextDocument = new()
                         {
-                            Uri = FileUri("File1.razor.g.html")
+                            DocumentUri = new(FileUri("File1.razor.g.html"))
                         },
                         Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
@@ -128,7 +129,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                     {
                         TextDocument = new()
                         {
-                            Uri = FileUri("File1.razor.g.html")
+                            DocumentUri = new(FileUri("File1.razor.g.html"))
                         },
                         Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
@@ -251,7 +252,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = new(document.CreateUri())
             },
             Range = sourceText.GetRange(span),
             Uris = uris
@@ -268,7 +269,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
             Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
-            Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
+            Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.DocumentUri.GetRequiredParsedUri());
         }
     }
 }

@@ -3,6 +3,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using StreamJsonRpc;
@@ -63,7 +64,7 @@ internal partial class RazorCustomMessageTarget
                     continue;
                 }
 
-                if (!_documentManager.TryGetDocument(location.Uri, out var documentSnapshot))
+                if (!_documentManager.TryGetDocument(location.DocumentUri.GetRequiredParsedUri(), out var documentSnapshot))
                 {
                     continue;
                 }
@@ -73,7 +74,7 @@ internal partial class RazorCustomMessageTarget
                     continue;
                 }
 
-                location.Uri = virtualDocument.Uri;
+                location.DocumentUri = new(virtualDocument.Uri);
             }
         }
     }

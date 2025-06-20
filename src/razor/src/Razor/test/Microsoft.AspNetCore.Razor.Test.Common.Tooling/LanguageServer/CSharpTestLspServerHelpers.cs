@@ -58,7 +58,7 @@ internal static class CSharpTestLspServerHelpers
     {
         var csharpFiles = files.Select(f => new CSharpFile(f.Uri, f.SourceText));
 
-        var exportProvider = TestComposition.Roslyn
+        var exportProvider = TestComposition.RoslynFeatures
             .AddParts(typeof(RazorTestLanguageServerFactory))
             .ExportProviderFactory.CreateExportProvider();
 

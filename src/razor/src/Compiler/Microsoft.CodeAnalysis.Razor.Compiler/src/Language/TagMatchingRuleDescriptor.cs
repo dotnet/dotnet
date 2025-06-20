@@ -13,6 +13,8 @@ namespace Microsoft.AspNetCore.Razor.Language;
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleDescriptor>
 {
+    private TagHelperDescriptor? _parent;
+
     public string TagName { get; }
     public string? ParentTag { get; }
     public TagStructure TagStructure { get; }
@@ -33,6 +35,11 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
         TagStructure = tagStructure;
         CaseSensitive = caseSensitive;
         Attributes = attributes.NullToEmpty();
+
+        foreach (var attribute in Attributes)
+        {
+            attribute.SetParent(this);
+        }
     }
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
@@ -47,6 +54,17 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
         {
             builder.AppendData(descriptor.Checksum);
         }
+    }
+
+    public TagHelperDescriptor Parent
+        => _parent ?? ThrowHelper.ThrowInvalidOperationException<TagHelperDescriptor>(Resources.Parent_has_not_been_set);
+
+    internal void SetParent(TagHelperDescriptor parent)
+    {
+        Debug.Assert(parent != null);
+        Debug.Assert(_parent == null);
+
+        _parent = parent;
     }
 
     public IEnumerable<RazorDiagnostic> GetAllDiagnostics()

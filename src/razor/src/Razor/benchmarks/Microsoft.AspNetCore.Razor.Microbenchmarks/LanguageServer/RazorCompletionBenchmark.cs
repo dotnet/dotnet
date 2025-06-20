@@ -134,7 +134,7 @@ public class RazorCompletionBenchmark : RazorLanguageServerBenchmarkBase
             Context = new VSInternalCompletionContext { },
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = DocumentUri!,
+                DocumentUri = new(DocumentUri!),
             },
         };
 

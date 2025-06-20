@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -21,7 +22,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
 
-    private Func<SourceText, SourceText>? _formattedCSharpDocumentModifierFunc = null;
+    private RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -37,12 +38,6 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
         var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options.ToIndentationOptions(), cancellationToken).ConfigureAwait(false);
         _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
-
-        if (_formattedCSharpDocumentModifierFunc is { } func)
-        {
-            formattedCSharpText = func(formattedCSharpText);
-            _logger.LogTestOnly($"Formatted generated C# document (after func):\r\n{formattedCSharpText}");
-        }
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
         // document as they come from very different places. What we want to do is go through each line of the generated document,
@@ -211,7 +206,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
         var tree = CSharpSyntaxTree.ParseText(generatedCSharpText, cancellationToken: cancellationToken);
         var csharpRoot = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options, cancellationToken);
+        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options, _csharpSyntaxFormattingOptionsOverride, cancellationToken);
 
         return generatedCSharpText.WithChanges(csharpChanges);
     }
@@ -224,9 +219,9 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
     internal readonly struct TestAccessor(CSharpFormattingPass instance)
     {
-        public void SetFormattedCSharpDocumentModifierFunc(Func<SourceText, SourceText> func)
+        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
         {
-            instance._formattedCSharpDocumentModifierFunc = func;
+            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
         }
     }
 }

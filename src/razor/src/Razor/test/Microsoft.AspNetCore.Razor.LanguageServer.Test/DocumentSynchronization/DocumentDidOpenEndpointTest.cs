@@ -37,7 +37,7 @@ public class DocumentDidOpenEndpointTest(ITestOutputHelper testOutput) : Languag
             TextDocument = new TextDocumentItem()
             {
                 Text = "hello",
-                Uri = new Uri(documentPath),
+                DocumentUri = new(new Uri(documentPath)),
                 Version = 1337,
             }
         };

@@ -212,7 +212,7 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
         {
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(filePath),
+                DocumentUri = new(new Uri(filePath)),
                 ProjectContext = new VSProjectContext()
                 {
                     Label = "test",

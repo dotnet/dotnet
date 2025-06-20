@@ -44,7 +44,7 @@ internal partial class RazorCustomMessageTarget
         {
             TextDocument = new VSTextDocumentIdentifier()
             {
-                Uri = delegationDetails.Value.ProjectedUri,
+                DocumentUri = new(delegationDetails.Value.ProjectedUri),
                 ProjectContext = null,
             },
             Position = request.ProjectedPosition,
