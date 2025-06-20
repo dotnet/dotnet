@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -45,7 +46,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         int tabSize = 4,
         bool allowDiagnostics = false,
         bool debugAssertsEnabled = true,
-        Func<SourceText, SourceText>? csharpModifierFunc = null)
+        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
@@ -65,10 +66,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
         var accessor = formattingService.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
-        if (csharpModifierFunc is not null)
-        {
-            accessor.SetFormattedCSharpDocumentModifierFunc(csharpModifierFunc);
-        }
+        accessor.SetCSharpSyntaxFormattingOptionsOverride(formattingOptionsOverride);
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
@@ -133,7 +131,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
 
         var request = new DocumentOnTypeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
             Options = new FormattingOptions()
             {
                 TabSize = tabSize,
@@ -186,7 +184,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
             var endpoint = new CohostDocumentFormattingEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
             var request = new DocumentFormattingParams()
             {
-                TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+                TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
                 Options = new FormattingOptions()
                 {
                     TabSize = tabSize,
@@ -201,7 +199,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var rangeEndpoint = new CohostRangeFormattingEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
         var rangeRequest = new DocumentRangeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
             Options = new FormattingOptions()
             {
                 TabSize = 4,

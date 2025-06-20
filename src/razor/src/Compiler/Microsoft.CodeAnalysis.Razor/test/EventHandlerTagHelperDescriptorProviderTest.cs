@@ -90,7 +90,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -230,7 +230,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);

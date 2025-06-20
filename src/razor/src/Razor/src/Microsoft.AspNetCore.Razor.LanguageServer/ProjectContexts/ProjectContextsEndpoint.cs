@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
@@ -40,7 +41,7 @@ internal class ProjectContextsEndpoint : IRazorDocumentlessRequestHandler<VSGetP
             throw new ArgumentNullException(nameof(request));
         }
 
-        var delegatedParams = new DelegatedProjectContextsParams(request.TextDocument.Uri);
+        var delegatedParams = new DelegatedProjectContextsParams(request.TextDocument.DocumentUri.GetRequiredParsedUri());
 
         var response = await _clientConnection.SendRequestAsync<DelegatedProjectContextsParams, VSProjectContextList>(
             CustomMessageNames.RazorProjectContextsEndpoint,

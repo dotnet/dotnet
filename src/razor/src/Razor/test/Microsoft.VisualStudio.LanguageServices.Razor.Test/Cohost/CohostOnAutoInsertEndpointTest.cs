@@ -254,7 +254,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = new(document.CreateUri())
             },
             Position = sourceText.GetPosition(input.Position),
             Character = triggerCharacter,

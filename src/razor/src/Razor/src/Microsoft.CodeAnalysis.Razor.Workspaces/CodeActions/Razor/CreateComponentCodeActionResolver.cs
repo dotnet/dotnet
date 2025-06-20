@@ -47,7 +47,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
         var newComponentUri = LspFactory.CreateFilePathUri(updatedPath);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
-        documentChanges.Add(new CreateFile() { Uri = newComponentUri });
+        documentChanges.Add(new CreateFile() { DocumentUri = new(newComponentUri) });
 
         TryAddNamespaceDirective(codeDocument, newComponentUri, ref documentChanges.AsRef());
 
@@ -66,7 +66,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
 
         if (namespaceDirective != null)
         {
-            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = newComponentUri };
+            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(newComponentUri) };
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,
