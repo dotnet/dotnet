@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
+
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
 
   <ItemGroup>

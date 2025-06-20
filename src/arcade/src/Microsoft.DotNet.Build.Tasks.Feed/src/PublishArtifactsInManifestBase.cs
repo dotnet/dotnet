@@ -407,8 +407,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             // We want to avoid pushing non-final bits with final version numbers to feeds that are in general
                             // use by the public. This is for technical (can't overwrite the original packages) reasons as well as 
                             // to avoid confusion. Because .NET core generally brands its "final" bits without prerelease version
-                            // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists.
-                            else if (!version.IsPrerelease && package.CouldBeStable != false)
+                            // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists or contains "final".
+                            else if ((!version.IsPrerelease || version.ReleaseLabels.Any(label => label.Contains("final", StringComparison.OrdinalIgnoreCase)))
+                                     && package.CouldBeStable != false)
                             {
                                 Log.LogError($"Package '{package.Id}' has stable version '{package.Version}' but is targeted at a non-isolated feed '{feedConfig.TargetURL}'");
                             }
