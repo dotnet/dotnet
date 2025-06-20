@@ -29,11 +29,11 @@
       "commitSha": "70155a89cb7781f4b7ffe346455939d09a2cd45e"
     },
     {
-      "packageVersion": "0.1.630601",
-      "barId": 270902,
+      "packageVersion": "0.1.631906",
+      "barId": 272511,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "806a6d90bdd57f268bff30f36e2132a26371b08a"
+      "commitSha": "68b6dad50acc558276958b19b4c9189d70721d76"
     },
     {
       "packageVersion": "9.0.0-preview.1.25313.1",
@@ -92,11 +92,11 @@
       "commitSha": "0d68401b703c7b50a827ae6eb69d8cea4997a598"
     },
     {
-      "packageVersion": "5.0.0-1.25314.1",
-      "barId": 271796,
+      "packageVersion": "5.0.0-1.25319.11",
+      "barId": 272514,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
+      "commitSha": "34f6cccb737b33fd13eb5f32c216ae970277c7a1"
     },
     {
       "packageVersion": "10.0.0-preview.25316.1",
