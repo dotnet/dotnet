@@ -106,7 +106,6 @@ stages:
 - stage: VMR_Vertical_Build
   displayName: VMR Vertical Build
   dependsOn: []
-  condition: false
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
