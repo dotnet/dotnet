@@ -1,0 +1,33 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - 'validate/*'
+  paths:
+    exclude:
+    - doc/
+    - '*.md'
+    - .vscode/
+    - .github/
+    - azure-pipelines/release.yml
+
+parameters:
+- name: EnableMacOSBuild
+  displayName: Build on macOS
+  type: boolean
+  default: false # macOS is often bogged down in Azure Pipelines
+- name: RunTests
+  displayName: Run tests
+  type: boolean
+  default: true
+
+variables:
+- template: /azure-pipelines/BuildStageVariables.yml@self
+
+jobs:
+- template: azure-pipelines/build.yml
+  parameters:
+    Is1ESPT: false
+    EnableMacOSBuild: ${{ parameters.EnableMacOSBuild }}
+    RunTests: ${{ parameters.RunTests }}

@@ -1,0 +1,18 @@
+em
+{
+    color: #f00;
+}
+/* #rgb */
+em
+{
+    color: #ff0000;
+}
+/* #rrggbb */
+em
+{
+    color: rgb(255,0,0);
+}
+em
+{
+    color: rgb(100%, 0%, 0%);
+}
