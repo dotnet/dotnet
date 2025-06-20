@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.7.25317.10",
-      "barId": 272220,
+      "packageVersion": "10.0.0-preview.7.25318.3",
+      "barId": 272310,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "7641b9ff44ce378dbd5bb090ba56b4c38acd99e8"
+      "commitSha": "ef0da55f8881c41d9828c857a592551d58cbf785"
     },
     {
       "packageVersion": "0.11.5-alpha.25302.1",
@@ -43,11 +43,11 @@
       "commitSha": "ea2bdda50b4e66d7e7d877b37eeea5974693c6a1"
     },
     {
-      "packageVersion": "9.0.631601",
-      "barId": 271983,
+      "packageVersion": "9.0.631801",
+      "barId": 272357,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "6b1e6c531cb5167f9157d68d21724d42d2ad6537"
+      "commitSha": "ff0733e1db96306495bd2a5c6d0a6c2e19fb4d8d"
     },
     {
       "packageVersion": "10.0.0-preview.7.25318.2",
@@ -71,11 +71,11 @@
       "commitSha": "733acd8bae809f1535c10576fba2fb86a65f6c1a"
     },
     {
-      "packageVersion": "17.15.0-preview-25317-07",
-      "barId": 272188,
+      "packageVersion": "17.15.0-preview-25318-13",
+      "barId": 272305,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "dfa4336a0154e4db81d559e94c8da0b7e46a96f0"
+      "commitSha": "84918331407471ece9f24b21e98cc6bfc7649690"
     },
     {
       "packageVersion": "6.15.0-preview.1.82",
@@ -107,24 +107,24 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 272244,
+      "barId": 272365,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "3c5f74af89e331a5474025ce56d146ee180e1887"
+      "commitSha": "390d1720df50b46680704ae6b7e52090505b50b0"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
-      "barId": 270239,
+      "barId": 272343,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "2a22f9703ddbe56d7d90201a4fdc19b8ed5183b2"
+      "commitSha": "6ab0ec29e4e346465c767a6e04c37b179ee287f8"
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 272233,
+      "barId": 272354,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2b5cee413e464a4211d05234ee0ba1c09dfa1e62"
+      "commitSha": "0e9898bbc2834154ba0afdfb8372acd02d39ef01"
     },
     {
       "packageVersion": "10.0.622801",
@@ -176,11 +176,11 @@
       "commitSha": "4d7496486f9b81cf0e18b08858fc70dba1b86199"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25317.2",
-      "barId": 272167,
+      "packageVersion": "10.0.0-preview.7.25318.2",
+      "barId": 272330,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "7d1da32e49f73cf6b654f7e512b1c3ee002b5e1b"
+      "commitSha": "a3fba65af731876e079d84fafd797ad105dce4f7"
     },
     {
       "packageVersion": "10.0.0-preview.6.25316.1",
