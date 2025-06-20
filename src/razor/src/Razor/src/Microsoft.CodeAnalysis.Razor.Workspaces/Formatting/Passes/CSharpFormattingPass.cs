@@ -87,7 +87,7 @@ internal sealed class CSharpFormattingPass(
             // These should already be remapped.
             var spanToFormat = sourceText.GetLinePositionSpan(span);
 
-            var changes = await _csharpFormatter.FormatAsync(hostWorkspaceServices, csharpDocument, context, spanToFormat, cancellationToken).ConfigureAwait(false);
+            var changes = await _csharpFormatter.FormatAsync(hostWorkspaceServices, csharpDocument, context, spanToFormat, _csharpSyntaxFormattingOptionsOverride, cancellationToken).ConfigureAwait(false);
             csharpChanges.AddRange(changes.Where(e => spanToFormat.Contains(sourceText.GetLinePositionSpan(e.Span))));
         }
 

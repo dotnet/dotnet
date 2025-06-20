@@ -52,7 +52,7 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        codeActionParams.CodeActionParams.TextDocument.Uri = virtualDocumentSnapshot.Uri;
+        codeActionParams.CodeActionParams.TextDocument.DocumentUri = new(virtualDocumentSnapshot.Uri);
 
         var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var lspMethodName = Methods.TextDocumentCodeActionName;
