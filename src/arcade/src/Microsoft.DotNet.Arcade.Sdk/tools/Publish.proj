@@ -59,7 +59,7 @@
     
     <!-- Globally set property. -->
     <IsStableBuild>false</IsStableBuild>
-    <IsStableBuild Condition="'$(DotNetFinalVersionKind)' == 'release'">true</IsStableBuild>
+    <IsStableBuild Condition="'$(DotNetFinalVersionKind)' == 'prerelease' or '$(DotNetFinalVersionKind)' == 'release'">true</IsStableBuild>
 
     <!-- If `IsReleaseOnlyPackageVersion` is set to true, package safety checks can be skipped-->
     <IsReleaseOnlyPackageVersion>false</IsReleaseOnlyPackageVersion>
