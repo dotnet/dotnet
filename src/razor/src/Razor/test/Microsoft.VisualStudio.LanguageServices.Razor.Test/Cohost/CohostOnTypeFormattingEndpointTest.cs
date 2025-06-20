@@ -130,7 +130,7 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
 
         var request = new DocumentOnTypeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
             Options = new FormattingOptions()
             {
                 TabSize = 4,

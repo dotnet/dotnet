@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
@@ -28,7 +29,7 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(inlineCompletionParams));
         }
 
-        var hostDocumentUri = inlineCompletionParams.TextDocument.Uri;
+        var hostDocumentUri = inlineCompletionParams.TextDocument.DocumentUri.GetRequiredParsedUri();
         if (!_documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot))
         {
             return null;
@@ -64,7 +65,7 @@ internal partial class RazorCustomMessageTarget
         DelegatedCompletionParams request,
         CancellationToken cancellationToken)
     {
-        var hostDocumentUri = request.Identifier.TextDocumentIdentifier.Uri;
+        var hostDocumentUri = request.Identifier.TextDocumentIdentifier.DocumentUri.GetRequiredParsedUri();
 
         string languageServerName;
         bool synchronized;
@@ -312,7 +313,7 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(LanguageServerConstants.RazorGetFormattingOptionsEndpointName, UseSingleObjectParameterDeserialization = true)]
     public Task<FormattingOptions?> GetFormattingOptionsAsync(TextDocumentIdentifierAndVersion document, CancellationToken _)
     {
-        var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.Uri);
+        var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.DocumentUri.GetRequiredParsedUri());
 
         if (formattingOptions is null)
         {

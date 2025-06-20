@@ -49,7 +49,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var fqn = "Abc.Xyz";
-        var docUri = new VSTextDocumentIdentifier { Uri = new Uri("c:/path") };
+        var docUri = new VSTextDocumentIdentifier { DocumentUri = new(new Uri("c:/path")) };
 
         // Act
         var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, delegatedDocumentUri: null, out var @namespace, out var resolutionParams);

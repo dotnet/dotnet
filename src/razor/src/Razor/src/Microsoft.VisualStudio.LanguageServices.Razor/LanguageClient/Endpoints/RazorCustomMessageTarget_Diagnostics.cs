@@ -27,7 +27,7 @@ internal partial class RazorCustomMessageTarget
         var hostDocument = new VSTextDocumentIdentifier
         {
             ProjectContext = request.Identifier.TextDocumentIdentifier.GetProjectContext(),
-            Uri = request.Identifier.TextDocumentIdentifier.Uri,
+            DocumentUri = request.Identifier.TextDocumentIdentifier.DocumentUri,
         };
 
         var csharpTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<CSharpVirtualDocumentSnapshot>(hostDocument, request.Identifier.Version, request.Identifier.TextDocumentIdentifier, request.CorrelationId, RazorLSPConstants.RazorCSharpLanguageServerName, cancellationToken), cancellationToken);

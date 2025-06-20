@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -21,7 +22,8 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
     private readonly BoundAttributeParameterFlags _flags;
     private readonly DocumentationObject _documentationObject;
 
-    public string Kind { get; }
+    private BoundAttributeDescriptor? _parent;
+
     public string Name { get; }
     public string TypeName { get; }
     public string DisplayName { get; }
@@ -34,7 +36,6 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
     public MetadataCollection Metadata { get; }
 
     internal BoundAttributeParameterDescriptor(
-        string kind,
         string name,
         string typeName,
         bool isEnum,
@@ -45,7 +46,6 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
         ImmutableArray<RazorDiagnostic> diagnostics)
         : base(diagnostics)
     {
-        Kind = kind;
         Name = name;
         TypeName = typeName;
         _documentationObject = documentationObject;
@@ -79,7 +79,6 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Kind);
         builder.AppendData(Name);
         builder.AppendData(TypeName);
         builder.AppendData(DisplayName);
@@ -91,6 +90,17 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
         builder.AppendData(IsBooleanProperty);
         builder.AppendData(IsStringProperty);
         builder.AppendData(Metadata.Checksum);
+    }
+
+    public BoundAttributeDescriptor Parent
+        => _parent ?? ThrowHelper.ThrowInvalidOperationException<BoundAttributeDescriptor>(Resources.Parent_has_not_been_set);
+
+    internal void SetParent(BoundAttributeDescriptor parent)
+    {
+        Debug.Assert(parent != null);
+        Debug.Assert(_parent == null);
+
+        _parent = parent;
     }
 
     public string? Documentation => _documentationObject.GetText();

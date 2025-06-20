@@ -106,7 +106,7 @@ public class SignatureHelpEndpointTest(ITestOutputHelper testOutput) : SingleSer
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             Context = signatureHelpContext
