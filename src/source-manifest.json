@@ -71,11 +71,11 @@
       "commitSha": "733acd8bae809f1535c10576fba2fb86a65f6c1a"
     },
     {
-      "packageVersion": "17.15.0-preview-25317-07",
-      "barId": 272188,
+      "packageVersion": "17.15.0-preview-25318-13",
+      "barId": 272305,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "dfa4336a0154e4db81d559e94c8da0b7e46a96f0"
+      "commitSha": "84918331407471ece9f24b21e98cc6bfc7649690"
     },
     {
       "packageVersion": "6.15.0-preview.1.82",
@@ -176,11 +176,11 @@
       "commitSha": "4d7496486f9b81cf0e18b08858fc70dba1b86199"
     },
     {
-      "packageVersion": "10.0.0-preview.6.25317.2",
-      "barId": 272167,
+      "packageVersion": "10.0.0-preview.7.25318.2",
+      "barId": 272330,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "7d1da32e49f73cf6b654f7e512b1c3ee002b5e1b"
+      "commitSha": "a3fba65af731876e079d84fafd797ad105dce4f7"
     },
     {
       "packageVersion": "10.0.0-preview.6.25316.1",
