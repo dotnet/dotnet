@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(ManualNuspecTargets)" />
 
   <!-- netstandard2.0's targeting pack uses the old package reference model which doesn't support using a local layout.
        Therefore disable the package reference download via DisableImplicitFrameworkReferences and manually import the

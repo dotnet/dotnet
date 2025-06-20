@@ -7,7 +7,6 @@
          msbuild task assembly is for build only purposes. -->
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <Deterministic>False</Deterministic>
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
