@@ -10,7 +10,6 @@
 
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
     <!-- BuildSteps are defined to ensure the correct dependency order across package types. -->
-    <ProjectToBuild Include="$(RepoRoot)eng\tasks\**\*.csproj" BuildStep="infra" />
     <ProjectToBuild Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" BuildStep="targetPacks" />
     <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" BuildStep="generalPackages" />
     <ProjectToBuild Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" BuildStep="generalPackages" />
