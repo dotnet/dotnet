@@ -18,7 +18,7 @@ using Microsoft.DotNet.Internal.DependencyInjection.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using static Microsoft.DotNet.Build.CloudTestTasks.AzureStorageUtils;
-using static Microsoft.DotNet.Build.Tasks.Feed.GeneralUtils;
+using static Microsoft.DotNet.Build.Tasks.Feed.PublishArtifactsInManifestBase;
 using MsBuildUtils = Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
@@ -114,16 +114,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
         {
             // Setup
             var buildEngine = new MockBuildEngine();
-            // May as well check that the exe is plumbed through from the task.
-            string fakeNugetExeName = $"{Path.GetRandomFileName()}.exe";
-            int timesNugetExeCalled = 0;
+            int timesCalled = 0;
+            var testPackagePath = TestInputs.GetFullPath(Path.Combine("Nupkgs", "test-package-a.1.0.0.nupkg"));
 
             // Functionality is the same as this is in the base class, create a v2 object to test. 
             var task = new PublishArtifactsInManifestV3
             {
                 InternalBuild = true,
                 BuildEngine = buildEngine,
-                NugetPath = fakeNugetExeName,
                 MaxRetryCount = 5, // In case the default changes, lock to 5 so the test data works
                 RetryDelayMilliseconds = 10 // retry faster in test
             };
@@ -143,38 +141,35 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                 }
             };
 
-            Func<string, string, Task<ProcessExecutionResult>> testRunAndLogProcess = (string fakeExePath, string fakeExeArgs) =>
+            Func<HttpClient, string, string, Stream, Task<NuGetFeedUploadPackageResult>> testPush = (_, feedName, feedUri, _) =>
             {
-                Debug.WriteLine($"Called mocked RunProcessAndGetOutputs() :  ExePath = {fakeExePath}, ExeArgs = {fakeExeArgs}");
-                fakeNugetExeName.Should().Be(fakeExePath);
-                ProcessExecutionResult result = new ProcessExecutionResult() { StandardError = "fake stderr", StandardOut = "fake stdout" };
-                timesNugetExeCalled++;
-                if (timesNugetExeCalled >= pushAttemptsBeforeSuccess)
+                Debug.WriteLine($"Called test push for {feedName}");
+                timesCalled++;
+                if (timesCalled >= pushAttemptsBeforeSuccess)
                 {
-                    result.ExitCode = 0;
+                    return Task.FromResult(NuGetFeedUploadPackageResult.Success);
                 }
                 else
                 {
-                    result.ExitCode = 1;
+                    return Task.FromResult(NuGetFeedUploadPackageResult.AlreadyExists);
                 }
-                return Task.FromResult(result);
             };
 
             await task.PushNugetPackageAsync(
                 config, 
-                null, 
-                "localPackageLocation", 
+                null,
+                testPackagePath, 
                 "1234", 
                 "version", 
                 "feedaccount", 
                 "feedvisibility", 
                 "feedname",
                 testCompareLocalPackage,
-                testRunAndLogProcess);
+                testPush);
             if (!expectedFailure && localPackageMatchesFeed)
             {
                 // Successful retry scenario; make sure we ran the # of retries we thought.
-                timesNugetExeCalled.Should().BeLessOrEqualTo(task.MaxRetryCount);
+                timesCalled.Should().BeLessOrEqualTo(task.MaxRetryCount);
             }
             expectedFailure.Should().Be(task.Log.HasLoggedErrors);
         }

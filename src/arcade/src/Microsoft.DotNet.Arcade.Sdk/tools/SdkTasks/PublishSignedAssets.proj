@@ -13,7 +13,6 @@
       - NonShippingFolder                       : Location of the nonshipping assets about to be published.
       - FeedName                                : Name of the feed that will be created. This will
                                                   be appended by '-shipping' and '-nonshipping' depending the case
-      - NugetPath                               : Path to nuget.exe
       - AzdoTargetFeedPAT                       : Token to publish assets to feeds
   -->
 
@@ -63,8 +62,7 @@
       ShippingFeedName="$(ShippingAzdoPackageFeedURL)"
       NonShippingFeedName="$(NonShippingAzdoPackageFeedURL)"
       ShippingAssetsFolder="$(ShippingFolder)"
-      NonShippingAssetsFolder="$(NonShippingFolder)"
-      NugetPath="$(NugetPath)">
+      NonShippingAssetsFolder="$(NonShippingFolder)">
     </PublishSignedAssets>
   </Target>
 

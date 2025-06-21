@@ -112,12 +112,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public bool AllowInteractiveAuthentication { get; set; }
 
         /// <summary>
-        /// Directory where "nuget.exe" is installed. This will be used to publish packages.
-        /// </summary>
-        [Required]
-        public string NugetPath { get; set; }
-
-        /// <summary>
         /// Whether this build is internal or not. If true, extra checks are done to avoid accidental
         /// publishing of assets to public feeds or storage accounts.
         /// </summary>
@@ -343,7 +337,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 BARBuildId = this.BARBuildId,
                 MaestroApiEndpoint = this.MaestroApiEndpoint,
                 BuildAssetRegistryToken = this.BuildAssetRegistryToken,
-                NugetPath = this.NugetPath,
                 InternalBuild = this.InternalBuild,
                 SkipSafetyChecks = this.SkipSafetyChecks,
                 AkaMSClientId = this.AkaMSClientId,
@@ -393,7 +386,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 BARBuildId = this.BARBuildId,
                 MaestroApiEndpoint = this.MaestroApiEndpoint,
                 BuildAssetRegistryToken = this.BuildAssetRegistryToken,
-                NugetPath = this.NugetPath,
                 InternalBuild = this.InternalBuild,
                 SkipSafetyChecks = this.SkipSafetyChecks,
                 AkaMSClientId = this.AkaMSClientId,
