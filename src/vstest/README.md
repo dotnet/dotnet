@@ -52,6 +52,7 @@ NOTE: When adding a new public API, always add it directly to the `PublicAPI.Shi
 
 ### Other
 
+- [Environment Variables](./docs/environment-variables.md)
 - [Roadmap](./docs/releases.md)
 - [Troubleshooting guide](./docs/troubleshooting.md)
 
