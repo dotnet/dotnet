@@ -97,7 +97,7 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        var completionParams = new CompletionParams()
+        var completionParams = new RazorVSInternalCompletionParams()
         {
             Context = request.Context,
             Position = request.ProjectedPosition,
@@ -135,7 +135,7 @@ internal partial class RazorCustomMessageTarget
             ReinvocationResponse<RazorVSInternalCompletionList?>? response;
             using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, request.CorrelationId))
             {
-                response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, RazorVSInternalCompletionList?>(
+                response = await _requestInvoker.ReinvokeRequestOnServerAsync<RazorVSInternalCompletionParams, RazorVSInternalCompletionList?>(
                     textBuffer,
                     lspMethodName,
                     languageServerName,
