@@ -29,6 +29,9 @@
     <None Update="Microsoft.NET.Test.Sdk.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Microsoft.NET.Test.Sdk.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="netcoreapp\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

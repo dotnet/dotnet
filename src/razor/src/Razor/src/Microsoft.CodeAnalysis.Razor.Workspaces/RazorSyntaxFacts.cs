@@ -22,8 +22,8 @@ internal static class RazorSyntaxFacts
     {
         attributeNameAbsoluteIndex = 0;
 
-        var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.Root.FindInnermostNode(absoluteIndex);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(absoluteIndex);
 
         var attributeName = owner?.Parent switch
         {
@@ -75,8 +75,8 @@ internal static class RazorSyntaxFacts
     /// </summary>
     public static bool TryGetFullAttributeNameSpan(RazorCodeDocument codeDocument, int absoluteIndex, out TextSpan attributeNameSpan)
     {
-        var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.Root.FindInnermostNode(absoluteIndex);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(absoluteIndex);
 
         attributeNameSpan = GetFullAttributeNameSpan(owner?.Parent);
 
@@ -161,7 +161,7 @@ internal static class RazorSyntaxFacts
 
         foreach (var directive in directives)
         {
-            if (directive.IsUsingDirective(out var _))
+            if (directive.IsUsingDirective())
             {
                 return true;
             }

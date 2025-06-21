@@ -36,13 +36,12 @@ internal class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactor
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        if (syntaxTree?.Root is null)
+        if (!context.CodeDocument.TryGetSyntaxRoot(out var root))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var owner = syntaxTree.Root.FindInnermostNode(context.StartAbsoluteIndex);
+        var owner = root.FindInnermostNode(context.StartAbsoluteIndex);
         if (owner is null)
         {
             _logger.LogWarning($"Owner should never be null.");
@@ -129,7 +128,7 @@ internal class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactor
         // similar for the NamespaceNode. This would end up with extracting to a wrong namespace
         // and causing compiler errors. Avoid offering this refactoring if we can't accurately get a
         // good namespace to extract to
-        => codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out @namespace);
+        => codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out @namespace);
 
     private static bool HasUnsupportedChildren(RazorSyntaxNode node)
         => node.DescendantNodes().Any(n => n is MarkupBlockSyntax or CSharpTransitionSyntax or RazorCommentBlockSyntax);

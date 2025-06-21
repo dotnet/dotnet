@@ -179,8 +179,8 @@ internal partial class CSharpFormattingPass
             {
                 using var _ = StringBuilderPool.GetPooledObject(out var additionalLinesBuilder);
 
-                var root = _codeDocument.GetSyntaxTree().Root;
-                var sourceMappings = _codeDocument.GetCSharpDocument().SourceMappings;
+                var root = _codeDocument.GetRequiredSyntaxRoot();
+                var sourceMappings = _codeDocument.GetRequiredCSharpDocument().SourceMappings;
                 var iMapping = 0;
                 foreach (var line in _sourceText.Lines)
                 {
@@ -680,7 +680,7 @@ internal partial class CSharpFormattingPass
                 // so this method is handles way more cases that ideally it would. Sorry! I've split it up into separate methods
                 // so we can pretend, for readability of those methods, if not this one.
 
-                if (node.IsUsingDirective(out _))
+                if (node.IsUsingDirective())
                 {
                     return VisitUsingDirective();
                 }

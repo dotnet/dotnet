@@ -228,7 +228,7 @@ public abstract class IntegrationTestBase
 
     protected CompiledAssembly CompileToAssembly(CompiledCSharpCode code, bool throwOnFailure = true, bool ignoreRazorDiagnostics = false)
     {
-        var csharpDocument = code.CodeDocument.GetCSharpDocument();
+        var csharpDocument = code.CodeDocument.GetRequiredCSharpDocument();
         if (!ignoreRazorDiagnostics && csharpDocument.Diagnostics.Any())
         {
             var diagnosticsLog = string.Join(Environment.NewLine, csharpDocument.Diagnostics.Select(d => d.ToString()).ToArray());
@@ -459,7 +459,7 @@ public abstract class IntegrationTestBase
 
         Assert.Equal(baseline, actualBaseline);
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var visitor = new CodeSpanVisitor();
         visitor.Visit(syntaxTree.Root);
 
@@ -624,7 +624,7 @@ public abstract class IntegrationTestBase
         }
         else
         {
-            var syntaxTree = codeDocument.GetSyntaxTree();
+            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
             var sourceContent = syntaxTree.Source.Text.ToString();
             var classifiedSpans = syntaxTree.GetClassifiedSpans();
             foreach (var classifiedSpan in classifiedSpans)

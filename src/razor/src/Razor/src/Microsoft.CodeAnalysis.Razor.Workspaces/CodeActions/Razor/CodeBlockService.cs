@@ -37,7 +37,7 @@ internal static class CodeBlockService
     /// </returns>
     public static TextEdit[] CreateFormattedTextEdit(RazorCodeDocument code, string templateWithMethodSignature, RazorFormattingOptions options)
     {
-        var csharpCodeBlock = code.GetSyntaxTree().Root.DescendantNodes()
+        var csharpCodeBlock = code.GetRequiredSyntaxRoot().DescendantNodes()
             .Select(RazorSyntaxFacts.TryGetCSharpCodeFromCodeBlock)
             .FirstOrDefault(static n => n is not null);
 

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -21,7 +20,7 @@ internal class GeneratedDocumentTextLoader(IDocumentSnapshot document, string fi
     {
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        var csharpSourceText = output.GetCSharpDocument().Text;
+        var csharpSourceText = output.GetRequiredCSharpDocument().Text;
 
         // If the encoding isn't UTF8, edit-continue won't work.
         Debug.Assert(csharpSourceText.Encoding == Encoding.UTF8);

@@ -168,10 +168,14 @@ namespace NuGet.Commands
             _enableNewDependencyResolver = _request.Project.RuntimeGraph.Supports.Count == 0 && ShouldUseNewResolverWithLockFile(_isLockFileEnabled, _request.Project) && !_request.Project.RestoreMetadata.UseLegacyDependencyResolver;
         }
 
-        // Use the new lock file if lock files are not enabled, or if lock files are enabled and .NET 10 SDK is used. Note that the legacy fallback is *false* in this case.
+        // Use the new resolver if lock files are not enabled, or if lock files are enabled and legacy projects or .NET 10 SDK is used.
         private static bool ShouldUseNewResolverWithLockFile(bool isLockFileEnabled, PackageSpec project)
         {
-            return !isLockFileEnabled || (project.RestoreMetadata.UsingMicrosoftNETSdk && SdkAnalysisLevelMinimums.IsEnabled(project.RestoreMetadata.SdkAnalysisLevel, project.RestoreMetadata.UsingMicrosoftNETSdk, SdkAnalysisLevelMinimums.NewResolverWithLockFiles));
+            return !isLockFileEnabled ||
+                SdkAnalysisLevelMinimums.IsEnabled(
+                    project.RestoreMetadata.SdkAnalysisLevel,
+                    project.RestoreMetadata.UsingMicrosoftNETSdk,
+                    SdkAnalysisLevelMinimums.V10_0_100);
         }
 
         public Task<RestoreResult> ExecuteAsync()
@@ -220,15 +224,7 @@ namespace NuGet.Commands
 
                 telemetry.TelemetryEvent[NoOpResult] = false; // Getting here means we did not no-op.
 
-                if (!await AreCentralVersionRequirementsSatisfiedAsync(_request, httpSourcesCount))
-                {
-                    // the errors will be added to the assets file
-                    _success = false;
-                }
-
-                _success &= await EvaluateHttpSourceUsageAsync();
-
-                _success &= HasValidPlatformVersions();
+                _success &= BeforeGraphResolutionValidations(httpSourcesCount);
 
                 var packagesLockFilePath = PackagesLockFileUtilities.GetNuGetLockFilePath(_request.Project);
                 PackagesLockFile packagesLockFile = null;
@@ -339,6 +335,18 @@ namespace NuGet.Commands
             }
         }
 
+        private bool BeforeGraphResolutionValidations(int httpSourcesCount)
+        {
+            var success = true;
+
+            success &= AreCentralVersionRequirementsSatisfied(_request, httpSourcesCount);
+            success &= EvaluateHttpSourceUsage();
+            success &= HasValidPlatformVersions();
+            success &= PackageReferencesHaveVersions();
+
+            return success;
+        }
+
         private void InitializeTelemetry(TelemetryActivity telemetry, int httpSourcesCount, bool auditEnabled)
         {
             telemetry.TelemetryEvent.AddPiiData(ProjectFilePath, _request.Project.FilePath);
@@ -433,7 +441,7 @@ namespace NuGet.Commands
             return (null, noOpCacheFileEvaluation, cacheFile);
         }
 
-        private async Task<bool> EvaluateHttpSourceUsageAsync()
+        private bool EvaluateHttpSourceUsage()
         {
             bool error = false;
 
@@ -447,11 +455,11 @@ namespace NuGet.Commands
                         var isErrorEnabled = SdkAnalysisLevelMinimums.IsEnabled(
                             _request.Project.RestoreMetadata.SdkAnalysisLevel,
                             _request.Project.RestoreMetadata.UsingMicrosoftNETSdk,
-                            SdkAnalysisLevelMinimums.HttpErrorSdkAnalysisLevelMinimumValue);
+                            SdkAnalysisLevelMinimums.V9_0_100);
 
                         if (isErrorEnabled)
                         {
-                            await _logger.LogAsync(
+                            _logger.Log(
                                 RestoreLogMessage.CreateError(
                                     NuGetLogCode.NU1302,
                                     string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "restore", source.Source)));
@@ -460,7 +468,7 @@ namespace NuGet.Commands
                         }
                         else
                         {
-                            await _logger.LogAsync(
+                            _logger.Log(
                                 RestoreLogMessage.CreateWarning(
                                     NuGetLogCode.NU1803,
                                     string.Format(CultureInfo.CurrentCulture, Strings.Warning_HttpServerUsage, "restore", source.Source)));
@@ -766,7 +774,7 @@ namespace NuGet.Commands
                 SdkAnalysisLevelMinimums.IsEnabled(
                     project.RestoreMetadata.SdkAnalysisLevel,
                     project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.PruningWarnings) &&
+                    SdkAnalysisLevelMinimums.V10_0_100) &&
                 HasFrameworkNewerThanNET10(project);
 
             if (!enablePruningWarnings)
@@ -884,7 +892,60 @@ namespace NuGet.Commands
             }
         }
 
-        private async Task<bool> AreCentralVersionRequirementsSatisfiedAsync(RestoreRequest restoreRequest, int httpSourcesCount)
+        private bool PackageReferencesHaveVersions()
+        {
+            var project = _request.Project;
+            if (project.RestoreMetadata == null || project.RestoreMetadata.CentralPackageVersionsEnabled)
+            {
+                // When CPM is used, by design, the version must not be defined.
+                return true;
+            }
+
+            if (!SdkAnalysisLevelMinimums.IsEnabled(
+                project.RestoreMetadata.SdkAnalysisLevel,
+                project.RestoreMetadata.UsingMicrosoftNETSdk,
+                SdkAnalysisLevelMinimums.V10_0_100))
+            {
+                return true;
+            }
+
+            HashSet<string> packagesWithoutVersions = null;
+
+            foreach (var frameworkInfo in _request.Project.TargetFrameworks)
+            {
+                foreach (var dependency in frameworkInfo.Dependencies)
+                {
+                    if (dependency?.LibraryRange.VersionRange == VersionRange.All)
+                    {
+                        packagesWithoutVersions ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        packagesWithoutVersions.Add(dependency.Name);
+                    }
+                }
+            }
+
+            // ilmerge crashes on NuGet.MSSigning.Extensions.csproj if this logging is not in a separate method.
+            // But it only crashes when ilmerging Release mode, in case you want to try to reproduce it.
+            return EnsureNoPackageReferencesWithoutVersions(packagesWithoutVersions);
+
+            bool EnsureNoPackageReferencesWithoutVersions(HashSet<string> packagesWithoutVersions)
+            {
+                if (packagesWithoutVersions is null)
+                {
+                    return true;
+                }
+
+                var packagesList = new List<string>(packagesWithoutVersions.Count);
+                packagesList.AddRange(packagesWithoutVersions);
+                packagesList.Sort();
+
+                var diagnostic = RestoreLogMessage.CreateError(NuGetLogCode.NU1015, string.Format(CultureInfo.InvariantCulture, Strings.Error_PackageReference_NoVersion, string.Join(", ", packagesList)));
+                _logger.Log(diagnostic);
+
+                return false;
+            }
+        }
+
+        private bool AreCentralVersionRequirementsSatisfied(RestoreRequest restoreRequest, int httpSourcesCount)
         {
             if (restoreRequest?.Project?.RestoreMetadata == null || !restoreRequest.Project.RestoreMetadata.CentralPackageVersionsEnabled)
             {
@@ -896,7 +957,7 @@ namespace NuGet.Commands
             if (!restoreRequest.PackageSourceMapping.IsEnabled && httpSourcesCount > 1)
             {
                 // Log a warning if there are more than one configured HTTP source and package source mapping is not enabled
-                await _logger.LogAsync(
+                _logger.Log(
                     RestoreLogMessage.CreateWarning(
                         NuGetLogCode.NU1507,
                         string.Format(
@@ -973,7 +1034,7 @@ namespace NuGet.Commands
             {
                 result = false;
 
-                await _logger.LogAsync(
+                _logger.Log(
                     RestoreLogMessage.CreateError(
                         NuGetLogCode.NU1008,
                         string.Format(
@@ -986,7 +1047,7 @@ namespace NuGet.Commands
             {
                 result = false;
 
-                await _logger.LogAsync(
+                _logger.Log(
                     RestoreLogMessage.CreateError(
                         NuGetLogCode.NU1009,
                         string.Format(
@@ -999,7 +1060,7 @@ namespace NuGet.Commands
             {
                 result = false;
 
-                await _logger.LogAsync(
+                _logger.Log(
                     RestoreLogMessage.CreateError(
                         NuGetLogCode.NU1010,
                         string.Format(
@@ -1012,7 +1073,7 @@ namespace NuGet.Commands
             {
                 result = false;
 
-                await _logger.LogAsync(
+                _logger.Log(
                     RestoreLogMessage.CreateError(
                         NuGetLogCode.NU1011,
                         string.Format(
@@ -1027,7 +1088,7 @@ namespace NuGet.Commands
 
                 foreach (var item in packageReferenceItemsWithVersionOverride)
                 {
-                    await _logger.LogAsync(
+                    _logger.Log(
                         RestoreLogMessage.CreateError(
                             NuGetLogCode.NU1013,
                             string.Format(
