@@ -50,7 +50,8 @@
     Create a new nuget config file that includes sources for its source built dependencies.
   -->
   <UsingTask TaskName="AddSourceToNuGetConfig" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="CreateNuGetConfig">
+  <Target Name="CreateNuGetConfig"
+          DependsOnTargets="PrepareInnerClone;ResolveProjectReferences">
     <PropertyGroup>
       <NewNuGetConfigContent>
 <![CDATA[
