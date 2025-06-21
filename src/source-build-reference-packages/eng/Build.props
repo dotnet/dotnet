@@ -9,10 +9,11 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(GeneratePackageSource)' != 'true' and '$(Test)' != 'true'">
-    <!-- The BuildInParallel="false" flag makes sure that the targeting packs get built first. -->
-    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" BuildInParallel="false" />
-    <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" />
-    <ProjectToBuild Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" />
+    <!-- BuildSteps are defined to ensure the correct dependency order across package types. -->
+    <ProjectToBuild Include="$(RepoRoot)src\targetPacks\ILsrc\**\*.csproj" BuildStep="targetPacks" />
+    <ProjectToBuild Include="$(RepoRoot)src\textOnlyPackages\src\*\*\*.csproj" BuildStep="generalPackages" />
+    <ProjectToBuild Include="$(RepoRoot)src\referencePackages\src\**\*.csproj" BuildStep="generalPackages" />
+    <ProjectToBuild Include="$(RepoRoot)src\externalPackages\projects\*.proj" BuildStep="externalPackages" />
   </ItemGroup>
 
   <!--

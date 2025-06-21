@@ -2,6 +2,14 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="source-build-reference-packages" Sha="20343176cfd35b56036dc4ca9d9ddd2a201a4e92" BarId="271975" />
   <ToolsetDependencies>
+    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25316-103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>20343176cfd35b56036dc4ca9d9ddd2a201a4e92</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.15.0-preview-25316-103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>20343176cfd35b56036dc4ca9d9ddd2a201a4e92</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25316.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>20343176cfd35b56036dc4ca9d9ddd2a201a4e92</Sha>
