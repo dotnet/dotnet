@@ -99,11 +99,11 @@
       "commitSha": "e15bc0a7eb664d20e7237daef7ab6b76da6c16cb"
     },
     {
-      "packageVersion": "10.0.0-preview.25316.1",
-      "barId": 271899,
+      "packageVersion": "10.0.0-preview.25320.2",
+      "barId": 272613,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "dc4858726e18153077521634c7e902484dfb3391"
+      "commitSha": "7e1c97a0cee7b66cbb807335ec1a7edddb673273"
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
