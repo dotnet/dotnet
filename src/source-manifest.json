@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.7.25317.10",
-      "barId": 272220,
+      "packageVersion": "10.0.0-preview.7.25318.4",
+      "barId": 272383,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "7641b9ff44ce378dbd5bb090ba56b4c38acd99e8"
+      "commitSha": "ee050bd56bdf2b653d4bad75f26ba8802a4f58fa"
     },
     {
       "packageVersion": "0.11.5-alpha.25302.1",
@@ -29,11 +29,11 @@
       "commitSha": "70155a89cb7781f4b7ffe346455939d09a2cd45e"
     },
     {
-      "packageVersion": "0.1.630601",
-      "barId": 270902,
+      "packageVersion": "0.1.631906",
+      "barId": 272511,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "806a6d90bdd57f268bff30f36e2132a26371b08a"
+      "commitSha": "68b6dad50acc558276958b19b4c9189d70721d76"
     },
     {
       "packageVersion": "9.0.0-preview.1.25316.1",
@@ -43,18 +43,18 @@
       "commitSha": "ea2bdda50b4e66d7e7d877b37eeea5974693c6a1"
     },
     {
-      "packageVersion": "9.0.631601",
-      "barId": 271983,
+      "packageVersion": "9.0.631901",
+      "barId": 272480,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "6b1e6c531cb5167f9157d68d21724d42d2ad6537"
+      "commitSha": "c80de30e0d582df0c6fb9b24e8b10c3a78c97161"
     },
     {
-      "packageVersion": "10.0.0-preview.7.25316.4",
-      "barId": 271967,
+      "packageVersion": "10.0.0-preview.7.25318.2",
+      "barId": 272403,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "33e9cd70ed36fc010dca52d82ca163efa4f8f42f"
+      "commitSha": "202d207420bb3b035973c0b5b6da6018ec64c49e"
     },
     {
       "packageVersion": "10.0.0-preview.7.25316.1",
@@ -71,11 +71,11 @@
       "commitSha": "733acd8bae809f1535c10576fba2fb86a65f6c1a"
     },
     {
-      "packageVersion": "17.15.0-preview-25317-07",
-      "barId": 272188,
+      "packageVersion": "17.15.0-preview-25319-07",
+      "barId": 272414,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "dfa4336a0154e4db81d559e94c8da0b7e46a96f0"
+      "commitSha": "074cf71a2397e02e34eb95f6b54bda9df16799ab"
     },
     {
       "packageVersion": "6.15.0-preview.1.82",
@@ -107,24 +107,24 @@
     },
     {
       "packageVersion": "10.0.0-preview.5.25262.10",
-      "barId": 272244,
+      "barId": 272486,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "3c5f74af89e331a5474025ce56d146ee180e1887"
+      "commitSha": "ede0118a8f82bd3e01e1de1eac6eb9e1e74f486f"
     },
     {
       "packageVersion": "10.0.0-preview.25221.1",
-      "barId": 270239,
+      "barId": 272343,
       "path": "scenario-tests",
       "remoteUri": "https://github.com/dotnet/scenario-tests",
-      "commitSha": "2a22f9703ddbe56d7d90201a4fdc19b8ed5183b2"
+      "commitSha": "6ab0ec29e4e346465c767a6e04c37b179ee287f8"
     },
     {
       "packageVersion": "10.0.100-preview.6.25272.9",
-      "barId": 272233,
+      "barId": 272354,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "2b5cee413e464a4211d05234ee0ba1c09dfa1e62"
+      "commitSha": "0e9898bbc2834154ba0afdfb8372acd02d39ef01"
     },
     {
       "packageVersion": "10.0.622801",
@@ -135,10 +135,10 @@
     },
     {
       "packageVersion": "",
-      "barId": 272222,
+      "barId": 272426,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "398d037421f466104ffc5e73df9694eb68bc7239"
+      "commitSha": "96f3b2251284604ab8d1ffc6f445474ad528bcba"
     },
     {
       "packageVersion": "10.0.0-beta.25302.1",
@@ -162,11 +162,11 @@
       "commitSha": "8c1b4400c5a4dedd69416cad324ea13baabf913b"
     },
     {
-      "packageVersion": "17.15.0-preview-25317-01",
-      "barId": 272048,
+      "packageVersion": "17.15.0-preview-25319-02",
+      "barId": 272429,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "28b3b5a7d7429890d806799348cae8b50dfd8d59"
+      "commitSha": "cdcfb7f5c163d7b7a555b129522c3b868f73e92c"
     },
     {
       "packageVersion": "10.0.0-preview.6.25315.1",

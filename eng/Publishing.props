@@ -87,6 +87,12 @@
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SdkTarball>
+      <!-- COMPAT: Our Source-Build partners expect the sdk tarball at the root of the ArtifactsAssetsDir in addition to publishing output -->
+      <Copy SourceFiles="@(SdkTarball)"
+            DestinationFolder="$(ArtifactsAssetsDir)"
+            SkipUnchangedFiles="true"
+            UseHardlinksIfPossible="true" />
+
       <!-- Add the symbols archives to the publishing output. -->
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)dotnet-symbols-*$(ArchiveExtension)">
         <Kind>Blob</Kind>
@@ -103,6 +109,7 @@
         <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
+
   </Target>
 
   <Target Name="AddVerticalNameToPdbArtifacts"
