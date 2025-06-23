@@ -63,11 +63,8 @@ stages:
         version: '6.0.x'
         installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'build'
-        projects: 'eng/tools/ChangeValidation/ChangeValidation.csproj'
-        arguments: '-noRsp'
+    - script: dotnet build eng/tools/ChangeValidation/ChangeValidation.csproj -noRsp
+      displayName: 'Build ChangeValidation tool without .rsp'
 
     - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
       displayName: 'Execute ChangeValidation Tool'
