@@ -64,7 +64,7 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Splat.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.Splat.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);

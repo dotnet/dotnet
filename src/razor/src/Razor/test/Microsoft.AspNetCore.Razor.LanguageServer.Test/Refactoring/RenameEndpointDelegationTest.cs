@@ -79,7 +79,7 @@ public class RenameEndpointDelegationTest(ITestOutputHelper testOutput) : Single
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = codeDocument.Source.Text.GetPosition(cursorPosition),
             NewName = newName
