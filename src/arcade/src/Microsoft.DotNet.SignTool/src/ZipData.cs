@@ -54,7 +54,7 @@ namespace Microsoft.DotNet.SignTool
             return null;
         }
 
-        public static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, bool ignoreContent = false)
+        public static IEnumerable<(string relativePath, ZipDataEntry entry)> ReadEntries(string archivePath, string tempDir, string tarToolPath, string pkgToolPath, bool ignoreContent = false)
         {
             if (FileSignInfo.IsTarGZip(archivePath))
             {
@@ -63,7 +63,7 @@ namespace Microsoft.DotNet.SignTool
                 return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
                 return ReadTarGZipEntries(archivePath)
-                    .Select(entry => (entry.Name, entry.DataStream, entry.Length));
+                    .Select(entry => (entry.Name, new ZipDataEntry(entry.DataStream, entry.Length)));
 #endif
             }
             else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
@@ -190,7 +190,7 @@ namespace Microsoft.DotNet.SignTool
         }
 #endif
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadZipEntries(string archivePath)
+        private static IEnumerable<(string relativePath, ZipDataEntry content)> ReadZipEntries(string archivePath)
         {
             using (var archive = new ZipArchive(File.OpenRead(archivePath), ZipArchiveMode.Read, leaveOpen: false))
             {
@@ -201,16 +201,58 @@ namespace Microsoft.DotNet.SignTool
                     // `entry` might be just a pointer to a folder. We skip those.
                     if (relativePath.EndsWith("/") && entry.Name == "")
                     {
-                        yield return (relativePath, null, 0);
+                        yield return (relativePath, null);
                     }
                     else
                     {
-                        var contentStream = entry.Open();
-                        yield return (relativePath, contentStream, entry.Length);
-                        contentStream.Close();
+                        yield return (relativePath, new ZipDataEntry(entry));
                     }
                 }
             }
+        }
+
+        public class ZipDataEntry : IDisposable
+        {
+            Stream _stream;
+            ImmutableArray<byte> _contentHash;
+
+            public ZipDataEntry(Stream contentStream, long contentSize)
+            {
+                if (contentStream.CanSeek)
+                {
+                    _stream = contentStream;
+                }
+                else
+                {
+                    _stream = new MemoryStream((int)contentSize);
+                    contentStream.CopyTo(_stream);
+                }
+
+                _contentHash = ContentUtil.GetContentHash(_stream);
+                _stream.Position = 0;
+            }
+
+            public ZipDataEntry(ZipArchiveEntry zipArchiveEntry)
+            {
+                using var contentHashStream = zipArchiveEntry.Open();
+                _contentHash = ContentUtil.GetContentHash(contentHashStream);
+
+                _stream = zipArchiveEntry.Open();
+            }
+
+            public void WriteToFile(string path)
+            {
+                using var fs = File.Create(path);
+                _stream.CopyTo(fs);
+            }
+
+            public void Dispose()
+            {
+                _stream.Dispose();
+                _stream = null;
+            }
+
+            public ImmutableArray<byte> ContentHash => _contentHash;
         }
 
         /// <summary>
@@ -327,7 +369,7 @@ namespace Microsoft.DotNet.SignTool
             return process.ExitCode == 0;
         }
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
+        private static IEnumerable<(string relativePath, ZipDataEntry entry)> ReadPkgOrAppBundleEntries(string archivePath, string tempDir, string pkgToolPath, bool ignoreContent)
         {
             string extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
@@ -341,7 +383,7 @@ namespace Microsoft.DotNet.SignTool
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return (relativePath, stream, stream?.Length ?? 0);
+                    yield return (relativePath, new ZipDataEntry(stream, stream?.Length ?? 0));
                 }
             }
             finally
@@ -406,7 +448,7 @@ namespace Microsoft.DotNet.SignTool
             return process.ExitCode == 0;
         }
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
+        private static IEnumerable<(string relativePath, ZipDataEntry entry)> ReadTarGZipEntries(string archivePath, string tempDir, string tarToolPath, bool ignoreContent)
         {
             var extractDir = Path.Combine(tempDir, Guid.NewGuid().ToString());
             try
@@ -422,7 +464,7 @@ namespace Microsoft.DotNet.SignTool
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent  ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return (relativePath, stream, stream?.Length ?? 0);
+                    yield return (relativePath, new ZipDataEntry(stream, stream?.Length ?? 0));
                 }
             }
             finally
@@ -573,9 +615,9 @@ namespace Microsoft.DotNet.SignTool
             Directory.CreateDirectory(dataLayout);
 
             // Get the original control archive - to reuse package metadata and scripts
-            var (relativePath, content, contentSize) = ReadDebContainerEntries(debianPackage, "control.tar").Single();
+            var (relativePath, entry) = ReadDebContainerEntries(debianPackage, "control.tar").Single();
             string controlArchive = Path.Combine(workingDir, relativePath);
-            File.WriteAllBytes(controlArchive, ((MemoryStream)content).ToArray());
+            entry.WriteToFile(controlArchive);
 
             ExtractTarballContents(dataArchive, dataLayout);
             ExtractTarballContents(controlArchive, controlLayout);
@@ -636,7 +678,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        internal static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadDebContainerEntries(string archivePath, string match = null)
+        internal static IEnumerable<(string relativePath, ZipDataEntry entry)> ReadDebContainerEntries(string archivePath, string match = null)
         {
             using var archive = new ArReader(File.OpenRead(archivePath), leaveOpen: false);
 
@@ -653,21 +695,21 @@ namespace Microsoft.DotNet.SignTool
 
                 if (match == null || relativePath.StartsWith(match))
                 {
-                    yield return (relativePath, entry.DataStream, entry.DataStream.Length);
+                    yield return (relativePath, new ZipDataEntry(entry.DataStream, entry.DataStream.Length));
                 }
             }
         }
 
-        private static IEnumerable<(string relativePath, Stream content, long contentSize)> ReadRpmContainerEntries(string archivePath)
+        private static IEnumerable<(string relativePath, ZipDataEntry entry)> ReadRpmContainerEntries(string archivePath)
         {
             using var stream = File.Open(archivePath, FileMode.Open);
             using RpmPackage rpmPackage = RpmPackage.Read(stream);
-            using var dataStream = File.OpenWrite(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
+            using var dataStream = File.Create(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
             using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
 
             while (archive.GetNextEntry() is CpioEntry entry)
             {
-                yield return (entry.Name, entry.DataStream, entry.DataStream.Length);
+                yield return (entry.Name, new ZipDataEntry(entry.DataStream, entry.DataStream.Length));
             }
         }
 
@@ -755,15 +797,14 @@ namespace Microsoft.DotNet.SignTool
 
         internal static void ExtractRpmPayloadContents(string rpmPackage, string layout)
         {
-            foreach (var (relativePath, content, contentSize) in ReadRpmContainerEntries(rpmPackage))
+            foreach (var (relativePath, entry) in ReadRpmContainerEntries(rpmPackage))
             {
                 string outputPath = Path.Combine(layout, relativePath);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                if (content != null)
+                if (entry != null)
                 {
-                    using FileStream outputFileStream = File.Create(outputPath);
-                    content.CopyTo(outputFileStream);
+                    entry.WriteToFile(outputPath);
                 }
             }
         }

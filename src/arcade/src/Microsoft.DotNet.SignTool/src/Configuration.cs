@@ -775,19 +775,14 @@ namespace Microsoft.DotNet.SignTool
             {
                 var nestedParts = new Dictionary<string, ZipPart>();
                 
-                foreach (var (relativePath, contentStream, contentSize) in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
+                foreach (var (relativePath, entry) in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
                 {
-                    if (contentStream == null)
+                    if (entry == null)
                     {
                         continue;
                     }
-                    
-                    using var entryMemoryStream = new MemoryStream((int)contentSize);
-                    contentStream.CopyTo(entryMemoryStream);
-                    entryMemoryStream.Position = 0;
-                    ImmutableArray<byte> contentHash = ContentUtil.GetContentHash(entryMemoryStream);
 
-                    var fileUniqueKey = new SignedFileContentKey(contentHash, Path.GetFileName(relativePath));
+                    var fileUniqueKey = new SignedFileContentKey(entry.ContentHash, Path.GetFileName(relativePath));
 
                     if (!_whichPackagesTheFileIsIn.TryGetValue(fileUniqueKey, out var packages))
                     {
@@ -808,16 +803,14 @@ namespace Microsoft.DotNet.SignTool
 
                         Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
 
-                        entryMemoryStream.Position = 0;
-                        using (var tempFileStream = File.OpenWrite(tempPath))
-                        {
-                            entryMemoryStream.CopyTo(tempFileStream);
-                        }
+                        entry.WriteToFile(tempPath);
 
                         _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
-                        PathWithHash nestedFile = new PathWithHash(tempPath, contentHash);
+                        PathWithHash nestedFile = new PathWithHash(tempPath, entry.ContentHash);
                         fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
                     }
+
+                    entry.Dispose();
 
                     if (fileSignInfo.ShouldTrack)
                     {

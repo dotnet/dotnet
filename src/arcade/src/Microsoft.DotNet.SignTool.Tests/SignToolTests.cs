@@ -453,9 +453,9 @@ namespace Microsoft.DotNet.SignTool.Tests
 
         private string ExtractArchiveFromDebPackage(string debianPackage, string archiveName, string destinationFolder)
         {
-            var (relativePath, content, contentSize) = ZipData.ReadDebContainerEntries(debianPackage, archiveName).Single();
+            var (relativePath, entry) = ZipData.ReadDebContainerEntries(debianPackage, archiveName).Single();
             string archive = Path.Combine(destinationFolder, relativePath);
-            File.WriteAllBytes(archive, ((MemoryStream)content).ToArray());
+            entry.WriteToFile(archive);
             return archive;
         }
 
