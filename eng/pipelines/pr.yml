@@ -67,6 +67,7 @@ stages:
       inputs:
         command: 'build'
         projects: 'eng/tools/ChangeValidation/ChangeValidation.csproj'
+        arguments: '-noRsp'
 
     - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
       displayName: 'Execute ChangeValidation Tool'
