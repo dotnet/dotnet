@@ -1,0 +1,108 @@
+@ ; /* AtDirectiveNameMissing */
+@* { bogus content; } /* AtDirectiveNameMissing */
+
+@import {} /* UrlImportMissing */ /* AtDirectiveSemicolonMissing */
+@import ; /* UrlImportMissing */
+
+@namespace ; /* UrlNamespaceMissing */
+@namespace foo ; /* UrlNamespaceMissing */
+@namespace "foo" { } /* AtDirectiveSemicolonMissing */ /* SelectorBeforeRuleBlockMissing */
+
+@charset ; /* EncodingMissing */
+@charset "utf-8" (] { } /* AtDirectiveSemicolonMissing */ /* CloseBraceMismatch */ /* SimpleSelectorExpected */
+@charset "utf-8
+{ } /* SelectorBeforeRuleBlockMissing */
+
+@media  } /* OpenCurlyBraceMissing */
+@media screen foo {} /* UnexpectedMediaQueryToken */
+@media screen, not {} /* MediaTypeMissing */
+@media screen, {} /* MediaTypeMissing */
+@media screen and foo {} /* MediaTypeMissing */ /* MediaExpressionExpected */ /* UnexpectedMediaQueryToken */
+@media screen and (foo:bar {} /* CloseFunctionBraceMissing */
+@media $foo { }
+@media and (color: ugly) { }
+@media (color: ugly) { }
+
+@font-face
+{
+    { } /* DeclarationExpected */
+    foo: format(); /* FunctionArgumentMissing */
+    foo: format(,*); /* FunctionArgumentMissing */ /* FormatTypeArgumentMissing */
+    background-image: url(^ ; /* CloseFunctionBraceMissing */
+    background-image: url(foo ; /* CloseFunctionBraceMissing */
+}
+
+@keyframes  /* KeyFrameBlockNameMissing */
+{
+    #foo { } /* KeyFramesSelectorExpected */
+    10%, 200 { color color: Red; } /* KeyFramesSelectorExpected */ /* ColonMissing */ /* UnexpectedToken(invisible) */
+    10%, foo bar { } /* KeyFramesSelectorExpected(1) */
+    10%, { } /* SelectorAfterCommaMissing */
+    20%, , 30% { } /* KeyFramesSelectorExpected */
+    40% 50% { } /* UnexpectedToken */
+    60% /* OpenCurlyBraceMissing */
+}
+
+@page : /* PseudoPageIdentifierMissing */
+{
+    @ /* AtDirectiveNameMissing */
+    @bottom-right color:red { } /* OpenCurlyBraceMissing */ /* UnexpectedToken(invisible) */
+    @foo /* OpenCurlyBraceMissing */
+}
+
+@unknown foo { }
+@unknown foo;
+
+/ ) *body /* SimpleSelectorExpected(3) */
+{
+    foo: ]; /* PropertyValueExpected(invisible) */
+    .foo /* PropertyNameMissing */ /* ColonMissing */ /* UnexpectedToken(invisible) */ ;
+    foo bar; /* ColonMissing */ /* UnexpectedToken(invisible) */
+    foo bar: goo; /* ColonMissing */ /* UnexpectedToken(3,invisible) */
+    ; /* PropertyNameMissing */ /* ColonMissing */
+    foo: ; /* PropertyValueMissing */
+    foo:   /* PropertyValueMissing */
+}
+
++ body# foo. > /* SelectorBeforeCombinatorMissing */ /* IdMissing */ /* ClassNameMissing */ /* SelectorAfterCombinatorMissing */
+{
+    color: rgb(; /* CloseFunctionBraceMissing */
+}
+
+, , body: div: , /* SelectorBeforeCommaMissing(2) */ /* PseudoClassNameMissing(2) */ /* SelectorAfterCommaMissing */
+{
+    foo: "bar; /* CloseQuoteMissing */
+    foo: red; /* PropertyValueExpected(invisible) */
+    foo: bar !; /* ImportantMissing */
+    foo: bar !baz; /* ImportantMissing */
+    foo: bar !!; /* UnexpectedBang */
+    foo: ) bar !important !; /* PropertyValueExpected(invisible) */ /* UnexpectedBang */
+}
+
+:lang(,foo) :not(:) :not() :not(&foo)
+/* FunctionArgumentMissing */
+/* PseudoClassNameMissing */
+/* FunctionArgumentMissing */
+/* PseudoFunctionSelectorExpected */
+{
+}
+
+: :: : foo :: foo : foo(bar) :: foo(bar) :foo(bar) ::foo(bar)
+/* PseudoClassNameMissing */
+/* PseudoElementNameMissing */
+/* SimpleSelectorExpected */
+{
+}
+
+body[, body[], body[foo, body[foo bar], body[foo=], body[=bar]
+/* AttributeSelectorCloseBracketMissing */
+/* AttributeSelectorElementMissing */
+/* AttributeSelectorOperationMissing */
+/* AttributeSelectorValueMissing */
+{
+}
+
+@media { /* CloseCurlyBraceMissing */
+.f {  /* CloseBraceMissing */
+foo { /* ColonMissing */ /* SimpleSelectorExpected */ /* CloseCurlyBraceMissing */
+/* CloseCommentMissing

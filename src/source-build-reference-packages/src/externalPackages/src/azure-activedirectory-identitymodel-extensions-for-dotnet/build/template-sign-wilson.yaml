@@ -1,0 +1,23 @@
+#template sign-wilson
+
+parameters:
+  BuildConfiguration: 'release'
+
+steps:
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'System.IdentityModel.Tokens.Jwt'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- template: template-sign-binary.yml
+  parameters:
+    LibraryName: 'Microsoft.IdentityModel*'
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+
+- task: PowerShell@1
+  displayName: 'Verify Signing'
+  inputs:
+    scriptName: build/VerifySigning.ps1
+    arguments: '-buildType ${{ parameters.BuildConfiguration }}'
+  condition: and(succeeded(), eq(variables['PipelineType'], 'legacy'))
+

@@ -1,0 +1,25 @@
+<ApplicationInsights xmlns="http://schemas.microsoft.com/ApplicationInsights/2013/Settings" xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <TelemetryInitializers xdt:Transform="InsertIfMissing">
+    <Add xdt:Transform="InsertIfMissing" xdt:Locator="Match(Type)" Type="Microsoft.ApplicationInsights.DependencyCollector.HttpDependenciesParsingTelemetryInitializer, Microsoft.AI.DependencyCollector" />
+  </TelemetryInitializers>
+  <TelemetryModules xdt:Transform="InsertIfMissing">
+    <Add xdt:Transform="InsertIfMissing" xdt:Locator="Match(Type)" Type="Microsoft.ApplicationInsights.DependencyCollector.DependencyTrackingTelemetryModule, Microsoft.AI.DependencyCollector">
+      <ExcludeComponentCorrelationHttpHeadersOnDomains>
+        <!-- 
+        Requests to the following hostnames will not be modified by adding correlation headers.         
+        Add entries here to exclude additional hostnames.
+        NOTE: this configuration will be lost upon NuGet upgrade.
+        -->
+        <Add>core.windows.net</Add>
+        <Add>core.chinacloudapi.cn</Add>
+        <Add>core.cloudapi.de</Add>
+        <Add>core.usgovcloudapi.net</Add>
+      </ExcludeComponentCorrelationHttpHeadersOnDomains>
+      <IncludeDiagnosticSourceActivities>
+        <Add>Microsoft.Azure.EventHubs</Add>
+        <Add>Microsoft.Azure.ServiceBus</Add>
+      </IncludeDiagnosticSourceActivities>
+    </Add>
+  </TelemetryModules>
+  <ApplicationIdProvider xdt:Transform="InsertIfMissing" Type="Microsoft.ApplicationInsights.Extensibility.Implementation.ApplicationId.ApplicationInsightsApplicationIdProvider, Microsoft.ApplicationInsights"/>
+</ApplicationInsights>

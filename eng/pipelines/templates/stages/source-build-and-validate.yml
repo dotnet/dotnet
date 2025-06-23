@@ -30,20 +30,15 @@ stages:
       parameters:
         # CentOS
         ${{ if eq(leg.distro, 'centos') }}:
-          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}
-            container:
-              name: ${{ variables.centOSStreamContainerNamePrevious }}
-              image: ${{ variables.centOSStreamContainerImagePrevious }}
-            artifactsRid: ${{ variables.centOSStreamX64RidPrevious }}
-          ${{ else }}:
-            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}
-            container:
-              name: ${{ variables.centOSStreamContainerName }}
-              image: ${{ variables.centOSStreamContainerImage }}
+          buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}
+          container:
+            name: ${{ variables.centOSStreamContainerName }}
+            image: ${{ variables.centOSStreamContainerImage }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
+          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
+            artifactsRid: ${{ variables.centOSStreamX64Rid }}
         # Fedora
         ${{ elseif eq(leg.distro, 'fedora') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}
@@ -103,7 +98,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
 
-- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
@@ -119,16 +114,10 @@ stages:
         parameters:
           # CentOS
           ${{ if eq(leg.distro, 'centos') }}:
-            ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-              buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_Validation
-              container:
-                name: ${{ variables.centOSStreamContainerNamePrevious }}
-                image: ${{ variables.centOSStreamContainerImagePrevious }}
-            ${{ else }}:
-              buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_Validation
-              container:
-                name: ${{ variables.centOSStreamContainerName }}
-                image: ${{ variables.centOSStreamContainerImage }}
+            buildName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_Validation
+            container:
+              name: ${{ variables.centOSStreamContainerName }}
+              image: ${{ variables.centOSStreamContainerImage }}
           # Fedora
           ${{ elseif eq(leg.distro, 'fedora') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_Validation
@@ -218,10 +207,7 @@ stages:
               downloadFilePatterns: assets/Release/**/*.tar.gz
               copyDestination: $(Build.SourcesDirectory)/artifacts
               ${{ if eq(leg.distro, 'centos') }}:
-                ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
-                ${{ else }}:
-                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'ubuntu') }}:
@@ -237,10 +223,7 @@ stages:
               copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
               flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
-                ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
-                ${{ else }}:
-                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'fedora') }}:
                 artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
               ${{ elseif eq(leg.distro, 'ubuntu') }}:
@@ -257,10 +240,7 @@ stages:
                 copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:
-                  ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-                    artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamNamePrevious) }}_${{ leg.targetArchitecture}}_Artifacts
-                  ${{ else }}:
-                    artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
+                  artifactName: ${{ format(leg.buildNameFormat, variables.centOSStreamName) }}_${{ leg.targetArchitecture}}_Artifacts
                 ${{ elseif eq(leg.distro, 'fedora') }}:
                   artifactName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_${{ leg.targetArchitecture}}_Artifacts
                 ${{ elseif eq(leg.distro, 'ubuntu') }}:
