@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <NuGetConfigFile>$(ProjectDirectory)Src/NuGet.Config</NuGetConfigFile>
     <NewtonsoftJsonKeyFilePath>$(KeysDir)Newtonsoft.Json.snk</NewtonsoftJsonKeyFilePath>
     <NewtonsoftJsonDirectory>$(ProjectDirectory)Src/Newtonsoft.Json/</NewtonsoftJsonDirectory>
     <NewtonsoftJsonProjectPath>$(NewtonsoftJsonDirectory)Newtonsoft.Json.csproj</NewtonsoftJsonProjectPath>
@@ -24,7 +23,7 @@
     <EnvironmentVariables Include="LibraryFrameworks=netstandard2.0" />
   </ItemGroup>
 
-  <Target Name="RepoRestore" BeforeTargets="RepoBuild" DependsOnTargets="UpdateNuGetConfig">
+  <Target Name="RepoRestore" BeforeTargets="RepoBuild" DependsOnTargets="CreateNuGetConfig">
     <Exec Command="$(DotNetTool) restore $(NewtonsoftJsonProjectPath) $(DotNetToolArgs) /v:$(LogVerbosity) /bl:$(ArtifactsLogRepoDir)restore.binlog $(RedirectRepoOutputToLog)"
           WorkingDirectory="$(ProjectDirectory)"
           EnvironmentVariables="@(EnvironmentVariables)"

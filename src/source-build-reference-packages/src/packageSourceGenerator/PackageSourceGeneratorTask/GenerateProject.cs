@@ -97,7 +97,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     string dependencyVersion = packageDependency.GetMetadata("Version");
                     string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj");
 
-                    // If the dependency is on the package reference allowed list (i.e. for source-build-externals packages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
+                    // If the dependency is on the package reference allowed list (i.e. for externalPackages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
                     if (AllowedPackageReference is not null && AllowedPackageReference.Contains(packageDependency.ItemSpec))
                     {
                         packageReferences += $"    <PackageReference Include=\"{packageDependency.ItemSpec}\" Version=\"{dependencyVersion}\" />{Environment.NewLine}";

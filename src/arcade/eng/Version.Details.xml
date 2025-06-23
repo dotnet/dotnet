@@ -5,7 +5,7 @@
   </ProductDependencies>
   <ToolsetDependencies>
     <!-- Needed for when this dependency gets updated in 
-         https://github.com/dotnet/source-build-externals, otherwise
+         https://github.com/dotnet/source-build-reference-packages/tree/main/src/externalPackages, otherwise
          a prebuilt will be introduced until the VMR is rebootstrapped. -->
     <Dependency Name="Microsoft.ApplicationInsights" Version="2.23.0">
       <Uri>https://github.com/microsoft/ApplicationInsights-dotnet</Uri>
@@ -110,7 +110,7 @@
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
     <!-- Needed for when this dependency gets updated in 
-         https://github.com/dotnet/source-build-externals, otherwise
+         https://github.com/dotnet/source-build-reference-packages/tree/main/src/externalPackages, otherwise
          a prebuilt will be introduced until the VMR is rebootstrapped. -->
     <Dependency Name="Newtonsoft.Json" Version="13.0.3">
       <Uri>https://github.com/JamesNK/Newtonsoft.Json</Uri>

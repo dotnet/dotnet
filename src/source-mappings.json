@@ -108,22 +108,6 @@
             ]
         },
         {
-            "name": "source-build-externals",
-            "defaultRemote": "https://github.com/dotnet/source-build-externals",
-            "exclude": [
-                "src/application-insights/**/*.exe",
-                "src/application-insights/**/*.dll",
-                "src/application-insights/**/*.zip",
-                "src/application-insights/**/NuGet.config",
-                "src/humanizer/samples/**/*.js",
-                "src/newtonsoft-json/**/NuGet.Config",
-                "src/spectre-console/docs/**",
-                "src/spectre-console/NuGet.Config",
-                "src/spectre-console/examples/Console/Canvas/Mandelbrot.cs",
-                "src/xunit/NuGet.Config"
-            ]
-        },
-        {
             "name": "source-build-reference-packages",
             "defaultRemote": "https://github.com/dotnet/source-build-reference-packages"
         },

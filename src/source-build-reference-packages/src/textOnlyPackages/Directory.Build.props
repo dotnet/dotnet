@@ -2,7 +2,7 @@
   <Import Project="..\..\Directory.Build.props" />
 
   <PropertyGroup>
-    <TextOnlyPackage>true</TextOnlyPackage>
+    <IsTextOnlyPackage>true</IsTextOnlyPackage>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NoDefaultExcludes>true</NoDefaultExcludes>
