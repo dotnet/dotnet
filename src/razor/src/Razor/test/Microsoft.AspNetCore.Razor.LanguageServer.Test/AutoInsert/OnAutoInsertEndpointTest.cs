@@ -36,7 +36,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = "!",
             Options = new FormattingOptions
@@ -78,7 +78,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var uri = new Uri("file://path/test.razor");
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -119,7 +119,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.CreatePosition(1, 3),
             Character = "/",
             Options = new FormattingOptions

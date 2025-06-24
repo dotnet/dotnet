@@ -165,6 +165,50 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             expectedSelectedItemLabel: "@onactivate");
     }
 
+    // Regression test for https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2505611
+    [IdeFact]
+    public async Task CompletionCommit_NoCommitOnTypingInDocComments()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "/test"
+            
+            <PageTitle>Test</PageTitle>
+            
+            @{
+                /// 
+            }
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("/// ", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send("add a function");
+
+        // Make sure extra text didn't get commited from an unexpected completion list
+        var currentLineText = await TestServices.Editor.GetCurrentLineTextAsync(HangMitigatingCancellationToken);
+        Assert.Contains("/// add a function", currentLineText);
+
+        // Make sure completion doesn't come up for 15 seconds
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
+
+        if (items is null)
+        {
+            // No items to check, we're good
+            return;
+        }
+
+        // If completion did pop up with something like "Processing", make sure no doccomment items are present
+        Assert.DoesNotContain("summary", items.Items.Select(i => i.DisplayText));
+
+    }
+
     [IdeFact]
     public async Task CompletionCommit_HtmlTag()
     {
