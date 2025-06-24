@@ -103,17 +103,18 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
             return false;
         }
 
-        var supportsRazor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
-
-        if (!supportsRazor)
+        if (!IsDotNetCoreProject(documentFilePath))
         {
             _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is not associated with the '{WellKnownProjectCapabilities.DotNetCoreCSharp}' capability.");
             return false;
         }
 
         _activityLog.LogInfo($"LSP editor is supported for '{documentFilePath}'.");
-        return supportsRazor;
+        return true;
     }
+
+    public bool IsDotNetCoreProject(string documentFilePath)
+        => _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
 
     public bool IsRemoteClient()
         => _uiContextService.IsActive(Guids.LiveShareGuestUIContextGuid) ||
