@@ -15,11 +15,11 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "10.0.0-preview.7.25318.4",
-      "barId": 272383,
+      "packageVersion": "10.0.0-preview.7.25323.8",
+      "barId": 272819,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "ee050bd56bdf2b653d4bad75f26ba8802a4f58fa"
+      "commitSha": "403d2161c6834f6e519ceac9e5eafa72a1e53b1b"
     },
     {
       "packageVersion": "0.11.5-alpha.25320.1",
@@ -201,7 +201,7 @@
     {
       "path": "aspnetcore/src/submodules/googletest",
       "remoteUri": "https://github.com/google/googletest",
-      "commitSha": "175c1b55cfb3dbed519b94a370c083aac605009f"
+      "commitSha": "35b75a2cba6ef72b7ce2b6b94b05c54ca07df866"
     },
     {
       "path": "aspnetcore/src/submodules/MessagePack-CSharp",
