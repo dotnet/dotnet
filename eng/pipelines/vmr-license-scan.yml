@@ -126,7 +126,7 @@ extends:
             -clp:v=m
             /p:SourceBuildTestsLicenseScanPath=$(repoPath)
             /p:TargetRid=linux-x64
-            /p:PortableRid=linux-x64
+            /p:PortableTargetRid=linux-x64
             /p:SkipPrepareSdkArchive=true
           displayName: Run Tests
           workingDirectory: $(Build.SourcesDirectory)

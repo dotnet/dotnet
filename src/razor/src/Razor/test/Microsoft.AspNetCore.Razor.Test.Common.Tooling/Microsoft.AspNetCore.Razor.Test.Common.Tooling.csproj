@@ -31,6 +31,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == '$(NetFxVS)'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />
+    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" />
     <PackageReference Include="Microsoft.WebTools.Languages.Html" />
     <PackageReference Include="Microsoft.WebTools.Languages.Html.Editor" />
     <PackageReference Include="Microsoft.WebTools.Languages.LanguageServer.Server" />
@@ -47,8 +49,6 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzer.Testing" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Common" />
     <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" />
     <PackageReference Include="Microsoft.CodeAnalysis.Test.Utilities" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" />

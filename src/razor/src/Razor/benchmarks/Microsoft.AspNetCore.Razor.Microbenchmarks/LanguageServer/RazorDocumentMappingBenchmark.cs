@@ -52,7 +52,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
         DocumentSnapshot = await GetDocumentSnapshotAsync(projectFilePath, _filePath, targetPath);
 
         var codeDocument = await DocumentSnapshot.GetGeneratedOutputAsync(CancellationToken.None);
-        CSharpDocument = codeDocument.GetCSharpDocument();
+        CSharpDocument = codeDocument.GetRequiredCSharpDocument();
     }
 
     private static void WriteSampleFile(string filePath, int blocks, out List<int> indexes)

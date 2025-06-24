@@ -61,7 +61,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
         File.Create(codeBehindFilePath).Close();
         try
         {
-            codeDocument.TryComputeNamespace(fallbackToRootNamespace: true, out var @namespace);
+            codeDocument.TryGetNamespace(fallbackToRootNamespace: true, out var @namespace);
             initialCodeBehindContent = initialCodeBehindContent.Replace(CodeBehindTestReplaceNamespace, @namespace);
             File.WriteAllText(codeBehindFilePath, initialCodeBehindContent);
 
@@ -92,7 +92,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
             var codeBehindSourceText = SourceText.From(initialCodeBehindContent);
             foreach (var change in changes)
             {
-                if (FilePathNormalizer.Normalize(change.TextDocument.Uri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
+                if (FilePathNormalizer.Normalize(change.TextDocument.DocumentUri.GetAbsoluteOrUNCPath()) == codeBehindFilePath)
                 {
                     codeBehindEdits.AddRange(change.Edits.Select(e => codeBehindSourceText.GetTextChange((TextEdit)e)));
                 }
@@ -241,7 +241,7 @@ public abstract class CodeActionEndToEndTestBase(ITestOutputHelper testOutput) :
 
         var @params = new VSCodeActionParams
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = uri },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(uri) },
             Range = sourceText.GetRange(textSpan),
             Context = new VSInternalCodeActionContext() { Diagnostics = diagnostics ?? [] }
         };

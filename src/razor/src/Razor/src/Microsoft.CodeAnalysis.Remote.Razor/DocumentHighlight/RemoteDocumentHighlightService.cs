@@ -59,7 +59,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
             return Response.NoFurtherHandling;
         }
 
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         if (DocumentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, index, out var mappedPosition, out _))
         {
             var generatedDocument = await context.Snapshot

@@ -65,7 +65,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     public virtual ComplexTypePropertyBuilder<TProperty> Property<TProperty>(Expression<Func<TComplex, TProperty>> propertyExpression)
         => new(
             TypeBuilder.Property(
-                    Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(), ConfigurationSource.Explicit)!
+                    Check.NotNull(propertyExpression).GetMemberAccess(), ConfigurationSource.Explicit)!
                 .Metadata);
 
     /// <summary>
@@ -82,7 +82,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
         Expression<Func<TComplex, TProperty>> propertyExpression)
         => new(
             TypeBuilder.PrimitiveCollection(
-                    Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(), ConfigurationSource.Explicit)!
+                    Check.NotNull(propertyExpression).GetMemberAccess(), ConfigurationSource.Explicit)!
                 .Metadata);
 
     /// <summary>
@@ -210,7 +210,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
         where TProperty : notnull
         => new(
             TypeBuilder.ComplexProperty(
-                Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(),
+                Check.NotNull(propertyExpression).GetMemberAccess(),
                 complexTypeName: null,
                 collection: false,
                 ConfigurationSource.Explicit)!.Metadata);
@@ -239,8 +239,8 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
         where TProperty : notnull
         => new(
             TypeBuilder.ComplexProperty(
-                Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(),
-                Check.NotEmpty(complexTypeName, nameof(complexTypeName)),
+                Check.NotNull(propertyExpression).GetMemberAccess(),
+                Check.NotEmpty(complexTypeName),
                 collection: false,
                 ConfigurationSource.Explicit)!.Metadata);
 
@@ -267,7 +267,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
         Action<ComplexPropertyBuilder<TProperty>> buildAction)
         where TProperty : notnull
     {
-        Check.NotNull(buildAction, nameof(buildAction));
+        Check.NotNull(buildAction);
 
         buildAction(ComplexProperty(propertyExpression));
 
@@ -299,7 +299,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
         Action<ComplexPropertyBuilder<TProperty>> buildAction)
         where TProperty : notnull
     {
-        Check.NotNull(buildAction, nameof(buildAction));
+        Check.NotNull(buildAction);
 
         buildAction(ComplexProperty(propertyExpression, complexTypeName));
 
@@ -417,11 +417,11 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     /// </param>
     /// <returns>An object that can be used to configure the complex collection property.</returns>
     public virtual ComplexCollectionBuilder<TElement> ComplexCollection<TElement>(
-        Expression<Func<TComplex, IEnumerable<TElement>?>> propertyExpression)
+        Expression<Func<TComplex, IEnumerable<TElement?>?>> propertyExpression)
         where TElement : notnull
         => new(
             TypeBuilder.ComplexProperty(
-                Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(),
+                Check.NotNull(propertyExpression).GetMemberAccess(),
                 complexTypeName: null,
                 collection: true,
                 ConfigurationSource.Explicit)!.Metadata);
@@ -438,13 +438,13 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     /// <param name="complexTypeName">The name of the complex type.</param>
     /// <returns>An object that can be used to configure the complex collection property.</returns>
     public virtual ComplexCollectionBuilder<TElement> ComplexCollection<TElement>(
-        Expression<Func<TComplex, IEnumerable<TElement>?>> propertyExpression,
+        Expression<Func<TComplex, IEnumerable<TElement?>?>> propertyExpression,
         string complexTypeName)
         where TElement : notnull
         => new(
             TypeBuilder.ComplexProperty(
-                Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess(),
-                Check.NotEmpty(complexTypeName, nameof(complexTypeName)),
+                Check.NotNull(propertyExpression).GetMemberAccess(),
+                Check.NotEmpty(complexTypeName),
                 collection: true,
                 ConfigurationSource.Explicit)!.Metadata);
 
@@ -460,11 +460,11 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     /// <param name="buildAction">An action that performs configuration of the property.</param>
     /// <returns>An object that can be used to configure the complex collection property.</returns>
     public virtual ComplexCollectionBuilder<TComplex> ComplexCollection<TElement>(
-        Expression<Func<TComplex, IEnumerable<TElement>?>> propertyExpression,
+        Expression<Func<TComplex, IEnumerable<TElement?>?>> propertyExpression,
         Action<ComplexCollectionBuilder<TElement>> buildAction)
         where TElement : notnull
     {
-        Check.NotNull(buildAction, nameof(buildAction));
+        Check.NotNull(buildAction);
 
         buildAction(ComplexCollection(propertyExpression));
 
@@ -484,12 +484,12 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     /// <param name="buildAction">An action that performs configuration of the property.</param>
     /// <returns>An object that can be used to configure the complex collection property.</returns>
     public virtual ComplexCollectionBuilder<TComplex> ComplexCollection<TElement>(
-        Expression<Func<TComplex, IEnumerable<TElement>?>> propertyExpression,
+        Expression<Func<TComplex, IEnumerable<TElement?>?>> propertyExpression,
         string complexTypeName,
         Action<ComplexCollectionBuilder<TElement>> buildAction)
         where TElement : notnull
     {
-        Check.NotNull(buildAction, nameof(buildAction));
+        Check.NotNull(buildAction);
 
         buildAction(ComplexCollection(propertyExpression, complexTypeName));
 
@@ -506,7 +506,7 @@ public class ComplexCollectionBuilder<[DynamicallyAccessedMembers(IEntityType.Dy
     /// </param>
     public virtual ComplexCollectionBuilder<TComplex> Ignore(Expression<Func<TComplex, object?>> propertyExpression)
         => (ComplexCollectionBuilder<TComplex>)base.Ignore(
-            Check.NotNull(propertyExpression, nameof(propertyExpression)).GetMemberAccess().GetSimpleMemberName());
+            Check.NotNull(propertyExpression).GetMemberAccess().GetSimpleMemberName());
 
     /// <summary>
     ///     Excludes the given property from the entity type. This method is typically used to remove properties

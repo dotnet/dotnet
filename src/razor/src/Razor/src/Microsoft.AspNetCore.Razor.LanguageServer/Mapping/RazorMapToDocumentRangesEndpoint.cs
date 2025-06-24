@@ -48,7 +48,7 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         IRazorGeneratedDocument? generatedDocument = request.Kind switch
         {
-            RazorLanguageKind.CSharp => codeDocument.GetCSharpDocument(),
+            RazorLanguageKind.CSharp => codeDocument.GetRequiredCSharpDocument(),
             RazorLanguageKind.Html => codeDocument.GetHtmlDocument(),
             _ => throw new NotSupportedException($"Unsupported language kind '{request.Kind}'."),
         };

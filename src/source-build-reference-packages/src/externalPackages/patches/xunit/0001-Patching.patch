@@ -1,0 +1,307 @@
+diff --git a/src/Directory.Build.props b/src/Directory.Build.props
+index a2668bac..2a9f85bf 100644
+--- a/src/Directory.Build.props
++++ b/src/Directory.Build.props
+@@ -24,18 +24,13 @@
+     <RootNamespace>Xunit</RootNamespace>
+     <SignAssembly>true</SignAssembly>
+     <WarningsAsErrors>true</WarningsAsErrors>
++    <AssemblyVersion>$(PackageVersion)</AssemblyVersion>
++    <AssemblyFileVersion>$(PackageVersion)</AssemblyFileVersion>
++    <Version>$(PackageVersion)</Version>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+     <Compile Include="$(MSBuildThisFileDirectory)common\GlobalAssemblyInfo.cs" LinkBase="Properties" />
+   </ItemGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.143">
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-      <PrivateAssets>all</PrivateAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+ </Project>
+diff --git a/src/Directory.Build.targets b/src/Directory.Build.targets
+index 819c97c3..7fdf2a3d 100644
+--- a/src/Directory.Build.targets
++++ b/src/Directory.Build.targets
+@@ -7,34 +7,4 @@
+     <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.0.0</RuntimeFrameworkVersion>
+     <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.0</RuntimeFrameworkVersion>
+   </PropertyGroup>
+-
+-  <!-- Supplement Nerdbank.GitVersioning version calculations -->
+-  <Target Name="UpdateAssemblyVersionInfo" BeforeTargets="GenerateAssemblyNBGVVersionInfo" DependsOnTargets="GetBuildVersion">
+-    <PropertyGroup>
+-      <!-- AssemblyVersion and AssemblyFileVersion should be x.y.z.0 -->
+-      <AssemblyVersion>$(BuildVersionSimple)</AssemblyVersion>
+-      <AssemblyFileVersion>$(BuildVersionSimple)</AssemblyFileVersion>
+-      <!-- Always put the Git hash in the informational version, even for non-pre-release versions -->
+-      <AssemblyInformationalVersion>$(BuildVersionSimple)$(PrereleaseVersion)+$(GitCommitIdShort)</AssemblyInformationalVersion>
+-    </PropertyGroup>
+-  </Target>
+-
+-  <Target Name="UpdateNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
+-    <PropertyGroup>
+-      <SignedPath />
+-      <SignedPath Condition=" '$(SIGN_APP_SECRET)' != '' ">signed\</SignedPath>
+-      <!-- Local builds should have a '-dev' suffix on the build number -->
+-      <PrereleaseSuffix Condition=" '$(GITHUB_ACTIONS)' != 'true' ">-dev</PrereleaseSuffix>
+-      <!-- Never put the Git hash in the package version -->
+-      <PackageVersion>$(BuildVersionSimple)$(PrereleaseVersion)$(PrereleaseSuffix)</PackageVersion>
+-      <!-- Pass through values we don't know ahead of time for any hand-crafted .nuspec files -->
+-      <NuspecProperties>
+-        Configuration=$(Configuration);
+-        GitCommitId=$(GitCommitId);
+-        PackageVersion=$(PackageVersion);
+-        SignedPath=$(SignedPath);
+-      </NuspecProperties>
+-    </PropertyGroup>
+-  </Target>
+-
+ </Project>
+diff --git a/src/xunit.assert/xunit.assert.csproj b/src/xunit.assert/xunit.assert.csproj
+index 0fdde3a4..15c5c49c 100644
+--- a/src/xunit.assert/xunit.assert.csproj
++++ b/src/xunit.assert/xunit.assert.csproj
+@@ -1,22 +1,11 @@
+ <Project Sdk="Microsoft.NET.Sdk">
+ 
+   <PropertyGroup>
+-    <DefineConstants Condition=" '$(TargetFramework)' == 'netstandard1.1' ">$(DefineConstants);XUNIT_NULLABLE</DefineConstants>
++    <DefineConstants Condition=" '$(TargetFramework)' == 'netstandard2.0' ">$(DefineConstants);XUNIT_NULLABLE</DefineConstants>
+     <DefineConstants Condition=" '$(TargetFramework)' == 'net6.0' ">$(DefineConstants);XUNIT_IMMUTABLE_COLLECTIONS;XUNIT_NULLABLE;XUNIT_SPAN</DefineConstants>
+     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+     <Nullable>enable</Nullable>
+-    <TargetFrameworks>netstandard1.1;net6.0</TargetFrameworks>
++    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
+-    <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" Version="1.0.0-alpha.160">
+-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+-      <PrivateAssets>all</PrivateAssets>
+-    </PackageReference>
+-  </ItemGroup>
+-
+-  <ItemGroup>
+-    <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[8.0.5]" />
+-  </ItemGroup>
+-
+ </Project>
+diff --git a/src/xunit.core/xunit.core.csproj b/src/xunit.core/xunit.core.csproj
+index 058a174b..e6c63c94 100644
+--- a/src/xunit.core/xunit.core.csproj
++++ b/src/xunit.core/xunit.core.csproj
+@@ -3,7 +3,7 @@
+   <PropertyGroup>
+     <DefineConstants>$(DefineConstants);XUNIT_ARGUMENTFORMATTER_PRIVATE;XUNIT_FRAMEWORK</DefineConstants>
+     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+-    <TargetFramework>netstandard1.1</TargetFramework>
++    <TargetFramework>netstandard2.0</TargetFramework>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+diff --git a/src/xunit.execution/xunit.execution.csproj b/src/xunit.execution/xunit.execution.csproj
+index fa959255..b8732cb3 100644
+--- a/src/xunit.execution/xunit.execution.csproj
++++ b/src/xunit.execution/xunit.execution.csproj
+@@ -2,11 +2,11 @@
+ 
+   <PropertyGroup>
+     <AssemblyName Condition=" '$(TargetFramework)' == 'net452' ">xunit.execution.desktop</AssemblyName>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'netstandard1.1' ">xunit.execution.dotnet</AssemblyName>
++    <AssemblyName Condition=" '$(TargetFramework)' == 'netstandard2.0' ">xunit.execution.dotnet</AssemblyName>
+     <DefineConstants>$(DefineConstants);XUNIT_ARGUMENTFORMATTER_PRIVATE;XUNIT_FRAMEWORK</DefineConstants>
+     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+     <RootNamespace>Xunit.Sdk</RootNamespace>
+-    <TargetFrameworks>net452;netstandard1.1</TargetFrameworks>
++    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+diff --git a/src/xunit.extensibility.core.nuspec b/src/xunit.extensibility.core.nuspec
+index 8b3fac36..02076906 100644
+--- a/src/xunit.extensibility.core.nuspec
++++ b/src/xunit.extensibility.core.nuspec
+@@ -18,14 +18,8 @@
+       <reference file="xunit.core.xml" />
+     </references>
+     <dependencies>
+-      <group targetFramework="net452">
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="netstandard1.1">
+-        <dependency id="NETStandard.Library" version="1.6.1" />
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+       <group targetFramework="netstandard2.0">
++        <dependency id="NETStandard.Library" version="2.0.3" />
+         <dependency id="xunit.abstractions" version="2.0.3" />
+       </group>
+     </dependencies>
+@@ -35,13 +29,7 @@
+     <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+     <file target="_content\" src="..\README.md" />
+ 
+-    <file target="lib\net452\" src="xunit.core\bin\$Configuration$\netstandard1.1\$SignedPath$xunit.core.dll" />
+-    <file target="lib\net452\" src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.dll.tdnet" />
+-    <file target="lib\net452\" src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.xml" />
+-    <file target="lib\net452\" src="xunit.runner.tdnet\bin\$Configuration$\net452\$SignedPath$xunit.runner.tdnet.dll" />
+-    <file target="lib\net452\" src="xunit.runner.utility\bin\$Configuration$\net452\$SignedPath$xunit.runner.utility.net452.dll" />
+-
+-    <file target="lib\netstandard1.1\" src="xunit.core\bin\$Configuration$\netstandard1.1\$SignedPath$xunit.core.dll" />
+-    <file target="lib\netstandard1.1\" src="xunit.core\bin\$Configuration$\netstandard1.1\xunit.core.xml" />
++    <file src="xunit.core\bin\$Configuration$\netstandard2.0\xunit.core.dll" target="lib\netstandard2.0\" />
++    <file src="xunit.core\bin\$Configuration$\netstandard2.0\xunit.core.xml" target="lib\netstandard2.0\" />
+   </files>
+ </package>
+diff --git a/src/xunit.extensibility.execution.nuspec b/src/xunit.extensibility.execution.nuspec
+index 208dcc6d..011c4109 100644
+--- a/src/xunit.extensibility.execution.nuspec
++++ b/src/xunit.extensibility.execution.nuspec
+@@ -15,14 +15,8 @@
+     <copyright>Copyright (C) .NET Foundation</copyright>
+     <repository type="git" url="https://github.com/xunit/xunit" commit="$GitCommitId$" />
+     <dependencies>
+-      <group targetFramework="net452">
+-        <dependency id="xunit.extensibility.core" version="[$PackageVersion$]" />
+-      </group>
+-      <group targetFramework="netstandard1.1">
+-        <dependency id="NETStandard.Library" version="1.6.1" />
+-        <dependency id="xunit.extensibility.core" version="[$PackageVersion$]" />
+-      </group>
+       <group targetFramework="netstandard2.0">
++        <dependency id="NETStandard.Library" version="2.0.3" />
+         <dependency id="xunit.extensibility.core" version="[$PackageVersion$]" />
+       </group>
+     </dependencies>
+@@ -32,10 +26,7 @@
+     <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+     <file target="_content\" src="..\README.md" />
+ 
+-    <file target="lib\net452\" src="xunit.execution\bin\$Configuration$\net452\$SignedPath$xunit.execution.desktop.dll" />
+-    <file target="lib\net452\" src="xunit.execution\bin\$Configuration$\net452\xunit.execution.desktop.xml" />
+-
+-    <file target="lib\netstandard1.1\" src="xunit.execution\bin\$Configuration$\netstandard1.1\$SignedPath$xunit.execution.dotnet.dll" />
+-    <file target="lib\netstandard1.1\" src="xunit.execution\bin\$Configuration$\netstandard1.1\xunit.execution.dotnet.xml" />
++    <file src="xunit.execution\bin\$Configuration$\netstandard2.0\xunit.execution.dotnet.dll" target="lib\netstandard2.0\" />
++    <file src="xunit.execution\bin\$Configuration$\netstandard2.0\xunit.execution.dotnet.xml" target="lib\netstandard2.0\" />
+   </files>
+-</package>
++</package>
+\ No newline at end of file
+diff --git a/src/xunit.runner.assemblies/xunit.runner.assemblies.csproj b/src/xunit.runner.assemblies/xunit.runner.assemblies.csproj
+index bf4ce9bd..c6e272d6 100644
+--- a/src/xunit.runner.assemblies/xunit.runner.assemblies.csproj
++++ b/src/xunit.runner.assemblies/xunit.runner.assemblies.csproj
+@@ -3,7 +3,7 @@
+   <PropertyGroup>
+     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+     <RootNamespace>Xunit</RootNamespace>
+-    <TargetFrameworks>net452;netcoreapp1.0;netcoreapp2.0</TargetFrameworks>
++    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+diff --git a/src/xunit.runner.utility.nuspec b/src/xunit.runner.utility.nuspec
+index dc360934..9a9b80ce 100644
+--- a/src/xunit.runner.utility.nuspec
++++ b/src/xunit.runner.utility.nuspec
+@@ -15,31 +15,8 @@
+     <copyright>Copyright (C) .NET Foundation</copyright>
+     <repository type="git" url="https://github.com/xunit/xunit" commit="$GitCommitId$" />
+     <dependencies>
+-      <group targetFramework="net35">
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="net452">
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="netstandard1.1">
+-        <dependency id="NETStandard.Library" version="1.6.1" />
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="netstandard1.5">
+-        <dependency id="NETStandard.Library" version="1.6.1" />
+-        <dependency id="System.Reflection.TypeExtensions" version="4.7.0" />
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+       <group targetFramework="netstandard2.0">
+-        <dependency id="System.Reflection.TypeExtensions" version="4.7.0" />
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="netcoreapp1.0">
+-        <dependency id="NETStandard.Library" version="1.6.0" />
+-        <dependency id="System.Runtime.Loader" version="4.0.0" />
+-        <dependency id="xunit.abstractions" version="2.0.3" />
+-      </group>
+-      <group targetFramework="netcoreapp2.0">
++        <dependency id="NETStandard.Library" version="2.0.3" />
+         <dependency id="xunit.abstractions" version="2.0.3" />
+       </group>
+     </dependencies>
+@@ -49,19 +26,7 @@
+     <file target="_content\" src="..\tools\media\logo-128-transparent.png" />
+     <file target="_content\" src="..\README.md" />
+ 
+-    <file target="lib\net35\" src="xunit.runner.utility\bin\$Configuration$\net35\$SignedPath$xunit.runner.utility.net35.dll" />
+-    <file target="lib\net35\" src="xunit.runner.utility\bin\$Configuration$\net35\xunit.runner.utility.net35.xml" />
+-
+-    <file target="lib\net452\" src="xunit.runner.utility\bin\$Configuration$\net452\$SignedPath$xunit.runner.utility.net452.dll" />
+-    <file target="lib\net452\" src="xunit.runner.utility\bin\$Configuration$\net452\xunit.runner.utility.net452.xml" />
+-
+-    <file target="lib\netstandard1.1\" src="xunit.runner.utility\bin\$Configuration$\netstandard1.1\$SignedPath$xunit.runner.utility.netstandard11.dll" />
+-    <file target="lib\netstandard1.1\" src="xunit.runner.utility\bin\$Configuration$\netstandard1.1\xunit.runner.utility.netstandard11.xml" />
+-
+-    <file target="lib\netstandard1.5\" src="xunit.runner.utility\bin\$Configuration$\netstandard1.5\$SignedPath$xunit.runner.utility.netstandard15.dll" />
+-    <file target="lib\netstandard1.5\" src="xunit.runner.utility\bin\$Configuration$\netstandard1.5\xunit.runner.utility.netstandard15.xml" />
+-
+-    <file target="lib\netcoreapp1.0\" src="xunit.runner.utility\bin\$Configuration$\netcoreapp1.0\$SignedPath$xunit.runner.utility.netcoreapp10.dll" />
+-    <file target="lib\netcoreapp1.0\" src="xunit.runner.utility\bin\$Configuration$\netcoreapp1.0\xunit.runner.utility.netcoreapp10.xml" />
++    <file src="xunit.runner.utility\bin\$Configuration$\netstandard2.0\xunit.runner.utility.netstandard20.dll" target="lib\netstandard2.0\" />
++    <file src="xunit.runner.utility\bin\$Configuration$\netstandard2.0\xunit.runner.utility.netstandard20.xml" target="lib\netstandard2.0\" />
+   </files>
+ </package>
+diff --git a/src/xunit.runner.utility/xunit.runner.utility.csproj b/src/xunit.runner.utility/xunit.runner.utility.csproj
+index 46d4a44f..5fa5cc58 100644
+--- a/src/xunit.runner.utility/xunit.runner.utility.csproj
++++ b/src/xunit.runner.utility/xunit.runner.utility.csproj
+@@ -1,14 +1,10 @@
+-<Project Sdk="Microsoft.NET.Sdk">
++﻿<Project Sdk="Microsoft.NET.Sdk">
+ 
+   <PropertyGroup>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'net35' ">xunit.runner.utility.net35</AssemblyName>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'net452' ">xunit.runner.utility.net452</AssemblyName>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'netstandard1.1' ">xunit.runner.utility.netstandard11</AssemblyName>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'netstandard1.5' ">xunit.runner.utility.netstandard15</AssemblyName>
+-    <AssemblyName Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">xunit.runner.utility.netcoreapp10</AssemblyName>
++    <AssemblyName Condition=" '$(TargetFramework)' == 'netstandard2.0' ">xunit.runner.utility.netstandard20</AssemblyName>
+     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+     <RootNamespace>Xunit</RootNamespace>
+-    <TargetFrameworks>net35;net452;netstandard1.1;netstandard1.5;netcoreapp1.0</TargetFrameworks>
++    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+   </PropertyGroup>
+ 
+   <ItemGroup>
+diff --git a/xunit-notests.slnf b/xunit-notests.slnf
+new file mode 100644
+index 00000000..41d03844
+--- /dev/null
++++ b/xunit-notests.slnf
+@@ -0,0 +1,10 @@
++{
++  "solution": {
++    "path": "xunit.sln",
++    "projects": [
++      "src\\xunit.core\\xunit.core.csproj",
++      "src\\xunit.execution\\xunit.execution.csproj",
++      "src\\xunit.runner.utility\\xunit.runner.utility.csproj",
++    ]
++  }
++}
+\ No newline at end of file

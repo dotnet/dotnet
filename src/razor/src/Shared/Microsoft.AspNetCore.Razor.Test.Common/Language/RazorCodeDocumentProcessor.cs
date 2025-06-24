@@ -63,7 +63,7 @@ public sealed class RazorCodeDocumentProcessor
 
     public DocumentIntermediateNode GetDocumentNode()
     {
-        var documentNode = CodeDocument.GetDocumentIntermediateNode();
+        var documentNode = CodeDocument.GetDocumentNode();
         Assert.NotNull(documentNode);
 
         return documentNode; ;

@@ -78,7 +78,7 @@ internal sealed class HoverEndpoint(
 
         // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
         // We can only do this if we're in single server mode though, otherwise we won't be delegating to Roslyn at all
-        if (SingleServerSupport && DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
+        if (SingleServerSupport && DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
         {
             return null;
         }
@@ -118,7 +118,7 @@ internal sealed class HoverEndpoint(
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
-            if (DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), response.Range, out var projectedRange))
+            if (DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), response.Range, out var projectedRange))
             {
                 response.Range = projectedRange;
             }

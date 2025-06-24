@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -76,7 +75,7 @@ internal sealed class CSharpFormattingPass(
         var sourceText = context.SourceText;
 
         using var csharpChanges = new PooledArrayBuilder<TextChange>();
-        foreach (var mapping in context.CodeDocument.GetCSharpDocument().SourceMappings)
+        foreach (var mapping in context.CodeDocument.GetRequiredCSharpDocument().SourceMappings)
         {
             var span = new TextSpan(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
             if (!ShouldFormat(context, span, allowImplicitStatements: true))
@@ -88,7 +87,7 @@ internal sealed class CSharpFormattingPass(
             // These should already be remapped.
             var spanToFormat = sourceText.GetLinePositionSpan(span);
 
-            var changes = await _csharpFormatter.FormatAsync(hostWorkspaceServices, csharpDocument, context, spanToFormat, cancellationToken).ConfigureAwait(false);
+            var changes = await _csharpFormatter.FormatAsync(hostWorkspaceServices, csharpDocument, context, spanToFormat, _csharpSyntaxFormattingOptionsOverride, cancellationToken).ConfigureAwait(false);
             csharpChanges.AddRange(changes.Where(e => spanToFormat.Contains(sourceText.GetLinePositionSpan(e.Span))));
         }
 

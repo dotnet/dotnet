@@ -70,15 +70,19 @@ internal class RazorCompletionListProvider(
 
         _logger.LogTrace($"Resolved {razorCompletionItems.Length} completion items.");
 
-        var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
+        // No point caching or setting data for an empty completion list.
+        if (razorCompletionItems.Length == 0)
+        {
+            return null;
+        }
 
-        var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
+        var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
 
         // The completion list is cached and can be retrieved via this result id to enable the resolve completion functionality.
         var filePath = codeDocument.Source.FilePath.AssumeNotNull();
         var razorResolveContext = new RazorCompletionResolveContext(filePath, razorCompletionItems);
         var resultId = _completionListCache.Add(completionList, razorResolveContext);
-        completionList.SetResultId(resultId, completionCapability);
+        completionList.SetResultId(resultId, clientCapabilities);
 
         return completionList;
     }
@@ -115,10 +119,7 @@ internal class RazorCompletionListProvider(
         VSInternalClientCapabilities clientCapabilities,
         [NotNullWhen(true)] out VSInternalCompletionItem? completionItem)
     {
-        if (razorCompletionItem is null)
-        {
-            throw new ArgumentNullException(nameof(razorCompletionItem));
-        }
+        ArgHelper.ThrowIfNull(razorCompletionItem);
 
         var tagHelperCompletionItemKind = CompletionItemKind.TypeParameter;
         var supportedItemKinds = clientCapabilities.TextDocument?.Completion?.CompletionItemKind?.ValueSet ?? [];

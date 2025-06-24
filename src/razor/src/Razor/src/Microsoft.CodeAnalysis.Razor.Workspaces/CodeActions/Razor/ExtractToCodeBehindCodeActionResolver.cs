@@ -64,12 +64,12 @@ internal class ExtractToCodeBehindCodeActionResolver(
 
         var removeRange = codeDocument.Source.Text.GetRange(actionParams.RemoveStart, actionParams.RemoveEnd);
 
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = documentContext.Uri };
-        var codeBehindDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = codeBehindUri };
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(documentContext.Uri) };
+        var codeBehindDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(codeBehindUri) };
 
         var documentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]
         {
-            new CreateFile { Uri = codeBehindUri },
+            new CreateFile { DocumentUri = codeBehindDocumentIdentifier.DocumentUri },
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,
@@ -93,7 +93,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
         var usingDirectives = razorCodeDocument
-            .GetDocumentIntermediateNode()
+            .GetRequiredDocumentNode()
             .FindDescendantNodes<UsingDirectiveIntermediateNode>();
 
         foreach (var usingDirective in usingDirectives)

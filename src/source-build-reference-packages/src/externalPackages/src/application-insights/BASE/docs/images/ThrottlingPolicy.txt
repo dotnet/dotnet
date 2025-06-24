@@ -1,0 +1,28 @@
+Image was created using http://flowchart.js.org/
+Metadata: 
+
+st=>start: Transmission sending finished
+e=>end: Finish
+
+cond1=>condition: Failed
+with WebException that has
+HttpWebResponse
+cond2=>condition: StatusCode 429
+cond3=>condition: StatusCode 439
+
+op1=>operation: Set storage capacity = 0
+op2=>operation: Buffer and sender capacity = 0
+op3=>operation: Set timver to restore capacity. Interval 
+either from Retry-After or exponential backoff
+op4=>operation: Number of errors +1 (used to 
+calculate exp. backoff) if it was not 
+updated in the last 10sec
+op5=>operation: Enqueue failed transaction back
+
+st->cond1
+cond1(yes)->cond2
+cond1(no)->e
+cond2(yes, bottom)->op2->op3->op4->op5->e
+cond2(no)->cond3
+cond3(yes)->op1->op2->op3->op4->op5->e
+cond3(no)->e

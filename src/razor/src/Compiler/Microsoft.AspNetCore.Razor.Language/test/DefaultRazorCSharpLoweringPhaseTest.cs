@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -45,11 +43,11 @@ public class DefaultRazorCSharpLoweringPhaseTest
 
         codeDocument.SetSyntaxTree(RazorSyntaxTree.Parse(codeDocument.Source));
 
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
         };
-        codeDocument.SetDocumentIntermediateNode(irDocument);
+        codeDocument.SetDocumentNode(documentNode);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => phase.Execute(codeDocument));
@@ -67,23 +65,23 @@ public class DefaultRazorCSharpLoweringPhaseTest
         var engine = RazorProjectEngine.CreateEmpty(b => b.Phases.Add(phase));
         var codeDocument = TestRazorCodeDocument.Create("<p class=@(");
         var options = RazorCodeGenerationOptions.Default;
-        var irDocument = new DocumentIntermediateNode()
+        var documentNode = new DocumentIntermediateNode()
         {
             DocumentKind = "test",
             Target = CodeTarget.CreateDefault(codeDocument, options),
             Options = options,
         };
         var expectedDiagnostic = RazorDiagnostic.Create(
-                new RazorDiagnosticDescriptor("1234", "I am an error.", RazorDiagnosticSeverity.Error),
-                new SourceSpan("SomeFile.cshtml", 11, 0, 11, 1));
-        irDocument.Diagnostics.Add(expectedDiagnostic);
-        codeDocument.SetDocumentIntermediateNode(irDocument);
+            new RazorDiagnosticDescriptor("1234", "I am an error.", RazorDiagnosticSeverity.Error),
+            new SourceSpan("SomeFile.cshtml", 11, 0, 11, 1));
+        documentNode.AddDiagnostic(expectedDiagnostic);
+        codeDocument.SetDocumentNode(documentNode);
 
         // Act
         phase.Execute(codeDocument);
 
         // Assert
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         var diagnostic = Assert.Single(csharpDocument.Diagnostics);
         Assert.Same(expectedDiagnostic, diagnostic);
     }

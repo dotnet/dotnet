@@ -1168,7 +1168,7 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
             return csharpRanges;
         }
 
-        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetCSharpDocument(), razorRange, out var range) &&
+        if (!documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetRequiredCSharpDocument(), razorRange, out var range) &&
             !codeDocument.TryGetMinimalCSharpRange(razorRange, out range))
         {
             // No C# in the range.
@@ -1181,14 +1181,14 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
     private static SemanticTokensRangesParams CreateVSSemanticTokensRangesParams(ImmutableArray<LinePositionSpan> ranges, Uri uri)
         => new()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Ranges = ranges.Select(s => s.ToRange()).ToArray()
         };
 
     private static SemanticTokensRangeParams CreateVSSemanticTokensRangeParams(LinePositionSpan range, Uri uri)
         => new()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Range = range.ToRange()
         };
 

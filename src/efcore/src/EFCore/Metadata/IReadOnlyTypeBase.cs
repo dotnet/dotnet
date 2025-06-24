@@ -26,6 +26,12 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
         => (IReadOnlyEntityType)this;
 
     /// <summary>
+    ///     Gets this entity type or the closest collection property in the complex property chain.
+    /// </summary>
+    IReadOnlyTypeBase ContainingType
+        => this;
+
+    /// <summary>
     ///     Gets the base type of this type. Returns <see langword="null" /> if this is not a
     ///     derived type in an inheritance hierarchy.
     /// </summary>
@@ -182,7 +188,7 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
     ///     otherwise <see langword="false" />.
     /// </returns>
     bool IsStrictlyDerivedFrom(IReadOnlyTypeBase baseType)
-        => this != Check.NotNull(baseType, nameof(baseType)) && baseType.IsAssignableFrom(this);
+        => this != Check.NotNull(baseType) && baseType.IsAssignableFrom(this);
 
     /// <summary>
     ///     Gets all types in the model that derive from this type.
@@ -269,7 +275,7 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
     /// <param name="memberInfo">The member on the class.</param>
     /// <returns>The property, or <see langword="null" /> if none is found.</returns>
     IReadOnlyProperty? FindProperty(MemberInfo memberInfo)
-        => (Check.NotNull(memberInfo, nameof(memberInfo)) as PropertyInfo)?.IsIndexerProperty() == true
+        => (Check.NotNull(memberInfo) as PropertyInfo)?.IsIndexerProperty() == true
             ? null
             : FindProperty(memberInfo.GetSimpleMemberName());
 
@@ -301,7 +307,7 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
     /// <returns>The property.</returns>
     IReadOnlyProperty GetProperty(string name)
     {
-        Check.NotEmpty(name, nameof(name));
+        Check.NotEmpty(name);
 
         var property = FindProperty(name);
         return property == null
@@ -359,7 +365,7 @@ public interface IReadOnlyTypeBase : IReadOnlyAnnotatable
     /// <param name="memberInfo">The member on the class.</param>
     /// <returns>The property, or <see langword="null" /> if none is found.</returns>
     IReadOnlyComplexProperty? FindComplexProperty(MemberInfo memberInfo)
-        => (Check.NotNull(memberInfo, nameof(memberInfo)) as PropertyInfo)?.IsIndexerProperty() == true
+        => (Check.NotNull(memberInfo) as PropertyInfo)?.IsIndexerProperty() == true
             ? null
             : FindComplexProperty(memberInfo.GetSimpleMemberName());
 

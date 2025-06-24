@@ -18,7 +18,7 @@ function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
     $expectedNumOfFiles = @{
         "Microsoft.CodeCoverage"                      = 59;
-        "Microsoft.NET.Test.Sdk"                      = 15;
+        "Microsoft.NET.Test.Sdk"                      = 25;
         "Microsoft.TestPlatform"                      = 619;
         "Microsoft.TestPlatform.Build"                = 20;
         "Microsoft.TestPlatform.CLI"                  = 481;

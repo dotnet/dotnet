@@ -52,24 +52,21 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var uri = new Uri(razorFilePath);
         Request = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
-        var stringSourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
-        var mockRazorCodeDocument = new Mock<RazorCodeDocument>(MockBehavior.Strict);
+        var sourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
+        var codeDocument = RazorCodeDocument.Create(sourceDocument, RazorParserOptions.Default, RazorCodeGenerationOptions.DesignTimeDefault);
 
-        var mockRazorCSharpDocument = new RazorCSharpDocument(
-            mockRazorCodeDocument.Object,
+        var csharpDocument = new RazorCSharpDocument(
+            codeDocument,
             GeneratedCode,
-            RazorCodeGenerationOptions.DesignTimeDefault,
             diagnostics: [],
             SourceMappings,
             linePragmas: []);
 
-        var itemCollection = new ItemCollection();
-        itemCollection[typeof(RazorCSharpDocument)] = mockRazorCSharpDocument;
-        mockRazorCodeDocument.Setup(r => r.Source).Returns(stringSourceDocument);
-        mockRazorCodeDocument.Setup(r => r.Items).Returns(itemCollection);
-        RazorCodeDocument = mockRazorCodeDocument.Object;
+        codeDocument.SetCSharpDocument(csharpDocument);
+
+        RazorCodeDocument = codeDocument;
 
         SourceText = RazorCodeDocument.Source.Text;
         var documentContext = new Mock<DocumentContext>(
