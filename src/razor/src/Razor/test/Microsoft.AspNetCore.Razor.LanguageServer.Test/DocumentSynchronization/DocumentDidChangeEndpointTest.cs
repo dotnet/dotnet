@@ -116,7 +116,7 @@ public class DocumentDidChangeEndpointTest(ITestOutputHelper testOutput) : Langu
             ContentChanges = [change],
             TextDocument = new VersionedTextDocumentIdentifier()
             {
-                Uri = documentPath,
+                DocumentUri = new(documentPath),
                 Version = 1337,
             }
         };

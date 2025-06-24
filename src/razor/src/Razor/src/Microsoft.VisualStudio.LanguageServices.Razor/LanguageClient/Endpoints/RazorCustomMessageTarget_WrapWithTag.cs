@@ -41,7 +41,7 @@ internal partial class RazorCustomMessageTarget
             wrapWithParams.Range,
             wrapWithParams.TagName,
             wrapWithParams.Options,
-            new VersionedTextDocumentIdentifier() { Uri = projectedUri, });
+            new VersionedTextDocumentIdentifier() { DocumentUri = new(projectedUri), });
 
         var textBuffer = htmlDocument.Snapshot.TextBuffer;
         var result = await _requestInvoker.ReinvokeRequestOnServerAsync<VSInternalWrapWithTagParams, VSInternalWrapWithTagResponse>(

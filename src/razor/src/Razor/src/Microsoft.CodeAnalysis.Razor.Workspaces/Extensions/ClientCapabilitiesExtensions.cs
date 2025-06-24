@@ -20,12 +20,20 @@ internal static class ClientCapabilitiesExtensions
     }
 
     public static bool SupportsMarkdown(this ClientCapabilities clientCapabilities)
-    {
-        return clientCapabilities.GetMarkupKind() == MarkupKind.Markdown;
-    }
+        => clientCapabilities.GetMarkupKind() == MarkupKind.Markdown;
 
     public static bool SupportsVisualStudioExtensions(this ClientCapabilities clientCapabilities)
-    {
-        return (clientCapabilities as VSInternalClientCapabilities)?.SupportsVisualStudioExtensions ?? false;
-    }
+        => clientCapabilities is VSInternalClientCapabilities { SupportsVisualStudioExtensions: true };
+
+    public static bool SupportsAnyCompletionListData(this ClientCapabilities clientCapabilities)
+        => clientCapabilities.SupportsCompletionListData() ||
+           clientCapabilities.SupportsCompletionListItemDefaultsData();
+
+    public static bool SupportsCompletionListData(this ClientCapabilities clientCapabilities)
+        => clientCapabilities.SupportsVisualStudioExtensions() &&
+           clientCapabilities.TextDocument?.Completion is VSInternalCompletionSetting { CompletionList.Data: true };
+
+    public static bool SupportsCompletionListItemDefaultsData(this ClientCapabilities clientCapabilities)
+        => clientCapabilities.TextDocument?.Completion?.CompletionListSetting?.ItemDefaults is { } defaults &&
+           Array.IndexOf(defaults, "data") >= 0;
 }

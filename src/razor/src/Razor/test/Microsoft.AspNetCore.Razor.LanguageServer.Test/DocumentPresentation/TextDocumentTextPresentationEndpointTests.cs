@@ -3,14 +3,12 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
-using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,7 +33,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };
@@ -65,7 +63,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };
@@ -95,7 +93,7 @@ public class TextDocumentTextPresentationEndpointTests(ITestOutputHelper testOut
 
         var parameters = new TextPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = codeDocument.Source.Text.GetRange(code.Span),
             Text = "Hi there"
         };

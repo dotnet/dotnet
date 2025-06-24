@@ -1,11 +1,11 @@
 {
   "repositories": [
     {
-      "packageVersion": "10.0.0-beta.25316.2",
-      "barId": 271932,
+      "packageVersion": "10.0.0-beta.25320.5",
+      "barId": 272615,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "d9d02d858b71562509f72ea84409853e4deffc8f"
+      "commitSha": "066f0d1e5e1a59ce611e82f4a1146239d6253bd7"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -50,11 +50,11 @@
       "commitSha": "c80de30e0d582df0c6fb9b24e8b10c3a78c97161"
     },
     {
-      "packageVersion": "10.0.0-preview.7.25318.2",
-      "barId": 272403,
+      "packageVersion": "10.0.0-preview.7.25320.1",
+      "barId": 272560,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "202d207420bb3b035973c0b5b6da6018ec64c49e"
+      "commitSha": "4588678bb94b2710977907db00ae7ddcd67156fc"
     },
     {
       "packageVersion": "10.0.0-preview.7.25316.1",
@@ -85,11 +85,11 @@
       "commitSha": "772ee13d2bafaa1414d90dbfbd77e0941115ef19"
     },
     {
-      "packageVersion": "10.0.0-preview.25313.2",
-      "barId": 271777,
+      "packageVersion": "10.0.0-preview.25322.1",
+      "barId": 272713,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "67633105eb00449cca598c97b44f97c8771563da"
+      "commitSha": "b9e53afd50421f25f75d178ed5e550e4ed1bc53f"
     },
     {
       "packageVersion": "5.0.0-1.25321.2",
@@ -128,17 +128,17 @@
     },
     {
       "packageVersion": "10.0.622801",
-      "barId": 271034,
+      "barId": 271898,
       "path": "source-build-externals",
       "remoteUri": "https://github.com/dotnet/source-build-externals",
-      "commitSha": "2cc332a5dfbcbd559c3eb156287292b6acf5c556"
+      "commitSha": "c4bd26056e83fcccbe76e4e2fd3aa257d7747c4c"
     },
     {
       "packageVersion": "",
-      "barId": 272426,
+      "barId": 272612,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "96f3b2251284604ab8d1ffc6f445474ad528bcba"
+      "commitSha": "31f60141b67dc390bbcc1e3251c63d240379a0be"
     },
     {
       "packageVersion": "10.0.0-beta.25302.1",

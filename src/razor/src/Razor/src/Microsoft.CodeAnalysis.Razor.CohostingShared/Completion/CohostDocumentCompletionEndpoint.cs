@@ -211,10 +211,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
             return null;
         }
 
-        var completionCapability = _clientCapabilitiesService.ClientCapabilities.TextDocument?.Completion as VSInternalCompletionSetting;
-        var supportsCompletionListData = completionCapability.SupportsCompletionListData();
-
-        RazorCompletionResolveData.Wrap(combinedCompletionList, originalTextDocumentIdentifier, supportsCompletionListData: supportsCompletionListData);
+        RazorCompletionResolveData.Wrap(combinedCompletionList, originalTextDocumentIdentifier, _clientCapabilitiesService.ClientCapabilities);
 
         return combinedCompletionList;
     }
@@ -236,12 +233,10 @@ internal sealed class CohostDocumentCompletionEndpoint(
 
         var rewrittenResponse = DelegatedCompletionHelper.RewriteHtmlResponse(result, razorCompletionOptions);
 
-        var completionCapability = _clientCapabilitiesService.ClientCapabilities.TextDocument?.Completion as VSInternalCompletionSetting;
-
         var razorDocumentIdentifier = new TextDocumentIdentifierAndVersion(request.TextDocument, Version: 0);
         var resolutionContext = new DelegatedCompletionResolutionContext(razorDocumentIdentifier, RazorLanguageKind.Html, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
-        rewrittenResponse.SetResultId(resultId, completionCapability);
+        rewrittenResponse.SetResultId(resultId, _clientCapabilitiesService.ClientCapabilities);
 
         return rewrittenResponse;
     }

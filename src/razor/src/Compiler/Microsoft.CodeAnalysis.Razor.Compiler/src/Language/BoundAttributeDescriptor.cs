@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -31,7 +32,8 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
     private readonly BoundAttributeFlags _flags;
     private readonly DocumentationObject _documentationObject;
 
-    public string Kind { get; }
+    private TagHelperDescriptor? _parent;
+
     public string Name { get; }
     public string TypeName { get; }
     public string DisplayName { get; }
@@ -54,7 +56,6 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
     public MetadataCollection Metadata { get; }
 
     internal BoundAttributeDescriptor(
-        string kind,
         string name,
         string typeName,
         bool isEnum,
@@ -71,7 +72,6 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         ImmutableArray<RazorDiagnostic> diagnostics)
         : base(diagnostics)
     {
-        Kind = kind;
         Name = name;
         TypeName = typeName;
         IndexerNamePrefix = indexerNamePrefix;
@@ -81,6 +81,11 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         ContainingType = containingType;
         Parameters = parameters.NullToEmpty();
         Metadata = metadata ?? MetadataCollection.Empty;
+
+        foreach (var parameter in Parameters)
+        {
+            parameter.SetParent(this);
+        }
 
         BoundAttributeFlags flags = 0;
 
@@ -134,7 +139,6 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
-        builder.AppendData(Kind);
         builder.AppendData(Name);
         builder.AppendData(TypeName);
         builder.AppendData(IndexerNamePrefix);
@@ -159,6 +163,17 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         }
 
         builder.AppendData(Metadata.Checksum);
+    }
+
+    public TagHelperDescriptor Parent
+        => _parent ?? ThrowHelper.ThrowInvalidOperationException<TagHelperDescriptor>(Resources.Parent_has_not_been_set);
+
+    internal void SetParent(TagHelperDescriptor parent)
+    {
+        Debug.Assert(parent != null);
+        Debug.Assert(_parent == null);
+
+        _parent = parent;
     }
 
     public string? Documentation => _documentationObject.GetText();
