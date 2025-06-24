@@ -17,6 +17,11 @@ internal interface ILspEditorFeatureDetector
     bool IsLspEditorSupported(string documentFilePath);
 
     /// <summary>
+    /// Determines whether the project containing the given document is a .NET Core project.
+    /// </summary>
+    bool IsDotNetCoreProject(string documentFilePath);
+
+    /// <summary>
     /// A remote client is a LiveShare guest or a Codespaces instance
     /// </summary>
     bool IsRemoteClient();
