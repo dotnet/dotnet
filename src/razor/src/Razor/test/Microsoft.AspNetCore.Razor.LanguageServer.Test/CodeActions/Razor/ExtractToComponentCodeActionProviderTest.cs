@@ -59,7 +59,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
             Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };
@@ -666,7 +666,7 @@ public class ExtractToComponentCodeActionProviderTest(ITestOutputHelper testOutp
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = new Uri(documentPath) },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(new Uri(documentPath)) },
             Range = LspFactory.DefaultRange,
             Context = new VSInternalCodeActionContext()
         };

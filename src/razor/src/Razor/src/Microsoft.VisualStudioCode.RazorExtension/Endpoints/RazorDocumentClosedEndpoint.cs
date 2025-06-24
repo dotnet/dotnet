@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Endpoints;
@@ -29,7 +30,7 @@ internal class RazorDocumentClosedEndpoint(IHtmlDocumentSynchronizer htmlDocumen
 
     protected override Task<VoidResult> HandleRequestAsync(TextDocumentIdentifier textDocument, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _htmlDocumentSynchronizer.DocumentRemoved(requestContext.Uri.AssumeNotNull(), cancellationToken);
+        _htmlDocumentSynchronizer.DocumentRemoved(requestContext.DocumentUri.AssumeNotNull().GetRequiredParsedUri(), cancellationToken);
         return SpecializedTasks.Default<VoidResult>();
     }
 }

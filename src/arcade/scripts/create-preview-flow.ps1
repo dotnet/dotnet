@@ -174,7 +174,7 @@ if ($AddInternalFlow) {
 }
 
 Write-Host "Make default channel for the VMR"
-MakeDefaultChannel https://github.com/dotnet/dotnet $SdkBranch $SdkBranch
+MakeDefaultChannel https://github.com/dotnet/dotnet $SdkBranch $SdkChannel
 
 if ($AddInternalFlow) {
     Write-Host "Make internal default channel for the VMR"

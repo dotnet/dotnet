@@ -16,7 +16,6 @@
       - BARBuildId                              : BAR ID of the build being published.
       - MaestroApiEndpoint                      : Maestro API/Token. Used for updating asset locations.
       - BuildAssetRegistryToken
-      - NugetPath                               : Full path to nuget.exe. Used for pushing to AzDO feeds.
       - PublishInstallersAndChecksums           : Whether installers & checksums should be published.
       - AzureDevOpsFeedsKey                     : Token used to publish to *any* AzDO feed in dnceng.
       - PublishSpecialClrFiles                  : If true, the special coreclr module indexed files like DBI, DAC and SOS are published
@@ -139,7 +138,6 @@
       AssetManifestPaths="@(ManifestFiles)"
       BlobAssetsBasePath="$(BlobBasePath)"
       PackageAssetsBasePath="$(PackageBasePath)"
-      NugetPath="$(NugetPath)"
       AkaMSClientId="$(AkaMSClientId)"
       AkaMSClientCertificate="$(AkaMSClientCertificate)"
       AkaMSTenant="$(AkaMSTenant)"
