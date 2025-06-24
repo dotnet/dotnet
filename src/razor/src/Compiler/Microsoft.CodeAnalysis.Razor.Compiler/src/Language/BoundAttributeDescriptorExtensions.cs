@@ -58,12 +58,4 @@ public static class BoundAttributeDescriptorExtensions
 
         return parameter.Parent.Parent.Kind == TagHelperConventions.DefaultKind;
     }
-
-    public static string? GetPropertyName(this BoundAttributeParameterDescriptor parameter)
-    {
-        ArgHelper.ThrowIfNull(parameter);
-
-        parameter.Metadata.TryGetValue(TagHelperMetadata.Common.PropertyName, out var propertyName);
-        return propertyName;
-    }
 }

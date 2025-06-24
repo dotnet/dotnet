@@ -60,6 +60,18 @@ internal static partial class ObjectWriters
             }
         }
 
+        static void WriteTypeNameObject(JsonDataWriter writer, string propertyName, TypeNameObject typeNameObject)
+        {
+            if (typeNameObject.Index is byte index)
+            {
+                writer.Write(propertyName, index);
+            }
+            else if (typeNameObject.StringValue is string stringValue)
+            {
+                writer.Write(propertyName, stringValue);
+            }
+        }
+
         static void WriteTagMatchingRule(JsonDataWriter writer, TagMatchingRuleDescriptor value)
         {
             writer.WriteObject(value, static (writer, value) =>
@@ -115,14 +127,12 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
+                writer.Write(nameof(value.Flags), (byte)value.Flags);
                 writer.Write(nameof(value.Name), value.Name);
-                writer.Write(nameof(value.TypeName), value.TypeName);
-                writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
+                writer.Write(nameof(value.PropertyName), value.PropertyName);
+                WriteTypeNameObject(writer, nameof(value.TypeName), value.TypeNameObject);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
-                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
 
-                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
                 writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
