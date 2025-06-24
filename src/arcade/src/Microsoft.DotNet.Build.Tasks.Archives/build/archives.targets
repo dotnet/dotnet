@@ -96,6 +96,7 @@
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(ArchiveName)-$(Version)-$(RuntimeIdentifier)</_ArchiveFileName>
       <_DestinationFileName>$([MSBuild]::NormalizePath($(PackageOutputPath), '$(_ArchiveFileName).$(ArchiveFormat)'))</_DestinationFileName>
     </PropertyGroup>
+    <MakeDir Directories="$(_OutputPathRoot)" />
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="PublishToDisk"
              Properties="OutputPath=$(_OutputPathRoot)" />
@@ -130,6 +131,7 @@
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(SymbolsArchiveName)-$(RuntimeIdentifier)-$(Version)</_ArchiveFileName>
       <_DestinationFileName>$([MSBuild]::NormalizePath($(PackageOutputPath), '$(_ArchiveFileName).$(ArchiveFormat)'))</_DestinationFileName>
     </PropertyGroup>
+    <MakeDir Directories="$(_SymbolsOutputPathRoot)" />
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="PublishSymbolsToDisk"
              Properties="SymbolsOutputPath=$(_SymbolsOutputPathRoot)" />
