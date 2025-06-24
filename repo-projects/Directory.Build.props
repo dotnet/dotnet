@@ -76,7 +76,9 @@
     <ArcadeFalseBoolBuildArg>false</ArcadeFalseBoolBuildArg>
   </PropertyGroup>
 
-  <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
+  <!-- Add 50 to the revision number to avoid clashing with the existing msft official builds. We used to add
+       100 here, but this means that for packages that do not have a pre-release label (sometimes called a Release-Only package version,
+       day N of the VMR's build will overlap with day N+1 of the a repo build. -->
   <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
     <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 50))</OfficialBuildId>
   </PropertyGroup>
