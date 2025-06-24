@@ -2242,8 +2242,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                     .BindAttributeParameter(p =>
                     {
                         p.Name = "event";
+                        p.PropertyName = "Event";
                         p.TypeName = typeof(string).FullName;
-                        p.SetMetadata(PropertyName("Event"));
                     }))
                 .Build(),
         ];
@@ -2288,8 +2288,8 @@ public class TagHelperBlockRewriterTest : TagHelperRewritingTestBase
                     .BindAttributeParameter(p =>
                     {
                         p.Name = "param";
+                        p.PropertyName = "Param";
                         p.TypeName = typeof(string).FullName;
-                        p.SetMetadata(PropertyName("Param"));
                     }))
                 .Build(),
         ];
