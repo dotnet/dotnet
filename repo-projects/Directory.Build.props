@@ -78,7 +78,7 @@
 
   <!-- Add 100 to the revision number to avoid clashing with the existing msft official builds. -->
   <PropertyGroup Condition="'$(OfficialBuildId)' != ''">
-    <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 100))</OfficialBuildId>
+    <OfficialBuildId>$(OfficialBuildId.Split('.')[0]).$([MSBuild]::Add($(OfficialBuildId.Split('.')[1]), 50))</OfficialBuildId>
   </PropertyGroup>
 
   <PropertyGroup>
