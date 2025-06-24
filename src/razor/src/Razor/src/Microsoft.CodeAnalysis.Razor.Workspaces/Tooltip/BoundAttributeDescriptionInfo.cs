@@ -21,7 +21,7 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
             throw new ArgumentNullException(nameof(parentTagHelperTypeName));
         }
 
-        var propertyName = parameterAttribute.GetPropertyName().AssumeNotNull();
+        var propertyName = parameterAttribute.PropertyName;
 
         return new BoundAttributeDescriptionInfo(
             parameterAttribute.TypeName,
