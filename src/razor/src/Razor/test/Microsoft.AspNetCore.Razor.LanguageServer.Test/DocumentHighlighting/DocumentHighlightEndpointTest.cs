@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
@@ -127,12 +128,12 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };
 
-        var documentContext = CreateDocumentContext(request.TextDocument.Uri, codeDocument);
+        var documentContext = CreateDocumentContext(request.TextDocument.DocumentUri.GetRequiredParsedUri(), codeDocument);
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -170,7 +171,7 @@ public class DocumentHighlightEndpointTest(ITestOutputHelper testOutput) : Langu
             {
                 TextDocument = new TextDocumentIdentifier()
                 {
-                    Uri = csharpDocumentUri
+                    DocumentUri = new(csharpDocumentUri)
                 },
                 Position = highlightParams.ProjectedPosition,
             };

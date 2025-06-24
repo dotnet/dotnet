@@ -50,7 +50,7 @@ internal sealed class InlineCompletionEndpoint(
     {
         ArgHelper.ThrowIfNull(request);
 
-        _logger.LogInformation($"Starting request for {request.TextDocument.Uri} at {request.Position}.");
+        _logger.LogInformation($"Starting request for {request.TextDocument.DocumentUri} at {request.Position}.");
 
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
@@ -68,7 +68,7 @@ internal sealed class InlineCompletionEndpoint(
         if (languageKind != RazorLanguageKind.CSharp ||
             !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out Position? projectedPosition, out _))
         {
-            _logger.LogInformation($"Unsupported location for {request.TextDocument.Uri}.");
+            _logger.LogInformation($"Unsupported location for {request.TextDocument.DocumentUri}.");
             return null;
         }
 

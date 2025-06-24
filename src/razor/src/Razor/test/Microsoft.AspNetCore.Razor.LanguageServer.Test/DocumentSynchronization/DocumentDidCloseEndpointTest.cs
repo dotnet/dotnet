@@ -31,7 +31,7 @@ public class DocumentDidCloseEndpointTest(ITestOutputHelper testOutput) : Langua
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = new Uri(documentPath)
+                DocumentUri = new(new Uri(documentPath))
             }
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
