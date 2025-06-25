@@ -57,14 +57,6 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '6.0.x'
-        installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    - script: dotnet build eng/tools/ChangeValidation/ChangeValidation.csproj -noRsp
-      displayName: 'Build ChangeValidation tool without .rsp'
-
-    - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+    - script: .dotnet/dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
       displayName: 'Execute ChangeValidation Tool'
