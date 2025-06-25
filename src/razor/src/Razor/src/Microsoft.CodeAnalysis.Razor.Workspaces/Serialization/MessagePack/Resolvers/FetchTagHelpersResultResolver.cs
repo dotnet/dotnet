@@ -48,7 +48,8 @@ internal sealed class FetchTagHelpersResultResolver : IFormatterResolver
             RazorDiagnosticFormatter.Instance,
             RequiredAttributeFormatter.Instance,
             TagHelperFormatter.Instance,
-            TagMatchingRuleFormatter.Instance
+            TagMatchingRuleFormatter.Instance,
+            TypeNameObjectFormatter.Instance
         };
 
         public static object? GetFormatter(Type t)

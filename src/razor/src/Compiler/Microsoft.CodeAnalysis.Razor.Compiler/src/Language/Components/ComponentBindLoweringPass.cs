@@ -97,7 +97,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 continue;
             }
 
-            if (node.BoundAttributeParameter.Metadata.ContainsKey(ComponentMetadata.Bind.BindAttributeGetSet))
+            if (node.BoundAttributeParameter.BindAttributeGetSet)
             {
                 if (!_bindGetSetSupported)
                 {
