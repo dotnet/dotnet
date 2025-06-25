@@ -27,7 +27,7 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
             formattingService, htmlFormatter, optionsMonitor);
         var @params = new DocumentRangeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Options = new FormattingOptions(),
             Range = LspFactory.DefaultRange
         };
@@ -52,7 +52,7 @@ public class DocumentRangeFormattingEndpointTest(ITestOutputHelper testOutput) :
         var uri = new Uri("file://path/test.razor");
         var @params = new DocumentRangeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), }
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
 

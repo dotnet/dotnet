@@ -23,15 +23,6 @@ public sealed partial class TestComposition
         ImmutableHashSet<Type>.Empty,
         ImmutableHashSet<Type>.Empty);
 
-    public static readonly TestComposition Roslyn = Empty
-        .AddAssemblies(MefHostServices.DefaultAssemblies)
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll"))
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.EditorFeatures.dll"))
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
-        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
-        .AddParts(typeof(RazorTestWorkspaceRegistrationService));
-
     public static readonly TestComposition RoslynFeatures = Empty
         .AddAssemblies(MefHostServices.DefaultAssemblies)
         .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
@@ -42,6 +33,15 @@ public sealed partial class TestComposition
         .AddParts(typeof(RazorTestWorkspaceRegistrationService));
 
 #if NETFRAMEWORK
+    public static readonly TestComposition Roslyn = Empty
+        .AddAssemblies(MefHostServices.DefaultAssemblies)
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.CSharp.EditorFeatures.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.EditorFeatures.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll"))
+        .AddAssemblies(Assembly.LoadFrom("Microsoft.CodeAnalysis.LanguageServer.Protocol.dll"))
+        .AddParts(typeof(RazorTestWorkspaceRegistrationService));
+
     public static readonly TestComposition Editor = Empty
         .AddAssemblies(Assembly.LoadFrom("Microsoft.VisualStudio.Text.Implementation.dll"))
         .AddParts(typeof(TestExportJoinableTaskContext));

@@ -5,7 +5,11 @@
     <NonShipping>true</NonShipping>
     <UseAppHost>false</UseAppHost>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForExecution)</MicrosoftCodeAnalysisVersion>
+    <!-- 
+        Because SourceBuild is not setting the value of <MicrosoftCodeAnalysisVersionForAnalyzerExecution> in
+        Versions.props we need to allow them a way to override the M.CA version here.
+    -->
+    <MicrosoftCodeAnalysisVersion Condition="'$(MicrosoftCodeAnalysisVersion)' == ''">$(MicrosoftCodeAnalysisVersionForAnalyzerExecution)</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
 
   <ItemGroup>
