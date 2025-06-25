@@ -4,6 +4,7 @@
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
   </PropertyGroup>
+
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="wpf" />
