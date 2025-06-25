@@ -1,31 +1,23 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class BoundAttributeDescriptorExtensions
 {
-    public static string GetPropertyName(this BoundAttributeDescriptor attribute)
+    public static string? GetPropertyName(this BoundAttributeDescriptor attribute)
     {
-        if (attribute == null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
+        ArgHelper.ThrowIfNull(attribute);
 
         attribute.Metadata.TryGetValue(TagHelperMetadata.Common.PropertyName, out var propertyName);
         return propertyName;
     }
 
-    public static string GetGloballyQualifiedTypeName(this BoundAttributeDescriptor attribute)
+    public static string? GetGloballyQualifiedTypeName(this BoundAttributeDescriptor attribute)
     {
-        if (attribute == null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
+        ArgHelper.ThrowIfNull(attribute);
 
         attribute.Metadata.TryGetValue(TagHelperMetadata.Common.GloballyQualifiedTypeName, out var propertyName);
         return propertyName;
@@ -33,12 +25,9 @@ public static class BoundAttributeDescriptorExtensions
 
     public static bool IsDefaultKind(this BoundAttributeDescriptor attribute)
     {
-        if (attribute == null)
-        {
-            throw new ArgumentNullException(nameof(attribute));
-        }
+        ArgHelper.ThrowIfNull(attribute);
 
-        return attribute.Kind == TagHelperConventions.DefaultKind;
+        return attribute.Parent.Kind == TagHelperConventions.DefaultKind;
     }
 
     internal static bool ExpectsStringValue(this BoundAttributeDescriptor attribute, string name)
@@ -65,22 +54,8 @@ public static class BoundAttributeDescriptorExtensions
 
     public static bool IsDefaultKind(this BoundAttributeParameterDescriptor parameter)
     {
-        if (parameter == null)
-        {
-            throw new ArgumentNullException(nameof(parameter));
-        }
+        ArgHelper.ThrowIfNull(parameter);
 
-        return parameter.Kind == TagHelperConventions.DefaultKind;
-    }
-
-    public static string GetPropertyName(this BoundAttributeParameterDescriptor parameter)
-    {
-        if (parameter == null)
-        {
-            throw new ArgumentNullException(nameof(parameter));
-        }
-
-        parameter.Metadata.TryGetValue(TagHelperMetadata.Common.PropertyName, out var propertyName);
-        return propertyName;
+        return parameter.Parent.Parent.Kind == TagHelperConventions.DefaultKind;
     }
 }

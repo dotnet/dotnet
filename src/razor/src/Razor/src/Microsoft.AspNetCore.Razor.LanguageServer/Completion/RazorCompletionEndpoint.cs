@@ -93,10 +93,7 @@ internal class RazorCompletionEndpoint(
                 return null;
             }
 
-            var completionCapability = _clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-            var supportsCompletionListData = completionCapability.SupportsCompletionListData();
-
-            RazorCompletionResolveData.Wrap(result, request.TextDocument, supportsCompletionListData: supportsCompletionListData);
+            RazorCompletionResolveData.Wrap(result, request.TextDocument, _clientCapabilities);
             return result;
         }
     }

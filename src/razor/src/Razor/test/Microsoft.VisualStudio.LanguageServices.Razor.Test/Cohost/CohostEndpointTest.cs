@@ -166,6 +166,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
         public bool IsLiveShareHost() => throw new NotImplementedException();
         public bool IsLspEditorEnabled() => throw new NotImplementedException();
         public bool IsLspEditorSupported(string documentFilePath) => throw new NotImplementedException();
+        public bool IsDotNetCoreProject(string documentFilePath) => throw new NotImplementedException();
         public bool IsRemoteClient() => throw new NotImplementedException();
     }
 

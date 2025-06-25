@@ -13,14 +13,14 @@ internal static class VSInternalCompletionListExtensions
     public static void SetResultId(
         this RazorVSInternalCompletionList completionList,
         int resultId,
-        VSInternalCompletionSetting? completionSetting)
+        VSInternalClientCapabilities clientCapabilities)
     {
         var data = JsonSerializer.SerializeToElement(new JsonObject()
         {
             [VSInternalCompletionItemExtensions.ResultIdKey] = resultId,
         });
 
-        if (completionSetting.SupportsCompletionListData())
+        if (clientCapabilities.SupportsAnyCompletionListData())
         {
             // Ensure there is data at the completion list level, but only if ItemDefaults isn't set by the delegated server,
             // or if they've set both.

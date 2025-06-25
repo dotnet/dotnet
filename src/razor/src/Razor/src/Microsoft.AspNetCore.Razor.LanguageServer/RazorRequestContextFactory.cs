@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -32,7 +33,7 @@ internal sealed class RazorRequestContextFactory(
             if (textDocumentHandler is ITextDocumentIdentifierHandler<TRequestParams, TextDocumentIdentifier> tdiHandler)
             {
                 var textDocumentIdentifier = tdiHandler.GetTextDocumentIdentifier(@params);
-                uri = textDocumentIdentifier.Uri;
+                uri = textDocumentIdentifier.DocumentUri.GetRequiredParsedUri();
 
                 _logger.LogDebug($"Trying to create DocumentContext for {queueItem.MethodName} for {textDocumentIdentifier.GetProjectContext()?.Id ?? "(no project context)"} for {uri}");
 

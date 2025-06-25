@@ -30,21 +30,22 @@ internal record RazorCompletionResolveData(
         return context;
     }
 
-    public static void Wrap(VSInternalCompletionList completionList, TextDocumentIdentifier textDocument, bool supportsCompletionListData)
+    public static void Wrap(VSInternalCompletionList completionList, TextDocumentIdentifier textDocument, VSInternalClientCapabilities clientCapabilities)
     {
         var data = new RazorCompletionResolveData(textDocument, OriginalData: null);
 
-        if (supportsCompletionListData)
+        if (clientCapabilities.SupportsAnyCompletionListData())
         {
-            if (completionList.Data is not null)
+            if (clientCapabilities.SupportsCompletionListData() || completionList.Data is not null)
             {
                 // Can set data at the completion list level
                 completionList.Data = data with { OriginalData = completionList.Data };
             }
 
-            if (completionList.ItemDefaults?.Data is not null)
+            if (clientCapabilities.SupportsCompletionListItemDefaultsData() || completionList.ItemDefaults?.Data is not null)
             {
                 // Set data for the item defaults
+                completionList.ItemDefaults ??= new();
                 completionList.ItemDefaults.Data = data with { OriginalData = completionList.ItemDefaults.Data };
             }
 
