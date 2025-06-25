@@ -235,11 +235,11 @@ internal static class TagHelperMatchingConventions
         string attributeValue)
     {
         var nameMatches = false;
-        if (descriptor.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
+        if (descriptor.NameComparison == RequiredAttributeNameComparison.FullMatch)
         {
             nameMatches = string.Equals(descriptor.Name, attributeName, descriptor.GetComparison());
         }
-        else if (descriptor.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)
+        else if (descriptor.NameComparison == RequiredAttributeNameComparison.PrefixMatch)
         {
             // attributeName cannot equal the Name if comparing as a PrefixMatch.
             nameMatches = attributeName.Length != descriptor.Name.Length &&
@@ -257,13 +257,13 @@ internal static class TagHelperMatchingConventions
 
         switch (descriptor.ValueComparison)
         {
-            case RequiredAttributeDescriptor.ValueComparisonMode.None:
+            case RequiredAttributeValueComparison.None:
                 return true;
-            case RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch: // Value starts with
+            case RequiredAttributeValueComparison.PrefixMatch: // Value starts with
                 return attributeValue.StartsWith(descriptor.Value.AssumeNotNull(), StringComparison.Ordinal);
-            case RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch: // Value ends with
+            case RequiredAttributeValueComparison.SuffixMatch: // Value ends with
                 return attributeValue.EndsWith(descriptor.Value.AssumeNotNull(), StringComparison.Ordinal);
-            case RequiredAttributeDescriptor.ValueComparisonMode.FullMatch: // Value equals
+            case RequiredAttributeValueComparison.FullMatch: // Value equals
                 return string.Equals(attributeValue, descriptor.Value, StringComparison.Ordinal);
             default:
                 Debug.Assert(false, "Unknown value comparison.");

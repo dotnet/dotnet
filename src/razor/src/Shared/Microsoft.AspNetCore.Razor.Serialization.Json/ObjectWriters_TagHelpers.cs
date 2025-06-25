@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #if !NET
 using System.Collections.Generic;
@@ -89,14 +89,11 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
+                writer.Write(nameof(value.Flags), (byte)value.Flags);
                 writer.Write(nameof(value.Name), value.Name);
-                writer.WriteIfNotZero(nameof(value.NameComparison), (int)value.NameComparison);
-                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
+                writer.WriteIfNotZero(nameof(value.NameComparison), (byte)value.NameComparison);
                 writer.WriteIfNotNull(nameof(value.Value), value.Value);
-                writer.WriteIfNotZero(nameof(value.ValueComparison), (int)value.ValueComparison);
-                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
-
-                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
+                writer.WriteIfNotZero(nameof(value.ValueComparison), (byte)value.ValueComparison);
                 writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }

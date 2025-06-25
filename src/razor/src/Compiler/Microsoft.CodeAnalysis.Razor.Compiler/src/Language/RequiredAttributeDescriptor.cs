@@ -9,46 +9,44 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttributeDescriptor>
 {
+    private readonly RequiredAttributeDescriptorFlags _flags;
     private TagMatchingRuleDescriptor? _parent;
+    private string? _displayName;
+
+    internal RequiredAttributeDescriptorFlags Flags => _flags;
 
     public string Name { get; }
-    public NameComparisonMode NameComparison { get; }
+    public RequiredAttributeNameComparison NameComparison { get; }
     public string? Value { get; }
-    public ValueComparisonMode ValueComparison { get; }
-    public string DisplayName { get; }
-    public bool CaseSensitive { get; }
+    public RequiredAttributeValueComparison ValueComparison { get; }
+    public string DisplayName => _displayName ??= GetDisplayName(Name, NameComparison);
 
-    public MetadataCollection Metadata { get; }
+    public bool CaseSensitive => _flags.IsFlagSet(RequiredAttributeDescriptorFlags.CaseSensitive);
+    public bool IsDirectiveAttribute => _flags.IsFlagSet(RequiredAttributeDescriptorFlags.IsDirectiveAttribute);
 
     internal RequiredAttributeDescriptor(
+        RequiredAttributeDescriptorFlags flags,
         string name,
-        NameComparisonMode nameComparison,
-        bool caseSensitive,
+        RequiredAttributeNameComparison nameComparison,
         string? value,
-        ValueComparisonMode valueComparison,
-        string displayName,
-        ImmutableArray<RazorDiagnostic> diagnostics,
-        MetadataCollection metadata)
+        RequiredAttributeValueComparison valueComparison,
+        ImmutableArray<RazorDiagnostic> diagnostics)
         : base(diagnostics)
     {
+        _flags = flags;
         Name = name;
         NameComparison = nameComparison;
-        CaseSensitive = caseSensitive;
         Value = value;
         ValueComparison = valueComparison;
-        DisplayName = displayName;
-        Metadata = metadata ?? MetadataCollection.Empty;
     }
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {
+        builder.AppendData((int)Flags);
         builder.AppendData(Name);
         builder.AppendData((int)NameComparison);
         builder.AppendData(Value);
         builder.AppendData((int)ValueComparison);
-        builder.AppendData(DisplayName);
-        builder.AppendData(CaseSensitive);
-        builder.AppendData(Metadata.Checksum);
     }
 
     public TagMatchingRuleDescriptor Parent
@@ -64,48 +62,11 @@ public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttrib
 
     public override string ToString()
     {
-        return DisplayName ?? base.ToString()!;
+        return DisplayName;
     }
 
-    /// <summary>
-    /// Acceptable <see cref="Name"/> comparison modes.
-    /// </summary>
-    public enum NameComparisonMode
-    {
-        /// <summary>
-        /// HTML attribute name case insensitively matches <see cref="Name"/>.
-        /// </summary>
-        FullMatch,
-
-        /// <summary>
-        /// HTML attribute name case insensitively starts with <see cref="Name"/>.
-        /// </summary>
-        PrefixMatch,
-    }
-
-    /// <summary>
-    /// Acceptable <see cref="Value"/> comparison modes.
-    /// </summary>
-    public enum ValueComparisonMode
-    {
-        /// <summary>
-        /// HTML attribute value always matches <see cref="Value"/>.
-        /// </summary>
-        None,
-
-        /// <summary>
-        /// HTML attribute value case sensitively matches <see cref="Value"/>.
-        /// </summary>
-        FullMatch,
-
-        /// <summary>
-        /// HTML attribute value case sensitively starts with <see cref="Value"/>.
-        /// </summary>
-        PrefixMatch,
-
-        /// <summary>
-        /// HTML attribute value case sensitively ends with <see cref="Value"/>.
-        /// </summary>
-        SuffixMatch,
-    }
+    internal static string GetDisplayName(string name, RequiredAttributeNameComparison nameComparison)
+        => nameComparison == RequiredAttributeNameComparison.PrefixMatch
+        ? name + "..."
+        : name;
 }

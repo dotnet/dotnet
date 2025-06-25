@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -150,15 +150,15 @@ internal static partial class RazorCodeDocumentExtensions
         return GetLanguageKindCore(classifiedSpans, tagHelperSpans, hostDocumentIndex, documentLength, rightAssociative);
     }
 
-    private static ImmutableArray<ClassifiedSpanInternal> GetClassifiedSpans(RazorCodeDocument document)
+    private static ImmutableArray<ClassifiedSpan> GetClassifiedSpans(RazorCodeDocument document)
         => GetCachedData(document).GetOrComputeClassifiedSpans(CancellationToken.None);
 
-    private static ImmutableArray<TagHelperSpanInternal> GetTagHelperSpans(RazorCodeDocument document)
+    private static ImmutableArray<SourceSpan> GetTagHelperSpans(RazorCodeDocument document)
         => GetCachedData(document).GetOrComputeTagHelperSpans(CancellationToken.None);
 
     private static RazorLanguageKind GetLanguageKindCore(
-        ImmutableArray<ClassifiedSpanInternal> classifiedSpans,
-        ImmutableArray<TagHelperSpanInternal> tagHelperSpans,
+        ImmutableArray<ClassifiedSpan> classifiedSpans,
+        ImmutableArray<SourceSpan> tagHelperSpans,
         int hostDocumentIndex,
         int hostDocumentLength,
         bool rightAssociative)
@@ -178,7 +178,7 @@ internal static partial class RazorCodeDocumentExtensions
                     {
                         // We're at an edge.
 
-                        if (classifiedSpan.SpanKind is SpanKindInternal.MetaCode or SpanKindInternal.Transition)
+                        if (classifiedSpan.Kind is SpanKind.MetaCode or SpanKind.Transition)
                         {
                             // If we're on an edge of a transition of some kind (MetaCode representing an open or closing piece of syntax such as <|,
                             // and Transition representing an explicit transition to/from razor syntax, such as @|), prefer to classify to the span
@@ -206,10 +206,8 @@ internal static partial class RazorCodeDocumentExtensions
             }
         }
 
-        foreach (var tagHelperSpan in tagHelperSpans)
+        foreach (var span in tagHelperSpans)
         {
-            var span = tagHelperSpan.Span;
-
             if (span.AbsoluteIndex <= hostDocumentIndex)
             {
                 var end = span.AbsoluteIndex + span.Length;
@@ -238,13 +236,13 @@ internal static partial class RazorCodeDocumentExtensions
         // Default to Razor
         return RazorLanguageKind.Razor;
 
-        static RazorLanguageKind GetLanguageFromClassifiedSpan(ClassifiedSpanInternal classifiedSpan)
+        static RazorLanguageKind GetLanguageFromClassifiedSpan(ClassifiedSpan classifiedSpan)
         {
             // Overlaps with request
-            return classifiedSpan.SpanKind switch
+            return classifiedSpan.Kind switch
             {
-                SpanKindInternal.Markup => RazorLanguageKind.Html,
-                SpanKindInternal.Code => RazorLanguageKind.CSharp,
+                SpanKind.Markup => RazorLanguageKind.Html,
+                SpanKind.Code => RazorLanguageKind.CSharp,
 
                 // Content type was non-C# or Html or we couldn't find a classified span overlapping the request position.
                 // All other classified span kinds default back to Razor

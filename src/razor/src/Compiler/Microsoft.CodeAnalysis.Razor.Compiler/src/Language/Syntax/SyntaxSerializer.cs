@@ -105,7 +105,7 @@ internal abstract partial class SyntaxSerializer(StringBuilder builder) : Syntax
 
     protected virtual void WriteSpan(TextSpan span)
     {
-        WriteValue($"[{span.Start}..{span.End}{Separator}Width: {span.End - span.Start}");
+        WriteValue($"[{span.Start}..{span.End}){Separator}Width: {span.End - span.Start}");
     }
 
     private void WriteRazorDirective(RazorDirectiveSyntax node)

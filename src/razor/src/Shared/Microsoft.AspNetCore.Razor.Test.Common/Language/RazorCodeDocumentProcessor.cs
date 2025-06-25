@@ -66,6 +66,6 @@ public sealed class RazorCodeDocumentProcessor
         var documentNode = CodeDocument.GetDocumentNode();
         Assert.NotNull(documentNode);
 
-        return documentNode; ;
+        return documentNode;
     }
 }
