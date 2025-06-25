@@ -105,7 +105,12 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
         foreach (string artifactDirectory in Directory.EnumerateDirectories(ArtifactDownloadDirectory))
         {
-            foreach (string manifest in Directory.EnumerateFiles(Path.Combine(artifactDirectory, "manifests"), "*.xml", SearchOption.AllDirectories))
+            var manifestsDir = Path.Combine(artifactDirectory, "manifests");
+            if (!Directory.Exists(manifestsDir))
+            {
+                continue;
+            }
+            foreach (string manifest in Directory.EnumerateFiles(manifestsDir, "*.xml", SearchOption.AllDirectories))
             {
                 using (Stream xmlStream = File.OpenRead(manifest))
                 {
@@ -113,18 +118,19 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
                     // Extract blobs
                     filesToSignCheck.AddRange(doc.Descendants("Blob")
-                        .Where(blob => IsReleaseShipping(blob))
+                        .Where(blob => IsReleaseShipping(blob) && IsExternallyVisible(blob))
                         .Select(blob => (artifactDirectory, ExtractAttribute(blob, "PipelineArtifactPath"))));
 
                     // Extract packages
                     filesToSignCheck.AddRange(doc.Descendants("Package")
-                        .Where(pkg => IsReleaseShipping(pkg))
+                        .Where(pkg => IsReleaseShipping(pkg) && IsExternallyVisible(pkg))
                         .Select(pkg => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
                 }
             }
         }
 
         ForceDirectory(_signCheckFilesDirectory);
+        int count = 0;
 
         // Copy the shipping blobs and packages from the download directory to the signcheck directory
         foreach ((string artifactDirectory, string file) in filesToSignCheck)
@@ -137,23 +143,32 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
             string sourcePath = Path.Combine(artifactDirectory, file);
             string destinationPath = Path.Combine(_signCheckFilesDirectory, file);
+            string? destinationDirectory = Path.GetDirectoryName(destinationPath);
 
-            if (!string.IsNullOrEmpty(sourcePath))
+            if (string.IsNullOrEmpty(destinationPath) || string.IsNullOrEmpty(destinationDirectory))
             {
-                if (File.Exists(destinationPath))
-                {
-                    Log.LogWarning($"File {file} already exists in {_signCheckFilesDirectory}, skipping copy.");
-                }
-                else
-                {
-                    File.Copy(sourcePath, destinationPath, true);
-                }
+                Log.LogWarning($"Invalid destination path.");
+                continue;
             }
-            else
+
+            if (!File.Exists(sourcePath))
             {
-                Log.LogWarning($"File {file} not found in {artifactDirectory}");
+                Log.LogMessage($"File {file} missing from {artifactDirectory}, skipping.");
+                continue;
             }
+
+            ForceDirectory(destinationDirectory);
+
+            if (File.Exists(destinationPath))
+            {
+                Log.LogWarning($"File {file} already exists in {_signCheckFilesDirectory}, skipping.");
+            }
+
+            File.Move(sourcePath, destinationPath, true);
+            count++;
         }
+
+        Log.LogMessage(MessageImportance.High, $"Prepared {count} files to sign check...");
     }
 
     /// <summary>
@@ -370,6 +385,14 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     /// </summary>
     private static bool IsReleaseShipping(XElement element)
         => element.Attribute("DotNetReleaseShipping")?.Value == "true";
+
+    /// <summary>
+    /// Checks if the element has external visibility.
+    /// </summary>
+    /// <param name="element"></param>
+    /// <returns></returns>
+    private static bool IsExternallyVisible(XElement element)
+        => element.Attribute("Visibility")?.Value == "External";
 
     /// <summary>
     /// Creates the directory if it does not exist
