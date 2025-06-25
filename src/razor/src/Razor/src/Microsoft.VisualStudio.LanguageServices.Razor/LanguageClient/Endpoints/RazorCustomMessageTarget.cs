@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -120,19 +121,21 @@ internal partial class RazorCustomMessageTarget
         [CallerMemberName] string? caller = null)
         where TVirtualDocumentSnapshot : VirtualDocumentSnapshot
     {
-        _logger.LogDebug($"Trying to synchronize for {caller} to version {requiredHostDocumentVersion} of {hostDocument.Uri} for {hostDocument.GetProjectContext()?.Id ?? "(no project context)"}");
+        _logger.LogDebug($"Trying to synchronize for {caller} to version {requiredHostDocumentVersion} of {hostDocument.DocumentUri} for {hostDocument.GetProjectContext()?.Id ?? "(no project context)"}");
+
+        var hostDocumentUri = hostDocument.DocumentUri.GetRequiredParsedUri();
 
         // For Html documents we don't do anything fancy, just call the standard service
         // If we're not generating unique document file names, then we can treat C# documents the same way
         if (!_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath ||
             typeof(TVirtualDocumentSnapshot) == typeof(HtmlVirtualDocumentSnapshot))
         {
-            var htmlResult = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+            var htmlResult = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug($"{(htmlResult.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {htmlResult.VirtualSnapshot?.Uri}");
             return htmlResult;
         }
 
-        var virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+        var virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocumentUri, hostDocument.GetProjectContext());
 
         if (virtualDocument is { ProjectKey.IsUnknown: true })
         {
@@ -140,7 +143,7 @@ internal partial class RazorCustomMessageTarget
             if (await _csharpVirtualDocumentAddListener.WaitForDocumentAddAsync(cancellationToken).ConfigureAwait(false))
             {
                 _logger.LogDebug($"Wait successful!");
-                virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+                virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocumentUri, hostDocument.GetProjectContext());
             }
             else
             {
@@ -151,28 +154,28 @@ internal partial class RazorCustomMessageTarget
         if (virtualDocument is null)
         {
             _logger.LogDebug($"No virtual document found, falling back to old code.");
-            return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+            return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, cancellationToken).ConfigureAwait(false);
         }
 
-        var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+        var result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
 
         // If we failed to sync on version 1, then it could be that we got new information while waiting, so try again
         if (requiredHostDocumentVersion == 1 && !result.Synchronized)
         {
             _logger.LogDebug($"Sync failed for v1 document. Trying to get virtual document again.");
-            virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, hostDocument.GetProjectContext());
+            virtualDocument = FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocumentUri, hostDocument.GetProjectContext());
 
             if (virtualDocument is null)
             {
                 _logger.LogDebug($"No virtual document found, falling back to old code.");
-                return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, cancellationToken).ConfigureAwait(false);
+                return await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, cancellationToken).ConfigureAwait(false);
             }
 
             _logger.LogDebug($"Got virtual document after trying again {virtualDocument.Uri}. Trying to synchronize again.");
 
             // try again
-            result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
+            result = await _documentSynchronizer.TrySynchronizeVirtualDocumentAsync<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, virtualDocument.Uri, rejectOnNewerParallelRequest, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug($"{(result.Synchronized ? "Did" : "Did NOT")} synchronize for {caller}: Version {requiredHostDocumentVersion} for {result.VirtualSnapshot?.Uri}");
         }
 
@@ -189,16 +192,18 @@ internal partial class RazorCustomMessageTarget
             throw new InvalidOperationException("Got an LSP document synchronizer I don't know how to handle.");
         }
 
+        var hostDocumentUri = hostDocument.DocumentUri.GetRequiredParsedUri();
+
         // If we're not generating unique document file names, then we don't need to ensure we find the right virtual document
         // as there can only be one anyway
         if (_languageServerFeatureOptions.IncludeProjectKeyInGeneratedFilePath &&
             hostDocument.GetProjectContext() is { } projectContext &&
-            FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocument.Uri, projectContext) is { } virtualDocument)
+            FindVirtualDocument<TVirtualDocumentSnapshot>(hostDocumentUri, projectContext) is { } virtualDocument)
         {
-            return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri, virtualDocument.Uri);
+            return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri, virtualDocument.Uri);
         }
 
-        return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocument.Uri);
+        return documentSynchronizer.TryReturnPossiblyFutureSnapshot<TVirtualDocumentSnapshot>(requiredHostDocumentVersion, hostDocumentUri);
     }
 
     private CSharpVirtualDocumentSnapshot? FindVirtualDocument<TVirtualDocumentSnapshot>(

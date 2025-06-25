@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -78,13 +78,11 @@ internal class RazorCompletionListProvider(
 
         var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
 
-        var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-
         // The completion list is cached and can be retrieved via this result id to enable the resolve completion functionality.
         var filePath = codeDocument.Source.FilePath.AssumeNotNull();
         var razorResolveContext = new RazorCompletionResolveContext(filePath, razorCompletionItems);
         var resultId = _completionListCache.Add(completionList, razorResolveContext);
-        completionList.SetResultId(resultId, completionCapability);
+        completionList.SetResultId(resultId, clientCapabilities);
 
         return completionList;
     }

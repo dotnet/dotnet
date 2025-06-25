@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -97,7 +97,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
             return;
         }
 
-        var path = context.Request.TextDocument.Uri.GetAbsoluteOrUNCPath();
+        var path = context.Request.TextDocument.DocumentUri.GetAbsoluteOrUNCPath();
         path = FilePathNormalizer.Normalize(path);
 
         var directoryName = Path.GetDirectoryName(path);
@@ -291,7 +291,7 @@ internal class ComponentAccessibilityCodeActionProvider(IFileSystem fileSystem) 
         RazorCodeActionContext context, BaseMarkupStartTagSyntax startTag, string newTagName)
     {
         using var textEdits = new PooledArrayBuilder<SumType<TextEdit, AnnotatedTextEdit>>();
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = context.Request.TextDocument.Uri };
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { DocumentUri = context.Request.TextDocument.DocumentUri };
 
         var startTagTextEdit = LspFactory.CreateTextEdit(startTag.Name.GetRange(context.CodeDocument.Source), newTagName);
 

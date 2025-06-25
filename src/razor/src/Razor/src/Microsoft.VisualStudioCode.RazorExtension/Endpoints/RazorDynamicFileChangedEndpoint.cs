@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Endpoints;
 
@@ -20,7 +21,7 @@ internal class RazorDynamicFileChangedEndpoint : AbstractRazorNotificationHandle
     protected override Task HandleNotificationAsync(RazorDynamicFileChangedParams request, RazorRequestContext context, CancellationToken cancellationToken)
     {
         var dynamicFileInfoProvider = context.GetRequiredService<RazorLspDynamicFileInfoProvider>();
-        dynamicFileInfoProvider.Update(request.RazorDocument.Uri);
+        dynamicFileInfoProvider.Update(request.RazorDocument.DocumentUri.GetRequiredParsedUri());
 
         return Task.CompletedTask;
     }

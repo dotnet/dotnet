@@ -58,7 +58,7 @@ internal sealed class RenderModeTagHelperDescriptorProvider() : TagHelperDescrip
             rule.Attribute(attribute =>
             {
                 attribute.Name = "@rendermode";
-                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                attribute.IsDirectiveAttribute = true;
             });
         });
 

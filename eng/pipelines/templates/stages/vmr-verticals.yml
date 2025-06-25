@@ -78,7 +78,7 @@ parameters:
 stages:
 
 #### VERTICAL BUILD (Validation) ####
-- ${{ if or(and(eq(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-linux-buildtests')), and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['System.TeamProject'], 'internal'))) }}:
+- ${{ if or(and(eq(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-linux-buildtests')), and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['System.TeamProject'], 'internal'), containsValue(parameters.verifications, 'unified-build-windows-buildtests'))) }}:
   - stage: VMR_Vertical_Build_Validation
     displayName: VMR Vertical Build Validation
     templateContext:
@@ -105,7 +105,7 @@ stages:
           targetArchitecture: x64
           extraProperties: /p:DotNetBuildTests=true
 
-    - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+    - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-windows-buildtests')) }}:
       - template: ../jobs/vmr-build.yml
         parameters:
           buildName: Windows_BuildTests

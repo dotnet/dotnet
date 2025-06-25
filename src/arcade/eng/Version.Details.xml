@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="20fdc50b34ee89e7c54eef0a193c30ed4816597a" BarId="271343" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="10060d128e3f470e77265f8490f5e4f72dae738e" BarId="272389" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -27,25 +27,25 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25313.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25323.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>7a09c1144283309440a7966c664199944198c920</Sha>
+      <Sha>c9a95aeae77ee977969fa38ad73ed1d8dd96b93f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25313.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25323.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>7a09c1144283309440a7966c664199944198c920</Sha>
+      <Sha>c9a95aeae77ee977969fa38ad73ed1d8dd96b93f</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25315.1">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25323.3">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>6bb54c7884576f040a4a5620f8532f2114bd2abd</Sha>
+      <Sha>fc30025994245df936af84f6989962c63cf22a7d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25315.1">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25323.3">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>6bb54c7884576f040a4a5620f8532f2114bd2abd</Sha>
+      <Sha>fc30025994245df936af84f6989962c63cf22a7d</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25262.1">
+    <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25318.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
-      <Sha>173a357c9d49136d9b7d49ca2bf9709a68067e19</Sha>
+      <Sha>15700cf562e03a74f80064d294e9f7e2c3032ed0</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
@@ -158,9 +158,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25311.1">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25320.2">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>17c1219466e5ec15cceab30a42161e916def8923</Sha>
+      <Sha>f8e423db429900ec56bbbc7e76d8d8711ab0c1f9</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
     <Dependency Name="Microsoft.Build" Version="17.12.36">

@@ -616,4 +616,7 @@
   <data name="Possible_preprocessor_directive_is_misplaced" xml:space="preserve">
     <value>Possible C# preprocessor directive is misplaced. C# preprocessor directives must be at the start of the line, except for whitespace.</value>
   </data>
+  <data name="Parent_has_not_been_set" xml:space="preserve">
+    <value>Parent has not been set.</value>
+  </data>
 </root>

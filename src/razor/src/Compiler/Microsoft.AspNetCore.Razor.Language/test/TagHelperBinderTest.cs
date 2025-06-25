@@ -225,48 +225,38 @@ public class TagHelperBinderTest
         get
         {
             var divDescriptor = TagHelperDescriptorBuilder.Create("DivTagHelper", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("style")))
                 .Build();
             var inputDescriptor = TagHelperDescriptorBuilder.Create("InputTagHelper", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("input")
                     .RequireAttributeDescriptor(attribute => attribute.Name("class"))
                     .RequireAttributeDescriptor(attribute => attribute.Name("style")))
                 .Build();
             var inputWildcardPrefixDescriptor = TagHelperDescriptorBuilder.Create("InputWildCardAttribute", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("input")
-                    .RequireAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("nodashprefix")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)))
+                    .RequireAttributeDescriptor(attribute => attribute
+                        .Name("nodashprefix", RequiredAttributeNameComparison.PrefixMatch)))
                 .Build();
             var catchAllDescriptor = TagHelperDescriptorBuilder.Create("CatchAllTagHelper", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName(TagHelperMatchingConventions.ElementCatchAllName)
                     .RequireAttributeDescriptor(attribute => attribute.Name("class")))
                 .Build();
             var catchAllDescriptor2 = TagHelperDescriptorBuilder.Create("CatchAllTagHelper2", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName(TagHelperMatchingConventions.ElementCatchAllName)
                     .RequireAttributeDescriptor(attribute => attribute.Name("custom"))
                     .RequireAttributeDescriptor(attribute => attribute.Name("class")))
                 .Build();
             var catchAllWildcardPrefixDescriptor = TagHelperDescriptorBuilder.Create("CatchAllWildCardAttribute", "SomeAssembly")
-                .TagMatchingRuleDescriptor(rule =>
-                    rule
+                .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName(TagHelperMatchingConventions.ElementCatchAllName)
-                    .RequireAttributeDescriptor(attribute =>
-                        attribute
-                        .Name("prefix-")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)))
+                    .RequireAttributeDescriptor(attribute => attribute
+                        .Name("prefix-", RequiredAttributeNameComparison.PrefixMatch)))
                 .Build();
             ImmutableArray<TagHelperDescriptor> defaultAvailableDescriptors =
                 [divDescriptor, inputDescriptor, catchAllDescriptor, catchAllDescriptor2];

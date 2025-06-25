@@ -63,7 +63,6 @@
   <ItemGroup Condition="'$(IncludeRoslynDeps)' == 'true'">
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />
     <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures" />
-    <PackageReference Include="Microsoft.CodeAnalysis.EditorFeatures.Wpf" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.Features" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures" />
     <PackageReference Include="Microsoft.CodeAnalysis.ExternalAccess.FSharp" />
@@ -79,7 +78,6 @@
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.CSharp.Workspaces.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Text.dll" />
-    <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.EditorFeatures.Wpf.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.Features.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.ExternalAccess.Razor.EditorFeatures.dll" />
     <VSIXSourceItem Include="$(OutputPath)Microsoft.CodeAnalysis.InteractiveHost.dll" />
