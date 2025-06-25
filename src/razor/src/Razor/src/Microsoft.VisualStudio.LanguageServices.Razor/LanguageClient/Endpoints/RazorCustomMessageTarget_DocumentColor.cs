@@ -29,7 +29,7 @@ internal partial class RazorCustomMessageTarget
             return new List<ColorInformation>();
         }
 
-        documentColorParams.TextDocument.Uri = htmlDoc.Uri;
+        documentColorParams.TextDocument.DocumentUri = new(htmlDoc.Uri);
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<DocumentColorParams, ColorInformation[]>(
             htmlTextBuffer,
@@ -64,7 +64,7 @@ internal partial class RazorCustomMessageTarget
             return new List<ColorPresentation>();
         }
 
-        colorPresentationParams.TextDocument.Uri = htmlDoc.Uri;
+        colorPresentationParams.TextDocument.DocumentUri = new(htmlDoc.Uri);
         var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
         var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<ColorPresentationParams, ColorPresentation[]>(
             htmlTextBuffer,

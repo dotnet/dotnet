@@ -36,7 +36,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -85,7 +85,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -137,7 +137,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -181,7 +181,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -223,7 +223,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = "=",
             Options = new FormattingOptions
@@ -263,7 +263,7 @@ public partial class OnAutoInsertEndpointTest
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = "=",
             Options = new FormattingOptions
@@ -410,7 +410,7 @@ public partial class OnAutoInsertEndpointTest
         var text = codeDocument.Source.Text;
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = new Uri(razorFilePath), },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(new Uri(razorFilePath)), },
             Position = text.GetPosition(cursorPosition),
             Character = character,
             Options = new FormattingOptions

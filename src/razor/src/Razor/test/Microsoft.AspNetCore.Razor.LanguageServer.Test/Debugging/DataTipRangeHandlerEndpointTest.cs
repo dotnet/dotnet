@@ -102,7 +102,7 @@ public sealed class DataTipRangeHandlerEndpointTest(ITestOutputHelper testOutput
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = codeDocument.Source.Text.GetPosition(position)
         };

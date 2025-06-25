@@ -122,9 +122,8 @@ internal static class SimpleTagHelpers
             attribute.BindAttributeParameter(parameter =>
             {
                 parameter.Name = "something";
+                parameter.PropertyName = "Something";
                 parameter.TypeName = typeof(string).FullName;
-
-                parameter.SetMetadata(PropertyName("Something"));
             });
         });
         directiveAttribute1.SetMetadata(
@@ -160,9 +159,8 @@ internal static class SimpleTagHelpers
             attribute.BindAttributeParameter(parameter =>
             {
                 parameter.Name = "something";
+                parameter.PropertyName = "Something";
                 parameter.TypeName = typeof(string).FullName;
-
-                parameter.SetMetadata(PropertyName("Something"));
             });
         });
         directiveAttribute2.SetMetadata(

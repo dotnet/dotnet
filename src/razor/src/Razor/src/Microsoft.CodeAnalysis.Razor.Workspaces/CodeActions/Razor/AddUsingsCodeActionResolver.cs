@@ -29,7 +29,7 @@ internal class AddUsingsCodeActionResolver : IRazorCodeActionResolver
         var documentSnapshot = documentContext.Snapshot;
 
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri };
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { DocumentUri = new(documentContext.Uri) };
 
         using var documentChanges = new PooledArrayBuilder<TextDocumentEdit>();
 
