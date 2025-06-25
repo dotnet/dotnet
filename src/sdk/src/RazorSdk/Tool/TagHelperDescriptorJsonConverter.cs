@@ -236,10 +236,13 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
         writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.Name));
         writer.WriteValue(boundAttributeParameter.Name);
 
+        writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.PropertyName));
+        writer.WriteValue(boundAttributeParameter.PropertyName);
+
         writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.TypeName));
         writer.WriteValue(boundAttributeParameter.TypeName);
 
-        if (boundAttributeParameter.IsEnum != default)
+        if (boundAttributeParameter.IsEnum)
         {
             writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.IsEnum));
             writer.WriteValue(boundAttributeParameter.IsEnum);
@@ -256,9 +259,6 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
             writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.Diagnostics));
             serializer.Serialize(writer, boundAttributeParameter.Diagnostics);
         }
-
-        writer.WritePropertyName(nameof(BoundAttributeParameterDescriptor.Metadata));
-        WriteMetadata(writer, boundAttributeParameter.Metadata);
 
         writer.WriteEndObject();
     }
@@ -492,15 +492,22 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
 
         builder.BindAttributeParameter(parameter =>
         {
-            reader.ReadProperties(propertyName =>
+            reader.ReadProperties(jsonPropertyName =>
             {
-                switch (propertyName)
+                switch (jsonPropertyName)
                 {
                     case nameof(BoundAttributeParameterDescriptor.Name):
                         if (reader.Read())
                         {
                             var name = (string)reader.Value;
                             parameter.Name = name;
+                        }
+                        break;
+                    case nameof(BoundAttributeParameterDescriptor.PropertyName):
+                        if (reader.Read())
+                        {
+                            var propertyName = (string)reader.Value;
+                            parameter.PropertyName = propertyName;
                         }
                         break;
                     case nameof(BoundAttributeParameterDescriptor.TypeName):
@@ -523,9 +530,6 @@ internal class TagHelperDescriptorJsonConverter : JsonConverter
                             var documentation = (string)reader.Value;
                             parameter.SetDocumentation(documentation);
                         }
-                        break;
-                    case nameof(BoundAttributeParameterDescriptor.Metadata):
-                        ReadMetadata(reader, parameter.Metadata);
                         break;
                     case nameof(BoundAttributeParameterDescriptor.Diagnostics):
                         ReadDiagnostics(reader, parameter.Diagnostics);
