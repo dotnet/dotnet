@@ -31,7 +31,7 @@ internal partial class RazorCustomMessageTarget
         var hostDocument = new VSTextDocumentIdentifier
         {
             ProjectContext = foldingRangeParams.TextDocument.GetProjectContext(),
-            Uri = foldingRangeParams.TextDocument.Uri,
+            DocumentUri = foldingRangeParams.TextDocument.DocumentUri,
         };
 
         var csharpRanges = new List<FoldingRange>();
@@ -77,7 +77,7 @@ internal partial class RazorCustomMessageTarget
                 {
                     TextDocument = new()
                     {
-                        Uri = htmlDocument.Uri
+                        DocumentUri = new(htmlDocument.Uri)
                     }
                 };
 

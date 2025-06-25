@@ -78,13 +78,11 @@ internal class RazorCompletionListProvider(
 
         var completionList = CreateLSPCompletionList(razorCompletionItems, clientCapabilities);
 
-        var completionCapability = clientCapabilities?.TextDocument?.Completion as VSInternalCompletionSetting;
-
         // The completion list is cached and can be retrieved via this result id to enable the resolve completion functionality.
         var filePath = codeDocument.Source.FilePath.AssumeNotNull();
         var razorResolveContext = new RazorCompletionResolveContext(filePath, razorCompletionItems);
         var resultId = _completionListCache.Add(completionList, razorResolveContext);
-        completionList.SetResultId(resultId, completionCapability);
+        completionList.SetResultId(resultId, clientCapabilities);
 
         return completionList;
     }

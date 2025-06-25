@@ -2,12 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttributeDescriptor>
 {
+    private TagMatchingRuleDescriptor? _parent;
+
     public string Name { get; }
     public NameComparisonMode NameComparison { get; }
     public string? Value { get; }
@@ -46,6 +49,17 @@ public sealed class RequiredAttributeDescriptor : TagHelperObject<RequiredAttrib
         builder.AppendData(DisplayName);
         builder.AppendData(CaseSensitive);
         builder.AppendData(Metadata.Checksum);
+    }
+
+    public TagMatchingRuleDescriptor Parent
+        => _parent ?? ThrowHelper.ThrowInvalidOperationException<TagMatchingRuleDescriptor>(Resources.Parent_has_not_been_set);
+
+    internal void SetParent(TagMatchingRuleDescriptor parent)
+    {
+        Debug.Assert(parent != null);
+        Debug.Assert(_parent == null);
+
+        _parent = parent;
     }
 
     public override string ToString()

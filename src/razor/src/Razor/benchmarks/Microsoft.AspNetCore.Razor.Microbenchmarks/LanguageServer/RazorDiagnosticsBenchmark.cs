@@ -52,7 +52,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var uri = new Uri(razorFilePath);
         Request = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
         var sourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
         var codeDocument = RazorCodeDocument.Create(sourceDocument, RazorParserOptions.Default, RazorCodeGenerationOptions.DesignTimeDefault);
