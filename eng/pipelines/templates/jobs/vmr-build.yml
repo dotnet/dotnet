@@ -323,6 +323,9 @@ jobs:
         sbomEnabled: false
 
   steps:
+  - checkout: self
+    fetchDepth: 1
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self

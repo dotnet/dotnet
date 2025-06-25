@@ -30,7 +30,7 @@ internal sealed class HtmlFormatter(
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = uri,
+                DocumentUri = new(uri),
             },
             HostDocumentVersion = documentSnapshot.Version,
             Options = options
@@ -62,7 +62,7 @@ internal sealed class HtmlFormatter(
         {
             Position = position,
             Character = triggerCharacter.ToString(),
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Options = options,
             HostDocumentVersion = documentSnapshot.Version,
         };
