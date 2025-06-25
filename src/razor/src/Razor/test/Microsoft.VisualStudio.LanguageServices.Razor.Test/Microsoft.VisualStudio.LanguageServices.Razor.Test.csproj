@@ -33,8 +33,8 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.CodeAnalysis.Razor.Workspaces\GlobalUsings.cs" Link="GlobalUsings.cs" />
-    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\DocumentFormattingTest.cs" Link="Cohost\DocumentFormattingTest.cs" />
-    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\OnTypeFormattingTest.cs" Link="Cohost\OnTypeFormattingTest.cs" />
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\DocumentFormattingTest.cs" Link="Cohost\Formatting\DocumentFormattingTest.cs" />
+    <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\Formatting_NetFx\OnTypeFormattingTest.cs" Link="Cohost\Formatting\OnTypeFormattingTest.cs" />
     <Compile Include="..\Microsoft.AspNetCore.Razor.LanguageServer.Test\XunitAssemblyInfo.cs" Link="XunitAssemblyInfo.cs" />
   </ItemGroup>
 
