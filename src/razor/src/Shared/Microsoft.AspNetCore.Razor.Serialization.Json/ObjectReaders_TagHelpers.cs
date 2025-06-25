@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT license. See License.txt in the project root for license information.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 #if JSONSERIALIZATION_ENABLETAGHELPERCACHE
@@ -153,7 +154,6 @@ internal static partial class ObjectReaders
 
             static BoundAttributeDescriptor ReadFromProperties(JsonDataReader reader)
             {
-                var kind = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.Kind));
                 var name = reader.ReadString(nameof(BoundAttributeDescriptor.Name));
                 var typeName = reader.ReadNonNullString(nameof(BoundAttributeDescriptor.TypeName));
                 var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeDescriptor.IsEnum));
@@ -171,7 +171,7 @@ internal static partial class ObjectReaders
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new BoundAttributeDescriptor(
-                    Cached(kind), Cached(name)!, Cached(typeName), isEnum,
+                    Cached(name)!, Cached(typeName), isEnum,
                     hasIndexer, Cached(indexerNamePrefix), Cached(indexerTypeName),
                     documentationObject, Cached(displayName), Cached(containingType),
                     caseSensitive, isEditorRequired, parameters, metadata, diagnostics);
@@ -184,21 +184,15 @@ internal static partial class ObjectReaders
 
             static BoundAttributeParameterDescriptor ReadFromProperties(JsonDataReader reader)
             {
-                var kind = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.Kind));
+                var flags = (BoundAttributeParameterFlags)reader.ReadInt32(nameof(BoundAttributeParameterDescriptor.Flags));
                 var name = reader.ReadString(nameof(BoundAttributeParameterDescriptor.Name));
-                var typeName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.TypeName));
-                var isEnum = reader.ReadBooleanOrFalse(nameof(BoundAttributeParameterDescriptor.IsEnum));
-                var displayName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.DisplayName));
+                var propertyName = reader.ReadNonNullString(nameof(BoundAttributeParameterDescriptor.PropertyName));
+                var typeNameObject = ReadTypeNameObject(reader, nameof(BoundAttributeParameterDescriptor.TypeName));
                 var documentationObject = ReadDocumentationObject(reader, nameof(BoundAttributeParameterDescriptor.Documentation));
-                var caseSensitive = reader.ReadBooleanOrTrue(nameof(BoundAttributeParameterDescriptor.CaseSensitive));
-
-                var metadata = ReadMetadata(reader, nameof(RequiredAttributeDescriptor.Metadata));
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeParameterDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new BoundAttributeParameterDescriptor(
-                    Cached(kind), Cached(name)!, Cached(typeName),
-                    isEnum, documentationObject, Cached(displayName), caseSensitive,
-                    metadata, diagnostics);
+                    flags, Cached(name)!, Cached(propertyName), typeNameObject, documentationObject, diagnostics);
             }
         }
 
@@ -214,6 +208,25 @@ internal static partial class ObjectReaders
 
                 return new AllowedChildTagDescriptor(Cached(name), Cached(displayName), diagnostics);
             }
+        }
+
+        static TypeNameObject ReadTypeNameObject(JsonDataReader reader, string propertyName)
+        {
+            if (!reader.TryReadPropertyName(propertyName))
+            {
+                return default;
+            }
+
+            if (reader.IsInteger)
+            {
+                var index = reader.ReadByte();
+                return new(index);
+            }
+
+            Debug.Assert(reader.IsString);
+
+            var fullName = reader.ReadNonNullString();
+            return new(Cached(fullName));
         }
 
         static DocumentationObject ReadDocumentationObject(JsonDataReader reader, string propertyName)

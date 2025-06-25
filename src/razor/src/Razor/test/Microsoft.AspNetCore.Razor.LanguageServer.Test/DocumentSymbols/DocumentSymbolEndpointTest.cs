@@ -110,7 +110,7 @@ public class DocumentSymbolEndpointTest(ITestOutputHelper testOutput) : SingleSe
         {
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath),
+                DocumentUri = new(new Uri(razorFilePath)),
                 ProjectContext = new VSProjectContext()
                 {
                     Label = "test",

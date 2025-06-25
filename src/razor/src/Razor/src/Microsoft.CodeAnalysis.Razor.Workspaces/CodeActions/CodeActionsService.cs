@@ -151,7 +151,7 @@ internal class CodeActionsService(
         {
             TextDocument = new VSTextDocumentIdentifier()
             {
-                Uri = request.TextDocument.Uri,
+                DocumentUri = request.TextDocument.DocumentUri,
                 ProjectContext = request.TextDocument.ProjectContext
             },
             Context = newContext,

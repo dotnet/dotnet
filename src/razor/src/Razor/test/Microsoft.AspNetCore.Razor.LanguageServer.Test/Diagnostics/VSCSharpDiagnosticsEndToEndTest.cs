@@ -89,7 +89,7 @@ public class VSCSharpDiagnosticsEndToEndTest(ITestOutputHelper testOutput) : Sin
 
         var diagnosticsRequest = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
         var diagnostics = await diagnosticsEndPoint.HandleRequestAsync(diagnosticsRequest, requestContext, DisposalToken);
 
