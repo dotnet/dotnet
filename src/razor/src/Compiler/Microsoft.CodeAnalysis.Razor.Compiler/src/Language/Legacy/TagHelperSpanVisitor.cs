@@ -2,13 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
-namespace Microsoft.AspNetCore.Razor.Language;
+namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
-internal class TagHelperSpanVisitor : SyntaxWalker
+internal sealed class TagHelperSpanVisitor : SyntaxWalker
 {
     private readonly RazorSourceDocument _source;
     private readonly ImmutableArray<TagHelperSpanInternal>.Builder _spans;

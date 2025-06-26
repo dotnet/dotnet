@@ -32,11 +32,6 @@ public static class CommonMetadata
     internal static KeyValuePair<string, string?> TypeNameIdentifier(string value)
         => new(TagHelperMetadata.Common.TypeNameIdentifier, value);
 
-    internal static class Attributes
-    {
-        public static readonly MetadataCollection IsDirectiveAttribute = MetadataCollection.Create(CommonMetadata.IsDirectiveAttribute);
-    }
-
     internal static class Parameters
     {
         public static readonly MetadataCollection After = MetadataCollection.Create(PropertyName("After"));

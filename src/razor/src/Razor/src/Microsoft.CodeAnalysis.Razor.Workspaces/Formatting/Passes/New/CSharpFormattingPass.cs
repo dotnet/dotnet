@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -56,6 +56,11 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             if (lineInfo.SkipPreviousLine)
             {
                 iFormatted++;
+            }
+
+            if (iFormatted >= formattedCSharpText.Lines.Count)
+            {
+                break;
             }
 
             var formattedLine = formattedCSharpText.Lines[iFormatted];
@@ -139,13 +144,25 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
             }
             else if (lineInfo.SkipNextLineIfBrace)
             {
-                // If the next line is a brace, we skip it, otherwise we don't. This is used to skip the opening brace of a class
+                // If the next line is a brace, we skip it. This is used to skip the opening brace of a class
                 // that we insert, but Roslyn settings might place on the same like as the class declaration.
                 if (iFormatted + 1 < formattedCSharpText.Lines.Count &&
                     formattedCSharpText.Lines[iFormatted + 1] is { Span.Length: > 0 } nextLine &&
                     nextLine.CharAt(0) == '{')
                 {
                     iFormatted++;
+                }
+
+                // On the other hand, we might insert the opening brace of a class, and Roslyn might collapse
+                // it up to the previous line, so we would want to skip the next line in the original document
+                // in that case. Fortunately its illegal to have `@code {\r\n {` in a Razor file, so there can't
+                // be false positives here.
+                if (iOriginal + 1 < changedText.Lines.Count &&
+                    changedText.Lines[iOriginal + 1] is { } nextOriginalLine &&
+                    nextOriginalLine.GetFirstNonWhitespaceOffset() is { } firstChar &&
+                    nextOriginalLine.CharAt(firstChar) == '{')
+                {
+                    iOriginal++;
                 }
             }
         }
