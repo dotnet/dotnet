@@ -57,7 +57,7 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
             rule.Attribute(attribute =>
             {
                 attribute.Name = "@key";
-                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                attribute.IsDirectiveAttribute = true;
             });
         });
 

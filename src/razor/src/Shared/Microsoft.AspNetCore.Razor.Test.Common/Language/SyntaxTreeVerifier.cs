@@ -30,6 +30,7 @@ internal class SyntaxTreeVerifier
             {
                 builder.Append(sourceText[i]);
             }
+
             var sourceString = builder.ToString();
 
             // Make sure the syntax tree contains all of the text in the document.

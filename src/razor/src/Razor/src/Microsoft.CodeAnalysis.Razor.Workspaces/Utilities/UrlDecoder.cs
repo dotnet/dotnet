@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 // Note: This was refactored from http://github.com/dotnet/runtime. The original algorithm is located at
 // https://github.com/dotnet/runtime/blob/876f763a8ff8345b61897ff6297876445b2b484f/src/libraries/System.Private.CoreLib/src/System/Net/WebUtility.cs#L483-L543
