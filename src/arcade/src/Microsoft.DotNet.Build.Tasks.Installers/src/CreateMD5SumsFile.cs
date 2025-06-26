@@ -29,7 +29,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            using FileStream outputFile = File.OpenWrite(OutputFile);
+            using FileStream outputFile = File.Create(OutputFile);
             using StreamWriter writer = new(outputFile, Encoding.ASCII);
             ulong installedSize = 0;
             foreach (ITaskItem file in Files)
