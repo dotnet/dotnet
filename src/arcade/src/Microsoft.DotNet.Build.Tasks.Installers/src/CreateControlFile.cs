@@ -42,7 +42,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            using Stream stream = File.OpenWrite(ControlFileOutputPath);
+            using Stream stream = File.Create(ControlFileOutputPath);
             using StreamWriter writer = new(stream, Encoding.ASCII);
             writer.WriteLine($"Package: {PackageName}");
             writer.WriteLine($"Version: {PackageVersion}");
