@@ -293,9 +293,9 @@ namespace Microsoft.DotNet.SignTool
 
         private static string ExtractDebContainerEntry(string debianPackage, string entryName, string workingDir)
         {
-            var (relativePath, content, contentSize) = ZipData.ReadDebContainerEntries(debianPackage, entryName).Single();
-            string entryPath = Path.Combine(workingDir, relativePath);
-            File.WriteAllBytes(entryPath, ((MemoryStream)content).ToArray());
+            var entry = ZipData.ReadDebContainerEntries(debianPackage, entryName).Single();
+            string entryPath = Path.Combine(workingDir, entry.RelativePath);
+            entry.WriteToFile(entryPath);
 
             return entryPath;
         }

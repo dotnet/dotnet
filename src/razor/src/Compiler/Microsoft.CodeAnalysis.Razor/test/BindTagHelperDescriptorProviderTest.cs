@@ -108,9 +108,9 @@ namespace Test
                 Assert.Empty(requiredAttribute.Diagnostics);
                 Assert.Equal("@bind-MyProperty", requiredAttribute.DisplayName);
                 Assert.Equal("@bind-MyProperty", requiredAttribute.Name);
-                Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                 Assert.Null(requiredAttribute.Value);
-                Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
             },
             rule =>
             {
@@ -126,18 +126,18 @@ namespace Test
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind-MyProperty:get", requiredAttribute.DisplayName);
                         Assert.Equal("@bind-MyProperty:get", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
                     },
                     requiredAttribute =>
                     {
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind-MyProperty:set", requiredAttribute.DisplayName);
                         Assert.Equal("@bind-MyProperty:set", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
                     });
             });
 
@@ -332,9 +332,9 @@ namespace Test
                 Assert.Empty(requiredAttribute.Diagnostics);
                 Assert.Equal("@bind-MyProperty", requiredAttribute.DisplayName);
                 Assert.Equal("@bind-MyProperty", requiredAttribute.Name);
-                Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                 Assert.Null(requiredAttribute.Value);
-                Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
             },
             rule =>
             {
@@ -350,18 +350,18 @@ namespace Test
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind-MyProperty:get", requiredAttribute.DisplayName);
                         Assert.Equal("@bind-MyProperty:get", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
                     },
                     requiredAttribute =>
                     {
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind-MyProperty:set", requiredAttribute.DisplayName);
                         Assert.Equal("@bind-MyProperty:set", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
                     });
             });
 
@@ -516,9 +516,9 @@ namespace Test
                 Assert.Empty(requiredAttribute.Diagnostics);
                 Assert.Equal("@bind", requiredAttribute.DisplayName);
                 Assert.Equal("@bind", requiredAttribute.Name);
-                Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                 Assert.Null(requiredAttribute.Value);
-                Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
                 var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
                 AssertAttribute(attribute);
@@ -537,9 +537,9 @@ namespace Test
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind:get", requiredAttribute.DisplayName);
                         Assert.Equal("@bind:get", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
                         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
                         AssertAttribute(attribute);
@@ -549,9 +549,9 @@ namespace Test
                         Assert.Empty(requiredAttribute.Diagnostics);
                         Assert.Equal("@bind:set", requiredAttribute.DisplayName);
                         Assert.Equal("@bind:set", requiredAttribute.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
                         Assert.Null(requiredAttribute.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
                         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
                         AssertAttribute(attribute);
@@ -600,7 +600,7 @@ namespace Test
                 parameter.Documentation);
 
             Assert.Equal("format", parameter.Name);
-            Assert.Equal("Format_myprop", parameter.GetPropertyName());
+            Assert.Equal("Format_myprop", parameter.PropertyName);
             Assert.Equal(":format", parameter.DisplayName);
 
             // Defined from the property type
@@ -622,7 +622,7 @@ namespace Test
                 parameter.Documentation);
 
             Assert.Equal("culture", parameter.Name);
-            Assert.Equal("Culture", parameter.GetPropertyName());
+            Assert.Equal("Culture", parameter.PropertyName);
             Assert.Equal(":culture", parameter.DisplayName);
 
             // Defined from the property type
@@ -644,7 +644,7 @@ namespace Test
                 parameter.Documentation);
 
             Assert.Equal("get", parameter.Name);
-            Assert.Equal("Get", parameter.GetPropertyName());
+            Assert.Equal("Get", parameter.PropertyName);
             Assert.Equal(":get", parameter.DisplayName);
 
             // Defined from the property type
@@ -666,7 +666,7 @@ namespace Test
                 parameter.Documentation);
 
             Assert.Equal("set", parameter.Name);
-            Assert.Equal("Set", parameter.GetPropertyName());
+            Assert.Equal("Set", parameter.PropertyName);
             Assert.Equal(":set", parameter.DisplayName);
 
             // Defined from the property type
@@ -688,7 +688,7 @@ namespace Test
                 parameter.Documentation);
 
             Assert.Equal("after", parameter.Name);
-            Assert.Equal("After", parameter.GetPropertyName());
+            Assert.Equal("After", parameter.PropertyName);
             Assert.Equal(":after", parameter.DisplayName);
 
             // Defined from the property type
@@ -852,7 +852,7 @@ namespace Test
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
         Assert.Equal("format", parameter.Name);
-        Assert.Equal("Format_myprop", parameter.GetPropertyName());
+        Assert.Equal("Format_myprop", parameter.PropertyName);
         Assert.Equal(":format", parameter.DisplayName);
     }
 
@@ -903,9 +903,9 @@ namespace Test
                     {
                         Assert.Equal("type", a.DisplayName);
                         Assert.Equal("type", a.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, a.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, a.NameComparison);
                         Assert.Equal("checkbox", a.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch, a.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.FullMatch, a.ValueComparison);
                     },
                     a =>
                     {
@@ -924,9 +924,9 @@ namespace Test
                     {
                         Assert.Equal("type", a.DisplayName);
                         Assert.Equal("type", a.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, a.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, a.NameComparison);
                         Assert.Equal("checkbox", a.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch, a.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.FullMatch, a.ValueComparison);
                     },
                     a =>
                     {
@@ -947,7 +947,7 @@ namespace Test
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
         Assert.Equal("format", parameter.Name);
-        Assert.Equal("Format_myprop", parameter.GetPropertyName());
+        Assert.Equal("Format_myprop", parameter.PropertyName);
         Assert.Equal(":format", parameter.DisplayName);
     }
 
@@ -1000,9 +1000,9 @@ namespace Test
                     {
                         Assert.Equal("type", a.DisplayName);
                         Assert.Equal("type", a.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, a.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, a.NameComparison);
                         Assert.Equal("checkbox", a.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch, a.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.FullMatch, a.ValueComparison);
                     },
                     a =>
                     {
@@ -1021,9 +1021,9 @@ namespace Test
                     {
                         Assert.Equal("type", a.DisplayName);
                         Assert.Equal("type", a.Name);
-                        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, a.NameComparison);
+                        Assert.Equal(RequiredAttributeNameComparison.FullMatch, a.NameComparison);
                         Assert.Equal("checkbox", a.Value);
-                        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch, a.ValueComparison);
+                        Assert.Equal(RequiredAttributeValueComparison.FullMatch, a.ValueComparison);
                     },
                     a =>
                     {
@@ -1044,7 +1044,7 @@ namespace Test
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
         Assert.Equal("format", parameter.Name);
-        Assert.Equal("Format_somevalue", parameter.GetPropertyName());
+        Assert.Equal("Format_somevalue", parameter.PropertyName);
         Assert.Equal(":format", parameter.DisplayName);
     }
 
@@ -1148,9 +1148,9 @@ namespace Test
         Assert.Empty(requiredAttribute.Diagnostics);
         Assert.Equal("@bind-...", requiredAttribute.DisplayName);
         Assert.Equal("@bind-", requiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch, requiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.PrefixMatch, requiredAttribute.NameComparison);
         Assert.Null(requiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
 
@@ -1201,7 +1201,7 @@ namespace Test
             parameter.Documentation);
 
         Assert.Equal("format", parameter.Name);
-        Assert.Equal("Format", parameter.GetPropertyName());
+        Assert.Equal("Format", parameter.PropertyName);
         Assert.Equal(":format", parameter.DisplayName);
 
         // Defined from the property type
@@ -1223,7 +1223,7 @@ namespace Test
             parameter.Documentation);
 
         Assert.Equal("culture", parameter.Name);
-        Assert.Equal("Culture", parameter.GetPropertyName());
+        Assert.Equal("Culture", parameter.PropertyName);
         Assert.Equal(":culture", parameter.DisplayName);
 
         // Defined from the property type

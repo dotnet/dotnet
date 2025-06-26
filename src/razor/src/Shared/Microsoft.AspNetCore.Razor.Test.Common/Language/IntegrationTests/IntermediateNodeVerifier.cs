@@ -78,12 +78,12 @@ public static class IntermediateNodeVerifier
                 throw new IntermediateNodeBaselineException(node, Ancestors.ToArray(), expected, actual, message);
             }
 
-            int charsVerified = 0;
+            var charsVerified = 0;
             AssertNestingEqual(node, ancestors, expected, actual, ref charsVerified);
             AssertNameEqual(node, ancestors, expected, actual, ref charsVerified);
-            AssertDelimiter(node, expected, actual, true, ref charsVerified);
+            AssertDelimiter(expected, actual, true, ref charsVerified);
             AssertLocationEqual(node, ancestors, expected, actual, ref charsVerified);
-            AssertDelimiter(node, expected, actual, false, ref charsVerified);
+            AssertDelimiter(expected, actual, false, ref charsVerified);
             AssertContentEqual(node, ancestors, expected, actual, ref charsVerified);
 
             throw new InvalidOperationException("We can't figure out HOW these two things are different. This is a bug.");
@@ -140,7 +140,7 @@ public static class IntermediateNodeVerifier
         }
 
         // Either both strings need to have a delimiter next or neither should.
-        private static void AssertDelimiter(IntermediateNode node, string expected, string actual, bool required, ref int charsVerified)
+        private static void AssertDelimiter(string expected, string actual, bool required, ref int charsVerified)
         {
             if (charsVerified == expected.Length && required)
             {
@@ -227,7 +227,7 @@ public static class IntermediateNodeVerifier
         private class IntermediateNodeBaselineException : XunitException
         {
             public IntermediateNodeBaselineException(IntermediateNode node, IntermediateNode[] ancestors, string expected, string actual, string userMessage)
-                : base(Format(node, ancestors, expected, actual, userMessage))
+                : base(Format(ancestors, expected, actual, userMessage))
             {
                 Node = node;
                 Expected = expected;
@@ -240,7 +240,7 @@ public static class IntermediateNodeVerifier
 
             public string Expected { get; }
 
-            private static string Format(IntermediateNode node, IntermediateNode[] ancestors, string expected, string actual, string userMessage)
+            private static string Format(IntermediateNode[] ancestors, string expected, string actual, string userMessage)
             {
                 using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
