@@ -142,8 +142,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
             rule.Attribute(attribute =>
             {
                 attribute.Name = "@bind-";
-                attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
-                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                attribute.NameComparison = RequiredAttributeNameComparison.PrefixMatch;
+                attribute.IsDirectiveAttribute = true;
             });
         });
 
@@ -404,17 +404,17 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     rule.Attribute(a =>
                     {
                         a.Name = "type";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
                         a.Value = typeAttribute;
-                        a.ValueComparisonMode = RequiredAttributeDescriptor.ValueComparisonMode.FullMatch;
+                        a.ValueComparison = RequiredAttributeValueComparison.FullMatch;
                     });
                 }
 
                 rule.Attribute(a =>
                 {
                     a.Name = attributeName;
-                    a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                    a.SetMetadata(Attributes.IsDirectiveAttribute);
+                    a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                    a.IsDirectiveAttribute = true;
                 });
             });
 
@@ -426,24 +426,24 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     rule.Attribute(a =>
                     {
                         a.Name = "type";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
                         a.Value = typeAttribute;
-                        a.ValueComparisonMode = RequiredAttributeDescriptor.ValueComparisonMode.FullMatch;
+                        a.ValueComparison = RequiredAttributeValueComparison.FullMatch;
                     });
                 }
 
                 rule.Attribute(a =>
                 {
                     a.Name = $"{attributeName}:get";
-                    a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                    a.SetMetadata(Attributes.IsDirectiveAttribute);
+                    a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                    a.IsDirectiveAttribute = true;
                 });
 
                 rule.Attribute(a =>
                 {
                     a.Name = $"{attributeName}:set";
-                    a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                    a.SetMetadata(Attributes.IsDirectiveAttribute);
+                    a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                    a.IsDirectiveAttribute = true;
                 });
             });
 
@@ -624,8 +624,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     rule.Attribute(attribute =>
                     {
                         attribute.Name = "@bind-" + valueAttribute.Name;
-                        attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                        attribute.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        attribute.IsDirectiveAttribute = true;
                     });
                 });
 
@@ -635,14 +635,14 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     rule.Attribute(attribute =>
                     {
                         attribute.Name = "@bind-" + valueAttribute.Name + ":get";
-                        attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                        attribute.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        attribute.IsDirectiveAttribute = true;
                     });
                     rule.Attribute(attribute =>
                     {
                         attribute.Name = "@bind-" + valueAttribute.Name + ":set";
-                        attribute.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                        attribute.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        attribute.IsDirectiveAttribute = true;
                     });
                 });
 

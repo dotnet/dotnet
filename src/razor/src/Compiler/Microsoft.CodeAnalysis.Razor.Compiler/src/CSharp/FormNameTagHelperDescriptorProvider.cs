@@ -61,7 +61,7 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
             rule.Attribute(attribute =>
             {
                 attribute.Name = "@formname";
-                attribute.SetMetadata(Attributes.IsDirectiveAttribute);
+                attribute.IsDirectiveAttribute = true;
             });
         });
 

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 #if COHOSTING
-namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
+namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 #else
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Formatting;
 #endif
@@ -69,6 +69,168 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.None
+            });
+    }
+
+    [FormattingTestFact]
+    public async Task RoslynFormatBracesAsKandR_CodeBlockBraceOnNextLine()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <h1>count is @counter</h1>
+
+                @code
+                {
+                private int counter;
+
+                class Goo
+                {
+                    public void Bar()
+                    {
+                        counter++;
+                    }
+                }
+                }
+                """,
+            expected: """
+                <h1>count is @counter</h1>
+
+                @code
+                {
+                    private int counter;
+
+                    class Goo {
+                        public void Bar() {
+                            counter++;
+                        }
+                    }
+                }
+                """,
+            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorNewLinePlacement.None
+            });
+    }
+
+    [FormattingTestFact]
+    public async Task RoslynFormatBracesAsKandR_NoRazorOrHtml()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            expected: """
+                @code {
+                    private bool IconMenuActive { get; set; } = false;
+                    protected void ToggleIconMenu(bool iconMenuActive)
+                    {
+                        IconMenuActive = iconMenuActive;
+                    }
+                }
+                """,
+            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
+            });
+    }
+
+    [FormattingTestFact]
+    public async Task RoslynFormatBracesAsKandR_CodeBlockBraceOnNextLine_NoRazorOrHtml()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code
+                {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            expected: """
+                @code
+                {
+                    private bool IconMenuActive { get; set; } = false;
+                    protected void ToggleIconMenu(bool iconMenuActive)
+                    {
+                        IconMenuActive = iconMenuActive;
+                    }
+                }
+                """,
+            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
+            });
+    }
+
+    [FormattingTestFact]
+    public async Task RoslynFormatBracesAsKandR_CodeBlockBraceIndented_NoRazorOrHtml()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                @code
+                    {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                """,
+            expected: """
+                @code
+                {
+                    private bool IconMenuActive { get; set; } = false;
+                    protected void ToggleIconMenu(bool iconMenuActive)
+                    {
+                        IconMenuActive = iconMenuActive;
+                    }
+                }
+                """,
+            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
+            });
+    }
+
+    [FormattingTestFact]
+    public async Task RoslynFormatBracesAsKandR_CodeBlockBraceIndented_InsideHtml()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+                @code
+                            {
+                private bool IconMenuActive { get; set; } = false;
+                protected void ToggleIconMenu(bool iconMenuActive)
+                {
+                IconMenuActive = iconMenuActive;
+                }
+                }
+                </div>
+                """,
+            expected: """
+                <div>
+                    @code
+                    {
+                        private bool IconMenuActive { get; set; } = false;
+                        protected void ToggleIconMenu(bool iconMenuActive)
+                        {
+                            IconMenuActive = iconMenuActive;
+                        }
+                    }
+                </div>
+                """,
+            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
             });
     }
 
@@ -6422,8 +6584,8 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
     [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11873")]
     public Task NestedExplicitExpression4()
-    => RunFormattingTestAsync(
-        input: """
+        => RunFormattingTestAsync(
+            input: """
                 @if (true)
                 {
                     <span>
@@ -6442,7 +6604,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     </span>
                 }
                 """,
-        expected: """
+            expected: """
                 @if (true)
                 {
                     <span>

@@ -238,7 +238,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
-        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
@@ -270,7 +270,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
-        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 
@@ -303,7 +303,7 @@ public class InputTestTagHelper : {{typeof(TagHelper).FullName}}
         // Assert
         AssertDocumentNodeMatchesBaseline(compiled.CodeDocument.GetDocumentNode());
         AssertCSharpDocumentMatchesBaseline(compiled.CodeDocument.GetCSharpDocument());
-        AssertLinePragmas(compiled.CodeDocument, designTime: false);
+        AssertLinePragmas(compiled.CodeDocument);
         AssertSourceMappingsMatchBaseline(compiled.CodeDocument);
     }
 

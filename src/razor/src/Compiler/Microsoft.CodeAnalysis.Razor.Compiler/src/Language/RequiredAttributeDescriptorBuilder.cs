@@ -2,12 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -15,7 +13,7 @@ public sealed partial class RequiredAttributeDescriptorBuilder : TagHelperObject
 {
     [AllowNull]
     private TagMatchingRuleDescriptorBuilder _parent;
-    private MetadataHolder _metadata;
+    private RequiredAttributeDescriptorFlags _flags;
 
     private RequiredAttributeDescriptorBuilder()
     {
@@ -27,75 +25,73 @@ public sealed partial class RequiredAttributeDescriptorBuilder : TagHelperObject
     }
 
     public string? Name { get; set; }
-    public NameComparisonMode NameComparisonMode { get; set; }
+    public RequiredAttributeNameComparison NameComparison { get; set; }
     public string? Value { get; set; }
-    public ValueComparisonMode ValueComparisonMode { get; set; }
+    public RequiredAttributeValueComparison ValueComparison { get; set; }
 
     internal bool CaseSensitive => _parent.CaseSensitive;
 
-    public IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
-
-    public void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
-
-    public bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
-        => _metadata.TryGetMetadataValue(key, out value);
+    public bool IsDirectiveAttribute
+    {
+        get => _flags.IsFlagSet(RequiredAttributeDescriptorFlags.IsDirectiveAttribute);
+        set => _flags.UpdateFlag(RequiredAttributeDescriptorFlags.IsDirectiveAttribute, value);
+    }
 
     private protected override RequiredAttributeDescriptor BuildCore(ImmutableArray<RazorDiagnostic> diagnostics)
     {
-        var displayName = GetDisplayName();
-        var metadata = _metadata.GetMetadataCollection();
+        var flags = _flags;
+
+        if (CaseSensitive)
+        {
+            flags |= RequiredAttributeDescriptorFlags.CaseSensitive;
+        }
 
         return new RequiredAttributeDescriptor(
+            flags,
             Name ?? string.Empty,
-            NameComparisonMode,
-            CaseSensitive,
+            NameComparison,
             Value,
-            ValueComparisonMode,
-            displayName,
-            diagnostics,
-            metadata);
+            ValueComparison,
+            diagnostics);
     }
-
-    private string GetDisplayName()
-    {
-        return (NameComparisonMode == NameComparisonMode.PrefixMatch ? string.Concat(Name, "...") : Name) ?? string.Empty;
-    }
-
-    private bool IsDirectiveAttribute()
-        => TryGetMetadataValue(ComponentMetadata.Common.DirectiveAttribute, out var value) &&
-           value == bool.TrueString;
 
     private protected override void CollectDiagnostics(ref PooledHashSet<RazorDiagnostic> diagnostics)
     {
-        if (Name.IsNullOrWhiteSpace())
+        var name = Name;
+
+        if (name.IsNullOrWhiteSpace())
         {
             var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeNameNullOrWhitespace();
 
             diagnostics.Add(diagnostic);
+            return;
         }
-        else
+
+        var nameSpan = name.AsSpan();
+        Debug.Assert(nameSpan.Length > 0, "Name should not be empty at this point.");
+
+        if (IsDirectiveAttribute)
         {
-            var name = Name.AsSpan();
-            var isDirectiveAttribute = IsDirectiveAttribute();
-            if (isDirectiveAttribute && name[0] == '@')
+            if (nameSpan[0] == '@')
             {
-                name = name[1..];
+                nameSpan = nameSpan[1..];
             }
-            else if (isDirectiveAttribute)
+            else
             {
-                var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidRequiredDirectiveAttributeName(GetDisplayName(), Name);
+                var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidRequiredDirectiveAttributeName(
+                    RequiredAttributeDescriptor.GetDisplayName(name, NameComparison), name);
 
                 diagnostics.Add(diagnostic);
             }
+        }
 
-            foreach (var ch in name)
+        foreach (var ch in nameSpan)
+        {
+            if (char.IsWhiteSpace(ch) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(ch))
             {
-                if (char.IsWhiteSpace(ch) || HtmlConventions.IsInvalidNonWhitespaceHtmlCharacters(ch))
-                {
-                    var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeName(Name, ch);
+                var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidTargetedAttributeName(name, ch);
 
-                    diagnostics.Add(diagnostic);
-                }
+                diagnostics.Add(diagnostic);
             }
         }
     }
