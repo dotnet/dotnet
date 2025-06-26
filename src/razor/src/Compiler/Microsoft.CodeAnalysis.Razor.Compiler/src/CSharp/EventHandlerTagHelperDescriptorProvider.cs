@@ -180,8 +180,8 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                 rule.Attribute(a =>
                 {
                     a.Name = attributeName;
-                    a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                    a.SetMetadata(Attributes.IsDirectiveAttribute);
+                    a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                    a.IsDirectiveAttribute = true;
                 });
             });
 
@@ -194,8 +194,8 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                     rule.Attribute(a =>
                     {
                         a.Name = attributeName + ":preventDefault";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        a.SetMetadata(Attributes.IsDirectiveAttribute);
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        a.IsDirectiveAttribute = true;
                     });
                 });
             }
@@ -209,8 +209,8 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                     rule.Attribute(a =>
                     {
                         a.Name = attributeName + ":stopPropagation";
-                        a.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
-                        a.SetMetadata(Attributes.IsDirectiveAttribute);
+                        a.NameComparison = RequiredAttributeNameComparison.FullMatch;
+                        a.IsDirectiveAttribute = true;
                     });
                 });
             }
@@ -240,13 +240,12 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                     a.BindAttributeParameter(parameter =>
                     {
                         parameter.Name = "preventDefault";
+                        parameter.PropertyName = "PreventDefault";
                         parameter.TypeName = typeof(bool).FullName;
                         parameter.SetDocumentation(
                             DocumentationDescriptor.From(
                                 DocumentationId.EventHandlerTagHelper_PreventDefault,
                                 attributeName));
-
-                        parameter.SetMetadata(Parameters.PreventDefault);
                     });
                 }
 
@@ -255,13 +254,12 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                     a.BindAttributeParameter(parameter =>
                     {
                         parameter.Name = "stopPropagation";
+                        parameter.PropertyName = "StopPropagation";
                         parameter.TypeName = typeof(bool).FullName;
                         parameter.SetDocumentation(
                             DocumentationDescriptor.From(
                                 DocumentationId.EventHandlerTagHelper_StopPropagation,
                                 attributeName));
-
-                        parameter.SetMetadata(Parameters.StopPropagation);
                     });
                 }
             });

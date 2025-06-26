@@ -93,15 +93,15 @@ public sealed class TagMatchingRuleDescriptor : TagHelperObject<TagMatchingRuleD
             var name = attribute.Name switch
             {
                 null => "*",
-                var prefix when attribute.NameComparison == RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch => $"^{prefix}",
+                var prefix when attribute.NameComparison == RequiredAttributeNameComparison.PrefixMatch => $"^{prefix}",
                 var full => full,
             };
 
             var value = attribute.Value switch
             {
                 null => "",
-                var prefix when attribute.ValueComparison == RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch => $"^={prefix}",
-                var suffix when attribute.ValueComparison == RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch => $"$={suffix}",
+                var prefix when attribute.ValueComparison == RequiredAttributeValueComparison.PrefixMatch => $"^={prefix}",
+                var suffix when attribute.ValueComparison == RequiredAttributeValueComparison.SuffixMatch => $"$={suffix}",
                 var full => $"={full}",
             };
             return name + value;
