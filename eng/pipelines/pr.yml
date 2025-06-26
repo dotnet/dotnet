@@ -58,5 +58,5 @@ stages:
       vmImage: 'windows-latest'
     steps:
 
-    - script: .dotnet/dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+    - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
       displayName: 'Execute ChangeValidation Tool'
