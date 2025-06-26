@@ -59,10 +59,6 @@ Let's use roslyn's dependency on command-line-api as an example to demonstrate t
   * No PackageVersions.props overrides happen because command-line-api doesn't exist in the build graph
   * That's ok because the static version defined in Version.Details is the one we want to consume
 
-**Considerations**
-
-- **Validation of 2xx+ repos** - A repo is validated on backflow based on what it built against. So a 1xx SDK repo branch receives the source changes in the 1xx VMR sdk sources, as well as the outputs of the VMR build, which includes the runtime that the SDK built against in that VMR build. This means that on backflow, the SDK PR is validating the SDK's sources against the updated SDK dependencies. For 2xx+ branches, only a subset of outputs is produced, so a backflow PR would not include all the dependencies that the 2xx SDK needs. To deal with this, we will attempt to use the CoherentParentDependency feature. CoherentParentDependency attributes will be placed on the SDK dependencies that are not produced in the 2xx build, tying them to a dependency produced in the 2xx build. When backflow happens and the dependencies are updated for a repo, the CPDs will resolve to the versions specific in the root VMR Version.Details.xml if they are not produced in the current build.
-
 ### Toolset
 
 Each feature band branch will start out using the N-1 toolset version and then build on top of itself for each subsequent release. For example, when 10.0.2xx branch is first created (for the 10.0.204 release, for example), it will use the 10.0.104 toolset from the 1xx branch. Then for the 10.0.205 release, the 10.0.2xx branch will be updated to reference the 10.0.204 toolset (the one from the previous 2xx release).
