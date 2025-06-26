@@ -8,27 +8,29 @@ namespace ValidateVmrChanges
     {
         static int Main(string[] args)
         {
+            string targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+
+            if (string.IsNullOrEmpty(targetBranch))
+            {
+                Console.WriteLine("Error: The target branch is not specified. Please set the SYSTEM_PULLREQUEST_TARGETBRANCH environment variable.");
+                return 1;
+            }
+
             try
             {
-                var gitDiff = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "git",
-                        Arguments = "diff --cached --name-only",
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        CreateNoWindow = true
-                    }
-                };
+                // Fetch the target branch
+                RunGitCommand($"fetch origin {targetBranch}");
 
-                gitDiff.Start();
-                string output = gitDiff.StandardOutput.ReadToEnd();
-                gitDiff.WaitForExit();
+                // Diff against the target branch
+                string diffOutput = RunGitCommand($"diff --name-only origin/{targetBranch}...HEAD");
 
-                var changedFiles = output.Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                                         .Select(f => f.Trim())
-                                         .ToList();
+                Console.WriteLine("Git diff output:\n");
+                Console.Write(diffOutput);
+
+                var changedFiles = diffOutput
+                    .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(f => f.Trim())
+                    .ToList();
 
                 var submoduleChanges = changedFiles
                     .Where(f => f.Equals(".gitmodules", StringComparison.OrdinalIgnoreCase) ||
@@ -55,6 +57,34 @@ namespace ValidateVmrChanges
                 Console.WriteLine($"Error while detecting submodule changes: {ex.Message}");
                 return 1;
             }
+        }
+
+        private static string RunGitCommand(string arguments)
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "git",
+                    Arguments = arguments,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            string err = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception($"Git command failed: {arguments}\n{err}");
+            }
+
+            return output;
         }
     }
 }
