@@ -37,7 +37,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public override bool Execute()
         {
-            using GZipStream stream = new(File.OpenWrite(ChangelogOutputPath), CompressionLevel.Optimal);
+            using GZipStream stream = new(File.Create(ChangelogOutputPath), CompressionLevel.Optimal);
             using StreamWriter writer = new(stream, Encoding.ASCII);
             writer.WriteLine($"{PackageName} ({PackageVersion}) unstable; urgency=low");
             writer.WriteLine();
