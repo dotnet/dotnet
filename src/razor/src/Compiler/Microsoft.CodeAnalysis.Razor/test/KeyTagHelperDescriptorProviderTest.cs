@@ -59,9 +59,9 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Empty(requiredAttribute.Diagnostics);
         Assert.Equal("@key", requiredAttribute.DisplayName);
         Assert.Equal("@key", requiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
         Assert.Null(requiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);

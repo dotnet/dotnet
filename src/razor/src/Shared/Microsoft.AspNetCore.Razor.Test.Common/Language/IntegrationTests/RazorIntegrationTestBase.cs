@@ -379,6 +379,7 @@ public class RazorIntegrationTestBase
         {
             throw new CompilationFailedException(compilation, emitResult.Diagnostics);
         }
+
         peStream.Position = 0;
         return peStream;
     }

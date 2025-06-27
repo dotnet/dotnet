@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -69,13 +69,10 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-one")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
+                        .Name("required-attribute-one", RequiredAttributeNameComparison.PrefixMatch))
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-two")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                        .Value("something")
-                        .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
+                        .Name("required-attribute-two", RequiredAttributeNameComparison.FullMatch)
+                        .Value("something", RequiredAttributeValueComparison.PrefixMatch))
                     .RequireParentTag("parent-name")
                     .RequireTagStructure(TagStructure.WithoutEndTag),
             ],
@@ -119,13 +116,10 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-one")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
+                        .Name("required-attribute-one", RequiredAttributeNameComparison.PrefixMatch))
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-two")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                        .Value("something")
-                        .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
+                        .Name("required-attribute-two", RequiredAttributeNameComparison.FullMatch)
+                        .Value("something", RequiredAttributeValueComparison.PrefixMatch))
                     .RequireParentTag("parent-name")
                     .RequireTagStructure(TagStructure.WithoutEndTag),
             ],
@@ -169,13 +163,10 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-one")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
+                        .Name("required-attribute-one", RequiredAttributeNameComparison.PrefixMatch))
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-two")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                        .Value("something")
-                        .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
+                        .Name("required-attribute-two", RequiredAttributeNameComparison.FullMatch)
+                        .Value("something", RequiredAttributeValueComparison.PrefixMatch))
                     .RequireParentTag("parent-name"),
             ],
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
@@ -224,8 +215,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .RequireAttributeDescriptor(attribute => attribute
-                        .Name("required-attribute-one")
-                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
+                        .Name("required-attribute-one", RequiredAttributeNameComparison.PrefixMatch))
             ],
             configureAction: builder => builder
                 .AllowChildTag("allowed-child-one")
