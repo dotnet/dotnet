@@ -4,18 +4,11 @@
 #nullable disable
 
 using Microsoft.Build.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuGet.Packaging.Core;
-using NuGet.Versioning;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
