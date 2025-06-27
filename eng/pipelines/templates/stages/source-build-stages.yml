@@ -24,6 +24,10 @@ parameters:
   type: boolean
   default: true
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # List of verifications to run during PRs.
 - name: verifications
   type: object
@@ -37,6 +41,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       
       # Description of the source build legs to run.
       # This is described here as a parameter to allow two separate stages to be produced from this list (one for building
