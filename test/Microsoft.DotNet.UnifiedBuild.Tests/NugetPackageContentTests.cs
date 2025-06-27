@@ -77,8 +77,8 @@ public class NugetPackageContentTests : TestBase
         {
             string baselineFileName = Path.GetTempFileName();
             string testFileName = Path.GetTempFileName();
-            using (FileStream baselineFile = File.OpenWrite(baselineFileName))
-            using (FileStream testFile = File.OpenWrite(testFileName))
+            using (FileStream baselineFile = File.Create(baselineFileName))
+            using (FileStream testFile = File.Create(testFileName))
             {
                 await baselinePackageReader.GetEntry(fileName).Open().CopyToAsync(baselineFile);
                 await testPackageReader.GetEntry(fileName).Open().CopyToAsync(testFile);
