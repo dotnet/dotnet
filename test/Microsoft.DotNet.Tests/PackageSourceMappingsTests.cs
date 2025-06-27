@@ -228,7 +228,7 @@ namespace Microsoft.DotNet.Tests
                 string nuspecPath = GenerateNuspecFile(folder, name, version);
                 string packagePath = Path.ChangeExtension(nuspecPath, ".nupkg");
 
-                using FileStream stream = File.OpenWrite(packagePath);
+                using FileStream stream = File.Create(packagePath);
                 using ZipArchive zipArchive = new(stream, ZipArchiveMode.Create);
                 ZipArchiveEntry entry = zipArchive.CreateEntryFromFile(nuspecPath, Path.GetFileName(nuspecPath));
                 File.Delete(nuspecPath);
