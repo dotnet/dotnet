@@ -7,7 +7,7 @@
     <NoTargetFrameworkFiltering>true</NoTargetFrameworkFiltering>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(StabilizePackageVersion)' == 'true'">
+  <PropertyGroup Condition="'$(DotNetFinalVersionKind)' == 'release'">
     <StableVersion>$(VersionPrefix)</StableVersion>
   </PropertyGroup>
 
