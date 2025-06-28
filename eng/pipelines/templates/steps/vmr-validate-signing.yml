@@ -42,7 +42,7 @@ steps:
     displayName: Remove Source-Build Artifacts
     continueOnError: ${{ parameters.continueOnError }}
 - ${{ else }}:
-  - script: rm -r "${{ parameters.signCheckFilesDirectory }}/*Sdk_*_Artifacts"
+  - script: rm -r ${{ parameters.signCheckFilesDirectory }}/*Sdk_*_Artifacts
     displayName: Remove Source-Build Artifacts
     continueOnError: ${{ parameters.continueOnError }}
 

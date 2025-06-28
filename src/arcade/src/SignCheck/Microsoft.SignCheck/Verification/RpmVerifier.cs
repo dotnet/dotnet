@@ -24,7 +24,7 @@ namespace Microsoft.SignCheck.Verification
 
             using var stream = File.Open(archivePath, FileMode.Open);
             using RpmPackage rpmPackage = RpmPackage.Read(stream);
-            using var dataStream = File.OpenWrite(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
+            using var dataStream = File.Create(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()));
             using var archive = new CpioReader(rpmPackage.ArchiveStream, leaveOpen: false);
 
             while (archive.GetNextEntry() is CpioEntry entry)
