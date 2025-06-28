@@ -28,7 +28,7 @@ internal abstract partial class TextDiffer
                 => (array, start, length) = (Array, Start, Length);
         }
 
-        private const int PageSize = 1024 * 80 / sizeof(int);
+        private const int PageSize = 1024 * 64 / sizeof(int);
 
         private Page _page;
         private readonly Page[] _pages;
