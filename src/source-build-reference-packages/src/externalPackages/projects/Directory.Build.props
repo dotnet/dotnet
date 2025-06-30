@@ -23,8 +23,6 @@
 
     <XPlatSourceBuildTasksName>Microsoft.DotNet.SourceBuild.Tasks.XPlat</XPlatSourceBuildTasksName>
     <XPlatSourceBuildTasksAssembly>$([MSBuild]::NormalizePath('$(ArtifactsBinDir)', '$(XPlatSourceBuildTasksName)', '$(Configuration)', '$(NetCurrent)', '$(XPlatSourceBuildTasksName).dll'))</XPlatSourceBuildTasksAssembly>
-
-    <BuildInParallel Condition="'$(BuildInParallel)' == ''">false</BuildInParallel>
   </PropertyGroup>
 
   <ItemGroup>
