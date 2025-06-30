@@ -10,6 +10,10 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -85,6 +89,7 @@ stages:
   parameters:
     desiredSigning: ${{ parameters.desiredSigning }}
     desiredIbc: ${{ parameters.desiredIbc }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
@@ -115,6 +120,7 @@ stages:
     pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
     scope: ${{ parameters.scope }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     verifications: ${{ parameters.verifications }}
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
       # For PR builds, we don't rely on Microsoft build assets for testing because not all of the required assets

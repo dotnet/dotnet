@@ -128,7 +128,8 @@
   </Target>
 
   <Target Name="PublishBinaryReport"
-          AfterTargets="PublishToAzureDevOpsArtifacts">
+          AfterTargets="PublishToAzureDevOpsArtifacts"
+          Condition="'$(SkipDetectBinaries)' != 'true'">
     <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
     <Copy SourceFiles="$(BinariesReportFile)"
           DestinationFolder="$(ArtifactsPublishStagingDir)/log"
