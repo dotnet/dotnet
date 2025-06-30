@@ -1,8 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <TestTargets Condition="'$(LocalBuild)' != 'True'">net462;net472;net6.0;net8.0</TestTargets>
-    <TestTargets Condition="'$(LocalBuild)' == 'True'">net8.0</TestTargets>
-    <TestTargets Condition="'$(TargetNet9)' == 'True'">$(TestTargets);net9.0</TestTargets>
-    <TestOnlyCoreTargets>net6.0</TestOnlyCoreTargets>
-  </PropertyGroup>
-</Project>
