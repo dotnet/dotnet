@@ -21,7 +21,7 @@
         <dependency id="Microsoft.CodeAnalysis.Common" version="[4.0.1, 4.0.1]" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.CSharp" version="[4.0.1, 4.0.1]" exclude="Build,Analyzers" />
         <dependency id="Microsoft.CodeAnalysis.Workspaces.Common" version="[4.0.1, 4.0.1]" exclude="Build,Analyzers" />
-        <!-- Humanizer version overridden to the version provided by source-build-externals -->
+        <!-- Humanizer version overridden to the version provided by externalPackages -->
         <dependency id="Humanizer.Core" version="2.14.1" include="Runtime,Build,Native,ContentFiles,Analyzers,BuildTransitive" />
       </group>
     </dependencies>
