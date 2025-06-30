@@ -70,7 +70,7 @@ if ! git merge --no-commit --no-ff "$remote/$branch_1xx" >/dev/null 2>&1; then
   done
 
   merge_msg=$(head -n 1 .git/MERGE_MSG)
-    git commit -m "$merge_msg"
+  git commit -m "$merge_msg"
 fi
 
 echo "Completed merge"
