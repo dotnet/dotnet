@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -211,7 +211,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = new Uri("C:/path/to/file.razor")
+                    DocumentUri = new(new Uri("C:/path/to/file.razor"))
                 },
                 Range = LspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
@@ -292,7 +292,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = testDocUri
+                    DocumentUri = new(testDocUri)
                 },
                 Range = LspFactory.DefaultRange,
                 Context = new VSInternalCodeActionContext()
@@ -373,7 +373,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         {
             Title = "Something",
         };
-        var request = new RazorResolveCodeActionParams(new TextDocumentIdentifier { Uri = razorUri }, HostDocumentVersion: 1, RazorLanguageKind.CSharp, codeAction);
+        var request = new RazorResolveCodeActionParams(new TextDocumentIdentifier { DocumentUri = new(razorUri) }, HostDocumentVersion: 1, RazorLanguageKind.CSharp, codeAction);
 
         // Act
         var result = await target.ResolveCodeActionsAsync(request, DisposalToken);
@@ -412,7 +412,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var request = new ProvideSemanticTokensRangesParams(
             textDocument: new TextDocumentIdentifier()
             {
-                Uri = new Uri("C:/path/to/file.razor")
+                DocumentUri = new(new Uri("C:/path/to/file.razor"))
             },
             requiredHostDocumentVersion: 1,
             ranges: [LspFactory.DefaultRange],
@@ -459,7 +459,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var request = new ProvideSemanticTokensRangesParams(
             textDocument: new TextDocumentIdentifier()
             {
-                Uri = new Uri("C:/path/to/file.razor")
+                DocumentUri = new(new Uri("C:/path/to/file.razor"))
             },
             requiredHostDocumentVersion: 0,
             ranges: [LspFactory.DefaultRange],
@@ -539,7 +539,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var request = new ProvideSemanticTokensRangesParams(
             textDocument: new TextDocumentIdentifier()
             {
-                Uri = new Uri("C:/path/to%20-%20project/file.razor")
+                DocumentUri = new(new Uri("C:/path/to%20-%20project/file.razor"))
             },
             requiredHostDocumentVersion: 0,
             ranges: [LspFactory.DefaultRange],
@@ -620,7 +620,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var request = new ProvideSemanticTokensRangesParams(
             textDocument: new TextDocumentIdentifier()
             {
-                Uri = new Uri("C:/path/to%20-%20project/file.razor")
+                DocumentUri = new(new Uri("C:/path/to%20-%20project/file.razor"))
             },
             requiredHostDocumentVersion: 0,
             ranges: [LspFactory.DefaultRange],

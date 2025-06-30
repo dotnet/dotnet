@@ -215,6 +215,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
             {
                 Assert.NotNull(pragma.EndCharacterIndex);
             }
+
             Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
         }
     }
@@ -247,6 +248,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
                 }
             }
         }
+
         var actualSequencePoints = builder.ToString().ReplaceLineEndings();
 
         var baselineFilePath = GetBaselineFilePath(codeDocument, ".sp.txt", testName);

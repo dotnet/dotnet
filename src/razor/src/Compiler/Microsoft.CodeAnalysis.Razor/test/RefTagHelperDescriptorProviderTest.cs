@@ -59,14 +59,14 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Empty(requiredAttribute.Diagnostics);
         Assert.Equal("@ref", requiredAttribute.DisplayName);
         Assert.Equal("@ref", requiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
         Assert.Null(requiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Ref.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.Ref.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);

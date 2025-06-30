@@ -220,8 +220,11 @@ jobs:
     ${{ else }}:
       value: clean-while-building
 
+  - name: brandingArgument
+    value: $(commandPrefix)branding $(brandingType)
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }}
+    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -323,6 +326,9 @@ jobs:
         sbomEnabled: false
 
   steps:
+  - checkout: self
+    fetchDepth: 1
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self

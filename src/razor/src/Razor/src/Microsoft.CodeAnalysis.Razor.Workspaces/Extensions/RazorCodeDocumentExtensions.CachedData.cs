@@ -1,12 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Microsoft.AspNetCore.Razor.Language.Legacy;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Razor.Threading;
@@ -39,8 +40,8 @@ internal static partial class RazorCodeDocumentExtensions
 
         private readonly SemaphoreSlim _stateLock = new(initialCount: 1);
         private SyntaxTree? _syntaxTree;
-        private ImmutableArray<ClassifiedSpanInternal>? _classifiedSpans;
-        private ImmutableArray<TagHelperSpanInternal>? _tagHelperSpans;
+        private ImmutableArray<ClassifiedSpan>? _classifiedSpans;
+        private ImmutableArray<SourceSpan>? _tagHelperSpans;
 
         public SyntaxTree GetOrParseCSharpSyntaxTree(CancellationToken cancellationToken)
         {
@@ -61,7 +62,7 @@ internal static partial class RazorCodeDocumentExtensions
             }
         }
 
-        public ImmutableArray<ClassifiedSpanInternal> GetOrComputeClassifiedSpans(CancellationToken cancellationToken)
+        public ImmutableArray<ClassifiedSpan> GetOrComputeClassifiedSpans(CancellationToken cancellationToken)
         {
             if (_classifiedSpans is { } classifiedSpans)
             {
@@ -70,11 +71,11 @@ internal static partial class RazorCodeDocumentExtensions
 
             using (_stateLock.DisposableWait(cancellationToken))
             {
-                return _classifiedSpans ??= _codeDocument.GetRequiredSyntaxTree().GetClassifiedSpans();
+                return _classifiedSpans ??= ClassifiedSpanVisitor.VisitRoot(_codeDocument.GetRequiredSyntaxTree());
             }
         }
 
-        public ImmutableArray<TagHelperSpanInternal> GetOrComputeTagHelperSpans(CancellationToken cancellationToken)
+        public ImmutableArray<SourceSpan> GetOrComputeTagHelperSpans(CancellationToken cancellationToken)
         {
             if (_tagHelperSpans is { } tagHelperSpans)
             {
@@ -83,7 +84,25 @@ internal static partial class RazorCodeDocumentExtensions
 
             using (_stateLock.DisposableWait(cancellationToken))
             {
-                return _tagHelperSpans ??= _codeDocument.GetRequiredSyntaxTree().GetTagHelperSpans();
+                return _tagHelperSpans ??= ComputeTagHelperSpans(_codeDocument.GetRequiredSyntaxTree());
+            }
+
+            static ImmutableArray<SourceSpan> ComputeTagHelperSpans(RazorSyntaxTree syntaxTree)
+            {
+                using var builder = new PooledArrayBuilder<SourceSpan>();
+
+                foreach (var node in syntaxTree.Root.DescendantNodes())
+                {
+                    if (node is not MarkupTagHelperElementSyntax tagHelperElement ||
+                        tagHelperElement.TagHelperInfo is null)
+                    {
+                        continue;
+                    }
+
+                    builder.Add(tagHelperElement.GetSourceSpan(syntaxTree.Source));
+                }
+
+                return builder.ToImmutableAndClear();
             }
         }
 

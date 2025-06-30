@@ -89,7 +89,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                         {
                             builder => builder
                                 .Name("name")
-                                .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)
+                                .ValueComparison(RequiredAttributeValueComparison.FullMatch)
                                 .AddDiagnostic(RazorDiagnosticFactory.CreateTagHelper_InvalidRequiredAttributeMismatchedQuotes('\'', "[name='unended]")),
                         }
                     },
@@ -99,7 +99,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                         {
                             builder => builder
                                 .Name("name")
-                                .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)
+                                .ValueComparison(RequiredAttributeValueComparison.FullMatch)
                                 .AddDiagnostic(RazorDiagnosticFactory.CreateTagHelper_InvalidRequiredAttributeMismatchedQuotes('\'', "[name='unended")),
                         }
                     },
@@ -154,8 +154,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                         {
                             builder => builder
                                 .Name("name")
-                                .Value("value")
-                                .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)
+                                .Value("value", RequiredAttributeValueComparison.FullMatch)
                                 .AddDiagnostic(RazorDiagnosticFactory.CreateTagHelper_CouldNotFindMatchingEndBrace("[name='value'")),
                         }
                     },
@@ -183,8 +182,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                         {
                             builder => builder
                                 .Name("name")
-                                .Value("value")
-                                .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)
+                                .Value("value", RequiredAttributeValueComparison.FullMatch)
                                 .AddDiagnostic(RazorDiagnosticFactory.CreateTagHelper_CouldNotFindMatchingEndBrace("[name=value ")),
                         }
                     },
@@ -223,64 +221,61 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
     {
         get
         {
-            Func<string, RequiredAttributeDescriptor.NameComparisonMode, Action<RequiredAttributeDescriptorBuilder>> plain =
-                (name, nameComparison) => (builder) => builder
-                    .Name(name)
-                    .NameComparisonMode(nameComparison);
+            Func<string, RequiredAttributeNameComparison, Action<RequiredAttributeDescriptorBuilder>> plain =
+                (name, nameComparison) => builder => builder.Name(name, nameComparison);
 
-            Func<string, string, RequiredAttributeDescriptor.ValueComparisonMode, Action<RequiredAttributeDescriptorBuilder>> css =
-                (name, value, valueComparison) => (builder) => builder
+            Func<string, string, RequiredAttributeValueComparison, Action<RequiredAttributeDescriptorBuilder>> css =
+                (name, value, valueComparison) => builder => builder
                     .Name(name)
-                    .Value(value)
-                    .ValueComparisonMode(valueComparison);
+                    .Value(value, valueComparison);
 
             return new TheoryData<string, IEnumerable<Action<RequiredAttributeDescriptorBuilder>>>
                 {
                     { null, Enumerable.Empty<Action<RequiredAttributeDescriptorBuilder>>() },
                     { string.Empty, Enumerable.Empty<Action<RequiredAttributeDescriptorBuilder>>() },
-                    { "name", new[] { plain("name", RequiredAttributeDescriptor.NameComparisonMode.FullMatch) } },
-                    { "name-*", new[] { plain("name-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch) } },
-                    { "  name-*   ", new[] { plain("name-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch) } },
+                    { "name", new[] { plain("name", RequiredAttributeNameComparison.FullMatch) } },
+                    { "name-*", new[] { plain("name-", RequiredAttributeNameComparison.PrefixMatch) } },
+                    { "  name-*   ", new[] { plain("name-", RequiredAttributeNameComparison.PrefixMatch) } },
                     {
                         "asp-route-*,valid  ,  name-*   ,extra",
                         new[]
                         {
-                            plain("asp-route-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
-                            plain("valid", RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
-                            plain("name-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
-                            plain("extra", RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
+                            plain("asp-route-", RequiredAttributeNameComparison.PrefixMatch),
+                            plain("valid", RequiredAttributeNameComparison.FullMatch),
+                            plain("name-", RequiredAttributeNameComparison.PrefixMatch),
+                            plain("extra", RequiredAttributeNameComparison.FullMatch),
                         }
                     },
-                    { "[name]", new[] { css("name", null, RequiredAttributeDescriptor.ValueComparisonMode.None) } },
-                    { "[ name ]", new[] { css("name", null, RequiredAttributeDescriptor.ValueComparisonMode.None) } },
-                    { " [ name ] ", new[] { css("name", null, RequiredAttributeDescriptor.ValueComparisonMode.None) } },
-                    { "[name=]", new[] { css("name", "", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { "[name='']", new[] { css("name", "", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { "[name ^=]", new[] { css("name", "", RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch) } },
-                    { "[name=hello]", new[] { css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { "[name= hello]", new[] { css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { "[name='hello']", new[] { css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { "[name=\"hello\"]", new[] { css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) } },
-                    { " [ name  $= \" hello\" ]  ", new[] { css("name", " hello", RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch) } },
+                    { "[name]", new[] { css("name", null, RequiredAttributeValueComparison.None) } },
+                    { "[ name ]", new[] { css("name", null, RequiredAttributeValueComparison.None) } },
+                    { " [ name ] ", new[] { css("name", null, RequiredAttributeValueComparison.None) } },
+                    { "[name=]", new[] { css("name", "", RequiredAttributeValueComparison.FullMatch) } },
+                    { "[name='']", new[] { css("name", "", RequiredAttributeValueComparison.FullMatch) } },
+                    { "[name ^=]", new[] { css("name", "", RequiredAttributeValueComparison.PrefixMatch) } },
+                    { "[name=hello]", new[] { css("name", "hello", RequiredAttributeValueComparison.FullMatch) } },
+                    { "[name= hello]", new[] { css("name", "hello", RequiredAttributeValueComparison.FullMatch) } },
+                    { "[name='hello']", new[] { css("name", "hello", RequiredAttributeValueComparison.FullMatch) } },
+                    { "[name=\"hello\"]", new[] { css("name", "hello", RequiredAttributeValueComparison.FullMatch) } },
+                    { " [ name  $= \" hello\" ]  ", new[] { css("name", " hello", RequiredAttributeValueComparison.SuffixMatch) } },
                     {
                         "[name=\"hello\"],[other^=something ], [val = 'cool']",
                         new[]
                         {
-                            css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch),
-                            css("other", "something", RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch),
-                            css("val", "cool", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch) }
+                            css("name", "hello", RequiredAttributeValueComparison.FullMatch),
+                            css("other", "something", RequiredAttributeValueComparison.PrefixMatch),
+                            css("val", "cool", RequiredAttributeValueComparison.FullMatch) }
                     },
                     {
                         "asp-route-*,[name=\"hello\"],valid  ,[other^=something ],   name-*   ,[val = 'cool'],extra",
                         new[]
                         {
-                            plain("asp-route-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
-                            css("name", "hello", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch),
-                            plain("valid", RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
-                            css("other", "something", RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch),
-                            plain("name-", RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
-                            css("val", "cool", RequiredAttributeDescriptor.ValueComparisonMode.FullMatch),
-                            plain("extra", RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
+                            plain("asp-route-", RequiredAttributeNameComparison.PrefixMatch),
+                            css("name", "hello", RequiredAttributeValueComparison.FullMatch),
+                            plain("valid", RequiredAttributeNameComparison.FullMatch),
+                            css("other", "something", RequiredAttributeValueComparison.PrefixMatch),
+                            plain("name-", RequiredAttributeNameComparison.PrefixMatch),
+                            css("val", "cool", RequiredAttributeValueComparison.FullMatch),
+                            plain("extra", RequiredAttributeNameComparison.FullMatch),
                         }
                     },
                 };
@@ -954,8 +949,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                             {
                                 builder => builder
                                     .RequireAttributeDescriptor(attribute => attribute
-                                        .Name("class")
-                                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)),
+                                        .Name("class", RequiredAttributeNameComparison.PrefixMatch)),
                             })
                     },
                     {
@@ -970,11 +964,9 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
                             {
                                 builder => builder
                                     .RequireAttributeDescriptor(attribute => attribute
-                                        .Name("class")
-                                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch))
+                                        .Name("class", RequiredAttributeNameComparison.PrefixMatch))
                                     .RequireAttributeDescriptor(attribute => attribute
-                                        .Name("style")
-                                        .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)),
+                                        .Name("style", RequiredAttributeNameComparison.PrefixMatch)),
                             })
                     },
                 };
@@ -2432,7 +2424,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
         var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, tagHelperTypeFullName.Split('.')[^1], "Test");
         tagHelperBuilder.Metadata(TypeName(tagHelperTypeFullName));
 
-        var attributeBuilder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var attributeBuilder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
         configure(attributeBuilder);
         return attributeBuilder.Build();
     }

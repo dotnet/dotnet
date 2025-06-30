@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -695,14 +695,10 @@ internal partial class CSharpFormattingPass
                     return VisitTypeParamDirective(typeParam, conditions);
                 }
 
-                if (node.IsCodeDirective(out var openBrace))
+                if (node.IsCodeDirective() ||
+                    node.IsFunctionsDirective())
                 {
-                    return VisitCodeOrFunctionsDirective(openBrace);
-                }
-
-                if (node.IsFunctionsDirective(out var functionsOpenBrace))
-                {
-                    return VisitCodeOrFunctionsDirective(functionsOpenBrace);
+                    return VisitCodeOrFunctionsDirective();
                 }
 
                 // All other directives that have braces are handled here
@@ -721,25 +717,17 @@ internal partial class CSharpFormattingPass
                 return EmitCurrentLineAsComment();
             }
 
-            private LineInfo VisitCodeOrFunctionsDirective(RazorSyntaxToken openBrace)
+            private LineInfo VisitCodeOrFunctionsDirective()
             {
-                // If the open brace is on the same line as the directive, then we need to ensure the contents are indented
-                if (GetLineNumber(openBrace) == GetLineNumber(_currentToken))
-                {
-                    // If its an @code or @functions we want to wrap the contents in a class
-                    // so that access modifiers are valid, and will be formatted as appropriate.
-                    _builder.AppendLine("class F");
-                    _builder.AppendLine("{");
+                // If its an @code or @functions we want to wrap the contents in a class so that access modifiers
+                // on any members declared within it are valid, and will be formatted as appropriate.
+                // We let the users content be the class name, as it will either be "@code" or "@functions", which
+                // are both valid, and it might have an open brace after it, or that might be on the next line,
+                // but if we just let that flow to the generated document, we don't need to do any fancy checking.
+                _builder.Append("class ");
+                _builder.AppendLine(_currentLine.ToString());
 
-                    // Roslyn might move our brace to the previous line, so we might _not_ need to skip it 🤦‍
-                    return CreateLineInfo(skipNextLineIfBrace: true);
-                }
-
-                // If the braces are on different lines, then we can do nothing, unless its an @code or @functions
-                // in which case we need to use a class. Note we don't output an open brace, as the next line of
-                // the original file will have one.
-                _builder.AppendLine("class F");
-                return CreateLineInfo();
+                return CreateLineInfo(skipNextLineIfBrace: true);
             }
 
             private LineInfo VisitUsingDirective()

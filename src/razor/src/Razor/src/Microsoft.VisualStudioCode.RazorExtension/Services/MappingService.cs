@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +38,7 @@ internal sealed class MappingService(IRazorClientLanguageServerManager razorClie
         {
             CSharpDocument = new()
             {
-                Uri = new(document.FilePath)
+                DocumentUri = new(new Uri(document.FilePath))
             },
             Ranges = [.. spans.Select(sourceText.GetRange)]
         };
@@ -57,7 +57,7 @@ internal sealed class MappingService(IRazorClientLanguageServerManager razorClie
         Debug.Assert(response.Ranges.Length == spans.Count(), "The number of mapped ranges should match the number of input spans.");
 
         using var builder = new PooledArrayBuilder<RazorMappedSpanResult>(response.Spans.Length);
-        var filePath = response.RazorDocument.Uri.GetDocumentFilePath();
+        var filePath = response.RazorDocument.DocumentUri.GetRequiredParsedUri().GetDocumentFilePath();
 
         for (var i = 0; i < response.Spans.Length; i++)
         {
@@ -94,7 +94,7 @@ internal sealed class MappingService(IRazorClientLanguageServerManager razorClie
         {
             CSharpDocument = new()
             {
-                Uri = new(newDocument.FilePath)
+                DocumentUri = new(new Uri(newDocument.FilePath))
             },
             TextChanges = textChanges
         };
@@ -110,7 +110,7 @@ internal sealed class MappingService(IRazorClientLanguageServerManager razorClie
         }
 
         Debug.Assert(response.MappedTextChanges.Length == changes.Count(), "The number of mapped text changes should match the number of input text changes.");
-        var filePath = response.RazorDocument.Uri.GetDocumentFilePath();
+        var filePath = response.RazorDocument.DocumentUri.GetRequiredParsedUri().GetDocumentFilePath();
         var convertedChanges = Array.ConvertAll(response.MappedTextChanges, mappedChange => mappedChange.ToTextChange());
         var result = new RazorMappedEditResult(filePath, convertedChanges);
         return [result];
