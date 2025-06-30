@@ -71,7 +71,7 @@
     </ItemGroup>
 
     <!-- Create Artifact items for produced packages and assets -->
-    <ItemGroup Condition="'$(IsPublishPass2)' == 'false'">
+    <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
       <Artifact Include="@(PackageToPublish)" />
       <Artifact Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')">
         <Kind>Blob</Kind>
