@@ -378,9 +378,9 @@ ORDER BY (
 """);
     }
 
-    public override async Task Default_if_empty_top_level(bool async)
+    public override async Task DefaultIfEmpty_top_level(bool async)
     {
-        await base.Default_if_empty_top_level(async);
+        await base.DefaultIfEmpty_top_level(async);
 
         AssertSql(
             """
@@ -396,9 +396,9 @@ LEFT JOIN (
 """);
     }
 
-    public override async Task Join_with_default_if_empty_on_both_sources(bool async)
+    public override async Task Join_with_DefaultIfEmpty_on_both_sources(bool async)
     {
-        await base.Join_with_default_if_empty_on_both_sources(async);
+        await base.Join_with_DefaultIfEmpty_on_both_sources(async);
 
         AssertSql(
             """
@@ -425,9 +425,9 @@ INNER JOIN (
 """);
     }
 
-    public override async Task Default_if_empty_top_level_followed_by_projecting_constant(bool async)
+    public override async Task DefaultIfEmpty_top_level_followed_by_constant_Select(bool async)
     {
-        await base.Default_if_empty_top_level_followed_by_projecting_constant(async);
+        await base.DefaultIfEmpty_top_level_followed_by_constant_Select(async);
 
         AssertSql(
             """
@@ -443,9 +443,27 @@ LEFT JOIN (
 """);
     }
 
-    public override async Task Default_if_empty_top_level_positive(bool async)
+    public override async Task DefaultIfEmpty_top_level_preceded_by_constant_Select(bool async)
     {
-        await base.Default_if_empty_top_level_positive(async);
+        await base.DefaultIfEmpty_top_level_preceded_by_constant_Select(async);
+
+        AssertSql(
+            """
+SELECT [e1].[c]
+FROM (
+    SELECT 1 AS empty
+) AS [e0]
+LEFT JOIN (
+    SELECT N'Foo' AS [c]
+    FROM [Employees] AS [e]
+    WHERE [e].[EmployeeID] = -1
+) AS [e1] ON 1 = 1
+""");
+    }
+
+    public override async Task DefaultIfEmpty_top_level_positive(bool async)
+    {
+        await base.DefaultIfEmpty_top_level_positive(async);
 
         AssertSql(
             """
@@ -461,9 +479,9 @@ LEFT JOIN (
 """);
     }
 
-    public override async Task Default_if_empty_top_level_projection(bool async)
+    public override async Task DefaultIfEmpty_top_level_projection(bool async)
     {
-        await base.Default_if_empty_top_level_projection(async);
+        await base.DefaultIfEmpty_top_level_projection(async);
 
         AssertSql(
             """
@@ -3829,25 +3847,20 @@ LEFT JOIN [Employees] AS [e0] ON [e].[EmployeeID] = [e0].[ReportsTo]
 
         AssertSql(
             """
-@dates='["1996-07-04T00:00:00","1996-07-16T00:00:00"]' (Size = 4000)
+@dates1='1996-07-04T00:00:00.0000000' (DbType = DateTime)
+@dates2='1996-07-16T00:00:00.0000000' (DbType = DateTime)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE CONVERT(date, [o].[OrderDate]) IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetime '$') AS [d]
-)
+WHERE CONVERT(date, [o].[OrderDate]) IN (@dates1, @dates2)
 """,
             //
             """
-@dates='["1996-07-04T00:00:00"]' (Size = 4000)
+@dates1='1996-07-04T00:00:00.0000000' (DbType = DateTime)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
-WHERE CONVERT(date, [o].[OrderDate]) IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@dates) WITH ([value] datetime '$') AS [d]
-)
+WHERE CONVERT(date, [o].[OrderDate]) = @dates1
 """);
     }
 
@@ -4868,17 +4881,8 @@ FROM (
 
         AssertSql(
             """
-@list='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-ORDER BY CASE
-    WHEN [c].[CustomerID] IN (
-        SELECT [l].[value]
-        FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END
 """);
     }
 
@@ -4888,17 +4892,8 @@ END
 
         AssertSql(
             """
-@list='[]' (Size = 4000)
-
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-ORDER BY CASE
-    WHEN [c].[CustomerID] NOT IN (
-        SELECT [l].[value]
-        FROM OPENJSON(@list) WITH ([value] nchar(5) '$') AS [l]
-    ) THEN CAST(1 AS bit)
-    ELSE CAST(0 AS bit)
-END
 """);
     }
 
@@ -5426,9 +5421,11 @@ WHERE [c].[CustomerID] = @entity_equality_a_CustomerID
 
         AssertSql(
             """
+@entity_equality_customers_CustomerID1='ALFKI' (Size = 5) (DbType = StringFixedLength)
+
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] = N'ALFKI'
+WHERE [c].[CustomerID] = @entity_equality_customers_CustomerID1
 """);
     }
 
@@ -6075,15 +6072,17 @@ WHERE [c].[CustomerID] = N'ALFKI'
 """,
             //
             """
-@orderIds='[10643,10692,10702,10835,10952,11011]' (Size = 4000)
+@orderIds1='10643'
+@orderIds2='10692'
+@orderIds3='10702'
+@orderIds4='10835'
+@orderIds5='10952'
+@orderIds6='11011'
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Orders] AS [o]
 LEFT JOIN [Customers] AS [c] ON [o].[CustomerID] = [c].[CustomerID]
-WHERE [o].[OrderID] IN (
-    SELECT [o0].[value]
-    FROM OPENJSON(@orderIds) WITH ([value] int '$') AS [o0]
-)
+WHERE [o].[OrderID] IN (@orderIds1, @orderIds2, @orderIds3, @orderIds4, @orderIds5, @orderIds6)
 """);
     }
 
@@ -6794,16 +6793,16 @@ FROM [Orders] AS [o]
         AssertSql();
     }
 
-    public override async Task Default_if_empty_top_level_arg(bool async)
+    public override async Task DefaultIfEmpty_top_level_arg(bool async)
     {
-        await base.Default_if_empty_top_level_arg(async);
+        await base.DefaultIfEmpty_top_level_arg(async);
 
         AssertSql();
     }
 
-    public override async Task Default_if_empty_top_level_arg_followed_by_projecting_constant(bool async)
+    public override async Task DefaultIfEmpty_top_level_arg_followed_by_projecting_constant(bool async)
     {
-        await base.Default_if_empty_top_level_arg_followed_by_projecting_constant(async);
+        await base.DefaultIfEmpty_top_level_arg_followed_by_projecting_constant(async);
 
         AssertSql();
     }
@@ -7034,30 +7033,22 @@ WHERE (
 
         AssertSql(
             """
-@ids='[10248,10249]' (Size = 4000)
+@ids1='10248'
+@ids2='10249'
 
 SELECT [o].[Quantity] AS [Key], (
     SELECT MAX([o1].[OrderDate])
     FROM [Order Details] AS [o0]
     INNER JOIN [Orders] AS [o1] ON [o0].[OrderID] = [o1].[OrderID]
-    WHERE [o0].[OrderID] IN (
-        SELECT [i0].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i0]
-    ) AND [o].[Quantity] = [o0].[Quantity]) AS [MaxTimestamp]
+    WHERE [o0].[OrderID] IN (@ids1, @ids2) AND [o].[Quantity] = [o0].[Quantity]) AS [MaxTimestamp]
 FROM [Order Details] AS [o]
-WHERE [o].[OrderID] IN (
-    SELECT [i].[value]
-    FROM OPENJSON(@ids) WITH ([value] int '$') AS [i]
-)
+WHERE [o].[OrderID] IN (@ids1, @ids2)
 GROUP BY [o].[Quantity]
 ORDER BY (
     SELECT MAX([o1].[OrderDate])
     FROM [Order Details] AS [o0]
     INNER JOIN [Orders] AS [o1] ON [o0].[OrderID] = [o1].[OrderID]
-    WHERE [o0].[OrderID] IN (
-        SELECT [i0].[value]
-        FROM OPENJSON(@ids) WITH ([value] int '$') AS [i0]
-    ) AND [o].[Quantity] = [o0].[Quantity])
+    WHERE [o0].[OrderID] IN (@ids1, @ids2) AND [o].[Quantity] = [o0].[Quantity])
 """);
     }
 
@@ -7067,14 +7058,12 @@ ORDER BY (
 
         AssertSql(
             """
-@data='["ALFKIAlfreds Futterkiste","ANATRAna Trujillo Emparedados y helados"]' (Size = 4000)
+@data1='ALFKIAlfreds Futterkiste' (Size = 45)
+@data2='ANATRAna Trujillo Emparedados y helados' (Size = 45)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + [c].[CompanyName] IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(45) '$') AS [d]
-)
+WHERE [c].[CustomerID] + [c].[CompanyName] IN (@data1, @data2)
 """);
     }
 
@@ -7084,14 +7073,13 @@ WHERE [c].[CustomerID] + [c].[CompanyName] IN (
 
         AssertSql(
             """
-@data='["ALFKISomeConstant","ANATRSomeConstant","ALFKIX"]' (Size = 4000)
+@data1='ALFKISomeConstant' (Size = 4000)
+@data2='ANATRSomeConstant' (Size = 4000)
+@data3='ALFKIX' (Size = 4000)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + N'SomeConstant' IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(max) '$') AS [d]
-)
+WHERE [c].[CustomerID] + N'SomeConstant' IN (@data1, @data2, @data3)
 """);
     }
 
@@ -7101,15 +7089,15 @@ WHERE [c].[CustomerID] + N'SomeConstant' IN (
 
         AssertSql(
             """
-@data='["ALFKIALFKI","ALFKI","ANATRAna Trujillo Emparedados y helados","ANATRANATR"]' (Size = 4000)
+@data1='ALFKIALFKI' (Size = 10) (DbType = StringFixedLength)
+@data2='ALFKI' (Size = 10)
+@data3='ANATRAna Trujillo Emparedados y helados' (Size = 4000)
+@data4='ANATRANATR' (Size = 10) (DbType = StringFixedLength)
 
 SELECT [o].[OrderID], [o].[CustomerID], [o].[EmployeeID], [o].[OrderDate]
 FROM [Orders] AS [o]
 LEFT JOIN [Customers] AS [c] ON [o].[CustomerID] = [c].[CustomerID]
-WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nchar(10) '$') AS [d]
-)
+WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (@data1, @data2, @data3, @data4)
 """);
     }
 
@@ -7120,14 +7108,13 @@ WHERE COALESCE([o].[CustomerID], N'') + COALESCE([c].[CustomerID], N'') IN (
         AssertSql(
             """
 @someVariable='SomeVariable' (Size = 4000)
-@data='["ALFKISomeVariable","ANATRSomeVariable","ALFKIX"]' (Size = 4000)
+@data1='ALFKISomeVariable' (Size = 4000)
+@data2='ANATRSomeVariable' (Size = 4000)
+@data3='ALFKIX' (Size = 4000)
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Customers] AS [c]
-WHERE [c].[CustomerID] + @someVariable IN (
-    SELECT [d].[value]
-    FROM OPENJSON(@data) WITH ([value] nvarchar(max) '$') AS [d]
-)
+WHERE [c].[CustomerID] + @someVariable IN (@data1, @data2, @data3)
 """);
     }
 

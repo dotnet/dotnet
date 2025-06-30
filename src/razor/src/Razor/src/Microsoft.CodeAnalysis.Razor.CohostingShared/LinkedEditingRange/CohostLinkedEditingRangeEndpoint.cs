@@ -1,11 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
@@ -50,7 +50,16 @@ internal sealed class CohostLinkedEditingRangeEndpoint(IRemoteServiceInvoker rem
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
     protected override Task<LinkedEditingRanges?> HandleRequestAsync(LinkedEditingRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
+    {
+        // The editor can send us a linked editing range request in a .NET Framework project for some reason, so we have to be
+        // a little defensive here.
+        if (context.TextDocument is null)
+        {
+            return SpecializedTasks.Null<LinkedEditingRanges>();
+        }
+
+        return HandleRequestAsync(request, context.TextDocument, cancellationToken);
+    }
 
     private async Task<LinkedEditingRanges?> HandleRequestAsync(LinkedEditingRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {

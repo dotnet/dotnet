@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -53,7 +54,7 @@ internal sealed class CohostSignatureHelpEndpoint(
     }
 
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SignatureHelpParams request)
-        => new RazorTextDocumentIdentifier(request.TextDocument.Uri, (request.TextDocument as VSTextDocumentIdentifier)?.ProjectContext?.Id);
+        => new RazorTextDocumentIdentifier(request.TextDocument.DocumentUri.GetRequiredParsedUri(), (request.TextDocument as VSTextDocumentIdentifier)?.ProjectContext?.Id);
 
     // NOTE: The use of SumType here is a little odd, but it allows us to return Roslyn LSP types from the Roslyn call, and VS LSP types from the Html
     //       call. It works because both sets of types are attributed the right way, so the Json ends up looking the same and the client doesn't

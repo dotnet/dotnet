@@ -1,17 +1,17 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -397,13 +397,22 @@ internal class RazorFormattingService : IRazorFormattingService
             contentValidationPass.DebugAssertsEnabled = debugAssertsEnabled;
         }
 
-        public void SetFormattedCSharpDocumentModifierFunc(Func<SourceText, SourceText> func)
+        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
         {
-            // This is only valid for the new formatting engine, so a test that sets it for the old formatter is probably written incorrectly.
-            Debug.Assert(service._languageServerFeatureOptions.UseNewFormattingEngine);
+            if (service._documentFormattingPasses.OfType<CSharpFormattingPass>().SingleOrDefault() is { } pass)
+            {
+                pass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
+            }
 
-            var pass = service._documentFormattingPasses.OfType<New.CSharpFormattingPass>().Single();
-            pass.GetTestAccessor().SetFormattedCSharpDocumentModifierFunc(func);
+            if (service._documentFormattingPasses.OfType<CSharpOnTypeFormattingPass>().SingleOrDefault() is { } onTypePass)
+            {
+                onTypePass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
+            }
+
+            if (service._documentFormattingPasses.OfType<New.CSharpFormattingPass>().SingleOrDefault() is { } newPass)
+            {
+                newPass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
+            }
         }
     }
 }

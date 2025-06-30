@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.ProjectSystem;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Text.Adornments;
@@ -72,7 +73,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
             },
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = sourceText.GetPosition(cursorPosition)
         };
@@ -90,7 +91,7 @@ public class FindAllReferencesEndpointTest(ITestOutputHelper testOutput) : Singl
         var i = 0;
         foreach (var referenceItem in result.OrderBy(l => l.Location.AssumeNotNull().Range.Start.Line))
         {
-            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.AssumeNotNull().Uri);
+            Assert.Equal(new Uri(razorFilePath), referenceItem.Location.AssumeNotNull().DocumentUri.GetRequiredParsedUri());
 
             var expectedRange = codeDocument.Source.Text.GetRange(expectedSpans[i]);
             Assert.Equal(expectedRange, referenceItem.Location.Range);

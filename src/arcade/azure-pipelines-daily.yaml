@@ -39,4 +39,4 @@ stages:
           scriptType: pscore
           scriptLocation: inlineScript
           inlineScript: |
-            Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize $_}
+            Get-ChildItem .vault-config/*.yaml |% { dotnet secret-manager synchronize --skip-untracked $_}

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -27,7 +27,7 @@ internal partial class RazorCustomMessageTarget
         var hostDocument = new VSTextDocumentIdentifier
         {
             ProjectContext = request.Identifier.TextDocumentIdentifier.GetProjectContext(),
-            Uri = request.Identifier.TextDocumentIdentifier.Uri,
+            DocumentUri = request.Identifier.TextDocumentIdentifier.DocumentUri,
         };
 
         var csharpTask = Task.Run(() => GetVirtualDocumentPullDiagnosticsAsync<CSharpVirtualDocumentSnapshot>(hostDocument, request.Identifier.Version, request.Identifier.TextDocumentIdentifier, request.CorrelationId, RazorLSPConstants.RazorCSharpLanguageServerName, cancellationToken), cancellationToken);

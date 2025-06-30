@@ -72,7 +72,7 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>20343176cfd35b56036dc4ca9d9ddd2a201a4e92</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25316-103">
+    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25315-102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>20343176cfd35b56036dc4ca9d9ddd2a201a4e92</Sha>
     </Dependency>

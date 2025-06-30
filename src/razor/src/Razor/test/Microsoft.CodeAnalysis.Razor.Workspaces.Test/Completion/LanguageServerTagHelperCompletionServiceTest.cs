@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -100,7 +100,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
                     .RequireAttributeDescriptor(builder =>
                     {
                         builder.Name = "asp-route-";
-                        builder.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                        builder.NameComparison = RequiredAttributeNameComparison.PrefixMatch;
                     }))
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("form")
@@ -1333,7 +1333,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
                 .RequireAttributeDescriptor(builder =>
                     {
                         builder.Name = "asp-route-";
-                        builder.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                        builder.NameComparison = RequiredAttributeNameComparison.PrefixMatch;
                     }))
                 .Build(),
         ];
@@ -1373,7 +1373,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
                 .RequireAttributeDescriptor(builder =>
                     {
                         builder.Name = "asp-route-";
-                        builder.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                        builder.NameComparison = RequiredAttributeNameComparison.PrefixMatch;
                     }))
                 .Build(),
         ];
@@ -1406,7 +1406,7 @@ public class LanguageServerTagHelperCompletionServiceTest(ITestOutputHelper test
                 .RequireAttributeDescriptor(builder =>
                     {
                         builder.Name = "type";
-                        builder.NameComparisonMode = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                        builder.NameComparison = RequiredAttributeNameComparison.PrefixMatch;
                     }))
                 .Build(),
         ];

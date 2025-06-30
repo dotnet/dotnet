@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
@@ -13,6 +13,19 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagH
 
 internal sealed class DocumentationObjectFormatter : ValueFormatter<DocumentationObject>
 {
+    private enum DocumentationKind : byte
+    {
+        Descriptor,
+        String
+    }
+
+    private enum ArgKind : byte
+    {
+        Integer,
+        String,
+        Boolean
+    }
+
     public static readonly ValueFormatter<DocumentationObject> Instance = new DocumentationObjectFormatter();
 
     private DocumentationObjectFormatter()
@@ -28,7 +41,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
 
         var count = reader.ReadArrayHeader();
 
-        var documentationKind = (DocumentationKind)reader.ReadInt32();
+        var documentationKind = (DocumentationKind)reader.ReadByte();
 
         switch (documentationKind)
         {
@@ -40,7 +53,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
                 // Note: Each argument is stored as two values.
                 var args = count > 0
                     ? ReadArgs(ref reader, count / 2, options)
-                    : Array.Empty<object>();
+                    : [];
 
                 return DocumentationDescriptor.From(id, args);
 
@@ -76,7 +89,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
                 return null;
             }
 
-            var argKind = (ArgKind)reader.ReadInt32();
+            var argKind = (ArgKind)reader.ReadByte();
 
             return argKind switch
             {
@@ -99,7 +112,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
 
                 writer.WriteArrayHeader(count);
 
-                writer.Write((int)DocumentationKind.Descriptor);
+                writer.Write((byte)DocumentationKind.Descriptor);
                 writer.Write((int)descriptor.Id);
 
                 foreach (var arg in args)
@@ -111,7 +124,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
 
             case string text:
                 writer.WriteArrayHeader(2);
-                writer.Write((int)DocumentationKind.String);
+                writer.Write((byte)DocumentationKind.String);
                 CachedStringFormatter.Instance.Serialize(ref writer, text, options);
                 break;
 
@@ -129,23 +142,23 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
             switch (value)
             {
                 case string s:
-                    writer.Write((int)ArgKind.String);
+                    writer.Write((byte)ArgKind.String);
                     CachedStringFormatter.Instance.Serialize(ref writer, s, options);
                     break;
 
+                case null:
+                    writer.Write((byte)ArgKind.String);
+                    writer.WriteNil();
+                    break;
+
                 case int i:
-                    writer.Write((int)ArgKind.Integer);
+                    writer.Write((byte)ArgKind.Integer);
                     writer.Write(i);
                     break;
 
                 case bool b:
-                    writer.Write((int)ArgKind.Boolean);
+                    writer.Write((byte)ArgKind.Boolean);
                     writer.Write(b);
-                    break;
-
-                case null:
-                    writer.Write((int)ArgKind.String);
-                    writer.WriteNil();
                     break;
 
                 case var arg:
@@ -171,7 +184,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
 
         var count = reader.ReadArrayHeader();
 
-        var documentationKind = (DocumentationKind)reader.ReadInt32();
+        var documentationKind = (DocumentationKind)reader.ReadByte();
 
         switch (documentationKind)
         {
@@ -217,7 +230,7 @@ internal sealed class DocumentationObjectFormatter : ValueFormatter<Documentatio
                 return;
             }
 
-            var argKind = (ArgKind)reader.ReadInt32();
+            var argKind = (ArgKind)reader.ReadByte();
 
             switch (argKind)
             {
