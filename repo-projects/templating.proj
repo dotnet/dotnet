@@ -5,8 +5,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="runtime" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'runtime')))" />
-    <RepositoryReference Include="source-build-externals" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'source-build-externals')))" />
+    <RepositoryReference Include="runtime" BuildOnlyFor1XX="true" />
+    <RepositoryReference Include="source-build-externals" BuildOnlyFor1XX="true" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

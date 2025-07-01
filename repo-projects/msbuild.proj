@@ -10,10 +10,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="roslyn" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'roslyn')))" />
-    <RepositoryReference Include="runtime" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'runtime')))" />
+    <RepositoryReference Include="roslyn" BuildOnlyFor1XX="true" />
+    <RepositoryReference Include="runtime" BuildOnlyFor1XX="true" />
     <RepositoryReference Include="source-build-reference-packages" />
-    <RepositoryReference Include="source-build-externals" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'source-build-externals')))" />
+    <RepositoryReference Include="source-build-externals" BuildOnlyFor1XX="true" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != '' and '$(EnableIBCOptimization)' == 'true'">

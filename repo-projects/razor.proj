@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="aspnetcore" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'aspnetcore')))" />
+    <RepositoryReference Include="aspnetcore" BuildOnlyFor1XX="true" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

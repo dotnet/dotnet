@@ -30,15 +30,15 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="command-line-api" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'command-line-api')))" />
+    <RepositoryReference Include="command-line-api" BuildOnlyFor1XX="true" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="roslyn-analyzers" />
-    <RepositoryReference Include="runtime" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'runtime')))"/>
-    <RepositoryReference Include="source-build-externals" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'source-build-externals')))" />
+    <RepositoryReference Include="runtime" BuildOnlyFor1XX="true" />
+    <RepositoryReference Include="source-build-externals" BuildOnlyFor1XX="true" />
     <RepositoryReference Include="source-build-reference-packages" />
-    <RepositoryReference Include="symreader" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'symreader')))" />
+    <RepositoryReference Include="symreader" BuildOnlyFor1XX="true" />
   </ItemGroup>
 
   <ItemGroup>

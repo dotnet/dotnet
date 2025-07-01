@@ -25,7 +25,6 @@
     <ArtifactsObjDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'obj'))</ArtifactsObjDir>
     <ArtifactsBinDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'bin'))</ArtifactsBinDir>
     <RepositoryEngineeringDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'eng'))</RepositoryEngineeringDir>
-    <SourcesDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'src'))</SourcesDir>
 
     <!-- ProjectLayout.props -->
     <PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
