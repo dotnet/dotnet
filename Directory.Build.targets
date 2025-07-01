@@ -1,4 +1,4 @@
-<Project>
+<Project InitialTargets="ValidateFeatureBand">
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
 
@@ -60,5 +60,13 @@
       <RuntimeArchivePath>%(RuntimeArchiveItem.Identity)</RuntimeArchivePath>
       <SourceBuiltRuntimeVersion>$(RuntimeFilename.Replace('$(RuntimeFilenamePrefix)','').Replace('-$(TargetRid)$(ArchiveExtension)',''))</SourceBuiltRuntimeVersion>
     </PropertyGroup>
+  </Target>
+
+  <Target Name="ValidateFeatureBand" Condition="'$(VersionSDKMinor)' != '1'" >
+    <!--
+      Non-1xx feature bands do not include runtime, and a short-stack build will build runtime and its dependencies only.
+      Therefore, we should not and cannot have a short-stack build on a non-1xx feature band.
+    -->
+    <Error Text="Cannot have a short-stack build on a non-1xx feature band." Condition="'$(ShortStack)' == 'true'" />
   </Target>
 </Project>
