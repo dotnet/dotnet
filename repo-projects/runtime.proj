@@ -15,6 +15,9 @@
     <SkipSetTargetOS>true</SkipSetTargetOS>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)os $(TargetOS)</BuildArgs>
 
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
+
     <!--
       When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
       This is generally used in source-build scenarios where the target RID is only supported on Mono
@@ -60,7 +63,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

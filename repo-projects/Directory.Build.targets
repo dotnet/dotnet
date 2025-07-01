@@ -28,6 +28,7 @@
     <CommonArgs>$(CommonArgs) /p:PortableBuild=$(PortableBuild)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PortableTargetRid=$(PortableTargetRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetFinalVersionKind)' != '' and '$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) /p:DotNetFinalVersionKind=$(DotNetFinalVersionKind)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
     <CommonArgs Condition="'$(DotNetBuildTests)' == 'true' and '$(DotNetBuildTestsOptOut)' != 'true'">$(CommonArgs) /p:DotNetBuildTests=true</CommonArgs>
@@ -641,8 +642,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-externals. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-externals'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-reference-packages. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>

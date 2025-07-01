@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Language;
 #if JSONSERIALIZATION_ENABLETAGHELPERCACHE
 using Microsoft.CodeAnalysis.Razor.Utilities;
 #endif
-using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
@@ -130,21 +129,16 @@ internal static partial class ObjectReaders
 
             static RequiredAttributeDescriptor ReadFromProperties(JsonDataReader reader)
             {
+                var flags = (RequiredAttributeDescriptorFlags)reader.ReadByte(nameof(RequiredAttributeDescriptor.Flags));
                 var name = reader.ReadString(nameof(RequiredAttributeDescriptor.Name));
-                var nameComparison = (NameComparisonMode)reader.ReadInt32OrZero(nameof(RequiredAttributeDescriptor.NameComparison));
-                var caseSensitive = reader.ReadBooleanOrTrue(nameof(RequiredAttributeDescriptor.CaseSensitive));
+                var nameComparison = (RequiredAttributeNameComparison)reader.ReadByteOrZero(nameof(RequiredAttributeDescriptor.NameComparison));
                 var value = reader.ReadStringOrNull(nameof(RequiredAttributeDescriptor.Value));
-                var valueComparison = (ValueComparisonMode)reader.ReadInt32OrZero(nameof(RequiredAttributeDescriptor.ValueComparison));
-                var displayName = reader.ReadNonNullString(nameof(RequiredAttributeDescriptor.DisplayName));
+                var valueComparison = (RequiredAttributeValueComparison)reader.ReadByteOrZero(nameof(RequiredAttributeDescriptor.ValueComparison));
 
-                var metadata = ReadMetadata(reader, nameof(RequiredAttributeDescriptor.Metadata));
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(RequiredAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new RequiredAttributeDescriptor(
-                    Cached(name)!, nameComparison,
-                    caseSensitive,
-                    Cached(value), valueComparison,
-                    Cached(displayName), diagnostics, metadata);
+                    flags, Cached(name)!, nameComparison, Cached(value), valueComparison, diagnostics);
             }
         }
 

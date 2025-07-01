@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
@@ -46,5 +46,8 @@ internal abstract partial class TextDiffer
 
         public static DiffEdit Delete(int position, int length = 1)
             => new(DiffEditKind.Delete, position, newTextPosition: null, length);
+
+        public DiffEdit Offset(int positionOffset, int newTextPositionOffset)
+            => new(Kind, positionOffset + Position, newTextPositionOffset + NewTextPosition, Length);
     }
 }

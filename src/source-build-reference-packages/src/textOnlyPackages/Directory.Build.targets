@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="..\..\Directory.Build.targets" />
+  <Import Project="$(ManualNuspecTargets)" />
 
   <!-- No Build. Only Pack. -->
   <Target Name="Build" />

@@ -117,7 +117,7 @@ namespace Microsoft.DotNet.SharedFramework.Sdk
                 document.Root.Add(choiceElements);
                 document.Root.Add(pkgRefElements);
                 document.Root.Add(scriptElement);
-                using XmlWriter writer = XmlWriter.Create(File.OpenWrite(DestinationFile));
+                using XmlWriter writer = XmlWriter.Create(File.Create(DestinationFile));
                 document.WriteTo(writer);
             }
             catch (Exception ex)
