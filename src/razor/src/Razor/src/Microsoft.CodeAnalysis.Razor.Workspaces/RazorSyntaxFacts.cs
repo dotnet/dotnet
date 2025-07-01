@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -22,8 +22,8 @@ internal static class RazorSyntaxFacts
     {
         attributeNameAbsoluteIndex = 0;
 
-        var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.Root.FindInnermostNode(absoluteIndex);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(absoluteIndex);
 
         var attributeName = owner?.Parent switch
         {
@@ -75,8 +75,8 @@ internal static class RazorSyntaxFacts
     /// </summary>
     public static bool TryGetFullAttributeNameSpan(RazorCodeDocument codeDocument, int absoluteIndex, out TextSpan attributeNameSpan)
     {
-        var tree = codeDocument.GetSyntaxTree();
-        var owner = tree.Root.FindInnermostNode(absoluteIndex);
+        var root = codeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(absoluteIndex);
 
         attributeNameSpan = GetFullAttributeNameSpan(owner?.Parent);
 
@@ -161,7 +161,7 @@ internal static class RazorSyntaxFacts
 
         foreach (var directive in directives)
         {
-            if (directive.IsUsingDirective(out var _))
+            if (directive.IsUsingDirective())
             {
                 return true;
             }

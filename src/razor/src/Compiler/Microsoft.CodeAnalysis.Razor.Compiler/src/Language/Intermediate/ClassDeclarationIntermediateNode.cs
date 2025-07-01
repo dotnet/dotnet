@@ -23,6 +23,10 @@ public sealed class ClassDeclarationIntermediateNode : MemberDeclarationIntermed
 
     public IList<TypeParameter> TypeParameters { get; set; } = new List<TypeParameter>();
 
+    public bool IsPrimaryClass { get; set; }
+
+    public bool NullableContext { get; set; }
+
     public override void Accept(IntermediateNodeVisitor visitor)
     {
         if (visitor == null)

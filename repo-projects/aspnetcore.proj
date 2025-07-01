@@ -20,6 +20,9 @@
     <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) -msbuildEngine vs</BuildArgs>
     <ForceDotNetMSBuildEngine>false</ForceDotNetMSBuildEngine>
 
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
+
     <!-- Pass TargetArchitecture in as a CLI switch, instead of an msbuild property. -->
     <SkipSetTargetArchitecture>true</SkipSetTargetArchitecture>
     <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)arch $(TargetArchitecture)</BuildArgs>
@@ -45,7 +48,6 @@
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
     <RepositoryReference Include="symreader" />
   </ItemGroup>

@@ -1,11 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Hover;
@@ -78,7 +77,7 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
 
             // Map the hover range back to the host document
             if (csharpHover.Range is { } range &&
-                DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range.ToLinePositionSpan(), out var hostDocumentSpan))
+                DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), range.ToLinePositionSpan(), out var hostDocumentSpan))
             {
                 csharpHover.Range = LspFactory.CreateRange(hostDocumentSpan);
             }

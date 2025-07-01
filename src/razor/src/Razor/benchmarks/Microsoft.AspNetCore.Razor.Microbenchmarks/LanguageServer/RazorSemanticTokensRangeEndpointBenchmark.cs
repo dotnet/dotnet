@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -103,7 +103,7 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     [Benchmark(Description = "Razor Semantic Tokens Range Endpoint")]
     public async Task RazorSemanticTokensRangeEndpointRangesAsync()
     {
-        var textDocumentIdentifier = new TextDocumentIdentifier { Uri = DocumentUri };
+        var textDocumentIdentifier = new TextDocumentIdentifier { DocumentUri = new(DocumentUri) };
         var request = new SemanticTokensRangeParams { Range = Range, TextDocument = textDocumentIdentifier };
 
         await SemanticTokensRangeEndpoint.HandleRequestAsync(request, RequestContext, CancellationToken);

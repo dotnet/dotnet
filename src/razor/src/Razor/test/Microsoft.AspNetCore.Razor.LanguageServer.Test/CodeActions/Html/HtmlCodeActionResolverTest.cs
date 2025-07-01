@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
@@ -39,7 +40,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
                 new() {
                     TextDocument = new OptionalVersionedTextDocumentIdentifier
                     {
-                        Uri = documentUri,
+                        DocumentUri = new(documentUri),
                     },
                     Edits = [LspFactory.CreateTextEdit(sourceText.GetRange(span), "Goo /*~~~~~~~~~~~*/ Bar")]
                 }
@@ -69,7 +70,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
                             {
                                 TextDocument = new OptionalVersionedTextDocumentIdentifier
                                 {
-                                    Uri = new Uri("c:/Test.razor.html"),
+                                    DocumentUri = new(new Uri("c:/Test.razor.html")),
                                 },
                                 Edits = [LspFactory.CreateTextEdit(position: (0, 0), "Goo")]
                             }
@@ -83,7 +84,7 @@ public class HtmlCodeActionResolverTest(ITestOutputHelper testOutput) : Language
         // Assert
         Assert.NotNull(action.Edit);
         Assert.True(action.Edit.TryGetTextDocumentEdits(out var documentEdits));
-        Assert.Equal(documentPath, documentEdits[0].TextDocument.Uri.AbsolutePath);
+        Assert.Equal(documentPath, documentEdits[0].TextDocument.DocumentUri.GetRequiredParsedUri().AbsolutePath);
         // Edit should be converted to 2 edits, to remove the tags
         Assert.Collection(documentEdits[0].Edits,
             e =>

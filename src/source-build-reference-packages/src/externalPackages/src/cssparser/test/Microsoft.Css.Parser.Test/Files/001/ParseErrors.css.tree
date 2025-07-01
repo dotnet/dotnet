@@ -1,0 +1,995 @@
+StyleSheet
+    UnknownDirective
+        At (AtDirectiveNameMissing:AfterItem)    @
+        Semicolon    ;
+    CComment
+        OpenCComment    /*
+        CommentText    AtDirectiveNameMissing
+        CloseCComment    */
+    UnknownDirective
+        At (AtDirectiveNameMissing:AfterItem)    @
+        Asterisk    *
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier (ColonMissingInDeclaration:AfterItem)    bogus
+                Identifier    content
+                Semicolon    ;
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    AtDirectiveNameMissing
+        CloseCComment    */
+    ImportDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier (UrlImportMissing:AfterItem)    import
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    UrlImportMissing
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    AtDirectiveSemicolonMissing
+        CloseCComment    */
+    ImportDirective
+        At    @
+        Identifier (UrlImportMissing:AfterItem)    import
+        Semicolon    ;
+    CComment
+        OpenCComment    /*
+        CommentText    UrlImportMissing
+        CloseCComment    */
+    NamespaceDirective
+        At    @
+        Identifier (UrlNamespaceMissing:AfterItem)    namespace
+        Semicolon    ;
+    CComment
+        OpenCComment    /*
+        CommentText    UrlNamespaceMissing
+        CloseCComment    */
+    NamespaceDirective
+        At    @
+        Identifier    namespace
+        Identifier (UrlNamespaceMissing:AfterItem)    foo
+        Semicolon    ;
+    CComment
+        OpenCComment    /*
+        CommentText    UrlNamespaceMissing
+        CloseCComment    */
+    NamespaceDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    namespace
+        String    "foo"
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    AtDirectiveSemicolonMissing
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    SelectorBeforeRuleBlockMissing
+        CloseCComment    */
+    CharsetDirective
+        At    @
+        Identifier (EncodingMissing:AfterItem)    charset
+        Semicolon    ;
+    CComment
+        OpenCComment    /*
+        CommentText    EncodingMissing
+        CloseCComment    */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    charset
+        String    "utf-8"
+    RuleSet
+        Selector
+            SimpleSelector
+                UnknownBlock (SimpleSelectorExpected:WholeItem)
+                    OpenFunctionBrace (CloseBraceMismatch:AfterItem)    (
+                CloseSquareBracket    ]
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    AtDirectiveSemicolonMissing
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    CloseBraceMismatch
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    SimpleSelectorExpected
+        CloseCComment    */
+    CharsetDirective (AtDirectiveSemicolonMissing:AfterItem)
+        At    @
+        Identifier    charset
+        InvalidString    "utf-8
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    SelectorBeforeRuleBlockMissing
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier (OpenCurlyBraceMissing:AfterItem)    media
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    CComment
+        OpenCComment    /*
+        CommentText    OpenCurlyBraceMissing
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            Identifier (UnexpectedMediaQueryToken:WholeItem)    foo
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    UnexpectedMediaQueryToken
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+        MediaQuery
+            Comma    ,
+            Identifier (MediaTypeMissing:AfterItem)    not
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    MediaTypeMissing
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+        MediaQuery
+            Comma (MediaTypeMissing:AfterItem)    ,
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    MediaTypeMissing
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier (MediaExpressionExpected:AfterItem)    and
+            Identifier (UnexpectedMediaQueryToken:WholeItem)    foo
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    MediaTypeMissing
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    MediaExpressionExpected
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    UnexpectedMediaQueryToken
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            Identifier    screen
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace (CloseFunctionBraceMissing:AfterItem)    (
+                Identifier    foo
+                Colon    :
+                Identifier    bar
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    CloseFunctionBraceMissing
+        CloseCComment    */
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery (MediaTypeMissing:BeforeItem)
+            Dollar (UnexpectedMediaQueryToken:WholeItem)    $
+            Identifier (UnexpectedMediaQueryToken:WholeItem)    foo
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery (MediaTypeMissing:BeforeItem)
+            MediaExpression
+                Identifier    and
+                OpenFunctionBrace    (
+                Identifier    color
+                Colon    :
+                Identifier    ugly
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        MediaQuery
+            MediaExpression
+                OpenFunctionBrace    (
+                Identifier    color
+                Colon    :
+                Identifier    ugly
+                CloseFunctionBrace    )
+        StyleSheet
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    FontFaceDirective
+        At    @
+        Identifier    font-face
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    DeclarationExpected
+        CloseCComment    */
+    RuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    foo
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                FunctionFormat (SimpleSelectorExpected:WholeItem)
+                    Function    format(
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    FunctionArgumentMissing
+                CloseCComment    */
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    foo
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                FunctionFormat (SimpleSelectorExpected:WholeItem)
+                    Function    format(
+                    FunctionArgument
+                        Comma (FunctionArgumentMissing:BeforeItem)    ,
+                    FunctionArgument
+                        Asterisk    *
+                    CloseFunctionBrace    )
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    FunctionArgumentMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    FormatTypeArgumentMissing
+                CloseCComment    */
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    background-image
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                UrlItem (SimpleSelectorExpected:WholeItem)
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    UnquotedUrlString    ^
+            SimpleSelector
+                Semicolon (SimpleSelectorExpected:WholeItem)    ;
+            CComment
+                OpenCComment    /*
+                CommentText    CloseFunctionBraceMissing
+                CloseCComment    */
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    background-image
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                UrlItem (SimpleSelectorExpected:WholeItem)
+                    Url (CloseFunctionBraceMissing:AfterItem)    url(
+                    UnquotedUrlString    foo
+            SimpleSelector
+                Semicolon (SimpleSelectorExpected:WholeItem)    ;
+    CComment
+        OpenCComment    /*
+        CommentText    CloseFunctionBraceMissing
+        CloseCComment    */
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    KeyFramesDirective
+        At    @
+        Identifier (KeyFrameBlockNameMissing:AfterItem)    keyframes
+        CComment
+            OpenCComment    /*
+            CommentText    KeyFrameBlockNameMissing
+            CloseCComment    */
+        KeyFramesBlock
+            OpenCurlyBrace    {
+            KeyFramesRuleSet
+                HashName (KeyFramesSelectorExpected:WholeItem)    #foo
+                RuleBlock
+                    OpenCurlyBrace    {
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    KeyFramesSelectorExpected
+                CloseCComment    */
+            KeyFramesRuleSet
+                KeyFramesSelector
+                    UnitValue
+                        Number    10
+                        Units    %
+                    Comma    ,
+                Number (KeyFramesSelectorExpected:WholeItem)    200
+                RuleBlock
+                    OpenCurlyBrace    {
+                    Declaration
+                        Identifier (ColonMissingInDeclaration:AfterItem)    color
+                        Identifier    color
+                        Colon    :
+                        Identifier    Red
+                        Semicolon    ;
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    KeyFramesSelectorExpected
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    ColonMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedToken(invisible)
+                CloseCComment    */
+            KeyFramesRuleSet
+                KeyFramesSelector
+                    UnitValue
+                        Number    10
+                        Units    %
+                    Comma    ,
+                Identifier (KeyFramesSelectorExpected:WholeItem)    foo
+                Identifier    bar
+                RuleBlock
+                    OpenCurlyBrace    {
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    KeyFramesSelectorExpected(1)
+                CloseCComment    */
+            KeyFramesRuleSet
+                KeyFramesSelector (SelectorAfterCommaMissing:AfterItem)
+                    UnitValue
+                        Number    10
+                        Units    %
+                    Comma    ,
+                RuleBlock
+                    OpenCurlyBrace    {
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    SelectorAfterCommaMissing
+                CloseCComment    */
+            KeyFramesRuleSet
+                KeyFramesSelector
+                    UnitValue
+                        Number    20
+                        Units    %
+                    Comma    ,
+                Comma (KeyFramesSelectorExpected:WholeItem)    ,
+                KeyFramesSelector
+                    UnitValue
+                        Number    30
+                        Units    %
+                RuleBlock
+                    OpenCurlyBrace    {
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    KeyFramesSelectorExpected
+                CloseCComment    */
+            KeyFramesRuleSet
+                KeyFramesSelector
+                    UnitValue
+                        Number    40
+                        Units    %
+                Number (UnexpectedToken:WholeItem)    50
+                Units    %
+                RuleBlock
+                    OpenCurlyBrace    {
+                    CloseCurlyBrace    }
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedToken
+                CloseCComment    */
+            KeyFramesRuleSet (OpenCurlyBraceMissingForRule:AfterItem)
+                KeyFramesSelector
+                    UnitValue
+                        Number    60
+                        Units    %
+            CComment
+                OpenCComment    /*
+                CommentText    OpenCurlyBraceMissing
+                CloseCComment    */
+            CloseCurlyBrace    }
+    PageDirective
+        At    @
+        Identifier    page
+        Colon (PseudoPageIdentifierMissing:AfterItem)    :
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoPageIdentifierMissing
+            CloseCComment    */
+        PageDirectiveBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            MarginDirective
+                At (AtDirectiveNameMissing:AfterItem, OpenCurlyBraceMissing:AfterItem)    @
+            CComment
+                OpenCComment    /*
+                CommentText    AtDirectiveNameMissing
+                CloseCComment    */
+            MarginDirective
+                At    @
+                Identifier (OpenCurlyBraceMissing:AfterItem)    bottom-right
+            Declaration
+                Identifier    color
+                Colon    :
+                Identifier    red
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    CComment
+        OpenCComment    /*
+        CommentText    OpenCurlyBraceMissing
+        CloseCComment    */
+    CComment
+        OpenCComment    /*
+        CommentText    UnexpectedToken(invisible)
+        CloseCComment    */
+    UnknownDirective
+        At    @
+        Identifier (AtDirectiveSemicolonMissing:AfterItem)    foo
+    CComment
+        OpenCComment    /*
+        CommentText    OpenCurlyBraceMissing
+        CloseCComment    */
+    CloseCurlyBrace (UnexpectedToken:WholeItem)    }
+    UnknownDirective
+        At    @
+        Identifier    unknown
+        Identifier    foo
+        UnknownDirectiveBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    UnknownDirective
+        At    @
+        Identifier    unknown
+        Identifier    foo
+        Semicolon    ;
+    RuleSet
+        Selector
+            SimpleSelector
+                Slash (SimpleSelectorExpected:WholeItem)    /
+            SimpleSelector
+                CloseFunctionBrace (SimpleSelectorExpected:WholeItem)    )
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    *
+                Identifier (SimpleSelectorExpected:WholeItem)    body
+        CComment
+            OpenCComment    /*
+            CommentText    SimpleSelectorExpected(3)
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    foo
+                Colon    :
+                CloseSquareBracket (PropertyValueExpected:WholeItem)    ]
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    PropertyValueExpected(invisible)
+                CloseCComment    */
+            Declaration (PropertyNameMissing:BeforeItem)
+                Dot    .
+                Identifier    foo
+                CComment
+                    OpenCComment    /*
+                    CommentText    PropertyNameMissing
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    ColonMissing
+                    CloseCComment    */
+                CComment
+                    OpenCComment    /*
+                    CommentText    UnexpectedToken(invisible)
+                    CloseCComment    */
+                Semicolon    ;
+            Declaration
+                Identifier (ColonMissingInDeclaration:AfterItem)    foo
+                Identifier    bar
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    ColonMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedToken(invisible)
+                CloseCComment    */
+            Declaration
+                Identifier (ColonMissingInDeclaration:AfterItem)    foo
+                Identifier    bar
+                Colon    :
+                Identifier    goo
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    ColonMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedToken(3,invisible)
+                CloseCComment    */
+            Declaration (PropertyNameMissing:BeforeItem)
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    PropertyNameMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    ColonMissing
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon (PropertyValueMissing:AfterItem)    :
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    PropertyValueMissing
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon (PropertyValueMissing:AfterItem)    :
+                CComment
+                    OpenCComment    /*
+                    CommentText    PropertyValueMissing
+                    CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Plus (SelectorBeforeCombineOperatorMissing:BeforeItem)    +
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                IdSelector
+                    Hash (IdMissing:AfterItem)    #
+            SimpleSelector (SelectorAfterCombineOperatorMissing:AfterItem)
+                Namespace    
+                Separator    
+                Name    foo
+                ClassSelector
+                    Dot (ClassNameMissing:AfterItem)    .
+                Greater    >
+        CComment
+            OpenCComment    /*
+            CommentText    SelectorBeforeCombinatorMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    IdMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    ClassNameMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    SelectorAfterCombinatorMissing
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    color
+                Colon    :
+                FunctionColor
+                    Function (CloseFunctionBraceMissing:AfterItem)    rgb(
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    CloseFunctionBraceMissing
+                CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            Comma (SelectorBeforeCommaMissing:BeforeItem)    ,
+        Selector
+            Comma (SelectorBeforeCommaMissing:BeforeItem)    ,
+        Selector (SelectorAfterCommaMissing:AfterItem)
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    div
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            Comma    ,
+        CComment
+            OpenCComment    /*
+            CommentText    SelectorBeforeCommaMissing(2)
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoClassNameMissing(2)
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    SelectorAfterCommaMissing
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            Declaration
+                Identifier    foo
+                Colon    :
+                InvalidString    "bar; /* CloseQuoteMissing */
+                Identifier    foo
+                Colon (PropertyValueExpected:WholeItem)    :
+                Identifier    red
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    PropertyValueExpected(invisible)
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon    :
+                Identifier    bar
+                Bang (ImportantMissing:AfterItem)    !
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    ImportantMissing
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon    :
+                Identifier    bar
+                Bang (ImportantMissing:AfterItem)    !
+                Identifier    baz
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    ImportantMissing
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon    :
+                Identifier    bar
+                Bang (ImportantMissing:AfterItem)    !
+                Bang (UnexpectedBangInProperty:WholeItem)    !
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedBang
+                CloseCComment    */
+            Declaration
+                Identifier    foo
+                Colon    :
+                CloseFunctionBrace (PropertyValueExpected:WholeItem)    )
+                Identifier    bar
+                Bang    !
+                Identifier    important
+                Bang (UnexpectedBangInProperty:WholeItem)    !
+                Semicolon    ;
+            CComment
+                OpenCComment    /*
+                CommentText    PropertyValueExpected(invisible)
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    UnexpectedBang
+                CloseCComment    */
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    lang(
+                        FunctionArgument
+                            Comma (FunctionArgumentMissing:BeforeItem)    ,
+                        FunctionArgument
+                            Identifier    foo
+                        CloseFunctionBrace    )
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                PseudoClassSelector
+                                    Colon (PseudoClassNameMissing:AfterItem)    :
+                        CloseFunctionBrace    )
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        CloseFunctionBrace    )
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    PseudoFunctionNot
+                        Function    not(
+                        PseudoSelectorArgument
+                            SimpleSelector
+                                Ampersand (PseudoFunctionSelectorExpected:WholeItem)    &
+                                Identifier (PseudoFunctionSelectorExpected:WholeItem)    foo
+                        CloseFunctionBrace    )
+        CComment
+            OpenCComment    /*
+            CommentText    FunctionArgumentMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoClassNameMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    FunctionArgumentMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoFunctionSelectorExpected
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                PseudoElementSelector
+                    DoubleColon (PseudoElementNameMissing:AfterItem)    ::
+            SimpleSelector
+                PseudoClassSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    foo
+            SimpleSelector
+                PseudoElementSelector
+                    DoubleColon (PseudoElementNameMissing:AfterItem)    ::
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    foo
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon (PseudoClassNameMissing:AfterItem)    :
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    foo(
+                    FunctionArgument
+                        Identifier    bar
+                    CloseFunctionBrace    )
+            SimpleSelector
+                PseudoElementFunctionSelector
+                    DoubleColon (PseudoElementNameMissing:AfterItem)    ::
+            SimpleSelector
+                Function (SimpleSelectorExpected:WholeItem)
+                    Function    foo(
+                    FunctionArgument
+                        Identifier    bar
+                    CloseFunctionBrace    )
+            SimpleSelector
+                PseudoClassFunctionSelector
+                    Colon    :
+                    Function
+                        Function    foo(
+                        FunctionArgument
+                            Identifier    bar
+                        CloseFunctionBrace    )
+            SimpleSelector
+                PseudoElementFunctionSelector
+                    DoubleColon    ::
+                    Function
+                        Function    foo(
+                        FunctionArgument
+                            Identifier    bar
+                        CloseFunctionBrace    )
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoClassNameMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    PseudoElementNameMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    SimpleSelectorExpected
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    RuleSet
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector (AttributeSelectorCloseBracketMissing:AfterItem)
+                    OpenSquareBracket (AttributeSelectorElementMissing:AfterItem)    [
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector
+                    OpenSquareBracket (AttributeSelectorElementMissing:AfterItem)    [
+                    CloseSquareBracket    ]
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector (AttributeSelectorCloseBracketMissing:AfterItem)
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Identifier (AttributeSelectorOperationMissing:BeforeItem)    bar
+                    CloseSquareBracket    ]
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector
+                    OpenSquareBracket    [
+                    Namespace    
+                    Separator    
+                    Name    foo
+                    Equals (AttributeSelectorValueMissing:AfterItem)    =
+                    CloseSquareBracket    ]
+            Comma    ,
+        Selector
+            SimpleSelector
+                Namespace    
+                Separator    
+                Name    body
+                AttributeSelector
+                    OpenSquareBracket (AttributeSelectorElementMissing:AfterItem)    [
+                    Equals    =
+                    Identifier    bar
+                    CloseSquareBracket    ]
+        CComment
+            OpenCComment    /*
+            CommentText    AttributeSelectorCloseBracketMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    AttributeSelectorElementMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    AttributeSelectorOperationMissing
+            CloseCComment    */
+        CComment
+            OpenCComment    /*
+            CommentText    AttributeSelectorValueMissing
+            CloseCComment    */
+        RuleBlock
+            OpenCurlyBrace    {
+            CloseCurlyBrace    }
+    MediaDirective
+        At    @
+        Identifier    media
+        StyleSheet (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            CComment
+                OpenCComment    /*
+                CommentText    CloseCurlyBraceMissing
+                CloseCComment    */
+            RuleSet
+                Selector
+                    SimpleSelector
+                        ClassSelector
+                            Dot    .
+                            Identifier    f
+                RuleBlock (CloseCurlyBraceMissing:AfterItem)
+                    OpenCurlyBrace    {
+                    CComment
+                        OpenCComment    /*
+                        CommentText    CloseBraceMissing
+                        CloseCComment    */
+                    Declaration
+                        Identifier (ColonMissingInDeclaration:AfterItem)    foo
+    RuleSet (SelectorBeforeRuleBlockMissing:BeforeItem)
+        RuleBlock (CloseCurlyBraceMissing:AfterItem)
+            OpenCurlyBrace    {
+            CComment
+                OpenCComment    /*
+                CommentText    ColonMissing
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    SimpleSelectorExpected
+                CloseCComment    */
+            CComment
+                OpenCComment    /*
+                CommentText    CloseCurlyBraceMissing
+                CloseCComment    */
+            CComment (CloseCommentMissing:AfterItem)
+                OpenCComment    /*
+                CommentText    CloseCommentMissing

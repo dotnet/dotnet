@@ -67,6 +67,12 @@ namespace Microsoft.DotNet.StrongName
                     return false;
                 }
 
+                // If the checksum isn't set, then it's not signed.
+                if (peHeaders.PEHeader.CheckSum == 0)
+                {
+                    return false;
+                }
+
                 // Reset position before creating the blob builder.
                 peStream.Position = 0;
                 byte[] peBuffer = Utils.ReadPEToBuffer(peStream);

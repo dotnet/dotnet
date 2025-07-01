@@ -13,6 +13,11 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  displayName: Final version kind
+  type: string
+  default: ''
+
 variables:
 - name: _TeamName
   value: DotNetCore
@@ -42,6 +47,20 @@ variables:
 - ${{ else }}:
   - name: ibcEnabled
     value: false
+
+## Note: The use of if expressons underneath the variable is necessary to get the updated isOfficialBuild value
+- ${{ if eq(parameters.desiredFinalVersionKind, 'Default (repo specifies)') }}:
+  - name: brandingType
+    value: 'default'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Preview') }}:
+  - name: brandingType
+    value: 'preview'
+- ${{ elseif eq(parameters.desiredFinalVersionKind, 'Stable Final') }}:
+  - name: brandingType
+    value: 'rtm'
+- ${{ else }}:
+  - name: brandingType
+    value: 'default'
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
@@ -114,12 +133,6 @@ variables:
 - name: centOSStreamContainerImage
   value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
 
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamContainerNamePrevious
-  value: centOSStreamContainerOld
-- name: centOSStreamContainerImagePrevious
-  value: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
-
 - name: fedoraContainerName
   value: fedoraContainer
 - name: fedoraContainerImage
@@ -191,9 +204,6 @@ variables:
   value: Alpine321
 - name: centOSStreamName
   value: CentOSStream10
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamNamePrevious
-  value: CentOSStream9
 - name: fedoraName
   value: Fedora41
 - name: ubuntuName
@@ -201,6 +211,10 @@ variables:
 
 - name: almaLinuxX64Rid
   value: almalinux.8-x64
+- name: linuxX64Rid
+  value: linux-x64
+- name: linuxArm64Rid
+  value: linux-arm64
 - name: linuxMuslX64Rid
   value: linux-musl-x64
 - name: linuxMuslArmRid
@@ -211,9 +225,6 @@ variables:
   value: alpine.3.21-x64
 - name: centOSStreamX64Rid
   value: centos.10-x64
-# Update previous version to current version in a rebootstrap PR - https://github.com/dotnet/source-build/issues/5238
-- name: centOSStreamX64RidPrevious
-  value: centos.9-x64
 - name: fedoraX64Rid
   value: fedora.41-x64
 - name: ubuntux64Rid

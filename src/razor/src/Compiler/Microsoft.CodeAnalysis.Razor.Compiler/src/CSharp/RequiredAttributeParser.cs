@@ -23,12 +23,12 @@ internal static class RequiredAttributeParser
     {
         private const char RequiredAttributeWildcardSuffix = '*';
 
-        private static readonly IReadOnlyDictionary<char, RequiredAttributeDescriptor.ValueComparisonMode> CssValueComparisons =
-            new Dictionary<char, RequiredAttributeDescriptor.ValueComparisonMode>
+        private static readonly IReadOnlyDictionary<char, RequiredAttributeValueComparison> CssValueComparisons =
+            new Dictionary<char, RequiredAttributeValueComparison>
             {
-                        { '=', RequiredAttributeDescriptor.ValueComparisonMode.FullMatch },
-                        { '^', RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch },
-                        { '$', RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch }
+                        { '=', RequiredAttributeValueComparison.FullMatch },
+                        { '^', RequiredAttributeValueComparison.PrefixMatch },
+                        { '$', RequiredAttributeValueComparison.SuffixMatch }
             };
         private static readonly char[] InvalidPlainAttributeNameCharacters = { ' ', '\t', ',', RequiredAttributeWildcardSuffix };
         private static readonly char[] InvalidCssAttributeNameCharacters = (new[] { ' ', '\t', ',', ']' })
@@ -112,7 +112,7 @@ internal static class RequiredAttributeParser
             var nameEndIndex = _requiredAttributes.IndexOfAny(InvalidPlainAttributeNameCharacters, _index);
             string attributeName;
 
-            var nameComparison = RequiredAttributeDescriptor.NameComparisonMode.FullMatch;
+            var nameComparison = RequiredAttributeNameComparison.FullMatch;
             if (nameEndIndex == -1)
             {
                 attributeName = _requiredAttributes.Substring(_index);
@@ -125,7 +125,7 @@ internal static class RequiredAttributeParser
 
                 if (_requiredAttributes[nameEndIndex] == RequiredAttributeWildcardSuffix)
                 {
-                    nameComparison = RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch;
+                    nameComparison = RequiredAttributeNameComparison.PrefixMatch;
 
                     // Move past wild card
                     _index++;
@@ -133,7 +133,7 @@ internal static class RequiredAttributeParser
             }
 
             attributeBuilder.Name = attributeName;
-            attributeBuilder.NameComparisonMode = nameComparison;
+            attributeBuilder.NameComparison = nameComparison;
         }
 
         private void ParseCssAttributeName(RequiredAttributeDescriptorBuilder builder)
@@ -148,7 +148,7 @@ internal static class RequiredAttributeParser
             builder.Name = attributeName;
         }
 
-        private bool TryParseCssValueComparison(RequiredAttributeDescriptorBuilder builder, out RequiredAttributeDescriptor.ValueComparisonMode valueComparison)
+        private bool TryParseCssValueComparison(RequiredAttributeDescriptorBuilder builder, out RequiredAttributeValueComparison valueComparison)
         {
             Debug.Assert(!AtEnd);
 
@@ -178,7 +178,7 @@ internal static class RequiredAttributeParser
                 return false;
             }
 
-            builder.ValueComparisonMode = valueComparison;
+            builder.ValueComparison = valueComparison;
 
             return true;
         }
@@ -237,7 +237,7 @@ internal static class RequiredAttributeParser
                 return false;
             }
 
-            if (!TryParseCssValueComparison(attributeBuilder, out RequiredAttributeDescriptor.ValueComparisonMode valueComparison))
+            if (!TryParseCssValueComparison(attributeBuilder, out RequiredAttributeValueComparison valueComparison))
             {
                 return false;
             }
@@ -249,7 +249,7 @@ internal static class RequiredAttributeParser
                 return false;
             }
 
-            if (valueComparison != RequiredAttributeDescriptor.ValueComparisonMode.None && !TryParseCssValue(attributeBuilder))
+            if (valueComparison != RequiredAttributeValueComparison.None && !TryParseCssValue(attributeBuilder))
             {
                 return false;
             }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -73,7 +73,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     {
         var output = await primary.GetGeneratedOutputAsync(cancellationToken);
 
-        foreach (var mapping in output.GetCSharpDocument().SourceMappings)
+        foreach (var mapping in output.GetRequiredCSharpDocument().SourceMappings)
         {
             if (mapping.OriginalSpan.AbsoluteIndex <= primarySpan.Start &&
                 (mapping.OriginalSpan.AbsoluteIndex + mapping.OriginalSpan.Length) >= primarySpan.End)

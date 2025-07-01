@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -55,7 +55,7 @@ internal class GenerateMethodCodeActionResolver(
 
         if (!_fileSystem.FileExists(codeBehindPath) ||
             razorClassName is null ||
-            !code.TryComputeNamespace(fallbackToRootNamespace: true, out var razorNamespace))
+            !code.TryGetNamespace(fallbackToRootNamespace: true, out var razorNamespace))
         {
             return await GenerateMethodInCodeBlockAsync(
                 code,
@@ -85,7 +85,7 @@ internal class GenerateMethodCodeActionResolver(
 
         var codeBehindUri = LspFactory.CreateFilePathUri(codeBehindPath);
 
-        var codeBehindTextDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { Uri = codeBehindUri };
+        var codeBehindTextDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier() { DocumentUri = new(codeBehindUri) };
 
         var templateWithMethodSignature = PopulateMethodSignature(actionParams);
         var classLocationLineSpan = @class.GetLocation().GetLineSpan();
@@ -130,7 +130,7 @@ internal class GenerateMethodCodeActionResolver(
         var editToSendToRoslyn = edits.Length == 3 ? edits[1] : edits[0];
         if (edits.Length == 3
             && razorClassName is not null
-            && (razorNamespace is not null || code.TryComputeNamespace(fallbackToRootNamespace: true, out razorNamespace))
+            && (razorNamespace is not null || code.TryGetNamespace(fallbackToRootNamespace: true, out razorNamespace))
             && GetCSharpClassDeclarationSyntax(code.GetOrParseCSharpSyntaxTree(cancellationToken), razorNamespace, razorClassName) is { } @class)
         {
             // There is no existing @code block. This means that there is no code block source mapping in the generated C# document
@@ -158,7 +158,7 @@ internal class GenerateMethodCodeActionResolver(
                 editToSendToRoslyn.NewText = $"{formatting}{simplificationEdit.NewText.TrimEnd()}";
             }
         }
-        else if (_documentMappingService.TryMapToGeneratedDocumentRange(code.GetCSharpDocument(), editToSendToRoslyn.Range, out var remappedRange))
+        else if (_documentMappingService.TryMapToGeneratedDocumentRange(code.GetRequiredCSharpDocument(), editToSendToRoslyn.Range, out var remappedRange))
         {
             // If the call to Roslyn is successful, the razor formatting service will format incorrectly if our manual formatting is present,
             // strip our manual formatting from the method so we just have a valid method signature.
@@ -190,7 +190,7 @@ internal class GenerateMethodCodeActionResolver(
 
         var razorTextDocEdit = new TextDocumentEdit()
         {
-            TextDocument = new OptionalVersionedTextDocumentIdentifier() { Uri = documentContext.Uri },
+            TextDocument = new OptionalVersionedTextDocumentIdentifier() { DocumentUri = new(documentContext.Uri) },
             Edits = [.. edits],
         };
 

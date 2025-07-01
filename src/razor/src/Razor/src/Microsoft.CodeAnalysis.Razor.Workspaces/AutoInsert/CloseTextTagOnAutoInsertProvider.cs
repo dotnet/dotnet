@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -46,8 +46,8 @@ internal class CloseTextTagOnAutoInsertProvider : IOnAutoInsertProvider
             return false;
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var token = syntaxTree.Root.FindToken(absoluteIndex - 1);
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
+        var token = syntaxRoot.FindToken(absoluteIndex - 1);
 
         // Make sure the end </text> tag doesn't already exist
         if (token.Parent is MarkupStartTagSyntax

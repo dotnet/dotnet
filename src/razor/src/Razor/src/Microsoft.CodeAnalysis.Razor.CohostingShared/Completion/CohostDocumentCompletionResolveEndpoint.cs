@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -44,7 +44,7 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentCompletionEndpoint>();
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentCompletionResolveEndpoint>();
 
     protected override bool MutatesSolutionState => false;
 
@@ -103,7 +103,7 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
             Debug.Assert(_logger is not null);
             Debug.Assert(nameof(DelegatedCompletionHelper).Length > 0);
 
-            // We don't support completion resolve in VS Code
+            // We don't support Html completion resolve in VS Code
             return completionItem;
 #else
             completionItem.Data = DelegatedCompletionHelper.GetOriginalCompletionItemData(completionItem, completionList, delegatedContext.OriginalCompletionListData);

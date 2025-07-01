@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -29,7 +29,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
     public TextDocumentIdentifier GetTextDocumentIdentifier()
         => new VSTextDocumentIdentifier()
         {
-            Uri = Uri,
+            DocumentUri = new(Uri),
             ProjectContext = _projectContext,
         };
 
@@ -86,7 +86,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static RazorSyntaxTree GetSyntaxTreeCore(RazorCodeDocument codeDocument)
         {
-            return codeDocument.GetSyntaxTree().AssumeNotNull();
+            return codeDocument.GetRequiredSyntaxTree();
         }
 
         async ValueTask<RazorSyntaxTree> GetSyntaxTreeCoreAsync(CancellationToken cancellationToken)
@@ -158,11 +158,7 @@ internal class DocumentContext(Uri uri, IDocumentSnapshot snapshot, VSProjectCon
 
         static RazorSyntaxNode? GetSyntaxNodeCore(RazorCodeDocument codeDocument, int absoluteIndex)
         {
-            var syntaxTree = codeDocument.GetSyntaxTree().AssumeNotNull();
-
-            return syntaxTree.Root is RazorSyntaxNode root
-                ? root.FindInnermostNode(absoluteIndex)
-                : null;
+            return codeDocument.GetRequiredSyntaxRoot().FindInnermostNode(absoluteIndex);
         }
 
         async ValueTask<RazorSyntaxNode?> GetSyntaxNodeCoreAsync(int absoluteIndex, CancellationToken cancellationToken)

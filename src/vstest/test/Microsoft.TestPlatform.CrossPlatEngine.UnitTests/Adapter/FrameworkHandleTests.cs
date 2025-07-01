@@ -87,6 +87,57 @@ public class FrameworkHandleTests
             mt.LaunchProcessWithDebuggerAttached(It.IsAny<TestProcessStartInfo>()), Times.Once);
     }
 
+    [TestMethod]
+    public void LaunchProcessWithDebuggerAttachedShouldSetCurrentDirectoryWhenWorkingDirectoryIsNull()
+    {
+        var tec = GetTestExecutionContext();
+        tec.IsDebug = true;
+        var mockTestRunEventsHandler = new Mock<IInternalTestRunEventsHandler>();
+        TestProcessStartInfo? capturedProcessInfo = null;
+
+        mockTestRunEventsHandler
+            .Setup(mt => mt.LaunchProcessWithDebuggerAttached(It.IsAny<TestProcessStartInfo>()))
+            .Callback<TestProcessStartInfo>(info => capturedProcessInfo = info)
+            .Returns(1234);
+
+        var frameworkHandle = new FrameworkHandle(
+            null,
+            new TestRunCache(100, TimeSpan.MaxValue, (s, r, ip) => { }),
+            tec,
+            mockTestRunEventsHandler.Object);
+
+        frameworkHandle.LaunchProcessWithDebuggerAttached("test.exe", null, null, null);
+
+        Assert.IsNotNull(capturedProcessInfo);
+        Assert.AreEqual(Environment.CurrentDirectory, capturedProcessInfo.WorkingDirectory);
+    }
+
+    [TestMethod]
+    public void LaunchProcessWithDebuggerAttachedShouldUseProvidedWorkingDirectory()
+    {
+        var tec = GetTestExecutionContext();
+        tec.IsDebug = true;
+        var mockTestRunEventsHandler = new Mock<IInternalTestRunEventsHandler>();
+        TestProcessStartInfo? capturedProcessInfo = null;
+        var expectedWorkingDirectory = "/custom/path";
+
+        mockTestRunEventsHandler
+            .Setup(mt => mt.LaunchProcessWithDebuggerAttached(It.IsAny<TestProcessStartInfo>()))
+            .Callback<TestProcessStartInfo>(info => capturedProcessInfo = info)
+            .Returns(1234);
+
+        var frameworkHandle = new FrameworkHandle(
+            null,
+            new TestRunCache(100, TimeSpan.MaxValue, (s, r, ip) => { }),
+            tec,
+            mockTestRunEventsHandler.Object);
+
+        frameworkHandle.LaunchProcessWithDebuggerAttached("test.exe", expectedWorkingDirectory, null, null);
+
+        Assert.IsNotNull(capturedProcessInfo);
+        Assert.AreEqual(expectedWorkingDirectory, capturedProcessInfo.WorkingDirectory);
+    }
+
     private static TestExecutionContext GetTestExecutionContext()
     {
         var tec = new TestExecutionContext(

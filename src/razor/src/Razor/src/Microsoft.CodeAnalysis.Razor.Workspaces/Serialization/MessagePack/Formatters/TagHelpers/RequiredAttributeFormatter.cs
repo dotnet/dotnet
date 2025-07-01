@@ -1,16 +1,16 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using MessagePack;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using static Microsoft.AspNetCore.Razor.Language.RequiredAttributeDescriptor;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class RequiredAttributeFormatter : ValueFormatter<RequiredAttributeDescriptor>
 {
+    private const int PropertyCount = 6;
+
     public static readonly ValueFormatter<RequiredAttributeDescriptor> Instance = new RequiredAttributeFormatter();
 
     private RequiredAttributeFormatter()
@@ -19,52 +19,43 @@ internal sealed class RequiredAttributeFormatter : ValueFormatter<RequiredAttrib
 
     public override RequiredAttributeDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(8);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
+        var flags = (RequiredAttributeDescriptorFlags)reader.ReadByte();
         var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var nameComparison = (NameComparisonMode)reader.ReadInt32();
-        var caseSensitive = reader.ReadBoolean();
+        var nameComparison = (RequiredAttributeNameComparison)reader.ReadByte();
         var value = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var valueComparison = (ValueComparisonMode)reader.ReadInt32();
-        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var valueComparison = (RequiredAttributeValueComparison)reader.ReadByte();
 
-        var metadata = reader.Deserialize<MetadataCollection>(options);
         var diagnostics = reader.Deserialize<ImmutableArray<RazorDiagnostic>>(options);
 
         return new RequiredAttributeDescriptor(
-            name!, nameComparison,
-            caseSensitive,
-            value, valueComparison,
-            displayName, diagnostics, metadata);
+            flags, name!, nameComparison, value, valueComparison, diagnostics);
     }
 
     public override void Serialize(ref MessagePackWriter writer, RequiredAttributeDescriptor value, SerializerCachingOptions options)
     {
-        writer.WriteArrayHeader(8);
+        writer.WriteArrayHeader(PropertyCount);
 
+        writer.Write((byte)value.Flags);
         CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
-        writer.Write((int)value.NameComparison);
-        writer.Write(value.CaseSensitive);
+        writer.Write((byte)value.NameComparison);
         CachedStringFormatter.Instance.Serialize(ref writer, value.Value, options);
-        writer.Write((int)value.ValueComparison);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
+        writer.Write((byte)value.ValueComparison);
 
-        writer.Serialize(value.Metadata, options);
         writer.Serialize(value.Diagnostics, options);
     }
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(8);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
+        reader.Skip(); // Flags
         CachedStringFormatter.Instance.Skim(ref reader, options); // Name
         reader.Skip(); // NameComparison
-        reader.Skip(); // CaseSensitive
         CachedStringFormatter.Instance.Skim(ref reader, options); // Value
         reader.Skip(); // ValueComparison
-        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
 
-        MetadataCollectionFormatter.Instance.Skim(ref reader, options); // Metadata
         RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
     }
 }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -23,9 +23,9 @@ public abstract class FormattingLanguageServerTestBase(ITestOutputHelper testOut
         var source = TestRazorSourceDocument.Create(content);
         var codeDocument = RazorCodeDocument.Create(source);
         var syntaxTree = RazorSyntaxTree.Parse(source, codeDocument.ParserOptions);
-        var razorCSharpDocument = TestRazorCSharpDocument.Create(codeDocument, content, sourceMappings);
+        var csharpDocument = TestRazorCSharpDocument.Create(codeDocument, content, sourceMappings);
         codeDocument.SetSyntaxTree(syntaxTree);
-        codeDocument.SetCSharpDocument(razorCSharpDocument);
+        codeDocument.SetCSharpDocument(csharpDocument);
 
         return codeDocument;
     }

@@ -19,7 +19,7 @@ if you're interested in the architecture of a test logger.
 
 ### Available test loggers
 
-| Scenario | Nuget Package | Source Repository |
+| Scenario | NuGet Package | Source Repository |
 | -------- | ------------- | ----------------- |
 | Local, CI, CD | Inbuilt | [Trx Logger][] |
 | Local, CI, CD | Inbuilt | [Console Logger][] |
@@ -30,7 +30,7 @@ if you're interested in the architecture of a test logger.
 | AppVeyor | [AppVeyor.TestLogger][appveyor.nuget] | [AppVeyor Logger][] |
 | Azure Pipelines | [AzurePipelines.TestLogger][azurepipelines.nuget] | [Azure Pipelines Logger][] |
 | GitHub Actions | [GitHubActionsTestLogger][githubactions.nuget] | [GitHub Actions Test Logger][] |
-| TeamCity | [TeamCity.VSTest.TestAdapter][teamcity.nuget] | [Teamcity Logger][] |
+| TeamCity | [TeamCity.VSTest.TestAdapter][teamcity.nuget] | [TeamCity Logger][] |
 
 [Trx Logger]: https://github.com/Microsoft/vstest/tree/main/src/Microsoft.TestPlatform.Extensions.TrxLogger
 [Html Logger]: https://github.com/Microsoft/vstest/tree/main/src/Microsoft.TestPlatform.Extensions.HtmlLogger
@@ -71,25 +71,27 @@ to one of the following locations:
 dotnet-cli, the path could be `/sdk/<version>/Extensions` directory.
 2. any well known location on the filesystem
 
-> Version Note: new in 15.1
-In case of #2, user can specify the full path to the location using `/TestAdapterPath:<path>`
-command line switch. Test platform will locate extensions from the provided
-directory.
+> [!NOTE]
+> **New in 15.1**
+>
+> In case of #2, user can specify the full path to the location using `/TestAdapterPath:<path>`
+> command line switch. Test platform will locate extensions from the provided
+> directory.
 
 ## Naming
 
 Test platform will look for assemblies named `*.testlogger.dll` when it's trying
 to load test loggers.
 
-> Version Note: < 15.1
-> For 15.0 version, the test loggers are also discovered from *.testadapter.dll
+> [!NOTE]
+> For the 15.0 version, the test loggers are also discovered from `*.testadapter.dll`
 
 ## Create a test logger
 
 Go through the following steps to create your own logger
 
 1) Add a nuget reference of package `Microsoft.TestPlatform.ObjectModel`.
-2) Implement ITestLoggerWithParameters (or ITestLogger, if your logger is not expecting any parameter). [Logger Example](https://github.com/spekt/xunit.testlogger/blob/master/src/Xunit.Xml.TestLogger/XunitXmlTestLogger.cs#L19)
+2) Implement `ITestLoggerWithParameters` (or `ITestLogger`, if your logger is not expecting any parameters). [Logger Example](https://github.com/spekt/xunit.testlogger/blob/49d2416f24acb30225adc6e65753cc829010bec9/src/Xunit.Xml.TestLogger/XunitXmlTestLogger.cs#L19)
 3) Name your logger assembly `*.testlogger.dll`. [Detailed](./report.md#naming)
 
 ## Enable a test logger
@@ -100,7 +102,7 @@ A test logger must be explicitly enabled using the command line. E.g.
  vstest.console test_project.dll /logger:mylogger
 ```
 
-Where `mylogger` is the LoggerUri or FriendlyName of the logger.
+Where `mylogger` is the `LoggerUri` or `FriendlyName` of the logger.
 
 ## Configure reporting
 
@@ -110,40 +112,48 @@ Additional arguments to a logger can also be passed in the command line. E.g.
  vstest.console test_project.dll /logger:mylogger;Setting=Value
 ```
 
-Where `mylogger` is the LoggerUri or FriendlyName of the logger.
-`Setting` is the name of the additional argument and `Value`is its value.
+Where `mylogger` is the `LoggerUri` or `FriendlyName` of the logger.
+`Setting` is the name of the additional argument and `Value` is its value.
 
-It is upto the logger implementation to support additional arguments.
+It is up to the logger implementation to support additional arguments.
 
 ## Syntax of default loggers
 
 ### 1) Console logger
 
-Console logger is the default logger and it is used to output the test results into console window.
+Console logger is the default logger and it is used to output the test results to a terminal.
 
 #### Syntax
 
-```shell
-For dotnet test or dotnet vstest :
---logger:console[;verbosity=<Defaults to "minimal">]
+For dotnet test or dotnet vstest:
 
-For vstest.console.exe :
-/logger:console[;verbosity=<Defaults to "normal">]
- 
-Argument "verbosity" define the verbosity level of console logger. Allowed values for verbosity are "quiet", "minimal", "normal" and "detailed".
+```shell
+--logger:console[;verbosity=<Defaults to "minimal">]
 ```
+
+For vstest.console.exe:
+
+```shell
+/logger:console[;verbosity=<Defaults to "normal">]
+```
+ 
+Argument `verbosity` defines the verbosity level of the console logger. Allowed values for verbosity are `quiet`, `minimal`, `normal` and `detailed`.
 
 #### Example
 
 ```shell
 vstest.console.exe Tests.dll /logger:"console;verbosity=normal"
+```
 
-If you are using "dotnet test", then use the following command
+If you are using `dotnet test`, then use the following command:
 
+```shell
 dotnet test Tests.csproj --logger:"console;verbosity=normal"
+```
 
-or you can also use argument "-v | --verbosity" of "dotnet test"
+or you can also use argument `-v | --verbosity` of `dotnet test`:
 
+```shell
 dotnet test Tests.csproj -v normal
 ```
 
@@ -155,28 +165,35 @@ Trx logger is used to log test results into a Visual Studio Test Results File (T
 
 ```shell
 /logger:trx [;LogFileName=<Defaults to unique file name>]
-
-Where "LogFileName" can be absolute or relative path. If path is relative, it will be relative to "TestResults" directory, created under current working directory.
 ```
+
+Where `LogFileName` can be absolute or relative path. If the path is relative, it will be relative to the `TestResults` directory, created under current working directory.
+
 
 #### Examples
 
-Suppose the current working directory is "c:\tempDirecory".
+Suppose the current working directory is `c:\tempDirectory`.
 
 ```shell
-1) vstest.console.exe Tests.dll /logger:trx
-trx file will get generated in location "c:\tempDirecory\TestResults"
-
-2) vstest.console.exe Tests.dll /logger:"trx;LogFileName=relativeDir\logFile.txt"
-trx file will be "c:\tempDirecory\TestResults\relativeDir\logFile.txt"
-
-3) vstest.console.exe Tests.dll /logger:"trx;LogFileName=c:\temp\logFile.txt"
-trx file will be "c:\temp\logFile.txt"
+vstest.console.exe Tests.dll /logger:trx
 ```
+
+trx file will get generated in location `c:\tempDirectory\TestResults`.
+
+```shell
+vstest.console.exe Tests.dll /logger:"trx;LogFileName=relativeDir\logFile.txt"
+
+trx file will be `c:\tempDirectory\TestResults\relativeDir\logFile.txt`.
+
+```shell
+vstest.console.exe Tests.dll /logger:"trx;LogFileName=c:\temp\logFile.txt"
+```
+
+trx file will be `c:\temp\logFile.txt`.
 
 ### 3) Html logger
 
-Html logger is used to log test results into a html file.
+Html logger is used to log test results into a HTML file.
 
 #### Syntax
 
@@ -189,18 +206,25 @@ Where "LogFileName" can be absolute or relative path. If path is relative, it wi
 
 #### Examples
 
-Suppose the current working directory is "c:\tempDirecory".
+Suppose the current working directory is `c:\tempDirectory`.
 
 ```shell
-1) vstest.console.exe Tests.dll /logger:html
-Html file will get generated in location "c:\tempDirecory\TestResults"
-
-2) vstest.console.exe Tests.dll /logger:"html;LogFileName=relativeDir\logFile.html"
-Html file will be "c:\tempDirecory\TestResults\relativeDir\logFile.html"
-
-3) vstest.console.exe Tests.dll /logger:"html;LogFileName=c:\temp\logFile.html"
-Html file will be "c:\temp\logFile.html"
+vstest.console.exe Tests.dll /logger:html
 ```
+
+HTML file will get generated in location `c:\tempDirectory\TestResults`.
+
+```shell
+vstest.console.exe Tests.dll /logger:"html;LogFileName=relativeDir\logFile.html"
+```
+
+HTML file will be `c:\tempDirectory\TestResults\relativeDir\logFile.html`.
+
+```shell
+vstest.console.exe Tests.dll /logger:"html;LogFileName=c:\temp\logFile.html"
+```
+
+HTML file will be `c:\temp\logFile.html`.
 
 ## Related links
 

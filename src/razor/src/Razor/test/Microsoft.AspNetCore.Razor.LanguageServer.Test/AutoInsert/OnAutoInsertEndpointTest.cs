@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -36,7 +36,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = "!",
             Options = new FormattingOptions
@@ -78,7 +78,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
         var uri = new Uri("file://path/test.razor");
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.DefaultPosition,
             Character = ">",
             Options = new FormattingOptions
@@ -119,7 +119,7 @@ public partial class OnAutoInsertEndpointTest(ITestOutputHelper testOutput) : Si
             LoggerFactory);
         var @params = new VSInternalDocumentOnAutoInsertParams()
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri, },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri), },
             Position = LspFactory.CreatePosition(1, 3),
             Character = "/",
             Options = new FormattingOptions

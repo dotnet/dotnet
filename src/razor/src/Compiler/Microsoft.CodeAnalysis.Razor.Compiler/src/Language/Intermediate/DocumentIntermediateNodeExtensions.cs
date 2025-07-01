@@ -17,7 +17,7 @@ public static class DocumentIntermediateNodeExtensions
             throw new ArgumentNullException(nameof(node));
         }
 
-        return FindWithAnnotation<ClassDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryClass);
+        return FindNode<ClassDeclarationIntermediateNode>(node, static n => n.IsPrimaryClass);
     }
 
     public static MethodDeclarationIntermediateNode FindPrimaryMethod(this DocumentIntermediateNode node)
@@ -27,7 +27,7 @@ public static class DocumentIntermediateNodeExtensions
             throw new ArgumentNullException(nameof(node));
         }
 
-        return FindWithAnnotation<MethodDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryMethod);
+        return FindNode<MethodDeclarationIntermediateNode>(node, static n => n.IsPrimaryMethod);
     }
 
     public static NamespaceDeclarationIntermediateNode FindPrimaryNamespace(this DocumentIntermediateNode node)
@@ -37,7 +37,7 @@ public static class DocumentIntermediateNodeExtensions
             throw new ArgumentNullException(nameof(node));
         }
 
-        return FindWithAnnotation<NamespaceDeclarationIntermediateNode>(node, CommonAnnotations.PrimaryNamespace);
+        return FindNode<NamespaceDeclarationIntermediateNode>(node, static n => n.IsPrimaryNamespace);
     }
 
     public static IReadOnlyList<IntermediateNodeReference> FindDirectiveReferences(this DocumentIntermediateNode node, DirectiveDescriptor directive)
@@ -70,16 +70,18 @@ public static class DocumentIntermediateNodeExtensions
         return visitor.References;
     }
 
-    private static T FindWithAnnotation<T>(IntermediateNode node, object annotation) where T : IntermediateNode
+    private static T FindNode<T>(IntermediateNode node, Func<T, bool> predicate)
+        where T : IntermediateNode
     {
-        if (node is T target && object.ReferenceEquals(target.Annotations[annotation], annotation))
+        if (node is T target && predicate(target))
         {
             return target;
         }
 
-        for (var i = 0; i < node.Children.Count; i++)
+        foreach (var child in node.Children)
         {
-            var result = FindWithAnnotation<T>(node.Children[i], annotation);
+            var result = FindNode<T>(child, predicate);
+
             if (result != null)
             {
                 return result;

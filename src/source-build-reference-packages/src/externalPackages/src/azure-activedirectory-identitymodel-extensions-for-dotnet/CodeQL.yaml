@@ -1,0 +1,12 @@
+# CodeQL configuration file
+#
+# Check the following link for more information:
+# https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/configuring-codeql3000-ado-pipelines#excluding-external-libraries-test-files-generated-files-docs
+
+path_classifiers:
+  test:
+    - "test/**"
+    - "perf/**"
+  docs:
+    - "docs/**"
+    - "samples/**"

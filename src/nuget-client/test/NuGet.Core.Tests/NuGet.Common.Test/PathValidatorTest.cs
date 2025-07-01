@@ -48,13 +48,17 @@ namespace NuGet.Common
         }
 
         [Theory]
-        [InlineData(@"C:", "windows")]
-        //[InlineData(@"\\server\invalid\*\","windows")] TODO: Enabled once this issue is fixed: https://github.com/NuGet/Home/issues/7588
-        [InlineData(@"https://test", "windows")]
-        [InlineData(@"..\packages", "windows")]
-        public void PathValidatorTest_InvalidUncSharePath(string path, string os)
+        [InlineData(@"C")]
+        [InlineData(@"C:")]
+        // .NET 9.0 and later support wildcards in UNC paths, so this test is only valid for earlier versions.
+#if !NET9_0_OR_GREATER
+        [InlineData(@"\\server\invalid\*\")]
+#endif
+        [InlineData(@"https://test")]
+        [InlineData(@"..\packages")]
+        public void PathValidatorTest_InvalidUncSharePath(string path)
         {
-            if ((os == "windows" && RuntimeEnvironmentHelper.IsWindows) || (os == "unix-base" && !RuntimeEnvironmentHelper.IsWindows))
+            if (RuntimeEnvironmentHelper.IsWindows)
             {
                 Assert.False(PathValidator.IsValidUncPath(path));
             }

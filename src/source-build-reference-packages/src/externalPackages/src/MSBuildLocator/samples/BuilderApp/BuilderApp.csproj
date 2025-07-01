@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="test.proj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      These are intentionally not the most up-to-date version of the MSBuild packages to show that they're
+      only used to compile against and that the runtime assemblies used are chosen by MSBuildLocator.
+    -->
+    <PackageReference Include="Microsoft.Build" Version="15.5.180" ExcludeAssets="Runtime" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.5.180" ExcludeAssets="Runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MSBuildLocator\Microsoft.Build.Locator.csproj" />
+  </ItemGroup>
+
+  <!-- Explicitly import the file that gives auto binding redirects for package users.
+       Not necessary if you use the package! -->
+  <Import Project="..\..\src\MSBuildLocator\build\Microsoft.Build.Locator.props"/>
+
+  <Import Project="..\..\src\MSBuildLocator\build\Microsoft.Build.Locator.targets"/>
+
+</Project>

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -66,7 +67,8 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         {
             foreach (var loc in locations)
             {
-                (loc.Uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.Uri, loc.Range, cancellationToken).ConfigureAwait(false);
+                (var uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.DocumentUri.GetRequiredParsedUri(), loc.Range, cancellationToken).ConfigureAwait(false);
+                loc.DocumentUri = new(uri);
             }
 
             return locations;
@@ -75,7 +77,8 @@ internal sealed class ImplementationEndpoint : AbstractRazorDelegatingEndpoint<T
         {
             foreach (var item in referenceItems)
             {
-                (item.Location!.Uri, item.Location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(item.Location.Uri, item.Location.Range, cancellationToken).ConfigureAwait(false);
+                (var uri, item.Location!.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(item.Location.DocumentUri.GetRequiredParsedUri(), item.Location.Range, cancellationToken).ConfigureAwait(false);
+                item.Location.DocumentUri = new(uri);
             }
 
             return referenceItems;

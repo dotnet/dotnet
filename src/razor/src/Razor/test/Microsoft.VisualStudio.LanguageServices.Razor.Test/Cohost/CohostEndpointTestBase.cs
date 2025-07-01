@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -19,6 +19,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
+using Microsoft.CodeAnalysis.Remote.Razor.Logging;
 using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -69,6 +70,9 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 
         AddDisposable(_exportProvider);
 
+        var remoteLogger = _exportProvider.GetExportedValue<RemoteLoggerFactory>();
+        remoteLogger.SetTargetLoggerFactory(LoggerFactory);
+
         _remoteServiceInvoker = new TestRemoteServiceInvoker(JoinableTaskContext, _exportProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);
 
@@ -85,16 +89,17 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         };
         UpdateClientInitializationOptions(c => c);
 
-        var completionSetting = new CompletionSetting
+        var completionSetting = new VSInternalCompletionSetting
         {
             CompletionItem = new CompletionItemSetting(),
             CompletionItemKind = new CompletionItemKindSetting()
             {
                 ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
             },
+            CompletionList = new VSInternalCompletionListSetting() { Data = true },
             CompletionListSetting = new CompletionListSetting()
             {
-                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat"]
+                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat", "data"]
             },
             ContextSupport = false,
             InsertTextMode = InsertTextMode.AsIs,

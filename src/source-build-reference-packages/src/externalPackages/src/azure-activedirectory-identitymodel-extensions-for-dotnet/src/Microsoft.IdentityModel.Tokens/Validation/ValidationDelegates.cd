@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Microsoft.IdentityModel.Tokens.TokenValidationParameters" Collapsed="true">
+    <Position X="2.5" Y="3.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>YAgEEAQAKMQck0AAi5R6AACRWgBkBQIAAQgYQsaIkxA=</HashCode>
+      <FileName>Validation\TokenValidationParameters.IssuerValidationDelegate.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="IssuerValidationDelegateAsync" />
+    </ShowAsAssociation>
+  </Class>
+  <Delegate Name="Microsoft.IdentityModel.Tokens.IssuerValidationDelegateAsync">
+    <Position X="8.5" Y="3" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAACAQBAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Validation\Validators.Issuer.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

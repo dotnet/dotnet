@@ -702,6 +702,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
         => new(
             column.Name,
             tableAlias,
+            column,
             property.ClrType.UnwrapNullableType(),
             column.PropertyMappings.First(m => m.Property == property).TypeMapping,
             nullable || column.IsNullable);
@@ -710,12 +711,13 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
         => new(
             subqueryProjection.Alias,
             tableAlias,
+            column: subqueryProjection.Expression is ColumnExpression { Column: IColumnBase column } ? column : null,
             subqueryProjection.Type,
             subqueryProjection.Expression.TypeMapping!,
             subqueryProjection.Expression switch
             {
-                ColumnExpression columnExpression => columnExpression.IsNullable,
-                SqlConstantExpression sqlConstantExpression => sqlConstantExpression.Value == null,
+                ColumnExpression c => c.IsNullable,
+                SqlConstantExpression c => c.Value is null,
                 _ => true
             });
 

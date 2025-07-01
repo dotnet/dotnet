@@ -1,0 +1,12 @@
+Microsoft.ApplicationInsights.NLogTarget.ApplicationInsightsTarget
+Microsoft.ApplicationInsights.NLogTarget.ApplicationInsightsTarget.ApplicationInsightsTarget() -> void
+Microsoft.ApplicationInsights.NLogTarget.ApplicationInsightsTarget.ContextProperties.get -> System.Collections.Generic.IList<Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext>
+Microsoft.ApplicationInsights.NLogTarget.ApplicationInsightsTarget.InstrumentationKey.get -> string
+Microsoft.ApplicationInsights.NLogTarget.ApplicationInsightsTarget.InstrumentationKey.set -> void
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.Layout.get -> NLog.Layouts.Layout
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.Layout.set -> void
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.Name.get -> string
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.Name.set -> void
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.TargetPropertyWithContext() -> void
+Microsoft.ApplicationInsights.NLogTarget.TargetPropertyWithContext.TargetPropertyWithContext(string name, NLog.Layouts.Layout layout) -> void

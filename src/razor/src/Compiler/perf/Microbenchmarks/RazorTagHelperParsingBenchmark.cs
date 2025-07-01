@@ -42,7 +42,7 @@ public class RazorTagHelperParsingBenchmark
         ComponentDirectiveVisitor = new ComponentDirectiveVisitor();
         ComponentDirectiveVisitor.Initialize(blazorServerTagHelpersFilePath, tagHelpers, currentNamespace: null);
         var codeDocument = ProjectEngine.ProcessDesignTime(BlazorServerTagHelpersDemoFile);
-        SyntaxTree = codeDocument.GetSyntaxTree();
+        SyntaxTree = codeDocument.GetRequiredSyntaxTree();
     }
 
     private RazorProjectEngine ProjectEngine { get; }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading;
@@ -39,8 +39,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        if (syntaxTree?.Root is null)
+        if (!context.CodeDocument.TryGetSyntaxTree(out var syntaxTree))
         {
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
@@ -272,7 +271,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
         // We only want to get the namespace if it is explicitly defined in this document:
         //   * If it's not explicit, then it would be weird to generate an explicit one in the new component.
         //   * If it's in an import document, then that same import document will still apply to the new component.
-        if (codeDocument.TryComputeNamespace(fallbackToRootNamespace: false, considerImports: false, out var @namespace, out _))
+        if (codeDocument.TryGetNamespace(fallbackToRootNamespace: false, considerImports: false, out var @namespace, out _))
         {
             return @namespace;
         }
