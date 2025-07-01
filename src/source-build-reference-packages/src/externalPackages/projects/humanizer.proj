@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <PackagesOutput>$(ProjectDirectory)src/Humanizer/bin/Release</PackagesOutput>
-    <NuGetConfigFile>$(ProjectDirectory)src/NuGet.config</NuGetConfigFile>
     <CustomRepoBuild>true</CustomRepoBuild>
   </PropertyGroup>
 

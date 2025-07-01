@@ -8,7 +8,6 @@
     <PackagesOutput>$(ProjectDirectory)bin/Packages/$(Configuration)/NuGet/</PackagesOutput>
 
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
-    <NuGetConfigFile>$(ProjectDirectory)nuget.config</NuGetConfigFile>
 
     <DotNetToolArgs>$(DotNetToolArgs) /p:Configuration=$(Configuration)</DotNetToolArgs>
     <DotNetToolArgs>$(DotNetToolArgs) /p:TreatWarningsAsErrors=false</DotNetToolArgs>
