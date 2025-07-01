@@ -29,12 +29,12 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="aspire" />
-    <RepositoryReference Include="aspnetcore" />
-    <RepositoryReference Include="command-line-api" />
-    <RepositoryReference Include="deployment-tools" />
+    <RepositoryReference Include="aspire" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'aspire')))" />
+    <RepositoryReference Include="aspnetcore" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'aspnetcore')))" />
+    <RepositoryReference Include="command-line-api" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'command-line-api')))" />
+    <RepositoryReference Include="deployment-tools" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'deployment-tools')))" />
     <!-- we're focusing on x64 and arm64 for the webassembly build tools -->
-    <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
+    <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64') and Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'emsdk')))" />
     <RepositoryReference Include="fsharp" />
     <RepositoryReference Include="msbuild" />
     <!-- nuget-client is not compliant with Unified Build: https://github.com/dotnet/source-build/issues/4974 -->
@@ -42,17 +42,17 @@
     <RepositoryReference Include="razor" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="runtime" />
-    <RepositoryReference Include="sourcelink" />
-    <RepositoryReference Include="symreader" />
+    <RepositoryReference Include="runtime" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'runtime')))" />
+    <RepositoryReference Include="sourcelink" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'sourcelink')))" />
+    <RepositoryReference Include="symreader" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'symreader')))" />
     <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
-    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
-    <RepositoryReference Include="xdt" />
+    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true' and Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'windowsdesktop')))" />
+    <RepositoryReference Include="xdt" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'xdt')))" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" />
+    <RepositoryReference Include="source-build-externals" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'source-build-externals')))" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 

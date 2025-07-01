@@ -20,9 +20,9 @@
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <RepositoryReference Include="msbuild" />
-    <RepositoryReference Include="runtime" />
-    <RepositoryReference Include="source-build-externals" />
-    <RepositoryReference Include="xdt" />
+    <RepositoryReference Include="runtime" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'runtime')))" />
+    <RepositoryReference Include="source-build-externals" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'source-build-externals')))" />
+    <RepositoryReference Include="xdt" Condition="Exists($([MSBuild]::NormalizeDirectory('$(SourcesDir)', 'xdt')))" />
   </ItemGroup>
 
   <ItemGroup>
