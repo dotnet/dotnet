@@ -48,7 +48,7 @@
     <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
     <RepositoryReference Include="windowsdesktop" BuildOnlyFor1XX="true" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
-    <RepositoryReference Include="xdt"BuildOnlyFor1XX="true" />
+    <RepositoryReference Include="xdt" BuildOnlyFor1XX="true" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">

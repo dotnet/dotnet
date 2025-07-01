@@ -50,6 +50,11 @@
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
+  <!-- Don't build repositories that aren't part of the feature band. -->
+  <ItemGroup Condition="'$(VersionSDKMinor)' != '1'">
+    <RepositoryReference Remove="@(RepositoryReference->WithMetadataValue('BuildOnlyFor1XX', 'true'))" />
+  </ItemGroup>
+
   <!-- Don't build repositories that aren't part of the current build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">
     <_repositoryReferenceIncluded Include="@(RepositoryReference->WithMetadataValue('DotNetBuildPass', '$(DotNetBuildPass)'))" />
