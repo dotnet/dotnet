@@ -84,7 +84,7 @@
     <!--
       Packages produced for Azure Linux must be signed with a special certificate.
       RPM v4 doesn't support multiple signatures, so we must have two separate copies of the RPM for us to sign.
-      To solve this, we make a copy of the RPM for Azure Linux, with the .azl.rpm extension (which the Arcade SDK will sign with the correct certificate).
+      To solve this, we make a copy of the RPM for Azure Linux (which the Arcade SDK will sign with the correct certificate).
       If Azure Linux ever switches to RPM v6, we should be able to remove this workaround if our signing tooling adds support for multiple signatures
       (something RPM v6 supports but RPM v4 does not).
     -->
@@ -102,8 +102,8 @@
     </PropertyGroup>
   </Target>
 
-  <!-- This target is kept for back-compat for targets that would hook it to add package info. -->
-  <Target Name="GetDebInstallerJsonProperties" />
+  <!-- This target is a hook for users to add package info in a target. -->
+  <Target Name="GetAdditionalLinuxInstallerProperties" />
 
   <PropertyGroup>
     <_LinuxPackageType Condition="'$(GenerateDeb)' == 'true'">deb</_LinuxPackageType>
@@ -166,7 +166,7 @@
   </Target>
 
   <Target Name="CreateDeb"
-          DependsOnTargets="_GetInstallerProperties;GetDebInstallerJsonProperties;_CreateLinuxPackagingLayout"
+          DependsOnTargets="_GetInstallerProperties;GetAdditionalLinuxInstallerProperties;_CreateLinuxPackagingLayout"
           Returns="$(_InstallerFile)">
     <ItemGroup>
       <_ChangelogFile Include="$(_LayoutDocs)/$(VersionedInstallerName)/changelog.Debian.gz" />
@@ -277,7 +277,7 @@
   <Target Name="CreateRpm"
           DependsOnTargets="
             _GetInstallerProperties;
-            GetRpmInstallerJsonProperties;
+            GetAdditionalLinuxInstallerProperties;
             _CreateLinuxPackagingLayout"
           Returns="$(_InstallerFile)">
     <!--
@@ -343,9 +343,6 @@
 
     <Message Text="$(MSBuildProjectName) -> $(_InstallerFileAzureLinux)" Importance="high" />
   </Target>
-
-  <!-- This target is kept for back-compat for targets that would hook it to add package info. -->
-  <Target Name="GetRpmInstallerJsonProperties" />
 
   <!--
     Create MSI installer, using WiX tools.
