@@ -53,14 +53,6 @@ src/runtime/src/libraries/System.Speech/src/**/*.upsmap # https://github.com/dot
 src/runtime/src/libraries/System.Text.Encoding.CodePages/src/Data/codepages.nlp # https://github.com/dotnet/runtime/issues/81693
 src/runtime/src/native/external/brotli/common/dictionary.bin.br
 
-# source-build-externals
-src/source-build-externals/src/repos/src/humanizer/src/Humanizer.Tests**/*.pfx
-src/source-build-externals/src/repos/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
-src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass.reg # UTF16-LE text file
-src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/build/strongNameBypass2.reg # UTF16-LE text file
-src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.pfx
-src/source-build-externals/src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/*.cer
-
 # source-build-reference-packages
 src/source-build-reference-packages/src/externalPackages/src/humanizer/src/Humanizer.Tests**/*.pfx
 src/source-build-reference-packages/src/externalPackages/src/newtonsoft-json/Src/Newtonsoft.Json.Tests/SpaceShipV2.bson
