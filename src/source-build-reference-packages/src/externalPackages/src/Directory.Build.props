@@ -1,8 +1,7 @@
 <Project>
 
   <!--
-    Prevent automatic Directory.Build imports from finding source-build infra. Note: used for
-    tarball build too, as the cloned repos are merged into this directory.
+    Prevent automatic Directory.Build imports from finding source-build infra.
   -->
 
 </Project>
