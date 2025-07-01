@@ -5,11 +5,6 @@
     <CustomRepoBuild>true</CustomRepoBuild>
   </PropertyGroup>
 
-  <ItemGroup>
-    <NuGetConfigFiles Include="$(ProjectDirectory)NuGet.config" />
-    <NuGetConfigFiles Include="$(ProjectDirectory)BASE/NuGet.config" />
-  </ItemGroup>
-
   <Target Name="CustomRepoBuild">
     <PropertyGroup>
       <BuildCommandArgs>$(ProjectDirectory)BASE/src/Microsoft.ApplicationInsights/Microsoft.ApplicationInsights.csproj</BuildCommandArgs>
