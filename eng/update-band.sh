@@ -6,7 +6,7 @@ usage() {
   echo ""
   echo "  --remote <name>         Git remote to pull from (e.g., upstream)"
   echo "  --1xx-branch <branch>   1xx branch name to merge in (e.g., main)"
-  echo "  --continue              Continue after manually fixing merge conflicts"
+  echo "  --continue-merge        Continue after manually fixing merge conflicts"
   echo "  --help, -help           Show this help message and exit"
   echo ""
   echo "  Arguments may also be passed with a single dash."
@@ -14,7 +14,7 @@ usage() {
 
 remote=''
 branch_1xx=''
-continue='false'
+continue_merge='false'
 
 attempt_merge() {
   if { git diff --check | grep -q .; } || [ -n "$(git ls-files -u)" ]; then
@@ -49,8 +49,8 @@ while [[ $# > 0 ]]; do
       branch_1xx=$2
       shift
       ;;
-    -continue)
-      continue=true
+    -continue-merge)
+      continue_merge=true
       ;;
     *)
       echo "Error: Unknown argument."
@@ -61,7 +61,7 @@ while [[ $# > 0 ]]; do
   shift
 done
 
-if [[ "$continue" == 'true' ]]; then
+if [[ "$continue_merge" == 'true' ]]; then
   attempt_merge
 elif [[ -z "$remote" ]]; then
   echo "Error: --remote is required."
@@ -79,7 +79,7 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 # Attempt merge
-if [ "$continue" != "true" ] && ! git merge --no-commit --no-ff "$remote/$branch_1xx" >/dev/null 2>&1; then
+if [ "$continue_merge" != "true" ] && ! git merge --no-commit --no-ff "$remote/$branch_1xx" >/dev/null 2>&1; then
   echo "Cleaning excluded paths..."
 
   for repo in "${deleted_repos[@]}"; do

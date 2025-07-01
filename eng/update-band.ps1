@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+    Updates a non-1xx branch of the VMR with the latest from a 1xx branch.
+
+.DESCRIPTION
+    This script pulls in updates from the target remote and branch, ignoring paths to repos that are excluded from non-1xx branches.
+
+.PARAMETER Remote
+    Git remote to pull from (e.g., upstream)
+
+.PARAMETER Branch1xx
+    1xx branch name to merge in (e.g., main)
+
+.PARAMETER ContinueMerge
+    Continue after manually fixing merge conflicts
+
+#>
+
 [CmdletBinding(PositionalBinding=$false)]
 Param(
     [Parameter(Mandatory = $false)]
@@ -6,23 +24,8 @@ Param(
     [Parameter(Mandatory = $false)]
     [string]$Branch1xx,
 
-    [switch]$Continue = $false,
-
-    [switch][Alias('h')]$help
+    [switch]$ContinueMerge = $false
 )
-
-function Get-Usage {
-    Write-Host "  -Remote <name>           Git remote to pull from (e.g., upstream)"
-    Write-Host "  -Branch1xx <branch>     1xx branch name to merge in (e.g., main)"
-    Write-Host "  -Continue                Continue after manually fixing merge conflicts"
-    Write-Host ""
-    Write-Host "  -help                    Print help and exit (short: -h)"
-}
-
-if ($help -or !$PSBoundParameters.Keys.Count) {
-    Get-Usage
-    exit 0
-}
 
 function Attempt-Merge {
     $conflicts = git diff --check | Out-String
@@ -45,7 +48,7 @@ $DeletedRepos = @(
     "sourcelink", "symreader", "windowsdesktop", "winforms", "wpf", "xdt"
 )
 
-if (-not $Continue) {
+if (-not $ContinueMerge) {
     if (-not $Remote) {
         Write-Error "Error: Remote is required."
         Show-Usage
