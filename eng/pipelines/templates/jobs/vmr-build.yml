@@ -215,16 +215,17 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
+    # Don't clean while building on Windows as the pool's disk space is sufficient.
     ${{ if eq(parameters.targetOS, 'windows') }}:
-      value: cleanWhileBuilding
+      value: ''
     ${{ else }}:
-      value: clean-while-building
+      value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
 
   - name: baseArguments
-    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
