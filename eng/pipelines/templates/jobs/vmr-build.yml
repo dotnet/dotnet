@@ -215,8 +215,8 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    # Don't clean while building on Windows as the pool's disk space is sufficient.
     ${{ if eq(parameters.targetOS, 'windows') }}:
+      # Don't clean while building on Windows as the pool's disk space is sufficient.
       ${{ if eq(variables['System.TeamProject'], 'internal') }}:
         value: ''
       ${{ else }}:
