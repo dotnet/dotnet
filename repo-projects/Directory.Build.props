@@ -238,7 +238,6 @@
     <SharedRepositoryReference Include="efcore" />
     <SharedRepositoryReference Include="emsdk" />
     <SharedRepositoryReference Include="runtime" />
-    <SharedRepositoryReference Include="source-build-externals" />
     <SharedRepositoryReference Include="sourcelink" />
     <SharedRepositoryReference Include="symreader" />
     <SharedRepositoryReference Include="windowsdesktop" />
