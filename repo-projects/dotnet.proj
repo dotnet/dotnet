@@ -14,9 +14,9 @@
           BeforeTargets="PrepareProjectReferences" >
     <!--
       A short-stack build will only build runtime and its dependencies.
-      We should not and cannot have a short-stack build if we're not building the runtime components.
+      Runtime is a shared component, so we should not and cannot have a short-stack build if we're not building the shared components.
     -->
-    <Error Text="Cannot have a short-stack build if we're not building the runtime components." Condition="'$(DotNetBuildRuntimeComponents)' != 'true'" />
+    <Error Text="Cannot have a short-stack build if we're not building the shared components." Condition="'$(DotNetBuildSharedComponents)' != 'true'" />
   </Target>
 
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">

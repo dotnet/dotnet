@@ -50,9 +50,9 @@
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
-  <!-- Exclude repositories marked as runtime components from the build, unless runtime component building is explicitly enabled. -->
-  <ItemGroup Condition="'$(DotNetBuildRuntimeComponents)' != 'true'">
-    <RepositoryReference Remove="@(RuntimeRepositoryReference)" />
+  <!-- Exclude shared repositories from the build, unless shared component building is explicitly enabled. -->
+  <ItemGroup Condition="'$(DotNetBuildSharedComponents)' != 'true'">
+    <RepositoryReference Remove="@(SharedRepositoryReference)" />
   </ItemGroup>
 
   <!-- Don't build repositories that aren't part of the current build pass. -->
