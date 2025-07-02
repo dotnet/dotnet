@@ -1,6 +1,0 @@
-<Solution>
-    <Folder Name="/Solution Items/">
-        <Project Path="foo.vbproj" />
-    </Folder>
-    <Project Path="foo.vbproj" />
-</Solution>

@@ -62,7 +62,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         ];
 
     [Fact]
-    public void IsApplicableTriggerContext_Deletion_ReturnsFalse()
+    public void IsApplicableTriggerContext_Deletion_ReturnsTrue()
     {
         // Arrange
         var completionContext = new VSInternalCompletionContext()
@@ -74,7 +74,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
     [Fact]
