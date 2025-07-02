@@ -89,4 +89,9 @@ internal sealed class RazorCompletionItem
         AggregateBoundAttributeDescription descriptionInfo,
         ImmutableArray<RazorCommitCharacter> commitCharacters, bool isSnippet)
         => new(RazorCompletionItemKind.TagHelperAttribute, displayText, insertText, sortText, descriptionInfo, commitCharacters, isSnippet);
+
+    public static RazorCompletionItem CreateDirectiveAttributeEventParameterHtmlEventValue(
+        string displayText, string insertText,
+        ImmutableArray<RazorCommitCharacter> commitCharacters)
+        => new(RazorCompletionItemKind.DirectiveAttributeParameterEventValue, displayText, insertText, sortText: null, descriptionInfo: AggregateBoundAttributeDescription.Empty, commitCharacters, isSnippet: false);
 }
