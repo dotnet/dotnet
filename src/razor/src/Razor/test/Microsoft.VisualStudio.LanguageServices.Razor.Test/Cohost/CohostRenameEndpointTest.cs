@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
@@ -180,12 +180,12 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentRenameName, null)]);
 
-        var endpoint = new CohostRenameEndpoint(RemoteServiceInvoker, requestInvoker);
+        var endpoint = new CohostRenameEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker);
 
         var renameParams = new RenameParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
             NewName = newName,
         };
 
@@ -209,8 +209,8 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
                 if (change.TryGetThird(out var renameEdit))
                 {
                     Assert.Contains(renames,
-                        r => renameEdit.OldUri.GetDocumentFilePath().EndsWith(r.oldName) &&
-                             renameEdit.NewUri.GetDocumentFilePath().EndsWith(r.newName));
+                        r => renameEdit.OldDocumentUri.GetRequiredParsedUri().GetDocumentFilePath().EndsWith(r.oldName) &&
+                             renameEdit.NewDocumentUri.GetRequiredParsedUri().GetDocumentFilePath().EndsWith(r.newName));
                 }
             }
         }
@@ -225,7 +225,7 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
         Assert.True(result.TryGetTextDocumentEdits(out var textDocumentEdits));
         foreach (var textDocumentEdit in textDocumentEdits)
         {
-            if (textDocumentEdit.TextDocument.Uri == razorDocumentUri)
+            if (textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri() == razorDocumentUri)
             {
                 foreach (var edit in textDocumentEdit.Edits)
                 {

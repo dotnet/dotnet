@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
@@ -58,7 +59,9 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
             .AddExcludedPartTypes(typeof(IWorkspaceProvider))
             .AddParts(typeof(TestWorkspaceProvider))
             .AddExcludedPartTypes(typeof(ILspEditorFeatureDetector))
-            .AddParts(typeof(TestLspEditorFeatureDetector));
+            .AddParts(typeof(TestLspEditorFeatureDetector))
+            .AddExcludedPartTypes(typeof(IIncompatibleProjectService))
+            .AddParts(typeof(TestIncompatibleProjectService));
 
         using var exportProvider = testComposition.ExportProviderFactory.CreateExportProvider();
 
@@ -120,7 +123,7 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
         }
     }
 
-    [Export(typeof(ILanguageServiceBroker2))]
+    [Export(typeof(ILanguageServiceBroker2)), PartNotDiscoverable]
     private class TestILanguageServiceBroker2 : ILanguageServiceBroker2
     {
         public IEnumerable<ILanguageClientInstance> ActiveLanguageClients => throw new NotImplementedException();
@@ -154,22 +157,23 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
         public Task<IEnumerable<(ILanguageClient, TOut)>> RequestMultipleAsync<TIn, TOut>(string[] contentTypes, Func<VSLSP.ServerCapabilities, bool> capabilitiesFilter, VSLSP.LspRequest<TIn, TOut> method, TIn parameters, CancellationToken cancellationToken) => throw new NotImplementedException();
     }
 
-    [Export(typeof(IWorkspaceProvider))]
+    [Export(typeof(IWorkspaceProvider)), PartNotDiscoverable]
     private class TestWorkspaceProvider : IWorkspaceProvider
     {
         public CodeAnalysis.Workspace GetWorkspace() => throw new NotImplementedException();
     }
 
-    [Export(typeof(ILspEditorFeatureDetector))]
+    [Export(typeof(ILspEditorFeatureDetector)), PartNotDiscoverable]
     private class TestLspEditorFeatureDetector : ILspEditorFeatureDetector
     {
         public bool IsLiveShareHost() => throw new NotImplementedException();
         public bool IsLspEditorEnabled() => throw new NotImplementedException();
         public bool IsLspEditorSupported(string documentFilePath) => throw new NotImplementedException();
+        public bool IsDotNetCoreProject(string documentFilePath) => throw new NotImplementedException();
         public bool IsRemoteClient() => throw new NotImplementedException();
     }
 
-    [Export(typeof(IRazorSemanticTokensRefreshQueue))]
+    [Export(typeof(IRazorSemanticTokensRefreshQueue)), PartNotDiscoverable]
     private class TestRazorSemanticTokensRefreshQueue : IRazorSemanticTokensRefreshQueue
     {
         public void Initialize(string clientCapabilitiesString) => throw new NotImplementedException();

@@ -1,13 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -20,9 +20,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostTextPresentationEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IFilePathService filePathService,
     IHtmlRequestInvoker requestInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<VSInternalTextPresentationParams, WorkspaceEdit?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<VSInternalTextPresentationParams, WorkspaceEdit?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IFilePathService _filePathService = filePathService;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
@@ -48,10 +49,7 @@ internal sealed class CohostTextPresentationEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalTextPresentationParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<WorkspaceEdit?> HandleRequestAsync(VSInternalTextPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
-
-    private async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalTextPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<WorkspaceEdit?> HandleRequestAsync(VSInternalTextPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var workspaceEdit = await _requestInvoker.MakeHtmlLspRequestAsync<VSInternalTextPresentationParams, WorkspaceEdit>(
             razorDocument,
@@ -71,9 +69,10 @@ internal sealed class CohostTextPresentationEndpoint(
 
         foreach (var edit in edits)
         {
-            if (_filePathService.IsVirtualHtmlFile(edit.TextDocument.Uri))
+            if (edit.TextDocument.DocumentUri.ParsedUri is { } uri &&
+                _filePathService.IsVirtualHtmlFile(uri))
             {
-                edit.TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = _filePathService.GetRazorDocumentUri(edit.TextDocument.Uri) };
+                edit.TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(_filePathService.GetRazorDocumentUri(uri)) };
             }
         }
 

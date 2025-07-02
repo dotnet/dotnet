@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -147,7 +148,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
         using var remappedDocumentEdits = new PooledArrayBuilder<TextDocumentEdit>(documentEdits.Length);
         foreach (var entry in documentEdits)
         {
-            var uri = entry.TextDocument.Uri;
+            var uri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
             if (!_filePathService.IsVirtualDocumentUri(uri))
             {
                 // This location doesn't point to a background razor file. No need to remap.
@@ -168,7 +169,7 @@ internal abstract class AbstractTextDocumentPresentationEndpointBase<TParams>(
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()
                 {
-                    Uri = razorDocumentUri,
+                    DocumentUri = new(razorDocumentUri),
                 },
                 Edits = [.. remappedEdits]
             });

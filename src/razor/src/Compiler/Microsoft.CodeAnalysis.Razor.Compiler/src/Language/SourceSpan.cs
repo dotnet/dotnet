@@ -96,18 +96,6 @@ public struct SourceSpan : IEquatable<SourceSpan>
             FilePath);
     }
 
-    internal SourceSpan With(int length, int endCharacterIndex)
-    {
-        return new SourceSpan(
-            FilePath,
-            AbsoluteIndex,
-            LineIndex,
-            CharacterIndex,
-            length,
-            LineCount,
-            endCharacterIndex);
-    }
-
     internal readonly SourceSpan GetZeroWidthEndSpan()
     {
         return new SourceSpan(FilePath, AbsoluteIndex + Length, LineIndex, characterIndex: EndCharacterIndex, length: 0, lineCount: 0, EndCharacterIndex);

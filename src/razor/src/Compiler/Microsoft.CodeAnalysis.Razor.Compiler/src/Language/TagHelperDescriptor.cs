@@ -83,6 +83,21 @@ public sealed class TagHelperDescriptor : TagHelperObject<TagHelperDescriptor>
         AllowedChildTags = allowedChildTags.NullToEmpty();
         Metadata = metadata ?? MetadataCollection.Empty;
 
+        foreach (var tagMatchingRule in TagMatchingRules)
+        {
+            tagMatchingRule.SetParent(this);
+        }
+
+        foreach (var boundAttribute in BoundAttributes)
+        {
+            boundAttribute.SetParent(this);
+        }
+
+        foreach (var allowedChildTag in AllowedChildTags)
+        {
+            allowedChildTag.SetParent(this);
+        }
+
         TagHelperFlags flags = 0;
 
         if (caseSensitive)

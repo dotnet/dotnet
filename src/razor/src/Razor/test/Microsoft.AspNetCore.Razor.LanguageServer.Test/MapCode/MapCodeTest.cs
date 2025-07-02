@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.MapCode;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Testing;
@@ -305,7 +306,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
             new() {
                 TextDocument = new TextDocumentIdentifier
                 {
-                    Uri = new Uri(razorFilePath)
+                    DocumentUri = new(new Uri(razorFilePath))
                 },
                 FocusLocations = locations ??
                 [
@@ -313,7 +314,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                         new LspLocation
                         {
                             Range = sourceText.GetZeroWidthRange(cursorPosition),
-                            Uri = new Uri(razorFilePath)
+                            DocumentUri = new(new Uri(razorFilePath))
                         }
                     ]
                 ],
@@ -356,7 +357,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
                 new() {
                     TextDocument = new TextDocumentIdentifier()
                     {
-                        Uri = csharpDocumentUri
+                        DocumentUri = new(csharpDocumentUri)
                     },
                     Contents = delegatedMapCodeParams.Contents,
                     FocusLocations = delegatedMapCodeParams.FocusLocations
@@ -379,7 +380,7 @@ public class MapCodeTest(ITestOutputHelper testOutput) : LanguageServerTestBase(
 
         foreach (var edit in edits)
         {
-            Assert.Equal(documentUri, edit.TextDocument.Uri);
+            Assert.Equal(documentUri, edit.TextDocument.DocumentUri.GetRequiredParsedUri());
 
             foreach (var currentEdit in edit.Edits)
             {

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -238,6 +238,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.OnAutoInsertName, response)]);
 
         var endpoint = new CohostOnAutoInsertEndpoint(
+            IncompatibleProjectService,
             RemoteServiceInvoker,
             clientSettingsManager,
             onAutoInsertTriggerCharacterProviders,
@@ -254,7 +255,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = document.CreateDocumentUri()
             },
             Position = sourceText.GetPosition(input.Position),
             Character = triggerCharacter,

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
@@ -87,13 +88,13 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         Assert.NotNull(result.Value.Third);
         var locations = result.Value.Third;
         var location = Assert.Single(locations);
-        Assert.EndsWith("String.cs", location.Uri.ToString());
+        Assert.EndsWith("String.cs", location.DocumentUri.UriString);
 
         // Note: The location is in a generated C# "metadata-as-source" file, which has a different
         // number of using directives in .NET Framework vs. .NET Core, so rather than relying on line
         // numbers we do some vague notion of actual navigation and test the actual source line that
         // the user would see.
-        var line = File.ReadLines(location.Uri.LocalPath).ElementAt(location.Range.Start.Line);
+        var line = File.ReadLines(location.DocumentUri.GetRequiredParsedUri().LocalPath).ElementAt(location.Range.Start.Line);
         Assert.Contains("public sealed class String", line);
     }
 
@@ -193,7 +194,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
 
         // Our tests don't currently support mapping multiple documents, so we just need to verify Roslyn sent back the right info.
         // Other tests verify mapping behavior
-        Assert.EndsWith("SurveyPrompt.razor.ide.g.cs", location.Uri.ToString());
+        Assert.EndsWith("SurveyPrompt.razor.ide.g.cs", location.DocumentUri.UriString);
 
         // We can still expect the character to be correct, even if the line won't match
         var surveyPromptSourceText = SourceText.From(surveyPrompt);
@@ -216,7 +217,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         Assert.NotNull(result.Value.Third);
         var locations = result.Value.Third;
         var location = Assert.Single(locations);
-        Assert.Equal(new Uri(razorFilePath), location.Uri);
+        Assert.Equal(new Uri(razorFilePath), location.DocumentUri.GetRequiredParsedUri());
 
         var expectedRange = codeDocument.Source.Text.GetRange(expectedSpan);
         Assert.Equal(expectedRange, location.Range);
@@ -250,7 +251,7 @@ public class DefinitionEndpointDelegationTest(ITestOutputHelper testOutput) : Si
         {
             TextDocument = new TextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Position = codeDocument.Source.Text.GetPosition(cursorPosition)
         };

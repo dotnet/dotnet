@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -552,6 +553,84 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
     }
 
     [Fact]
+    public async Task HtmlAndDirectiveAttributeEventParameterEmptyNoSuffixHtmlEventNamesCompletion()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <input @bind="str" @bind:event="$$ />
+
+                The end.
+
+                @code {
+                    private string? str;
+                }
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["oninput", "onchange", "onblur"],
+            htmlItemLabels: [],
+            commitElementsWithSpace: true);
+    }
+
+    [Fact]
+    public async Task HtmlAndDirectiveAttributeEventParameterEmptyHtmlEventNamesCompletion()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <input @bind="str" @bind:event="$$" />
+
+                The end.
+
+                @code {
+                    private string? str;
+                }
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["oninput", "onchange", "onblur"],
+            htmlItemLabels: [],
+            commitElementsWithSpace: true);
+    }
+
+    [Fact]
+    public async Task HtmlAndDirectiveAttributeEventParameterNonEmptyHtmlEventNamesCompletion()
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <input @bind="str" @bind:event="on$$" />
+
+                The end.
+
+                @code {
+                    private string? str;
+                }
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = null,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["oninput", "onchange", "onblur"],
+            htmlItemLabels: [],
+            commitElementsWithSpace: true);
+    }
+
+    [Fact]
     public async Task HtmlAttributeNamesAndTagHelpersCompletion()
     {
         await VerifyCompletionListAsync(
@@ -669,6 +748,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
         var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
+            IncompatibleProjectService,
             RemoteServiceInvoker,
             clientSettingsManager,
             ClientCapabilitiesService,
@@ -683,7 +763,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = document.CreateDocumentUri()
             },
             Position = sourceText.GetPosition(input.Position),
             Context = completionContext
@@ -749,6 +829,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
         var endpoint = new CohostDocumentCompletionResolveEndpoint(
+            IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
             clientSettingsManager,

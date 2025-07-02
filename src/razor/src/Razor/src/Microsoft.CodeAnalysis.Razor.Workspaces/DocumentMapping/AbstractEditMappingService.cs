@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -113,7 +113,7 @@ internal abstract class AbstractEditMappingService(
 
         foreach (var entry in documentEdits)
         {
-            var generatedDocumentUri = entry.TextDocument.Uri;
+            var generatedDocumentUri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
 
             // Check if the edit is actually for a generated document, because if not we don't need to do anything
             if (!_filePathService.IsVirtualDocumentUri(generatedDocumentUri))
@@ -144,7 +144,7 @@ internal abstract class AbstractEditMappingService(
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()
                 {
-                    Uri = razorDocumentUri,
+                    DocumentUri = new(razorDocumentUri),
                 },
                 Edits = remappedEdits.Select(e => new SumType<TextEdit, AnnotatedTextEdit>(e)).ToArray()
             });

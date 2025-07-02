@@ -38,8 +38,16 @@ jobs:
       dotnet_dotnet_build='${{ replace(parameters.dotnetDotnetRunId, ' ', '') }}'
       dotnet_dotnet_sha=''
 
+      triggering_alias=$(Resources.TriggeringAlias)
+      triggering_alias=$(echo $triggering_alias | sed 's/\./_/g' | tr '[:lower:]' '[:upper:]')
+
       if [[ -z "$dotnet_dotnet_build" ]]; then
-        dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --top 1 --query "[].id" --output tsv)
+        if [[ -z "$triggering_alias" ]]; then
+          dotnet_dotnet_build=$(az pipelines runs list --branch '$(Build.SourceBranch)' --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --pipeline-ids '$(DOTNET_DOTNET_CI_PIPELINE_ID)' --status completed --top 1 --query "[].id" --output tsv)
+        else
+          runID=RESOURCES_PIPELINE_${triggering_alias}_RUNID
+          dotnet_dotnet_build=$(printenv "$runID")
+        fi
       fi
 
       if [[ -z "$dotnet_dotnet_build" ]]; then
@@ -48,7 +56,12 @@ jobs:
       fi
 
       if [[ -z "$dotnet_dotnet_sha" ]]; then
-        dotnet_dotnet_sha=$(az pipelines build show --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --id "$dotnet_dotnet_build" --query "sourceVersion" --output tsv)
+        if [[ -z "$triggering_alias" ]]; then
+          dotnet_dotnet_sha=$(az pipelines build show --organization '$(AZDO_ORG)' --project '$(AZDO_PROJECT)' --id "$dotnet_dotnet_build" --query "sourceVersion" --output tsv)
+        else
+          sourceCommit=RESOURCES_PIPELINE_${triggering_alias}_SOURCECOMMIT
+          dotnet_dotnet_sha=$(printenv "$sourceCommit")
+        fi
       fi
 
       if [[ -z "$dotnet_dotnet_sha" ]]; then

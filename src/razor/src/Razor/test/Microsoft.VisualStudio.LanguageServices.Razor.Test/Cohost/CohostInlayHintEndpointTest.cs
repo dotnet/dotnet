@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Test.Utilities;
@@ -137,11 +138,11 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
             <div></div>
             """;
         var document = CreateProjectAndRazorDocument(input);
-        var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostInlayHintEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var request = new InlayHintParams()
         {
-            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
 
@@ -198,12 +199,12 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
         var document = CreateProjectAndRazorDocument(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
-        var resolveEndpoint = new CohostInlayHintResolveEndpoint(RemoteServiceInvoker, LoggerFactory);
+        var endpoint = new CohostInlayHintEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
+        var resolveEndpoint = new CohostInlayHintResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, LoggerFactory);
 
         var request = new InlayHintParams()
         {
-            TextDocument = new TextDocumentIdentifier() { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Range = new()
             {
                 Start = new(0, 0),
@@ -238,7 +239,7 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
             // Make sure we can resolve the document correctly
             var tdi = resolveEndpoint.GetTestAccessor().GetTextDocumentIdentifier(serializedHint);
             Assert.NotNull(tdi);
-            Assert.Equal(document.CreateUri(), tdi.Uri);
+            Assert.Equal(document.CreateUri(), tdi.DocumentUri.GetRequiredParsedUri());
 
             // Make sure we, or really Roslyn, can resolve the hint correctly
             var resolvedHint = await resolveEndpoint.GetTestAccessor().HandleRequestAsync(serializedHint, document, DisposalToken);

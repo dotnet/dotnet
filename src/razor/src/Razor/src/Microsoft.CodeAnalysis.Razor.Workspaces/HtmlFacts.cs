@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -10,7 +11,7 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal static class HtmlFacts
 {
-    private static readonly HashSet<string> s_htmlSchemaTagNames = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly FrozenSet<string> s_htmlSchemaTagNames = new string[]
     {
         "DOCTYPE",
         "a",
@@ -135,7 +136,33 @@ internal static class HtmlFacts
         "var",
         "video",
         "wbr",
-    };
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    internal static readonly ImmutableArray<string> FormEvents =
+    [
+        "onabort",
+        "onblur",
+        "onchange",
+        "onclick",
+        "oncontextmenu",
+        "ondblclick",
+        "onerror",
+        "onfocus",
+        "oninput",
+        "onkeydown",
+        "onkeypress",
+        "onkeyup",
+        "onload",
+        "onmousedown",
+        "onmousemove",
+        "onmouseout",
+        "onmouseover",
+        "onmouseup",
+        "onreset",
+        "onscroll",
+        "onselect",
+        "onsubmit",
+    ];
 
     public static bool IsHtmlTagName(string name)
         => s_htmlSchemaTagNames.Contains(name);

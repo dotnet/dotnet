@@ -1,6 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
@@ -114,6 +115,43 @@ internal static class RazorSyntaxFacts
 
             return new TextSpan(start, length);
         }
+    }
+
+    /// <summary>
+    /// For example given "&lt;Goo @bi$$nd-Value:after="val" /&gt;", it would return the span from "V" to "e".
+    /// </summary>
+    public static bool TryGetComponentParameterNameFromFullAttributeName(string fullAttributeName, out ReadOnlySpan<char> componentParameterName, out ReadOnlySpan<char> directiveAttributeParameter)
+    {
+        componentParameterName = fullAttributeName.AsSpan();
+        directiveAttributeParameter = default;
+        if (componentParameterName.IsEmpty)
+        {
+            return false;
+        }
+
+        // Parse @bind directive
+        if (componentParameterName[0] == '@')
+        {
+            // Trim `@` transition
+            componentParameterName = componentParameterName[1..];
+
+            // Check for and trim `bind-` directive prefix
+            if (!componentParameterName.StartsWith("bind-", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            componentParameterName = componentParameterName["bind-".Length..];
+
+            // Trim directive parameter name, if any
+            if (componentParameterName.LastIndexOf(':') is int colonIndex and > 0)
+            {
+                directiveAttributeParameter = componentParameterName[(colonIndex + 1)..];
+                componentParameterName = componentParameterName[..colonIndex];
+            }
+        }
+
+        return true;
     }
 
     public static CSharpCodeBlockSyntax? TryGetCSharpCodeFromCodeBlock(RazorSyntaxNode node)

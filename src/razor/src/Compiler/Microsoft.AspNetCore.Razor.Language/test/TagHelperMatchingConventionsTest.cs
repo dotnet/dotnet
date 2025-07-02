@@ -31,101 +31,79 @@ public class TagHelperMatchingConventionsTest
                         false
                     },
                     {
-                        builder => builder
-                            .Name("route-")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
+                        builder => builder.Name("route-", RequiredAttributeNameComparison.PrefixMatch),
                         "ROUTE-area",
                         "manage",
                         true
                     },
                     {
-                        builder => builder
-                            .Name("route-")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
+                        builder => builder.Name("route-", RequiredAttributeNameComparison.PrefixMatch),
                         "routearea",
                         "manage",
                         false
                     },
                     {
-                        builder => builder
-                            .Name("route-")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch),
+                        builder => builder.Name("route-", RequiredAttributeNameComparison.PrefixMatch),
                         "route-",
                         "manage",
                         false
                     },
                     {
-                        builder => builder
-                            .Name("key")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
+                        builder => builder.Name("key", RequiredAttributeNameComparison.FullMatch),
                         "KeY",
                         "value",
                         true
                     },
                     {
-                        builder => builder
-                            .Name("key")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch),
+                        builder => builder.Name("key", RequiredAttributeNameComparison.FullMatch),
                         "keys",
                         "value",
                         false
                     },
                     {
                         builder => builder
-                            .Name("key")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("value")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch),
+                            .Name("key", RequiredAttributeNameComparison.FullMatch)
+                            .Value("value", RequiredAttributeValueComparison.FullMatch),
                         "key",
                         "value",
                         true
                     },
                     {
                         builder => builder
-                            .Name("key")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("value")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch),
+                            .Name("key", RequiredAttributeNameComparison.FullMatch)
+                            .Value("value", RequiredAttributeValueComparison.FullMatch),
                         "key",
                         "Value",
                         false
                     },
                     {
                         builder => builder
-                            .Name("class")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("btn")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch),
+                            .Name("class", RequiredAttributeNameComparison.FullMatch)
+                            .Value("btn", RequiredAttributeValueComparison.PrefixMatch),
                         "class",
                         "btn btn-success",
                         true
                     },
                     {
                         builder => builder
-                            .Name("class")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("btn")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch),
+                            .Name("class", RequiredAttributeNameComparison.FullMatch)
+                            .Value("btn", RequiredAttributeValueComparison.PrefixMatch),
                         "class",
                         "BTN btn-success",
                         false
                     },
                     {
                         builder => builder
-                            .Name("href")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("#navigate")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch),
+                            .Name("href", RequiredAttributeNameComparison.FullMatch)
+                            .Value("#navigate", RequiredAttributeValueComparison.SuffixMatch),
                         "href",
                         "/home/index#navigate",
                         true
                     },
                     {
                         builder => builder
-                            .Name("href")
-                            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                            .Value("#navigate")
-                            .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch),
+                            .Name("href", RequiredAttributeNameComparison.FullMatch)
+                            .Value("#navigate", RequiredAttributeValueComparison.SuffixMatch),
                         "href",
                         "/home/index#NAVigate",
                         false
@@ -163,7 +141,7 @@ public class TagHelperMatchingConventionsTest
     {
         // Arrange
         var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
         builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
 
         var boundAttribute = builder.Build();
@@ -180,7 +158,7 @@ public class TagHelperMatchingConventionsTest
     {
         // Arrange
         var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder, TagHelperConventions.DefaultKind);
+        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
         builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
 
         var boundAttribute = builder.Build();

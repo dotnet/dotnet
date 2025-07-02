@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
@@ -73,13 +74,13 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
         var location = Assert.Single(locations);
-        Assert.EndsWith("String.cs", location.Uri.ToString());
+        Assert.EndsWith("String.cs", location.DocumentUri.UriString);
 
         // Note: The location is in a generated C# "metadata-as-source" file, which has a different
         // number of using directives in .NET Framework vs. .NET Core, so rather than relying on line
         // numbers we do some vague notion of actual navigation and test the actual source line that
         // the user would see.
-        var line = File.ReadLines(location.Uri.LocalPath).ElementAt(location.Range.Start.Line);
+        var line = File.ReadLines(location.DocumentUri.GetRequiredParsedUri().LocalPath).ElementAt(location.Range.Start.Line);
         Assert.Contains("public sealed class String", line);
     }
 
@@ -220,7 +221,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var htmlResponse = new SumType<LspLocation, LspLocation[], DocumentLink[]>?(new LspLocation[]
         {
             new() {
-                Uri = new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix),
+                DocumentUri = new(new Uri(document.CreateUri(), document.Name + FeatureOptions.HtmlVirtualDocumentSuffix)),
                 Range = inputText.GetRange(input.Span),
             },
         });
@@ -249,7 +250,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var range = text.GetRange(input.Span);
         Assert.Equal(range, location.Range);
 
-        Assert.Equal(document.CreateUri(), location.Uri);
+        Assert.Equal(document.CreateUri(), location.DocumentUri.GetRequiredParsedUri());
     }
 
     private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultAsync(
@@ -270,12 +271,12 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentDefinitionName, htmlResponse)]);
 
         var filePathService = new VisualStudioFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToDefinitionEndpoint(RemoteServiceInvoker, requestInvoker, filePathService);
+        var endpoint = new CohostGoToDefinitionEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);

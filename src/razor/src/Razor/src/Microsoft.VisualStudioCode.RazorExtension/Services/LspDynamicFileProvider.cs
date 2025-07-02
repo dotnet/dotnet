@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
@@ -40,7 +41,7 @@ internal sealed partial class LspDynamicFileProvider(
         {
             RazorDocument = new()
             {
-                Uri = razorUri
+                DocumentUri = new(razorUri)
             }
         };
 
@@ -54,7 +55,7 @@ internal sealed partial class LspDynamicFileProvider(
             return null;
         }
 
-        var textDocument = await WorkspaceExtensions.GetTextDocumentAsync(workspace, response.CSharpDocument.Uri, cancellationToken).ConfigureAwait(false);
+        var textDocument = await WorkspaceExtensions.GetTextDocumentAsync(workspace, response.CSharpDocument.DocumentUri, cancellationToken).ConfigureAwait(false);
         var checksum = Convert.FromBase64String(response.Checksum);
         var textLoader = new LspTextChangesTextLoader(
             textDocument,
@@ -66,7 +67,7 @@ internal sealed partial class LspDynamicFileProvider(
             _clientLanguageServerManager);
 
         return new RazorDynamicFileInfo(
-            RazorUri.GetDocumentFilePathFromUri(response.CSharpDocument.Uri),
+            RazorUri.GetDocumentFilePathFromUri(response.CSharpDocument.DocumentUri.GetRequiredParsedUri()),
             SourceCodeKind.Regular,
             textLoader,
             documentServiceProvider: new LspDocumentServiceProvider(_clientLanguageServerManager));
@@ -78,7 +79,7 @@ internal sealed partial class LspDynamicFileProvider(
         {
             CSharpDocument = new()
             {
-                Uri = new Uri(filePath)
+                DocumentUri = new(new Uri(filePath))
             }
         };
         return _clientLanguageServerManager.SendNotificationAsync(

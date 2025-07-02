@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -32,7 +32,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(uri) })
         {
             Range = LspFactory.CreateSingleLineRange(start: (0, 0), length: 2),
         };
@@ -62,7 +62,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(uri) })
         {
             Range = LspFactory.CreateSingleLineRange(start: (0, 1), length: 2),
         };
@@ -93,7 +93,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(uri) })
         {
             Range = LspFactory.CreateSingleLineRange(start: (0, 0), length: 8),
         };
@@ -130,7 +130,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
         var range = codeDocument.Source.Text.GetRange(input.Span);
-        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { DocumentUri = new(uri) })
         {
             Range = range
         };
@@ -167,7 +167,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
         var range = codeDocument.Source.Text.GetRange(input.Span);
-        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { DocumentUri = new(uri) })
         {
             Range = range
         };
@@ -204,7 +204,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
         var range = codeDocument.Source.Text.GetRange(input.Span);
-        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { DocumentUri = new(uri) })
         {
             Range = range
         };
@@ -238,7 +238,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
         var range = codeDocument.Source.Text.GetRange(input.Span);
-        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new TextDocumentIdentifier { DocumentUri = new(uri) })
         {
             Range = range
         };
@@ -267,7 +267,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(uri) })
         {
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 2, length: 2),
         };
@@ -298,7 +298,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = uri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(uri) })
         {
             Range = LspFactory.CreateZeroWidthRange(0, 4),
         };
@@ -326,7 +326,7 @@ public class WrapWithTagEndpointTest(ITestOutputHelper testOutput) : LanguageSer
 
         var endpoint = new WrapWithTagEndpoint(clientConnection, LoggerFactory);
 
-        var wrapWithDivParams = new WrapWithTagParams(new() { Uri = missingUri })
+        var wrapWithDivParams = new WrapWithTagParams(new() { DocumentUri = new(missingUri) })
         {
             Range = LspFactory.CreateSingleLineRange(start: (0, 0), length: 2),
         };

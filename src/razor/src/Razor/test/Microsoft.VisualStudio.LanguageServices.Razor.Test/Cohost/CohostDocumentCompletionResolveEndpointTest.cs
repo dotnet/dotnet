@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,10 +25,25 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
                 <div st$$></div>
 
                 The end.
-                """);
+                """,
+            supportsVisualStudioExtensions: true);
     }
 
-    private async Task VerifyCompletionItemResolveAsync(TestCode input)
+    [Fact]
+    public async Task HtmlResolve_VSCode()
+    {
+        await VerifyCompletionItemResolveAsync(
+            input: """
+                This is a Razor document.
+
+                <div st$$></div>
+
+                The end.
+                """,
+            supportsVisualStudioExtensions: false);
+    }
+
+    private async Task VerifyCompletionItemResolveAsync(TestCode input, bool supportsVisualStudioExtensions)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
 
@@ -41,35 +56,64 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var completionListCache = new CompletionListCache();
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
         var endpoint = new CohostDocumentCompletionResolveEndpoint(
+            IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
             clientSettingsManager,
             requestInvoker,
             LoggerFactory);
 
-        var textDocumentIdentifier = new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier { Uri = document.CreateUri() }, Version: 0);
+        var textDocumentIdentifier = new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, Version: 0);
 
         var context = new DelegatedCompletionResolutionContext(
             textDocumentIdentifier,
             OriginalCompletionListData: null,
             ProjectedKind: RazorLanguageKind.Html);
 
-        var request = new VSInternalCompletionItem()
-        {
-            Data = JsonSerializer.SerializeToElement(context),
-            Label = "TestItem"
-        };
         var list = new RazorVSInternalCompletionList
         {
-            Items = [request]
+            Data = supportsVisualStudioExtensions ? JsonSerializer.SerializeToElement(context) : null,
+            ItemDefaults = new()
+            {
+                Data = supportsVisualStudioExtensions ? null : JsonSerializer.SerializeToElement(context),
+            },
+            Items = [new VSInternalCompletionItem()
+            {
+                Label = "TestItem"
+            }]
+        };
+
+        var clientCapabilities = new VSInternalClientCapabilities
+        {
+            SupportsVisualStudioExtensions = supportsVisualStudioExtensions,
+            TextDocument = new TextDocumentClientCapabilities()
+            {
+                Completion = new VSInternalCompletionSetting()
+                {
+                    CompletionList = new()
+                    {
+                        Data = supportsVisualStudioExtensions
+                    },
+                    CompletionListSetting = new()
+                    {
+                        ItemDefaults = supportsVisualStudioExtensions ? null : ["data"]
+                    }
+                }
+            }
         };
 
         var resultId = completionListCache.Add(list, context);
-        list.SetResultId(resultId, null);
-        RazorCompletionResolveData.Wrap(list, textDocumentIdentifier.TextDocumentIdentifier, supportsCompletionListData: false);
+        list.SetResultId(resultId, clientCapabilities);
+        RazorCompletionResolveData.Wrap(list, textDocumentIdentifier.TextDocumentIdentifier, clientCapabilities);
 
-        // We expect data to be a JsonElement, so for tests we have to _not_ strongly type
-        request.Data = JsonSerializer.SerializeToElement(request.Data, JsonHelpers.JsonSerializerOptions);
+        var request = list.Items[0];
+        // Simulate the LSP client, which would receive all of the items and the list data, and send the item back to us with
+        // data filled in.
+        request.Data = JsonSerializer.SerializeToElement(list.Data ?? list.ItemDefaults.Data, JsonHelpers.JsonSerializerOptions);
+
+        var tdi = endpoint.GetTestAccessor().GetRazorTextDocumentIdentifier(request);
+        Assert.NotNull(tdi);
+        Assert.Equal(document.CreateUri(), tdi.Value.Uri);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
 
