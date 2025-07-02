@@ -1,4 +1,4 @@
-<Project InitialTargets="ValidateShortStackBuild">
+<Project>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
 
@@ -60,13 +60,5 @@
       <RuntimeArchivePath>%(RuntimeArchiveItem.Identity)</RuntimeArchivePath>
       <SourceBuiltRuntimeVersion>$(RuntimeFilename.Replace('$(RuntimeFilenamePrefix)','').Replace('-$(TargetRid)$(ArchiveExtension)',''))</SourceBuiltRuntimeVersion>
     </PropertyGroup>
-  </Target>
-
-  <Target Name="ValidateShortStackBuild" Condition="'$(ShortStack)' == 'true'" >
-    <!--
-      A short-stack build will only build runtime and its dependencies.
-      We should not and cannot have a short-stack build if we're not building the runtime components.
-    -->
-    <Error Text="Cannot have a short-stack build if we're not building the runtime components." Condition="'$(ShortStack)' == 'true' and '$(DotNetBuildRuntimeComponents)' != 'true'" />
   </Target>
 </Project>

@@ -9,6 +9,16 @@
     <IsUtilityProject>true</IsUtilityProject>
   </PropertyGroup>
 
+  <Target Name="ValidateShortStackBuild"
+          Condition="'$(ShortStack)' == 'true'"
+          BeforeTargets="PrepareProjectReferences" >
+    <!--
+      A short-stack build will only build runtime and its dependencies.
+      We should not and cannot have a short-stack build if we're not building the runtime components.
+    -->
+    <Error Text="Cannot have a short-stack build if we're not building the runtime components." Condition="'$(DotNetBuildRuntimeComponents)' != 'true'" />
+  </Target>
+
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">
     <!-- Short stack builds stop at runtime, not the whole SDK -->
     <RepositoryReference Include="sdk" Condition="'$(ShortStack)' != 'true'" />
