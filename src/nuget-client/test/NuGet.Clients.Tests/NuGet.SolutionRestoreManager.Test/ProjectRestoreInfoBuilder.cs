@@ -317,14 +317,6 @@ namespace NuGet.SolutionRestoreManager.Test
             return new VsReferenceItem(library.Name, properties);
         }
 
-        private static IVsReferenceItem ToToolReference(LibraryRange libraryRange)
-        {
-            var properties = new VsReferenceProperties(
-                new[] { new VsReferenceProperty("Version", libraryRange.VersionRange.OriginalString) }
-            );
-            return new VsReferenceItem(libraryRange.Name, properties);
-        }
-
         private static IVsReferenceItem ToPackageDownload(IGrouping<string, DownloadDependency> library)
         {
             string versionProperty = string.Join(";", library.Select(e => e.VersionRange.OriginalString));

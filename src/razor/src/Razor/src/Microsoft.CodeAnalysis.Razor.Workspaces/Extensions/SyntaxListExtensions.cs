@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -42,7 +42,7 @@ internal static class SyntaxListExtensions
         if (children.FirstOrDefault(static c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
             var token = metaCode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.LeftBrace);
-            if (token != null)
+            if (token != default)
             {
                 brace = metaCode;
             }
@@ -60,7 +60,7 @@ internal static class SyntaxListExtensions
         if (children.LastOrDefault(static c => c.Kind == SyntaxKind.RazorMetaCode) is RazorMetaCodeSyntax metaCode)
         {
             var token = metaCode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.RightBrace);
-            if (token != null)
+            if (token != default)
             {
                 brace = metaCode;
             }
@@ -69,35 +69,35 @@ internal static class SyntaxListExtensions
         return brace != null;
     }
 
-    internal static bool TryGetOpenBraceToken(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out SyntaxToken? brace)
+    internal static bool TryGetOpenBraceToken(this SyntaxList<RazorSyntaxNode> children, out SyntaxToken brace)
     {
-        brace = null;
+        brace = default;
 
         if (children.TryGetOpenBraceNode(out var metacode))
         {
             var token = metacode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.LeftBrace);
-            if (token != null)
+            if (token != default)
             {
                 brace = token;
             }
         }
 
-        return brace != null;
+        return brace != default;
     }
 
-    internal static bool TryGetCloseBraceToken(this SyntaxList<RazorSyntaxNode> children, [NotNullWhen(true)] out SyntaxToken? brace)
+    internal static bool TryGetCloseBraceToken(this SyntaxList<RazorSyntaxNode> children, out SyntaxToken brace)
     {
-        brace = null;
+        brace = default;
 
         if (children.TryGetCloseBraceNode(out var metacode))
         {
             var token = metacode.MetaCode.SingleOrDefault(static m => m.Kind == SyntaxKind.RightBrace);
-            if (token != null)
+            if (token != default)
             {
                 brace = token;
             }
         }
 
-        return brace != null;
+        return brace != default;
     }
 }

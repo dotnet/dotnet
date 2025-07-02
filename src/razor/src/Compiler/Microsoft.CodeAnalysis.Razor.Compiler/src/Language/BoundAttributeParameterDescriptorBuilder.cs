@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -13,39 +12,45 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
 {
     [AllowNull]
     private BoundAttributeDescriptorBuilder _parent;
-    [AllowNull]
-    private string _kind;
+    private BoundAttributeParameterFlags _flags;
     private DocumentationObject _documentationObject;
-    private MetadataHolder _metadata;
+    private TypeNameObject _typeNameObject;
 
     private BoundAttributeParameterDescriptorBuilder()
     {
     }
 
-    internal BoundAttributeParameterDescriptorBuilder(BoundAttributeDescriptorBuilder parent, string kind)
+    internal BoundAttributeParameterDescriptorBuilder(BoundAttributeDescriptorBuilder parent)
     {
         _parent = parent;
-        _kind = kind;
     }
 
     public string? Name { get; set; }
-    public string? TypeName { get; set; }
-    public bool IsEnum { get; set; }
+    public string? PropertyName { get; set; }
+
+    public string? TypeName
+    {
+        get => _typeNameObject.GetTypeName();
+        set => _typeNameObject = TypeNameObject.From(value);
+    }
+
+    public bool IsEnum
+    {
+        get => _flags.IsFlagSet(BoundAttributeParameterFlags.IsEnum);
+        set => _flags.UpdateFlag(BoundAttributeParameterFlags.IsEnum, value);
+    }
+
+    public bool BindAttributeGetSet
+    {
+        get => _flags.IsFlagSet(BoundAttributeParameterFlags.BindAttributeGetSet);
+        set => _flags.UpdateFlag(BoundAttributeParameterFlags.BindAttributeGetSet, value);
+    }
 
     public string? Documentation
     {
         get => _documentationObject.GetText();
         set => _documentationObject = new(value);
     }
-
-    public string? DisplayName { get; set; }
-
-    public IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
-
-    public void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
-
-    public bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
-        => _metadata.TryGetMetadataValue(key, out value);
 
     internal bool CaseSensitive => _parent.CaseSensitive;
 
@@ -61,20 +66,21 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
 
     private protected override BoundAttributeParameterDescriptor BuildCore(ImmutableArray<RazorDiagnostic> diagnostics)
     {
+        var flags = _flags;
+
+        if (CaseSensitive)
+        {
+            flags |= BoundAttributeParameterFlags.CaseSensitive;
+        }
+
         return new BoundAttributeParameterDescriptor(
-            _kind,
+            flags,
             Name ?? string.Empty,
-            TypeName ?? string.Empty,
-            IsEnum,
+            PropertyName ?? string.Empty,
+            _typeNameObject,
             _documentationObject,
-            GetDisplayName(),
-            CaseSensitive,
-            _metadata.GetMetadataCollection(),
             diagnostics);
     }
-
-    private string GetDisplayName()
-        => DisplayName ?? $":{Name}";
 
     private protected override void CollectDiagnostics(ref PooledHashSet<RazorDiagnostic> diagnostics)
     {

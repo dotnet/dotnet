@@ -64,37 +64,6 @@ public static class IntermediateNodeAssert
         }
     }
 
-    public static void AnnotationEquals(IntermediateNode node, object value)
-    {
-        AnnotationEquals(node, value, value);
-    }
-
-    public static void AnnotationEquals(IntermediateNode node, object key, object value)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.Equal(value, node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
-    public static void HasAnnotation(IntermediateNode node, object key)
-    {
-        try
-        {
-            Assert.NotNull(node);
-            Assert.NotNull(node.Annotations[key]);
-        }
-        catch (XunitException e)
-        {
-            throw new IntermediateNodeAssertException(node, node.Children, e.Message, e);
-        }
-    }
-
     public static void Html(string expected, IntermediateNode node)
     {
         try
@@ -303,6 +272,7 @@ public static class IntermediateNodeAssert
                 Assert.Equal(TokenKind.CSharp, token.Kind);
                 content.Append(token.Content);
             }
+
             Assert.Equal("EndContext();", content.ToString());
         }
         catch (XunitException e)
@@ -423,13 +393,13 @@ public static class IntermediateNodeAssert
     private class IntermediateNodeAssertException : XunitException
     {
         public IntermediateNodeAssertException(IntermediateNode node, string userMessage)
-            : base(Format(node, null, null, userMessage))
+            : base(Format(null, null, userMessage))
         {
             Node = node;
         }
 
         public IntermediateNodeAssertException(IntermediateNode node, IEnumerable<IntermediateNode> nodes, string userMessage)
-            : base(Format(node, null, nodes, userMessage))
+            : base(Format(null, nodes, userMessage))
         {
             Node = node;
             Nodes = nodes;
@@ -440,8 +410,10 @@ public static class IntermediateNodeAssert
             IEnumerable<IntermediateNode> nodes,
             string userMessage,
             Exception innerException)
-            : base(Format(node, null, nodes, userMessage), innerException)
+            : base(Format(null, nodes, userMessage), innerException)
         {
+            Node = node;
+            Nodes = nodes;
         }
 
         public IntermediateNodeAssertException(
@@ -450,15 +422,17 @@ public static class IntermediateNodeAssert
             IEnumerable<IntermediateNode> nodes,
             string userMessage,
             Exception innerException)
-            : base(Format(node, ancestors, nodes, userMessage), innerException)
+            : base(Format(ancestors, nodes, userMessage), innerException)
         {
+            Node = node;
+            Nodes = nodes;
         }
 
         public IntermediateNode Node { get; }
 
         public IEnumerable<IntermediateNode> Nodes { get; }
 
-        private static string Format(IntermediateNode node, IntermediateNode[] ancestors, IEnumerable<IntermediateNode> nodes, string userMessage)
+        private static string Format(IntermediateNode[] ancestors, IEnumerable<IntermediateNode> nodes, string userMessage)
         {
             using var _ = StringBuilderPool.GetPooledObject(out var builder);
             builder.AppendLine(userMessage);

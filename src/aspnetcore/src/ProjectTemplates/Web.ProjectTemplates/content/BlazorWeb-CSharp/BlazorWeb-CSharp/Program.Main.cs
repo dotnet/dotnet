@@ -70,7 +70,11 @@ public class Program
         #endif
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-        builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        builder.Services.AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddSignInManager()
             .AddDefaultTokenProviders();
@@ -103,10 +107,12 @@ public class Program
         #endif
         }
 
+        app.UseStatusCodePagesWithReExecute("/not-found", createScopeForErrors: true);
+
         #if (HasHttpsProfile)
         app.UseHttpsRedirection();
 
-        #endif
+#endif
         app.UseAntiforgery();
 
         app.MapStaticAssets();

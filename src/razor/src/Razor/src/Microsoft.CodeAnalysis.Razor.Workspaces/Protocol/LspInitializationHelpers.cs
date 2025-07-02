@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +80,11 @@ internal static class LspInitializationHelpers
     public static void EnableValidateBreakpointRange(this VSInternalServerCapabilities serverCapabilities)
     {
         serverCapabilities.BreakableRangeProvider = true;
+    }
+
+    public static void EnableDataTipRangeProvider(this VSInternalServerCapabilities serverCapabilities)
+    {
+        serverCapabilities.DataTipRangeProvider = true;
     }
 
     public static void EnableMapCodeProvider(this VSInternalServerCapabilities serverCapabilities)

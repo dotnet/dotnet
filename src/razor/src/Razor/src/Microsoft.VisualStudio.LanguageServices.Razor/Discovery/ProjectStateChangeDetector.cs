@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
     /// <summary>
     ///  A map of assembly path strings to ProjectKeys. This will be cleared when the solution is closed.
     /// </summary>
-    private readonly Dictionary<string, ProjectKey> _assemblyPathToProjectKeyMap = new(FilePathComparer.Instance);
+    private readonly Dictionary<string, ProjectKey> _assemblyPathToProjectKeyMap = new(PathUtilities.OSSpecificPathComparer);
 
     private WorkspaceChangedListener? _workspaceChangedListener;
 
@@ -245,11 +245,11 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         }
 
         // Using EndsWith because Path.GetExtension will ignore everything before .cs
-        return filePath.EndsWith(_options.CSharpVirtualDocumentSuffix, FilePathComparison.Instance) ||
+        return filePath.EndsWith(_options.CSharpVirtualDocumentSuffix, PathUtilities.OSSpecificPathComparison) ||
                // Still have .cshtml.g.cs and .razor.g.cs for Razor.VSCode scenarios.
-               filePath.EndsWith(".cshtml.g.cs", FilePathComparison.Instance) ||
-               filePath.EndsWith(".razor.g.cs", FilePathComparison.Instance) ||
-               filePath.EndsWith(".razor", FilePathComparison.Instance) ||
+               filePath.EndsWith(".cshtml.g.cs", PathUtilities.OSSpecificPathComparison) ||
+               filePath.EndsWith(".razor.g.cs", PathUtilities.OSSpecificPathComparison) ||
+               filePath.EndsWith(".razor", PathUtilities.OSSpecificPathComparison) ||
 
                // VSCode's background C# document
                // Using Ordinal because the SDK generates these filenames.

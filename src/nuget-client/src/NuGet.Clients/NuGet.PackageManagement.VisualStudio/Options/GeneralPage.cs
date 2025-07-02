@@ -4,19 +4,16 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Utilities.UnifiedSettings;
-using NuGet.Configuration;
 using NuGet.VisualStudio;
 
 namespace NuGet.PackageManagement.VisualStudio.Options
 {
     [Guid("6C09BBE2-4537-48B4-87D8-01BF5EB75901")]
-    public sealed class GeneralPage : IExternalSettingsProvider
+    public sealed class GeneralPage : NuGetExternalSettingsProvider
     {
         private const string MonikerAllowRestoreDownload = "packageRestore.allowRestoreDownload";
         private const string MonikerPackageRestoreAutomatic = "packageRestore.packageRestoreAutomatic";
@@ -26,100 +23,65 @@ namespace NuGet.PackageManagement.VisualStudio.Options
         private const string MonikerPackagesConfig = "packages-config";
         private const string MonikerShowPackageManagementChooser = "packageManagement.showPackageManagementChooser";
 
-        private readonly ISettings? _settings;
-        private readonly VSSettings? _vsSettings;
+        internal PackageRestoreConsent? _packageRestoreConsent;
+        internal BindingRedirectBehavior? _bindingRedirectBehavior;
+        internal PackageManagementFormat? _packageManagementFormat;
 
-        private PackageRestoreConsent? _packageRestoreConsent;
-        private BindingRedirectBehavior? _bindingRedirectBehavior;
-        private PackageManagementFormat? _packageManagementFormat;
+        public GeneralPage(VSSettings vsSettings)
+            : base(vsSettings)
+        { }
 
-        public GeneralPage()
-        {
-            var componentModel = NuGetUIThreadHelper.JoinableTaskFactory.Run(ServiceLocator.GetComponentModelAsync);
-            _settings = componentModel.GetService<ISettings>();
-            _vsSettings = _settings as VSSettings;
-            if (_vsSettings != null)
-            {
-                _vsSettings.SettingsChanged += VsSettings_SettingsChanged;
-            }
-            Debug.Assert(_settings != null);
-        }
-
-        private void VsSettings_SettingsChanged(object sender, EventArgs e)
-        {
-            _packageRestoreConsent = null;
-            _bindingRedirectBehavior = null;
-            _packageManagementFormat = null;
-            SettingValuesChanged?.Invoke(this, ExternalSettingsChangedEventArgs.SomeOrAll);
-        }
-
-        private BindingRedirectBehavior BindingRedirectBehavior
+        internal BindingRedirectBehavior BindingRedirectBehavior
         {
             get
             {
                 if (_bindingRedirectBehavior is null)
                 {
-                    _bindingRedirectBehavior = new BindingRedirectBehavior(_settings);
+                    _bindingRedirectBehavior = new BindingRedirectBehavior(_vsSettings);
                 }
 
                 return _bindingRedirectBehavior;
             }
         }
 
-        private PackageRestoreConsent PackageRestoreConsent
+        internal PackageRestoreConsent PackageRestoreConsent
         {
             get
             {
                 if (_packageRestoreConsent is null)
                 {
-                    _packageRestoreConsent = new PackageRestoreConsent(_settings);
+                    _packageRestoreConsent = new PackageRestoreConsent(_vsSettings);
                 }
 
                 return _packageRestoreConsent;
             }
         }
 
-        private PackageManagementFormat PackageManagementFormat
+        internal PackageManagementFormat PackageManagementFormat
         {
             get
             {
                 if (_packageManagementFormat is null)
                 {
-                    _packageManagementFormat = new PackageManagementFormat(_settings);
+                    _packageManagementFormat = new PackageManagementFormat(_vsSettings);
                 }
 
                 return _packageManagementFormat;
             }
         }
 
-        public event EventHandler<ExternalSettingsChangedEventArgs>? SettingValuesChanged;
-
-        // Event is unused at this time, so an empty add and remove accessor block is used to avoid a CS0067 analyzer warning.
-        public event EventHandler<EnumSettingChoicesChangedEventArgs> EnumSettingChoicesChanged { add { } remove { } }
-        // Event is unused at this time, so an empty add and remove accessor block is used to avoid a CS0067 analyzer warning.
-        public event EventHandler<DynamicMessageTextChangedEventArgs> DynamicMessageTextChanged { add { } remove { } }
-        // Event is unused at this time, so an empty add and remove accessor block is used to avoid a CS0067 analyzer warning.
-        public event EventHandler ErrorConditionResolved { add { } remove { } }
-
-        public void Dispose()
+        /// <summary>
+        /// Reset any cached values for this specific page instance when the settings change.
+        /// </summary>
+        internal override void VsSettings_SettingsChanged(object sender, EventArgs e)
         {
-            if (_vsSettings != null)
-            {
-                _vsSettings.SettingsChanged -= VsSettings_SettingsChanged;
-            }
+            _packageRestoreConsent = null;
+            _bindingRedirectBehavior = null;
+            _packageManagementFormat = null;
+            base.VsSettings_SettingsChanged(sender, e);
         }
 
-        public Task<ExternalSettingOperationResult<IReadOnlyList<EnumChoice>>> GetEnumChoicesAsync(string enumSettingMoniker, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(ExternalSettingOperationResult.SuccessResult((IReadOnlyList<EnumChoice>)new List<EnumChoice>().AsReadOnly()));
-        }
-
-        public Task<string> GetMessageTextAsync(string messageId, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ExternalSettingOperationResult<T>> GetValueAsync<T>(string moniker, CancellationToken cancellationToken) where T : notnull
+        public override Task<ExternalSettingOperationResult<T>> GetValueAsync<T>(string moniker, CancellationToken cancellationToken)
         {
             switch (moniker)
             {
@@ -135,14 +97,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             throw new InvalidOperationException();
         }
 
-        public Task OpenBackingStoreAsync(CancellationToken cancellationToken)
-        {
-            var optionsPageActivator = ServiceLocator.GetComponentModelService<IOptionsPageActivator>();
-            optionsPageActivator.ActivatePage(OptionsPage.ConfigurationFiles, closeCallback: null);
-            return Task.CompletedTask;
-        }
-
-        public Task<ExternalSettingOperationResult> SetValueAsync<T>(string moniker, T value, CancellationToken cancellationToken) where T : notnull
+        public override Task<ExternalSettingOperationResult> SetValueAsync<T>(string moniker, T value, CancellationToken cancellationToken)
         {
             switch (moniker)
             {
@@ -209,19 +164,6 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             throw new InvalidOperationException();
         }
 
-        private static Task<ExternalSettingOperationResult<T>> ConvertValueOrThrow<T>(object input) where T : notnull
-        {
-            if (input is T value)
-            {
-                return Task.FromResult(ExternalSettingOperationResult.SuccessResult(value));
-            }
-            else
-            {
-                // Shouldn't happen as these are types we declared in registration.json.
-                throw new IncompatibleSettingTypeException(input.GetType().Name, typeof(T).Name);
-            }
-        }
-
         private static Task<ExternalSettingOperationResult<T>> ConvertDefaultPackageManagementFormatKeyOrThrow<T>(Func<int> input)
         {
             ExternalSettingOperationResult<T> result;
@@ -243,7 +185,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
             catch (Exception ex)
             {
-                result = ExternalSettingsUtility.CreateSettingErrorResult<T>(ex.Message + " ('" + MonikerDefaultPackageManagementFormat + "')");
+                result = CreateSettingErrorResult<T>(ex.Message + " ('" + MonikerDefaultPackageManagementFormat + "')");
             }
 #pragma warning restore CA1031 // Do not catch general exception types
 

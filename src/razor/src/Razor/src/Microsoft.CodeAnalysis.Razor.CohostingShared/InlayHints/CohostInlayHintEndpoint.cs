@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -20,8 +20,10 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportRazorStatelessLspService(typeof(CohostInlayHintEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal class CohostInlayHintEndpoint(IRemoteServiceInvoker remoteServiceInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<InlayHintParams, InlayHint[]?>, IDynamicRegistrationProvider
+internal class CohostInlayHintEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
+    IRemoteServiceInvoker remoteServiceInvoker)
+    : AbstractCohostDocumentEndpoint<InlayHintParams, InlayHint[]?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
 
@@ -46,10 +48,10 @@ internal class CohostInlayHintEndpoint(IRemoteServiceInvoker remoteServiceInvoke
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(InlayHintParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<InlayHint[]?> HandleRequestAsync(InlayHintParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected override Task<InlayHint[]?> HandleRequestAsync(InlayHintParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         // TODO: Once the platform team have finished the work, check the "Show inlay hints while key pressed" option, and pass it along
-        return HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), displayAllOverride: false, cancellationToken);
+        return HandleRequestAsync(request, razorDocument, displayAllOverride: false, cancellationToken);
     }
 
     private async Task<InlayHint[]?> HandleRequestAsync(InlayHintParams request, TextDocument razorDocument, bool displayAllOverride, CancellationToken cancellationToken)

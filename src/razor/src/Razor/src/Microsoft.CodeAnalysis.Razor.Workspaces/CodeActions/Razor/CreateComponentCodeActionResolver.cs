@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
         var newComponentUri = LspFactory.CreateFilePathUri(updatedPath);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
-        documentChanges.Add(new CreateFile() { Uri = newComponentUri });
+        documentChanges.Add(new CreateFile() { DocumentUri = new(newComponentUri) });
 
         TryAddNamespaceDirective(codeDocument, newComponentUri, ref documentChanges.AsRef());
 
@@ -59,15 +59,14 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
 
     private static void TryAddNamespaceDirective(RazorCodeDocument codeDocument, Uri newComponentUri, ref PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
-        var namespaceDirective = syntaxTree.Root.DescendantNodes()
-            .Where(n => n.Kind == SyntaxKind.RazorDirective)
-            .Cast<RazorDirectiveSyntax>()
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
+        var namespaceDirective = syntaxRoot.DescendantNodes()
+            .OfType<RazorDirectiveSyntax>()
             .FirstOrDefault(static n => n.DirectiveDescriptor == NamespaceDirective.Directive);
 
         if (namespaceDirective != null)
         {
-            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = newComponentUri };
+            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(newComponentUri) };
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,

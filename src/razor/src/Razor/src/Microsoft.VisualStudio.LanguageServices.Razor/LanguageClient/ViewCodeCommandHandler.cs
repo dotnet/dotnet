@@ -1,12 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
 using System.ComponentModel.Composition;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.VisualStudio.Commanding;
 using Microsoft.VisualStudio.Razor.Extensions;
 using Microsoft.VisualStudio.Shell;
@@ -30,7 +30,7 @@ internal sealed partial class ViewCodeCommandHandler(
     {
         RazorLSPConstants.CSHTMLFileExtension,
         RazorLSPConstants.RazorFileExtension
-    }.ToFrozenSet(FilePathComparer.Instance);
+    }.ToFrozenSet(PathUtilities.OSSpecificPathComparer);
 
     private static readonly CommandState s_availableCommandState = new(isAvailable: true, displayText: SR.View_Code);
 

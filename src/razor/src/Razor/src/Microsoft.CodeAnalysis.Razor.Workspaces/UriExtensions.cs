@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 
@@ -17,12 +18,15 @@ internal static class UriExtensions
     public static string GetDocumentFilePath(this Uri uri)
         => RazorUri.GetDocumentFilePathFromUri(uri);
 
+    public static Uri GetRequiredParsedUri(this DocumentUri uri)
+        => uri.ParsedUri.AssumeNotNull();
+
+    public static string GetAbsoluteOrUNCPath(this DocumentUri uri)
+        => GetAbsoluteOrUNCPath(uri.GetRequiredParsedUri());
+
     public static string GetAbsoluteOrUNCPath(this Uri uri)
     {
-        if (uri is null)
-        {
-            throw new ArgumentNullException(nameof(uri));
-        }
+        ArgHelper.ThrowIfNull(uri, nameof(uri));
 
         if (uri.IsUnc)
         {

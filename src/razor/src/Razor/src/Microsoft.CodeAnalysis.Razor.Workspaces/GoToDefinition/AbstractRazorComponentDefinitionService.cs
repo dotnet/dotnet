@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -74,7 +75,7 @@ internal abstract class AbstractRazorComponentDefinitionService(
             _logger.LogInformation($"Attempting to get definition from an attribute directly.");
 
             var range = await RazorComponentDefinitionHelpers
-                .TryGetPropertyRangeAsync(documentSnapshot, attributeDescriptor.GetPropertyName(), _documentMappingService, _logger, cancellationToken)
+                .TryGetPropertyRangeAsync(documentSnapshot, attributeDescriptor.GetPropertyName().AssumeNotNull(), _documentMappingService, _logger, cancellationToken)
                 .ConfigureAwait(false);
 
             if (range is not null)

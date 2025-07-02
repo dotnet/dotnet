@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.ObjectModel;
@@ -65,7 +65,7 @@ public class VisualStudioRazorParserIntegrationTest : VisualStudioTestBase
             Assert.Equal(RazorFileKind.Component, codeDocument.FileKind);
 
             // @code is only applicable in component files so we're verifying that `@code` was treated as a directive.
-            var directiveNodes = manager.CurrentSyntaxTree!.Root.DescendantNodes().Where(child => child.Kind == SyntaxKind.RazorDirective);
+            var directiveNodes = manager.CurrentSyntaxTree!.Root.DescendantNodes().Where(node => node.Kind == SyntaxKind.RazorDirective);
             Assert.Single(directiveNodes);
         }
     }

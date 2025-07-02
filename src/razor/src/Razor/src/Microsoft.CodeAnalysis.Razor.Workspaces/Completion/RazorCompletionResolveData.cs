@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -22,8 +22,7 @@ internal record RazorCompletionResolveData(
             throw new InvalidOperationException($"Invalid completion item received'{completionItem.Label}'.");
         }
 
-        var context = paramsObj.Deserialize<RazorCompletionResolveData>();
-        if (context is null)
+        if (paramsObj.Deserialize<RazorCompletionResolveData>() is not { } context)
         {
             throw new InvalidOperationException($"completionItem.Data should be convertible to {nameof(RazorCompletionResolveData)}");
         }
@@ -31,14 +30,24 @@ internal record RazorCompletionResolveData(
         return context;
     }
 
-    public static void Wrap(VSInternalCompletionList completionList, TextDocumentIdentifier textDocument, bool supportsCompletionListData)
+    public static void Wrap(VSInternalCompletionList completionList, TextDocumentIdentifier textDocument, VSInternalClientCapabilities clientCapabilities)
     {
         var data = new RazorCompletionResolveData(textDocument, OriginalData: null);
 
-        if (supportsCompletionListData)
+        if (clientCapabilities.SupportsAnyCompletionListData())
         {
-            // Can set data at the completion list level
-            completionList.Data = data with { OriginalData = completionList.Data };
+            if (clientCapabilities.SupportsCompletionListData() || completionList.Data is not null)
+            {
+                // Can set data at the completion list level
+                completionList.Data = data with { OriginalData = completionList.Data };
+            }
+
+            if (clientCapabilities.SupportsCompletionListItemDefaultsData() || completionList.ItemDefaults?.Data is not null)
+            {
+                // Set data for the item defaults
+                completionList.ItemDefaults ??= new();
+                completionList.ItemDefaults.Data = data with { OriginalData = completionList.ItemDefaults.Data };
+            }
 
             // Set data for items that won't inherit the default
             foreach (var completionItem in completionList.Items.Where(static c => c.Data is not null))

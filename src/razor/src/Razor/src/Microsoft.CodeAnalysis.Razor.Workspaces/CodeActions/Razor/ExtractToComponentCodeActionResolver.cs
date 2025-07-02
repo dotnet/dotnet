@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #if !NET
 using System;
@@ -56,11 +56,17 @@ internal class ExtractToComponentCodeActionResolver(
             ? '/' + componentPath
             : componentPath;
 
-        var newComponentUri = LspFactory.CreateFilePathUri(componentPath);
+        var newComponentUri = new DocumentUri(LspFactory.CreateFilePathUri(componentPath));
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
-        var syntaxTree = componentDocument.GetSyntaxTree();
+        if (actionParams.Namespace is not null)
+        {
+            builder.AppendLine($"@namespace {actionParams.Namespace}");
+            builder.AppendLine();
+        }
+
+        var syntaxTree = componentDocument.GetRequiredSyntaxTree();
 
         // Right now this includes all the usings in the original document.
         // https://github.com/dotnet/razor/issues/11025 tracks reducing to only the required set.
@@ -83,10 +89,10 @@ internal class ExtractToComponentCodeActionResolver(
 
         var documentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]
         {
-            new CreateFile { Uri = newComponentUri },
+            new CreateFile { DocumentUri = newComponentUri },
             new TextDocumentEdit
             {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = documentContext.Uri },
+                TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(documentContext.Uri) },
                 Edits =
                 [
                     new TextEdit
@@ -98,7 +104,7 @@ internal class ExtractToComponentCodeActionResolver(
             },
             new TextDocumentEdit
             {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = newComponentUri },
+                TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = newComponentUri },
                 Edits  =
                 [
                     new TextEdit

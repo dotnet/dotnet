@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         if (changes.Length == 0)
         {
-            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
+            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
             {
                 _logger.LogWarning($"Failed to map to projected position for document {context.OriginalSnapshot.FilePath}.");
                 return [];
@@ -58,6 +58,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 context.Options.ToIndentationOptions(),
                 autoFormattingOptions,
                 indentStyle: CodeAnalysis.Formatting.FormattingOptions.IndentStyle.Smart,
+                _csharpSyntaxFormattingOptionsOverride,
                 cancellationToken).ConfigureAwait(false);
 
             if (formattingChanges.IsEmpty)
@@ -192,7 +193,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
-        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetCSharpDocument(), projectedTextChanges);
+        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetRequiredCSharpDocument(), projectedTextChanges);
 
         return changes.ToImmutableArray();
     }
@@ -288,7 +289,7 @@ internal sealed class CSharpOnTypeFormattingPass(
     private static ImmutableArray<TextChange> CleanupDocument(FormattingContext context, LinePositionSpan spanAfterFormatting)
     {
         var text = context.SourceText;
-        var csharpDocument = context.CodeDocument.GetCSharpDocument();
+        var csharpDocument = context.CodeDocument.GetRequiredCSharpDocument();
 
         using var changes = new PooledArrayBuilder<TextChange>();
         foreach (var mapping in csharpDocument.SourceMappings)
@@ -337,9 +338,9 @@ internal sealed class CSharpOnTypeFormattingPass(
             return;
         }
 
-        if (owner is CSharpStatementLiteralSyntax &&
-            owner.TryGetPreviousSibling(out var prevNode) &&
-            prevNode.FirstAncestorOrSelf<RazorSyntaxNode>(static a => a is CSharpTemplateBlockSyntax) is { } template &&
+        if (owner is CSharpStatementLiteralSyntax literal &&
+            literal.TryGetPreviousSibling(out var prevNode) &&
+            prevNode.FirstAncestorOrSelf<CSharpTemplateBlockSyntax>() is { } template &&
             owner.SpanStart == template.Span.End &&
             IsOnSingleLine(template, text))
         {
@@ -492,8 +493,8 @@ internal sealed class CSharpOnTypeFormattingPass(
         }
 
         if (owner is CSharpStatementLiteralSyntax &&
-            owner.NextSpan() is { } nextNode &&
-            nextNode.FirstAncestorOrSelf<RazorSyntaxNode>(static a => a is CSharpTemplateBlockSyntax) is { } template &&
+            owner.NextSpan() is { } nextSpan &&
+            nextSpan.AsNode().AssumeNotNull().FirstAncestorOrSelf<CSharpTemplateBlockSyntax>() is { } template &&
             template.SpanStart == owner.Span.End &&
             IsOnSingleLine(template, text))
         {

@@ -909,25 +909,6 @@ namespace NuGet.CommandLine
             throw new InvalidOperationException(noInputs);
         }
 
-        private static bool IsSolutionOrProjectFile(string fileName)
-        {
-            if (!string.IsNullOrEmpty(fileName))
-            {
-                var extension = Path.GetExtension(fileName);
-                var lastFourCharacters = string.Empty;
-                var length = extension.Length;
-
-                if (length >= 4)
-                {
-                    lastFourCharacters = extension.Substring(length - 4);
-                }
-
-                return (fileName.IsSolutionFile()
-                        || string.Equals(lastFourCharacters, "proj", StringComparison.OrdinalIgnoreCase));
-            }
-            return false;
-        }
-
         /// <summary>
         /// True if the filename is a packages.config file
         /// </summary>

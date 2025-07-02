@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var source = output.Source.Text;
 
-        var csharpDocument = output.GetCSharpDocument();
+        var csharpDocument = output.GetRequiredCSharpDocument();
         var filePath = output.Source.FilePath.AssumeNotNull();
 
         using var results = new PooledArrayBuilder<RazorMappedSpanResult>();
@@ -57,7 +57,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
             }
         }
 
-        return results.DrainToImmutable();
+        return results.ToImmutableAndClear();
     }
 
     public async Task<ImmutableArray<RazorMappedEditResult>> MapTextChangesAsync(Document oldDocument, Document newDocument, CancellationToken cancellationToken)

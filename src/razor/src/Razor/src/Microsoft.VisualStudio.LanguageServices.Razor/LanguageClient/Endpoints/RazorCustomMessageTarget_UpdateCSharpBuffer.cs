@@ -1,11 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -50,7 +51,7 @@ internal partial class RazorCustomMessageTarget
         await _joinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
         var identifier = CreateTextDocumentIdentifier(request);
-        var hostDocumentUri = identifier.Uri;
+        var hostDocumentUri = identifier.DocumentUri.GetRequiredParsedUri();
 
         _logger.LogDebug($"UpdateCSharpBuffer for {request.HostDocumentVersion} of {hostDocumentUri} in {request.ProjectKeyId}");
 
@@ -152,12 +153,12 @@ internal partial class RazorCustomMessageTarget
 
     private static TextDocumentIdentifier CreateTextDocumentIdentifier(UpdateBufferRequest request)
     {
-        var hostDocumentUri = new Uri(request.HostDocumentFilePath);
+        var hostDocumentUri = new DocumentUri(new Uri(request.HostDocumentFilePath));
         if (request.ProjectKeyId is { } id)
         {
             return new VSTextDocumentIdentifier
             {
-                Uri = hostDocumentUri,
+                DocumentUri = hostDocumentUri,
                 ProjectContext = new VSProjectContext
                 {
                     Id = id,
@@ -165,7 +166,7 @@ internal partial class RazorCustomMessageTarget
             };
         }
 
-        return new TextDocumentIdentifier { Uri = hostDocumentUri };
+        return new TextDocumentIdentifier { DocumentUri = hostDocumentUri };
     }
 
     private int GetLineCountOfVirtualDocument(Uri hostDocumentUri, CSharpVirtualDocumentSnapshot virtualDocument)

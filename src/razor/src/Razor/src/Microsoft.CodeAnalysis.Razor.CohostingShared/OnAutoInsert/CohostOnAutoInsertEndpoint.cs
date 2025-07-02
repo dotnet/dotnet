@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,12 +7,12 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol.AutoInsert;
@@ -31,6 +31,7 @@ namespace Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostOnAutoInsertEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
 #pragma warning disable RS0030 // Do not use banned APIs
@@ -38,7 +39,7 @@ internal sealed class CohostOnAutoInsertEndpoint(
 #pragma warning restore RS0030 // Do not use banned APIs
     IHtmlRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
-    : AbstractRazorCohostDocumentRequestHandler<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<VSInternalDocumentOnAutoInsertParams, VSInternalDocumentOnAutoInsertResponseItem?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
@@ -84,10 +85,7 @@ internal sealed class CohostOnAutoInsertEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentOnAutoInsertParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
-
-    private async Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected async override Task<VSInternalDocumentOnAutoInsertResponseItem?> HandleRequestAsync(VSInternalDocumentOnAutoInsertParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         _logger.LogDebug($"Resolving auto-insertion for {razorDocument.FilePath}");
 

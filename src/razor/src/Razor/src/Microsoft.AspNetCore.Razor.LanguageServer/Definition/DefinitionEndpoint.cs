@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.EndpointContracts;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -107,22 +108,25 @@ internal sealed class DefinitionEndpoint(
         // Not using .TryGetXXX because this does the null check for us too
         if (result is LspLocation location)
         {
-            (location.Uri, location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(location.Uri, location.Range, cancellationToken).ConfigureAwait(false);
+            (var uri, location.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(location.DocumentUri.GetRequiredParsedUri(), location.Range, cancellationToken).ConfigureAwait(false);
+            location.DocumentUri = new(uri);
         }
         else if (result is LspLocation[] locations)
         {
             foreach (var loc in locations)
             {
-                (loc.Uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.Uri, loc.Range, cancellationToken).ConfigureAwait(false);
+                (var uri, loc.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(loc.DocumentUri.GetRequiredParsedUri(), loc.Range, cancellationToken).ConfigureAwait(false);
+                loc.DocumentUri = new(uri);
             }
         }
         else if (result is DocumentLink[] links)
         {
             foreach (var link in links)
             {
-                if (link.Target is not null)
+                if (link.DocumentTarget?.ParsedUri is not null)
                 {
-                    (link.Target, link.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(link.Target, link.Range, cancellationToken).ConfigureAwait(false);
+                    (var uri, link.Range) = await _documentMappingService.MapToHostDocumentUriAndRangeAsync(link.DocumentTarget.ParsedUri, link.Range, cancellationToken).ConfigureAwait(false);
+                    link.DocumentTarget = new(uri);
                 }
             }
         }

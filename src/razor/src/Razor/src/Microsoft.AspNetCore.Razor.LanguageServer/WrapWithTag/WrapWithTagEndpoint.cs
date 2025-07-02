@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +33,7 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
         var documentContext = requestContext.DocumentContext;
         if (documentContext is null)
         {
-            _logger.LogWarning($"Failed to find document {request.TextDocument.Uri}.");
+            _logger.LogWarning($"Failed to find document {request.TextDocument.DocumentUri}.");
             return null;
         }
 
@@ -120,7 +120,7 @@ internal class WrapWithTagEndpoint(IClientConnection clientConnection, ILoggerFa
 
         var versioned = new VersionedTextDocumentIdentifier
         {
-            Uri = request.TextDocument.Uri,
+            DocumentUri = request.TextDocument.DocumentUri,
             Version = documentContext.Snapshot.Version,
         };
         var parameter = new DelegatedWrapWithTagParams(versioned, request);

@@ -1,4 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <!-- May stabilize. -->
+    <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
+  </PropertyGroup>
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />

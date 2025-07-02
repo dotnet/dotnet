@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
-using static System.StringExtensions;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -416,7 +415,7 @@ public sealed partial class CodeWriter : IDisposable
 
             if (_page is null)
             {
-                return -1;
+                return 0;
             }
 
             var destination = buffer.AsSpan(index, count);
@@ -436,6 +435,12 @@ public sealed partial class CodeWriter : IDisposable
 
                 foreach (var chunk in chunks)
                 {
+                    if (destination.IsEmpty)
+                    {
+                        // If we have no more space in the destination, we're done.
+                        break;
+                    }
+
                     var source = chunk.Span;
 
                     // Slice if the first chunk is partial. Note that this only occurs for the first chunk.
@@ -462,16 +467,15 @@ public sealed partial class CodeWriter : IDisposable
                         charIndex = 0;
                     }
 
+                    if (source.IsEmpty)
+                    {
+                        continue;
+                    }
+
                     source.CopyTo(destination);
                     destination = destination[source.Length..];
 
                     charsWritten += source.Length;
-
-                    // Break if we are done writing. chunkIndex and charIndex should have their correct values at this point.
-                    if (destination.IsEmpty)
-                    {
-                        break;
-                    }
                 }
 
                 if (destination.IsEmpty)
@@ -498,6 +502,8 @@ public sealed partial class CodeWriter : IDisposable
                 _charIndex = -1;
             }
 
+            _remainingLength -= charsWritten;
+
             return charsWritten;
         }
 
@@ -508,7 +514,7 @@ public sealed partial class CodeWriter : IDisposable
                 return string.Empty;
             }
 
-            var result = CreateString(_remainingLength, (_page, _chunkIndex, _charIndex), static (destination, state) =>
+            var result = string.Create(_remainingLength, (_page, _chunkIndex, _charIndex), static (destination, state) =>
             {
                 var (page, chunkIndex, charIndex) = state;
 
@@ -552,6 +558,7 @@ public sealed partial class CodeWriter : IDisposable
             _page = null;
             _chunkIndex = -1;
             _charIndex = 1;
+            _remainingLength = 0;
 
             return result;
         }

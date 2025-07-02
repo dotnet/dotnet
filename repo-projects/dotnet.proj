@@ -1,16 +1,18 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
+  <!-- This project file serves a couple of purpose.
+       - We conditionally include repos based on what works on different platforms/configurations.
+       - If we have a repo that is not in sdk's dependency tree, we can still build it by including it here. -->
+
   <PropertyGroup>
     <!-- This is a wrapper project that doesn't build anything. -->
     <IsUtilityProject>true</IsUtilityProject>
   </PropertyGroup>
 
-  <!-- This project file serves a couple of purpose.
-       - We conditionally include repos based on what works on different platforms/configurations.
-       - If we have a repo that is not in sdk's dependency tree, we can still build it by including it here.  -->
-
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">
-    <RepositoryReference Include="sdk" />
+    <!-- Short stack builds stop at runtime, not the whole SDK -->
+    <RepositoryReference Include="sdk" Condition="'$(ShortStack)' != 'true'" />
+    <RepositoryReference Include="runtime" Condition="'$(ShortStack)' == 'true'" />
   </ItemGroup>
 
   <!-- Build the cross-OS DACs. -->

@@ -104,9 +104,7 @@ namespace NuGet.Commands
 
                 if (spec.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference
                     || spec.RestoreMetadata.ProjectStyle == ProjectStyle.ProjectJson
-                    || spec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool
-                    || spec.RestoreMetadata.ProjectStyle == ProjectStyle.Standalone
-                    || spec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetToolReference)
+                    || spec.RestoreMetadata.ProjectStyle == ProjectStyle.DotnetCliTool)
                 {
                     validForRestore.Add(spec.RestoreMetadata.ProjectUniqueName);
                 }
@@ -204,10 +202,8 @@ namespace NuGet.Commands
                 AddProjectReferences(result, items);
 
                 if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
                     || restoreType == ProjectStyle.DotnetCliTool
                     || restoreType == ProjectStyle.ProjectJson
-                    || restoreType == ProjectStyle.DotnetToolReference
                     || restoreType == ProjectStyle.PackagesConfig)
                 {
 
@@ -234,9 +230,7 @@ namespace NuGet.Commands
 
                 // Read package references for netcore, tools, and standalone
                 if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
-                    || restoreType == ProjectStyle.DotnetCliTool
-                    || restoreType == ProjectStyle.DotnetToolReference)
+                    || restoreType == ProjectStyle.DotnetCliTool)
                 {
                     AddPackageReferences(result, items, isCentralPackageManagementEnabled);
                     AddPackageDownloads(result, items);
@@ -251,9 +245,7 @@ namespace NuGet.Commands
                                     tfi.FrameworkName.GetShortFolderName()));
                 }
 
-                if (restoreType == ProjectStyle.PackageReference
-                    || restoreType == ProjectStyle.Standalone
-                    || restoreType == ProjectStyle.DotnetToolReference)
+                if (restoreType == ProjectStyle.PackageReference)
                 {
                     // Set project version
                     result.Version = GetVersion(specItem);
@@ -282,7 +274,7 @@ namespace NuGet.Commands
                     result.RestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
 
                     // NuGet audit properties
-                    result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items);
+                    result.RestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items, GetAuditSuppressions(items));
                 }
 
                 if (restoreType == ProjectStyle.PackagesConfig)
@@ -300,7 +292,7 @@ namespace NuGet.Commands
                         );
                     }
                     pcRestoreMetadata.RestoreLockProperties = GetRestoreLockProperties(specItem);
-                    pcRestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items);
+                    pcRestoreMetadata.RestoreAuditProperties = GetRestoreAuditProperties(specItem, items, GetAuditSuppressions(items));
                 }
 
                 if (restoreType == ProjectStyle.ProjectJson)
@@ -484,9 +476,7 @@ namespace NuGet.Commands
                 bool assetTargetFallback = false;
                 bool warn = false;
 
-                if (restoreType == ProjectStyle.PackageReference ||
-                    restoreType == ProjectStyle.Standalone ||
-                    restoreType == ProjectStyle.DotnetToolReference)
+                if (restoreType == ProjectStyle.PackageReference)
                 {
                     var packageTargetFallback = MSBuildStringUtility.Split(item.GetProperty("PackageTargetFallback"))
                         .Select(NuGetFramework.Parse)
@@ -1020,12 +1010,11 @@ namespace NuGet.Commands
                 IsPropertyTrue(specItem, "RestoreLockedMode"));
         }
 
-        public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem, IEnumerable<IMSBuildItem> allItems)
+        public static RestoreAuditProperties GetRestoreAuditProperties(IMSBuildItem specItem, IEnumerable<IMSBuildItem> allItems, HashSet<string> suppressionItems)
         {
             string enableAudit = specItem.GetProperty("NuGetAudit");
             string auditLevel = specItem.GetProperty("NuGetAuditLevel");
             string auditMode = GetAuditMode(specItem, allItems);
-            HashSet<string> suppressionItems = GetAuditSuppressions(allItems);
 
             if (enableAudit != null || auditLevel != null || auditMode != null
                 || (suppressionItems != null && suppressionItems.Count > 0))

@@ -3,6 +3,7 @@
 namespace FSharp.Compiler.SyntaxTrivia
 
 open FSharp.Compiler.Text
+open FSharp.Compiler.Text.Range
 
 [<RequireQualifiedAccess; NoEquality; NoComparison>]
 type IdentTrivia =
@@ -23,23 +24,29 @@ and [<RequireQualifiedAccess; NoEquality; NoComparison>] IfDirectiveExpression =
     | Ident of string
 
 [<RequireQualifiedAccess; NoEquality; NoComparison>]
+type WarnDirectiveTrivia =
+    | Nowarn of range
+    | Warnon of range
+
+[<RequireQualifiedAccess; NoEquality; NoComparison>]
 type CommentTrivia =
     | LineComment of range: range
     | BlockComment of range: range
 
 [<NoEquality; NoComparison>]
-type ParsedImplFileInputTrivia =
+type ParsedInputTrivia =
     {
         ConditionalDirectives: ConditionalDirectiveTrivia list
+        WarnDirectives: WarnDirectiveTrivia list
         CodeComments: CommentTrivia list
     }
 
-[<NoEquality; NoComparison>]
-type ParsedSigFileInputTrivia =
-    {
-        ConditionalDirectives: ConditionalDirectiveTrivia list
-        CodeComments: CommentTrivia list
-    }
+    static member Empty =
+        {
+            ConditionalDirectives = []
+            WarnDirectives = []
+            CodeComments = []
+        }
 
 [<NoEquality; NoComparison>]
 type SynExprTryWithTrivia =
@@ -92,7 +99,7 @@ type SynExprLetOrUseTrivia =
     static member Zero: SynExprLetOrUseTrivia =
         {
             InKeyword = None
-            LetOrUseKeyword = Range.Zero
+            LetOrUseKeyword = range0
         }
 
 [<NoEquality; NoComparison>]
@@ -104,7 +111,7 @@ type SynExprLetOrUseBangTrivia =
 
     static member Zero: SynExprLetOrUseBangTrivia =
         {
-            LetOrUseBangKeyword = Range.Zero
+            LetOrUseBangKeyword = range0
             EqualsRange = None
         }
 
@@ -128,7 +135,7 @@ type SynExprYieldOrReturnTrivia =
         YieldOrReturnKeyword: range
     }
 
-    static member Zero: SynExprYieldOrReturnTrivia = { YieldOrReturnKeyword = Range.Zero }
+    static member Zero: SynExprYieldOrReturnTrivia = { YieldOrReturnKeyword = range0 }
 
 [<NoEquality; NoComparison>]
 type SynExprYieldOrReturnFromTrivia =
@@ -136,10 +143,7 @@ type SynExprYieldOrReturnFromTrivia =
         YieldOrReturnFromKeyword: range
     }
 
-    static member Zero: SynExprYieldOrReturnFromTrivia =
-        {
-            YieldOrReturnFromKeyword = Range.Zero
-        }
+    static member Zero: SynExprYieldOrReturnFromTrivia = { YieldOrReturnFromKeyword = range0 }
 
 [<NoEquality; NoComparison>]
 type SynExprDoBangTrivia = { DoBangKeyword: range }
@@ -282,7 +286,7 @@ type SynLeadingKeyword =
         | MemberVal(m1, m2)
         | OverrideVal(m1, m2)
         | StaticMemberVal(m1, _, m2) -> Range.unionRanges m1 m2
-        | Synthetic -> Range.Zero
+        | Synthetic -> range0
 
 [<NoEquality; NoComparison>]
 type SynBindingTrivia =

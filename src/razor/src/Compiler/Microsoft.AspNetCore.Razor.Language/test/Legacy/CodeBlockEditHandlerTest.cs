@@ -287,7 +287,7 @@ public class CodeBlockEditHandlerTest
         var tokens = NativeCSharpLanguageCharacteristics.Instance.TokenizeString(content).ToArray();
         foreach (var token in tokens)
         {
-            builder.Add((SyntaxToken)token.CreateRed());
+            builder.Add(new SyntaxToken(token));
         }
         var node = SyntaxFactory.CSharpStatementLiteral(builder.ToList(), SpanChunkGenerator.Null);
 

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
@@ -15,6 +15,7 @@ internal static class CustomMessageNames
     // VS Windows only
     public const string RazorInlineCompletionEndpoint = "razor/inlineCompletion";
     public const string RazorValidateBreakpointRangeName = "razor/validateBreakpointRange";
+    public const string RazorDataTipRangeName = "razor/dataTipRange";
     public const string RazorOnAutoInsertEndpointName = "razor/onAutoInsert";
     public const string RazorSemanticTokensRefreshEndpoint = "razor/semanticTokensRefresh";
     public const string RazorTextPresentationEndpoint = "razor/textPresentation";

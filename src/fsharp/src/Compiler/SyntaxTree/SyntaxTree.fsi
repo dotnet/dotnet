@@ -999,6 +999,7 @@ type SynExprRecordField =
         fieldName: RecordFieldName *
         equalsRange: range option *
         expr: SynExpr option *
+        range: range *
         blockSeparator: BlockSeparator option
 
 [<NoEquality; NoComparison; RequireQualifiedAccess>]
@@ -1730,7 +1731,15 @@ type SynModuleDecl =
     /// An 'expr' within a module.
     | Expr of expr: SynExpr * range: range
 
-    /// One or more 'type' definitions within a module
+    /// <summary>
+    /// A type definition group ('<c>type T1 ... and T2 ...</c>') or a single '<c>type</c>' definition within a module.
+    /// </summary>
+    ///
+    /// <remarks>
+    /// Consecutive '<c>type</c>' keywords (e.g. <c>type T1 ... type T2 ...</c>) are represented individually, with
+    /// separate <c>Types</c> syntax tree nodes for each.
+    /// Only the '<c>and</c>' keyword causes multiple types to be aggregated into a single <c>Types</c> node.
+    /// </remarks>
     | Types of typeDefns: SynTypeDefn list * range: range
 
     /// An 'exception' definition within a module
@@ -1933,12 +1942,6 @@ type ParsedImplFile =
 [<NoEquality; NoComparison>]
 type ParsedSigFile = ParsedSigFile of hashDirectives: ParsedHashDirective list * fragments: ParsedSigFileFragment list
 
-/// Represents a scoped pragma
-[<RequireQualifiedAccess>]
-type ScopedPragma =
-    /// A pragma to turn a warning off
-    | WarningOff of range: range * warningNumber: int
-
 /// Represents a qualifying name for anonymous module specifications and implementations,
 [<NoEquality; NoComparison>]
 type QualifiedNameOfFile =
@@ -1960,11 +1963,10 @@ type ParsedImplFileInput =
         fileName: string *
         isScript: bool *
         qualifiedNameOfFile: QualifiedNameOfFile *
-        scopedPragmas: ScopedPragma list *
         hashDirectives: ParsedHashDirective list *
         contents: SynModuleOrNamespace list *
         flags: (bool * bool) *
-        trivia: ParsedImplFileInputTrivia *
+        trivia: ParsedInputTrivia *
         identifiers: Set<string>
 
     member FileName: string
@@ -1973,13 +1975,11 @@ type ParsedImplFileInput =
 
     member QualifiedName: QualifiedNameOfFile
 
-    member ScopedPragmas: ScopedPragma list
-
     member HashDirectives: ParsedHashDirective list
 
     member Contents: SynModuleOrNamespace list
 
-    member Trivia: ParsedImplFileInputTrivia
+    member Trivia: ParsedInputTrivia
 
     member IsLastCompiland: bool
 
@@ -1991,23 +1991,20 @@ type ParsedSigFileInput =
     | ParsedSigFileInput of
         fileName: string *
         qualifiedNameOfFile: QualifiedNameOfFile *
-        scopedPragmas: ScopedPragma list *
         hashDirectives: ParsedHashDirective list *
         contents: SynModuleOrNamespaceSig list *
-        trivia: ParsedSigFileInputTrivia *
+        trivia: ParsedInputTrivia *
         identifiers: Set<string>
 
     member FileName: string
 
     member QualifiedName: QualifiedNameOfFile
 
-    member ScopedPragmas: ScopedPragma list
-
     member HashDirectives: ParsedHashDirective list
 
     member Contents: SynModuleOrNamespaceSig list
 
-    member Trivia: ParsedSigFileInputTrivia
+    member Trivia: ParsedInputTrivia
 
 /// Represents the syntax tree for a parsed implementation or signature file
 [<NoEquality; NoComparison; RequireQualifiedAccess>]
@@ -2026,9 +2023,6 @@ type ParsedInput =
 
     /// Gets the qualified name used to help match signature and implementation files
     member QualifiedName: QualifiedNameOfFile
-
-    /// Gets the #nowarn and other scoped pragmas
-    member ScopedPragmas: ScopedPragma list
 
     /// Gets a set of all identifiers used in this parsed input. Only populated if captureIdentifiersWhenParsing option was used.
     member Identifiers: Set<string>

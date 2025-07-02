@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <Target Name="Build">
-    <!-- Construct a set of properties for the inner build. Only pass properties that have been set.-->
+    <!-- Construct a set of properties for the build. Only pass properties that have been set.-->
     <ItemGroup>
       <_CommonProperties Include="Configuration=$(Configuration)" />
       <_CommonProperties Include="DotNetBuildFromVMR=$(DotNetBuildFromVMR)" Condition="'$(DotNetBuildFromVMR)' != ''" />

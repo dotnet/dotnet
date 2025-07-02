@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -27,6 +28,8 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
     private readonly bool _isFormatOnType = isFormatOnType;
 
     protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
+
+    protected RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -45,7 +48,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         // 2. The indentation due to Razor and HTML constructs
 
         var text = context.SourceText;
-        var csharpDocument = context.CodeDocument.GetCSharpDocument();
+        var csharpDocument = context.CodeDocument.GetRequiredCSharpDocument();
 
         // To help with figuring out the correct indentation, first we will need the indentation
         // that the C# formatter wants to apply in the following locations,
@@ -164,11 +167,11 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         }
 
         // Now, invoke the C# formatter to obtain the CSharpDesiredIndentation for all significant locations.
-        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, cancellationToken).ConfigureAwait(false);
+        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, _csharpSyntaxFormattingOptionsOverride, cancellationToken).ConfigureAwait(false);
 
         // Build source mapping indentation scopes.
         var sourceMappingIndentations = new SortedDictionary<int, IndentationData>();
-        var syntaxTreeRoot = context.CodeDocument.GetSyntaxTree().Root;
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
         foreach (var originalLocation in sourceMappingMap.Keys)
         {
             var significantLocation = sourceMappingMap[originalLocation];
@@ -178,12 +181,12 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
                 continue;
             }
 
-            if (originalLocation > syntaxTreeRoot.EndPosition)
+            if (originalLocation > root.EndPosition)
             {
                 continue;
             }
 
-            var scopeOwner = syntaxTreeRoot.FindInnermostNode(originalLocation);
+            var scopeOwner = root.FindInnermostNode(originalLocation);
             if (!sourceMappingIndentations.ContainsKey(originalLocation))
             {
                 sourceMappingIndentations[originalLocation] = new IndentationData(indentation);
@@ -339,7 +342,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             changes.Add(new TextChange(spanToReplace, effectiveDesiredIndentation));
         }
 
-        return changes.DrainToImmutable();
+        return changes.ToImmutableAndClear();
     }
 
     protected static bool ShouldFormat(FormattingContext context, TextSpan mappingSpan, bool allowImplicitStatements)
@@ -362,8 +365,8 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             return true;
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindInnermostNode(mappingSpan.Start, includeWhitespace: true);
+        var root = context.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(mappingSpan.Start, includeWhitespace: true);
         if (owner is null)
         {
             // Can't determine owner of this position. Optimistically allow formatting.
@@ -458,9 +461,9 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             //
 
             if (owner.SpanStart == mappingSpan.Start &&
-                owner is CSharpStatementLiteralSyntax &&
-                owner.Parent is CSharpCodeBlockSyntax &&
-                owner.TryGetPreviousSibling(out var transition) && transition is CSharpTransitionSyntax)
+                owner is CSharpStatementLiteralSyntax { Parent: CSharpCodeBlockSyntax } literal &&
+                literal.TryGetPreviousSibling(out var transition) &&
+                transition is CSharpTransitionSyntax)
             {
                 return true;
             }
@@ -628,7 +631,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
 
     protected static string RenderSourceMappings(RazorCodeDocument codeDocument)
     {
-        var markers = codeDocument.GetCSharpDocument().SourceMappings.SelectMany(mapping =>
+        var markers = codeDocument.GetRequiredCSharpDocument().SourceMappings.SelectMany(mapping =>
             new[]
             {
                 (index: mapping.OriginalSpan.AbsoluteIndex, text: "<#" ),
@@ -693,6 +696,16 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             }
 
             return _indentation;
+        }
+    }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(CSharpFormattingPassBase instance)
+    {
+        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
+        {
+            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
         }
     }
 }

@@ -7,9 +7,12 @@
 # requested for review when someone opens a pull request.
 * @dotnet/product-construction @dotnet/source-build
 
+# We must guard against these files being created temporarily (https://github.com/dotnet/source-build/issues/4491)
+/prereqs/git-info/ @premun
+
 # Exclude the src folder which is team specific
 /src/
 
-# Exclude forward flow file changes to common files to reduce noise.
+# Explicitly exclude source-manifest.json which gets updated with every
+# forward flow PR.
 /src/source-manifest.json
-/prereqs/git-info/

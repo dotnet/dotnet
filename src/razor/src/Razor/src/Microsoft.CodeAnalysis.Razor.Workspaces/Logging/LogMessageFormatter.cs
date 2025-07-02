@@ -1,11 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor;
-using static System.StringExtensions;
 
 namespace Microsoft.CodeAnalysis.Razor.Logging;
 
@@ -23,7 +22,7 @@ internal static partial class LogMessageFormatter
                 ref messageLineRangeBuilder, ref exceptionLineRangeBuilder);
 
             // Create the final string.
-            return CreateString(state.Length, state, static (span, state) =>
+            return string.Create(state.Length, state, static (span, state) =>
             {
                 Write(state.CategoryNamePart, ref span);
 

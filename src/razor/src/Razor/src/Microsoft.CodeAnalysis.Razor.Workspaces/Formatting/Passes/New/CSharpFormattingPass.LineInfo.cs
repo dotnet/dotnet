@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting.New;
 
@@ -13,6 +13,7 @@ internal partial class CSharpFormattingPass
     /// <param name="CheckForNewLines">Whether the origin document text could have overflowed to multiple lines in the formatted document</param>
     /// <param name="SkipPreviousLine">Whether to skip the previous line in the formatted document, since it doesn't represent anything in the origin document</param>
     /// <param name="SkipNextLine">Whether to skip the next line in the formatted document, since it doesn't represent anything in the origin document</param>
+    /// <param name="SkipNextLineIfBrace">Whether to skip the next line in the formatted document, like <see cref="SkipNextLine" />, but only skips if the next line is a brace</param>
     /// <param name="HtmlIndentLevel">The indent level that the Html formatter applied to this line</param>
     /// <param name="OriginOffset">How many characters after the first non-whitespace character of the origin line should be skipped before applying formatting</param>
     /// <param name="FormattedLength">How many characters of the origin line the formatted line represents</param>
@@ -25,6 +26,7 @@ internal partial class CSharpFormattingPass
         bool CheckForNewLines,
         bool SkipPreviousLine,
         bool SkipNextLine,
+        bool SkipNextLineIfBrace,
         int HtmlIndentLevel,
         int OriginOffset,
         int FormattedLength,

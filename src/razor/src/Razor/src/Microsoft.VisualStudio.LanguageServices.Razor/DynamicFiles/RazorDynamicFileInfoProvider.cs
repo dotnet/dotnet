@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Concurrent;
@@ -174,7 +174,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
     {
         foreach (var entry in _entries)
         {
-            if (FilePathComparer.Instance.Equals(filePath, entry.Key.FilePath))
+            if (PathUtilities.OSSpecificPathComparer.Equals(filePath, entry.Key.FilePath))
             {
                 yield return entry;
             }
@@ -396,7 +396,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
 
         public bool Equals(Key other)
             => ProjectId.Equals(other.ProjectId) &&
-               FilePathComparer.Instance.Equals(FilePath, other.FilePath);
+               PathUtilities.OSSpecificPathComparer.Equals(FilePath, other.FilePath);
 
         public override bool Equals(object? obj)
             => obj is Key other && Equals(other);
@@ -405,7 +405,7 @@ internal class RazorDynamicFileInfoProvider : IRazorDynamicFileInfoProviderInter
         {
             var hash = HashCodeCombiner.Start();
             hash.Add(ProjectId);
-            hash.Add(FilePath, FilePathComparer.Instance);
+            hash.Add(FilePath, PathUtilities.OSSpecificPathComparer);
             return hash;
         }
     }

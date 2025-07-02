@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -36,11 +36,6 @@ public class RCLStressTests(ITestOutputHelper testOutputHelper) : AbstractStress
             await TestServices.Editor.InvokeCodeActionAsync("Extract element to new component", cancellationToken);
 
             await TestServices.Editor.WaitForActiveWindowByFileAsync("Component.razor", cancellationToken);
-
-            await TestServices.Editor.PlaceCaretAsync("<h1", charsOffset: -1, cancellationToken);
-
-            // TODO: Remove once https://github.com/dotnet/razor/issues/11478 is fixed
-            await TestServices.Editor.InsertTextAsync($"@namespace MyCoolNamespace{Environment.NewLine}{Environment.NewLine}", cancellationToken);
 
             var componentFileName = (await TestServices.Editor.GetActiveTextViewAsync(cancellationToken)).TextBuffer.GetFileName();
 

@@ -129,6 +129,11 @@ public class QueryCompilationContext
     public virtual bool IgnoreQueryFilters { get; internal set; }
 
     /// <summary>
+    ///     A collection of ignored query filters.
+    /// </summary>
+    public virtual HashSet<string>? IgnoredQueryFilters { get; internal set; }
+
+    /// <summary>
     ///     A value indicating whether eager loaded navigations are ignored in this query.
     /// </summary>
     public virtual bool IgnoreAutoIncludes { get; internal set; }
@@ -253,14 +258,19 @@ public class QueryCompilationContext
                     .Select(
                         kv =>
                             Expression.Call(
-                                QueryContextParameter,
-                                QueryContextAddParameterMethodInfo,
+                                Expression.Property(
+                                    QueryContextParameter,
+                                    QueryContextParametersProperty),
+                                ParameterDictionaryAddMethod,
                                 Expression.Constant(kv.Key),
                                 Expression.Convert(Expression.Invoke(kv.Value, QueryContextParameter), typeof(object))))
                     .Append(query));
 
-    private static readonly MethodInfo QueryContextAddParameterMethodInfo
-        = typeof(QueryContext).GetTypeInfo().GetDeclaredMethod(nameof(QueryContext.AddParameter))!;
+    private static readonly PropertyInfo QueryContextParametersProperty
+        = typeof(QueryContext).GetProperty(nameof(QueryContext.Parameters))!;
+
+    private static readonly MethodInfo ParameterDictionaryAddMethod
+        = typeof(Dictionary<string, object?>).GetMethod(nameof(Dictionary<string, object?>.Add))!;
 
     [DebuggerDisplay("{Microsoft.EntityFrameworkCore.Query.ExpressionPrinter.Print(this), nq}")]
     private sealed class NotTranslatedExpressionType : Expression, IPrintableExpression

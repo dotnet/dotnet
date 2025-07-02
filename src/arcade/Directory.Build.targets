@@ -1,7 +1,6 @@
 <Project>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
-  <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.XliffTasks.InTree.targets" Condition="'$(UsingInTreeToolXliff)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)Microsoft.DotNet.SwaggerGenerator.MSBuild.InTree.targets" Condition="'$(UsingInTreeToolSwaggerGeneratorMSBuild)' == 'true'" />
   <Import Project="$(RepositoryEngineeringDir)BuildTask.targets" Condition="'$(IsBuildTaskProject)' == 'true'" />
 

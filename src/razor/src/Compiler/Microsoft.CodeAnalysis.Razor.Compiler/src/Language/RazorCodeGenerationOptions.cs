@@ -15,6 +15,7 @@ public sealed partial class RazorCodeGenerationOptions
         indentSize: DefaultIndentSize,
         newLine: DefaultNewLine,
         rootNamespace: null,
+        cssScope: null,
         suppressUniqueIds: null,
         flags: Flags.DefaultFlags);
 
@@ -22,6 +23,7 @@ public sealed partial class RazorCodeGenerationOptions
         indentSize: DefaultIndentSize,
         newLine: DefaultNewLine,
         rootNamespace: null,
+        cssScope: null,
         suppressUniqueIds: null,
         flags: Flags.DefaultDesignTimeFlags);
 
@@ -34,6 +36,11 @@ public sealed partial class RazorCodeGenerationOptions
     public string? RootNamespace { get; }
 
     /// <summary>
+    /// A scope identifier that will be used on elements in the generated class, or <see langword="null""/>.
+    /// </summary>
+    public string? CssScope { get; }
+
+    /// <summary>
     /// Gets a value used for unique ids for testing purposes. Null for unique ids.
     /// </summary>
     public string? SuppressUniqueIds { get; }
@@ -44,12 +51,14 @@ public sealed partial class RazorCodeGenerationOptions
         int indentSize,
         string newLine,
         string? rootNamespace,
+        string? cssScope,
         string? suppressUniqueIds,
         Flags flags)
     {
         IndentSize = indentSize;
         NewLine = newLine;
         RootNamespace = rootNamespace;
+        CssScope = cssScope;
         SuppressUniqueIds = suppressUniqueIds;
         _flags = flags;
     }
@@ -63,10 +72,10 @@ public sealed partial class RazorCodeGenerationOptions
     }
 
     public bool DesignTime
-        => _flags.HasFlag(Flags.DesignTime);
+        => (_flags & Flags.DesignTime) == Flags.DesignTime;
 
     public bool IndentWithTabs
-        => _flags.HasFlag(Flags.IndentWithTabs);
+        => (_flags & Flags.IndentWithTabs) == Flags.IndentWithTabs;
 
     /// <summary>
     /// Gets a value that indicates whether to suppress the default <c>#pragma checksum</c> directive in the
@@ -78,7 +87,7 @@ public sealed partial class RazorCodeGenerationOptions
     /// purposes.
     /// </remarks>
     public bool SuppressChecksum
-        => _flags.HasFlag(Flags.SuppressChecksum);
+        => (_flags & Flags.SuppressChecksum) == Flags.SuppressChecksum;
 
     /// <summary>
     /// Gets a value that indicates whether to suppress the default metadata attributes in the generated
@@ -97,7 +106,7 @@ public sealed partial class RazorCodeGenerationOptions
     /// </para>
     /// </remarks>
     public bool SuppressMetadataAttributes
-        => _flags.HasFlag(Flags.SuppressMetadataAttributes);
+        => (_flags & Flags.SuppressMetadataAttributes) == Flags.SuppressMetadataAttributes;
 
     /// <summary>
     /// Gets a value that indicates whether to suppress the <c>RazorSourceChecksumAttribute</c>.
@@ -107,69 +116,74 @@ public sealed partial class RazorCodeGenerationOptions
     /// </para>
     /// </summary>
     public bool SuppressMetadataSourceChecksumAttributes
-        => _flags.HasFlag(Flags.SuppressMetadataSourceChecksumAttributes);
+        => (_flags & Flags.SuppressMetadataSourceChecksumAttributes) == Flags.SuppressMetadataSourceChecksumAttributes;
 
     /// <summary>
     /// Gets or sets a value that determines if an empty body is generated for the primary method.
     /// </summary>
     public bool SuppressPrimaryMethodBody
-        => _flags.HasFlag(Flags.SuppressPrimaryMethodBody);
+        => (_flags & Flags.SuppressPrimaryMethodBody) == Flags.SuppressPrimaryMethodBody;
 
     /// <summary>
     /// Gets a value that determines if nullability type enforcement should be suppressed for user code.
     /// </summary>
     public bool SuppressNullabilityEnforcement
-        => _flags.HasFlag(Flags.SuppressNullabilityEnforcement);
+        => (_flags & Flags.SuppressNullabilityEnforcement) == Flags.SuppressNullabilityEnforcement;
 
     /// <summary>
     /// Gets a value that determines if the components code writer may omit values for minimized attributes.
     /// </summary>
     public bool OmitMinimizedComponentAttributeValues
-        => _flags.HasFlag(Flags.OmitMinimizedComponentAttributeValues);
+        => (_flags & Flags.OmitMinimizedComponentAttributeValues) == Flags.OmitMinimizedComponentAttributeValues;
 
     /// <summary>
     /// Gets a value that determines if localized component names are to be supported.
     /// </summary>
     public bool SupportLocalizedComponentNames
-        => _flags.HasFlag(Flags.SupportLocalizedComponentNames);
+        => (_flags & Flags.SupportLocalizedComponentNames) == Flags.SupportLocalizedComponentNames;
 
     /// <summary>
     /// Gets a value that determines if enhanced line pragmas are to be utilized.
     /// </summary>
     public bool UseEnhancedLinePragma
-        => _flags.HasFlag(Flags.UseEnhancedLinePragma);
+        => (_flags & Flags.UseEnhancedLinePragma) == Flags.UseEnhancedLinePragma;
 
     /// <summary>
     /// Determines whether RenderTreeBuilder.AddComponentParameter should not be used.
     /// </summary>
     public bool SuppressAddComponentParameter
-        => _flags.HasFlag(Flags.SuppressAddComponentParameter);
+        => (_flags & Flags.SuppressAddComponentParameter) == Flags.SuppressAddComponentParameter;
 
     /// <summary>
     /// Determines if the file paths emitted as part of line pragmas should be mapped back to a valid path on windows.
     /// </summary>
     public bool RemapLinePragmaPathsOnWindows
-        => _flags.HasFlag(Flags.RemapLinePragmaPathsOnWindows);
+        => (_flags & Flags.RemapLinePragmaPathsOnWindows) == Flags.RemapLinePragmaPathsOnWindows;
 
     public RazorCodeGenerationOptions WithIndentSize(int value)
         => IndentSize == value
             ? this
-            : new(value, NewLine, RootNamespace, SuppressUniqueIds, _flags);
+            : new(value, NewLine, RootNamespace, CssScope, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithNewLine(string value)
         => NewLine == value
             ? this
-            : new(IndentSize, value, RootNamespace, SuppressUniqueIds, _flags);
+            : new(IndentSize, value, RootNamespace, CssScope, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithRootNamespace(string? value)
         => RootNamespace == value
             ? this
-            : new(IndentSize, NewLine, value, SuppressUniqueIds, _flags);
+            : new(IndentSize, NewLine, value, CssScope, SuppressUniqueIds, _flags);
+
+    public RazorCodeGenerationOptions WithCssScope(string? value)
+        => CssScope == value
+            ? this
+            : new(IndentSize, NewLine, RootNamespace, value, SuppressUniqueIds, _flags);
 
     public RazorCodeGenerationOptions WithSuppressUniqueIds(string? value)
         => RootNamespace == value
             ? this
-            : new(IndentSize, NewLine, RootNamespace, value, _flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, value, _flags);
 
     public RazorCodeGenerationOptions WithFlags(
         Optional<bool> designTime = default,
@@ -249,6 +263,6 @@ public sealed partial class RazorCodeGenerationOptions
 
         return flags == _flags
             ? this
-            : new(IndentSize, NewLine, RootNamespace, SuppressUniqueIds, flags);
+            : new(IndentSize, NewLine, RootNamespace, CssScope, SuppressUniqueIds, flags);
     }
 }

@@ -220,8 +220,11 @@ jobs:
     ${{ else }}:
       value: clean-while-building
 
+  - name: brandingArgument
+    value: $(commandPrefix)branding $(brandingType)
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }}
+    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -300,7 +303,7 @@ jobs:
     # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
     # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
     - output: pipelineArtifact
-      path: $(Build.ArtifactStagingDirectory)
+      path: $(Build.ArtifactStagingDirectory)/artifacts
       artifact: $(successfulJobArtifactName)
       displayName: Publish Artifacts (On Success)
       condition: succeeded()
@@ -317,12 +320,15 @@ jobs:
     # Using build artifacts to enable publishing the vertical manifests to a single artifact from different jobs
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - output: buildArtifacts
-        PathtoPublish: $(Build.ArtifactStagingDirectory)/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+        PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
         ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
         sbomEnabled: false
 
   steps:
+  - checkout: self
+    fetchDepth: 1
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
@@ -411,14 +417,13 @@ jobs:
 
     - ${{ if eq(parameters.signDac, 'true') }}:
       # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
-      - template: ${{ variables['Build.SourcesDirectory'] }}/src/runtime/eng/pipelines/coreclr/templates/install-diagnostic-certs.yml
+      - template: ../steps/setup-diagnostics-esrp.yml@self
         parameters:
           isOfficialBuild: true
-          certNames:
-          - 'dac-dnceng-ssl-cert'
-          vaultName: 'clrdiag-esrp-pme'
-          azureSubscription: 'diagnostics-esrp-kvcertuser-pme'
-          scriptRoot: '$(Build.SourcesDirectory)/src/runtime'
+          serviceConnectionGuid: 0a3b81f8-02bd-434b-960a-1e45cfcca801
+          serviceConnectionName: 'diagnostics-esrp-kvcertuser-pme'
+          scriptRoot: '${{ variables.sourcesPath }}/src/runtime/eng/native/signing'
+
 
     - script: build.cmd
         $(baseArguments)
@@ -433,13 +438,8 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-
-    - ${{ if eq(parameters.signDac, 'true') }}:
-      # TODO: Once we turn off the dotnet/runtime official build, move these templates into the VMR's eng folder.
-      - template: ${{ variables['Build.SourcesDirectory'] }}/src/runtime/eng/pipelines/coreclr/templates/remove-diagnostic-certs.yml
-        parameters:
-          isOfficialBuild: true
-          scriptRoot: '$(Build.SourcesDirectory)/src/runtime'
+      env:
+        ESRP_TOKEN: $(System.AccessToken)
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
@@ -471,8 +471,7 @@ jobs:
           fi
 
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Source-built artifacts are from CentOS 9 Stream. We want to download them without
-            # downloading portable versions from the internet.
+            # Using previous SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
@@ -678,7 +677,7 @@ jobs:
     # Both publishing steps are necessary to ensure artifacts are published on both success and failure.
     # This prevents overwrite conflicts in the event of a failed build followed by a rerun.
     # Additionally, the 'Download Previous Build *' steps depend on a fixed name to acquire specific assets in multi-stage builds.
-    - publish: $(Build.ArtifactStagingDirectory)
+    - publish: $(Build.ArtifactStagingDirectory)/artifacts
       artifact: $(successfulJobArtifactName)
       displayName: Publish Artifacts (On Success)
       condition: succeeded()
@@ -694,6 +693,6 @@ jobs:
     - ${{ if ne(parameters.buildSourceOnly, true) }}:
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: $(Build.ArtifactStagingDirectory)/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
+          PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest

@@ -9535,4 +9535,65 @@ namespace ConsoleApp1
             }
             """);
     }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/78680")]
+    public async Task FixReferenceInMemberAccessNameInTopLevel()
+    {
+        await TestAsync(
+            """
+            C c = null;
+            C d = null;
+            Console.WriteLine([|c.c|]);
+            Console.WriteLine(d.c.c);
+
+            class C
+            {
+                public C c;
+            }
+            """,
+            """
+            C c = null;
+            C d = null;
+            
+            C {|Rename:c1|} = c.c;
+
+            Console.WriteLine(c1);
+            Console.WriteLine(d.c.c);
+
+            class C
+            {
+                public C c;
+            }
+            """,
+            parseOptions: null,
+            index: 1);
+    }
+
+    [Fact]
+    public async Task TestNotOnNamedType1()
+    {
+        await TestMissingInRegularAndScriptAsync(
+            """
+            using System;
+
+            class C
+            {
+                void M()
+                {
+                    [||]Console.WriteLine();
+                }
+            }
+            """);
+    }
+
+    [Fact]
+    public async Task TestNotOnNamedType2()
+    {
+        await TestMissingInRegularAndScriptAsync(
+            """
+            using System;
+            
+            [||]Console.WriteLine();
+            """);
+    }
 }

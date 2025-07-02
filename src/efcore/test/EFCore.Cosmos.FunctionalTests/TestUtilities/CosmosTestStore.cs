@@ -435,7 +435,6 @@ public class CosmosTestStore : TestStore
             mappedTypes.Add(entityType);
         }
 
-#pragma warning disable EF9103
         foreach (var (containerName, mappedTypes) in containers)
         {
             IReadOnlyList<string> partitionKeyStoreNames = Array.Empty<string>();
@@ -502,7 +501,6 @@ public class CosmosTestStore : TestStore
                 ProcessEntityType(ownedType, indexes, vectors, fullTextProperties);
             }
         }
-#pragma warning restore EF9103
     }
 
     private static IReadOnlyList<string> GetPartitionKeyStoreNames(IEntityType entityType)
@@ -840,7 +838,7 @@ public class CosmosTestStore : TestStore
         public PropertyAccessMode GetPropertyAccessMode()
             => throw new NotImplementedException();
 
-        public LambdaExpression GetQueryFilter()
+        public IReadOnlyDictionary<string, LambdaExpression> GetDeclaredQueryFilters()
             => throw new NotImplementedException();
 
         public IEnumerable<IForeignKey> GetReferencingForeignKeys()
@@ -1037,5 +1035,8 @@ public class CosmosTestStore : TestStore
 
         IEnumerable<IReadOnlyTypeBase> IReadOnlyTypeBase.GetDirectlyDerivedTypes()
             => GetDirectlyDerivedTypes();
+        IReadOnlyCollection<IQueryFilter> IReadOnlyEntityType.GetDeclaredQueryFilters() => throw new NotImplementedException();
+        public LambdaExpression? GetQueryFilter() => throw new NotImplementedException();
+        public IQueryFilter? FindDeclaredQueryFilter(string? filterKey) => throw new NotImplementedException();
     }
 }

@@ -1,13 +1,13 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -181,7 +181,7 @@ internal sealed class FallbackProjectManager : IFallbackProjectManager
         // that don't match
         var projectPath = FilePathNormalizer.GetNormalizedDirectoryName(projectFilePath);
         var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
-        if (!normalizedFilePath.StartsWith(projectPath, FilePathComparison.Instance))
+        if (!normalizedFilePath.StartsWith(projectPath, PathUtilities.OSSpecificPathComparison))
         {
             return null;
         }

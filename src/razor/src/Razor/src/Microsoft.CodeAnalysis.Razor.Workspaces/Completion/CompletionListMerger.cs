@@ -1,6 +1,5 @@
-﻿
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -23,7 +22,9 @@ internal static class CompletionListMerger
     [return: NotNullIfNotNull(nameof(delegatedCompletionList))]
     public static RazorVSInternalCompletionList? Merge(RazorVSInternalCompletionList? razorCompletionList, RazorVSInternalCompletionList? delegatedCompletionList)
     {
-        if (razorCompletionList is null)
+        // In VSCode case we always think completion was invoked explicitly and create empty Razor completion list,
+        // so check for empty Items collection as well. 
+        if (razorCompletionList is null || razorCompletionList.Items.Length == 0)
         {
             return delegatedCompletionList;
         }
@@ -39,12 +40,14 @@ internal static class CompletionListMerger
         var mergedIsIncomplete = razorCompletionList.IsIncomplete || delegatedCompletionList.IsIncomplete;
         var mergedItems = razorCompletionList.Items.Concat(delegatedCompletionList.Items).ToArray();
         var mergedData = MergeData(razorCompletionList.Data, delegatedCompletionList.Data);
-        var mergedCommitCharacters = razorCompletionList.CommitCharacters ?? delegatedCompletionList.CommitCharacters;
+        var mergedCommitCharacters = razorCompletionList.CommitCharacters
+            ?? delegatedCompletionList.CommitCharacters;
         var mergedSuggestionMode = razorCompletionList.SuggestionMode || delegatedCompletionList.SuggestionMode;
 
         // We don't fully support merging continue characters currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedContinueWithCharacters = razorCompletionList.ContinueCharacters ?? delegatedCompletionList.ContinueCharacters;
 
+        var mergedItemDefaultsData = MergeData(razorCompletionList.ItemDefaults?.Data, delegatedCompletionList.ItemDefaults?.Data);
         // We don't fully support merging edit ranges currently. Razor doesn't currently use them so delegated completion lists always win.
         var mergedItemDefaultsEditRange = razorCompletionList.ItemDefaults?.EditRange ?? delegatedCompletionList.ItemDefaults?.EditRange;
 
@@ -58,7 +61,10 @@ internal static class CompletionListMerger
             ContinueCharacters = mergedContinueWithCharacters,
             ItemDefaults = new CompletionListItemDefaults()
             {
+                Data = mergedItemDefaultsData,
                 EditRange = mergedItemDefaultsEditRange,
+                // VSCode won't use VSInternalCompletionList.CommitCharacters, make sure we don't lose item defaults
+                CommitCharacters = razorCompletionList.ItemDefaults?.CommitCharacters ?? delegatedCompletionList.ItemDefaults?.CommitCharacters
             }
         };
 
@@ -152,14 +158,16 @@ internal static class CompletionListMerger
 
     private static void EnsureMergeableData(RazorVSInternalCompletionList completionListA, RazorVSInternalCompletionList completionListB)
     {
-        if (completionListA.Data != completionListB.Data &&
-            (completionListA.Data is null || completionListB.Data is null))
+        var completionListAData = completionListA.Data ?? completionListA.ItemDefaults?.Data;
+        var completionListBData = completionListB.Data ?? completionListB.ItemDefaults?.Data;
+        if (completionListAData != completionListBData &&
+            (completionListAData is null || completionListBData is null))
         {
             // One of the completion lists have data while the other does not, we need to ensure that any non-data centric items don't get incorrect data associated
 
             // The candidate completion list will be one where we populate empty data for any `null` specifying data given we'll be merging
             // two completion lists together we don't want incorrect data to be inherited down
-            var candidateCompletionList = completionListA.Data is null ? completionListA : completionListB;
+            var candidateCompletionList = completionListAData is null ? completionListA : completionListB;
             for (var i = 0; i < candidateCompletionList.Items.Length; i++)
             {
                 var item = candidateCompletionList.Items[i];
@@ -206,11 +214,7 @@ internal static class CompletionListMerger
             }
 
             completionListToStopInheriting.CommitCharacters = null;
-
-            if (completionListToStopInheriting.ItemDefaults is not null)
-            {
-                completionListToStopInheriting.ItemDefaults.CommitCharacters = null;
-            }
+            completionListToStopInheriting.ItemDefaults?.CommitCharacters = null;
         }
     }
 
@@ -219,8 +223,7 @@ internal static class CompletionListMerger
         using var inheritableCompletions = new PooledArrayBuilder<VSInternalCompletionItem>();
         for (var i = 0; i < completionList.Items.Length; i++)
         {
-            var completionItem = completionList.Items[i] as VSInternalCompletionItem;
-            if (completionItem is null ||
+            if (completionList.Items[i] is not VSInternalCompletionItem completionItem ||
                 completionItem.CommitCharacters is not null ||
                 completionItem.VsCommitCharacters is not null)
             {

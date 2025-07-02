@@ -191,16 +191,11 @@ public sealed class RazorProjectEngine
         Action<RazorCodeGenerationOptions.Builder>? configureCodeGeneration)
     {
         var parserOptions = ComputeParserOptions(fileKind, configureParser);
-        var codeGenerationOptions = ComputeCodeGenerationOptions(configureCodeGeneration);
+        var codeGenerationOptions = ComputeCodeGenerationOptions(cssScope, configureCodeGeneration);
 
         var codeDocument = RazorCodeDocument.Create(source, importSources, parserOptions, codeGenerationOptions);
 
         codeDocument.SetTagHelpers(tagHelpers);
-
-        if (cssScope != null)
-        {
-            codeDocument.SetCssScope(cssScope);
-        }
 
         return codeDocument;
     }
@@ -233,7 +228,7 @@ public sealed class RazorProjectEngine
             configureParser?.Invoke(builder);
         });
 
-        var codeGenerationOptions = ComputeCodeGenerationOptions(builder =>
+        var codeGenerationOptions = ComputeCodeGenerationOptions(cssScope: null, builder =>
         {
             builder.DesignTime = true;
             builder.SuppressChecksum = true;
@@ -263,11 +258,12 @@ public sealed class RazorProjectEngine
         return builder.ToOptions();
     }
 
-    private RazorCodeGenerationOptions ComputeCodeGenerationOptions(Action<RazorCodeGenerationOptions.Builder>? configure)
+    private RazorCodeGenerationOptions ComputeCodeGenerationOptions(string? cssScope, Action<RazorCodeGenerationOptions.Builder>? configure)
     {
         var configuration = Configuration;
         var builder = new RazorCodeGenerationOptions.Builder()
         {
+            CssScope = cssScope,
             SuppressAddComponentParameter = configuration.SuppressAddComponentParameter
         };
 
@@ -501,7 +497,7 @@ public sealed class RazorProjectEngine
             }
         }
 
-        return result.DrainToImmutable();
+        return result.ToImmutableAndClear();
     }
 
     private ImmutableArray<RazorSourceDocument> GetImportSources(RazorProjectItem projectItem, bool designTime)
@@ -543,6 +539,6 @@ public sealed class RazorProjectEngine
             }
         }
 
-        return imports.DrainToImmutable();
+        return imports.ToImmutableAndClear();
     }
 }

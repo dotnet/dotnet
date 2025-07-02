@@ -6,7 +6,6 @@
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
 
-    <GitInfoRepoPropsFile>$([MSBuild]::NormalizePath('$(PrereqsDir)', 'git-info', '$(RepositoryName).props'))</GitInfoRepoPropsFile>
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
     <!-- If this is a dev build with parallelism enabled, ensure that RunEachTargetSeparately is true so that StopOnFirstFailure will be honored.
@@ -16,9 +15,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Fake, to satisfy the SDK. -->
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+    <NoTargetsDoNotReferenceOutputAssemblies>false</NoTargetsDoNotReferenceOutputAssemblies>
 
     <ProjectDirectory>$([MSBuild]::NormalizeDirectory('$(SrcDir)', '$(RepositoryName)'))</ProjectDirectory>
 
@@ -41,6 +39,9 @@
 
     <RepoArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ProjectDirectory)', 'artifacts'))</RepoArtifactsDir>
     <RepoArtifactsPackageCache>$([MSBuild]::NormalizeDirectory('$(RepoArtifactsDir)', '.packages'))</RepoArtifactsPackageCache>
+    <RepoArtifactsShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsShippingPackagesDir>
+    <RepoArtifactsNonShippingPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsNonShippingPackagesDir)', '$(RepositoryName)'))</RepoArtifactsNonShippingPackagesDir>
+    <RepoArtifactsPdbArtifactsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsSymStoreDirectory)', '$(RepositoryName)'))</RepoArtifactsPdbArtifactsDir>
 
     <SourceBuiltSdksDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'source-built-sdks'))</SourceBuiltSdksDir>
 
@@ -96,8 +97,8 @@
   <!-- Common args used for building and testing. -->
   <PropertyGroup>
     <CommonArgs Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(CommonArgs) $(FlagParameterPrefix)productBuild</CommonArgs>
-    <!-- TODO: Rename to source-build when the new switch is available everywhere. -->
     <CommonArgs Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)sourceBuild</CommonArgs>
+    <CommonArgs>$(CommonArgs) $(FlagParameterPrefix)fromVMR</CommonArgs>
 
     <CommonArgs Condition="'$(ContinuousIntegrationBuild)' == 'true'">$(CommonArgs) $(FlagParameterPrefix)ci</CommonArgs>
 
@@ -113,7 +114,7 @@
     <CommonArgs Condition="'$(CrossBuild)' == 'true'">$(CommonArgs) /p:CrossBuild=true</CommonArgs>
     <CommonArgs Condition="'$(DotNetBuildUseMonoRuntime)' == 'true'">$(CommonArgs) /p:DotNetBuildUseMonoRuntime=$(DotNetBuildUseMonoRuntime)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
-    <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder=$(OfficialBuilder)</CommonArgs>
+    <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder="$(OfficialBuilder)"</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)</CommonArgs>
@@ -122,12 +123,7 @@
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetsDir=$(ArtifactsAssetsDir)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:SourceBuiltAssetManifestsDir=$(RepoAssetManifestsDir)</CommonArgs>
 
-    <!-- TODO: Remove the GitHubRepositoryName switch here after the next re-boostrap that includes the Publish.proj change. -->
-    <CommonArgs>$(CommonArgs) /p:GitHubRepositoryName=$(RepositoryName)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
-    <!-- TODO: Remove both properties and replace with '-from-VMR' CLI arg with the next re-bootstrap. -->
-    <CommonArgs>$(CommonArgs) /p:DotNetBuildFromVMR=true</CommonArgs>
-    <CommonArgs>$(CommonArgs) /p:DotNetBuildOrchestrator=true</CommonArgs>
 
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
@@ -136,7 +132,7 @@
     <!-- PGO assets by default are "Vertical" visibilty. Each repo will enable the specific artifacts it must publish externally -->
     <DefaultArtifactVisibility Condition="'$(PgoInstrument)' == 'true'">Vertical</DefaultArtifactVisibility>
     <!-- ShortStack builds only publish new assets from the root repository. All other assets are duplicates. -->
-    <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(MSBuildProjectName)' != '$(RootRepo)'">Vertical</DefaultArtifactVisibility>
+    <DefaultArtifactVisibility Condition="'$(ShortStack)' == 'true' and '$(RepositoryName)' != 'runtime'">Vertical</DefaultArtifactVisibility>
 
     <!-- Don't publish loose Windows PDBs for PGO assets. They're never used and they slow down publishing. -->
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) /p:PublishWindowsPdb=false</BuildArgs>
@@ -177,14 +173,6 @@
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
-    <!-- We pass '-ci', but also apply ci mode via env var for edge cases. (E.g. misbehaving inner builds.). -->
-    <EnvironmentVariables Condition="'$(ContinuousIntegrationBuild)' == 'true'" Include="ContinuousIntegrationBuild=true" />
-
-    <!-- Turn off node reuse for source build because repos use conflicting versions
-         of compilers which cause assembly load errors.
-         See https://github.com/dotnet/source-build/issues/541 -->
-    <EnvironmentVariables Include="MSBUILDDISABLENODEREUSE=1" />
-
     <EnvironmentVariables Include="DeterministicSourcePaths=true" Condition="'$(DeterministicBuildOptOut)' != 'true'" />
     <EnvironmentVariables Include="DeterministicSourcePaths=false" Condition="'$(DeterministicBuildOptOut)' == 'true'" />
 
@@ -193,7 +181,7 @@
     <!-- Needed for miscellanous projects in various repos - see https://github.com/dotnet/source-build/issues/4081-->
     <EnvironmentVariables Include="RestoreConfigFile=$(NuGetConfigFile)" Condition="'$(NuGetConfigFile)' != ''" />
 
-    <!-- Need to be passed in here so that outer and inner builds don't restore into the orchestrator package cache (CI builds)
+    <!-- Need to be passed in here so that repo builds don't restore into the orchestrator package cache (CI builds)
          or the user package cache (local dev builds). -->
     <EnvironmentVariables Include="NUGET_PACKAGES=$(RepoArtifactsPackageCache)" />
   </ItemGroup>
@@ -233,13 +221,10 @@
     <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>
 
-  <!-- Additional pseudo-versions that **multiple** repos depend on. -->
   <ItemGroup>
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimewinx64Version" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimewinx64PackageVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftNETCoreAppRuntimeVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
-
-    <ExtraPackageVersionPropsPackageInfo Include="VSRedistCommonNetCoreSharedFrameworkx64100PackageVersion" Version="%24(MicrosoftNETCoreAppRefPackageVersion)" />
+    <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+    <!-- Skip the sdk resolver in source-only mode as it already got built in the previous msbuild node execution triggered in build.sh. -->
+    <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
 </Project>

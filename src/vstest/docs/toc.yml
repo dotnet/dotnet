@@ -4,6 +4,8 @@
     #href: quickstart.md
   #- name: Concepts
     #href: concepts.md
+- name: Environment Variables
+  href: environment-variables.md
 - name: Contribute
   href: contribute.md
 - name: Release Notes

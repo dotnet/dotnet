@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -48,7 +49,7 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// <summary>
     /// The set of open documents.
     /// </summary>
-    private readonly HashSet<string> _openDocumentSet = new(FilePathComparer.Instance);
+    private readonly HashSet<string> _openDocumentSet = new(PathUtilities.OSSpecificPathComparer);
 
     /// <summary>
     /// Determines whether or not the solution is closing.
@@ -133,7 +134,7 @@ internal partial class ProjectSnapshotManager : IDisposable
                 builder.Add(entry.GetSnapshot());
             }
 
-            return builder.DrainToImmutable();
+            return builder.ToImmutableAndClear();
         }
     }
 
@@ -176,13 +177,13 @@ internal partial class ProjectSnapshotManager : IDisposable
 
             foreach (var (key, entry) in _projectMap)
             {
-                if (FilePathComparer.Instance.Equals(entry.State.HostProject.FilePath, filePath))
+                if (PathUtilities.OSSpecificPathComparer.Equals(entry.State.HostProject.FilePath, filePath))
                 {
                     projects.Add(key);
                 }
             }
 
-            return projects.DrainToImmutable();
+            return projects.ToImmutableAndClear();
         }
     }
 

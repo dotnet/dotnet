@@ -43,6 +43,16 @@ public interface IConventionEntityType : IReadOnlyEntityType, IConventionTypeBas
     bool IsKeyless { get; }
 
     /// <summary>
+    ///     Sets the query filter automatically applied to queries for this entity type.
+    /// </summary>
+    /// <param name="filterKey">The filter key.</param>
+    /// <param name="filter">The LINQ predicate expression.</param>
+    /// <returns>The configured filter.</returns>
+    /// <param name="fromDataAnnotation">Indicates whether the configuration was specified using a data annotation.</param>
+    /// <returns>The configured filter.</returns>
+    IQueryFilter? SetQueryFilter(string filterKey, LambdaExpression? filter, bool fromDataAnnotation = false);
+
+    /// <summary>
     ///     Sets the LINQ expression filter automatically applied to queries for this entity type.
     /// </summary>
     /// <param name="queryFilter">The LINQ expression filter.</param>
@@ -51,10 +61,16 @@ public interface IConventionEntityType : IReadOnlyEntityType, IConventionTypeBas
     LambdaExpression? SetQueryFilter(LambdaExpression? queryFilter, bool fromDataAnnotation = false);
 
     /// <summary>
-    ///     Returns the configuration source for <see cref="IReadOnlyEntityType.GetQueryFilter" />.
+    ///     Returns the configuration source for <see cref="IReadOnlyEntityType.GetDeclaredQueryFilters" />.
     /// </summary>
-    /// <returns>The configuration source for <see cref="IReadOnlyEntityType.GetQueryFilter" />.</returns>
+    /// <returns>The configuration source for <see cref="IReadOnlyEntityType.GetDeclaredQueryFilters" />.</returns>
     ConfigurationSource? GetQueryFilterConfigurationSource();
+
+    /// <summary>
+    ///     Returns the configuration source for <see cref="IReadOnlyEntityType.GetDeclaredQueryFilters" />.
+    /// </summary>
+    /// <returns>The configuration source for <see cref="IReadOnlyEntityType.GetDeclaredQueryFilters" />.</returns>
+    ConfigurationSource? GetQueryFilterConfigurationSource(string? filterKey);
 
     /// <summary>
     ///     Sets the value indicating whether the discriminator mapping is complete.
@@ -459,7 +475,7 @@ public interface IConventionEntityType : IReadOnlyEntityType, IConventionTypeBas
     /// <param name="memberInfo">The navigation property on the entity class.</param>
     /// <returns>The navigation property, or <see langword="null" /> if none is found.</returns>
     new IConventionNavigation? FindNavigation(MemberInfo memberInfo)
-        => FindNavigation(Check.NotNull(memberInfo, nameof(memberInfo)).GetSimpleMemberName());
+        => FindNavigation(Check.NotNull(memberInfo).GetSimpleMemberName());
 
     /// <summary>
     ///     Gets a navigation property on the given entity type. Returns <see langword="null" /> if no navigation property is found.
@@ -476,7 +492,7 @@ public interface IConventionEntityType : IReadOnlyEntityType, IConventionTypeBas
     /// <param name="name">The name of the navigation property on the entity class.</param>
     /// <returns>The navigation property, or <see langword="null" /> if none is found.</returns>
     new IConventionNavigation? FindDeclaredNavigation(string name)
-        => (IConventionNavigation?)((IReadOnlyEntityType)this).FindDeclaredNavigation(Check.NotNull(name, nameof(name)));
+        => (IConventionNavigation?)((IReadOnlyEntityType)this).FindDeclaredNavigation(Check.NotNull(name));
 
     /// <summary>
     ///     Gets all navigation properties declared on this entity type.

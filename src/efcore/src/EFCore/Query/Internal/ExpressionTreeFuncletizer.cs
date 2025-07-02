@@ -96,7 +96,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
 
     private IQueryProvider? _currentQueryProvider;
     private State _state;
-    private IParameterValues _parameterValues = null!;
+    private Dictionary<string, object?> _parameters = null!;
 
     private readonly IModel _model;
     private readonly ContextParameterReplacer _contextParameterReplacer;
@@ -154,10 +154,10 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
     /// </remarks>
     public virtual Expression ExtractParameters(
         Expression expression,
-        IParameterValues parameterValues,
+        Dictionary<string, object?> parameters,
         bool parameterize,
         bool clearParameterizedValues)
-        => ExtractParameters(expression, parameterValues, parameterize, clearParameterizedValues, precompiledQuery: false);
+        => ExtractParameters(expression, parameters, parameterize, clearParameterizedValues, precompiledQuery: false);
 
     /// <summary>
     ///     Processes an expression tree, extracting parameters and evaluating evaluatable fragments as part of the pass.
@@ -172,13 +172,13 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
     [Experimental(EFDiagnostics.PrecompiledQueryExperimental)]
     public virtual Expression ExtractParameters(
         Expression expression,
-        IParameterValues parameterValues,
+        Dictionary<string, object?> parameters,
         bool parameterize,
         bool clearParameterizedValues,
         bool precompiledQuery)
     {
         Reset(clearParameterizedValues);
-        _parameterValues = parameterValues;
+        _parameters = parameters;
         _parameterize = parameterize;
         _calculatingPath = false;
         _precompiledQuery = precompiledQuery;
@@ -210,7 +210,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
 
         // In precompilation mode we don't actually extract parameter values; but we do need to generate the parameter names, using the
         // same logic (and via the same code) used in parameter extraction, and that logic requires _parameterValues.
-        _parameterValues = new DummyParameterValues();
+        _parameters = new Dictionary<string, object?>();
     }
 
     /// <summary>
@@ -969,28 +969,32 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
 
         // .NET 10 made changes to overload resolution to prefer Span-based overloads when those exist ("first-class spans").
         // Unfortunately, the LINQ interpreter does not support ref structs, so we rewrite e.g. MemoryExtensions.Contains to
-        // Enumerable.Contains here. See https://github.com/dotnet/runtime/issues/109757.
+        // Enumerable.Contains here. See https://github.com/dotnet/runtime/issues/109757,.
         if (method.DeclaringType == typeof(MemoryExtensions))
         {
             switch (method.Name)
             {
+                // Note that MemoryExtensions.Contains has an optional 3rd ComparisonType parameter; we only match when
+                // it's null.
                 case nameof(MemoryExtensions.Contains)
-                    when methodCall.Arguments is [var arg0, var arg1] && TryUnwrapSpanImplicitCast(arg0, out var unwrappedArg0):
+                    when methodCall.Arguments is [var spanArg, var valueArg, ..]
+                    && (methodCall.Arguments.Count is 2 || methodCall.Arguments.Count is 3 && methodCall.Arguments[2] is ConstantExpression { Value: null })
+                    && TryUnwrapSpanImplicitCast(spanArg, out var unwrappedSpanArg):
                 {
                     return Visit(
                         Call(
                             EnumerableMethods.Contains.MakeGenericMethod(methodCall.Method.GetGenericArguments()[0]),
-                            unwrappedArg0, arg1));
+                            unwrappedSpanArg, valueArg));
                 }
 
                 case nameof(MemoryExtensions.SequenceEqual)
-                    when methodCall.Arguments is [var arg0, var arg1]
-                    && TryUnwrapSpanImplicitCast(arg0, out var unwrappedArg0)
-                    && TryUnwrapSpanImplicitCast(arg1, out var unwrappedArg1):
+                    when methodCall.Arguments is [var spanArg, var otherArg]
+                    && TryUnwrapSpanImplicitCast(spanArg, out var unwrappedSpanArg)
+                    && TryUnwrapSpanImplicitCast(otherArg, out var unwrappedOtherArg):
                     return Visit(
                         Call(
                             EnumerableMethods.SequenceEqual.MakeGenericMethod(methodCall.Method.GetGenericArguments()[0]),
-                            unwrappedArg0, unwrappedArg1));
+                            unwrappedSpanArg, unwrappedOtherArg));
             }
 
             static bool TryUnwrapSpanImplicitCast(Expression expression, [NotNullWhen(true)] out Expression? result)
@@ -1951,7 +1955,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                 };
 
                 // We still maintain _parameterValues since later parameter names are generated based on already-populated names.
-                _parameterValues.AddParameter(parameterName, null);
+                _parameters.Add(parameterName, null);
 
                 return evaluatableRoot;
             }
@@ -1968,7 +1972,7 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                 && !evaluatableRoot.Type.IsValueType
                 && evaluatableRoot is MemberExpression { Member: IParameterNullabilityInfo { IsNonNullableReferenceType: true } };
 
-            _parameterValues.AddParameter(parameterName, value);
+            _parameters.Add(parameterName, value);
 
             return _parameterizedValues[evaluatableRoot] = new QueryParameterExpression(
                 parameterName,
@@ -2325,16 +2329,5 @@ public class ExpressionTreeFuncletizer : ExpressionVisitor
                 && expression?.Type.IsAssignableFrom(contextType) == true
                     ? ContextParameterExpression
                     : base.Visit(expression);
-    }
-
-    private sealed class DummyParameterValues : IParameterValues
-    {
-        private readonly Dictionary<string, object?> _parameterValues = new();
-
-        public IReadOnlyDictionary<string, object?> ParameterValues
-            => _parameterValues;
-
-        public void AddParameter(string name, object? value)
-            => _parameterValues.Add(name, value);
     }
 }

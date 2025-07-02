@@ -264,6 +264,7 @@ module FileIndex =
 [<Struct; CustomEquality; NoComparison>]
 [<System.Diagnostics.DebuggerDisplay("({StartLine},{StartColumn}-{EndLine},{EndColumn}) {ShortFileName} -> {DebugCode}")>]
 type Range(code1: int64, code2: int64) =
+    [<Obsolete("Use Range.range0 instead")>]
     static member Zero = range (0L, 0L)
 
     new(fIdx, bl, bc, el, ec) =
@@ -449,7 +450,7 @@ module Range =
 
     let posOrder =
         let pairOrder = Pair.order (Int32.order, Int32.order)
-        let lineAndColumn = fun (p: pos) -> p.Line, p.Column
+        let lineAndColumn = fun (p: pos) -> struct (p.Line, p.Column)
 
         { new IComparer<pos> with
             member _.Compare(x, xx) =
@@ -458,7 +459,7 @@ module Range =
 
     let rangeOrder =
         let tripleOrder = Pair.order (String.order, Pair.order (posOrder, posOrder))
-        let fileLineColumn = fun (r: range) -> r.FileName, (r.Start, r.End)
+        let fileLineColumn = fun (r: range) -> struct (r.FileName, struct (r.Start, r.End))
 
         { new IComparer<range> with
             member _.Compare(x, xx) =

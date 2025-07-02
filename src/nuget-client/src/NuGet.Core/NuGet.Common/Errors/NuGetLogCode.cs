@@ -129,6 +129,11 @@ namespace NuGet.Common
         NU1014 = 1014,
 
         /// <summary>
+        /// PackageReference without a version.
+        /// </summary>
+        NU1015 = 1015,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,
@@ -202,11 +207,13 @@ namespace NuGet.Common
         /// <summary>
         /// Invalid package types
         /// </summary>
+        [Obsolete]
         NU1204 = 1204,
 
         /// <summary>
         /// Project has an invalid dependency count
         /// </summary>
+        [Obsolete]
         NU1211 = 1211,
 
         /// <summary>

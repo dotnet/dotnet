@@ -115,6 +115,12 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 annotation, annotatable);
 
         /// <summary>
+        ///     Cannot apply both anonymous and named query filters simultaneously. Please specify either an anonymous filter or one or more named filters.
+        /// </summary>
+        public static string AnonymousAndNamedFiltersCombined
+            => GetString("AnonymousAndNamedFiltersCombined");
+
+        /// <summary>
         ///     The '{parameter}' value passed to '{methodName}' must be a constant.
         /// </summary>
         public static string ArgumentNotConstant(object? parameter, object? methodName)
@@ -2162,6 +2168,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("NonIndexerEntityType", nameof(property), nameof(entityType), nameof(type)),
                 property, entityType, type);
+
+        /// <summary>
+        ///     The complex collection '{entityType}'.'{name}' is of type '{type}' which does not implement '{listInterface}'.
+        /// </summary>
+        public static string NonListCollection(object? entityType, object? name, object? type, object? listInterface)
+            => string.Format(
+                GetString("NonListCollection", nameof(entityType), nameof(name), nameof(type), nameof(listInterface)),
+                entityType, name, type, listInterface);
 
         /// <summary>
         ///     The collection type '{2_collectionType}' being used for navigation '{1_entityType}.{0_navigation}' does not implement 'INotifyCollectionChanged'. Any entity type configured to use the '{changeTrackingStrategy}' change tracking strategy must use collections that implement 'INotifyCollectionChanged'. Consider using 'ObservableCollection&lt;T&gt;' for this.

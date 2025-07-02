@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -18,6 +18,9 @@ internal abstract partial class TextDiffer
     protected abstract int OldSourceLength { get; }
     protected abstract int NewSourceLength { get; }
 
+    private int _oldSourceOffset;
+    private int _newSourceOffset;
+
     protected abstract bool SourceEqual(int oldSourceIndex, int newSourceIndex);
 
     protected List<DiffEdit> ComputeDiff()
@@ -25,31 +28,41 @@ internal abstract partial class TextDiffer
         var edits = new List<DiffEdit>(capacity: 4);
         var builder = new DiffEditBuilder(edits);
 
+        var lowA = 0;
+        var highA = OldSourceLength;
+        var lowB = 0;
+        var highB = NewSourceLength;
+
+        // Determine the extent of the changes in both texts, as this will allow us
+        // to limit the amount of memory needed in the vf/vr arrays. By doing this though,
+        // we will need to adjust SourceEqual requests to use an appropriate offset.
+        FindChangeExtent(ref lowA, ref highA, ref lowB, ref highB);
+
+        _oldSourceOffset = lowA;
+        _newSourceOffset = lowB;
+
+        var oldSourceLength = highA - lowA;
+        var newSourceLength = highB - lowB;
+
         // Initialize the vectors to use for forward and reverse searches.
-        var max = NewSourceLength + OldSourceLength;
+        var max = newSourceLength + oldSourceLength;
         using var vf = new IntArray((2 * max) + 1);
         using var vr = new IntArray((2 * max) + 1);
 
-        ComputeDiffRecursive(builder, 0, OldSourceLength, 0, NewSourceLength, vf, vr);
+        ComputeDiffRecursive(builder, 0, oldSourceLength, 0, newSourceLength, vf, vr);
+
+        // Update the resultant edits with the appropriate offsets
+        for (var i = 0; i < edits.Count; i++)
+        {
+            edits[i] = edits[i].Offset(_oldSourceOffset, _newSourceOffset);
+        }
 
         return edits;
     }
 
     private void ComputeDiffRecursive(DiffEditBuilder edits, int lowA, int highA, int lowB, int highB, IntArray vf, IntArray vr)
     {
-        while (lowA < highA && lowB < highB && SourceEqual(lowA, lowB))
-        {
-            // Skip equal text at the start.
-            lowA++;
-            lowB++;
-        }
-
-        while (lowA < highA && lowB < highB && SourceEqual(highA - 1, highB - 1))
-        {
-            // Skip equal text at the end.
-            highA--;
-            highB--;
-        }
+        FindChangeExtent(ref lowA, ref highA, ref lowB, ref highB);
 
         if (lowA == highA)
         {
@@ -79,6 +92,23 @@ internal abstract partial class TextDiffer
 
             // Recursively find the midpoint of the right half.
             ComputeDiffRecursive(edits, middleX, highA, middleY, highB, vf, vr);
+        }
+    }
+
+    private void FindChangeExtent(ref int lowA, ref int highA, ref int lowB, ref int highB)
+    {
+        while (lowA < highA && lowB < highB && SourceEqualUsingOffset(lowA, lowB))
+        {
+            // Skip equal text at the start.
+            lowA++;
+            lowB++;
+        }
+
+        while (lowA < highA && lowB < highB && SourceEqualUsingOffset(highA - 1, highB - 1))
+        {
+            // Skip equal text at the end.
+            highA--;
+            highB--;
         }
     }
 
@@ -126,7 +156,7 @@ internal abstract partial class TextDiffer
                 var y = x - k;
 
                 // Traverse diagonal if possible.
-                while (x < highA && y < highB && SourceEqual(x, y))
+                while (x < highA && y < highB && SourceEqualUsingOffset(x, y))
                 {
                     x++;
                     y++;
@@ -169,7 +199,7 @@ internal abstract partial class TextDiffer
                 var y = x - k;
 
                 // Traverse diagonal if possible.
-                while (x > lowA && y > lowB && SourceEqual(x - 1, y - 1))
+                while (x > lowA && y > lowB && SourceEqualUsingOffset(x - 1, y - 1))
                 {
                     x--;
                     y--;
@@ -195,4 +225,7 @@ internal abstract partial class TextDiffer
 
         throw Assumes.NotReachable();
     }
+
+    private bool SourceEqualUsingOffset(int oldSourceIndex, int newSourceIndex)
+        => SourceEqual(oldSourceIndex + _oldSourceOffset, newSourceIndex + _newSourceOffset);
 }

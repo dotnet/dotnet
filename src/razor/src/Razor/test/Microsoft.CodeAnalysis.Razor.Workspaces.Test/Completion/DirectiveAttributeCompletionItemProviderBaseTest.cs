@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.IntegrationTests;
@@ -231,8 +231,8 @@ public class DirectiveAttributeCompletionItemProviderBaseTest(ITestOutputHelper 
     private RazorSyntaxNode GetNodeAt(string content, int index)
     {
         var result = CompileToCSharp(content, throwOnFailure: false);
-        var syntaxTree = result.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
+        var root = result.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = root.FindInnermostNode(index, includeWhitespace: true, walkMarkersBack: true);
         owner = AbstractRazorCompletionFactsService.AdjustSyntaxNodeForWordBoundary(owner, index);
 
         Assert.NotNull(owner);

@@ -39,7 +39,7 @@ namespace NuGet.LibraryModel
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_PrunePackageReferenceMissingVersion, name));
             }
 
-            return new PrunePackageReference(name, new VersionRange(maxVersion: NuGetVersion.Parse(version), includeMaxVersion: true));
+            return new PrunePackageReference(name, VersionRange.Parse("(," + version + "]"));
         }
 
         public override string ToString()

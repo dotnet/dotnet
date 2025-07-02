@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -30,9 +30,9 @@ internal static class HoverFactory
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
 
-        var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
+        var owner = root.FindInnermostNode(absoluteIndex);
         if (owner is null)
         {
             Debug.Fail("Owner should never be null.");
@@ -49,7 +49,7 @@ internal static class HoverFactory
 
         var tagHelperContext = codeDocument.GetRequiredTagHelperContext();
 
-        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, closingForwardSlashOrCloseAngleToken: out _) &&
+        if (HtmlFacts.TryGetElementInfo(owner, out var containingTagNameToken, out var attributes, out _) &&
             containingTagNameToken.Span.IntersectsWith(absoluteIndex))
         {
             if (owner is MarkupStartTagSyntax or MarkupEndTagSyntax &&
@@ -103,7 +103,7 @@ internal static class HoverFactory
         {
             // When finding parents for attributes, we make sure to find the parent of the containing tag, otherwise these methods
             // would return the parent of the attribute, which is not helpful, as its just going to be the containing element
-            var containingTag = containingTagNameToken.Parent;
+            var containingTag = containingTagNameToken.Parent.AssumeNotNull();
             var ancestors = containingTag.Ancestors().Where(n => n.SpanStart != containingTag.SpanStart);
             var (parentTag, parentIsTagHelper) = TagHelperFacts.GetNearestAncestorTagInfo(ancestors);
 

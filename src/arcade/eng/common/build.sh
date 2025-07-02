@@ -91,7 +91,7 @@ verbosity='minimal'
 runtime_source_feed=''
 runtime_source_feed_key=''
 
-properties=''
+properties=()
 while [[ $# > 0 ]]; do
   opt="$(echo "${1/#--/-}" | tr "[:upper:]" "[:lower:]")"
   case "$opt" in
@@ -192,7 +192,7 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     *)
-      properties="$properties $1"
+      properties+=("$1")
       ;;
   esac
 
@@ -226,7 +226,7 @@ function Build {
   InitializeCustomToolset
 
   if [[ ! -z "$projects" ]]; then
-    properties="$properties /p:Projects=$projects"
+    properties+=("/p:Projects=$projects")
   fi
 
   local bl=""
@@ -257,7 +257,7 @@ function Build {
     /p:Sign=$sign \
     /p:Publish=$publish \
     /p:RestoreStaticGraphEnableBinaryLogger=$binary_log \
-    $properties
+    ${properties[@]+"${properties[@]}"}
 
   ExitWithExitCode 0
 }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -938,7 +938,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
 
         TestFileMarkupParser.GetPosition(markup, out var documentContent, out var position);
         var codeDocument = CreateCodeDocument(documentContent, isRazorFile, tagHelpers);
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var context = codeDocument.GetRequiredTagHelperContext();
 
         var owner = syntaxTree.Root.FindInnermostNode(position, includeWhitespace: true, walkMarkersBack: true);

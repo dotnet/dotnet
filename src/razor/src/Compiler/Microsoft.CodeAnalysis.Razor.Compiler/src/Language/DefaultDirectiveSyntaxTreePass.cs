@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 
@@ -34,12 +35,13 @@ internal class DefaultDirectiveSyntaxTreePass : RazorEngineFeatureBase, IRazorSy
         public RazorSyntaxTree Verify()
         {
             var root = Visit(_syntaxTree.Root);
-            var diagnostics = _diagnostics?.DrainToImmutable() ?? _syntaxTree.Diagnostics;
+            var diagnostics = _diagnostics?.ToImmutableAndClear() ?? _syntaxTree.Diagnostics;
 
             return new RazorSyntaxTree(root, _syntaxTree.Source, diagnostics, _syntaxTree.Options);
         }
 
-        public override SyntaxNode Visit(SyntaxNode node)
+        [return: NotNullIfNotNull(nameof(node))]
+        public override SyntaxNode? Visit(SyntaxNode? node)
         {
             try
             {

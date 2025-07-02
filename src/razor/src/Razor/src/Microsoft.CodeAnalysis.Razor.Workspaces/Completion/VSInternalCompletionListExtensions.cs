@@ -1,49 +1,52 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.AspNetCore.Razor;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal static class VSInternalCompletionListExtensions
 {
-    // This needs to match what's listed in VSInternalCompletionItemExtensions.ResultIdKey
-    private const string ResultIdKey = "_resultId";
-
     public static void SetResultId(
         this RazorVSInternalCompletionList completionList,
         int resultId,
-        VSInternalCompletionSetting? completionSetting)
+        VSInternalClientCapabilities clientCapabilities)
     {
         var data = JsonSerializer.SerializeToElement(new JsonObject()
         {
-            [ResultIdKey] = resultId,
+            [VSInternalCompletionItemExtensions.ResultIdKey] = resultId,
         });
 
-        if (completionSetting?.CompletionList?.Data == true)
+        if (clientCapabilities.SupportsAnyCompletionListData())
         {
-            // Can set data at the completion list level
+            // Ensure there is data at the completion list level, but only if ItemDefaults isn't set by the delegated server,
+            // or if they've set both.
+            var hasDefaultsData = completionList.ItemDefaults?.Data is not null;
+            if (completionList.Data is not null || !hasDefaultsData)
+            {
+                completionList.Data = CompletionListMerger.MergeData(data, completionList.Data);
+            }
 
-            var mergedData = CompletionListMerger.MergeData(data, completionList.Data);
-            completionList.Data = mergedData;
+            if (hasDefaultsData)
+            {
+                completionList.ItemDefaults.AssumeNotNull().Data = CompletionListMerger.MergeData(data, completionList.ItemDefaults.Data);
+            }
 
             // Merge data for items that won't inherit the default
             foreach (var completionItem in completionList.Items.Where(c => c.Data is not null))
             {
-                mergedData = CompletionListMerger.MergeData(data, completionItem.Data);
-                completionItem.Data = mergedData;
+                completionItem.Data = CompletionListMerger.MergeData(data, completionItem.Data);
             }
         }
         else
         {
             // No CompletionList.Data support
-
             foreach (var completionItem in completionList.Items)
             {
-                var mergedData = CompletionListMerger.MergeData(data, completionItem.Data);
-                completionItem.Data = mergedData;
+                completionItem.Data = CompletionListMerger.MergeData(data, completionItem.Data);
             }
         }
     }

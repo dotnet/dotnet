@@ -1,10 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -44,7 +43,7 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         // We've got C# and Html, lets get Razor diagnostics
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         // Yes, CSharpDocument.Documents are the Razor diagnostics. Don't ask.
-        var razorDiagnostics = codeDocument.GetCSharpDocument().Diagnostics;
+        var razorDiagnostics = codeDocument.GetRequiredCSharpDocument().Diagnostics;
 
         return [
             .. RazorDiagnosticHelper.Convert(razorDiagnostics, codeDocument.Source.Text, context.Snapshot),

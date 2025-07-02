@@ -24,9 +24,10 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
     // https://tools.ietf.org/html/rfc6960
     public sealed class OcspResponder : HttpResponder
     {
+#if IS_SIGNING_SUPPORTED
         private const string RequestContentType = "application/ocsp-request";
         private const string ResponseContentType = "application/ocsp-response";
-
+#endif
         private readonly OcspResponderOptions _options;
         private readonly ConcurrentDictionary<string, DateTimeOffset> _responses;
 

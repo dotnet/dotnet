@@ -1,9 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Reflection.Metadata;
 using System.Text;
-using System.Text.Json;
 
 namespace Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -273,7 +271,22 @@ public class RelationalModel : Annotatable, IRelationalModel
         var isTph = entityType.FindDiscriminatorProperty() != null;
         while (mappedType != null)
         {
-            var mappedTableName = isTph ? entityType.GetRootType().Name : mappedType.Name;
+            // Find the table name this entity type is mapped to, taking into account
+            // ownership and inheritance.
+            var principalRootEntityType = mappedType;
+
+            if (mappedType.FindOwnership() is IForeignKey ownership && (ownership.IsUnique || mappedType.IsMappedToJson()))
+            {
+                principalRootEntityType = ownership.PrincipalEntityType;
+            }
+
+            if (principalRootEntityType.FindDiscriminatorProperty() is not null)
+            {
+                principalRootEntityType = principalRootEntityType.GetRootType();
+            }
+
+            var mappedTableName = principalRootEntityType.Name;
+
             if (!databaseModel.DefaultTables.TryGetValue(mappedTableName, out var defaultTable))
             {
                 defaultTable = new TableBase(mappedTableName, null, databaseModel);

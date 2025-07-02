@@ -617,6 +617,10 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
         Friend Overrides Function ParseExpression(stringToParse As String) As SyntaxNode
             Return SyntaxFactory.ParseExpression(stringToParse)
         End Function
+
+        Friend Overrides Function ParseTypeName(stringToParse As String) As SyntaxNode
+            Return SyntaxFactory.ParseTypeName(stringToParse)
+        End Function
 #End Region
 
 #Region "Declarations"
@@ -2361,8 +2365,10 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
             Return mods
         End Function
 
-        Private Shared Sub GetAccessibilityAndModifiers(modifierTokens As SyntaxTokenList, ByRef accessibility As Accessibility, ByRef modifiers As DeclarationModifiers, ByRef isDefault As Boolean)
+        Private Shared Sub GetAccessibilityAndModifiers(modifierTokens As SyntaxTokenList, ByRef accessibility As Accessibility, ByRef declarationModifiers As DeclarationModifiers, ByRef isDefault As Boolean)
+            Dim modifiers As Modifiers
             VisualBasicAccessibilityFacts.GetAccessibilityAndModifiers(modifierTokens, accessibility, modifiers, isDefault)
+            declarationModifiers = modifiers.ToDeclarationModifiers()
         End Sub
 
         Private Shared Function GetModifierTokens(declaration As SyntaxNode) As SyntaxTokenList
@@ -3024,7 +3030,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
         End Function
 
         Public Overrides Function InsertAccessors(declaration As SyntaxNode, index As Integer, accessors As IEnumerable(Of SyntaxNode)) As SyntaxNode
-
             Dim currentList = GetAccessorList(declaration)
             Dim newList = AsAccessorList(accessors, declaration.Kind)
 
@@ -3033,17 +3038,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
             Else
                 Return WithAccessorList(declaration, newList)
             End If
-        End Function
-
-        Friend Shared Function GetAccessorList(declaration As SyntaxNode) As SyntaxList(Of AccessorBlockSyntax)
-            Select Case declaration.Kind
-                Case SyntaxKind.PropertyBlock
-                    Return DirectCast(declaration, PropertyBlockSyntax).Accessors
-                Case SyntaxKind.EventBlock
-                    Return DirectCast(declaration, EventBlockSyntax).Accessors
-                Case Else
-                    Return Nothing
-            End Select
         End Function
 
         Private Shared Function WithAccessorList(declaration As SyntaxNode, accessorList As SyntaxList(Of AccessorBlockSyntax)) As SyntaxNode

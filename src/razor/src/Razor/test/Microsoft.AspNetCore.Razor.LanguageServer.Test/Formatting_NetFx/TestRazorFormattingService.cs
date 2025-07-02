@@ -1,12 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -21,7 +23,8 @@ internal static class TestRazorFormattingService
         RazorCodeDocument? codeDocument = null,
         RazorLSPOptions? razorLSPOptions = null,
         LanguageServerFeatureOptions? languageServerFeatureOptions = null,
-        bool debugAssertsEnabled = false)
+        bool debugAssertsEnabled = false,
+        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
@@ -45,7 +48,10 @@ internal static class TestRazorFormattingService
         var hostServicesProvider = new DefaultHostServicesProvider();
 
         var service = new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
-        service.GetTestAccessor().SetDebugAssertsEnabled(debugAssertsEnabled);
+        var accessor = service.GetTestAccessor();
+        accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
+        accessor.SetCSharpSyntaxFormattingOptionsOverride(formattingOptionsOverride);
+
         return service;
     }
 }

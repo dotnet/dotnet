@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
@@ -96,7 +96,7 @@ internal class BraceSmartIndenter : IDisposable
             return;
         }
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         if (TryCreateIndentationContext(changeInformation.firstChange.NewPosition, newText.Length, newText, syntaxTree, _documentTracker, out var context))
         {
             _context = context;
@@ -267,10 +267,9 @@ internal class BraceSmartIndenter : IDisposable
     {
         // We only support whitespace based content. Any non-whitespace content is an unknown to us
         // in regards to indentation.
-        var children = owner.ChildNodes();
-        for (var i = 0; i < children.Count; i++)
+        foreach (var child in owner.ChildNodesAndTokens())
         {
-            if (children[i] is not SyntaxToken token ||
+            if (!child.AsToken(out var token) ||
                 !string.IsNullOrWhiteSpace(token.Content))
             {
                 return true;

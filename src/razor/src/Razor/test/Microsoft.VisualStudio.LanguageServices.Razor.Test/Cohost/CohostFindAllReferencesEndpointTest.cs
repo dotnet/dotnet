@@ -1,11 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Text.Adornments;
@@ -101,12 +102,12 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
-        var endpoint = new CohostFindAllReferencesEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostFindAllReferencesEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { Uri = document.CreateUri() },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         var results = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, DisposalToken);
@@ -143,14 +144,14 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
         {
             var location = GetLocation(result);
             string matchedText;
-            if (razorDocumentUri.Equals(location.Uri))
+            if (razorDocumentUri.Equals(location.DocumentUri.GetRequiredParsedUri()))
             {
                 matchedText = inputText.Lines[location.Range.Start.Line].ToString();
                 Assert.Single(input.Spans.Where(s => inputText.GetRange(s).Equals(location.Range)));
             }
             else
             {
-                var (fileName, testCode) = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.Uri.AbsolutePath)));
+                var (fileName, testCode) = Assert.Single(additionalFiles.Where(f => FilePathNormalizingComparer.Instance.Equals(f.fileName, location.DocumentUri.GetRequiredParsedUri().AbsolutePath)));
                 var text = SourceText.From(testCode.Text);
                 matchedText = text.Lines[location.Range.Start.Line].ToString();
                 Assert.Single(testCode.Spans.Where(s => text.GetRange(s).Equals(location.Range)));

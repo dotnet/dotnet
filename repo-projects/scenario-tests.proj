@@ -15,14 +15,20 @@
          as the scenario tests repo needs to be capable of being built by itself in a standalone validation job.
          This also requires the use of bootstrap arcade. -->
     <SkipScenarioTestsDependencies Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">true</SkipScenarioTestsDependencies>
-    <UseBootstrapArcade Condition="'$(SkipScenarioTestsDependencies)' == 'true'">true</UseBootstrapArcade>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(SkipScenarioTestsDependencies)' == 'true'">
+    <UseBootstrapArcade>true</UseBootstrapArcade>
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    <_GlobalPropertiesToRemoveFromProjectReferences>$(_GlobalPropertiesToRemoveFromProjectReferences);SkipScenarioTestsDependencies</_GlobalPropertiesToRemoveFromProjectReferences>
+  </PropertyGroup>
+
+  <!-- Use PrivateAssets="all" to not flow repo dependencies to consuming projects (for installer tests). -->
   <ItemGroup Condition="'$(SkipScenarioTestsDependencies)' != 'true'">
-    <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="arcade" PrivateAssets="all" />
+    <RepositoryReference Include="command-line-api" PrivateAssets="all" />
     <!-- Depend on NuGet packages from the sdk repo and transitive repositories. -->
-    <RepositoryReference Include="sdk" />
+    <RepositoryReference Include="sdk" PrivateAssets="all" />
   </ItemGroup>
 
   <Target Name="PrepareScenarioTestsInputs"
@@ -36,7 +42,7 @@
     <PropertyGroup>
       <ScenarioTestsResultsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsTestResultsDir)', 'scenario-tests'))</ScenarioTestsResultsDir>
       <TestXmlOutputPath>$(ScenarioTestsResultsDir)$([System.DateTime]::Now.ToString("yyyy-MM-dd_HH_mm_ss")).xml</TestXmlOutputPath>
-      <ScenarioTestsAdditionalArgs>--xml $(TestXmlOutputPath) --target-rid $(TargetRid) --portable-rid $(PortableRid) --no-cleanup --no-traits Category=MultiTFM</ScenarioTestsAdditionalArgs>
+      <ScenarioTestsAdditionalArgs>--xml $(TestXmlOutputPath) --target-rid $(TargetRid) --portable-rid $(PortableTargetRid) --no-cleanup --no-traits Category=MultiTFM</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">$(ScenarioTestsAdditionalArgs) --no-traits Category=RequiresNonTargetRidPackages</ScenarioTestsAdditionalArgs>
       <ScenarioTestsAdditionalArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">$(ScenarioTestsAdditionalArgs) --no-traits SkipIfBuild=SourceOnlyUnofficialBuild</ScenarioTestsAdditionalArgs>
     </PropertyGroup>

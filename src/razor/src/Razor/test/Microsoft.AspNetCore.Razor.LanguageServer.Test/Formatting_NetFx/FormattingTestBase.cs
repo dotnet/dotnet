@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
@@ -65,13 +65,14 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool allowDiagnostics = false,
         bool codeBlockBraceOnNextLine = false,
         bool inGlobalNamespace = false,
-        bool debugAssertsEnabled = true)
+        bool debugAssertsEnabled = true,
+        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
         var razorLSPOptions = RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine };
 
-        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled);
+        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, formattingOptionsOverride);
     }
 
     private async Task RunFormattingTestInternalAsync(
@@ -84,7 +85,8 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool allowDiagnostics,
         RazorLSPOptions? razorLSPOptions,
         bool inGlobalNamespace,
-        bool debugAssertsEnabled)
+        bool debugAssertsEnabled,
+        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride)
     {
         // Arrange
         var fileKindValue = fileKind ?? RazorFileKind.Component;
@@ -111,7 +113,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled, formattingOptionsOverride);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         var client = new FormattingLanguageServerClient(_htmlFormattingService, LoggerFactory);
@@ -291,7 +293,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
 
         if (!allowDiagnostics)
         {
-            Assert.False(codeDocument.GetCSharpDocument().Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, codeDocument.GetCSharpDocument().Diagnostics));
+            Assert.False(codeDocument.GetRequiredCSharpDocument().Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, codeDocument.GetRequiredCSharpDocument().Diagnostics));
         }
 
         var documentSnapshot = CreateDocumentSnapshot(

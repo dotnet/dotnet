@@ -92,12 +92,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public bool AllowInteractiveAuthentication { get; set; }
 
         /// <summary>
-        /// Directory where "nuget.exe" is installed. This will be used to publish packages.
-        /// </summary>
-        [Required]
-        public string NugetPath { get; set; }
-
-        /// <summary>
         /// We are setting StreamingPublishingMaxClients=16 and NonStreamingPublishingMaxClients=12 through publish-asset.yml as we were hitting OOM issue 
         /// https://github.com/dotnet/core-eng/issues/13098 for more details.
         /// </summary>
@@ -407,8 +401,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                             // We want to avoid pushing non-final bits with final version numbers to feeds that are in general
                             // use by the public. This is for technical (can't overwrite the original packages) reasons as well as 
                             // to avoid confusion. Because .NET core generally brands its "final" bits without prerelease version
-                            // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists.
-                            else if (!version.IsPrerelease && package.CouldBeStable != false)
+                            // suffixes (e.g. 3.0.0-preview1), test to see whether a prerelease suffix exists or contains "final".
+                            else if ((!version.IsPrerelease || version.ReleaseLabels.Any(label => label.Contains("final", StringComparison.OrdinalIgnoreCase)))
+                                     && package.CouldBeStable != false)
                             {
                                 Log.LogError($"Package '{package.Id}' has stable version '{package.Version}' but is targeted at a non-isolated feed '{feedConfig.TargetURL}'");
                             }
@@ -536,6 +531,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             SymbolPromotionHelper.Environment env = SymbolPromotionHelper.Environment.Prod)
         {
             ArgumentNullException.ThrowIfNull(buildInfo);
+
+            Log.LogMessage(MessageImportance.High, "Begin publishing of symbols.");
 
             var symbolPackagesToPublish = BlobsByCategory.TryGetValue(TargetFeedContentType.Symbols, out HashSet<BlobArtifactModel> symbolAssets) ?
                 symbolAssets : new HashSet<BlobArtifactModel>();
@@ -1366,6 +1363,46 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
         }
 
+        public enum NuGetFeedUploadPackageResult
+        {
+            Success,
+            AlreadyExists,
+            Failed,
+        }
+
+        public static async Task<NuGetFeedUploadPackageResult> NuGetFeedUploadPackageAsync(HttpClient httpClient, string feedName, string feedUri, Stream packageContentReadStream)
+        {
+            const string cAzureDevOps = "AzureDevOps";
+
+            try
+            {
+                Uri uri = new Uri(feedUri);
+
+                var request = new HttpRequestMessage(HttpMethod.Put, uri);
+                var packageContent = new StreamContent(packageContentReadStream);
+                packageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+                using var content = new MultipartFormDataContent();
+                content.Add(packageContent, "package", "package.nupkg");
+                request.Content = content;
+                request.Headers.TransferEncodingChunked = true;
+                request.Headers.Add("X-NuGet-ApiKey", cAzureDevOps);
+
+                var response = await httpClient.SendAsync(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    return NuGetFeedUploadPackageResult.AlreadyExists;
+                }
+
+                response.EnsureSuccessStatusCode();
+                return NuGetFeedUploadPackageResult.Success;
+            }
+            catch
+            {
+                // Log the exception if we have access to the logging context
+                return NuGetFeedUploadPackageResult.Failed;
+            }
+        }
+
         /// <summary>
         ///     Push a single package to an Azure DevOps nuget feed.
         /// </summary>
@@ -1382,12 +1419,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         ///         - Azure DevOps is having some issue meaning we didn't succeed to publish at first.
         ///         
         ///     The second case is by far the most common. So, we first attempt to push the 
-        ///     package normally using nuget.exe. If this fails, this could mean any number of 
-        ///     things (like failed auth). But in normal circumstances, this might mean the 
-        ///     package already exists. This either means that we are attempting to push the 
-        ///     same package, or attemtping to push a different package with the same id and 
-        ///     version. The second case is an error, as Azure DevOps feeds are immutable, 
-        ///     the former is simply a case where we should continue onward.
+        ///     package normally using the API, and if we get Conflict, then we start comparing file contents.
         ///     
         ///     To handle the third case we rely on the call to compare file contents 
         ///     `CompareLocalPackageToFeedPackage` to return PackageFeedStatus.DoesNotExist,
@@ -1406,57 +1438,68 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             string feedVisibility,
             string feedName,
             Func<string, string, HttpClient, MsBuildUtils.TaskLoggingHelper, Task<PackageFeedStatus>> CompareLocalPackageToFeedPackageCallBack = null,
-            Func<string, string, Task<ProcessExecutionResult>> RunProcessAndGetOutputsCallBack = null
-            )
+            Func<HttpClient, string, string, Stream, Task<NuGetFeedUploadPackageResult>> AttemptPushPackageCallback = null)
         {
             // Using these callbacks we can mock up functionality when testing.
             CompareLocalPackageToFeedPackageCallBack ??= CompareLocalPackageToFeedPackage;
-            RunProcessAndGetOutputsCallBack ??= GeneralUtils.RunProcessAndGetOutputsAsync;
-            ProcessExecutionResult nugetResult = null;
+            AttemptPushPackageCallback ??= NuGetFeedUploadPackageAsync;
             var packageStatus = PackageFeedStatus.Unknown;
 
             try
             {
-                Log.LogMessage(MessageImportance.Normal, $"Pushing local package {localPackageLocation} to target feed {feedConfig.TargetURL}");
+                Log.LogMessage(MessageImportance.Normal, $"Pushing package {id}@{version} to target feed {feedConfig.TargetURL}");
                 int attemptIndex = 0;
 
                 do
                 {
                     attemptIndex++;
-                    // The feed key when pushing to AzDo feeds is "AzureDevOps" (works with the credential helper).
-                    nugetResult = await RunProcessAndGetOutputsCallBack(NugetPath, $"push \"{localPackageLocation}\" -Source \"{feedConfig.TargetURL}\" -NonInteractive -ApiKey AzureDevOps -Verbosity quiet");
+                    string feedUri = $"https://pkgs.dev.azure.com/{feedAccount}/{feedVisibility}_packaging/{feedName}/nuget/v2";
 
-                    if (nugetResult.ExitCode == 0)
+                    NuGetFeedUploadPackageResult result;
+
+                    using (Stream packageStream = File.OpenRead(localPackageLocation))
+                    {
+                        result = await AttemptPushPackageCallback(client, feedName, feedUri, packageStream);
+                    }
+
+                    if (result == NuGetFeedUploadPackageResult.Success)
                     {
                         // We have just pushed this package so we know it exists and is identical to our local copy
                         packageStatus = PackageFeedStatus.ExistsAndIdenticalToLocal;
                         break;
                     }
-
-                    Log.LogMessage(MessageImportance.Low, $"Attempt # {attemptIndex} failed to push {localPackageLocation}, attempting to determine whether the package already existed on the feed with the same content. Nuget exit code = {nugetResult.ExitCode}");
-
-                    string packageContentUrl = $"https://pkgs.dev.azure.com/{feedAccount}/{feedVisibility}_apis/packaging/feeds/{feedName}/nuget/packages/{id}/versions/{version}/content";
-                    packageStatus = await CompareLocalPackageToFeedPackageCallBack(localPackageLocation, packageContentUrl, client, Log);
-
-                    switch (packageStatus)
+                    else if (result == NuGetFeedUploadPackageResult.AlreadyExists)
                     {
-                        case PackageFeedStatus.ExistsAndIdenticalToLocal:
-                            {
-                                Log.LogMessage(MessageImportance.Normal, $"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' but has the same content; skipping push");
-                                break;
-                            }
-                        case PackageFeedStatus.ExistsAndDifferent:
-                            {
-                                Log.LogError($"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' with different content.");
-                                break;
-                            }
-                        default:
-                            {
-                                // For either case (unknown exception or 404, we will retry the push and check again.  Linearly increase back-off time on each retry.
-                                Log.LogMessage(MessageImportance.Low, $"Hit error checking package status after failed push: '{packageStatus}'. Will retry after {RetryDelayMilliseconds * attemptIndex} ms.");
-                                await Task.Delay(RetryDelayMilliseconds * attemptIndex).ConfigureAwait(false);
-                                break;
-                            }
+
+                        Log.LogMessage(MessageImportance.Low, $"Attempt # {attemptIndex} failed to push {localPackageLocation}, attempting to determine whether the package already existed on the feed with the same content.");
+
+                        string packageContentUrl = $"https://pkgs.dev.azure.com/{feedAccount}/{feedVisibility}_apis/packaging/feeds/{feedName}/nuget/packages/{id}/versions/{version}/content";
+                        packageStatus = await CompareLocalPackageToFeedPackageCallBack(localPackageLocation, packageContentUrl, client, Log);
+
+                        switch (packageStatus)
+                        {
+                            case PackageFeedStatus.ExistsAndIdenticalToLocal:
+                                {
+                                    Log.LogMessage(MessageImportance.Normal, $"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' but has the same content; skipping push");
+                                    break;
+                                }
+                            case PackageFeedStatus.ExistsAndDifferent:
+                                {
+                                    Log.LogError($"Package '{localPackageLocation}' already exists on '{feedConfig.TargetURL}' with different content.");
+                                    break;
+                                }
+                            default:
+                                {
+                                    // For either case (unknown exception or 404, we will retry the push and check again.  Linearly increase back-off time on each retry.
+                                    Log.LogMessage(MessageImportance.Low, $"Hit error checking package status after failed push: '{packageStatus}'. Will retry after {RetryDelayMilliseconds * attemptIndex} ms.");
+                                    await Task.Delay(RetryDelayMilliseconds * attemptIndex).ConfigureAwait(false);
+                                    break;
+                                }
+                        }
+                    }
+                    else
+                    {
+                        packageStatus = PackageFeedStatus.Unknown;
                     }
                 }
                 while (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal && // Success
@@ -1474,12 +1517,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             }
             catch (Exception e)
             {
-                Log.LogError($"Unexpected exception pushing package '{id}@{version}': {e.Message}");
-            }
-
-            if (packageStatus != PackageFeedStatus.ExistsAndIdenticalToLocal && nugetResult?.ExitCode != 0)
-            {
-                Log.LogError($"Output from nuget.exe: {Environment.NewLine}StdOut:{Environment.NewLine}{nugetResult.StandardOut}{Environment.NewLine}StdErr:{Environment.NewLine}{nugetResult.StandardError}");
+                Log.LogErrorFromException(e, true);
             }
         }
 

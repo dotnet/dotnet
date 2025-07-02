@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -133,7 +133,7 @@ internal class CodeActionsService(
     {
         // For C# we have to map the ranges to the generated document
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var csharpDocument = codeDocument.GetCSharpDocument();
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, request.Range, out var projectedRange))
         {
             return null;
@@ -151,7 +151,7 @@ internal class CodeActionsService(
         {
             TextDocument = new VSTextDocumentIdentifier()
             {
-                Uri = request.TextDocument.Uri,
+                DocumentUri = request.TextDocument.DocumentUri,
                 ProjectContext = request.TextDocument.ProjectContext
             },
             Context = newContext,
@@ -249,7 +249,7 @@ internal class CodeActionsService(
             codeActions.AddRange(result);
         }
 
-        return codeActions.DrainToImmutableOrderedBy(static r => r.Order);
+        return codeActions.ToImmutableOrderedByAndClear(static r => r.Order);
     }
 
     private static ImmutableHashSet<string> GetAllAvailableCodeActionNames()

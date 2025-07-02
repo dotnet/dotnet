@@ -1,11 +1,12 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectContexts;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -31,14 +32,14 @@ public class ProjectContextsEndpointTest(ITestOutputHelper testOutput) : SingleS
         {
             TextDocument = new TextDocumentItem()
             {
-                Uri = new Uri(razorFilePath),
+                DocumentUri = new(new Uri(razorFilePath)),
                 LanguageId = "razor",
                 Text = input,
                 Version = 1337
             }
         };
 
-        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument.Uri, out var documentContext));
+        Assert.True(DocumentContextFactory.TryCreate(request.TextDocument.DocumentUri.GetRequiredParsedUri(), out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         var results = await endpoint.HandleRequestAsync(request, requestContext, DisposalToken);

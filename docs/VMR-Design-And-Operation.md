@@ -37,7 +37,6 @@ Rather than building as a set of independent repositories and flowing dependenci
   - [Synchronization Based on Declared Dependencies](#synchronization-based-on-declared-dependencies)
     - [Example](#example)
   - [Synchronizing Patched Files](#synchronizing-patched-files)
-  - [*"git-info"* XMLs to support source-link](#git-info-xmls-to-support-source-link)
   - [Storing original package version of dependencies](#storing-original-package-version-of-dependencies)
 
 ## Structure

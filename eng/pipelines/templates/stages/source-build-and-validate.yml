@@ -16,6 +16,10 @@ parameters:
   type: boolean
   default: true
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -24,6 +28,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
   - ${{ each leg in parameters.legs }}:
     - template: ../jobs/vmr-build.yml
@@ -98,7 +103,7 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
 
-- ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
+- ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
     displayName: VMR Source-Only Validation
     dependsOn:
@@ -108,6 +113,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         buildSourceOnly: true
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
     - ${{ each leg in parameters.legs }}:
       - template: ../jobs/vmr-build.yml
@@ -219,7 +225,7 @@ stages:
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Binary Report
-              downloadFilePatterns: BuildLogs/artifacts/log/Release/binary-report/NewBinaries.txt
+              downloadFilePatterns: log/NewBinaries.txt
               copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release/binary-report
               flattenDirs: true
               ${{ if eq(leg.distro, 'centos') }}:
@@ -236,7 +242,7 @@ stages:
             - template: ../steps/download-artifacts.yml
               parameters:
                 artifactDescription: Source Build Poison Report
-                downloadFilePatterns: BuildLogs/artifacts/log/Release/poison-usage.xml
+                downloadFilePatterns: log/poison-usage.xml
                 copyDestination: $(Build.SourcesDirectory)/artifacts/log/Release
                 flattenDirs: true
                 ${{ if eq(leg.distro, 'centos') }}:

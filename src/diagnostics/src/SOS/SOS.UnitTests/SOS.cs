@@ -353,6 +353,12 @@ public class SOS
     [SkippableTheory, MemberData(nameof(Configurations))]
     public async Task StackTests(TestConfiguration config)
     {
+        if (config.RuntimeFrameworkVersionMajor == 10)
+        {
+            // The clrstack -i command regressed on .NET 10 win-x86, so skip this test for now.
+            SOSTestHelpers.SkipIfWinX86(config);
+        }
+
         await SOSTestHelpers.RunTest(
             config,
             debuggeeName: "NestedExceptionTest",
@@ -488,6 +494,11 @@ public class SOS
     [SkippableTheory, MemberData(nameof(Configurations))]
     public async Task ConcurrentDictionaries(TestConfiguration config)
     {
+        if (OS.Kind != OSKind.Windows && config.RuntimeFrameworkVersionMajor == 10)
+        {
+            throw new SkipTestException("Dumping concurrent dict objects in dumps hits unavailable memory on linux dumps. Tracking: dotnet/diagnostics#5491");
+        }
+
         await SOSTestHelpers.RunTest(
             scriptName: "ConcurrentDictionaries.script",
             new SOSRunner.TestInformation

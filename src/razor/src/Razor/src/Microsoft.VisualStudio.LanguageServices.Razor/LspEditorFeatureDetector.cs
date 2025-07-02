@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
@@ -86,16 +86,7 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
 #pragma warning restore VSTHRD108 // Assert thread affinity unconditionally
         }
 
-        var useLegacyEditorEnabled = _lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
-
-        if (useLegacyEditorEnabled)
-        {
-            _activityLog.LogInfo("Using legacy editor because the option was set to true");
-            return false;
-        }
-
-        _activityLog.LogInfo("LSP editor is enabled.");
-        return true;
+        return !_lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
     }
 
     /// <inheritdoc/>
@@ -112,17 +103,18 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
             return false;
         }
 
-        var supportsRazor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
-
-        if (!supportsRazor)
+        if (!IsDotNetCoreProject(documentFilePath))
         {
             _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is not associated with the '{WellKnownProjectCapabilities.DotNetCoreCSharp}' capability.");
             return false;
         }
 
         _activityLog.LogInfo($"LSP editor is supported for '{documentFilePath}'.");
-        return supportsRazor;
+        return true;
     }
+
+    public bool IsDotNetCoreProject(string documentFilePath)
+        => _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
 
     public bool IsRemoteClient()
         => _uiContextService.IsActive(Guids.LiveShareGuestUIContextGuid) ||

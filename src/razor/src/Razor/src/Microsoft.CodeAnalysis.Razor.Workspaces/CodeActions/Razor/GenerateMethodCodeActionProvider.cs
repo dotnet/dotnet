@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -28,8 +28,8 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
             return SpecializedTasks.EmptyImmutableArray<RazorVSInternalCodeAction>();
         }
 
-        var syntaxTree = context.CodeDocument.GetSyntaxTree();
-        var owner = syntaxTree.Root.FindToken(context.StartAbsoluteIndex).Parent.AssumeNotNull();
+        var syntaxRoot = context.CodeDocument.GetRequiredSyntaxRoot();
+        var owner = syntaxRoot.FindToken(context.StartAbsoluteIndex).Parent.AssumeNotNull();
 
         if (IsGenerateEventHandlerValid(owner, out var methodName, out var eventParameterType, out var allowsAsync))
         {

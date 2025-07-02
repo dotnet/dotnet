@@ -360,7 +360,8 @@ type FSharpEntity(cenv: SymbolEnv, entity: EntityRef, tyargs: TType list) =
     inherit FSharpSymbol(cenv, 
                          (fun () -> 
                               checkEntityIsResolved entity
-                              if entity.IsModuleOrNamespace then Item.ModuleOrNamespaces [entity] 
+                              if entity.IsModuleOrNamespace then Item.ModuleOrNamespaces [entity]
+                              elif entity.IsFSharpException then Item.ExnCase entity
                               else Item.UnqualifiedType [entity]), 
                          (fun _this thisCcu2 ad -> 
                              checkForCrossProjectAccessibility cenv.g.ilg (thisCcu2, ad) (cenv.thisCcu, getApproxFSharpAccessibilityOfEntity entity)) 
@@ -741,7 +742,7 @@ type FSharpEntity(cenv: SymbolEnv, entity: EntityRef, tyargs: TType list) =
     
         if entity.IsILEnumTycon then
             let (TILObjectReprData(_scoref, _enc, tdef)) = entity.ILTyconInfo
-            let formalTypars = entity.Typars(range.Zero)
+            let formalTypars = entity.Typars range0
             let formalTypeInst = generalizeTypars formalTypars
             let ty = TType_app(entity, formalTypeInst, cenv.g.knownWithoutNull)
             let formalTypeInfo = ILTypeInfo.FromType cenv.g ty

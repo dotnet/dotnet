@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -63,6 +63,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
                 CustomMessageNames.RazorRenameEndpointName => await HandleRenameAsync(@params, cancellationToken),
                 CustomMessageNames.RazorOnAutoInsertEndpointName => await HandleOnAutoInsertAsync(@params, cancellationToken),
                 CustomMessageNames.RazorValidateBreakpointRangeName => await HandleValidateBreakpointRangeAsync(@params, cancellationToken),
+                CustomMessageNames.RazorDataTipRangeName => await HandleDataTipRangeAsync(@params, cancellationToken),
                 CustomMessageNames.RazorReferencesEndpointName => await HandleReferencesAsync(@params, cancellationToken),
                 CustomMessageNames.RazorProvideCodeActionsEndpoint => await HandleProvideCodeActionsAsync(@params, cancellationToken),
                 CustomMessageNames.RazorResolveCodeActionsEndpoint => await HandleResolveCodeActionsAsync(@params, cancellationToken),
@@ -87,7 +88,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             Assert.IsType<DelegatedDiagnosticParams>(@params);
             var actualParams = new DocumentDiagnosticParams()
             {
-                TextDocument = new TextDocumentIdentifier { Uri = _csharpDocumentUri }
+                TextDocument = new TextDocumentIdentifier { DocumentUri = new(_csharpDocumentUri) }
             };
 
             return _csharpServer.ExecuteRequestAsync<DocumentDiagnosticParams, SumType<FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport>?>(
@@ -110,7 +111,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new TextDocumentItem
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                 },
             };
 
@@ -128,7 +129,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new TextDocumentIdentifier
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                 },
                 Range = delegatedParams.ProjectedRange
             };
@@ -159,7 +160,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new TextDocumentIdentifier
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                 },
             };
 
@@ -177,7 +178,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
@@ -196,7 +197,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
             };
@@ -231,7 +232,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             var delegatedParams = Assert.IsType<DelegatedCodeActionParams>(@params);
 
             var delegatedRequest = delegatedParams.CodeActionParams;
-            delegatedRequest.TextDocument.Uri = _csharpDocumentUri;
+            delegatedRequest.TextDocument.DocumentUri = new(_csharpDocumentUri);
 
             return _csharpServer.ExecuteRequestAsync<VSCodeActionParams, RazorVSInternalCodeAction[]>(
                 Methods.TextDocumentCodeActionName,
@@ -246,7 +247,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
@@ -266,7 +267,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
@@ -285,7 +286,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition
@@ -304,7 +305,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
@@ -323,7 +324,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Position = delegatedParams.ProjectedPosition,
@@ -343,7 +344,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext()
                 },
                 Position = delegatedParams.ProjectedPosition,
@@ -374,7 +375,7 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
             {
                 TextDocument = new VSTextDocumentIdentifier()
                 {
-                    Uri = _csharpDocumentUri,
+                    DocumentUri = new(_csharpDocumentUri),
                     ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
                 },
                 Range = delegatedParams.ProjectedRange,
@@ -382,6 +383,23 @@ public abstract partial class SingleServerDelegatingEndpointTestBase
 
             return _csharpServer.ExecuteRequestAsync<VSInternalValidateBreakableRangeParams, LspRange>(
                 VSInternalMethods.TextDocumentValidateBreakableRangeName, delegatedRequest, cancellationToken);
+        }
+
+        private Task<VSInternalDataTip> HandleDataTipRangeAsync<T>(T @params, CancellationToken cancellationToken)
+        {
+            var delegatedParams = Assert.IsType<DelegatedPositionParams>(@params);
+            var delegatedRequest = new TextDocumentPositionParams()
+            {
+                TextDocument = new VSTextDocumentIdentifier()
+                {
+                    DocumentUri = new(_csharpDocumentUri),
+                    ProjectContext = delegatedParams.Identifier.TextDocumentIdentifier.GetProjectContext(),
+                },
+                Position = delegatedParams.ProjectedPosition,
+            };
+
+            return _csharpServer.ExecuteRequestAsync<TextDocumentPositionParams, VSInternalDataTip>(
+                VSInternalMethods.TextDocumentDataTipRangeName, delegatedRequest, cancellationToken);
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -61,6 +62,6 @@ internal static class IDocumentSnapshotExtensions
         }
 
         var fileName = Path.GetFileNameWithoutExtension(documentSnapshot.FilePath);
-        return fileName.AsSpan().Equals(path.Span, FilePathComparison.Instance);
+        return fileName.AsSpan().Equals(path.Span, PathUtilities.OSSpecificPathComparison);
     }
 }

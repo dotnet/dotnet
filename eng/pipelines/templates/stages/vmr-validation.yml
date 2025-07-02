@@ -6,6 +6,10 @@ parameters:
 - name: desiredIbc
   type: string
   default: ''
+
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
   
 # These are not expected to be passed it but rather just object variables reused below
 - name: pool_Linux
@@ -43,16 +47,18 @@ parameters:
 stages:
 - stage: VMR_Validation
   displayName: VMR Validation
+  dependsOn:
+  - VMR_Vertical_Build
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredIbc: ${{ parameters.desiredIbc }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   - group: Release-Pipeline
   - group: DotNetBot-GitHub-AllBranches
   jobs:
   - job: ValidateInstallers_Linux_x64
-    displayName: Validate Installers - Linux x64
     pool: ${{ parameters.pool_Linux }}
     timeoutInMinutes: 30
     steps:
@@ -61,11 +67,9 @@ stages:
         targetArchitecture: x64
         OS: Linux
         reuseBuildArtifactsFrom:
-        # Scenario-tests package is built/published by Windows_x64 job
         - Windows_x64
         - AzureLinux_x64_Cross_x64
   - job: ValidateInstallers_Linux_arm64
-    displayName: Validate Installers - Linux arm64
     pool: ${{ parameters.pool_LinuxArm64 }}
     timeoutInMinutes: 60
     steps:
@@ -74,7 +78,6 @@ stages:
         targetArchitecture: arm64
         OS: Linux
         reuseBuildArtifactsFrom:
-        # Scenario-tests package is built/published by Windows_x64 job
         - Windows_x64
         - AzureLinux_x64_Cross_arm64
   - ${{ if eq(variables.signEnabled, 'true') }}:

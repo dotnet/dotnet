@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -9,15 +9,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion.Delegation;
-
-using SyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 /// <summary>
 /// Helper methods for C# and HTML completion ("delegated" completion) that are used both in LSP and cohosting
@@ -211,12 +212,12 @@ internal static class DelegatedCompletionHelper
 
     public static bool ShouldIncludeSnippets(RazorCodeDocument razorCodeDocument, int absoluteIndex)
     {
-        var tree = razorCodeDocument.GetSyntaxTree();
+        var root = razorCodeDocument.GetRequiredSyntaxRoot();
 
-        var token = tree.Root.FindToken(absoluteIndex, includeWhitespace: false);
+        var token = root.FindToken(absoluteIndex, includeWhitespace: false);
         if (token.Kind == SyntaxKind.EndOfFile &&
-            token.GetPreviousToken()?.Parent is { } parent &&
-            parent.FirstAncestorOrSelf<SyntaxNode>(RazorSyntaxFacts.IsAnyStartTag) is not null)
+            token.GetPreviousToken().Parent is { } parent &&
+            parent.FirstAncestorOrSelf<RazorSyntaxNode>(RazorSyntaxFacts.IsAnyStartTag) is not null)
         {
             // If we're at the end of the file, we check if the previous token is part of a start tag, because the parser
             // treats whitespace at the end different. eg with "<$$[EOF]" or "<div $$", the EndOfFile won't be seen as being
@@ -225,7 +226,7 @@ internal static class DelegatedCompletionHelper
         }
 
         var node = token.Parent;
-        var startOrEndTag = node?.FirstAncestorOrSelf<SyntaxNode>(n => RazorSyntaxFacts.IsAnyStartTag(n) || RazorSyntaxFacts.IsAnyEndTag(n));
+        var startOrEndTag = node?.FirstAncestorOrSelf<RazorSyntaxNode>(n => RazorSyntaxFacts.IsAnyStartTag(n) || RazorSyntaxFacts.IsAnyEndTag(n));
 
         if (startOrEndTag is null)
         {
@@ -274,25 +275,60 @@ internal static class DelegatedCompletionHelper
         return originalData;
     }
 
-    public static async Task<VSInternalCompletionItem> FormatCSharpCompletionItemAsync(VSInternalCompletionItem resolvedCompletionItem, DocumentContext documentContext, RazorFormattingOptions options, IRazorFormattingService formattingService, CancellationToken cancellationToken)
+    public static async Task<VSInternalCompletionItem> FormatCSharpCompletionItemAsync(
+        VSInternalCompletionItem resolvedCompletionItem,
+        DocumentContext documentContext,
+        RazorFormattingOptions options,
+        IRazorFormattingService formattingService,
+        IDocumentMappingService documentMappingService,
+        ILogger logger,
+        CancellationToken cancellationToken)
     {
-        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
-        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        // In VS Code, Roslyn does resolve via a custom command. Thats fine, but we have to modify the text edit sitting within it,
+        // rather than the one LSP knows about.
+        if (resolvedCompletionItem.Command is { CommandIdentifier: Constants.CompleteComplexEditCommand, Arguments: var args })
+        {
+            if (args is [TextDocumentIdentifier, TextEdit complexEdit, _, int nextCursorPosition])
+            {
+                var formattedTextEdit = await FormatTextEditsAsync([complexEdit], documentContext, options, formattingService, cancellationToken).ConfigureAwait(false);
+                if (formattedTextEdit is null)
+                {
+                    resolvedCompletionItem.Command = null;
+                }
+                else
+                {
+                    args[0] = documentContext.GetTextDocumentIdentifier();
+                    args[1] = formattedTextEdit;
+                    if (nextCursorPosition >= 0)
+                    {
+                        // nextCursorPosition is where VS Code will navigate to, so we translate it to our document, or set to 0 to do nothing.
+                        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+                        args[3] = documentMappingService.TryMapToHostDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
+                            ? nextCursorPosition
+                            : 0;
+                    }
+                }
+            }
+            else
+            {
+                logger.LogError($"Unexpected arguments for command '{Constants.CompleteComplexEditCommand}': Expected: [TextDocumentIdentifier, TextEdit, _, int], Actual: {GetArgumentTypesLogString(resolvedCompletionItem)}");
+                Debug.Fail("Unexpected arguments for Roslyn complex edit command. Have they changed things?");
+            }
+        }
+        else if (resolvedCompletionItem.Command is not null)
+        {
+            logger.LogError($"Unsupported command for Razor document: {resolvedCompletionItem.Command.CommandIdentifier}.");
+            Debug.Fail("Unexpected command. Do we need to add something to support a new feature?");
+        }
 
         if (resolvedCompletionItem.TextEdit is not null)
         {
             if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
             {
-                var textChange = csharpSourceText.GetTextChange(textEdit);
-                var formattedTextChange = await formattingService.TryGetCSharpSnippetFormattingEditAsync(
-                    documentContext,
-                    [textChange],
-                    options,
-                    cancellationToken).ConfigureAwait(false);
-
-                if (formattedTextChange is { } change)
+                var formattedTextChange = await FormatTextEditsAsync([textEdit], documentContext, options, formattingService, cancellationToken).ConfigureAwait(false);
+                if (formattedTextChange is not null)
                 {
-                    resolvedCompletionItem.TextEdit = sourceText.GetTextEdit(change);
+                    resolvedCompletionItem.TextEdit = formattedTextChange;
                 }
             }
             else
@@ -305,16 +341,35 @@ internal static class DelegatedCompletionHelper
 
         if (resolvedCompletionItem.AdditionalTextEdits is not null)
         {
-            var additionalChanges = resolvedCompletionItem.AdditionalTextEdits.SelectAsArray(csharpSourceText.GetTextChange);
-            var formattedTextChange = await formattingService.TryGetCSharpSnippetFormattingEditAsync(
-                documentContext,
-                additionalChanges,
-                options,
-                cancellationToken).ConfigureAwait(false);
-
-            resolvedCompletionItem.AdditionalTextEdits = formattedTextChange is { } change ? [sourceText.GetTextEdit(change)] : null;
+            var formattedTextChange = await FormatTextEditsAsync(resolvedCompletionItem.AdditionalTextEdits, documentContext, options, formattingService, cancellationToken).ConfigureAwait(false);
+            resolvedCompletionItem.AdditionalTextEdits = formattedTextChange is { } change ? [change] : null;
         }
 
         return resolvedCompletionItem;
+
+        static string GetArgumentTypesLogString(VSInternalCompletionItem resolvedCompletionItem)
+        {
+            if (resolvedCompletionItem.Command?.Arguments is { } args)
+            {
+                return "[" + string.Join(", ", args.Select(a => a.GetType().Name)) + "]";
+            }
+
+            return "null";
+        }
+    }
+
+    private static async Task<TextEdit?> FormatTextEditsAsync(TextEdit[] textEdits, DocumentContext documentContext, RazorFormattingOptions options, IRazorFormattingService formattingService, CancellationToken cancellationToken)
+    {
+        var sourceText = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
+        var csharpSourceText = await documentContext.GetCSharpSourceTextAsync(cancellationToken).ConfigureAwait(false);
+
+        var changes = textEdits.SelectAsArray(csharpSourceText.GetTextChange);
+        var formattedTextChange = await formattingService.TryGetCSharpSnippetFormattingEditAsync(
+            documentContext,
+            changes,
+            options,
+            cancellationToken).ConfigureAwait(false);
+
+        return formattedTextChange is { } change ? sourceText.GetTextEdit(change) : null;
     }
 }

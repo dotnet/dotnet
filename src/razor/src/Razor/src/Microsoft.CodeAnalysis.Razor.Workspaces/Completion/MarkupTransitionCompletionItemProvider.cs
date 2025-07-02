@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.VisualStudio.Editor.Razor;
@@ -38,6 +39,8 @@ internal class MarkupTransitionCompletionItemProvider : IRazorCompletionItemProv
             var previousToken = metaCodeToken.GetPreviousToken();
             owner = previousToken.Parent;
         }
+
+        Assumed.NotNull(owner);
 
         if (!AtMarkupTransitionCompletionPoint(owner))
         {

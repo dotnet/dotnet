@@ -80,7 +80,7 @@ run_analyzers=false
 skip_documentation=false
 prepare_machine=false
 warn_as_error=false
-properties=""
+properties=()
 source_build=false
 product_build=false
 from_vmr=false
@@ -193,7 +193,7 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     /p:*)
-      properties="$properties $1"
+      properties+=("$1")
       ;;
     *)
       echo "Invalid argument: $1"
@@ -323,7 +323,7 @@ function BuildSolution {
     $mono_tool \
     $generate_documentation_file \
     $roslyn_use_hard_links \
-    $properties
+    ${properties[@]+"${properties[@]}"}
 }
 
 function GetCompilerTestAssembliesIncludePaths {

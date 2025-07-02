@@ -1,9 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Frozen;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
@@ -11,7 +11,7 @@ namespace Microsoft.VisualStudio.Editor.Razor;
 
 internal static class HtmlFacts
 {
-    private static readonly HashSet<string> s_htmlSchemaTagNames = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly FrozenSet<string> s_htmlSchemaTagNames = new string[]
     {
         "DOCTYPE",
         "a",
@@ -136,50 +136,80 @@ internal static class HtmlFacts
         "var",
         "video",
         "wbr",
-    };
+    }.ToFrozenSet(StringComparer.Ordinal);
+
+    internal static readonly ImmutableArray<string> FormEvents =
+    [
+        "onabort",
+        "onblur",
+        "onchange",
+        "onclick",
+        "oncontextmenu",
+        "ondblclick",
+        "onerror",
+        "onfocus",
+        "oninput",
+        "onkeydown",
+        "onkeypress",
+        "onkeyup",
+        "onload",
+        "onmousedown",
+        "onmousemove",
+        "onmouseout",
+        "onmouseover",
+        "onmouseup",
+        "onreset",
+        "onscroll",
+        "onselect",
+        "onsubmit",
+    ];
 
     public static bool IsHtmlTagName(string name)
         => s_htmlSchemaTagNames.Contains(name);
 
     public static bool TryGetElementInfo(
         SyntaxNode element,
-        [NotNullWhen(true)] out SyntaxToken? containingTagNameToken,
+        out SyntaxToken containingTagNameToken,
         out SyntaxList<RazorSyntaxNode> attributeNodes,
-        [NotNullWhen(true)] out SyntaxToken? closingForwardSlashOrCloseAngleToken)
+        out SyntaxToken closingForwardSlashOrCloseAngleToken)
     {
         switch (element)
         {
-            case MarkupStartTagSyntax startTag:
-                containingTagNameToken = startTag.Name;
-                attributeNodes = startTag.Attributes;
-                closingForwardSlashOrCloseAngleToken = startTag.ForwardSlash ?? startTag.CloseAngle;
+            case BaseMarkupStartTagSyntax startTag:
+                {
+                    containingTagNameToken = startTag.Name;
+                    attributeNodes = startTag.Attributes;
+
+                    closingForwardSlashOrCloseAngleToken = startTag.ForwardSlash.IsValid(out var forwardSlash)
+                        ? forwardSlash
+                        : startTag.CloseAngle;
+                }
+
                 return true;
-            case MarkupEndTagSyntax { Parent: MarkupElementSyntax parent } endTag:
-                containingTagNameToken = endTag.Name;
-                attributeNodes = parent.StartTag?.Attributes ?? new SyntaxList<RazorSyntaxNode>();
-                closingForwardSlashOrCloseAngleToken = endTag.ForwardSlash ?? endTag.CloseAngle;
+
+            case BaseMarkupEndTagSyntax endTag:
+                {
+                    containingTagNameToken = endTag.Name;
+                    attributeNodes = endTag.GetStartTag()?.Attributes ?? default;
+
+                    closingForwardSlashOrCloseAngleToken = endTag.ForwardSlash.IsValid(out var forwardSlash)
+                        ? forwardSlash
+                        : endTag.CloseAngle;
+                }
+
                 return true;
-            case MarkupTagHelperStartTagSyntax startTagHelper:
-                containingTagNameToken = startTagHelper.Name;
-                attributeNodes = startTagHelper.Attributes;
-                closingForwardSlashOrCloseAngleToken = startTagHelper.ForwardSlash ?? startTagHelper.CloseAngle;
-                return true;
-            case MarkupTagHelperEndTagSyntax { Parent: MarkupTagHelperElementSyntax parent } endTagHelper:
-                containingTagNameToken = endTagHelper.Name;
-                attributeNodes = parent.StartTag?.Attributes ?? new SyntaxList<RazorSyntaxNode>();
-                closingForwardSlashOrCloseAngleToken = endTagHelper.ForwardSlash ?? endTagHelper.CloseAngle;
-                return true;
+
             default:
-                containingTagNameToken = null;
+                containingTagNameToken = default;
                 attributeNodes = default;
-                closingForwardSlashOrCloseAngleToken = null;
+                closingForwardSlashOrCloseAngleToken = default;
                 return false;
         }
     }
 
     public static bool TryGetAttributeInfo(
         SyntaxNode attribute,
-        [NotNullWhen(true)] out SyntaxToken? containingTagNameToken,
+        out SyntaxToken containingTagNameToken,
         out TextSpan? prefixLocation,
         out string? selectedAttributeName,
         out TextSpan? selectedAttributeNameLocation,
@@ -187,7 +217,7 @@ internal static class HtmlFacts
     {
         if (!TryGetElementInfo(attribute.Parent, out containingTagNameToken, out attributeNodes, closingForwardSlashOrCloseAngleToken: out _))
         {
-            containingTagNameToken = null;
+            containingTagNameToken = default;
             prefixLocation = null;
             selectedAttributeName = null;
             selectedAttributeNameLocation = null;

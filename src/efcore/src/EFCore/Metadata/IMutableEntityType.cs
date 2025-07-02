@@ -44,6 +44,13 @@ public interface IMutableEntityType : IReadOnlyEntityType, IMutableTypeBase
     void SetQueryFilter(LambdaExpression? queryFilter);
 
     /// <summary>
+    ///     Sets the query filter automatically applied to queries for this entity type.
+    /// </summary>
+    /// <param name="filterKey">The filter key.</param>
+    /// <param name="filter">The LINQ predicate expression.</param>
+    void SetQueryFilter(string filterKey, LambdaExpression? filter);
+
+    /// <summary>
     ///     Sets the value indicating whether the discriminator mapping is complete.
     /// </summary>
     /// <param name="complete">The value indicating whether the discriminator mapping is complete.</param>
@@ -393,7 +400,7 @@ public interface IMutableEntityType : IReadOnlyEntityType, IMutableTypeBase
     /// <param name="memberInfo">The navigation property on the entity class.</param>
     /// <returns>The navigation property, or <see langword="null" /> if none is found.</returns>
     new IMutableNavigation? FindNavigation(MemberInfo memberInfo)
-        => FindNavigation(Check.NotNull(memberInfo, nameof(memberInfo)).GetSimpleMemberName());
+        => FindNavigation(Check.NotNull(memberInfo).GetSimpleMemberName());
 
     /// <summary>
     ///     Gets a navigation property on the given entity type. Returns <see langword="null" /> if no navigation property is found.

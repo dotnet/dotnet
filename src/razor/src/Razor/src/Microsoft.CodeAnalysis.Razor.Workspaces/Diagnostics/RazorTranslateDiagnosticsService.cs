@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
@@ -22,6 +22,7 @@ namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
 using RazorDiagnosticFactory = AspNetCore.Razor.Language.RazorDiagnosticFactory;
 using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using RazorSyntaxNodeOrToken = AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 /// <summary>
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
@@ -94,7 +95,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         LspDiagnostic[] unmappedDiagnostics,
         RazorCodeDocument codeDocument)
     {
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var sourceText = codeDocument.Source.Text;
 
         var processedAttributes = new Dictionary<TextSpan, bool>();
@@ -303,7 +304,8 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
             var bodyElement = element
                 .ChildNodes()
-                .SingleOrDefault(static c => c is MarkupElementSyntax tag && tag.StartTag?.Name.Content == "body") as MarkupElementSyntax;
+                .OfType<MarkupElementSyntax>()
+                .SingleOrDefault(static element => element.StartTag?.Name.Content == "body");
 
             return bodyElement is not null &&
                    bodyElement.StartTag?.Bang is not null;
@@ -329,7 +331,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 return false;
             }
 
-            var haveBang = startNode.Bang is not null && endNode.Bang is not null;
+            var haveBang = startNode.Bang.IsValid() && endNode.Bang.IsValid();
             var namesEquivalent = startNode.Name.Content == endNode.Name.Content;
 
             return haveBang && namesEquivalent;
@@ -419,13 +421,15 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         static bool CheckIfAttributeContainsNonMarkupNodes(RazorSyntaxNode attributeNode)
         {
             // Only allow markup, generic & (non-razor comment) token nodes
-            var containsNonMarkupNodes = attributeNode.DescendantNodes()
-                .Any(static n => !(n is MarkupBlockSyntax ||
-                    n is MarkupSyntaxNode ||
-                    n is GenericBlockSyntax ||
-                    (n is SyntaxNode sn && sn.IsToken && sn.Kind != SyntaxKind.RazorCommentTransition)));
+            var containsNonMarkupNodes = attributeNode.DescendantNodesAndTokens().Any(IsNotMarkupNodeOrCommentToken);
 
             return containsNonMarkupNodes;
+        }
+
+        static bool IsNotMarkupNodeOrCommentToken(RazorSyntaxNodeOrToken nodeOrToken)
+        {
+            return !(nodeOrToken.IsToken && nodeOrToken.AsToken().Kind == SyntaxKind.RazorCommentTransition) &&
+                   !(nodeOrToken.IsNode && nodeOrToken.AsNode() is MarkupBlockSyntax or MarkupSyntaxNode or GenericBlockSyntax);
         }
     }
 
@@ -466,7 +470,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
     private static bool CheckIfDocumentHasRazorDiagnostic(RazorCodeDocument codeDocument, string razorDiagnosticCode)
     {
-        return codeDocument.GetSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
+        return codeDocument.GetRequiredSyntaxTree().Diagnostics.Any(razorDiagnosticCode, static (d, code) => d.Id == code);
     }
 
     private bool TryGetOriginalDiagnosticRange(LspDiagnostic diagnostic, RazorCodeDocument codeDocument, [NotNullWhen(true)] out LspRange? originalRange)
@@ -482,7 +486,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         }
 
         if (!_documentMappingService.TryMapToHostDocumentRange(
-            codeDocument.GetCSharpDocument(),
+            codeDocument.GetRequiredCSharpDocument(),
             diagnostic.Range,
             MappingBehavior.Inferred,
             out originalRange))
@@ -514,10 +518,10 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         // it's based on the runtime code generation of the Razor document therefore we need to re-map the already mapped diagnostic in a
         // semi-intelligent way.
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var syntaxRoot = codeDocument.GetRequiredSyntaxRoot();
         var sourceText = codeDocument.Source.Text;
         var span = sourceText.GetTextSpan(diagnosticRange);
-        var owner = syntaxTree.Root.FindNode(span, getInnermostNodeForTie: true);
+        var owner = syntaxRoot.FindNode(span, getInnermostNodeForTie: true);
 
         switch (owner?.Kind)
         {

@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Compile Include="$(RepoRoot)src\Microsoft.TestPlatform.TestHostProvider\Properties\TestExtensionTypesAttribute.cs" Link="Properties\TestExtensionTypesAttribute.cs" />
+    <Compile Include="..\..\shared\NullableAttributes.cs" Link="NullableAttributes.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="NullableHelpers.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NullableHelpers.tt</DependentUpon>
+    </Compile>
     <Compile Update="Resources\TrxResource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -68,6 +74,13 @@
     <!-- Framework specific API -->
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI/$(TargetFramework)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NullableHelpers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NullableHelpers.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

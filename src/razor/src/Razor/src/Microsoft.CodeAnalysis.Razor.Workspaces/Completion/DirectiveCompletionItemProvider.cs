@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
@@ -88,7 +88,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             return false;
         }
 
-        if (owner.ChildNodes().Any(n => !n.IsToken || !IsDirectiveCompletableToken((AspNetCore.Razor.Language.Syntax.SyntaxToken)n)))
+        if (owner.ChildNodesAndTokens().Any(static x => !x.AsToken(out var token) || !IsDirectiveCompletableToken(token)))
         {
             // Implicit expression contains invalid directive tokens
             return false;
@@ -167,7 +167,7 @@ internal class DirectiveCompletionItemProvider : IRazorCompletionItemProvider
             }
         }
 
-        return completionItems.DrainToImmutable();
+        return completionItems.ToImmutableAndClear();
     }
 
     private static ImmutableArray<RazorCommitCharacter> GetDirectiveCommitCharacters(DirectiveKind directiveKind)

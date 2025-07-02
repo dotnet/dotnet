@@ -1,7 +1,6 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.Json;
@@ -39,7 +38,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
                 {
                     CompletionItemKind = new CompletionItemKindSetting()
                     {
-                        ValueSet = new[] { CompletionItemKind.TagHelper }
+                        ValueSet = [CompletionItemKind.TagHelper]
                     },
                     CompletionList = new VSInternalCompletionListSetting()
                     {
@@ -54,69 +53,13 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
     }
 
-    private static IEnumerable<IRazorCompletionItemProvider> GetCompletionProviders()
-    {
-        // Working around strong naming restriction.
-        var tagHelperCompletionService = new TagHelperCompletionService();
-
-        var completionProviders = new IRazorCompletionItemProvider[]
-        {
+    private static IRazorCompletionItemProvider[] GetCompletionProviders()
+        => [
             new DirectiveCompletionItemProvider(),
             new DirectiveAttributeCompletionItemProvider(),
             new DirectiveAttributeParameterCompletionItemProvider(),
-            new TagHelperCompletionProvider(tagHelperCompletionService)
-        };
-
-        return completionProviders;
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Deletion_ReturnsFalse()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Deletion
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Explicit_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Explicit
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Typing_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Typing
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
+            new TagHelperCompletionProvider(new TagHelperCompletionService())
+        ];
 
     [Fact]
     public void TryConvert_Directive_ReturnsTrue()
@@ -476,8 +419,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
             codeDocument, absoluteIndex: 1, completionContext, _clientCapabilities, existingCompletions: null, _razorCompletionOptions);
 
         // Assert
-        Assert.NotNull(completionList);
-        Assert.Empty(completionList.Items);
+        Assert.Null(completionList);
     }
 
     [Fact]

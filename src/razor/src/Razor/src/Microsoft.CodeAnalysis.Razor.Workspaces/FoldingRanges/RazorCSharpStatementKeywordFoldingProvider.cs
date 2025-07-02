@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -16,7 +16,7 @@ internal class RazorCSharpStatementKeywordFoldingProvider : AbstractSyntaxNodeFo
         if (node.Children is [_, CSharpStatementLiteralSyntax literal, ..] &&
             literal.LiteralTokens is [var keyword, ..])
         {
-            return $"@{keyword.GetContent()}";
+            return $"@{keyword.Content}";
         }
 
         return "@{...}";
@@ -25,7 +25,7 @@ internal class RazorCSharpStatementKeywordFoldingProvider : AbstractSyntaxNodeFo
     protected override ImmutableArray<CSharpCodeBlockSyntax> GetFoldableNodes(RazorSyntaxTree syntaxTree)
     {
         return syntaxTree.Root
-            .DescendantNodes(node => node is RazorDocumentSyntax or MarkupBlockSyntax or MarkupElementSyntax or CSharpCodeBlockSyntax)
+            .DescendantNodes(static node => node is RazorDocumentSyntax or MarkupBlockSyntax or MarkupElementSyntax or CSharpCodeBlockSyntax)
             .OfType<CSharpStatementLiteralSyntax>()
             .Where(n => n is
             {

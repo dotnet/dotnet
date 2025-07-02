@@ -66,7 +66,7 @@ In addition to these default high level controls, there may be additional compon
 | BuildRid | Valid RIDs | RID of the the currently executing runtime | The RID of the runtime that is running the build |
 | TargetRid | Valid RIDs or custom RID | When building non-portable, the OS of build Rid + TargetArchitecture. When building portable, `TargetOS-TargetArchitecture`. | The RID of the runtime that will run the binary -> the end user’s machine. |
 | HostRid | Valid RIDs or `TargetRid` | `TargetRid` | The RID of the runtime that will run the produced tool (i.e. compiler) to generate the binary for the target operating system. |
-| BaseRid | Valid RIDs | OS portion of `NETCoreSdkPortableRuntimeIdentifier` appended with `-TargetArchitecture` | A known RID to use as a parent of a custom RID specified in `TargetRid` if `TargetRid` is unknown. |
+| PortableTargetRid | Valid RIDs | Portable rid for the target. | PortableTargetRid is a known rid from the graph that is compatible with the target. It is the same as `TargetRid` for portable builds, or usable as a parent rid for non-portable builds. |
 | BuildArchitecture | "x64", "x86", "arm", "arm64", ... | The architecture of the build environment | The architecture of the machine that is built on. Lower-case string. |
 | TargetArchitecture | Same as `BuildArchitecture` | `BuildArchitecture` | The architecture of the machine that will run the binary -> the end user's machine. |
 | HostArchitecture | Same as `BuildArchitecture` | `TargetArchitecture` | The architecture of the machine that will run the produced tool (i.e. compiler) to generate the binary for the target architecture |

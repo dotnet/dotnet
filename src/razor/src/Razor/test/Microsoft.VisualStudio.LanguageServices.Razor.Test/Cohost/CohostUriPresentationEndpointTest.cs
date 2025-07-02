@@ -1,9 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Xunit.Abstractions;
@@ -56,7 +57,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                     {
                         TextDocument = new()
                         {
-                            Uri = FileUri("File1.razor.g.html")
+                            DocumentUri = new(FileUri("File1.razor.g.html"))
                         },
                         Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
@@ -128,7 +129,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
                     {
                         TextDocument = new()
                         {
-                            Uri = FileUri("File1.razor.g.html")
+                            DocumentUri = new(FileUri("File1.razor.g.html"))
                         },
                         Edits = [LspFactory.CreateTextEdit(position: (0, 0), htmlTag)]
                     }
@@ -245,13 +246,13 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, FilePathService, requestInvoker);
+        var endpoint = new CohostUriPresentationEndpoint(IncompatibleProjectService, RemoteServiceInvoker, FilePathService, requestInvoker);
 
         var request = new VSInternalUriPresentationParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = document.CreateDocumentUri()
             },
             Range = sourceText.GetRange(span),
             Uris = uris
@@ -268,7 +269,7 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
             Assert.NotNull(result);
             Assert.NotNull(result.DocumentChanges);
             Assert.Equal(expected, ((TextEdit)result.DocumentChanges.Value.First[0].Edits[0]).NewText);
-            Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.Uri);
+            Assert.Equal(document.CreateUri(), result.DocumentChanges.Value.First[0].TextDocument.DocumentUri.GetRequiredParsedUri());
         }
     }
 }

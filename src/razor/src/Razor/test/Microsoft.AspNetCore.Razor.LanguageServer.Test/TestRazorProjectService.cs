@@ -1,12 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.Test.Common;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Serialization;
@@ -46,7 +45,7 @@ internal class TestRazorProjectService(
             var projectDirectory = FilePathNormalizer.GetNormalizedDirectoryName(projectSnapshot.FilePath);
             var normalizedFilePath = FilePathNormalizer.Normalize(filePath);
 
-            var targetPath = normalizedFilePath.StartsWith(projectDirectory, FilePathComparison.Instance)
+            var targetPath = normalizedFilePath.StartsWith(projectDirectory, PathUtilities.OSSpecificPathComparison)
                 ? normalizedFilePath[projectDirectory.Length..]
                 : normalizedFilePath;
 

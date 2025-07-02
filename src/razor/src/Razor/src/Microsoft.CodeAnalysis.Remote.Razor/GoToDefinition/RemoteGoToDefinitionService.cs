@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.GoToDefinition;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -66,7 +67,7 @@ internal sealed class RemoteGoToDefinitionService(in ServiceArgs args) : RazorDo
             if (componentLocation is not null)
             {
                 // Convert from VS LSP Location to Roslyn. This can be removed when Razor moves fully onto Roslyn's LSP types.
-                return Results([LspFactory.CreateLocation(componentLocation.Uri, componentLocation.Range.ToLinePositionSpan())]);
+                return Results([LspFactory.CreateLocation(componentLocation.DocumentUri.GetRequiredParsedUri(), componentLocation.Range.ToLinePositionSpan())]);
             }
 
             // If it isn't a Razor component, and it isn't C#, let the server know to delegate to HTML.

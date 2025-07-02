@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -73,7 +73,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         {
             // Write syntax tree baseline
             var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: EnableSpanEditHandlers));
+            File.WriteAllText(baselineFullPath, TestSyntaxSerializer.Serialize(root, allowSpanEditHandlers: EnableSpanEditHandlers));
 
             // Write diagnostics baseline
             var baselineDiagnosticsFullPath = Path.Combine(TestProjectRoot, baselineDiagnosticsFileName);
@@ -114,7 +114,7 @@ public abstract class ToolingParserTestBase : ToolingTestBase, IParserTest
         }
 
         var syntaxNodeBaseline = stFile.ReadAllText();
-        var actualSyntaxNodes = SyntaxNodeSerializer.Serialize(root, validateSpanEditHandlers: EnableSpanEditHandlers);
+        var actualSyntaxNodes = TestSyntaxSerializer.Serialize(root, allowSpanEditHandlers: EnableSpanEditHandlers);
         AssertEx.AssertEqualToleratingWhitespaceDifferences(syntaxNodeBaseline, actualSyntaxNodes);
 
         // Verify diagnostics

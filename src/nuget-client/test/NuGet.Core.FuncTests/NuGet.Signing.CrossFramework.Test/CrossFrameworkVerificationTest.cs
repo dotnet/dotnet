@@ -17,8 +17,9 @@ namespace NuGet.Signing.CrossFramework.Test
     [Collection(CrossVerifyTestCollection.Name)]
     public class CrossFrameworkVerificationTest
     {
+#if IS_DESKTOP
         private const int SHA1HashLength = 20;
-
+#endif
         private readonly string _successfullyVerified = "Successfully verified package 'packageA.1.0.0'";
         private readonly string _noTimestamperWarning = "NU3027: The signature should be timestamped to enable long-term signature validity after the certificate has expired";
         private static readonly Uri ServiceIndexUrl = new Uri("https://v3serviceIndex.test/api/index.json");

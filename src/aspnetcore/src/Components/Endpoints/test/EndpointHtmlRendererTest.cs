@@ -1,9 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Endpoints.Forms;
 using Microsoft.AspNetCore.Components.Endpoints.Tests.TestComponents;
 using Microsoft.AspNetCore.Components.Forms;
@@ -11,6 +13,8 @@ using Microsoft.AspNetCore.Components.Forms.Mapping;
 using Microsoft.AspNetCore.Components.Infrastructure;
 using Microsoft.AspNetCore.Components.Reflection;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Test.Helpers;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.DataProtection;
@@ -47,18 +51,23 @@ public class EndpointHtmlRendererTest
     }
 
     [Fact]
-    public async Task DoesNotRenderChildAfterRendererStopped()
+    public async Task DoesNotRenderAfterRendererStopped()
     {
-        renderer.SignalRendererToFinishRendering();
-
         var httpContext = GetHttpContext();
         var writer = new StringWriter();
 
-        var result = await renderer.PrerenderComponentAsync(httpContext, typeof(SimpleComponent), null, ParameterView.Empty);
-        await renderer.Dispatcher.InvokeAsync(() => result.WriteTo(writer, HtmlEncoder.Default));
-        var content = writer.ToString();
+        var component = new StoppingRendererComponent();
+        var id = renderer.AssignRootComponentId(component);
+        var initialRenderOperation = renderer.Dispatcher.InvokeAsync(
+            () => renderer.RenderRootComponentAsync(id, ParameterView.Empty));
 
-        Assert.DoesNotContain("Hello from SimpleComponent", content);
+        renderer.SignalRendererToFinishRendering();
+        component.TaskCompletionSource.SetResult(false);
+        await initialRenderOperation;
+        int initialRenderCount = renderer.RenderCount;
+
+        await renderer.Dispatcher.InvokeAsync(() => renderer.RenderRootComponentAsync(id, ParameterView.Empty));
+        Assert.Equal(initialRenderCount, renderer.RenderCount);
     }
 
     [Fact]
@@ -136,25 +145,19 @@ public class EndpointHtmlRendererTest
         );
 
         // Act
-        var result = await renderer.PrerenderComponentAsync(httpContext, typeof(SimpleComponent), new InteractiveWebAssemblyRenderMode(prerender: false), ParameterView.Empty);
+        var result = await renderer.PrerenderComponentAsync(httpContext, typeof(WebAssemblyPreloadWrapper), null, ParameterView.Empty);
         await renderer.Dispatcher.InvokeAsync(() => result.WriteTo(writer, HtmlEncoder.Default));
 
         // Assert
-        Assert.Equal(2, httpContext.Response.Headers.Link.Count);
+        var output = writer.ToString();
 
-        var firstPreloadLink = httpContext.Response.Headers.Link[0];
-        Assert.Contains("<first.js>", firstPreloadLink);
-        Assert.Contains("rel=preload", firstPreloadLink);
-        Assert.Contains("as=script", firstPreloadLink);
-        Assert.Contains("fetchpriority=high", firstPreloadLink);
-        Assert.Contains("integrity=\"abcd\"", firstPreloadLink);
-
-        var secondPreloadLink = httpContext.Response.Headers.Link[1];
-        Assert.Contains("<second.js>", secondPreloadLink);
-        Assert.Contains("rel=preload", secondPreloadLink);
-        Assert.Contains("as=script", secondPreloadLink);
-        Assert.Contains("fetchpriority=high", secondPreloadLink);
-        Assert.Contains("integrity=\"abcd\"", secondPreloadLink);
+        Assert.Contains("href=\"first.js\"", output);
+        Assert.Contains("href=\"second.js\"", output);
+        Assert.DoesNotContain("nopreload.js", output);
+        Assert.Contains("rel=\"preload\"", output);
+        Assert.Contains("as=\"script\"", output);
+        Assert.Contains("fetchpriority=\"high\"", output);
+        Assert.Contains("integrity=\"abcd\"", output);
     }
 
     [Fact]
@@ -846,9 +849,9 @@ public class EndpointHtmlRendererTest
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public async Task UriHelperRedirect_ThrowsInvalidOperationException_WhenResponseHasAlreadyStarted(bool expectException)
+    public async Task UriHelperRedirect_ThrowsInvalidOperationException_WhenResponseHasAlreadyStarted(bool allowException)
     {
-        AppContext.SetSwitch("Microsoft.AspNetCore.Components.Endpoints.NavigationManager.EnableThrowNavigationException", isEnabled: expectException);
+        AppContext.SetSwitch("Microsoft.AspNetCore.Components.Endpoints.NavigationManager.DisableThrowNavigationException", isEnabled: !allowException);
         // Arrange
         var ctx = new DefaultHttpContext();
         ctx.Request.Scheme = "http";
@@ -864,7 +867,7 @@ public class EndpointHtmlRendererTest
         string redirectUri = "http://localhost/redirect";
 
         // Act
-        if (expectException)
+        if (allowException)
         {
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await renderer.PrerenderComponentAsync(
                 httpContext,
@@ -926,6 +929,26 @@ public class EndpointHtmlRendererTest
         // Assert
         Assert.Equal(302, ctx.Response.StatusCode);
         Assert.Equal("http://localhost/redirect", ctx.Response.Headers.Location);
+    }
+
+    [Fact]
+    public async Task Renderer_WhenNoNotFoundPathProvided_Throws()
+    {
+        // Arrange
+        var httpContext = GetHttpContext();
+        var responseMock = new Mock<IHttpResponseFeature>();
+        responseMock.Setup(r => r.HasStarted).Returns(true);
+        responseMock.Setup(r => r.Headers).Returns(new HeaderDictionary());
+        httpContext.Features.Set(responseMock.Object);
+        var renderer = GetEndpointHtmlRenderer();
+        httpContext.Items[nameof(StatusCodePagesOptions)] = null; // simulate missing re-execution route
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await renderer.SetNotFoundResponseAsync(httpContext, new NotFoundEventArgs(""))
+        );
+        string expectedError = "The NotFoundPage route must be specified or re-execution middleware has to be set to render NotFoundPage when the response has started.";
+
+        Assert.Equal(expectedError, exception.Message);
     }
 
     [Fact]
@@ -1772,18 +1795,10 @@ public class EndpointHtmlRendererTest
     private class TestEndpointHtmlRenderer : EndpointHtmlRenderer
     {
         private bool _rendererIsStopped = false;
+        private int _renderCount;
+
         public TestEndpointHtmlRenderer(IServiceProvider serviceProvider, ILoggerFactory loggerFactory) : base(serviceProvider, loggerFactory)
         {
-        }
-
-        internal int TestAssignRootComponentId(IComponent component)
-        {
-            return base.AssignRootComponentId(component);
-        }
-        public void SignalRendererToFinishRendering()
-        {
-            // sets a deferred stop on the renderer, which will have an effect after the current batch is completed
-            _rendererIsStopped = true;
         }
 
         protected override void ProcessPendingRender()
@@ -1793,6 +1808,22 @@ public class EndpointHtmlRendererTest
                 return;
             }
             base.ProcessPendingRender();
+
+            _renderCount++;
+        }
+
+        public int RenderCount => _renderCount;
+
+        public new void SignalRendererToFinishRendering()
+        {
+            _rendererIsStopped = true;
+            base.SignalRendererToFinishRendering();
+        }
+
+        public async Task SetNotFoundResponseAsync(HttpContext httpContext, NotFoundEventArgs args)
+        {
+            SetHttpContext(httpContext);
+            await SetNotFoundResponseAsync(httpContext.Request.PathBase, args);
         }
     }
 
@@ -1827,6 +1858,7 @@ public class EndpointHtmlRendererTest
         services.AddSingleton<AntiforgeryStateProvider, EndpointAntiforgeryStateProvider>();
         services.AddSingleton<ICascadingValueSupplier>(_ => new SupplyParameterFromFormValueProvider(null, ""));
         services.AddScoped<ResourceCollectionProvider>();
+        services.AddScoped<ResourcePreloadService>();
         services.AddSingleton(new WebAssemblySettingsEmitter(new TestEnvironment(Environments.Development)));
         return services;
     }

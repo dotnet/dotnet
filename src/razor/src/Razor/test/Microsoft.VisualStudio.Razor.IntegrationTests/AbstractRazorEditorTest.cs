@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -169,7 +169,7 @@ public abstract class AbstractRazorEditorTest(ITestOutputHelper testOutput) : Ab
 
     private async Task EnsureExtensionInstalledAsync(CancellationToken cancellationToken)
     {
-        const string AssemblyName = "Microsoft.AspNetCore.Razor.LanguageServer";
+        const string AssemblyName = "Microsoft.CodeAnalysis.Razor.Workspaces";
         using var semaphore = new SemaphoreSlim(1);
         await semaphore.WaitAsync(cancellationToken);
 

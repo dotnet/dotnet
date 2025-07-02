@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using MessagePack;
@@ -46,7 +46,7 @@ internal sealed class ProjectWorkspaceStateFormatter : ValueFormatter<ProjectWor
             builder.Add(tagHelper);
         }
 
-        var tagHelpers = builder.DrainToImmutable();
+        var tagHelpers = builder.ToImmutableAndClear();
 
         return ProjectWorkspaceState.Create(tagHelpers);
     }

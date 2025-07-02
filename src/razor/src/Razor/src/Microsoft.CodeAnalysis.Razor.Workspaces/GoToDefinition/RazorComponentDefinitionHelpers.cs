@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -29,9 +29,9 @@ internal static class RazorComponentDefinitionHelpers
         boundTagHelper = null;
         boundAttribute = null;
 
-        var syntaxTree = codeDocument.GetSyntaxTree();
+        var root = codeDocument.GetRequiredSyntaxRoot();
 
-        var innermostNode = syntaxTree.Root.FindInnermostNode(absoluteIndex);
+        var innermostNode = root.FindInnermostNode(absoluteIndex);
         if (innermostNode is null)
         {
             logger.LogInformation($"Could not locate innermost node at index, {absoluteIndex}.");
@@ -114,16 +114,16 @@ internal static class RazorComponentDefinitionHelpers
             return node.Kind is RazorSyntaxKind.MarkupTagHelperStartTag or RazorSyntaxKind.MarkupTagHelperEndTag;
         }
 
-        static bool TryGetTagName(RazorSyntaxNode node, [NotNullWhen(true)] out RazorSyntaxToken? tagName)
+        static bool TryGetTagName(RazorSyntaxNode node, out RazorSyntaxToken tagName)
         {
             tagName = node switch
             {
                 MarkupTagHelperStartTagSyntax tagHelperStartTag => tagHelperStartTag.Name,
                 MarkupTagHelperEndTagSyntax tagHelperEndTag => tagHelperEndTag.Name,
-                _ => null
+                _ => default
             };
 
-            return tagName is not null;
+            return tagName != default;
         }
     }
 
@@ -168,9 +168,9 @@ internal static class RazorComponentDefinitionHelpers
                 return null;
             }
 
-            var csharpText = codeDocument.GetCSharpSourceText();
-            var range = csharpText.GetRange(property.Identifier.Span);
-            if (documentMappingService.TryMapToHostDocumentRange(codeDocument.GetCSharpDocument(), range, out var originalRange))
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+            var range = csharpDocument.Text.GetRange(property.Identifier.Span);
+            if (documentMappingService.TryMapToHostDocumentRange(csharpDocument, range, out var originalRange))
             {
                 return originalRange;
             }

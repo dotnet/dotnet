@@ -481,10 +481,10 @@ namespace NuGet.SolutionRestoreManager
                     if (DependencyGraphRestoreUtility.IsRestoreRequired(dgSpec))
                     {
                         await _logger.RunWithProgressAsync(
-                            async (l, _, t) =>
+                            async (logger, _, token) =>
                             {
                                 // Display the restore opt out message if it has not been shown yet
-                                await l.WriteHeaderAsync();
+                                await logger.WriteHeaderAsync();
 
                                 var sources = _sourceRepositoryProvider
                                     .GetRepositories()
@@ -512,8 +512,8 @@ namespace NuGet.SolutionRestoreManager
                                        isRestoreOriginalAction,
                                        additionalMessages,
                                        _nuGetProgressReporter,
-                                       l,
-                                       t);
+                                       logger,
+                                       token);
 
                                     _packageCount += restoreSummaries.Sum(summary => summary.InstallCount);
                                     isRestoreSucceeded = restoreSummaries.All(summary => summary.Success == true);
@@ -704,12 +704,12 @@ namespace NuGet.SolutionRestoreManager
                 {
                     // Only show the wait dialog, when there are some packages to restore
                     await _logger.RunWithProgressAsync(
-                        async (l, _, t) =>
+                        async (logger, _, token) =>
                         {
                             // Display the restore opt out message if it has not been shown yet
-                            await l.WriteHeaderAsync();
+                            await logger.WriteHeaderAsync();
 
-                            PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, l, t);
+                            PackageRestoreResult packageRestoreResult = await RestoreMissingPackagesInSolutionAsync(solutionDirectory, packages, logger, token);
                             _auditResultCachingService.LastAuditCheckResult = packageRestoreResult?.AuditCheckResult;
                         },
                         token);

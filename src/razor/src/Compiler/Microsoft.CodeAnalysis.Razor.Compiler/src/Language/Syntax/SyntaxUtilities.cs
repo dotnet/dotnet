@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
@@ -9,39 +9,6 @@ namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal static class SyntaxUtilities
 {
-    public static MarkupTextLiteralSyntax MergeTextLiterals(params ReadOnlySpan<MarkupTextLiteralSyntax?> literals)
-    {
-        SyntaxNode? parent = null;
-        var position = 0;
-        var seenFirstLiteral = false;
-
-        using PooledArrayBuilder<SyntaxToken> builder = [];
-
-        foreach (var literal in literals)
-        {
-            if (literal == null)
-            {
-                continue;
-            }
-
-            if (!seenFirstLiteral)
-            {
-                // Set the parent and position of the merged literal to the value of the first non-null literal.
-                parent = literal.Parent;
-                position = literal.Position;
-                seenFirstLiteral = true;
-            }
-
-            builder.AddRange(literal.LiteralTokens);
-        }
-
-        return (MarkupTextLiteralSyntax)InternalSyntax.SyntaxFactory
-            .MarkupTextLiteral(
-                literalTokens: builder.ToGreenListNode().ToGreenList<InternalSyntax.SyntaxToken>(),
-                chunkGenerator: null)
-            .CreateRed(parent, position);
-    }
-
     internal static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupStartTagChildren(
         MarkupStartTagSyntax node, bool includeEditHandler = false)
     {
@@ -120,6 +87,39 @@ internal static class SyntaxUtilities
         }
     }
 
+    private static MarkupTextLiteralSyntax MergeTextLiterals(params ReadOnlySpan<MarkupTextLiteralSyntax?> literals)
+    {
+        SyntaxNode? parent = null;
+        var position = 0;
+        var seenFirstLiteral = false;
+
+        using PooledArrayBuilder<SyntaxToken> builder = [];
+
+        foreach (var literal in literals)
+        {
+            if (literal == null)
+            {
+                continue;
+            }
+
+            if (!seenFirstLiteral)
+            {
+                // Set the parent and position of the merged literal to the value of the first non-null literal.
+                parent = literal.Parent;
+                position = literal.Position;
+                seenFirstLiteral = true;
+            }
+
+            builder.AddRange(literal.LiteralTokens);
+        }
+
+        return (MarkupTextLiteralSyntax)InternalSyntax.SyntaxFactory
+            .MarkupTextLiteral(
+                literalTokens: builder.ToGreenListNode().ToGreenList<InternalSyntax.SyntaxToken>(),
+                chunkGenerator: null)
+            .CreateRed(parent, position);
+    }
+
     internal static SyntaxList<RazorSyntaxNode> GetRewrittenMarkupEndTagChildren(
         MarkupEndTagSyntax node, bool includeEditHandler = false)
     {
@@ -134,9 +134,9 @@ internal static class SyntaxUtilities
     {
         using PooledArrayBuilder<SyntaxToken> builder = [];
 
-        foreach (var descendantNode in node.DescendantNodes())
+        foreach (var token in node.DescendantTokens())
         {
-            if (descendantNode is SyntaxToken { IsMissing: false } token)
+            if (!token.IsMissing)
             {
                 builder.Add(token);
             }
@@ -153,6 +153,6 @@ internal static class SyntaxUtilities
             markupTransition = markupTransition.WithEditHandler(editHandler);
         }
 
-        return SyntaxList<RazorSyntaxNode>.Create(markupTransition, parent: node);
+        return new(markupTransition);
     }
 }

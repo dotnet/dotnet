@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
+using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
+using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 
@@ -16,13 +18,17 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion.Delegation;
 internal class DelegatedCompletionItemResolver(
     IDocumentContextFactory documentContextFactory,
     IRazorFormattingService formattingService,
+    IDocumentMappingService documentMappingService,
     RazorLSPOptionsMonitor optionsMonitor,
-    IClientConnection clientConnection) : CompletionItemResolver
+    IClientConnection clientConnection,
+    ILoggerFactory loggerFactory) : CompletionItemResolver
 {
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
     private readonly IRazorFormattingService _formattingService = formattingService;
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
     private readonly IClientConnection _clientConnection = clientConnection;
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<DelegatedCompletionItemResolver>();
 
     public override async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem item,
@@ -97,6 +103,6 @@ internal class DelegatedCompletionItemResolver(
 
         var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(resolvedCompletionItem, documentContext, options, _formattingService, cancellationToken).ConfigureAwait(false);
+        return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(resolvedCompletionItem, documentContext, options, _formattingService, _documentMappingService, _logger, cancellationToken).ConfigureAwait(false);
     }
 }

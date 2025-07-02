@@ -104,6 +104,8 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
     private readonly JoinableTaskCollection _updateUIContextJoinableTasks;
 
     private OpenFileTracker? _openFileTracker;
+    private UIContext? _solutionClosingContext;
+
     internal IFileChangeWatcher FileChangeWatcher { get; }
 
     internal ProjectSystemProjectFactory ProjectSystemProjectFactory { get; }
@@ -192,6 +194,11 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
         _isExternalErrorDiagnosticUpdateSourceSubscribedToSolutionBuildEvents = true;
     }
 
+    private void SolutionClosingContext_UIContextChanged(object sender, UIContextChangedEventArgs e)
+    {
+        ProjectSystemProjectFactory.SolutionClosing = e.Activated;
+    }
+
     public async Task InitializeUIAffinitizedServicesAsync(IAsyncServiceProvider asyncServiceProvider)
     {
         // Yield the thread, so the caller can proceed and return immediately.
@@ -204,8 +211,8 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
         // https://devdiv.visualstudio.com/DevDiv/_workitems?id=296981&_a=edit
         var telemetrySession = TelemetryService.DefaultSession;
 
-        var solutionClosingContext = UIContext.FromUIContextGuid(VSConstants.UICONTEXT.SolutionClosing_guid);
-        solutionClosingContext.UIContextChanged += (_, e) => ProjectSystemProjectFactory.SolutionClosing = e.Activated;
+        _solutionClosingContext = UIContext.FromUIContextGuid(VSConstants.UICONTEXT.SolutionClosing_guid);
+        _solutionClosingContext.UIContextChanged += SolutionClosingContext_UIContextChanged;
 
         var openFileTracker = await OpenFileTracker.CreateAsync(this, ProjectSystemProjectFactory, asyncServiceProvider).ConfigureAwait(true);
 
@@ -1016,18 +1023,14 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
         var document = this.CurrentSolution.GetTextDocument(documentId);
         if (document != null)
         {
-            var hierarchy = this.GetHierarchy(documentId.ProjectId);
-            Contract.ThrowIfNull(hierarchy, "Removing files from projects without hierarchies are not supported.");
-
-            var text = document.GetTextSynchronously(CancellationToken.None);
-
-            Contract.ThrowIfNull(document.FilePath, "Removing files from projects that don't have file names are not supported.");
-            var itemId = hierarchy.TryGetItemId(document.FilePath);
-            if (itemId == (uint)VSConstants.VSITEMID.Nil)
+            if (!VisualStudioWorkspaceUtilities.TryGetVsHierarchyAndItemId(
+                    document, out var hierarchy, out var itemId))
             {
                 // it is no longer part of the solution
                 return;
             }
+
+            var text = document.GetTextSynchronously(CancellationToken.None);
 
             var project = (IVsProject3)hierarchy;
             project.RemoveItem(0, itemId, out _);
@@ -1491,6 +1494,11 @@ internal abstract partial class VisualStudioWorkspaceImpl : VisualStudioWorkspac
             {
                 _lazyExternalErrorDiagnosticUpdateSource.Value.Dispose();
             }
+
+            // Make sure we unsubscribe this, or otherwise this will cause a leak in unit tests since the UIContext for SolutionClosing is a static that is shared
+            // across all tests.
+            if (_solutionClosingContext is not null)
+                _solutionClosingContext.UIContextChanged -= SolutionClosingContext_UIContextChanged;
         }
 
         base.Dispose(finalize);

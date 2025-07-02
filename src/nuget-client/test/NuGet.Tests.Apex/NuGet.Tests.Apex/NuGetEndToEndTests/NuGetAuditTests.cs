@@ -22,7 +22,6 @@ namespace NuGet.Tests.Apex.NuGetEndToEndTests
     {
         private const string TestPackageName = "Contoso.A";
         private const string TestPackageVersionV1 = "1.0.0";
-        private const string TestPackageVersionV2 = "2.0.0";
 
         [TestMethod]
         [Timeout(DefaultTimeout)]

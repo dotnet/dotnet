@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -13,8 +13,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -30,11 +32,12 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostCodeActionsEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     IHtmlRequestInvoker requestInvoker,
     ITelemetryReporter telemetryReporter)
-    : AbstractRazorCohostDocumentRequestHandler<VSCodeActionParams, SumType<Command, CodeAction>[]?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<VSCodeActionParams, SumType<Command, CodeAction>[]?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
@@ -62,10 +65,7 @@ internal sealed class CohostCodeActionsEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSCodeActionParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(VSCodeActionParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(context.TextDocument.AssumeNotNull(), request, cancellationToken);
-
-    private async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(TextDocument razorDocument, VSCodeActionParams request, CancellationToken cancellationToken)
+    protected override async Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(VSCodeActionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var correlationId = Guid.NewGuid();
         using var _ = _telemetryReporter.TrackLspRequest(Methods.TextDocumentCodeActionName, LanguageServerConstants.RazorLanguageServerName, TelemetryThresholds.CodeActionRazorTelemetryThreshold, correlationId);
@@ -103,7 +103,7 @@ internal sealed class CohostCodeActionsEndpoint(
 
     private async Task<RazorVSInternalCodeAction[]> GetCSharpCodeActionsAsync(TextDocument razorDocument, VSCodeActionParams request, Guid correlationId, CancellationToken cancellationToken)
     {
-        var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(request.TextDocument.Uri, cancellationToken).ConfigureAwait(false);
+        var generatedDocument = await razorDocument.Project.TryGetCSharpDocumentFromGeneratedDocumentUriAsync(request.TextDocument.DocumentUri.GetRequiredParsedUri(), cancellationToken).ConfigureAwait(false);
         if (generatedDocument is null)
         {
             return [];
@@ -143,6 +143,6 @@ internal sealed class CohostCodeActionsEndpoint(
     internal readonly struct TestAccessor(CohostCodeActionsEndpoint instance)
     {
         public Task<SumType<Command, CodeAction>[]?> HandleRequestAsync(TextDocument razorDocument, VSCodeActionParams request, CancellationToken cancellationToken)
-            => instance.HandleRequestAsync(razorDocument, request, cancellationToken);
+            => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }

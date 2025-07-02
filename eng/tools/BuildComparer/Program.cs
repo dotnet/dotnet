@@ -1,8 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.DotNet.VersionTools.Automation;
-using Microsoft.DotNet.VersionTools.BuildManifest;
+using Microsoft.DotNet.Build.Manifest;
 using NuGet.Packaging;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -32,12 +31,6 @@ public class Program
     {
         Description = "Type of asset to compare. If not specified, all asset types will be compared.",
         Required = false
-    };
-
-    private static Option vmrManifestPath = new Option<string>("-vmrManifestPath")
-    {
-        Description = "Path to the manifest file",
-        Required = true
     };
 
     private static Option vmrAssetBasePath = new Option<string>("-vmrAssetBasePath")
@@ -103,12 +96,12 @@ public class Program
                 "assets",
                 "Compares asset manifests and outputs missing or misclassified assets",
                 typeof(AssetComparer),
-                new List<Option> { clean, assetType, vmrManifestPath, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline }),
+                new List<Option> { clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline }),
             new ComparerCommand(
                 "signing",
                 "Compares signing status between builds and outputs assets with differences.",
                 typeof(SigningComparer),
-                new List<Option> { clean, assetType, vmrManifestPath, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline, exclusions, sdkTaskScript }),
+                new List<Option> { clean, assetType, vmrAssetBasePath, msftAssetBasePath, issuesReport, noIssuesReport, parallel, baseline, exclusions, sdkTaskScript }),
         };
 
         foreach (var command in CreateComparerCommands(subCommands))

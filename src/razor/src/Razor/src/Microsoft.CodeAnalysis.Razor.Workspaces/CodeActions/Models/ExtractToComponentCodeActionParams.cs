@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.Json.Serialization;
 
@@ -8,11 +8,11 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Models;
 internal sealed class ExtractToComponentCodeActionParams
 {
     [JsonPropertyName("start")]
-    public int Start { get; set; }
+    public required int Start { get; set; }
 
     [JsonPropertyName("end")]
-    public int End { get; set; }
+    public required int End { get; set; }
 
     [JsonPropertyName("namespace")]
-    public required string Namespace { get; set; }
+    public string? Namespace { get; set; }
 }

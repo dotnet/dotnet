@@ -1,9 +1,8 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -20,6 +19,7 @@ using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 using RazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode>;
+using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -43,7 +43,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
 
         // Format the razor bits of the file
-        var syntaxTree = changedContext.CodeDocument.GetSyntaxTree();
+        var syntaxTree = changedContext.CodeDocument.GetRequiredSyntaxTree();
         var razorChanges = FormatRazor(changedContext, syntaxTree);
 
         if (razorChanges.Length > 0)
@@ -106,7 +106,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                 // Fortunately for a Html-only section block, the indentation is entirely handled by the Html formatter, and we
                 // just need to push it out one level, because the Html formatter will have pushed it back to position 0.
                 if (children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */] &&
-                    !context.CodeDocument.GetCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
+                    !context.CodeDocument.GetRequiredCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
                 {
                     // The Html formatter will have "collapsed" the @section block contents to 0 indent, so we push it back out
                     // again because we're opinionated about section blocks
@@ -253,10 +253,10 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         //     <div></div>
         // }
         if (node is MarkupBlockSyntax markupBlockNode &&
-            markupBlockNode.Parent is CSharpCodeBlockSyntax cSharpCodeBlock)
+            markupBlockNode.Parent is CSharpCodeBlockSyntax csharpCodeBlock)
         {
-            var openBraceNode = cSharpCodeBlock.Children.PreviousSiblingOrSelf(markupBlockNode);
-            var closeBraceNode = cSharpCodeBlock.Children.NextSiblingOrSelf(markupBlockNode);
+            var openBraceNode = csharpCodeBlock.Children.PreviousSiblingOrSelf(markupBlockNode);
+            var closeBraceNode = csharpCodeBlock.Children.NextSiblingOrSelf(markupBlockNode);
 
             return FormatBlock(context, source, directiveNode: null, openBraceNode, markupBlockNode, closeBraceNode, ref changes);
         }
@@ -324,16 +324,20 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
 
     private static void TryFormatSingleLineDirective(ref PooledArrayBuilder<TextChange> changes, RazorSyntaxNode node)
     {
-        // Looking for single line directives like
+        // Looking for single line directives like...
         //
         // @attribute [Obsolete("old")]
         //
         // The CSharpCodeBlockSyntax covers everything from the end of "attribute" to the end of the line
-        if (IsSingleLineDirective(node, out var children) || node.IsUsingDirective(out children))
+        //
+        // ... or using directives.
+
+        // Shrink any block of C# that only has whitespace down to a single space.
+        // In the @attribute case above this would only be the whitespace between the directive and code
+        // but for @inject its also between the type and the field name.
+
+        if (IsSingleLineDirective(node, out var children))
         {
-            // Shrink any block of C# that only has whitespace down to a single space.
-            // In the @attribute case above this would only be the whitespace between the directive and code
-            // but for @inject its also between the type and the field name.
             foreach (var child in children)
             {
                 if (child.ContainsOnlyWhitespace(includingNewLines: false))
@@ -342,12 +346,23 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                 }
             }
         }
+        else if (node.IsUsingDirective(out var tokens))
+        {
+            foreach (var token in tokens)
+            {
+                if (token.ContainsOnlyWhitespace(includingNewLines: false))
+                {
+                    ShrinkToSingleSpace(token, ref changes);
+                }
+            }
+        }
 
         static bool IsSingleLineDirective(RazorSyntaxNode node, out RazorSyntaxNodeList children)
         {
-            if (node is CSharpCodeBlockSyntax content &&
-                node.Parent?.Parent is RazorDirectiveSyntax directive &&
-                directive.DirectiveDescriptor?.Kind == DirectiveKind.SingleLine)
+            if (node is CSharpCodeBlockSyntax
+                {
+                    Parent.Parent: RazorDirectiveSyntax { DirectiveDescriptor.Kind: DirectiveKind.SingleLine }
+                } content)
             {
                 children = content.Children;
                 return true;
@@ -375,12 +390,12 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
     }
 
-    private static void ShrinkToSingleSpace(RazorSyntaxNode node, ref PooledArrayBuilder<TextChange> changes)
+    private static void ShrinkToSingleSpace(RazorSyntaxNodeOrToken nodeOrToken, ref PooledArrayBuilder<TextChange> changes)
     {
         // If there is anything other than one single space then we replace with one space between directive and brace.
         //
         // ie, "@code     {" will become "@code {"
-        changes.Add(new TextChange(node.Span, " "));
+        changes.Add(new TextChange(nodeOrToken.Span, " "));
     }
 
     private bool FormatBlock(FormattingContext context, RazorSourceDocument source, RazorSyntaxNode? directiveNode, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode, RazorSyntaxNode closeBraceNode, ref PooledArrayBuilder<TextChange> changes)
@@ -403,8 +418,15 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             {
                 var openBraceLineNumber = openBraceNode.GetLinePositionSpan(source).Start.Line;
                 var openBraceLine = source.Text.Lines[openBraceLineNumber];
-                Debug.Assert(openBraceLine.GetFirstNonWhitespacePosition().HasValue);
-                additionalIndentation = source.Text.GetSubTextString(TextSpan.FromBounds(openBraceLine.Start, openBraceLine.GetFirstNonWhitespacePosition().GetValueOrDefault()));
+
+                // The open brace node might actually start with a newline on the line before, which could be blank,
+                // so make sure we find some actual content.
+                while (!openBraceLine.GetFirstNonWhitespacePosition().HasValue)
+                {
+                    openBraceLine = source.Text.Lines[++openBraceLineNumber];
+                }
+
+                additionalIndentation = openBraceLine.GetLeadingWhitespace();
             }
         }
 
@@ -499,10 +521,9 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
 
             static int GetLeadingWhitespaceLength(RazorSyntaxNode node, FormattingContext context)
             {
-                var tokens = node.GetTokens();
                 var whitespaceLength = 0;
 
-                foreach (var token in tokens)
+                foreach (var token in node.DescendantTokens())
                 {
                     if (token.IsWhitespace())
                     {
@@ -531,12 +552,10 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
 
             static int GetTrailingWhitespaceLength(RazorSyntaxNode node, FormattingContext context)
             {
-                var tokens = node.GetTokens();
                 var whitespaceLength = 0;
 
-                for (var i = tokens.Count - 1; i >= 0; i--)
+                foreach (var token in node.DescendantTokens().Reverse())
                 {
-                    var token = tokens[i];
                     if (token.IsWhitespace())
                     {
                         if (token.Kind == SyntaxKind.NewLine)

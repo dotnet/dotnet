@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Handlers;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.CodeActions;
 using Microsoft.CodeAnalysis.Razor.CodeActions.Models;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -33,11 +34,12 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostCodeActionsResolveEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     IClientSettingsManager clientSettingsManager,
     IHtmlRequestInvoker requestInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<CodeAction, CodeAction?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<CodeAction, CodeAction?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
@@ -68,10 +70,7 @@ internal sealed class CohostCodeActionsResolveEndpoint(
         return resolveParams.TextDocument.ToRazorTextDocumentIdentifier();
     }
 
-    protected override Task<CodeAction?> HandleRequestAsync(CodeAction request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(context.TextDocument.AssumeNotNull(), request, cancellationToken);
-
-    private async Task<CodeAction?> HandleRequestAsync(TextDocument razorDocument, CodeAction request, CancellationToken cancellationToken)
+    protected override async Task<CodeAction?> HandleRequestAsync(CodeAction request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var resolveParams = CodeActionResolveService.GetRazorCodeActionResolutionParams(request);
 
@@ -152,6 +151,6 @@ internal sealed class CohostCodeActionsResolveEndpoint(
     internal readonly struct TestAccessor(CohostCodeActionsResolveEndpoint instance)
     {
         public Task<CodeAction?> HandleRequestAsync(TextDocument razorDocument, CodeAction request, CancellationToken cancellationToken)
-            => instance.HandleRequestAsync(razorDocument, request, cancellationToken);
+            => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }

@@ -925,6 +925,18 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
             return Expression.Condition(objectNullCheck, Expression.Constant(null, result.Type), result);
         }
 
+        // Null-compensate any extension method where the 'this' argument is a reference type
+        // (in theory should do this for value types as well, but that's more complicated as the expression type needs to be changed etc.)
+        if (methodCallExpression is { Object: null, Method: { IsStatic: true } staticMethod }
+            && staticMethod.IsDefined(typeof(System.Runtime.CompilerServices.ExtensionAttribute), inherit: false)
+            && arguments is [{ Type.IsValueType: false } instance, ..])
+        {
+            return Expression.Condition(
+                Expression.Equal(instance, Expression.Constant(null, instance.Type)),
+                Expression.Default(methodCallExpression.Type),
+                Expression.Call(methodCallExpression.Method, arguments));
+        }
+
         return methodCallExpression.Update(@object, arguments);
     }
 
@@ -1204,7 +1216,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
 
     [UsedImplicitly]
     private static T GetParameterValue<T>(QueryContext queryContext, string parameterName)
-        => (T)queryContext.ParameterValues[parameterName]!;
+        => (T)queryContext.Parameters[parameterName]!;
 
     private static bool IsConvertedToNullable(Expression result, Expression original)
         => result.Type.IsNullableType()
@@ -1468,7 +1480,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
 
     private static T? ParameterValueExtractor<T>(QueryContext context, string baseParameterName, IProperty property)
     {
-        var baseParameter = context.ParameterValues[baseParameterName];
+        var baseParameter = context.Parameters[baseParameterName];
         return baseParameter == null ? (T?)(object?)null : (T?)property.GetGetter().GetClrValue(baseParameter);
     }
 
@@ -1477,7 +1489,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
         string baseParameterName,
         IProperty property)
     {
-        if (!(context.ParameterValues[baseParameterName] is IEnumerable<TEntity> baseListParameter))
+        if (!(context.Parameters[baseParameterName] is IEnumerable<TEntity> baseListParameter))
         {
             return null;
         }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -120,14 +120,14 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
     {
         if (element is MarkupStartTagSyntax startTag)
         {
-            containingTagName = startTag.Name.GetContent();
+            containingTagName = startTag.Name.Content;
             attributeNames = ExtractAttributeNames(startTag.Attributes);
             return true;
         }
 
         if (element is MarkupTagHelperStartTagSyntax startTagHelper)
         {
-            containingTagName = startTagHelper.Name.GetContent();
+            containingTagName = startTagHelper.Name.Content;
             attributeNames = ExtractAttributeNames(startTagHelper.Attributes);
             return true;
         }
@@ -171,7 +171,7 @@ internal abstract class DirectiveAttributeCompletionItemProviderBase : IRazorCom
             }
         }
 
-        return attributeNames.DrainToImmutable();
+        return attributeNames.ToImmutableAndClear();
     }
 
     private static void SplitAttributeNameIntoParts(

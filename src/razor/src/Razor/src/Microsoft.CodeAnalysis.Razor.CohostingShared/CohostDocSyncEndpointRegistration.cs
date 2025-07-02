@@ -1,8 +1,8 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using System.Composition;
+using System.ComponentModel.Composition;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -11,10 +11,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 /// This class provides dynamic registration for Razor files, for LSP methods where the endpoint implementation
 /// is provided by Roslyn
 /// </summary>
-#pragma warning disable RS0030 // Do not use banned APIs
-[Shared]
 [Export(typeof(IDynamicRegistrationProvider))]
-#pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocSyncEndpointRegistration : IDynamicRegistrationProvider
 {
     public ImmutableArray<Registration> GetRegistrations(VSInternalClientCapabilities clientCapabilities, RazorCohostRequestContext requestContext)

@@ -15,7 +15,6 @@ namespace Test.Utility
     public class TestMSBuildNuGetProjectSystem : IMSBuildProjectSystem
     {
         private const string TestProjectName = "TestProjectName";
-        private const string TestProjectFileName = "Test.csproj";
 
         public Dictionary<string, string> References { get; }
         public HashSet<string> FrameworkReferences { get; }

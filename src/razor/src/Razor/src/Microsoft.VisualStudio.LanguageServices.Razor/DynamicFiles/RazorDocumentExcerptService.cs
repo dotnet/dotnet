@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -57,7 +57,7 @@ internal class RazorDocumentExcerptService(
         // Then we'll classify the spans based on the primary document, since that's the coordinate
         // space that our output mappings use.
         var output = await _document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
-        var mappings = output.GetCSharpDocument().SourceMappings;
+        var mappings = output.GetRequiredCSharpDocument().SourceMappings;
         var classifiedSpans = await ClassifyPreviewAsync(
             excerptSpan,
             generatedDocument,

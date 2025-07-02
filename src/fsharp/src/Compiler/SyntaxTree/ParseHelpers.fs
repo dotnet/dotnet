@@ -85,7 +85,7 @@ type LexerIfdefStack = LexerIfdefStackEntries
 
 /// Specifies how the 'endline' function in the lexer should continue after
 /// it reaches end of line or eof. The options are to continue with 'token' function
-/// or to continue with 'skip' function.
+/// or to continue with 'ifdefSkip' function.
 [<RequireQualifiedAccess>]
 type LexerEndlineContinuation =
     | Token
@@ -677,7 +677,7 @@ let adjustHatPrefixToTyparLookup mFull rightExpr =
 let mkSynTypeTuple (elementTypes: SynTupleTypeSegment list) : SynType =
     let range =
         match elementTypes with
-        | [] -> Range.Zero
+        | [] -> range0
         | head :: tail ->
 
             (head.Range, tail)
@@ -704,10 +704,31 @@ let patFromParseError (e: SynPat) = SynPat.FromParseError(e, e.Range)
 // to form
 // binding1*sep1, binding2*sep2
 let rebindRanges first fields lastSep =
-    let rec run (name, mEquals, value) l acc =
+    let calculateFieldRange (lidwd: SynLongIdent) (mEquals: range option) (value: SynExpr option) =
+        match lidwd with
+        | SynLongIdent([], _, _) ->
+            // Special case used in inherit clause
+            match mEquals, value with
+            | Some mEq, Some expr -> unionRanges mEq expr.Range
+            | Some mEq, None -> mEq
+            | None, Some expr -> expr.Range
+            | None, None -> range0
+        | _ ->
+            // Normal case
+            match value with
+            | Some expr -> unionRanges lidwd.Range expr.Range
+            | None ->
+                match mEquals with
+                | Some mEq -> unionRanges lidwd.Range mEq
+                | None -> lidwd.Range
+
+    let rec run (name, mEquals, value: SynExpr option) l acc =
+        let lidwd, _ = name
+        let fieldRange = calculateFieldRange lidwd mEquals value
+
         match l with
-        | [] -> List.rev (SynExprRecordField(name, mEquals, value, lastSep) :: acc)
-        | (f, m) :: xs -> run f xs (SynExprRecordField(name, mEquals, value, m) :: acc)
+        | [] -> List.rev (SynExprRecordField(name, mEquals, value, fieldRange, lastSep) :: acc)
+        | (f, m) :: xs -> run f xs (SynExprRecordField(name, mEquals, value, fieldRange, m) :: acc)
 
     run first fields []
 
@@ -868,7 +889,7 @@ let mkLocalBindings (mWhole, BindingSetPreAttrs(_, isRec, isUse, declsPreAttrs, 
     let mLetOrUse =
         match decls with
         | SynBinding(trivia = trivia) :: _ -> trivia.LeadingKeyword.Range
-        | _ -> Range.Zero
+        | _ -> range0
 
     SynExpr.LetOrUse(
         isRec,

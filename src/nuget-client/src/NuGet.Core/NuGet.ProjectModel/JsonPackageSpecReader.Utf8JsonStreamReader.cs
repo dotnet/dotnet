@@ -14,7 +14,6 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.LibraryModel;
-using NuGet.Packaging.Core;
 using NuGet.RuntimeModel;
 using NuGet.Versioning;
 
@@ -491,13 +490,6 @@ namespace NuGet.ProjectModel
                     }
                 }
             }
-        }
-
-        private static PackageType CreatePackageType(ref Utf8JsonStreamReader jsonReader)
-        {
-            var name = jsonReader.GetString();
-
-            return new PackageType(name, Packaging.Core.PackageType.EmptyVersion);
         }
 
         private static void ReadCentralPackageVersions(

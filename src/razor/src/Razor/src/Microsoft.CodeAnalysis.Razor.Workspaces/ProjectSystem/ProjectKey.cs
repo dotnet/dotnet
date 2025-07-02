@@ -1,9 +1,10 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -30,10 +31,10 @@ internal readonly record struct ProjectKey : IComparable<ProjectKey>
     }
 
     public bool Equals(ProjectKey other)
-        => FilePathComparer.Instance.Equals(Id, other.Id);
+        => PathUtilities.OSSpecificPathComparer.Equals(Id, other.Id);
 
     public override int GetHashCode()
-        => IsUnknown ? 0 : FilePathComparer.Instance.GetHashCode(Id);
+        => IsUnknown ? 0 : PathUtilities.OSSpecificPathComparer.GetHashCode(Id);
 
     public override string ToString()
         => IsUnknown ? "<Unknown Project>" : Id;
@@ -50,6 +51,6 @@ internal readonly record struct ProjectKey : IComparable<ProjectKey>
             return -1;
         }
 
-        return FilePathComparer.Instance.Compare(Id, other.Id);
+        return PathUtilities.OSSpecificPathComparer.Compare(Id, other.Id);
     }
 }

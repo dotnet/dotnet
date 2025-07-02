@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -125,7 +125,7 @@ internal class OutOfProcTagHelperResolver(
 
         if (checksumsToFetchBuilder.Count > 0)
         {
-            var checksumsToFetch = checksumsToFetchBuilder.DrainToImmutable();
+            var checksumsToFetch = checksumsToFetchBuilder.ToImmutableAndClear();
 
             // There are checksums that we don't have cached tag helpers for, so we need to fetch them from OOP.
             var fetchResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteTagHelperProviderService, FetchTagHelpersResult>(
@@ -186,7 +186,7 @@ internal class OutOfProcTagHelperResolver(
                     }
                 }
 
-                return resultBuilder.DrainToImmutable();
+                return resultBuilder.ToImmutableAndClear();
             }
         }
 

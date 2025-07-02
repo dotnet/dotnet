@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -21,8 +21,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentSpellCheckEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<VSInternalDocumentSpellCheckableParams, VSInternalSpellCheckableRangeReport[]>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
 
@@ -47,10 +48,10 @@ internal sealed class CohostDocumentSpellCheckEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentSpellCheckableParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<VSInternalSpellCheckableRangeReport[]> HandleRequestAsync(VSInternalDocumentSpellCheckableParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(context.TextDocument.AssumeNotNull(), cancellationToken);
+    protected override Task<VSInternalSpellCheckableRangeReport[]?> HandleRequestAsync(VSInternalDocumentSpellCheckableParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+        => HandleRequestAsync(razorDocument, cancellationToken);
 
-    private async Task<VSInternalSpellCheckableRangeReport[]> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+    private async Task<VSInternalSpellCheckableRangeReport[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var data = await _remoteServiceInvoker.TryInvokeAsync<IRemoteSpellCheckService, int[]>(
             razorDocument.Project.Solution,
@@ -71,7 +72,7 @@ internal sealed class CohostDocumentSpellCheckEndpoint(
 
     internal readonly struct TestAccessor(CohostDocumentSpellCheckEndpoint instance)
     {
-        public Task<VSInternalSpellCheckableRangeReport[]> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
+        public Task<VSInternalSpellCheckableRangeReport[]?> HandleRequestAsync(TextDocument razorDocument, CancellationToken cancellationToken)
             => instance.HandleRequestAsync(razorDocument, cancellationToken);
     }
 }

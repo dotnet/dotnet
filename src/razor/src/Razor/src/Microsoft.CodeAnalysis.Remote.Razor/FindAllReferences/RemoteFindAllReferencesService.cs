@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -94,7 +94,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
                 continue;
             }
 
-            var (mappedUri, mappedRange) = await DocumentMappingService.MapToHostDocumentUriAndRangeAsync(context.Snapshot, location.Uri, location.Range.ToLinePositionSpan(), cancellationToken).ConfigureAwait(false);
+            var (mappedUri, mappedRange) = await DocumentMappingService.MapToHostDocumentUriAndRangeAsync(context.Snapshot, location.DocumentUri.GetRequiredParsedUri(), location.Range.ToLinePositionSpan(), cancellationToken).ConfigureAwait(false);
 
             if (referenceItem is not null)
             {
@@ -102,7 +102,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
                 referenceItem.Origin = VSInternalItemOrigin.Exact;
 
                 // If we're going to change the Uri, then also override the file paths
-                if (mappedUri != location.Uri)
+                if (mappedUri != location.DocumentUri.GetRequiredParsedUri())
                 {
                     referenceItem.DisplayPath = mappedUri.AbsolutePath;
                     referenceItem.DocumentName = mappedUri.AbsolutePath;
@@ -112,7 +112,7 @@ internal sealed class RemoteFindAllReferencesService(in ServiceArgs args) : Razo
                 }
             }
 
-            location.Uri = mappedUri;
+            location.DocumentUri = new(mappedUri);
             location.Range = mappedRange.ToRange();
         }
 

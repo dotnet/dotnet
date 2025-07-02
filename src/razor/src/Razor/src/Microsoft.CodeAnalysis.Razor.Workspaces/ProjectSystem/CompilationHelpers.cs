@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading;
@@ -39,7 +39,7 @@ internal static class CompilationHelpers
         return generator.GenerateDesignTime(source, document.FileKind, importSources, tagHelpers, cancellationToken);
     }
 
-    private static async Task<ImmutableArray<RazorSourceDocument>> GetImportSourcesAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
+    internal static async Task<ImmutableArray<RazorSourceDocument>> GetImportSourcesAsync(IDocumentSnapshot document, RazorProjectEngine projectEngine, CancellationToken cancellationToken)
     {
         // We don't use document.FilePath when calling into GetItem(...) because
         // it could be rooted outside of the project root. document.TargetPath should
@@ -74,14 +74,12 @@ internal static class CompilationHelpers
             }
             else if (project.TryGetDocument(importProjectItem.PhysicalPath, out var importDocument))
             {
-                var text = await importDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                var properties = RazorSourceDocumentProperties.Create(importProjectItem.FilePath, importProjectItem.RelativePhysicalPath);
-                var importSource = RazorSourceDocument.Create(text, properties);
+                var importSource = await importDocument.GetSourceAsync(cancellationToken).ConfigureAwait(false);
 
                 importSources.Add(importSource);
             }
         }
 
-        return importSources.DrainToImmutable();
+        return importSources.ToImmutableAndClear();
     }
 }

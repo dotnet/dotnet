@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Frozen;
@@ -178,7 +178,7 @@ internal static class ClassifiedTagHelperTooltipFactory
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
-        return descriptions.DrainToImmutable();
+        return descriptions.ToImmutableAndClear();
     }
 
     private static async Task AddProjectAvailabilityInfoAsync(
@@ -239,7 +239,7 @@ internal static class ClassifiedTagHelperTooltipFactory
             descriptions.Add(new DescriptionClassification(typeRuns, documentationRuns));
         }
 
-        classifications = descriptions.DrainToImmutable();
+        classifications = descriptions.ToImmutableAndClear();
         return true;
     }
 
