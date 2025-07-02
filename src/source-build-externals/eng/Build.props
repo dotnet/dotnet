@@ -1,7 +1,0 @@
-<Project>
-
-  <ItemGroup>
-    <ProjectToBuild Include="$(RepoRoot)src\repos\projects\*.proj" />
-  </ItemGroup>
-
-</Project>

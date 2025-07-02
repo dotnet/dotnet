@@ -89,6 +89,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeEventParameterCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, TagHelperCompletionProvider>();
@@ -155,6 +156,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, PromoteUsingCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, WrapAttributesCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, WrapAttributesCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, SimplifyTagToSelfClosingCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, SimplifyTagToSelfClosingCodeActionResolver>();
 
         // Html Code actions
         services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();
