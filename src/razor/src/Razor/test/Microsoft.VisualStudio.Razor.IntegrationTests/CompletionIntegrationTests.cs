@@ -562,6 +562,31 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
     }
 
+    [IdeFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11565")]
+    public async Task TagHelpers_Present_OnBackspace()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            <PageTitle>Test</PageTitle>
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("<PageTitle", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send("{BACKSPACE}");
+
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
+
+        Assert.NotNull(items);
+        Assert.Contains("PageTitle", items.Items.Select(i => i.DisplayText));
+    }
+
     private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)
     {
         await TestServices.SolutionExplorer.AddFileAsync(
