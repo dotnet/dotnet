@@ -52,7 +52,7 @@
 
   <!-- Exclude repositories marked as runtime components from the build, unless runtime component building is explicitly enabled. -->
   <ItemGroup Condition="'$(DotNetBuildRuntimeComponents)' != 'true'">
-    <RepositoryReference Remove="@(RepositoryReference->WithMetadataValue('BuildRuntimeComponents', 'true'))" />
+    <RepositoryReference Remove="@(RuntimeRepositoryReference)" />
   </ItemGroup>
 
   <!-- Don't build repositories that aren't part of the current build pass. -->

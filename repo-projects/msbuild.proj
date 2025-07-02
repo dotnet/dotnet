@@ -10,10 +10,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="roslyn" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="runtime" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="roslyn" />
+    <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
-    <RepositoryReference Include="source-build-externals" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="source-build-externals" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != '' and '$(EnableIBCOptimization)' == 'true'">

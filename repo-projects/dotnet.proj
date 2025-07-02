@@ -22,17 +22,17 @@
   <ItemGroup Condition="'$(DotNetBuildPass)' == '' or '$(DotNetBuildPass)' == '1'">
     <!-- Short stack builds stop at runtime, not the whole SDK -->
     <RepositoryReference Include="sdk" Condition="'$(ShortStack)' != 'true'" />
-    <RepositoryReference Include="runtime" Condition="'$(ShortStack)' == 'true'" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="runtime" Condition="'$(ShortStack)' == 'true'" />
   </ItemGroup>
 
   <!-- Build the cross-OS DACs. -->
   <ItemGroup Condition="'$(BuildWorkloads)' != 'true' and '$(DotNetBuildPass)' == '2' and '$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x86'">
-    <RepositoryReference Include="runtime" DotNetBuildPass="2" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="runtime" DotNetBuildPass="2" />
   </ItemGroup>
 
   <!-- Build the ASP.NET Core hosting bundle and VS components. -->
   <ItemGroup Condition="'$(BuildWorkloads)' != 'true' and '$(DotNetBuildPass)' == '2' and '$(TargetOS)' == 'windows' and '$(TargetArchitecture)' == 'x64'">
-    <RepositoryReference Include="aspnetcore" DotNetBuildPass="2" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="aspnetcore" DotNetBuildPass="2" />
     <RepositoryReference Include="sdk" DotNetBuildPass="2" />
   </ItemGroup>
 

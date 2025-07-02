@@ -227,4 +227,24 @@
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
+  <!-- Runtime repository references. These repositories are excluded from the build when we're not building runtime components. -->
+  <ItemGroup>
+    <RuntimeRepositoryReference Include="aspire" />
+    <RuntimeRepositoryReference Include="aspnetcore" />
+    <RuntimeRepositoryReference Include="cecil" />
+    <RuntimeRepositoryReference Include="command-line-api" />
+    <RuntimeRepositoryReference Include="deployment-tools" />
+    <RuntimeRepositoryReference Include="diagnostics" />
+    <RuntimeRepositoryReference Include="efcore" />
+    <RuntimeRepositoryReference Include="emsdk" />
+    <RuntimeRepositoryReference Include="runtime" />
+    <RuntimeRepositoryReference Include="source-build-externals" />
+    <RuntimeRepositoryReference Include="sourcelink" />
+    <RuntimeRepositoryReference Include="symreader" />
+    <RuntimeRepositoryReference Include="windowsdesktop" />
+    <RuntimeRepositoryReference Include="winforms" />
+    <RuntimeRepositoryReference Include="wpf" />
+    <RuntimeRepositoryReference Include="xdt" />
+  </ItemGroup>
+
 </Project>

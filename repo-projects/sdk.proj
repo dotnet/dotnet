@@ -29,12 +29,12 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="aspire" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="aspnetcore" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="command-line-api" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="deployment-tools" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="aspire" />
+    <RepositoryReference Include="aspnetcore" />
+    <RepositoryReference Include="command-line-api" />
+    <RepositoryReference Include="deployment-tools" />
     <!-- we're focusing on x64 and arm64 for the webassembly build tools -->
-    <RepositoryReference Include="emsdk" BuildRuntimeComponents="true" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
+    <RepositoryReference Include="emsdk" Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(PgoInstrument)' != 'true' and ('$(TargetArchitecture)' == 'x64' or '$(TargetArchitecture)' == 'arm64')" />
     <RepositoryReference Include="fsharp" />
     <RepositoryReference Include="msbuild" />
     <!-- nuget-client is not compliant with Unified Build: https://github.com/dotnet/source-build/issues/4974 -->
@@ -42,17 +42,17 @@
     <RepositoryReference Include="razor" />
     <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="roslyn" />
-    <RepositoryReference Include="runtime" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="sourcelink" BuildRuntimeComponents="true" />
-    <RepositoryReference Include="symreader" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="runtime" />
+    <RepositoryReference Include="sourcelink" />
+    <RepositoryReference Include="symreader" />
     <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
-    <RepositoryReference Include="windowsdesktop" BuildRuntimeComponents="true" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
-    <RepositoryReference Include="xdt" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
+    <RepositoryReference Include="xdt" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="source-build-externals" BuildRuntimeComponents="true" />
+    <RepositoryReference Include="source-build-externals" />
     <RepositoryReference Include="source-build-reference-packages" />
   </ItemGroup>
 
