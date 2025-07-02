@@ -217,7 +217,10 @@ jobs:
   - name: cleanArgument
     # Don't clean while building on Windows as the pool's disk space is sufficient.
     ${{ if eq(parameters.targetOS, 'windows') }}:
-      value: ''
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        value: ''
+      ${{ else }}:
+        value: $(commandPrefix)cleanWhileBuilding
     ${{ else }}:
       value: $(commandPrefix)clean-while-building
 
