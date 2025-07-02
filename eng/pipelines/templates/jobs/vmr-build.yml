@@ -506,7 +506,7 @@ jobs:
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
           else
-            customPreBuildArgs="$customPreBuildArgs sudo unshare -n"
+            customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
           fi
 
           if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then
