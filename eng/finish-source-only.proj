@@ -43,6 +43,7 @@
 
       <SourceBuiltPackageFile Include="$(ArtifactsPackagesDir)**/*.nupkg" />
       <SourceBuiltPackageFile Include="$(PreviouslySourceBuiltPackagesPath)*.nupkg" />
+      <SourceBuiltPackageFile Include="$(PreviouslySourceBuiltSharedComponentsPackagesPath)*.nupkg" />
       <ReferencePackageFile Include="$(ReferencePackagesDir)**/*.nupkg" />
 
       <!-- Check all RIDs from all restored Microsoft.NETCore.Platforms packages. -->
