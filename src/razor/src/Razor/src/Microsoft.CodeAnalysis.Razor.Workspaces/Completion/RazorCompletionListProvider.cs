@@ -263,12 +263,6 @@ internal class RazorCompletionListProvider(
             return true;
         }
 
-        if (vsCompletionContext.InvokeKind == VSInternalCompletionInvokeKind.Deletion)
-        {
-            // We do not support providing completions on delete.
-            return false;
-        }
-
         return true;
     }
 }

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Xunit;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost.Formatting;
 
@@ -21,7 +21,7 @@ public class CSharpSyntaxFormattingOptionsTest_Generator
     /// and you'll have to manually adjust it, which is why regenerating the tests is a manual process.
     /// Or make the test generation much smarter I guess :)
     /// </remarks>
-    [ManualRunOnlyFact]
+    [Fact(Skip = "This test needs to be run manually. Just remove this skip message, and run it if you want")]
     public void GenerateTests()
     {
         //lang=C#-test
