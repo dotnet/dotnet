@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.CodeActions.Razor;
 
 internal class SimplifyTagToSelfClosingCodeActionResolver : IRazorCodeActionResolver
 {
-    public string Action => LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction;
+    public string Action => LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing;
 
     public async Task<WorkspaceEdit?> ResolveAsync(DocumentContext documentContext, JsonElement data, RazorFormattingOptions options, CancellationToken cancellationToken)
     {

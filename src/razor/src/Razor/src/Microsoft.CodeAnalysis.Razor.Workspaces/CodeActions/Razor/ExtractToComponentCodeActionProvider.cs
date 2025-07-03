@@ -74,7 +74,7 @@ internal class ExtractToComponentCodeActionProvider() : IRazorCodeActionProvider
         var resolutionParams = new RazorCodeActionResolutionParams()
         {
             TextDocument = context.Request.TextDocument,
-            Action = LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
+            Action = LanguageServerConstants.CodeActions.ExtractToNewComponent,
             Language = RazorLanguageKind.Razor,
             DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = actionParams,

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -234,6 +235,9 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
 
         public string ReadFile(string filePath)
             => files.AssumeNotNull().Single(f => FilePathNormalizingComparer.Instance.Equals(f.filePath, filePath)).contents;
+
+        public Stream OpenReadStream(string filePath)
+            => new MemoryStream(Encoding.UTF8.GetBytes(ReadFile(filePath)));
 
         public IEnumerable<string> GetDirectories(string workspaceDirectory)
             => throw new NotImplementedException();

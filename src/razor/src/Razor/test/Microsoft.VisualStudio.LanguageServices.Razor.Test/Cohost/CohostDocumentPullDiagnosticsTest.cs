@@ -110,6 +110,60 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
     }
 
     [Fact]
+    public Task FilterRazorCommentsFromCss()
+    {
+        TestCode input = """
+            <div>
+
+            <style>
+                @* This is a Razor comment *@
+            </style>
+
+            </div>
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@*"), 1))
+                    }
+                ]
+            }]);
+    }
+
+    [Fact]
+    public Task FilterRazorCommentsFromCss_Inside()
+    {
+        TestCode input = """
+            <div>
+
+            <style>
+                @* This is a Razor comment *@
+            </style>
+
+            </div>
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("Ra"), 1))
+                    }
+                ]
+            }]);
+    }
+
+    [Fact]
     public Task CombinedAndNestedDiagnostics()
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
@@ -169,6 +223,15 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 {
                     Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken)
                 }];
+
+        Assert.NotNull(result);
+
+        if (result is [{ Diagnostics: null }])
+        {
+            // No diagnostics found, make sure none were expected
+            AssertEx.Equal(input.OriginalInput, input.Text);
+            return;
+        }
 
         var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
             new[] {

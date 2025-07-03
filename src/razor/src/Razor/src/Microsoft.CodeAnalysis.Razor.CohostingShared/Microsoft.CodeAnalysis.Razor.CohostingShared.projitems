@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostRangeFormattingEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertTriggerCharacterProviders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RazorAnalyzerAssemblyRedirector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Rename\CohostRenameEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignatureHelp\CohostSignatureHelpEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FoldingRange\CohostFoldingRangeEndpoint.cs" />
