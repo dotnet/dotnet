@@ -85,7 +85,7 @@
     <SystemFormatsAsn1Version>9.0.0-rc.2.24473.5</SystemFormatsAsn1Version>
     <!-- sdk -->
     <MicrosoftNETSdkWorkloadManifestReaderVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderVersion>
-    <!-- source-build-externals -->
+    <!-- source-build-reference-packages -->
     <!-- The version is overridden by the VMR to use the version from the previous (n-1) build of Arcade. -->
     <MicrosoftApplicationInsightsVersion>2.23.0</MicrosoftApplicationInsightsVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
