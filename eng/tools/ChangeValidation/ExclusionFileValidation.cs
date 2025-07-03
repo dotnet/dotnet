@@ -6,6 +6,9 @@ using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
 using static ValidateVmrChanges.Validate;
 
 namespace ValidateVmrChanges;
@@ -78,14 +81,34 @@ internal class ExclusionFileValidation
 
         if (string.IsNullOrEmpty(fileContents))
         {
-            return new List<string>();
+            Console.WriteLine($"Error: Could not retrieve {SourceMappingsPath} from branch `{branchName}`. The file may not exist or is empty.");
+            return [];
         }
-        var jsonObject = JObject.Parse(fileContents);
-        var mappings = jsonObject["mappings"]?.ToObject<List<string>>() ?? new List<string>();
+
+        JArray mappings = null;
+        try
+        {
+            var jsonRoot = JObject.Parse(fileContents);
+
+            if (jsonRoot.TryGetValue("mappings", out JToken mappingsToken) && mappingsToken.Type == JTokenType.Array)
+            {
+                mappings = (JArray)mappingsToken;
+            }
+            else
+            {
+                Console.WriteLine($"Cannot find mappings in {SourceMappingsPath}");
+                return [];
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error parsing {SourceMappingsPath}");
+            return [];
+        }
 
         List<string> allExcludes = new List<string>();
 
-        foreach (string exclusion in mappings)
+        foreach (var mapping in mappings)
         {
             JToken excludeToken = mapping["exclude"];
             if (excludeToken != null && excludeToken.Type == JTokenType.Array)
@@ -96,10 +119,10 @@ internal class ExclusionFileValidation
 
         foreach (string exclude in allExcludes)
         {
-            Console.WriteLine($"Found exclusion rule: {exclude}")
+            Console.WriteLine($"Found exclusion rule: {exclude}");
         }
 
-        return globPatterns;
+        return allExcludes;
     }
     
     private static HashSet<string> FilesMatchingGlobs(List<string> globPatterns)
