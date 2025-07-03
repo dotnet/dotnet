@@ -102,12 +102,12 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
 
-        var endpoint = new CohostFindAllReferencesEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostFindAllReferencesEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         var results = await endpoint.GetTestAccessor().HandleRequestAsync(document, position, DisposalToken);

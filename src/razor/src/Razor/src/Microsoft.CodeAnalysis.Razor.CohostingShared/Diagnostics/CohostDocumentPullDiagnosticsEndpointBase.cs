@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -20,12 +20,13 @@ using ExternalHandlers = Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost.Hand
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 internal abstract class CohostDocumentPullDiagnosticsEndpointBase<TRequest, TResponse>(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlRequestInvoker requestInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : AbstractRazorCohostDocumentRequestHandler<TRequest, TResponse>
+    : AbstractCohostDocumentEndpoint<TRequest, TResponse>(incompatibleProjectService)
     where TRequest : notnull
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
