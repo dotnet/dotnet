@@ -32,7 +32,7 @@ internal class SubmoduleValidation
         }
         else
         {
-            AddProcessingMessage(messages, Info("Submodule validation success: no changes detected in submodules."));
+            AddProcessingMessage(messages, Sucecss("Submodule validation success: no changes detected in submodules."));
         }
 
         return messages;

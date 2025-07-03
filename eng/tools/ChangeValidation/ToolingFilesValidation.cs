@@ -46,7 +46,7 @@ internal class ToolingFilesValidation
         }
         else
         {
-            AddProcessingMessage(messages, Info("Tooling files validation success: no changed detected in tooling files."));
+            AddProcessingMessage(messages, Sucecss("Tooling files validation success: no changed detected in tooling files."));
         }
         return messages;
     }

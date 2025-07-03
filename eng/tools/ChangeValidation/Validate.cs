@@ -9,6 +9,7 @@ namespace ValidateVmrChanges;
 
 internal static class Validate
 {
+    internal static ProcessingMessage Sucecss(string message) => new ProcessingMessage(message, WarningLevel.Success);
     internal static ProcessingMessage Info(string message) => new ProcessingMessage(message, WarningLevel.None);
     internal static ProcessingMessage Warn(string message) => new ProcessingMessage(message, WarningLevel.Warning);
     internal static ProcessingMessage Error(string message) => new ProcessingMessage(message, WarningLevel.Error);
@@ -158,6 +159,14 @@ internal static class Validate
         {
             Console.WriteLine($"##vso[task.logissue type=warning]{processingMessage.Message}");
         }
+        else if (processingMessage.WarningLevel == WarningLevel.Success)
+        {
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(processingMessage.Message);
+            Console.ResetColor();
+
+        }
         else
         {
             Console.WriteLine(processingMessage.Message);
@@ -181,6 +190,7 @@ internal class ProcessingMessage
 internal enum WarningLevel
 {
     None,
+    Success,
     Warning,
     Error
 }
