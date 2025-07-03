@@ -22,13 +22,14 @@ internal class ExclusionFileValidation
         List<ProcessingMessage> messages = [];
 
         var originalFileExclusionRules = GetExclusionPatternsFromBranch(targetBranch);
-        var newFileExclusionRules = GetExclusionPatternsFromBranch("HEAD");
 
         if (originalFileExclusionRules == null || !originalFileExclusionRules.Any())
         {
             AddProcessingMessage(messages, Error($"No exclusion rules found in `{SourceMappingsPath}` on the target branch, or the file does not exist."));
             return messages;
         }
+
+        var newFileExclusionRules = GetExclusionPatternsFromBranch("HEAD");
 
         if (newFileExclusionRules == null || !newFileExclusionRules.Any())
         {
@@ -117,7 +118,6 @@ internal class ExclusionFileValidation
 
         List<string> allExcludes = new List<string>();
 
-
         foreach (var mapping in mappings.OfType<JObject>())
         {
             var excludes = mapping["exclude"] as JArray;
@@ -126,8 +126,6 @@ internal class ExclusionFileValidation
                 allExcludes.AddRange(excludes.Values<string>().Where(x => x != null)!);
             }
         }
-
-
 
         foreach (string exclude in allExcludes)
         {
