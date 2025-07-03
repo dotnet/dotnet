@@ -17,10 +17,8 @@ internal class SubmoduleValidation
         List<ProcessingMessage> messages = [];
 
         var submoduleChanges = fileNames
-                            .Where(f => f.Equals(".gitmodules", StringComparison.OrdinalIgnoreCase) ||
-                                        f.Contains("submodules/") ||
-                                        f.EndsWith("/.gitmodules"))
-                            .ToList();
+            .Where(f => f.Equals(".gitmodules", StringComparison.OrdinalIgnoreCase) || f.Contains("submodules/") || f.EndsWith("/.gitmodules"))
+            .ToList();
 
         if (submoduleChanges.Any())
         {
@@ -34,7 +32,7 @@ internal class SubmoduleValidation
         }
         else
         {
-            Console.WriteLine("Submodule validation success: no changes detected in submodules.");
+            AddProcessingMessage(messages, Info("Submodule validation success: no changes detected in submodules."));
         }
 
         return messages;

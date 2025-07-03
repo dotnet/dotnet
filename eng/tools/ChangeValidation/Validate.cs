@@ -9,6 +9,7 @@ namespace ValidateVmrChanges;
 
 internal static class Validate
 {
+    internal static ProcessingMessage Info(string message) => new ProcessingMessage(message, WarningLevel.None);
     internal static ProcessingMessage Warn(string message) => new ProcessingMessage(message, WarningLevel.Warning);
     internal static ProcessingMessage Error(string message) => new ProcessingMessage(message, WarningLevel.Error);
 

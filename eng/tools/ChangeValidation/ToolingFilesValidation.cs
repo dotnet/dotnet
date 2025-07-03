@@ -11,10 +11,10 @@ internal class ToolingFilesValidation
 {
     private static readonly string[] ToolingFilePatterns = new[]
     {
-        "^eng/Version\.Details\.xml$",
-        "^src/source-manifest\.json$",
-        "^eng/Version\.props$",
-        "^global\.json$",
+        "^eng/Version\\.Details\\.xml$",
+        "^src/source-manifest\\.json$",
+        "^eng/Version\\.props$",
+        "^global\\.json$",
         "^eng/common/.*"
     };
 
@@ -46,7 +46,7 @@ internal class ToolingFilesValidation
         }
         else
         {
-            Console.WriteLine("Success: No changes detected in Maestro files.");
+            AddProcessingMessage(messages, Info("Tooling files validation success: no changed detected in tooling files."));
         }
         return messages;
     }

@@ -80,9 +80,25 @@ internal class ExclusionFileValidation
         {
             return new List<string>();
         }
-        var jsonObject = Newtonsoft.Json.Linq.JObject.Parse(fileContents);
-        var globPatterns = jsonObject["exclusionRules"]?.ToObject<List<string>>() ?? new List<string>();
-        
+        var jsonObject = JObject.Parse(fileContents);
+        var mappings = jsonObject["mappings"]?.ToObject<List<string>>() ?? new List<string>();
+
+        List<string> allExcludes = new List<string>();
+
+        foreach (string exclusion in mappings)
+        {
+            JToken excludeToken = mapping["exclude"];
+            if (excludeToken != null && excludeToken.Type == JTokenType.Array)
+            {
+                allExcludes.AddRange(excludeToken.ToObject<List<string>>());
+            }
+        }
+
+        foreach (string exclude in allExcludes)
+        {
+            Console.WriteLine($"Found exclusion rule: {exclude}")
+        }
+
         return globPatterns;
     }
     
