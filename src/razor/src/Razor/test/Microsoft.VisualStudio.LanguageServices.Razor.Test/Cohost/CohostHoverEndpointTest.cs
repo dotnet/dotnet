@@ -205,12 +205,12 @@ public class CohostHoverEndpointTest(ITestOutputHelper testOutputHelper) : Cohos
         var linePosition = inputText.GetLinePosition(input.Position);
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentHoverName, htmlResponse)]);
-        var endpoint = new CohostHoverEndpoint(RemoteServiceInvoker, requestInvoker);
+        var endpoint = new CohostHoverEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = LspFactory.CreatePosition(linePosition),
-            TextDocument = new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);

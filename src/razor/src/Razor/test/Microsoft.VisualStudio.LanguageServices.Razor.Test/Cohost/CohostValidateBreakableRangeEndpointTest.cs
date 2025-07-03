@@ -113,7 +113,7 @@ public class CohostValidateBreakableRangeEndpointTest(ITestOutputHelper testOutp
 
         var span = inputText.GetLinePositionSpan(breakpointSpans.Single());
 
-        var endpoint = new CohostValidateBreakableRangeEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostValidateBreakableRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, span, DisposalToken);
 
