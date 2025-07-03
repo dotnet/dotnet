@@ -18,11 +18,11 @@
     <IsPackable>true</IsPackable>
     <PackageId>Microsoft.DotNet.HotReload.Agent.Host</PackageId>
     <PackageDescription>Package containing Hot Reload agent host.</PackageDescription>
+    <DisableTransitiveFrameworkReferenceDownloads Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</DisableTransitiveFrameworkReferenceDownloads>
   </PropertyGroup>
 
+  <!-- Reference 6.0.0 targeting packs in Source Build -->
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(TargetFramework)' == 'net6.0'">
-    <!-- Reference 6.0.0 targeting packs in Source Build -->
-    <FrameworkReference Update="Microsoft.AspNetCore.App" TargetingPackVersion="6.0.0" />
     <FrameworkReference Update="Microsoft.NETCore.App" TargetingPackVersion="6.0.0" />
   </ItemGroup>
 
