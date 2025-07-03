@@ -77,6 +77,7 @@ internal class ExclusionFileValidation
 
     private static List<string> GetExclusionPatternsFromBranch(string branchName)
     {
+        Console.WriteLine($"Retrieving {SourceMappingsPath} from branch `{branchName}`...");
         var fileContents = RunGitCommand($"show {branchName}:src/source-mappings.json");
 
         if (string.IsNullOrEmpty(fileContents))
@@ -85,12 +86,12 @@ internal class ExclusionFileValidation
             return [];
         }
 
-        JArray mappings = null;
+        JArray? mappings = null;
         try
         {
             var jsonRoot = JObject.Parse(fileContents);
 
-            if (jsonRoot.TryGetValue("mappings", out JToken mappingsToken) && mappingsToken.Type == JTokenType.Array)
+            if (jsonRoot.TryGetValue("mappings", out JToken? mappingsToken) && mappingsToken?.Type == JTokenType.Array)
             {
                 mappings = (JArray)mappingsToken;
             }
@@ -100,7 +101,7 @@ internal class ExclusionFileValidation
                 return [];
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Console.WriteLine($"Error parsing {SourceMappingsPath}");
             return [];
@@ -108,14 +109,17 @@ internal class ExclusionFileValidation
 
         List<string> allExcludes = new List<string>();
 
-        foreach (var mapping in mappings)
+
+        foreach (var mapping in mappings.OfType<JObject>())
         {
-            JToken excludeToken = mapping["exclude"];
-            if (excludeToken != null && excludeToken.Type == JTokenType.Array)
+            var excludes = mapping["exclude"] as JArray;
+            if (excludes != null)
             {
-                allExcludes.AddRange(excludeToken.ToObject<List<string>>());
+                allExcludes.AddRange(excludes.Values<string>().Where(x => x != null)!);
             }
         }
+
+
 
         foreach (string exclude in allExcludes)
         {

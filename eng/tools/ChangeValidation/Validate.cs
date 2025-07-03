@@ -160,7 +160,7 @@ internal static class Validate
         }
         else
         {
-            Console.WriteLine($"##vso[task.logissue type=message]{processingMessage.Message}");
+            Console.WriteLine(processingMessage.Message);
         }
         processingMessages.Add(processingMessage);
     }
