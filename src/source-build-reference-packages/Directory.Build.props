@@ -16,6 +16,9 @@
     <CustomizationsSourceFile>$(CustomizationsPrefix).cs</CustomizationsSourceFile>
 
     <ArtifactsReferenceOnlyPackagesDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsPackagesDir)','ReferenceOnly'))</ArtifactsReferenceOnlyPackagesDir>
+    <ManualNuspecTargets>$(RepositoryEngineeringDir)ManualNuspec.targets</ManualNuspecTargets>
+
+    <LogVerbosity Condition="'$(LogVerbosity)' == ''">minimal</LogVerbosity>
 
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>

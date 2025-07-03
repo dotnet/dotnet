@@ -2,13 +2,6 @@
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove(Directory.Build.targets, $(MSBuildThisFileDirectory)..))" />
 
-  <PropertyGroup>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.config')">$(ProjectDirectory)NuGet.config</NuGetConfigFile>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)NuGet.Config')">$(ProjectDirectory)NuGet.Config</NuGetConfigFile>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.config')">$(ProjectDirectory)src\NuGet.config</NuGetConfigFile>
-    <NuGetConfigFile Condition="'$(NuGetConfigFile)' == '' and Exists('$(ProjectDirectory)src\NuGet.Config')">$(ProjectDirectory)src\NuGet.Config</NuGetConfigFile>
-  </PropertyGroup>
-
   <Target Name="BuildRepoReferences" Condition="'@(RepositoryReference)' != '' and '$(SkipRepoReferences)' != 'true'">
     <Message Importance="High" Text="Building dependencies [@(RepositoryReference)] needed by '$(InnerRepoName)'." />
 
@@ -54,42 +47,11 @@
   </Target>
 
   <!--
-    If a NuGet.config exists in the project, delete it, so the dotnet/source-build nuget.config is
-    found instead. This lets the subrepo use the incoming intermediate nupkg contents and avoids the
-    need to do subrepo-specific fixups like removing internet sources.
-  -->
-  <Target Name="RemoveNuGetConfig"
-          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != ''">
-    <ItemGroup>
-      <NuGetConfigFiles Include="$(NuGetConfigFile)" />
-    </ItemGroup>
-
-    <Delete Files="@(NuGetConfigFiles)" />
-  </Target>
-
-  <!--
-    Add a new nuget config file at the root of the component that includes sources for its dependencies'
-    outputs.
+    Create a new nuget config file that includes sources for its source built dependencies.
   -->
   <UsingTask TaskName="AddSourceToNuGetConfig" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="AddNewNuGetConfigForDependencies"
-          Condition="'@(RepositoryReference)' != ''"
-          DependsOnTargets="ResolveProjectReferences">
-    <PropertyGroup>
-      <NewNuGetConfigFile>$(ProjectDirectory)NuGet.config</NewNuGetConfigFile>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <_DependentProjectSources Include="@(RepositoryReference -> '%(Identity).proj')">
-        <InnerRepoName>%(Identity)</InnerRepoName>
-      </_DependentProjectSources>
-    </ItemGroup>
-
-    <MSBuild Projects="@(_DependentProjectSources)"
-          Targets="GetPackagesOutput">
-      <Output TaskParameter="TargetOutputs" ItemName="_DependencyProjectsPackagesOutput" />
-    </MSBuild>
-
+  <Target Name="CreateNuGetConfig"
+          DependsOnTargets="PrepareInnerClone;ResolveProjectReferences">
     <PropertyGroup>
       <NewNuGetConfigContent>
 <![CDATA[
@@ -101,25 +63,17 @@
 ]]>
       </NewNuGetConfigContent>
     </PropertyGroup>
-    <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NewNuGetConfigFile)" />
+    <WriteLinesToFile Lines="$(NewNuGetConfigContent)" File="$(NuGetConfigFile)" Overwrite="true" />
 
-    <AddSourceToNuGetConfig NuGetConfigFile="$(NewNuGetConfigFile)"
-                            SourceName="%(_DependencyProjectsPackagesOutput.InnerRepoName)"
-                            SourcePath="%(_DependencyProjectsPackagesOutput.Identity)" />
-  </Target>
+    <!-- Add the SBRP artifact packages as a nuget feed.
+         This is how other SBRP references are picked up (e.g. targeting pack). -->
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
+                            SourceName="SBRP"
+                            SourcePath="$(ArtifactsPackagesDir)" />
 
-  <!-- Root target for nuget updates. Removes the existing nuget config files, then adds a new one for dependencies
-       if necessary. -->
-  <Target Name="UpdateNuGetConfig"
-          DependsOnTargets="PrepareInnerClone;RemoveNuGetConfig;AddNewNuGetConfigForDependencies"
-          Condition="'$(NuGetConfigFile)' != '' OR '@(NuGetConfigFiles)' != '' OR '@(RepositoryReference)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
-
-    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
-    <Touch Files="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete" AlwaysCreate="true">
-      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
-    </Touch>
+    <ItemGroup>
+      <EmbedInBinlog Include="$(NuGetConfigFile)" />
+    </ItemGroup>
   </Target>
 
   <UsingTask TaskName="UpdateJson" AssemblyFile="$(XPlatSourceBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
@@ -203,7 +157,7 @@
             BuildRepoReferences;
             PrepareInnerClone;
             ApplyPatches;
-            UpdateNuGetConfig;
+            CreateNuGetConfig;
             UpdateGlobalJsonVersions;
             RepoBuild;
             CopyPackagesOutput" />

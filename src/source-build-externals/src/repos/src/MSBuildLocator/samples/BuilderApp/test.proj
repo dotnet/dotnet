@@ -1,5 +1,0 @@
-﻿<Project>
-  <Target Name="Build">
-    <Error Condition="!$(MSBuildExtensionsPath.StartsWith('$(ProgramFiles(x86))'))" Text="Failure!!"/>
-  </Target>
-</Project>

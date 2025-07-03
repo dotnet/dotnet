@@ -440,6 +440,34 @@ internal readonly partial struct SyntaxList<TNode>(SyntaxNode? node) : IReadOnly
         return Node != null;
     }
 
+    public bool Any(Func<TNode, bool> predicate)
+    {
+        foreach (var node in this)
+        {
+            if (predicate(node))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public SyntaxList<TNode> Where(Func<TNode, bool> predicate)
+    {
+        using var builder = new PooledArrayBuilder<TNode>(Count);
+
+        foreach (var node in this)
+        {
+            if (predicate(node))
+            {
+                builder.Add(node);
+            }
+        }
+
+        return builder.ToList();
+    }
+
     // for debugging
 #pragma warning disable IDE0051 // Remove unused private members
     private TNode[] Nodes => [.. this];

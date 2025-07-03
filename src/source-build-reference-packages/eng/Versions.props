@@ -7,17 +7,30 @@
     <!-- Opt-out repo features -->
     <UsingToolXliff>false</UsingToolXliff>
   </PropertyGroup>
+  <!-- External package versions -->
   <PropertyGroup>
-    <HumanizerCoreVersion>2.14.1</HumanizerCoreVersion>
+    <AbstractionsXunitReleaseVersion>2.0.3</AbstractionsXunitReleaseVersion>
+    <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
+    <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
+    <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
+    <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
+    <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
+    <SpectreConsoleReleaseVersion>0.48.0</SpectreConsoleReleaseVersion>
+    <XunitReleaseVersion>2.9.2</XunitReleaseVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- External package dependencies -->
+    <HumanizerCoreVersion>$(HumanizerReleaseVersion)</HumanizerCoreVersion>
     <!-- MSBuild dependencies -->
-    <MicrosoftBuildUtilitiesCoreVersion>17.8.3</MicrosoftBuildUtilitiesCoreVersion>
+    <MicrosoftBuildVersion>17.15.0-preview-25351-101</MicrosoftBuildVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>17.15.0-preview-25351-101</MicrosoftBuildUtilitiesCoreVersion>
     <!-- NuGet dependencies -->
     <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
     <!-- Runtime dependencies -->
-    <MicrosoftNETCoreILAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILAsmVersion>
-    <MicrosoftNETCoreILDAsmVersion>6.0.0-preview.6.21352.12</MicrosoftNETCoreILDAsmVersion>
+    <MicrosoftNETCoreILAsmVersion>10.0.0-preview.7.25351.101</MicrosoftNETCoreILAsmVersion>
+    <MicrosoftNETCoreILDAsmVersion>10.0.0-preview.7.25351.101</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25318.105</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25351.101</MicrosoftDotNetGenAPITaskPackageVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>
