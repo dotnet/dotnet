@@ -143,6 +143,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<ICSharpCodeActionResolver, UnformattedRemappingCSharpCodeActionResolver>();
 
         // Razor Code actions
+        services.AddSingleton<IRazorCodeActionProvider, ExtractToCssCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, ExtractToCssCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ExtractToCodeBehindCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, ExtractToCodeBehindCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ExtractToComponentCodeActionProvider>();

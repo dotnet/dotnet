@@ -37,6 +37,10 @@ internal sealed class OOPCodeActionResolveService(
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 [method: ImportingConstructor]
+internal sealed class OOPExtractToCssCodeActionProvider(ILoggerFactory loggerFactory) : ExtractToCssCodeActionProvider(loggerFactory);
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+[method: ImportingConstructor]
 internal sealed class OOPExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory) : ExtractToCodeBehindCodeActionProvider(loggerFactory);
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
@@ -70,6 +74,11 @@ internal sealed class OOPDefaultCSharpCodeActionProvider(LanguageServerFeatureOp
 internal sealed class OOPDefaultHtmlCodeActionProvider(IEditMappingService editMappingService) : HtmlCodeActionProvider(editMappingService);
 
 // Code Action Resolvers
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+[method: ImportingConstructor]
+internal sealed class OOPExtractToCssCodeActionResolver(LanguageServerFeatureOptions languageServerFeatureOptions, IFileSystem fileSystem)
+    : ExtractToCssCodeActionResolver(languageServerFeatureOptions, fileSystem);
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]

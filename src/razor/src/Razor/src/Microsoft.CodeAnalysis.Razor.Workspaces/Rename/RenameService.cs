@@ -136,18 +136,9 @@ internal class RenameService(
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
         => new RenameFile
         {
-            OldDocumentUri = BuildUri(documentSnapshot.FilePath),
-            NewDocumentUri = BuildUri(newPath),
+            OldDocumentUri = new(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions)),
+            NewDocumentUri = new(LspFactory.CreateFilePathUri(newPath, _languageServerFeatureOptions)),
         };
-
-    private DocumentUri BuildUri(string filePath)
-    {
-        // VS Code in Windows expects path to start with '/'
-        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
-                    ? '/' + filePath
-                    : filePath;
-        return new(LspFactory.CreateFilePathUri(updatedPath));
-    }
 
     private static string MakeNewPath(string originalPath, string newName)
     {
@@ -171,7 +162,7 @@ internal class RenameService(
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         // VS Code in Windows expects path to start with '/'
-        var uri = BuildUri(documentSnapshot.FilePath);
+        var uri = new DocumentUri(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions));
 
         AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, uri, codeDocument);
     }

@@ -30,7 +30,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -59,7 +59,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -93,7 +93,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -121,7 +121,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction);
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction);
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -178,7 +178,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -201,7 +201,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -229,7 +229,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -263,7 +263,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -308,7 +308,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                     private RenderFragment? LocalChildContent { get; set; }
                 }
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
@@ -353,7 +353,7 @@ public class SimplifyTagToSelfClosingTests(ITestOutputHelper testOutputHelper) :
                     private RenderFragment? LocalChildContent { get; set; }
                 }
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            codeActionName: LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             additionalFiles: [
                 (FilePath("Component.razor"), """
                     <div>
