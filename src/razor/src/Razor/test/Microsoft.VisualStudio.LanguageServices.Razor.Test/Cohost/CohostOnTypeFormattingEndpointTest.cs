@@ -126,11 +126,11 @@ public class CohostOnTypeFormattingEndpointTest(HtmlFormattingFixture htmlFormat
 
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
 
-        var endpoint = new CohostOnTypeFormattingEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
+        var endpoint = new CohostOnTypeFormattingEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, LoggerFactory);
 
         var request = new DocumentOnTypeFormattingParams()
         {
-            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Options = new FormattingOptions()
             {
                 TabSize = 4,

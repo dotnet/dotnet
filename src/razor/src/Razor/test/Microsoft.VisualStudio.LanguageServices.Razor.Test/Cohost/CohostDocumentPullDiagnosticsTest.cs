@@ -161,7 +161,7 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
 
         var clientSettingsManager = new ClientSettingsManager([]);
         var clientCapabilitiesService = new TestClientCapabilitiesService(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
-        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, LoggerFactory);
+        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, LoggerFactory);
 
         var result = taskListRequest
             ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], DisposalToken)

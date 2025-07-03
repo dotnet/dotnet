@@ -114,9 +114,21 @@
       PackageVersion="$(MicrosoftWindowsDesktopAppRefPackageVersion)"
       RelativeLayoutPath="packs/%(PackageName)/%(PackageVersion)" />
 
+    <BundledLayoutPackage Include="Microsoft.NETCore.App.Crossgen2.$(SharedFrameworkRid)"
+      Condition="'$(BundleCrossgen2)' == 'true'"
+      PackageName="Microsoft.NETCore.App.Crossgen2.$(SharedFrameworkRid)"
+      PackageVersion="$(MicrosoftNETCoreAppRuntimePackageVersion)"
+      RelativeLayoutPath="packs/%(PackageName)/%(PackageVersion)" />
+
     <BundledLayoutPackage Include="runtime.$(SharedFrameworkRid).Microsoft.DotNet.ILCompiler"
       Condition="'$(BundleNativeAotCompiler)' == 'true'"
       PackageName="runtime.$(SharedFrameworkRid).Microsoft.DotNet.ILCompiler"
+      PackageVersion="$(MicrosoftNETCoreAppRuntimePackageVersion)"
+      RelativeLayoutPath="packs/%(PackageName)/%(PackageVersion)" />
+
+    <BundledLayoutPackage Include="Microsoft.NETCore.App.Runtime.NativeAOT.$(SharedFrameworkRid)"
+      Condition="'$(BundleNativeAotCompiler)' == 'true'"
+      PackageName="Microsoft.NETCore.App.Runtime.NativeAOT.$(SharedFrameworkRid)"
       PackageVersion="$(MicrosoftNETCoreAppRuntimePackageVersion)"
       RelativeLayoutPath="packs/%(PackageName)/%(PackageVersion)" />
 
