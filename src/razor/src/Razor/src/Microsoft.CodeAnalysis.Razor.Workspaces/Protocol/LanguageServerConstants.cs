@@ -43,6 +43,8 @@ internal static class LanguageServerConstants
 
         public const string ExtractToNewComponentAction = "ExtractToNewComponent";
 
+        public const string SimplifyTagToSelfClosingAction = "SimplifyTagToSelfClosing";
+
         public const string CreateComponentFromTag = "CreateComponentFromTag";
 
         public const string AddUsing = "AddUsing";

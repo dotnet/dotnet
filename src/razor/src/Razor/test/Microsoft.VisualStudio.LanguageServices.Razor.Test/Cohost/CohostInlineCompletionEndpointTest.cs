@@ -86,7 +86,7 @@ public class CohostInlineCompletionEndpointTest(ITestOutputHelper testOutputHelp
         var position = inputText.GetLinePosition(input.Position);
 
         var clientSettingsManager = new ClientSettingsManager([]);
-        var endpoint = new CohostInlineCompletionEndpoint(RemoteServiceInvoker, clientSettingsManager);
+        var endpoint = new CohostInlineCompletionEndpoint(IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager);
 
         var options = new RazorFormattingOptions() with
         {
