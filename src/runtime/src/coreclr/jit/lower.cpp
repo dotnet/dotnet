@@ -789,6 +789,11 @@ GenTree* Lowering::LowerNode(GenTree* node)
             LowerReturnSuspend(node);
             break;
 
+#if defined(FEATURE_HW_INTRINSICS) && defined(TARGET_ARM64)
+        case GT_CNS_MSK:
+            return LowerCnsMask(node->AsMskCon());
+#endif // FEATURE_HW_INTRINSICS && TARGET_ARM64
+
         default:
             break;
     }
@@ -5881,7 +5886,7 @@ GenTree* Lowering::LowerAsyncContinuation(GenTree* asyncCont)
             {
                 JITDUMP("Marking the call [%06u] before async continuation [%06u] as an async call\n",
                         Compiler::dspTreeID(node), Compiler::dspTreeID(asyncCont));
-                node->AsCall()->SetIsAsync();
+                node->AsCall()->SetIsAsync(new (comp, CMK_Async) AsyncCallInfo);
             }
 
             BlockRange().Remove(asyncCont);
