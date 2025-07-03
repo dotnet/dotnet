@@ -78,9 +78,10 @@ internal class ExclusionFileValidation
     private static List<string> GetExclusionPatternsFromBranch(string branchName)
     {
         Console.WriteLine($"Retrieving {SourceMappingsPath} from branch `{branchName}`...");
+        string? fileContents = null;
         try
         {
-            var fileContents = RunGitCommand($"show {branchName}:src/source-mappings.json");
+            fileContents = RunGitCommand($"show {branchName}:src/source-mappings.json");
         } catch (Exception ex)
         {
             Console.WriteLine($"Error retrieving {SourceMappingsPath} from branch `{branchName}`: {ex.Message}");
