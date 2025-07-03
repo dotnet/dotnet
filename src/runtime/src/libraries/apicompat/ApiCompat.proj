@@ -66,6 +66,7 @@
         System.Security.Permissions;
         System.ServiceModel.Syndication;
         System.ServiceProcess.ServiceController;
+        System.Threading.AccessControl;
         System.Windows.Extensions"
       PackageVersion="$(ApiCompatNetCoreAppBaselineVersion)"
       TargetFramework="$(ApiCompatNetCoreAppBaselineTFM)" />
