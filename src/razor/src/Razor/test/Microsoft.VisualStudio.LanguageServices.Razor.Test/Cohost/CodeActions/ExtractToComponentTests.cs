@@ -30,7 +30,7 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponent,
             additionalExpectedFiles: [
                 (FileUri("Component.razor"), """
                     <div>
@@ -55,7 +55,7 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
                 <div></div>
                 """,
             expected: null,
-            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction);
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponent);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponent,
             additionalExpectedFiles: [
                 (FileUri("Component.razor"), """
                     @namespace ILoveYou
@@ -121,7 +121,7 @@ public class ExtractToComponentTests(ITestOutputHelper testOutputHelper) : Cohos
 
                 <div></div>
                 """,
-            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponentAction,
+            codeActionName: LanguageServerConstants.CodeActions.ExtractToNewComponent,
             additionalExpectedFiles: [
                 (FileUri("Component.razor"), """
                     @namespace MyHero

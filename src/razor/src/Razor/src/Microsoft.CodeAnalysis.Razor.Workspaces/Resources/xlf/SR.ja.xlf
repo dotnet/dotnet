@@ -59,6 +59,11 @@
         <target state="translated">要素を新しいコンポーネントに抽出する</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_Css_Title">
+        <source>Extract to {0}.css</source>
+        <target state="new">Extract to {0}.css</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">書式設定操作は、さらに診断の 1 つを導入または削除するため、破棄されています。</target>
@@ -77,6 +82,21 @@
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">イベント ハンドラー '{0}' の生成</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_MiscFiles">
+        <source>The Razor editor utilizes the Razor Source Generator. {0} appears to not be part of any project, so the source generator is not present and the editing experience will be limited. No more messages will be logged for this scenario.</source>
+        <target state="translated">Razor エディターは Razor ソース ジェネレーターを利用します。{0} はどのプロジェクトにも含まれていないように見えるので、ソース ジェネレーターが存在せず、編集エクスペリエンスが制限されます。このシナリオでは、これ以上メッセージはログに記録されません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NoAdditionalFiles">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
+        <target state="translated">Razor エディターは Razor ソース ジェネレーターを利用します。これには、*.razor および *.cshtml ファイルがプロジェクトの AddedFiles である必要があります。{0} は、'{1}' から取得されたようですが、これには AddedFiles である Razor ドキュメントがないため、編集エクスペリエンスが制限されます。Razor SDK を使用していますか?このプロジェクトのメッセージはこれ以上ログに記録されません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
+        <target state="translated">Razor エディターは Razor ソース ジェネレーターを利用します。これには、*.razor および *.cshtml ファイルがプロジェクトの AddedFiles である必要があります。{0} は、'{1}' から取得されたようですが、このファイルには Razor ドキュメントが含まれていますが、このファイルは AddedFile ではないため、編集エクスペリエンスが制限されます。このプロジェクトのメッセージはこれ以上ログに記録されません。</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -107,6 +127,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">using ディレクティブを {0} に昇格します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
+        <source>Simplify tag to self-closing</source>
+        <target state="translated">タグを自己終了タグに簡略化する</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

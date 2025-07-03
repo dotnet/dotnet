@@ -10,7 +10,6 @@
     <ProductBrandPrefix>Microsoft .NET</ProductBrandPrefix>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <UseRuntimePackageDisclaimer>true</UseRuntimePackageDisclaimer>
-    <UseArcadeRpmTooling>true</UseArcadeRpmTooling>
   </PropertyGroup>
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' != 'true'">
     <GenerateInstallers>true</GenerateInstallers>

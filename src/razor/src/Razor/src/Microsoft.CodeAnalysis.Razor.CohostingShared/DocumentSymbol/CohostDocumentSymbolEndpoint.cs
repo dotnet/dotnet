@@ -5,10 +5,10 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -20,8 +20,8 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [ExportRazorStatelessLspService(typeof(CohostDocumentSymbolEndpoint))]
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
-internal sealed class CohostDocumentSymbolEndpoint(IRemoteServiceInvoker remoteServiceInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<DocumentSymbolParams, SumType<DocumentSymbol[], SymbolInformation[]>?>, IDynamicRegistrationProvider
+internal sealed class CohostDocumentSymbolEndpoint(IIncompatibleProjectService incompatibleProjectService, IRemoteServiceInvoker remoteServiceInvoker)
+    : AbstractCohostDocumentEndpoint<DocumentSymbolParams, SumType<DocumentSymbol[], SymbolInformation[]>?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private bool _useHierarchicalSymbols;
@@ -49,17 +49,8 @@ internal sealed class CohostDocumentSymbolEndpoint(IRemoteServiceInvoker remoteS
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentSymbolParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SumType<DocumentSymbol[], SymbolInformation[]>?> HandleRequestAsync(DocumentSymbolParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-    {
-        // The editor can send us a document symbol request in a .NET Framework project for some reason, so we have to be
-        // a little defensive here.
-        if (context.TextDocument is null)
-        {
-            return SpecializedTasks.Default<SumType<DocumentSymbol[], SymbolInformation[]>?>();
-        }
-
-        return HandleRequestAsync(context.TextDocument, _useHierarchicalSymbols, cancellationToken);
-    }
+    protected override Task<SumType<DocumentSymbol[], SymbolInformation[]>?> HandleRequestAsync(DocumentSymbolParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+        => HandleRequestAsync(razorDocument, _useHierarchicalSymbols, cancellationToken);
 
     private async Task<SumType<DocumentSymbol[], SymbolInformation[]>?> HandleRequestAsync(TextDocument razorDocument, bool useHierarchicalSymbols, CancellationToken cancellationToken)
     {

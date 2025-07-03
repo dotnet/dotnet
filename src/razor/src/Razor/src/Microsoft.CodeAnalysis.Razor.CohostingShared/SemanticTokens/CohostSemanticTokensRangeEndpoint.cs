@@ -5,10 +5,10 @@ using System;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
@@ -23,10 +23,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostSemanticTokensRangeEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
     ITelemetryReporter telemetryReporter)
-    : AbstractRazorCohostDocumentRequestHandler<SemanticTokensRangeParams, SemanticTokens?>
+    : AbstractCohostDocumentEndpoint<SemanticTokensRangeParams, SemanticTokens?>(incompatibleProjectService)
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
@@ -38,13 +39,8 @@ internal sealed class CohostSemanticTokensRangeEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(SemanticTokensRangeParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-    {
-        var razorDocument = context.TextDocument.AssumeNotNull();
-        var span = request.Range.ToLinePositionSpan();
-
-        return HandleRequestAsync(razorDocument, span, cancellationToken);
-    }
+    protected override Task<SemanticTokens?> HandleRequestAsync(SemanticTokensRangeParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+        => HandleRequestAsync(razorDocument, request.Range.ToLinePositionSpan(), cancellationToken);
 
     private async Task<SemanticTokens?> HandleRequestAsync(TextDocument razorDocument, LinePositionSpan span, CancellationToken cancellationToken)
     {

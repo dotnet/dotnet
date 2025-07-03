@@ -59,6 +59,11 @@
         <target state="translated">Öğeyi yeni bileşene ayıklayın</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_Css_Title">
+        <source>Extract to {0}.css</source>
+        <target state="new">Extract to {0}.css</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">Bir veya daha fazla tanılamayı ortaya çıkarabileceği veya kaldırabileceği için biçimlendirme işlemi bırakılıyor.</target>
@@ -77,6 +82,21 @@
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">'{0}' Olay İşleyicisi Oluştur</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_MiscFiles">
+        <source>The Razor editor utilizes the Razor Source Generator. {0} appears to not be part of any project, so the source generator is not present and the editing experience will be limited. No more messages will be logged for this scenario.</source>
+        <target state="translated">Razor düzenleyici, Razor Kaynak Oluşturucuyu kullanır. {0} herhangi bir projenin parçası değil gibi görünüyor, bu nedenle kaynak oluşturucu mevcut değildir ve düzenleme deneyimi sınırlı olacaktır. Bu senaryo için başka mesajlar günlüğe kaydedilmeyecektir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NoAdditionalFiles">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
+        <target state="translated">Razor düzenleyici, *.razor ve *.cshtml dosyalarının projede AdditionalFiles olmasını gerektiren Razor Kaynak Oluşturucuyu kullanır. {0}, AdditionalFile olan herhangi bir Razor belgesine sahip olmayan '{1}' dosyasından geliyor gibi görünüyor, bu nedenle düzenleme deneyimi sınırlı olacaktır. Razor SDK'sını kullanıyor mu? Bu proje için başka mesajlar günlüğe kaydedilmeyecektir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
+        <target state="translated">Razor düzenleyici, *.razor ve *.cshtml dosyalarının projede AdditionalFiles olmasını gerektiren Razor Kaynak Oluşturucuyu kullanır. {0}, Razor belgelerine sahip olan '{1}' dosyasından geliyor gibi görünüyor, ancak bu dosya bir AdditionalFile değildir, bu nedenle düzenleme deneyimi sınırlı olacaktır. Bu proje için başka mesajlar günlüğe kaydedilmeyecektir.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -107,6 +127,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Yönergeyi şu sürüme yükseltmeyi destekleyin: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
+        <source>Simplify tag to self-closing</source>
+        <target state="translated">Etiketi kendi kendine kapatacak şekilde basitleştir</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

@@ -27,7 +27,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IRoslynCodeActionHelpers _roslynCodeActionHelpers = roslynCodeActionHelpers;
 
-    public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
+    public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehind;
 
     public async Task<WorkspaceEdit?> ResolveAsync(DocumentContext documentContext, JsonElement data, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
@@ -37,22 +37,11 @@ internal class ExtractToCodeBehindCodeActionResolver(
             return null;
         }
 
-        if (!documentContext.FileKind.IsComponent())
-        {
-            return null;
-        }
-
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var codeBehindPath = FileUtilities.GenerateUniquePath(path, $"{Path.GetExtension(path)}.cs");
-
-        // VS Code in Windows expects path to start with '/'
-        var updatedCodeBehindPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !codeBehindPath.StartsWith("/")
-            ? '/' + codeBehindPath
-            : codeBehindPath;
-
-        var codeBehindUri = LspFactory.CreateFilePathUri(updatedCodeBehindPath);
+        var codeBehindUri = LspFactory.CreateFilePathUri(codeBehindPath, _languageServerFeatureOptions);
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
