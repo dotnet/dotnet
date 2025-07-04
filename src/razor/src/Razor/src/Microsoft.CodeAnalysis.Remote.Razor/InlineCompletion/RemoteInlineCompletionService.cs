@@ -39,7 +39,7 @@ internal sealed class RemoteInlineCompletionService(in ServiceArgs args) : Razor
             return null;
         }
 
-        if (!_documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, hostDocumentPosition, out var mappedPosition, out _))
+        if (!_documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, hostDocumentPosition, out var mappedPosition, out _))
         {
             return null;
         }
@@ -62,7 +62,7 @@ internal sealed class RemoteInlineCompletionService(in ServiceArgs args) : Razor
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-        if (!_documentMappingService.TryMapToHostDocumentRange(csharpDocument, span, out var razorRange))
+        if (!_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, span, out var razorRange))
         {
             return null;
         }

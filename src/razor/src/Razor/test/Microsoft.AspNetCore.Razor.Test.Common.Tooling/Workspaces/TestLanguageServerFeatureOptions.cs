@@ -7,7 +7,6 @@ namespace Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 
 internal class TestLanguageServerFeatureOptions(
     bool includeProjectKeyInGeneratedFilePath = false,
-    bool forceRuntimeCodeGeneration = false,
     bool updateBuffersForClosedDocuments = false,
     bool useNewFormattingEngine = false,
     bool supportsSoftSelectionInCompletion = true,
@@ -37,8 +36,6 @@ internal class TestLanguageServerFeatureOptions(
     public override bool IncludeProjectKeyInGeneratedFilePath => includeProjectKeyInGeneratedFilePath;
 
     public override bool UseRazorCohostServer => false;
-
-    public override bool ForceRuntimeCodeGeneration => forceRuntimeCodeGeneration;
 
     public override bool UseNewFormattingEngine => useNewFormattingEngine;
 
