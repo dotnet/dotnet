@@ -48,7 +48,6 @@ internal static class Validate
                 toolingMessages = new List<ProcessingMessage>();
                 AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on tooling files."));
             }
-            LogValidationSummary("Tooling Files Validation", toolingMessages);
             processingMessages.AddRange(toolingMessages);
 
             // Submodule Validation
@@ -63,7 +62,6 @@ internal static class Validate
                 submoduleMessages = new List<ProcessingMessage>();
                 AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on submodule files."));
             }
-            LogValidationSummary("Submodule Validation", submoduleMessages);
             processingMessages.AddRange(submoduleMessages);
 
             // Exclusion File Validation
@@ -78,7 +76,6 @@ internal static class Validate
                 exclusionMessages = new List<ProcessingMessage>();
                 AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on exclusion files."));
             }
-            LogValidationSummary("Exclusion File Validation", exclusionMessages);
             processingMessages.AddRange(exclusionMessages);
         }
         catch (Exception)
@@ -107,18 +104,6 @@ internal static class Validate
         }
     }
 
-    private static void LogValidationSummary(string validationName, List<ProcessingMessage> messages)
-    {
-        int errorCount = messages.Count(m => m.WarningLevel == WarningLevel.Error);
-        int warningCount = messages.Count(m => m.WarningLevel == WarningLevel.Warning);
-
-        Console.WriteLine($"Finished {validationName}. Encountered {errorCount} error(s) and {warningCount} warning(s).");
-
-        foreach (var message in messages)
-        {
-            Console.WriteLine($" - [{message.WarningLevel}] {message.Message}");
-        }
-    }
 
 
     internal static string RunGitCommand(string arguments)
@@ -165,7 +150,6 @@ internal static class Validate
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(processingMessage.Message);
             Console.ResetColor();
-
         }
         else
         {

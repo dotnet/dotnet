@@ -21,7 +21,8 @@ internal class ExclusionFileValidation
     {
         List<ProcessingMessage> messages = [];
 
-        var originalFileExclusionRules = GetExclusionPatternsFromBranch(targetBranch);
+        string remoteTargetBranch = "origin/" + targetBranch;
+        var originalFileExclusionRules = GetExclusionPatternsFromBranch(remoteTargetBranch);
 
         if (originalFileExclusionRules == null || !originalFileExclusionRules.Any())
         {
