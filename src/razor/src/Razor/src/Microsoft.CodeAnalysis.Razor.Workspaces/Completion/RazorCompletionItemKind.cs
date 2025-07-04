@@ -8,6 +8,7 @@ internal enum RazorCompletionItemKind
     Directive,
     DirectiveAttribute,
     DirectiveAttributeParameter,
+    DirectiveAttributeParameterEventValue,
     MarkupTransition,
     TagHelperElement,
     TagHelperAttribute,

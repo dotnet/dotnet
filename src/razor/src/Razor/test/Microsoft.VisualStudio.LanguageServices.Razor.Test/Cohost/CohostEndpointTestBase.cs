@@ -33,11 +33,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
     private ExportProvider? _exportProvider;
+    private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private RemoteClientInitializationOptions _clientInitializationOptions;
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
     private IFilePathService? _filePathService;
 
+    private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
     private protected TestRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
@@ -69,6 +71,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         }
 
         AddDisposable(_exportProvider);
+
+        _incompatibleProjectService = new TestIncompatibleProjectService();
 
         var remoteLogger = _exportProvider.GetExportedValue<RemoteLoggerFactory>();
         remoteLogger.SetTargetLoggerFactory(LoggerFactory);

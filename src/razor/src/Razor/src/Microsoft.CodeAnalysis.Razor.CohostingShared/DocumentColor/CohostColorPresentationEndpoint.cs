@@ -4,10 +4,10 @@
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -18,8 +18,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostColorPresentationEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IHtmlRequestInvoker requestInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<ColorPresentationParams, ColorPresentation[]?>
+    : AbstractCohostDocumentEndpoint<ColorPresentationParams, ColorPresentation[]?>(incompatibleProjectService)
 {
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
@@ -30,10 +31,7 @@ internal sealed class CohostColorPresentationEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(ColorPresentationParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<ColorPresentation[]?> HandleRequestAsync(ColorPresentationParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
-
-    private async Task<ColorPresentation[]?> HandleRequestAsync(ColorPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<ColorPresentation[]?> HandleRequestAsync(ColorPresentationParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         return await _requestInvoker.MakeHtmlLspRequestAsync<ColorPresentationParams, ColorPresentation[]>(
             razorDocument,

@@ -227,4 +227,23 @@
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
   </ItemGroup>
 
+  <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
+  <ItemGroup>
+    <SharedRepositoryReference Include="aspire" />
+    <SharedRepositoryReference Include="aspnetcore" />
+    <SharedRepositoryReference Include="cecil" />
+    <SharedRepositoryReference Include="command-line-api" />
+    <SharedRepositoryReference Include="deployment-tools" />
+    <SharedRepositoryReference Include="diagnostics" />
+    <SharedRepositoryReference Include="efcore" />
+    <SharedRepositoryReference Include="emsdk" />
+    <SharedRepositoryReference Include="runtime" />
+    <SharedRepositoryReference Include="sourcelink" />
+    <SharedRepositoryReference Include="symreader" />
+    <SharedRepositoryReference Include="windowsdesktop" />
+    <SharedRepositoryReference Include="winforms" />
+    <SharedRepositoryReference Include="wpf" />
+    <SharedRepositoryReference Include="xdt" />
+  </ItemGroup>
+
 </Project>
