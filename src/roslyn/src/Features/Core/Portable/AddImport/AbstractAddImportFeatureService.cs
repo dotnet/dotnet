@@ -112,8 +112,7 @@ internal abstract partial class AbstractAddImportFeatureService<TSimpleNameSynta
                         {
                             cancellationToken.ThrowIfCancellationRequested();
 
-                            var fixData = await reference.TryGetFixDataAsync(
-                                document, node, options.CleanupDocument, options.CleanupOptions, cancellationToken).ConfigureAwait(false);
+                            var fixData = await reference.TryGetFixDataAsync(document, node, options.CleanupOptions, cancellationToken).ConfigureAwait(false);
                             result.AddIfNotNull(fixData);
 
                             if (result.Count > maxResults)

@@ -2,11 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,20 +33,7 @@ internal sealed partial class CallHierarchyProvider
     private readonly Lazy<IStreamingFindUsagesPresenter> _streamingPresenter;
 
     public IThreadingContext ThreadingContext { get; }
-
-    [AllowNull]
-    public IGlyphService GlyphService
-    {
-        get
-        {
-            // Work around https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2506733; we don't expect to need this in unit tests
-            // so we'll keep the property non-nullable. Once the editor bug is fixed, we can revert this to an autoprop again.
-            Contract.ThrowIfNull(field, "We must be in unit tests and didn't get a IGlyphService, but a test still needs it.");
-
-            return field;
-        }
-        set { field = value!; }
-    }
+    public IGlyphService GlyphService { get; }
 
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
@@ -53,7 +41,7 @@ internal sealed partial class CallHierarchyProvider
         IThreadingContext threadingContext,
         IUIThreadOperationExecutor threadOperationExecutor,
         IAsynchronousOperationListenerProvider listenerProvider,
-        [Import(AllowDefault = true)] IGlyphService? glyphService, // AllowDefault = true to work around https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2506733
+        IGlyphService glyphService,
         Lazy<IStreamingFindUsagesPresenter> streamingPresenter)
     {
         AsyncListener = listenerProvider.GetListener(FeatureAttribute.CallHierarchy);
@@ -63,7 +51,7 @@ internal sealed partial class CallHierarchyProvider
         _streamingPresenter = streamingPresenter;
     }
 
-    public async Task<CallHierarchyItem?> CreateItemAsync(
+    public async Task<CallHierarchyItem> CreateItemAsync(
         ISymbol symbol, Project project, ImmutableArray<Location> callsites, CancellationToken cancellationToken)
     {
         if (symbol.Kind is SymbolKind.Method or
@@ -131,9 +119,9 @@ internal sealed partial class CallHierarchyProvider
                 finders.Add(new CallToOverrideFinder(symbol, project.Id, AsyncListener, this));
             }
 
-            if (symbol.GetOverriddenMember() is ISymbol overridenMember)
+            if (symbol.GetOverriddenMember() != null)
             {
-                finders.Add(new BaseMemberFinder(overridenMember, project.Id, AsyncListener, this));
+                finders.Add(new BaseMemberFinder(symbol.GetOverriddenMember(), project.Id, AsyncListener, this));
             }
 
             var implementedInterfaceMembers = await SymbolFinder.FindImplementedInterfaceMembersAsync(symbol, project.Solution, cancellationToken: cancellationToken).ConfigureAwait(false);

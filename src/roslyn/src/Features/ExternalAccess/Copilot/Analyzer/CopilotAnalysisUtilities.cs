@@ -19,6 +19,5 @@ internal static class CopilotAnalysisUtilities
         string proposalId,
         IEnumerable<TextChange> textChanges,
         CancellationToken cancellationToken)
-    => CopilotChangeAnalysisUtilities.AnalyzeCopilotChangeAsync(
-        document, accepted, featureId, proposalId, CodeAnalysis.Copilot.CopilotUtilities.TryNormalizeCopilotTextChanges(textChanges), cancellationToken);
+    => CopilotChangeAnalysisUtilities.AnalyzeCopilotChangeAsync(document, accepted, featureId, proposalId, textChanges, cancellationToken);
 }

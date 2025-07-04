@@ -72,8 +72,7 @@ internal abstract partial class AbstractAddImportCodeFixProvider : CodeFixProvid
             searchOptions = searchOptions with { SearchNuGetPackages = false };
         }
 
-        var addImportOptions = await document.GetAddImportOptionsAsync(
-            searchOptions, cleanupDocument: true, cancellationToken).ConfigureAwait(false);
+        var addImportOptions = await document.GetAddImportOptionsAsync(searchOptions, cancellationToken).ConfigureAwait(false);
 
         var fixesForDiagnostic = await addImportService.GetFixesForDiagnosticsAsync(
             document, span, diagnostics, MaxResults, symbolSearchService, addImportOptions, packageSources, cancellationToken).ConfigureAwait(false);

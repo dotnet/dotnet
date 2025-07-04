@@ -26,7 +26,6 @@ Namespace Microsoft.VisualStudio.LanguageServices.UnitTests
         Private ReadOnly _fileChangeEx As New MockVsFileChangeEx
 
         Public MockMonitorSelection As IVsMonitorSelection
-        Public MockRunningDocumentTable As New MockVsRunningDocumentTable
 
         <ImportingConstructor>
         <Obsolete(MefConstruction.ImportingConstructorMessage, True)>
@@ -55,9 +54,6 @@ Namespace Microsoft.VisualStudio.LanguageServices.UnitTests
 
                 Case GetType(SVsFileChangeEx)
                     Return _fileChangeEx
-
-                Case GetType(SVsRunningDocumentTable)
-                    Return MockRunningDocumentTable
 
                 Case Else
                     Throw New Exception($"{NameOf(MockServiceProvider)} does not implement {serviceType.FullName}.")

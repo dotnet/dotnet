@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Internal.Log;
-using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Copilot;
@@ -40,7 +39,7 @@ internal static class CopilotChangeAnalysisUtilities
         bool accepted,
         string featureId,
         string proposalId,
-        ImmutableArray<TextChange> textChanges,
+        IEnumerable<TextChange> textChanges,
         CancellationToken cancellationToken)
     {
         // Currently we do not support analyzing languges other than C# and VB.  This is because we only want to do
@@ -49,10 +48,7 @@ internal static class CopilotChangeAnalysisUtilities
         if (!document.SupportsSemanticModel)
             return;
 
-        if (textChanges.IsDefaultOrEmpty)
-            return;
-
-        var normalizedEdits = CopilotUtilities.TryNormalizeCopilotTextChanges(textChanges);
+        var normalizedEdits = Normalize(textChanges);
         if (normalizedEdits.IsDefaultOrEmpty)
             return;
 
@@ -60,8 +56,31 @@ internal static class CopilotChangeAnalysisUtilities
         var analysisResult = await changeAnalysisService.AnalyzeChangeAsync(
             document, normalizedEdits, cancellationToken).ConfigureAwait(false);
 
-        LogCopilotChangeAnalysis(
+        CopilotChangeAnalysisUtilities.LogCopilotChangeAnalysis(
             featureId, accepted, proposalId, analysisResult, cancellationToken).Dispose();
+    }
+
+    private static ImmutableArray<TextChange> Normalize(IEnumerable<TextChange> textChanges)
+    {
+        using var _ = PooledObjects.ArrayBuilder<TextChange>.GetInstance(out var builder);
+        foreach (var textChange in textChanges)
+            builder.Add(textChange);
+
+        // Ensure everything is sorted.
+        builder.Sort(static (c1, c2) => c1.Span.Start - c2.Span.Start);
+
+        // Now, go through and make sure no edit overlaps another.
+        for (int i = 1, n = builder.Count; i < n; i++)
+        {
+            var lastEdit = builder[i - 1];
+            var currentEdit = builder[i];
+
+            if (lastEdit.Span.OverlapsWith(currentEdit.Span))
+                return default;
+        }
+
+        // Things look good.  Can process these sorted edits.
+        return builder.ToImmutableAndClear();
     }
 
     public static IDisposable LogCopilotChangeAnalysis(

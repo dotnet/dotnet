@@ -74,8 +74,7 @@ internal sealed class WorkspaceSymbolsHandler(IAsynchronousOperationListenerProv
         BufferedProgress<SymbolInformation[]> progress)
         : INavigateToSearchCallback
     {
-        public async Task AddResultsAsync(
-            ImmutableArray<INavigateToSearchResult> results, Document? activeDocument, CancellationToken cancellationToken)
+        public async Task AddResultsAsync(ImmutableArray<INavigateToSearchResult> results, CancellationToken cancellationToken)
         {
             Contract.ThrowIfNull(context.Solution);
             var solution = context.Solution;
