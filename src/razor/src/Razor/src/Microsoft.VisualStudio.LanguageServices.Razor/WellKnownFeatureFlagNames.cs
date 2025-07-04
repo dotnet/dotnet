@@ -10,7 +10,6 @@ internal static class WellKnownFeatureFlagNames
     public const string UsePreciseSemanticTokenRanges = "Razor.LSP.UsePreciseSemanticTokenRanges";
     public const string UseRazorCohostServer = "Razor.LSP.UseRazorCohostServer";
     public const string DisableRazorLanguageServer = "Razor.LSP.DisableRazorLanguageServer";
-    public const string ForceRuntimeCodeGeneration = "Razor.LSP.ForceRuntimeCodeGeneration";
     public const string UseRoslynTokenizer = "Razor.LSP.UseRoslynTokenizer";
     public const string UseNewFormattingEngine = "Razor.LSP.UseNewFormattingEngine";
 }

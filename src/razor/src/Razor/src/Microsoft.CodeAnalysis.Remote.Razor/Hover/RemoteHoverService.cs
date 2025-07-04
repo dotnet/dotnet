@@ -77,7 +77,7 @@ internal sealed class RemoteHoverService(in ServiceArgs args) : RazorDocumentSer
 
             // Map the hover range back to the host document
             if (csharpHover.Range is { } range &&
-                DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), range.ToLinePositionSpan(), out var hostDocumentSpan))
+                DocumentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), range.ToLinePositionSpan(), out var hostDocumentSpan))
             {
                 csharpHover.Range = LspFactory.CreateRange(hostDocumentSpan);
             }
