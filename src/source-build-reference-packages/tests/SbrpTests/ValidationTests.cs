@@ -36,24 +36,11 @@ public class ValidationTests
     [SkippableFact]
     public void ValidateSbrpAttribute()
     {
-        string[] packages = GetPackages();
+        string[] packages = GetReferenceOnlyPackages();
 
-        HashSet<string> textOnlyPacks = new(
-            Directory.GetDirectories(Path.Combine(PathUtilities.GetRepoRoot(), "src/textOnlyPackages/src"))
-                .Select(x => Path.GetFileName(x).ToLower())
-        );
+        Output.WriteLine($"Checking {packages.Count()} packages for SBRP attribute.");
 
-        var filteredPackages = packages
-            .Where(package =>
-            {
-                string packageName = Path.GetFileNameWithoutExtension(package).ToLower();
-                packageName = Regex.Replace(packageName, VersionPattern, string.Empty);
-                return !textOnlyPacks.Contains(packageName);
-            });
-
-        Output.WriteLine($"Checking {filteredPackages.Count()} packages for SBRP attribute.");
-
-        foreach (var package in filteredPackages)
+        foreach (var package in packages)
         {
             string tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), Path.GetFileNameWithoutExtension(package));
 
@@ -82,7 +69,7 @@ public class ValidationTests
     [SkippableFact]
     public async Task ValidateSignatures()
     {
-        string[] packages = GetPackages();
+        string[] packages = GetAllPackages();
 
         ISignatureVerificationProvider[] trustProviders = [new SignatureTrustAndValidityVerificationProvider()];
         PackageSignatureVerifier verifier = new(trustProviders);
@@ -97,15 +84,25 @@ public class ValidationTests
         }
     }
 
-    private static string[] GetPackages()
+    private static string[] GetAllPackages()
     {
-        string buildPackagesDirectory = PathUtilities.GetArtifactsShippingPackagesDir();
+        string packagesDirectory = PathUtilities.GetArtifactsPackagesDir();
+        return GetPackages(packagesDirectory);
+    }
 
-        string[] packages = Directory.GetFiles(buildPackagesDirectory, "*.nupkg", SearchOption.AllDirectories);
+    private static string[] GetReferenceOnlyPackages()
+    {
+        string refPackageDir = PathUtilities.GetArtifactsReferenceOnlyPackagesDir();
+        return GetPackages(refPackageDir);
+    }
+
+    private static string[] GetPackages(string searchPath)
+    {
+        string[] packages = Directory.GetFiles(searchPath, "*.nupkg", SearchOption.AllDirectories);
 
         if (packages.Length == 0)
         {
-            throw new FileNotFoundException($"No packages found in {buildPackagesDirectory}");
+            throw new FileNotFoundException($"No packages found in {searchPath}");
         }
         return packages;
     }
