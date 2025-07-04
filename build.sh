@@ -265,6 +265,10 @@ if [[ "$test" == true ]]; then
   actions=( "/p:Restore=true" "/p:Build=true" "/p:Test=true" )
   properties+=( "/p:IsTestRun=true" )
 
+  if [[ "$sourceOnly" == true ]]; then
+    properties+=( "/p:DotNetBuildWithOnlineFeeds=true" )
+  fi
+
   # Workaround for vstest hangs: https://github.com/microsoft/vstest/issues/10760
   export MSBUILDENSURESTDOUTFORTASKPROCESSES=1
   # Ensure all test projects share stdout (https://github.com/dotnet/source-build/issues/4635#issuecomment-2397464519)
