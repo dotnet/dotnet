@@ -17,6 +17,9 @@ internal sealed class OOPDirectiveAttributeCompletionItemProvider : DirectiveAtt
 internal sealed class OOPDirectiveAttributeParameterCompletionItemProvider : DirectiveAttributeParameterCompletionItemProvider;
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
+internal sealed class OOPDirectiveAttributeEventParameterCompletionItemProvider : DirectiveAttributeEventParameterCompletionItemProvider;
+
+[Export(typeof(IRazorCompletionItemProvider)), Shared]
 [method: ImportingConstructor]
 internal sealed class OOPDirectiveAttributeTransitionCompletionItemProvider(LanguageServerFeatureOptions languageServerFeatureOptions)
     : DirectiveAttributeTransitionCompletionItemProvider(languageServerFeatureOptions);

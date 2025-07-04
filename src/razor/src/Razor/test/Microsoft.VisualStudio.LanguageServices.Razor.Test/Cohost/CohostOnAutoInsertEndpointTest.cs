@@ -238,6 +238,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.OnAutoInsertName, response)]);
 
         var endpoint = new CohostOnAutoInsertEndpoint(
+            IncompatibleProjectService,
             RemoteServiceInvoker,
             clientSettingsManager,
             onAutoInsertTriggerCharacterProviders,
@@ -254,7 +255,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                DocumentUri = new(document.CreateUri())
+                DocumentUri = document.CreateDocumentUri()
             },
             Position = sourceText.GetPosition(input.Position),
             Character = triggerCharacter,

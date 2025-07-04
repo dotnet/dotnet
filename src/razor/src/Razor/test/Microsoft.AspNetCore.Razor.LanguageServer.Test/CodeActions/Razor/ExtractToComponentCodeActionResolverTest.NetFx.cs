@@ -304,7 +304,7 @@ public class ExtractToComponentCodeActionResolverTest(ITestOutputHelper testOutp
             null);
 
         Assert.NotEmpty(result);
-        var codeActionToRun = GetCodeActionToRun(LanguageServerConstants.CodeActions.ExtractToNewComponentAction, 0, result);
+        var codeActionToRun = GetCodeActionToRun(LanguageServerConstants.CodeActions.ExtractToNewComponent, 0, result);
 
         if (expectedNewComponent is null)
         {

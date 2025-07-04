@@ -39,5 +39,6 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.FindAllReferences" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFindAllReferencesService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.InlineCompletion" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteInlineCompletionService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.DebugInfo" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteDebugInfoService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.WrapWithTag" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteWrapWithTagService+Factory" />
   </ItemGroup>
 </Project>
