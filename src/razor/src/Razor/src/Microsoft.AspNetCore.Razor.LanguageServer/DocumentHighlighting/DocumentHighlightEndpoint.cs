@@ -73,14 +73,16 @@ internal class DocumentHighlightEndpoint : AbstractRazorDelegatingEndpoint<Docum
             return null;
         }
 
-        var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        var generatedDocument = codeDocument.GetGeneratedDocument(positionInfo.LanguageKind);
-        foreach (var highlight in response)
+        if (positionInfo.LanguageKind is RazorLanguageKind.CSharp)
         {
-            if (_documentMappingService.TryMapToHostDocumentRange(generatedDocument, highlight.Range, out var mappedRange))
+            var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
+            var csharpDocument = codeDocument.GetRequiredCSharpDocument();
+            foreach (var highlight in response)
             {
-                highlight.Range = mappedRange;
+                if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, highlight.Range, out var mappedRange))
+                {
+                    highlight.Range = mappedRange;
+                }
             }
         }
 

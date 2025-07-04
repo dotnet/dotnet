@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="XMLTRANSFORMATION_AmbiguousTypeMatch">
+        <source>Type '{0}' was found in more than one assembly</source>
+        <target state="translated">タイプ '{0}' が複数のアセンブリで見つかりました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_BadAttributeValue">
+        <source>Transform and Locator attributes must contain only a type name, or a type name followed by a list of attributes in parentheses.</source>
+        <target state="translated">Transform および Locator 属性にはタイプ名のみを指定するか、またはタイプ名の後に属性の一覧をかっこで囲んで指定する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_FatalTransformSyntaxError">
+        <source>Fatal syntax error</source>
+        <target state="translated">致命的な構文エラー</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportAttributeConflict">
+        <source>Import tag cannot have both a 'path' and an 'assembly'</source>
+        <target state="translated">インポート タグに 'path' および 'assembly' の両方を含めることはできません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportMissingAssembly">
+        <source>Import tag must have a 'path' or an 'assembly'</source>
+        <target state="translated">インポート タグに 'path' または 'assembly' が必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportMissingNamespace">
+        <source>Import tag must have a 'namespace'</source>
+        <target state="translated">インポート タグに 'namespace' が必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_ImportUnknownAttribute">
+        <source>Import tag does not support '{0}' attribute</source>
+        <target state="translated">インポート タグは '{0}' 属性をサポートしていません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_IncorrectBaseType">
+        <source>'{0}' is not a type of {1}</source>
+        <target state="translated">'{0}' は {1} のタイプではありません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertBadXPath">
+        <source>No element in the source document matches '{0}'</source>
+        <target state="translated">ソース ドキュメント内の要素が '{0}' に一致しません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertBadXPathResult">
+        <source>'{0}' does not evaluate to an element</source>
+        <target state="translated">'{0}' は要素に評価されません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertMissingArgument">
+        <source>{0} requires an XPath argument</source>
+        <target state="translated">{0} には XPath 引数が必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InsertTooManyArguments">
+        <source>Too many arguments to {0}</source>
+        <target state="translated">{0} に対する引数が多すぎます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_InvalidCommentOutTarget">
+        <source>Cannot comment out the whole XML document</source>
+        <target state="new">Cannot comment out the whole XML document</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_MatchAttributeDoesNotExist">
+        <source>No attribute '{0}' exists for the Match Locator</source>
+        <target state="translated">Match ロケーターに属性 '{0}' が存在しません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_NoValidConstructor">
+        <source>Type '{0}' must have a no-argument constructor to be instantiated by the transformation engine</source>
+        <target state="translated">タイプ '{0}' には変換エンジンによってインスタンス化される引数なしのコンストラクターが必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_RequiresExactArguments">
+        <source>{0} requires exactly {1} arguments</source>
+        <target state="translated">{0} には {1} 個の引数が必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_RequiresMinimumArguments">
+        <source>{0} requires at least {1} arguments</source>
+        <target state="translated">{0} には少なくとも {1} 個の引数が必要です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TooManyArguments">
+        <source>Too many arguments for {0}</source>
+        <target state="translated">{0} に対する引数が多すぎます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformArgumentFoundNoAttributes">
+        <source>Argument '{0}' did not match any attributes</source>
+        <target state="translated">引数 '{0}' はどの属性にも一致しませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformBeginExecutingMessage">
+        <source>Executing {0}</source>
+        <target state="translated">{0} を実行しています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformDoesNotExpectArguments">
+        <source>{0} does not expect arguments; ignoring</source>
+        <target state="translated">{0} は予期しない引数のため無視されます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformEndExecutingMessage">
+        <source>Done executing {0}</source>
+        <target state="translated">{0} の実行が完了しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformErrorExecutingMessage">
+        <source>Error during {0}</source>
+        <target state="translated">{0} の間にエラーが発生しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageCommentOut">
+        <source>Commented out '{0}' element</source>
+        <target state="new">Commented out '{0}' element</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageInsert">
+        <source>Inserted '{0}' element</source>
+        <target state="translated">'{0}' 要素を挿入しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageNoRemoveAttributes">
+        <source>No attributes found to remove</source>
+        <target state="translated">削除する属性が見つかりませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageNoSetAttributes">
+        <source>No attributes found to set</source>
+        <target state="translated">設定する属性が見つかりませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemove">
+        <source>Removed '{0}' element</source>
+        <target state="translated">'{0}' 要素を削除しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemoveAttribute">
+        <source>Removed '{0}' attribute</source>
+        <target state="translated">'{0}' 属性を削除しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageRemoveAttributes">
+        <source>Removed {0} attributes</source>
+        <target state="translated">{0} 個の属性を削除しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageReplace">
+        <source>Replaced '{0}' element</source>
+        <target state="translated">'{0}' 要素を置き換えました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageSetAttribute">
+        <source>Set '{0}' attribute</source>
+        <target state="translated">'{0}' 属性を設定しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformMessageSetAttributes">
+        <source>Set {0} attributes</source>
+        <target state="translated">{0} 個の属性を設定しました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNameFormatLong">
+        <source>{0} (transform line {1}, {2})</source>
+        <target state="translated">{0} (変換行 {1}、{2})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNameFormatShort">
+        <source>{0}</source>
+        <target state="translated">{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNoMatchingTargetNodes">
+        <source>No element in the source document matches '{0}'</source>
+        <target state="translated">ソース ドキュメント内の要素が '{0}' に一致しません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformNotExecutingMessage">
+        <source>Not executing {0}</source>
+        <target state="translated">{0} を実行していません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformOnlyAppliesOnce">
+        <source>Found multiple target elements, but the '{0}' Transform only applies to the first match</source>
+        <target state="translated">複数のターゲット要素が見つかりましたが、'{0}' 変換は最初に一致した要素にのみ適用されます</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformSourceMatchWasRemoved">
+        <source>'{0}' did not find a match, because matching nodes in the source document were modified or removed by a previous transform</source>
+        <target state="translated">'{0}' の一致が見つかりませんでした。ソース ドキュメント内の一致するノードが以前の変換で変更されたか、または削除されました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusApplyTarget">
+        <source>Applying to '{0}' element (source line {1}, {2})</source>
+        <target state="translated">'{0}' 要素に適用しています (ソース行 {1}、{2})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusApplyTargetNoLineInfo">
+        <source>Applying to '{0}' element (no source line info)</source>
+        <target state="translated">'{0}' 要素に適用しています (ソース行の情報なし)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_TransformStatusXPath">
+        <source>on {0}</source>
+        <target state="translated">- {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_UnknownTypeName">
+        <source>Could not resolve '{0}' as a type of {1}</source>
+        <target state="translated">{1} のタイプとして '{0}' を解決できませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XMLTRANSFORMATION_UnknownXdtTag">
+        <source>Unknown tag '{0}'</source>
+        <target state="translated">不明なタグ '{0}'</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -92,8 +92,8 @@ internal class SpellCheckService(
 
             // We need to map the start index to produce results, and we validate that we can map the end index so we don't have
             // squiggles that go from C# into Razor/Html.
-            if (_documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteCSharpStartIndex, out _, out var hostDocumentIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteCSharpStartIndex + length, out _, out _))
+            if (_documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteCSharpStartIndex, out _, out var hostDocumentIndex) &&
+                _documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteCSharpStartIndex + length, out _, out _))
             {
                 ranges.Add(range with { AbsoluteStartIndex = hostDocumentIndex });
             }

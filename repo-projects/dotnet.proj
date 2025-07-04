@@ -36,4 +36,14 @@
     <RepositoryReference Include="sdk" DotNetBuildPass="3" />
   </ItemGroup>
 
+  <Target Name="ValidateShortStackBuild"
+          Condition="'$(ShortStack)' == 'true'"
+          BeforeTargets="PrepareProjectReferences" >
+    <!--
+      A short-stack build will only build runtime and its dependencies.
+      Runtime is a shared component, so we should not and cannot have a short-stack build if we're not building the shared components.
+    -->
+    <Error Text="Cannot have a short-stack build if we're not building the shared components." Condition="'$(DotNetBuildSharedComponents)' != 'true'" />
+  </Target>
+
 </Project>

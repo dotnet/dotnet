@@ -3,22 +3,12 @@
 
 using System.Linq;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
 internal static class Extensions
 {
-    private const string RazorExtension = ".razor";
-    private const string CSHtmlExtension = ".cshtml";
-
-    public static bool IsRazorFilePath(this string filePath)
-    {
-        var comparison = PathUtilities.OSSpecificPathComparison;
-
-        return filePath.EndsWith(RazorExtension, comparison) ||
-               filePath.EndsWith(CSHtmlExtension, comparison);
-    }
-
     public static bool IsRazorDocument(this TextDocument document)
         => document is AdditionalDocument &&
            document.FilePath is string filePath &&
