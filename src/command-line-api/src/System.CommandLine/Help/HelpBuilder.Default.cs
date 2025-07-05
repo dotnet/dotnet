@@ -18,13 +18,17 @@ internal partial class HelpBuilder
         /// <summary>
         /// Gets an argument's default value to be displayed in help.
         /// </summary>
-        /// <param name="parameter">The argument or option to get the default value for.</param>
-        public static string GetArgumentDefaultValue(Symbol parameter)
+        /// <param name="symbol">The argument or option to get the default value for.</param>
+        public static string GetArgumentDefaultValue(Symbol symbol)
         {
-            return parameter switch
+            return symbol switch
             {
-                Argument argument => argument.HasDefaultValue ? ToString(argument.GetDefaultValue()) : "",
-                Option option => option.HasDefaultValue ? ToString(option.GetDefaultValue()) : "",
+                Argument argument => ShouldShowDefaultValue(argument) 
+                                         ? ToString(argument.GetDefaultValue()) 
+                                         : "",
+                Option option => ShouldShowDefaultValue(option) 
+                                     ? ToString(option.GetDefaultValue()) 
+                                     : "",
                 _ => throw new InvalidOperationException("Symbol must be an Argument or Option.")
             };
 
@@ -36,6 +40,22 @@ internal partial class HelpBuilder
                 _ => value.ToString() ?? string.Empty
             };
         }
+
+        public static bool ShouldShowDefaultValue(Symbol symbol) =>
+            symbol switch
+            {
+                Option option => ShouldShowDefaultValue(option),
+                Argument argument => ShouldShowDefaultValue(argument),
+                _ => false
+            };
+
+        public static bool ShouldShowDefaultValue(Option option) =>
+            option.HasDefaultValue && 
+            !(option.ValueType == typeof(bool) || option.ValueType == typeof(bool?));
+
+        public static bool ShouldShowDefaultValue(Argument argument) =>
+            argument.HasDefaultValue && 
+            !(argument.ValueType == typeof(bool) || argument.ValueType == typeof(bool?));
 
         /// <summary>
         /// Gets the description for an argument (typically used in the second column text in the arguments section).
@@ -50,19 +70,22 @@ internal partial class HelpBuilder
             // By default Option.Name == Argument.Name, don't repeat it
             return parameter switch
             {
-                Argument argument => GetUsageLabel(argument.HelpName, argument.ValueType, argument.CompletionSources, argument) ?? $"<{argument.Name}>",
-                Option option => GetUsageLabel(option.HelpName, option.ValueType, option.CompletionSources, option) ?? "",
+                Argument argument => GetUsageLabel(argument.HelpName, argument.ValueType, argument.CompletionSources, argument, argument.Arity) ?? $"<{argument.Name}>",
+                Option option => GetUsageLabel(option.HelpName, option.ValueType, option.CompletionSources, option, option.Arity) ?? "",
                 _ => throw new InvalidOperationException()
             };
 
-            static string? GetUsageLabel(string? helpName, Type valueType, List<Func<CompletionContext, IEnumerable<CompletionItem>>> completionSources, Symbol symbol)
+            static string? GetUsageLabel(string? helpName, Type valueType, List<Func<CompletionContext, IEnumerable<CompletionItem>>> completionSources, Symbol symbol, ArgumentArity arity)
             {
                 // Argument.HelpName is always first choice
                 if (!string.IsNullOrWhiteSpace(helpName))
                 {
                     return $"<{helpName}>";
                 }
-                else if (!(valueType == typeof(bool) || valueType == typeof(bool?)) && completionSources.Count > 0)
+                else if (
+                    !(valueType == typeof(bool) || valueType == typeof(bool?))
+                    && arity.MaximumNumberOfValues > 0 // allowing zero arguments means we don't need to show usage
+                    && completionSources.Count > 0)
                 {
                     IEnumerable<string> completions = symbol
                         .GetCompletions(CompletionContext.Empty)
@@ -94,9 +117,9 @@ internal partial class HelpBuilder
 
         private static string GetIdentifierSymbolUsageLabel(Symbol symbol, ICollection<string>? aliasSet)
         {
-            var aliases =  aliasSet is null
-                ? new [] { symbol.Name }
-                : new [] {symbol.Name}.Concat(aliasSet)
+            var aliases = aliasSet is null
+                ? new[] { symbol.Name }
+                : new[] { symbol.Name }.Concat(aliasSet)
                                 .Select(r => r.SplitPrefix())
                                 .OrderBy(r => r.Prefix, StringComparer.OrdinalIgnoreCase)
                                 .ThenBy(r => r.Alias, StringComparer.OrdinalIgnoreCase)
