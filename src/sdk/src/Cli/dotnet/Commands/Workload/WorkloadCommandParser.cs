@@ -167,8 +167,8 @@ internal static class WorkloadCommandParser
         command.Subcommands.Add(WorkloadConfigCommandParser.GetCommand());
         command.Subcommands.Add(WorkloadHistoryCommandParser.GetCommand());
 
-        Command.Options.Add(InfoOption);
-        Command.Options.Add(VersionOption);
+        command.Options.Add(InfoOption);
+        command.Options.Add(VersionOption);
 
         command.Validators.Add(commandResult =>
         {
