@@ -44,8 +44,6 @@ internal static class WorkloadCommandParser
 
     public static Command GetCommand()
     {
-        Command.Options.Add(InfoOption);
-        Command.Options.Add(VersionOption);
         return Command;
     }
 
@@ -168,6 +166,9 @@ internal static class WorkloadCommandParser
         command.Subcommands.Add(WorkloadElevateCommandParser.GetCommand());
         command.Subcommands.Add(WorkloadConfigCommandParser.GetCommand());
         command.Subcommands.Add(WorkloadHistoryCommandParser.GetCommand());
+
+        Command.Options.Add(InfoOption);
+        Command.Options.Add(VersionOption);
 
         command.Validators.Add(commandResult =>
         {
