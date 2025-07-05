@@ -61,7 +61,7 @@
       </trans-unit>
       <trans-unit id="ExtractTo_Css_Title">
         <source>Extract to {0}.css</source>
-        <target state="new">Extract to {0}.css</target>
+        <target state="translated">Extraer a {0}.css</target>
         <note />
       </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
