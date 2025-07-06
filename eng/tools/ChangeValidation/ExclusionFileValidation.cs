@@ -74,6 +74,14 @@ internal class ExclusionFileValidation
             string warningMessage = sb.ToString();
             AddProcessingMessage(messages, Warn(warningMessage));
         }
+
+        if (!excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any())
+        {
+            AddProcessingMessage(messages, Sucecss($"Exclusion file validation succeeded."));
+        } else
+        {
+            AddProcessingMessage(messages, Warning($"Exclusion file validation finished with warning(s)."));
+        }
         return messages;
     }
 
