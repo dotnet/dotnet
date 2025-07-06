@@ -136,13 +136,21 @@ internal static class Validate
 
     internal static void AddProcessingMessage(List<ProcessingMessage> processingMessages, ProcessingMessage processingMessage)
     {
+        var lines = processingMessage.Message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
         if (processingMessage.WarningLevel == WarningLevel.Error)
         {
-            Console.WriteLine($"##vso[task.logissue type=error]{processingMessage.Message}");
+            foreach (var line in lines)
+            {
+                Console.WriteLine($"##vso[task.logissue type=error]{line}");
+            }
         }
         else if (processingMessage.WarningLevel == WarningLevel.Warning)
         {
-            Console.WriteLine($"##vso[task.logissue type=warning]{processingMessage.Message}");
+            foreach (var line in lines)
+            {
+                Console.WriteLine($"##vso[task.logissue type=warning]{line}");
+            }
         }
         else if (processingMessage.WarningLevel == WarningLevel.Success)
         {
