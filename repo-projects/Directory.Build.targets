@@ -46,6 +46,11 @@
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
 
+  <!-- Exclude shared repositories from the build, unless shared component building is explicitly enabled. -->
+  <ItemGroup Condition="'$(DotNetBuildSharedComponents)' != 'true'">
+    <RepositoryReference Remove="@(SharedRepositoryReference)" />
+  </ItemGroup>
+
   <!-- Don't build repositories that aren't part of the current build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">
     <_repositoryReferenceIncluded Include="@(RepositoryReference->WithMetadataValue('DotNetBuildPass', '$(DotNetBuildPass)'))" />
@@ -343,6 +348,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(CurrentSourceBuiltPackageVersionPropsPath)"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Create previously source-built inputs info -->
@@ -350,7 +356,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
-                               IsPreviousPropsFile="true"
+                               PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
@@ -364,6 +370,7 @@
          A key element of this algorith is that we must write the full package version props and not the filtered version. -->
     <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
                                VersionPropsFlowType="AllPackages"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
                                OutputPath="$(SnapshotPackageVersionPropsPath)" />
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->

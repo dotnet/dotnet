@@ -27,7 +27,7 @@ internal class ExtractToComponentCodeActionResolver(
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public string Action => LanguageServerConstants.CodeActions.ExtractToNewComponentAction;
+    public string Action => LanguageServerConstants.CodeActions.ExtractToNewComponent;
 
     public async Task<WorkspaceEdit?> ResolveAsync(DocumentContext documentContext, JsonElement data, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
@@ -50,13 +50,7 @@ internal class ExtractToComponentCodeActionResolver(
         var templatePath = Path.Combine(directoryName, "Component.razor");
         var componentPath = FileUtilities.GenerateUniquePath(templatePath, ".razor");
         var componentName = Path.GetFileNameWithoutExtension(componentPath);
-
-        // VS Code in Windows expects path to start with '/'
-        componentPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !componentPath.StartsWith('/')
-            ? '/' + componentPath
-            : componentPath;
-
-        var newComponentUri = new DocumentUri(LspFactory.CreateFilePathUri(componentPath));
+        var newComponentUri = new DocumentUri(LspFactory.CreateFilePathUri(componentPath, _languageServerFeatureOptions));
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 

@@ -59,6 +59,11 @@
         <target state="translated">Element in neue Komponente extrahieren</target>
         <note />
       </trans-unit>
+      <trans-unit id="ExtractTo_Css_Title">
+        <source>Extract to {0}.css</source>
+        <target state="new">Extract to {0}.css</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Format_operation_changed_diagnostics">
         <source>A format operation is being abandoned because it would introduce or remove one of more diagnostics.</source>
         <target state="translated">Ein Formatierungsvorgang wird abgebrochen, weil er eine oder mehrere Diagnosen einführen oder entfernen würde.</target>
@@ -77,6 +82,21 @@
       <trans-unit id="Generate_Event_Handler_Title">
         <source>Generate Event Handler '{0}'</source>
         <target state="translated">Ereignishandler "{0}" generieren</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_MiscFiles">
+        <source>The Razor editor utilizes the Razor Source Generator. {0} appears to not be part of any project, so the source generator is not present and the editing experience will be limited. No more messages will be logged for this scenario.</source>
+        <target state="translated">Der Razor-Editor verwendet den Razor-Quellgenerator. {0} scheint nicht Teil eines Projekts zu sein, sodass der Quellgenerator nicht vorhanden ist und die Bearbeitungserfahrung eingeschränkt ist. Für dieses Szenario werden keine weiteren Nachrichten protokolliert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NoAdditionalFiles">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
+        <target state="translated">Der Razor-Editor verwendet den Razor-Quellgenerator, der *.razor- und *.cshtml-Dateien als AdditionalFiles im Projekt erfordert. {0} scheint von „{1}“ zu stammen, das keine Razor-Dokumente enthält, die "AdditionalFiles" sind, sodass die Bearbeitungserfahrung eingeschränkt ist. Wird das Razor SDK verwendet? Für dieses Projekt werden keine weiteren Nachrichten protokolliert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IncompatibleProject_NotAnAdditionalFile">
+        <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has Razor documents but this file is not an AdditionalFile, so the editing experience will be limited. No more messages will be logged for this project.</source>
+        <target state="translated">Der Razor-Editor verwendet den Razor-Quellgenerator, der *.razor- und *.cshtml-Dateien als AdditionalFiles im Projekt erfordert. {0} scheint von „{1}“ zu stammen, das über Razor-Dokumente verfügt, diese Datei ist aber keine AdditionalFile, sodass die Bearbeitungserfahrung eingeschränkt ist. Für dieses Projekt werden keine weiteren Nachrichten protokolliert.</target>
         <note />
       </trans-unit>
       <trans-unit id="Invalid_Offset">
@@ -107,6 +127,11 @@
       <trans-unit id="Promote_using_directive_to">
         <source>Promote using directive to {0}</source>
         <target state="translated">Using-Direktive höher stufen zu {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Simplify_Tag_To_SelfClosing_Title">
+        <source>Simplify tag to self-closing</source>
+        <target state="translated">Tag zu selbstschließendem Format vereinfachen</target>
         <note />
       </trans-unit>
       <trans-unit id="TagHelper_Attribute_Glyph">

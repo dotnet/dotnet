@@ -271,12 +271,12 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentDefinitionName, htmlResponse)]);
 
         var filePathService = new VisualStudioFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToDefinitionEndpoint(RemoteServiceInvoker, requestInvoker, filePathService);
+        var endpoint = new CohostGoToDefinitionEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         return await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);

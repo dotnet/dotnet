@@ -41,8 +41,8 @@ internal static class FindAllReferencesHelper
             var codeDoc = await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
             var line = codeDoc.Source.Text.Lines[lineNumber];
             var csharpDocument = codeDoc.GetRequiredCSharpDocument();
-            if (!documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.Start, out _, out _) ||
-                !documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.End, out _, out _))
+            if (!documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, line.Start, out _, out _) ||
+                !documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, line.End, out _, out _))
             {
                 var start = line.GetFirstNonWhitespacePosition() ?? line.Start;
                 return codeDoc.Source.Text.GetSubTextString(TextSpan.FromBounds(start, line.End));

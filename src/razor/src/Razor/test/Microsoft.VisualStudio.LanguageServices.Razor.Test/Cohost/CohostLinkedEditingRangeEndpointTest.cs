@@ -161,13 +161,13 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostLinkedEditingRangeEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostLinkedEditingRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var request = new LinkedEditingRangeParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                DocumentUri = new(document.CreateUri())
+                DocumentUri = document.CreateDocumentUri()
             },
             Position = sourceText.GetPosition(cursorPosition)
         };
