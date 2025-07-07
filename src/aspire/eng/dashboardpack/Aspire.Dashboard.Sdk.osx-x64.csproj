@@ -1,9 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <DashboardRuntime>osx-x64</DashboardRuntime>
-    <DashboardPlatformType>Unix</DashboardPlatformType>
-  </PropertyGroup>
-
-  <Import Project="Common.projitems" />
-
-</Project>
