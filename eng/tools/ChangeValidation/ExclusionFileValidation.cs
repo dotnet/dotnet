@@ -80,7 +80,7 @@ internal class ExclusionFileValidation
             AddProcessingMessage(messages, Sucecss($"Exclusion file validation succeeded."));
         } else
         {
-            AddProcessingMessage(messages, Warning($"Exclusion file validation finished with warning(s)."));
+            AddProcessingMessage(messages, Warn($"Exclusion file validation finished with warning(s)."));
         }
         return messages;
     }
