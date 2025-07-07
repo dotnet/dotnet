@@ -2,7 +2,6 @@
   <CreatedByRid>centos.10-x64</CreatedByRid>
   <ProjectDirectories>
     <Dir>src/arcade</Dir>
-    <Dir>src/aspire</Dir>
     <Dir>src/aspnetcore</Dir>
     <Dir>src/cecil</Dir>
     <Dir>src/command-line-api</Dir>

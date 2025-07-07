@@ -7,12 +7,6 @@
       "commitSha": "d1834121068b0df7974a380cebadb781e58ff098"
     },
     {
-      "barId": null,
-      "path": "aspire",
-      "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
-    },
-    {
       "barId": 273508,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
