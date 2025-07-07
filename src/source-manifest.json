@@ -103,10 +103,10 @@
       "commitSha": "feb621b704347e6fb72b816a257f1ba2fdc6a385"
     },
     {
-      "barId": 274012,
+      "barId": 274246,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b3dd2a683d3a51fd7df85724db83ef5484031508"
+      "commitSha": "24d24fcadbda7343189b132956debb716d4de057"
     },
     {
       "barId": 273667,
@@ -214,29 +214,14 @@
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
     },
     {
+      "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
+      "remoteUri": "https://github.com/spectreconsole/spectre.console",
+      "commitSha": "f32f80dc57d8b0c8446a72ea0d382f3048f8bac1"
+    },
+    {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
       "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit",
-      "remoteUri": "https://github.com/xunit/xunit",
-      "commitSha": "82543a6df6f5f13b5b70f8a9f9ccb41cd676084f"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/src/xunit.assert/Asserts",
-      "remoteUri": "https://github.com/xunit/assert.xunit",
-      "commitSha": "cac8b688c193c0f244a0bedf3bb60feeb32d377a"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/builder/common",
-      "remoteUri": "https://github.com/xunit/build-tools-v3",
-      "commitSha": "90dba1f5638a4f00d4978a73e23edde5b85061d9"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/media",
-      "remoteUri": "https://github.com/xunit/media",
-      "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
     }
   ]
 }

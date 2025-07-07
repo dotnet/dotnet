@@ -122,6 +122,8 @@ src/sdk/test/Microsoft.NET.Sdk.Publish.Tasks.Tests/Resources/*.zip
 
 # source-build-reference-packages
 src/source-build-reference-packages/src/externalPackages/src/application-insights*/WEB/Src/WindowsServer/WindowsServer.Tests/**/*.dll
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/docs/**/*.woff*
+src/source-build-reference-packages/src/externalPackages/src/spectre-console/docs/input/assets/images/*
 
 # symreader
 src/symreader/src/PdbTestResources/Resources/*
