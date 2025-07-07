@@ -146,7 +146,7 @@ internal class ExclusionFileValidation
     
     private static HashSet<string> FilesMatchingGlobs(List<string> globPatterns)
     {
-        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", ".."));
+        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
 
         var matcher = new Matcher();
         foreach (var pattern in globPatterns)
