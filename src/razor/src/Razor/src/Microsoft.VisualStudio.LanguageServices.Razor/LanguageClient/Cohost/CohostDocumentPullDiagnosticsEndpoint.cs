@@ -6,10 +6,10 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
@@ -26,13 +26,14 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentPullDiagnosticsEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlRequestInvoker requestInvoker,
     IClientSettingsManager clientSettingsManager,
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : CohostDocumentPullDiagnosticsEndpointBase<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(remoteServiceInvoker, requestInvoker, clientCapabilitiesService, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
+    : CohostDocumentPullDiagnosticsEndpointBase<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientCapabilitiesService, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
@@ -60,17 +61,17 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(VSInternalDocumentDiagnosticsParams request)
         => request.TextDocument?.ToRazorTextDocumentIdentifier();
 
-    protected async override Task<VSInternalDiagnosticReport[]> HandleRequestAsync(VSInternalDocumentDiagnosticsParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
+    protected async override Task<VSInternalDiagnosticReport[]?> HandleRequestAsync(VSInternalDocumentDiagnosticsParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         if (request.QueryingDiagnosticKind?.Value == VSInternalDiagnosticKind.Task.Value)
         {
             return await HandleTaskListItemRequestAsync(
-                context.TextDocument.AssumeNotNull(),
+                razorDocument,
                 _clientSettingsManager.GetClientSettings().AdvancedSettings.TaskListDescriptors,
                 cancellationToken).ConfigureAwait(false);
         }
 
-        var results = await GetDiagnosticsAsync(context.TextDocument.AssumeNotNull(), cancellationToken).ConfigureAwait(false);
+        var results = await GetDiagnosticsAsync(razorDocument, cancellationToken).ConfigureAwait(false);
 
         if (results is null)
         {

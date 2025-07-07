@@ -332,7 +332,7 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
 
         var documentMappingServiceMock = new StrictMock<IDocumentMappingService>();
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out generatedPosition, out It.Ref<int>.IsAny))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out generatedPosition, out It.Ref<int>.IsAny))
             .Returns(true);
 
         var completionProvider = CreateDelegatedCompletionListProvider(clientConnection, documentMappingServiceMock.Object);

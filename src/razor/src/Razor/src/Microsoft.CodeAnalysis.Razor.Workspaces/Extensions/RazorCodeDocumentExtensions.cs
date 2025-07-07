@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -46,44 +44,6 @@ internal static partial class RazorCodeDocumentExtensions
     /// </summary>
     public static SyntaxTree GetOrParseCSharpSyntaxTree(this RazorCodeDocument document, CancellationToken cancellationToken)
         => GetCachedData(document).GetOrParseCSharpSyntaxTree(cancellationToken);
-
-    public static bool TryGetGeneratedDocument(
-        this RazorCodeDocument codeDocument,
-        Uri generatedDocumentUri,
-        IFilePathService filePathService,
-        [NotNullWhen(true)] out IRazorGeneratedDocument? generatedDocument)
-    {
-        if (filePathService.IsVirtualCSharpFile(generatedDocumentUri))
-        {
-            generatedDocument = codeDocument.GetRequiredCSharpDocument();
-            return true;
-        }
-
-        if (filePathService.IsVirtualHtmlFile(generatedDocumentUri))
-        {
-            generatedDocument = codeDocument.GetHtmlDocument();
-            return true;
-        }
-
-        generatedDocument = null;
-        return false;
-    }
-
-    public static SourceText GetGeneratedSourceText(this RazorCodeDocument document, IRazorGeneratedDocument generatedDocument)
-        => generatedDocument switch
-        {
-            RazorCSharpDocument => document.GetCSharpSourceText(),
-            RazorHtmlDocument => document.GetHtmlSourceText(),
-            _ => ThrowHelper.ThrowInvalidOperationException<SourceText>("Unknown generated document type"),
-        };
-
-    public static IRazorGeneratedDocument GetGeneratedDocument(this RazorCodeDocument document, RazorLanguageKind languageKind)
-        => languageKind switch
-        {
-            RazorLanguageKind.CSharp => document.GetRequiredCSharpDocument(),
-            RazorLanguageKind.Html => document.GetHtmlDocument(),
-            _ => ThrowHelper.ThrowInvalidOperationException<IRazorGeneratedDocument>($"Unexpected language kind: {languageKind}"),
-        };
 
     public static bool TryGetMinimalCSharpRange(this RazorCodeDocument codeDocument, LinePositionSpan razorRange, out LinePositionSpan csharpRange)
     {

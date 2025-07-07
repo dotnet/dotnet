@@ -246,13 +246,13 @@ public class CohostUriPresentationEndpointTest(ITestOutputHelper testOutputHelpe
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentUriPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostUriPresentationEndpoint(RemoteServiceInvoker, FilePathService, requestInvoker);
+        var endpoint = new CohostUriPresentationEndpoint(IncompatibleProjectService, RemoteServiceInvoker, FilePathService, requestInvoker);
 
         var request = new VSInternalUriPresentationParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                DocumentUri = new(document.CreateUri())
+                DocumentUri = document.CreateDocumentUri()
             },
             Range = sourceText.GetRange(span),
             Uris = uris

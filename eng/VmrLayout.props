@@ -78,4 +78,15 @@
     <MergedAssetManifestOutputPath>$(ArtifactsStagingDir)/manifests/$(Configuration)/$(MergedAssetManifestName)</MergedAssetManifestOutputPath>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageVersionPropertySuffix>Version</PackageVersionPropertySuffix>
+    <PackageVersionPropertyAlternateSuffix>PackageVersion</PackageVersionPropertyAlternateSuffix>
+    <PackagePreviousVersionPropertySuffix>PreviousVersion</PackagePreviousVersionPropertySuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DefaultPackageVersionPropertySuffixes Include="$(PackageVersionPropertySuffix);$(PackageVersionPropertyAlternateSuffix)" />
+    <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
+  </ItemGroup>
+
 </Project>

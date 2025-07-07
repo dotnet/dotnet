@@ -53,7 +53,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!DocumentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+        if (!DocumentMappingService.TryMapToCSharpDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
             !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
@@ -81,7 +81,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         foreach (var hint in hints)
         {
             if (csharpSourceText.TryGetAbsoluteIndex(hint.Position.ToLinePosition(), out var absoluteIndex) &&
-                DocumentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out var hostDocumentPosition, out var hostDocumentIndex))
+                DocumentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteIndex, out var hostDocumentPosition, out var hostDocumentIndex))
             {
                 // We know this C# maps to Razor, but does it map to Razor that we like?
 
@@ -103,7 +103,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
                 if (hint.TextEdits is not null)
                 {
                     var changes = hint.TextEdits.SelectAsArray(csharpSourceText.GetTextChange);
-                    var mappedChanges = DocumentMappingService.GetHostDocumentEdits(csharpDocument, changes);
+                    var mappedChanges = DocumentMappingService.GetRazorDocumentEdits(csharpDocument, changes);
                     hint.TextEdits = mappedChanges.Select(razorSourceText.GetTextEdit).ToArray();
                 }
 
