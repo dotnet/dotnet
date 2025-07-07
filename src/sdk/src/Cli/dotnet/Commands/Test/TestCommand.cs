@@ -219,7 +219,7 @@ public class TestCommand(
             msbuildArgs.Add($"-property:VSTestSessionCorrelationId={testSessionCorrelationId}");
         }
 
-        bool noRestore = (result.GetResult(TestCommandParser.NoRestoreOption) ?? result.GetResult(TestCommandParser.NoBuildOption)) is not null;
+        bool noRestore = result.GetValue(TestCommandParser.NoRestoreOption) || result.GetValue(TestCommandParser.NoBuildOption);
 
         TestCommand testCommand = new(
             msbuildArgs,

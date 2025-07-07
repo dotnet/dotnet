@@ -26,8 +26,8 @@ public static class BuildCommand
         parseResult.ShowHelpOrErrorIfAppropriate();
 
         CommonOptions.ValidateSelfContainedOptions(
-            parseResult.GetResult(BuildCommandParser.SelfContainedOption) is not null,
-            parseResult.GetResult(BuildCommandParser.NoSelfContainedOption) is not null);
+            parseResult.HasOption(BuildCommandParser.SelfContainedOption),
+            parseResult.HasOption(BuildCommandParser.NoSelfContainedOption));
 
         string[] args = parseResult.GetValue(BuildCommandParser.SlnOrProjectOrFileArgument) ?? [];
 
@@ -35,9 +35,9 @@ public static class BuildCommand
 
         string[] forwardedOptions = parseResult.OptionValuesToBeForwarded(BuildCommandParser.GetCommand()).ToArray();
 
-        bool noRestore = parseResult.GetResult(BuildCommandParser.NoRestoreOption) is not null;
+        bool noRestore = parseResult.HasOption(BuildCommandParser.NoRestoreOption);
 
-        bool noIncremental = parseResult.GetResult(BuildCommandParser.NoIncrementalOption) is not null;
+        bool noIncremental = parseResult.HasOption(BuildCommandParser.NoIncrementalOption);
 
         CommandBase command;
 

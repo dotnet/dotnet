@@ -278,4 +278,17 @@ public static class ParseResultExtensions
     /// </summary>
     public static bool HasOption(this ParseResult parseResult, string name)
         => parseResult.GetResult(name) is OptionResult or && !or.Implicit;
+
+    /// <summary>
+    /// Checks if the option is present and not implicit (i.e. not set by default).
+    /// This is useful for checking if the user has explicitly set an option, as opposed to it being set by default.
+    /// </summary>
+    public static bool HasOption(this SymbolResult symbolResult, Option option) => symbolResult.GetResult(option) is OptionResult or && !or.Implicit;
+
+    /// <summary>
+    /// Checks if the option with given name is present and not implicit (i.e. not set by default).
+    /// This is useful for checking if the user has explicitly set an option, as opposed to it being set by default.
+    /// </summary>
+    public static bool HasOption(this SymbolResult symbolResult, string name)
+        => symbolResult.GetResult(name) is OptionResult or && !or.Implicit;
 }
