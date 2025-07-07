@@ -109,10 +109,10 @@
       "commitSha": "4177291d4d3dabd5341239d01b3e844125659304"
     },
     {
-      "barId": 274012,
+      "barId": 274199,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "b3dd2a683d3a51fd7df85724db83ef5484031508"
+      "commitSha": "2b4409f7bb4574effb9dda08dfcec8975dfb6935"
     },
     {
       "barId": 273667,
@@ -218,6 +218,11 @@
       "path": "source-build-reference-packages/src/externalPackages/src/newtonsoft-json",
       "remoteUri": "https://github.com/JamesNK/Newtonsoft.Json.git",
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
+    },
+    {
+      "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
+      "remoteUri": "https://github.com/spectreconsole/spectre.console",
+      "commitSha": "f32f80dc57d8b0c8446a72ea0d382f3048f8bac1"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
