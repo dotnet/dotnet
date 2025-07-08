@@ -500,11 +500,11 @@ namespace R2RDump
 
         public static int Main(string[] args) =>
             new R2RDumpRootCommand().UseVersion()
-            .Parse(
+            .Parse(args,
                 new ParserConfiguration()
                 {
                     ResponseFileTokenReplacer = Helpers.TryReadResponseFile
                 })
-            .Invoke(args);
+            .Invoke();
     }
 }
