@@ -16,6 +16,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:UseBuildTimeTools=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=true</BuildCommandArgs>
     </PropertyGroup>
 
     <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
