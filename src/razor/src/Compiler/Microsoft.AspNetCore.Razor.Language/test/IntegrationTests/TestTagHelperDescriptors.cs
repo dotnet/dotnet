@@ -116,10 +116,8 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("href")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                                    .Value("~/")
-                                    .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)),
+                                    .Name("href", RequiredAttributeNameComparison.FullMatch)
+                                    .Value("~/", RequiredAttributeValueComparison.FullMatch)),
                         }),
                     CreateTagHelperDescriptor(
                         tagName: "a",
@@ -129,15 +127,11 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("href")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                                    .Value("~/")
-                                    .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch))
+                                    .Name("href", RequiredAttributeNameComparison.FullMatch)
+                                    .Value("~/", RequiredAttributeValueComparison.PrefixMatch))
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("href")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                                    .Value("?hello=world")
-                                    .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.SuffixMatch)),
+                                    .Name("href", RequiredAttributeNameComparison.FullMatch)
+                                    .Value("?hello=world", RequiredAttributeValueComparison.SuffixMatch)),
                         }),
                     CreateTagHelperDescriptor(
                         tagName: "input",
@@ -151,10 +145,8 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("type")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                                    .Value("text")
-                                    .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.FullMatch)),
+                                    .Name("type", RequiredAttributeNameComparison.FullMatch)
+                                    .Value("text", RequiredAttributeValueComparison.FullMatch)),
                         }),
                     CreateTagHelperDescriptor(
                         tagName: "input",
@@ -168,8 +160,7 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("ty")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch)),
+                                    .Name("ty", RequiredAttributeNameComparison.PrefixMatch)),
                         }),
                     CreateTagHelperDescriptor(
                         tagName: "*",
@@ -179,10 +170,8 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("href")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)
-                                    .Value("~/")
-                                    .ValueComparisonMode(RequiredAttributeDescriptor.ValueComparisonMode.PrefixMatch)),
+                                    .Name("href", RequiredAttributeNameComparison.FullMatch)
+                                    .Value("~/", RequiredAttributeValueComparison.PrefixMatch)),
                         }),
                     CreateTagHelperDescriptor(
                         tagName: "*",
@@ -192,8 +181,7 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .RequireAttributeDescriptor(attribute => attribute
-                                    .Name("type")
-                                    .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch)),
+                                    .Name("type", RequiredAttributeNameComparison.FullMatch)),
                         }),
                 };
         }

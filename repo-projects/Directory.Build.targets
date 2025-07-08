@@ -28,6 +28,7 @@
     <CommonArgs>$(CommonArgs) /p:PortableBuild=$(PortableBuild)</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:PortableTargetRid=$(PortableTargetRid)</CommonArgs>
     <CommonArgs Condition="'$(DefaultArtifactVisibility)' != ''">$(CommonArgs) /p:DefaultArtifactVisibility=$(DefaultArtifactVisibility)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetFinalVersionKind)' != '' and '$(AllowDotNetFinalVersionKindOverride)' == 'true'">$(CommonArgs) /p:DotNetFinalVersionKind=$(DotNetFinalVersionKind)</CommonArgs>
 
     <!-- Only pass these properites through when necessary to reduce command line noise. -->
     <CommonArgs Condition="'$(DotNetBuildTests)' == 'true' and '$(DotNetBuildTestsOptOut)' != 'true'">$(CommonArgs) /p:DotNetBuildTests=true</CommonArgs>
@@ -44,6 +45,11 @@
     <RepoConsoleLogFile>$(ArtifactsLogRepoDir)$(RepositoryName).log</RepoConsoleLogFile>
     <MinimalConsoleLogOutput Condition="'$(MinimalConsoleLogOutput)' == ''">$(BuildInParallel)</MinimalConsoleLogOutput>
   </PropertyGroup>
+
+  <!-- Exclude shared repositories from the build, unless shared component building is explicitly enabled. -->
+  <ItemGroup Condition="'$(DotNetBuildSharedComponents)' != 'true'">
+    <RepositoryReference Remove="@(SharedRepositoryReference)" />
+  </ItemGroup>
 
   <!-- Don't build repositories that aren't part of the current build pass. -->
   <ItemGroup Condition="'$(DotNetBuildPass)' != '' and '$(DotNetBuildPass)' != '1'">
@@ -205,7 +211,7 @@
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
       KeepFeedPrefixes="@(KeepFeedPrefixes)"
-      Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetSourceOnlyTestOnly)' != 'true'" />
+      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PrebuiltNuGetSourceName)"
@@ -342,6 +348,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(CurrentSourceBuiltPackageVersionPropsPath)"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Create previously source-built inputs info -->
@@ -349,7 +356,7 @@
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
-                               IsPreviousPropsFile="true"
+                               PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
                                Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
@@ -363,6 +370,7 @@
          A key element of this algorith is that we must write the full package version props and not the filtered version. -->
     <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
                                VersionPropsFlowType="AllPackages"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
                                OutputPath="$(SnapshotPackageVersionPropsPath)" />
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->
@@ -641,8 +649,8 @@
       <IntermediateSymbolsRepoDir>$([MSBuild]::NormalizeDirectory('$(IntermediateSymbolsRootDir)', '$(RepositoryName)'))</IntermediateSymbolsRepoDir>
 
       <SymbolsRoot>$(RepoArtifactsDir)</SymbolsRoot>
-      <!-- Fall back to repo root for source-build-externals. -->
-      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-externals'">$(ProjectDirectory)</SymbolsRoot>
+      <!-- Fall back to repo root for source-build-reference-packages. -->
+      <SymbolsRoot Condition="'$(RepositoryName)' == 'source-build-reference-packages'">$(ProjectDirectory)</SymbolsRoot>
     </PropertyGroup>
 
     <ItemGroup>

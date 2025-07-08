@@ -4,6 +4,7 @@
     <VersionPrefix>0.1.0</VersionPrefix>
     <PreReleaseVersionLabel>alpha.1</PreReleaseVersionLabel>
     <UseVSTestRunner>true</UseVSTestRunner>
+    <VersionSDKMinor>1</VersionSDKMinor>
   </PropertyGroup>
   <PropertyGroup>
     <!--

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using MessagePack;
@@ -10,6 +10,8 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagH
 
 internal sealed class BoundAttributeParameterFormatter : ValueFormatter<BoundAttributeParameterDescriptor>
 {
+    private const int PropertyCount = 6;
+
     public static readonly ValueFormatter<BoundAttributeParameterDescriptor> Instance = new BoundAttributeParameterFormatter();
 
     private BoundAttributeParameterFormatter()
@@ -18,54 +20,43 @@ internal sealed class BoundAttributeParameterFormatter : ValueFormatter<BoundAtt
 
     public override BoundAttributeParameterDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(9);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
-        var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var flags = (BoundAttributeParameterFlags)reader.ReadByte();
         var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
-        var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
-        var isEnum = reader.ReadBoolean();
-        var displayName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var propertyName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
+        var typeNameObject = reader.Deserialize<TypeNameObject>(options);
         var documentationObject = reader.Deserialize<DocumentationObject>(options);
-        var caseSensitive = reader.ReadBoolean();
 
-        var metadata = reader.Deserialize<MetadataCollection>(options);
         var diagnostics = reader.Deserialize<ImmutableArray<RazorDiagnostic>>(options);
 
         return new BoundAttributeParameterDescriptor(
-            kind, name!, typeName,
-            isEnum, documentationObject, displayName, caseSensitive,
-            metadata, diagnostics);
+            flags, name!, propertyName, typeNameObject, documentationObject, diagnostics);
     }
 
     public override void Serialize(ref MessagePackWriter writer, BoundAttributeParameterDescriptor value, SerializerCachingOptions options)
     {
-        writer.WriteArrayHeader(9);
+        writer.WriteArrayHeader(PropertyCount);
 
-        CachedStringFormatter.Instance.Serialize(ref writer, value.Kind, options);
+        writer.Write((byte)value.Flags);
         CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.TypeName, options);
-        writer.Write(value.IsEnum);
-        CachedStringFormatter.Instance.Serialize(ref writer, value.DisplayName, options);
+        CachedStringFormatter.Instance.Serialize(ref writer, value.PropertyName, options);
+        writer.Serialize(value.TypeNameObject, options);
         writer.Serialize(value.DocumentationObject, options);
-        writer.Write(value.CaseSensitive);
 
-        writer.Serialize(value.Metadata, options);
         writer.Serialize(value.Diagnostics, options);
     }
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(9);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
-        CachedStringFormatter.Instance.Skim(ref reader, options); // Kind
+        reader.Skip(); // Flags
         CachedStringFormatter.Instance.Skim(ref reader, options); // Name
-        CachedStringFormatter.Instance.Skim(ref reader, options); // TypeName
-        reader.Skip(); // IsEnum
-        CachedStringFormatter.Instance.Skim(ref reader, options); // DisplayName
+        CachedStringFormatter.Instance.Skim(ref reader, options); // PropertyName
+        TypeNameObjectFormatter.Instance.Skim(ref reader, options); // TypeNameObject
         DocumentationObjectFormatter.Instance.Skim(ref reader, options); // DocumentationObject
-        reader.Skip(); // CaseSensitive
 
-        MetadataCollectionFormatter.Instance.Skim(ref reader, options); // Metadata
         RazorDiagnosticFormatter.Instance.SkimArray(ref reader, options); // Diagnostics
     }
 }

@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -21,8 +21,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostFindAllReferencesEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<ReferenceParams, SumType<VSInternalReferenceItem, LspLocation>[]?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<ReferenceParams, SumType<VSInternalReferenceItem, LspLocation>[]?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
 
@@ -47,11 +48,8 @@ internal sealed class CohostFindAllReferencesEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(ReferenceParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SumType<VSInternalReferenceItem, LspLocation>[]?> HandleRequestAsync(ReferenceParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(
-            context.TextDocument.AssumeNotNull(),
-            request.Position,
-            cancellationToken);
+    protected override Task<SumType<VSInternalReferenceItem, LspLocation>[]?> HandleRequestAsync(ReferenceParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+        => HandleRequestAsync(razorDocument, request.Position, cancellationToken);
 
     private async Task<SumType<VSInternalReferenceItem, LspLocation>[]?> HandleRequestAsync(TextDocument razorDocument, Position position, CancellationToken cancellationToken)
     {

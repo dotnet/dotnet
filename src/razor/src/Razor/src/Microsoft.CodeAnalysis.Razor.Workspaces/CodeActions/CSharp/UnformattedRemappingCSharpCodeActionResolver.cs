@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Linq;
@@ -56,7 +56,7 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
 
         var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
-        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), textEdit.Range, MappingBehavior.Inclusive, out var originalRange))
+        if (!_documentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), textEdit.Range, MappingBehavior.Inclusive, out var originalRange))
         {
             // Text edit failed to map
             return codeAction;
@@ -66,7 +66,7 @@ internal class UnformattedRemappingCSharpCodeActionResolver(IDocumentMappingServ
 
         var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier()
         {
-            Uri = documentContext.Uri,
+            DocumentUri = new(documentContext.Uri),
         };
         codeAction.Edit = new WorkspaceEdit()
         {

@@ -1,10 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -111,7 +112,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
     private protected async Task<SumType<Command, CodeAction>[]?> GetCodeActionsAsync(TextDocument document, TestCode input)
     {
         var requestInvoker = new TestHtmlRequestInvoker();
-        var endpoint = new CohostCodeActionsEndpoint(RemoteServiceInvoker, ClientCapabilitiesService, requestInvoker, NoOpTelemetryReporter.Instance);
+        var endpoint = new CohostCodeActionsEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, requestInvoker, NoOpTelemetryReporter.Instance);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         using var diagnostics = new PooledArrayBuilder<LspDiagnostic>();
@@ -138,7 +139,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
 
         var request = new VSCodeActionParams
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = document.CreateUri() },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
             Range = range,
             Context = new VSInternalCodeActionContext() { Diagnostics = diagnostics.ToArray() }
         };
@@ -172,9 +173,9 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
                 if (sumType.Value is CreateFile createFile)
                 {
                     validated = true;
-                    Assert.Single(additionalExpectedFiles.AssumeNotNull(), f => f.fileUri == createFile.Uri);
+                    Assert.Single(additionalExpectedFiles.AssumeNotNull(), f => f.fileUri == createFile.DocumentUri.GetRequiredParsedUri());
                     var documentId = DocumentId.CreateNewId(document.Project.Id);
-                    var filePath = createFile.Uri.GetDocumentFilePath();
+                    var filePath = createFile.DocumentUri.GetRequiredParsedUri().GetDocumentFilePath();
                     var documentInfo = DocumentInfo.Create(documentId, filePath, filePath: filePath);
                     solution = solution.AddDocument(documentInfo);
                 }
@@ -185,7 +186,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         {
             foreach (var edit in documentEdits)
             {
-                var textDocument = solution.GetTextDocuments(edit.TextDocument.Uri).First();
+                var textDocument = solution.GetTextDocuments(edit.TextDocument.DocumentUri.GetRequiredParsedUri()).First();
                 var text = await textDocument.GetTextAsync(DisposalToken).ConfigureAwait(false);
                 if (textDocument is Document)
                 {
@@ -219,7 +220,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
     {
         var requestInvoker = new TestHtmlRequestInvoker();
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
-        var endpoint = new CohostCodeActionsResolveEndpoint(RemoteServiceInvoker, ClientCapabilitiesService, clientSettingsManager, requestInvoker);
+        var endpoint = new CohostCodeActionsResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientCapabilitiesService, clientSettingsManager, requestInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, codeAction, DisposalToken);
 
@@ -234,6 +235,9 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
 
         public string ReadFile(string filePath)
             => files.AssumeNotNull().Single(f => FilePathNormalizingComparer.Instance.Equals(f.filePath, filePath)).contents;
+
+        public Stream OpenReadStream(string filePath)
+            => new MemoryStream(Encoding.UTF8.GetBytes(ReadFile(filePath)));
 
         public IEnumerable<string> GetDirectories(string workspaceDirectory)
             => throw new NotImplementedException();

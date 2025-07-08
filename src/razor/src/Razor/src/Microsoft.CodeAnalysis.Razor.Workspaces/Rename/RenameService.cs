@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ internal class RenameService(
         using var _ = ListPool<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>.GetPooledObject(out var documentChanges);
         var fileRename = GetFileRenameForComponent(originComponentDocumentSnapshot, newPath);
         documentChanges.Add(fileRename);
-        AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, documentContext.Uri, codeDocument);
+        AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, new(documentContext.Uri), codeDocument);
 
         var documentSnapshots = GetAllDocumentSnapshots(documentContext.FilePath, solutionQueryOperations);
 
@@ -87,9 +87,9 @@ internal class RenameService(
         foreach (var documentChange in documentChanges)
         {
             if (documentChange.TryGetFirst(out var textDocumentEdit) &&
-                textDocumentEdit.TextDocument.Uri == fileRename.OldUri)
+                textDocumentEdit.TextDocument.DocumentUri == fileRename.OldDocumentUri)
             {
-                textDocumentEdit.TextDocument.Uri = fileRename.NewUri;
+                textDocumentEdit.TextDocument.DocumentUri = fileRename.NewDocumentUri;
             }
         }
 
@@ -136,18 +136,9 @@ internal class RenameService(
     private RenameFile GetFileRenameForComponent(IDocumentSnapshot documentSnapshot, string newPath)
         => new RenameFile
         {
-            OldUri = BuildUri(documentSnapshot.FilePath),
-            NewUri = BuildUri(newPath),
+            OldDocumentUri = new(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions)),
+            NewDocumentUri = new(LspFactory.CreateFilePathUri(newPath, _languageServerFeatureOptions)),
         };
-
-    private Uri BuildUri(string filePath)
-    {
-        // VS Code in Windows expects path to start with '/'
-        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith("/")
-                    ? '/' + filePath
-                    : filePath;
-        return LspFactory.CreateFilePathUri(updatedPath);
-    }
 
     private static string MakeNewPath(string originalPath, string newName)
     {
@@ -171,7 +162,7 @@ internal class RenameService(
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         // VS Code in Windows expects path to start with '/'
-        var uri = BuildUri(documentSnapshot.FilePath);
+        var uri = new DocumentUri(LspFactory.CreateFilePathUri(documentSnapshot.FilePath, _languageServerFeatureOptions));
 
         AddEditsForCodeDocument(documentChanges, originTagHelpers, newName, uri, codeDocument);
     }
@@ -180,10 +171,10 @@ internal class RenameService(
         List<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>> documentChanges,
         ImmutableArray<TagHelperDescriptor> originTagHelpers,
         string newName,
-        Uri uri,
+        DocumentUri uri,
         RazorCodeDocument codeDocument)
     {
-        var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = uri };
+        var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = uri };
         var tagHelperElements = codeDocument.GetRequiredSyntaxRoot()
             .DescendantNodes()
             .OfType<MarkupTagHelperElementSyntax>();

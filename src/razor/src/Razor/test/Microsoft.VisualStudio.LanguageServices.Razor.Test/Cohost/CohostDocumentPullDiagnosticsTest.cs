@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -110,6 +110,60 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
     }
 
     [Fact]
+    public Task FilterRazorCommentsFromCss()
+    {
+        TestCode input = """
+            <div>
+
+            <style>
+                @* This is a Razor comment *@
+            </style>
+
+            </div>
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@*"), 1))
+                    }
+                ]
+            }]);
+    }
+
+    [Fact]
+    public Task FilterRazorCommentsFromCss_Inside()
+    {
+        TestCode input = """
+            <div>
+
+            <style>
+                @* This is a Razor comment *@
+            </style>
+
+            </div>
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new Diagnostic
+                    {
+                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("Ra"), 1))
+                    }
+                ]
+            }]);
+    }
+
+    [Fact]
     public Task CombinedAndNestedDiagnostics()
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
@@ -161,7 +215,7 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
 
         var clientSettingsManager = new ClientSettingsManager([]);
         var clientCapabilitiesService = new TestClientCapabilitiesService(new VSInternalClientCapabilities { SupportsVisualStudioExtensions = true });
-        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(RemoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, LoggerFactory);
+        var endpoint = new CohostDocumentPullDiagnosticsEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, clientSettingsManager, clientCapabilitiesService, NoOpTelemetryReporter.Instance, LoggerFactory);
 
         var result = taskListRequest
             ? await endpoint.GetTestAccessor().HandleTaskListItemRequestAsync(document, ["TODO"], DisposalToken)
@@ -169,6 +223,15 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 {
                     Diagnostics = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken)
                 }];
+
+        Assert.NotNull(result);
+
+        if (result is [{ Diagnostics: null }])
+        {
+            // No diagnostics found, make sure none were expected
+            AssertEx.Equal(input.OriginalInput, input.Text);
+            return;
+        }
 
         var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
             new[] {

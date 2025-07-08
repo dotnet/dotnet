@@ -1,4 +1,4 @@
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!-- Opt-in arcade features -->
   <PropertyGroup>
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -47,28 +47,27 @@
 
   -->
   <PropertyGroup Label="Automated">
-    <MicrosoftCodeAnalysisAnalyzersPackageVersion>3.12.0-beta1.25230.6</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-1.25230.6</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
-    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.0.0-1.25230.6</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCommonPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisCommonPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisEditorFeaturesWpfPackageVersion>
-    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
-    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
-    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-1.25230.6</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-1.25230.6</MicrosoftVisualStudioLanguageServicesPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisAnalyzersPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-1.25321.1</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
+    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.0.0-1.25321.1</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCommonPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisCommonPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
+    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
+    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
+    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-1.25321.1</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-1.25321.1</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <!--
       Exception - Microsoft.Extensions.ObjectPool and System.Collections.Immutable packages are not updated by automation,
       but are present in Version.Details.xml for source-build PVP flow. See the comment in Version.Details.xml for more information.

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -33,11 +33,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool UseRazorCohostServer { get; }
 
-    /// <summary>
-    /// When enabled, design time code will not be generated. All tooling, except formatting, will be using runtime code generation.
-    /// </summary>
-    public abstract bool ForceRuntimeCodeGeneration { get; }
-
     public abstract bool UseNewFormattingEngine { get; }
 
     /// <summary>
@@ -56,4 +51,12 @@ internal abstract class LanguageServerFeatureOptions
     /// all Razor files found under the workspace root path.
     /// </summary>
     public abstract bool DoNotInitializeMiscFilesProjectFromWorkspace { get; }
+
+    /// <summary>
+    /// When enabled, design time code will not be generated. All tooling, except formatting, will be using runtime code generation.
+    /// </summary>
+    /// <remarks>
+    /// This is now always <see langword="true" /> but cannot be removed entirely until the legacy editor is removed.
+    /// </remarks>
+    public bool ForceRuntimeCodeGeneration { get; } = true;
 }

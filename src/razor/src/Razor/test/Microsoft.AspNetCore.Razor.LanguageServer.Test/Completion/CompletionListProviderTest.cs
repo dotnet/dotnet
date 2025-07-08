@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -21,8 +21,8 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 
 public class CompletionListProviderTest : LanguageServerTestBase
 {
-    private readonly RazorVSInternalCompletionList _completionList1;
-    private readonly RazorVSInternalCompletionList _completionList2;
+    private readonly RazorVSInternalCompletionList _razorCompletionList;
+    private readonly RazorVSInternalCompletionList _delegatedCompletionList;
     private readonly RazorCompletionListProvider _razorCompletionProvider;
     private readonly DelegatedCompletionListProvider _delegatedCompletionProvider;
     private readonly VSInternalCompletionContext _completionContext;
@@ -34,10 +34,10 @@ public class CompletionListProviderTest : LanguageServerTestBase
     public CompletionListProviderTest(ITestOutputHelper testOutput)
         : base(testOutput)
     {
-        _completionList1 = new RazorVSInternalCompletionList() { Items = [] };
-        _completionList2 = new RazorVSInternalCompletionList() { Items = [] };
-        _razorCompletionProvider = new TestRazorCompletionListProvider(_completionList1, LoggerFactory);
-        _delegatedCompletionProvider = new TestDelegatedCompletionListProvider(_completionList2);
+        _razorCompletionList = new RazorVSInternalCompletionList() { Items = [] };
+        _delegatedCompletionList = new RazorVSInternalCompletionList() { Items = [] };
+        _razorCompletionProvider = new TestRazorCompletionListProvider(_razorCompletionList, LoggerFactory);
+        _delegatedCompletionProvider = new TestDelegatedCompletionListProvider(_delegatedCompletionList);
         _completionContext = new VSInternalCompletionContext();
         _documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml");
         _clientCapabilities = new VSInternalClientCapabilities();
@@ -52,12 +52,13 @@ public class CompletionListProviderTest : LanguageServerTestBase
         var provider = new CompletionListProvider(_razorCompletionProvider, _delegatedCompletionProvider, _triggerAndCommitCharacters);
 
         // Act
-        var completionList = await provider.GetCompletionListAsync(
+        var mergedCompletionList = await provider.GetCompletionListAsync(
             absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, _razorCompletionOptions, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
-        Assert.NotSame(_completionList1, completionList);
-        Assert.NotSame(_completionList2, completionList);
+        Assert.Empty(mergedCompletionList.Items);
+        Assert.NotSame(_razorCompletionList, mergedCompletionList);
+        Assert.Same(_delegatedCompletionList, mergedCompletionList);
     }
 
     [Fact]
@@ -75,7 +76,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
             absoluteIndex: 0, _completionContext, _documentContext, _clientCapabilities, _razorCompletionOptions, correlationId: Guid.Empty, cancellationToken: DisposalToken);
 
         // Assert
-        Assert.Same(_completionList2, completionList);
+        Assert.Same(_delegatedCompletionList, completionList);
     }
 
     private class TestDelegatedCompletionListProvider : DelegatedCompletionListProvider

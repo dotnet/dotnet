@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
@@ -163,6 +163,50 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
             search: "<select @",
             stringsToType: ["o", "n", "a", "c"],
             expectedSelectedItemLabel: "@onactivate");
+    }
+
+    // Regression test for https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2505611
+    [IdeFact]
+    public async Task CompletionCommit_NoCommitOnTypingInDocComments()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            @page "/test"
+            
+            <PageTitle>Test</PageTitle>
+            
+            @{
+                /// 
+            }
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        var textView = await TestServices.Editor.GetActiveTextViewAsync(HangMitigatingCancellationToken);
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("/// ", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send("add a function");
+
+        // Make sure extra text didn't get commited from an unexpected completion list
+        var currentLineText = await TestServices.Editor.GetCurrentLineTextAsync(HangMitigatingCancellationToken);
+        Assert.Contains("/// add a function", currentLineText);
+
+        // Make sure completion doesn't come up for 15 seconds
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
+
+        if (items is null)
+        {
+            // No items to check, we're good
+            return;
+        }
+
+        // If completion did pop up with something like "Processing", make sure no doccomment items are present
+        Assert.DoesNotContain("summary", items.Items.Select(i => i.DisplayText));
+
     }
 
     [IdeFact]
@@ -516,6 +560,31 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
         await Task.Delay(500, HangMitigatingCancellationToken);
 
         await TestServices.Editor.ValidateNoDiscoColorsAsync(HangMitigatingCancellationToken);
+    }
+
+    [IdeFact]
+    [WorkItem("https://github.com/dotnet/razor/issues/11565")]
+    public async Task TagHelpers_Present_OnBackspace()
+    {
+        await TestServices.SolutionExplorer.AddFileAsync(
+            RazorProjectConstants.BlazorProjectName,
+            "Test.razor",
+            """
+            <PageTitle>Test</PageTitle>
+            """,
+            open: true,
+            ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.WaitForComponentClassificationAsync(ControlledHangMitigatingCancellationToken);
+
+        await TestServices.Editor.PlaceCaretAsync("<PageTitle", charsOffset: 1, ControlledHangMitigatingCancellationToken);
+        TestServices.Input.Send("{BACKSPACE}");
+
+        var completionSession = await TestServices.Editor.WaitForCompletionSessionAsync(s_snippetTimeout, HangMitigatingCancellationToken);
+        var items = completionSession?.GetComputedItems(HangMitigatingCancellationToken);
+
+        Assert.NotNull(items);
+        Assert.Contains("PageTitle", items.Items.Select(i => i.DisplayText));
     }
 
     private async Task VerifyTypeAndCommitCompletionAsync(string input, string output, string search, string[] stringsToType, char? commitChar = null, string? expectedSelectedItemLabel = null)

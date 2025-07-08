@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Razor.Extensions;
+using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -127,6 +128,15 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         lock (_lock)
         {
             _activeTextViews.Add(textView);
+
+            if (!textView.TextBuffer.Properties.ContainsProperty(RazorLSPConstants.WebToolsWrapWithTagServerNameProperty))
+            {
+                // We have to tell web tools which language server to send requests to for this buffer, but that changes
+                // if cohosting is enabled.
+                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = _featureOptions.UseRazorCohostServer
+                    ? RazorLSPConstants.RoslynLanguageServerName
+                    : RazorLSPConstants.RazorLanguageServerName;
+            }
 
             // Initialize the user's options and start listening for changes.
             // We only want to attach the option changed event once so we don't receive multiple

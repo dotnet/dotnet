@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -53,48 +53,44 @@ internal abstract class AbstractEditMappingService(
 
         foreach (var (uriString, edits) in changes)
         {
-            var uri = new Uri(uriString);
+            var generatedDocumentUri = new Uri(uriString);
 
             // Check if the edit is actually for a generated document, because if not we don't need to do anything
-            if (!_filePathService.IsVirtualDocumentUri(uri))
+            if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))
             {
                 remappedChanges[uriString] = edits;
                 continue;
             }
 
-            if (!TryGetDocumentContext(contextDocumentSnapshot, uri, projectContext: null, out var documentContext))
+            var razorDocumentUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
+
+            if (!TryGetDocumentContext(contextDocumentSnapshot, razorDocumentUri, projectContext: null, out var documentContext))
             {
                 continue;
             }
 
             var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-            var remappedEdits = RemapTextEditsCore(uri, codeDocument, edits);
+            var remappedEdits = RemapTextEditsCore(codeDocument.GetRequiredCSharpDocument(), edits);
             if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
                 continue;
             }
 
-            var razorDocumentUri = _filePathService.GetRazorDocumentUri(uri);
             remappedChanges[razorDocumentUri.AbsoluteUri] = remappedEdits;
         }
 
         return remappedChanges;
     }
 
-    private TextEdit[] RemapTextEditsCore(Uri generatedDocumentUri, RazorCodeDocument codeDocument, TextEdit[] edits)
+    private TextEdit[] RemapTextEditsCore(RazorCSharpDocument csharpDocument, TextEdit[] edits)
     {
-        if (!codeDocument.TryGetGeneratedDocument(generatedDocumentUri, _filePathService, out var generatedDocument))
-        {
-            return edits;
-        }
-
         using var remappedEdits = new PooledArrayBuilder<TextEdit>(edits.Length);
 
         foreach (var edit in edits)
         {
             var generatedRange = edit.Range;
-            if (!_documentMappingService.TryMapToHostDocumentRange(generatedDocument, generatedRange, MappingBehavior.Strict, out var hostDocumentRange))
+            if (!_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, generatedRange, MappingBehavior.Strict, out var hostDocumentRange))
             {
                 // Can't map range. Discard this edit.
                 continue;
@@ -113,10 +109,10 @@ internal abstract class AbstractEditMappingService(
 
         foreach (var entry in documentEdits)
         {
-            var generatedDocumentUri = entry.TextDocument.Uri;
+            var generatedDocumentUri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
 
             // Check if the edit is actually for a generated document, because if not we don't need to do anything
-            if (!_filePathService.IsVirtualDocumentUri(generatedDocumentUri))
+            if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))
             {
                 // This location doesn't point to a background razor file. No need to remap.
                 remappedDocumentEdits.Add(entry);
@@ -133,7 +129,7 @@ internal abstract class AbstractEditMappingService(
             var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
             // entry.Edits is SumType<TextEdit, AnnotatedTextEdit> but AnnotatedTextEdit inherits from TextEdit, so we can just cast
-            var remappedEdits = RemapTextEditsCore(generatedDocumentUri, codeDocument, entry.Edits.Select(e => (TextEdit)e).ToArray());
+            var remappedEdits = RemapTextEditsCore(codeDocument.GetRequiredCSharpDocument(), [.. entry.Edits.Select(static e => (TextEdit)e)]);
             if (remappedEdits.Length == 0)
             {
                 // Nothing to do.
@@ -144,9 +140,9 @@ internal abstract class AbstractEditMappingService(
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier()
                 {
-                    Uri = razorDocumentUri,
+                    DocumentUri = new(razorDocumentUri),
                 },
-                Edits = remappedEdits.Select(e => new SumType<TextEdit, AnnotatedTextEdit>(e)).ToArray()
+                Edits = [.. remappedEdits.Select(static e => new SumType<TextEdit, AnnotatedTextEdit>(e))]
             });
         }
 

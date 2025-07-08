@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -22,10 +22,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostGoToImplementationEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IRemoteServiceInvoker remoteServiceInvoker,
     IHtmlRequestInvoker requestInvoker,
     IFilePathService filePathService)
-    : AbstractRazorCohostDocumentRequestHandler<TextDocumentPositionParams, SumType<LspLocation[], VSInternalReferenceItem[]>?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<TextDocumentPositionParams, SumType<LspLocation[], VSInternalReferenceItem[]>?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
@@ -52,13 +53,7 @@ internal sealed class CohostGoToImplementationEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(TextDocumentPositionParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<SumType<LspLocation[], VSInternalReferenceItem[]>?> HandleRequestAsync(TextDocumentPositionParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(
-            request,
-            context.TextDocument.AssumeNotNull(),
-            cancellationToken);
-
-    private async Task<SumType<LspLocation[], VSInternalReferenceItem[]>?> HandleRequestAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<SumType<LspLocation[], VSInternalReferenceItem[]>?> HandleRequestAsync(TextDocumentPositionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
         var position = LspFactory.CreatePosition(request.Position.ToLinePosition());
 
@@ -122,10 +117,10 @@ internal sealed class CohostGoToImplementationEndpoint(
 
     private void RemapVirtualHtmlUri(LspLocation? location)
     {
-        if (location is not null &&
-            _filePathService.IsVirtualHtmlFile(location.Uri))
+        if (location?.DocumentUri.ParsedUri is { } uri &&
+            _filePathService.IsVirtualHtmlFile(uri))
         {
-            location.Uri = _filePathService.GetRazorDocumentUri(location.Uri);
+            location.DocumentUri = new(_filePathService.GetRazorDocumentUri(uri));
         }
     }
 

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -60,54 +60,6 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
             new DirectiveAttributeParameterCompletionItemProvider(),
             new TagHelperCompletionProvider(new TagHelperCompletionService())
         ];
-
-    [Fact]
-    public void IsApplicableTriggerContext_Deletion_ReturnsFalse()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Deletion
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Explicit_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Explicit
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Typing_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Typing
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
 
     [Fact]
     public void TryConvert_Directive_ReturnsTrue()

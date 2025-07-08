@@ -84,7 +84,8 @@
           AfterTargets="Publish"
           DependsOnTargets="DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
-          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
+          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)"
+          Condition="'$(IsPublishPass2)' != 'true'">
     <!-- Copy packages to layout directory. Since there are a large number of files,
           this will use symlinks instead of copying files to make this execute quickly. -->
     <Copy SourceFiles="@(PackageToPublish)"
@@ -105,7 +106,8 @@
     <WritePackageVersionsProps KnownPackages="@(ProducedPackage->Metadata('PackageId'))"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
-                               OutputPath="$(AllPackageVersionsPropsName)" />
+                               OutputPath="$(AllPackageVersionsPropsName)"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
 
     <!-- Ensure the target parent dir has been created. -->
     <MakeDir Directories="$(SourceBuiltAssetsDir)" />
@@ -119,10 +121,16 @@
     <Copy SourceFiles="$(SourceBuiltTarballName)"
           DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="Publish"
+             Condition="'$(DotNetSourceOnlyPublishArtifacts)' == 'true'"
+             Properties="@(_PublishProps);IsPublishPass2=true;AssetManifestFileName=$(SYSTEM_PHASENAME).xml" />
   </Target>
 
   <Target Name="PublishBinaryReport"
-          AfterTargets="PublishToAzureDevOpsArtifacts">
+          AfterTargets="PublishToAzureDevOpsArtifacts"
+          Condition="'$(SkipDetectBinaries)' != 'true'">
     <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
     <Copy SourceFiles="$(BinariesReportFile)"
           DestinationFolder="$(ArtifactsPublishStagingDir)/log"

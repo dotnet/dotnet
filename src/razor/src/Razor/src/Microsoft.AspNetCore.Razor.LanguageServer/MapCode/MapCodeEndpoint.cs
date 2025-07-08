@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Razor.LanguageServer.MapCode.Mappers;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -82,7 +83,7 @@ internal sealed class MapCodeEndpoint(
                 continue;
             }
 
-            if (!_documentContextFactory.TryCreate(mapping.TextDocument.Uri, out var documentContext))
+            if (!_documentContextFactory.TryCreate(mapping.TextDocument.DocumentUri.GetRequiredParsedUri(), out var documentContext))
             {
                 continue;
             }
@@ -173,7 +174,7 @@ internal sealed class MapCodeEndpoint(
                 // as the code to map. The client is currently implemented using this behavior, but if it
                 // ever changes, we'll need to update this code to account for it (i.e., take into account
                 // focus location URIs).
-                Debug.Assert(location.Uri == documentContext.Uri);
+                Debug.Assert(location.DocumentUri.GetRequiredParsedUri() == documentContext.Uri);
 
                 var syntaxTree = await documentContext.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 if (syntaxTree is null)
@@ -234,7 +235,7 @@ internal sealed class MapCodeEndpoint(
                         {
                             TextDocument = new OptionalVersionedTextDocumentIdentifier
                             {
-                                Uri = documentContext.Uri
+                                DocumentUri = new(documentContext.Uri)
                             },
                             Edits = [edit],
                         };
@@ -349,7 +350,7 @@ internal sealed class MapCodeEndpoint(
                     continue;
                 }
 
-                if (!_documentContextFactory.TryCreate(potentialLocation.Uri, out var documentContext))
+                if (!_documentContextFactory.TryCreate(potentialLocation.DocumentUri.GetRequiredParsedUri(), out var documentContext))
                 {
                     continue;
                 }
@@ -359,13 +360,13 @@ internal sealed class MapCodeEndpoint(
                 var hostDocumentRange = potentialLocation.Range.ToLinePositionSpan();
                 var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-                if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
+                if (_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
                     var csharpLocation = new LspLocation
                     {
                         // We convert the URI to the C# generated document URI later on in
                         // LanguageServer.Client since we're unable to retrieve it here.
-                        Uri = potentialLocation.Uri,
+                        DocumentUri = potentialLocation.DocumentUri,
                         Range = generatedDocumentRange.ToRange()
                     };
 
@@ -392,7 +393,7 @@ internal sealed class MapCodeEndpoint(
             // into also supporting file creation/deletion/rename.
             foreach (var edit in documentEdits)
             {
-                var success = await TryProcessEditAsync(edit.TextDocument.Uri, edit.Edits, csharpChanges, cancellationToken).ConfigureAwait(false);
+                var success = await TryProcessEditAsync(edit.TextDocument.DocumentUri.GetRequiredParsedUri(), edit.Edits, csharpChanges, cancellationToken).ConfigureAwait(false);
                 if (!success)
                 {
                     return false;
@@ -436,7 +437,7 @@ internal sealed class MapCodeEndpoint(
 
                 var textDocumentEdit = new TextDocumentEdit
                 {
-                    TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = hostDocumentUri },
+                    TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(hostDocumentUri) },
                     Edits = [textEdit]
                 };
 
@@ -450,7 +451,7 @@ internal sealed class MapCodeEndpoint(
     // Resolve edits that are at the same start location by merging them together.
     private static void MergeEdits(List<TextDocumentEdit> changes)
     {
-        var groupedChanges = changes.GroupBy(c => c.TextDocument.Uri).ToImmutableArray();
+        var groupedChanges = changes.GroupBy(c => c.TextDocument.DocumentUri).ToImmutableArray();
         changes.Clear();
         foreach (var documentChanges in groupedChanges)
         {
@@ -474,7 +475,7 @@ internal sealed class MapCodeEndpoint(
             {
                 TextDocument = new OptionalVersionedTextDocumentIdentifier
                 {
-                    Uri = documentChanges.Key,
+                    DocumentUri = documentChanges.Key,
                 },
                 Edits = edits.SelectMany(e => e.Edits).ToArray()
             };

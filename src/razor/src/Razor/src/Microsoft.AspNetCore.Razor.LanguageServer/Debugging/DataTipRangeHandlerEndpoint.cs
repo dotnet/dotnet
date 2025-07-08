@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,13 +71,13 @@ internal sealed class DataTipRangeHandlerEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-        if (!DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, delegatedResponse.HoverRange, out var hoverRange))
+        if (!DocumentMappingService.TryMapToRazorDocumentRange(csharpDocument, delegatedResponse.HoverRange, out var hoverRange))
         {
             return null;
         }
 
         LspRange? expressionRange = null;
-        if (delegatedResponse.ExpressionRange != null && !DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, delegatedResponse.ExpressionRange, out expressionRange))
+        if (delegatedResponse.ExpressionRange != null && !DocumentMappingService.TryMapToRazorDocumentRange(csharpDocument, delegatedResponse.ExpressionRange, out expressionRange))
         {
             return null;
         }

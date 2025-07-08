@@ -216,12 +216,19 @@ jobs:
   ### Basic arguments
   - name: cleanArgument
     ${{ if eq(parameters.targetOS, 'windows') }}:
-      value: cleanWhileBuilding
+      # Don't clean while building on Windows as the pool's disk space is sufficient.
+      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+        value: ''
+      ${{ else }}:
+        value: $(commandPrefix)cleanWhileBuilding
     ${{ else }}:
-      value: clean-while-building
+      value: $(commandPrefix)clean-while-building
+
+  - name: brandingArgument
+    value: $(commandPrefix)branding $(brandingType)
 
   - name: baseArguments
-    value: $(commandPrefix)ci $(commandPrefix)$(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }}
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -323,6 +330,9 @@ jobs:
         sbomEnabled: false
 
   steps:
+  - checkout: self
+    fetchDepth: 1
+
   - ${{ if not(parameters.isBuiltFromVmr) }}:
     # Synchronize new content in the VMR during PRs
     - template: /eng/common/templates/steps/vmr-sync.yml@self
@@ -500,7 +510,7 @@ jobs:
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
           else
-            customPreBuildArgs="$customPreBuildArgs sudo unshare -n"
+            customPreBuildArgs="$customPreBuildArgs sudo -E unshare -n"
           fi
 
           if [[ '${{ parameters.enablePoison }}' == 'True' ]]; then

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
 using System.Text.Json;
@@ -13,14 +13,14 @@ internal static class VSInternalCompletionListExtensions
     public static void SetResultId(
         this RazorVSInternalCompletionList completionList,
         int resultId,
-        VSInternalCompletionSetting? completionSetting)
+        VSInternalClientCapabilities clientCapabilities)
     {
         var data = JsonSerializer.SerializeToElement(new JsonObject()
         {
             [VSInternalCompletionItemExtensions.ResultIdKey] = resultId,
         });
 
-        if (completionSetting.SupportsCompletionListData())
+        if (clientCapabilities.SupportsAnyCompletionListData())
         {
             // Ensure there is data at the completion list level, but only if ItemDefaults isn't set by the delegated server,
             // or if they've set both.

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +60,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
         }
 
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
-        if (DocumentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, index, out var mappedPosition, out _))
+        if (DocumentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, index, out var mappedPosition, out _))
         {
             var generatedDocument = await context.Snapshot
                 .GetGeneratedDocumentAsync(cancellationToken)
@@ -74,7 +74,7 @@ internal sealed partial class RemoteDocumentHighlightService(in ServiceArgs args
 
                 foreach (var highlight in highlights)
                 {
-                    if (DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, highlight.Range.ToLinePositionSpan(), out var mappedRange))
+                    if (DocumentMappingService.TryMapToRazorDocumentRange(csharpDocument, highlight.Range.ToLinePositionSpan(), out var mappedRange))
                     {
                         highlight.Range = mappedRange.ToRange();
                         results.Add(RemoteDocumentHighlight.FromLspDocumentHighlight(highlight));

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -39,15 +39,10 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        // VS Code in Windows expects path to start with '/'
-        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")
-            ? '/' + actionParams.Path
-            : actionParams.Path;
-        var newComponentUri = LspFactory.CreateFilePathUri(updatedPath);
+        var newComponentUri = LspFactory.CreateFilePathUri(actionParams.Path, _languageServerFeatureOptions);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
-        documentChanges.Add(new CreateFile() { Uri = newComponentUri });
+        documentChanges.Add(new CreateFile() { DocumentUri = new(newComponentUri) });
 
         TryAddNamespaceDirective(codeDocument, newComponentUri, ref documentChanges.AsRef());
 
@@ -66,7 +61,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
 
         if (namespaceDirective != null)
         {
-            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = newComponentUri };
+            var documentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(newComponentUri) };
             documentChanges.Add(new TextDocumentEdit
             {
                 TextDocument = documentIdentifier,

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Composition;
@@ -37,10 +37,17 @@ internal sealed class OOPCodeActionResolveService(
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 [method: ImportingConstructor]
+internal sealed class OOPExtractToCssCodeActionProvider(ILoggerFactory loggerFactory) : ExtractToCssCodeActionProvider(loggerFactory);
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+[method: ImportingConstructor]
 internal sealed class OOPExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactory) : ExtractToCodeBehindCodeActionProvider(loggerFactory);
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 internal sealed class OOPExtractToComponentCodeActionProvider : ExtractToComponentCodeActionProvider;
+
+[Export(typeof(IRazorCodeActionProvider)), Shared]
+internal sealed class OOPSimplifyTagToSelfClosingCodeActionProvider : SimplifyTagToSelfClosingCodeActionProvider;
 
 [Export(typeof(IRazorCodeActionProvider)), Shared]
 [method: ImportingConstructor]
@@ -70,6 +77,11 @@ internal sealed class OOPDefaultHtmlCodeActionProvider(IEditMappingService editM
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]
+internal sealed class OOPExtractToCssCodeActionResolver(LanguageServerFeatureOptions languageServerFeatureOptions, IFileSystem fileSystem)
+    : ExtractToCssCodeActionResolver(languageServerFeatureOptions, fileSystem);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+[method: ImportingConstructor]
 internal sealed class OOPExtractToCodeBehindCodeActionResolver(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IRoslynCodeActionHelpers roslynCodeActionHelpers)
@@ -78,6 +90,9 @@ internal sealed class OOPExtractToCodeBehindCodeActionResolver(
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]
 internal sealed class OOPExtractToComponentCodeActionResolver(LanguageServerFeatureOptions languageServerFeatureOptions) : ExtractToComponentCodeActionResolver(languageServerFeatureOptions);
+
+[Export(typeof(IRazorCodeActionResolver)), Shared]
+internal sealed class OOPSimplifyTagToSelfClosingCodeActionResolver : SimplifyTagToSelfClosingCodeActionResolver;
 
 [Export(typeof(IRazorCodeActionResolver)), Shared]
 [method: ImportingConstructor]

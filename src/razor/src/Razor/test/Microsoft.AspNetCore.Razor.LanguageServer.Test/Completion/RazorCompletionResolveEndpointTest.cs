@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -73,7 +73,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         // Arrange
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
-        completionList.SetResultId(1337, completionSetting: null);
+        completionList.SetResultId(1337, clientCapabilities: new());
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -91,7 +91,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
         var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
-        completionList.SetResultId(resultId, completionSetting: null);
+        completionList.SetResultId(resultId, clientCapabilities: new());
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -111,9 +111,9 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         await InitializeAsync();
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList = new RazorVSInternalCompletionList() { Items = [completionItem] };
-        completionList.SetResultId(/* Invalid */ 1337, completionSetting: null);
+        completionList.SetResultId(/* Invalid */ 1337, clientCapabilities: new());
         var resultId = _completionListCache.Add(completionList, StrictMock.Of<ICompletionResolveContext>());
-        completionList.SetResultId(resultId, completionSetting: null);
+        completionList.SetResultId(resultId, clientCapabilities: new());
         var parameters = ConvertToBridgedItem(completionItem);
         var requestContext = CreateRazorRequestContext(documentContext: null);
 
@@ -131,17 +131,27 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     {
         // Arrange
         await InitializeAsync();
-        var completionSetting = new VSInternalCompletionSetting() { CompletionList = new VSInternalCompletionListSetting() { Data = true } };
+        var clientCapabilities = new VSInternalClientCapabilities
+        {
+            SupportsVisualStudioExtensions = true,
+            TextDocument = new()
+            {
+                Completion = new VSInternalCompletionSetting()
+                {
+                    CompletionList = new VSInternalCompletionListSetting() { Data = true }
+                }
+            }
+        };
         var completionList1 = new RazorVSInternalCompletionList() { Items = [] };
         var completion1Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId1 = _completionListCache.Add(completionList1, completion1Context);
-        completionList1.SetResultId(resultId1, completionSetting);
+        completionList1.SetResultId(resultId1, clientCapabilities);
 
         var completionItem = new VSInternalCompletionItem() { Label = "Test" };
         var completionList2 = new RazorVSInternalCompletionList() { Items = [completionItem] };
         var completion2Context = StrictMock.Of<ICompletionResolveContext>();
         var resultId2 = _completionListCache.Add(completionList2, completion2Context);
-        completionList2.SetResultId(resultId2, completionSetting);
+        completionList2.SetResultId(resultId2, clientCapabilities);
         var mergedCompletionList = CompletionListMerger.Merge(completionList1, completionList2);
         var mergedCompletionItem = mergedCompletionList.Items.Single();
         mergedCompletionItem.Data = mergedCompletionList.Data;
@@ -161,7 +171,7 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
     private VSInternalCompletionItem ConvertToBridgedItem(CompletionItem completionItem)
     {
         var list = new VSInternalCompletionList { Items = [completionItem] };
-        RazorCompletionResolveData.Wrap(list, textDocument: new(), supportsCompletionListData: false);
+        RazorCompletionResolveData.Wrap(list, textDocument: new(), clientCapabilities: new());
 
         var serialized = JsonSerializer.Serialize(completionItem, SerializerOptions);
         var bridgedItem = JsonSerializer.Deserialize<VSInternalCompletionItem>(serialized, SerializerOptions);

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -113,7 +114,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentFilePath1);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
@@ -136,7 +137,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentFilePath1);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
@@ -155,14 +156,14 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // We renamed Component2 to Component5, so ensure we received a file rename.
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath2), renameFile.OldUri);
-        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "Component5.razor"), renameFile.NewUri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath2), renameFile.OldDocumentUri.GetRequiredParsedUri());
+        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "Component5.razor"), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
         // Next, we should get a series of text edits to Component1 that rename
         // "Component2" to "Component5".
         var editChange = documentChanges.ElementAt(1);
         Assert.True(editChange.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal(uri, textDocumentEdit.TextDocument.Uri);
+        Assert.Equal(uri, textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Collection(
             textDocumentEdit.Edits,
             AssertTextEdit("Component5", startLine: 2, startCharacter: 1, endLine: 2, endCharacter: 11),
@@ -177,7 +178,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 14),
             NewName = "Test2"
         };
@@ -200,7 +201,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 0),
             NewName = "Test2"
         };
@@ -223,7 +224,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 1),
             NewName = "Test2"
         };
@@ -246,7 +247,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3),
             NewName = "Test2"
         };
@@ -269,7 +270,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 36),
             NewName = "Test2"
         };
@@ -292,7 +293,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 10),
             NewName = "Test2"
         };
@@ -315,7 +316,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentFilePath4);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 1),
             NewName = "Component5"
         };
@@ -334,13 +335,13 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         // We renamed Component3 to Component5, so we should expect file rename.
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath3), renameFile.OldUri);
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), renameFile.NewUri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath3), renameFile.OldDocumentUri.GetRequiredParsedUri());
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
         Assert.Collection(GetTextDocumentEdits(result, startIndex: 1, endIndex: 4),
             textDocumentEdit =>
             {
-                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.Uri);
+                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
                 Assert.Collection(
                     textDocumentEdit.Edits,
                     AssertTextEdit("Component5", startLine: 1, startCharacter: 1, endLine: 1, endCharacter: 11),
@@ -348,7 +349,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             },
             textDocumentEdit =>
             {
-                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.Uri);
+                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
                 Assert.Collection(
                     textDocumentEdit.Edits,
                     AssertTextEdit("Component5", startLine: 2, startCharacter: 1, endLine: 2, endCharacter: 11),
@@ -356,7 +357,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             },
             textDocumentEdit =>
             {
-                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), textDocumentEdit.TextDocument.Uri);
+                Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
                 Assert.Collection(
                     textDocumentEdit.Edits,
                     AssertTextEdit("Component5", startLine: 1, startCharacter: 1, endLine: 1, endCharacter: 11),
@@ -364,7 +365,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             },
             textDocumentEdit =>
             {
-                Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit.TextDocument.Uri);
+                Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
                 Assert.Collection(
                     textDocumentEdit.Edits,
                     AssertTextEdit("Component5", startLine: 1, startCharacter: 1, endLine: 1, endCharacter: 11),
@@ -387,7 +388,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
             return builder
                 .ToArray()
-                .OrderBy(x => x.TextDocument.Uri.ToString())
+                .OrderBy(x => x.TextDocument.DocumentUri.GetRequiredParsedUri().ToString())
                 .ThenBy(x => ((TextEdit)x.Edits.First()).Range.Start.Line)
                 .ThenBy(x => ((TextEdit)x.Edits.First()).Range.Start.Character);
         }
@@ -401,7 +402,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_indexFilePath1);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(2, 1),
             NewName = "Component5"
         };
@@ -419,12 +420,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath1337), renameFile.OldUri);
-        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "Component5.razor"), renameFile.NewUri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath1337), renameFile.OldDocumentUri.GetRequiredParsedUri());
+        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "Component5.razor"), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
         var editChange1 = documentChanges.ElementAt(1);
         Assert.True(editChange1.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal(TestPathUtilities.GetUri(s_indexFilePath1), textDocumentEdit.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_indexFilePath1), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Collection(
             textDocumentEdit.Edits,
             AssertTextEdit("Component5", startLine: 2, startCharacter: 1, endLine: 2, endCharacter: 14),
@@ -432,7 +433,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var editChange2 = result.DocumentChanges.Value.ElementAt(2);
         Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
-        Assert.Equal(TestPathUtilities.GetUri(s_indexFilePath1), textDocumentEdit2.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_indexFilePath1), textDocumentEdit2.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Collection(
             textDocumentEdit2.Edits,
             AssertTextEdit("Test.Component5", startLine: 3, startCharacter: 1, endLine: 3, endCharacter: 19),
@@ -447,7 +448,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentFilePath3);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 1),
             NewName = "Component5"
         };
@@ -465,12 +466,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath3), renameFile.OldUri);
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), renameFile.NewUri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath3), renameFile.OldDocumentUri.GetRequiredParsedUri());
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
         var editChange1 = documentChanges.ElementAt(1);
         Assert.True(editChange1.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), textDocumentEdit.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath5), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Collection(
             textDocumentEdit.Edits,
             AssertTextEdit("Component5", 1, 1, 1, 11),
@@ -478,17 +479,17 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var editChange2 = documentChanges.ElementAt(2);
         Assert.True(editChange2.TryGetFirst(out var textDocumentEdit2));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit2.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit2.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Equal(2, textDocumentEdit2.Edits.Length);
 
         var editChange3 = documentChanges.ElementAt(3);
         Assert.True(editChange3.TryGetFirst(out var textDocumentEdit3));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit3.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentFilePath4), textDocumentEdit3.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Equal(2, textDocumentEdit3.Edits.Length);
 
         var editChange4 = documentChanges.ElementAt(4);
         Assert.True(editChange4.TryGetFirst(out var textDocumentEdit4));
-        Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit4.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_componentWithParamFilePath), textDocumentEdit4.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Equal(2, textDocumentEdit4.Edits.Length);
     }
 
@@ -500,7 +501,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_directoryFilePath1);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 1),
             NewName = "TestComponent"
         };
@@ -518,12 +519,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var renameChange = documentChanges.ElementAt(0);
         Assert.True(renameChange.TryGetThird(out var renameFile));
-        Assert.Equal(TestPathUtilities.GetUri(s_directoryFilePath2), renameFile.OldUri);
-        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "TestComponent.razor"), renameFile.NewUri);
+        Assert.Equal(TestPathUtilities.GetUri(s_directoryFilePath2), renameFile.OldDocumentUri.GetRequiredParsedUri());
+        Assert.Equal(TestPathUtilities.GetUri(s_project1BasePath, "TestComponent.razor"), renameFile.NewDocumentUri.GetRequiredParsedUri());
 
         var editChange = documentChanges.ElementAt(1);
         Assert.True(editChange.TryGetFirst(out var textDocumentEdit));
-        Assert.Equal(TestPathUtilities.GetUri(s_directoryFilePath1), textDocumentEdit.TextDocument.Uri);
+        Assert.Equal(TestPathUtilities.GetUri(s_directoryFilePath1), textDocumentEdit.TextDocument.DocumentUri.GetRequiredParsedUri());
         Assert.Collection(
             textDocumentEdit.Edits,
             AssertTextEdit("TestComponent", startLine: 1, startCharacter: 1, endLine: 1, endCharacter: 11),
@@ -551,7 +552,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var projectedPosition = new LinePosition(1, 1);
         var projectedIndex = 1;
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
@@ -568,7 +569,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var uri = TestPathUtilities.GetUri(s_componentWithParamFilePath);
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 0),
             NewName = "Test2"
         };
@@ -598,12 +599,12 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
 
         var request = new RenameParams
         {
-            TextDocument = new() { Uri = TestPathUtilities.GetUri(s_componentWithParamFilePath) },
+            TextDocument = new() { DocumentUri = new(TestPathUtilities.GetUri(s_componentWithParamFilePath)) },
             Position = LspFactory.CreatePosition(0, 1), // This is right after the '@' in '@namespace'
             NewName = "Test2"
         };
 
-        Assert.True(documentContextFactory.TryCreate(request.TextDocument.Uri, out var documentContext));
+        Assert.True(documentContextFactory.TryCreate(request.TextDocument.DocumentUri.GetRequiredParsedUri(), out var documentContext));
         var requestContext = CreateRazorRequestContext(documentContext);
 
         // Act
@@ -703,7 +704,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             var projectedPosition = new LinePosition(1, 1);
             var projectedIndex = 1;
             documentMappingServiceMock
-                .Setup(c => c.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+                .Setup(c => c.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
                 .Returns(true);
             documentMappingService = documentMappingServiceMock.Object;
         }

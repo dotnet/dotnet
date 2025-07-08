@@ -1,14 +1,14 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
@@ -20,8 +20,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentColorEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     IHtmlRequestInvoker requestInvoker)
-    : AbstractRazorCohostDocumentRequestHandler<DocumentColorParams, ColorInformation[]?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<DocumentColorParams, ColorInformation[]?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
 
@@ -41,12 +42,10 @@ internal sealed class CohostDocumentColorEndpoint(
     protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(DocumentColorParams request)
         => request.TextDocument.ToRazorTextDocumentIdentifier();
 
-    protected override Task<ColorInformation[]?> HandleRequestAsync(DocumentColorParams request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
-
-    private async Task<ColorInformation[]?> HandleRequestAsync(DocumentColorParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<ColorInformation[]?> HandleRequestAsync(DocumentColorParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        return await _requestInvoker.MakeHtmlLspRequestAsync<DocumentColorParams, ColorInformation[]>(
+        return await _requestInvoker.MakeHtmlLspRequestAsync<DocumentColorParams, ColorInformation[]>
+        (
             razorDocument,
             Methods.TextDocumentDocumentColorName,
             request,

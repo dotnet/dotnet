@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,7 +60,7 @@ internal class ValidateBreakpointRangeEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         // We've already mapped the position, but sadly we need a range for breakpoints, so we have to do it again
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(codeDocument.GetRequiredCSharpDocument(), request.Range, out var projectedRange))
+        if (!_documentMappingService.TryMapToCSharpDocumentRange(codeDocument.GetRequiredCSharpDocument(), request.Range, out var projectedRange))
         {
             return null;
         }
@@ -92,7 +92,7 @@ internal class ValidateBreakpointRangeEndpoint(
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        if (_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), delegatedResponse, MappingBehavior.Inclusive, out var projectedRange))
+        if (_documentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), delegatedResponse, MappingBehavior.Inclusive, out var projectedRange))
         {
             return projectedRange;
         }

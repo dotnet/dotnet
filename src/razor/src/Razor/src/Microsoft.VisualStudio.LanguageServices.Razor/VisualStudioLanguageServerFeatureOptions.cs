@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.ComponentModel.Composition;
@@ -17,7 +17,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly Lazy<bool> _includeProjectKeyInGeneratedFilePath;
     private readonly Lazy<bool> _usePreciseSemanticTokenRanges;
     private readonly Lazy<bool> _useRazorCohostServer;
-    private readonly Lazy<bool> _forceRuntimeCodeGeneration;
     private readonly Lazy<bool> _useNewFormattingEngine;
 
     [ImportingConstructor]
@@ -58,13 +57,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
             return useRazorCohostServer;
         });
 
-        _forceRuntimeCodeGeneration = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var forceRuntimeCodeGeneration = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.ForceRuntimeCodeGeneration, defaultValue: true);
-            return forceRuntimeCodeGeneration;
-        });
-
         _useNewFormattingEngine = new Lazy<bool>(() =>
         {
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
@@ -97,9 +89,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool UsePreciseSemanticTokenRanges => _usePreciseSemanticTokenRanges.Value;
 
     public override bool UseRazorCohostServer => _useRazorCohostServer.Value;
-
-    /// <inheritdoc />
-    public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration.Value;
 
     public override bool UseNewFormattingEngine => _useNewFormattingEngine.Value;
 

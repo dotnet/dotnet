@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
@@ -332,7 +332,7 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
 
         var documentMappingServiceMock = new StrictMock<IDocumentMappingService>();
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out generatedPosition, out It.Ref<int>.IsAny))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out generatedPosition, out It.Ref<int>.IsAny))
             .Returns(true);
 
         var completionProvider = CreateDelegatedCompletionListProvider(clientConnection, documentMappingServiceMock.Object);

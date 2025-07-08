@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -27,7 +27,7 @@ internal class ExtractToCodeBehindCodeActionResolver(
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IRoslynCodeActionHelpers _roslynCodeActionHelpers = roslynCodeActionHelpers;
 
-    public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehindAction;
+    public string Action => LanguageServerConstants.CodeActions.ExtractToCodeBehind;
 
     public async Task<WorkspaceEdit?> ResolveAsync(DocumentContext documentContext, JsonElement data, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
@@ -37,22 +37,11 @@ internal class ExtractToCodeBehindCodeActionResolver(
             return null;
         }
 
-        if (!documentContext.FileKind.IsComponent())
-        {
-            return null;
-        }
-
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
         var path = FilePathNormalizer.Normalize(documentContext.Uri.GetAbsoluteOrUNCPath());
         var codeBehindPath = FileUtilities.GenerateUniquePath(path, $"{Path.GetExtension(path)}.cs");
-
-        // VS Code in Windows expects path to start with '/'
-        var updatedCodeBehindPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !codeBehindPath.StartsWith("/")
-            ? '/' + codeBehindPath
-            : codeBehindPath;
-
-        var codeBehindUri = LspFactory.CreateFilePathUri(updatedCodeBehindPath);
+        var codeBehindUri = LspFactory.CreateFilePathUri(codeBehindPath, _languageServerFeatureOptions);
 
         var text = await documentContext.GetSourceTextAsync(cancellationToken).ConfigureAwait(false);
 
@@ -64,12 +53,12 @@ internal class ExtractToCodeBehindCodeActionResolver(
 
         var removeRange = codeDocument.Source.Text.GetRange(actionParams.RemoveStart, actionParams.RemoveEnd);
 
-        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = documentContext.Uri };
-        var codeBehindDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { Uri = codeBehindUri };
+        var codeDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(documentContext.Uri) };
+        var codeBehindDocumentIdentifier = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(codeBehindUri) };
 
         var documentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]
         {
-            new CreateFile { Uri = codeBehindUri },
+            new CreateFile { DocumentUri = codeBehindDocumentIdentifier.DocumentUri },
             new TextDocumentEdit
             {
                 TextDocument = codeDocumentIdentifier,

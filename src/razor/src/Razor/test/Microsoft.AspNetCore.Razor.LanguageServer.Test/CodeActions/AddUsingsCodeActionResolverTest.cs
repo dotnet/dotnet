@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -49,7 +49,7 @@ public class AddUsingsCodeActionResolverTest(ITestOutputHelper testOutput) : Lan
     {
         // Arrange
         var fqn = "Abc.Xyz";
-        var docUri = new VSTextDocumentIdentifier { Uri = new Uri("c:/path") };
+        var docUri = new VSTextDocumentIdentifier { DocumentUri = new(new Uri("c:/path")) };
 
         // Act
         var result = AddUsingsCodeActionResolver.TryCreateAddUsingResolutionParams(fqn, docUri, additionalEdit: null, delegatedDocumentUri: null, out var @namespace, out var resolutionParams);

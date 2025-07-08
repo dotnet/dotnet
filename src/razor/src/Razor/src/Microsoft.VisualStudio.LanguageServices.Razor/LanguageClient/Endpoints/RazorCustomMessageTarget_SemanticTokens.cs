@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Linq;
@@ -75,7 +75,7 @@ internal partial class RazorCustomMessageTarget
             return new ProvideSemanticTokensResponse(tokens: null, hostDocumentSyncVersion: csharpDoc.HostDocumentSyncVersion ?? -1);
         }
 
-        requestParams.TextDocument.Uri = csharpDoc.Uri;
+        requestParams.TextDocument.DocumentUri = new(csharpDoc.Uri);
         var textBuffer = csharpDoc.Snapshot.TextBuffer;
 
         _logger.LogDebug($"Requesting semantic tokens for {csharpDoc.Uri}, for buffer version {textBuffer.CurrentSnapshot.Version.VersionNumber} and snapshot version {csharpDoc.Snapshot.Version.VersionNumber}, host version {semanticTokensParams.RequiredHostDocumentVersion}, correlation ID {semanticTokensParams.CorrelationId}");

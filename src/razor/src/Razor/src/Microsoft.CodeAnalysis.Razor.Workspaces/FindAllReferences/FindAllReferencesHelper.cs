@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Linq;
 using System.Threading;
@@ -41,8 +41,8 @@ internal static class FindAllReferencesHelper
             var codeDoc = await document.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
             var line = codeDoc.Source.Text.Lines[lineNumber];
             var csharpDocument = codeDoc.GetRequiredCSharpDocument();
-            if (!documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.Start, out _, out _) ||
-                !documentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, line.End, out _, out _))
+            if (!documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, line.Start, out _, out _) ||
+                !documentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, line.End, out _, out _))
             {
                 var start = line.GetFirstNonWhitespacePosition() ?? line.Start;
                 return codeDoc.Source.Text.GetSubTextString(TextSpan.FromBounds(start, line.End));

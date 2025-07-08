@@ -5,13 +5,11 @@
     <VersionInstallerName>true</VersionInstallerName>
     <IncludeVersionInMacOSComponentName>true</IncludeVersionInMacOSComponentName>
   </PropertyGroup>
-  
-  <UsingTask TaskName="BuildFPMToolPreReqs" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)"/>
+
   <UsingTask TaskName="CreateLightCommandPackageDrop" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="ExecWithRetries" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="GenerateCurrentVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="GenerateGuidFromName" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
-  <UsingTask TaskName="GenerateJsonObjectString" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)"/>
   <UsingTask TaskName="GenerateMsiVersion" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="StabilizeWixFileId" AssemblyFile="$(MicrosoftDotNetBuildTasksInstallersTaskAssembly)" />
   <UsingTask TaskName="CreateChangelogFile"

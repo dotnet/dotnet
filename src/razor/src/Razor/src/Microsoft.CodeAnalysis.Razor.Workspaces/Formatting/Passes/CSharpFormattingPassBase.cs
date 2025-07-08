@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -27,6 +28,8 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
     private readonly bool _isFormatOnType = isFormatOnType;
 
     protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
+
+    protected RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -116,7 +119,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
                 continue;
             }
 
-            if (DocumentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, lineStart, out _, out var projectedLineStart))
+            if (DocumentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, lineStart, out _, out var projectedLineStart))
             {
                 lineStartMap[lineStart] = projectedLineStart;
                 significantLocations.Add(projectedLineStart);
@@ -164,7 +167,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         }
 
         // Now, invoke the C# formatter to obtain the CSharpDesiredIndentation for all significant locations.
-        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, cancellationToken).ConfigureAwait(false);
+        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, _csharpSyntaxFormattingOptionsOverride, cancellationToken).ConfigureAwait(false);
 
         // Build source mapping indentation scopes.
         var sourceMappingIndentations = new SortedDictionary<int, IndentationData>();
@@ -693,6 +696,16 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             }
 
             return _indentation;
+        }
+    }
+
+    internal TestAccessor GetTestAccessor() => new(this);
+
+    internal readonly struct TestAccessor(CSharpFormattingPassBase instance)
+    {
+        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
+        {
+            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
         }
     }
 }

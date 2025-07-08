@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Linq;
@@ -60,12 +60,13 @@ public class CohostDocumentSpellCheckEndpointTest(ITestOutputHelper testOutputHe
         var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostDocumentSpellCheckEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostDocumentSpellCheckEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var span = new LinePositionSpan(new(0, 0), new(sourceText.Lines.Count, 0));
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken);
 
+        Assert.NotNull(result);
         var ranges = result.First().Ranges.AssumeNotNull();
 
         // To make for easier test failure analysis, we convert the ranges back to the test input, so we can show a diff
