@@ -198,7 +198,8 @@ steps:
     downloadPath: '$(Build.ArtifactStagingDirectory)/vmr-assets/'
     continueOnError: ${{ parameters.continueOnError }}
 
-- powershell: rm -r "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts"
+- powershell: |
+    Remove-Item -Path "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts" -Recurse -Force -ErrorAction SilentlyContinue
   displayName: Remove Source-Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}
 

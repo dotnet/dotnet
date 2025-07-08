@@ -38,18 +38,6 @@
       ]
     },
     {
-      "_justification": "Legitimate UT certificate file with private key, from dotnet/aspnetcore",
-      "file": [
-        "/src/aspire/tests/Shared/TestCertificates/eku.client.pfx"
-      ]
-    },
-    {
-      "_justification": "Legitimate UT certificate file with private key, from dotnet/aspnetcore",
-      "file": [
-        "/src/aspire/tests/Shared/TestCertificates/testCert.pfx"
-      ]
-    },
-    {
       "_justification": "This is a fake password used in test code.",
       "placeholder": [
         "aspnetcore"
