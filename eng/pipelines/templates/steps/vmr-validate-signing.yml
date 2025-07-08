@@ -37,14 +37,10 @@ steps:
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 # SourceBuild jobs may have succeeded already, so remove those artifacts in case we downloaded them.
-- ${{ if eq(parameters.OS, 'Windows_NT') }}:
-  - powershell: rm -r "${{ parameters.signCheckFilesDirectory }}/*Sdk_*_Artifacts"
-    displayName: Remove Source-Build Artifacts
-    continueOnError: ${{ parameters.continueOnError }}
-- ${{ else }}:
-  - script: rm -r ${{ parameters.signCheckFilesDirectory }}/*Sdk_*_Artifacts
-    displayName: Remove Source-Build Artifacts
-    continueOnError: ${{ parameters.continueOnError }}
+- powershell: |
+    Remove-Item -Path "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts" -Recurse -Force -ErrorAction SilentlyContinue
+  displayName: Remove Source-Build Artifacts
+  continueOnError: ${{ parameters.continueOnError }}
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
 # Since sdk-task.ps1 tries to restore packages we need to do this authentication here
