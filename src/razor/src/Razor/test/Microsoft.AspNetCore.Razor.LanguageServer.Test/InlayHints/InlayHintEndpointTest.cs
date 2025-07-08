@@ -106,7 +106,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
         {
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
@@ -137,7 +137,7 @@ public class InlayHintEndpointTest(ITestOutputHelper testOutput) : SingleServerD
         {
             TextDocument = new VSTextDocumentIdentifier
             {
-                Uri = new Uri(razorFilePath)
+                DocumentUri = new(new Uri(razorFilePath))
             },
             Range = LspFactory.CreateRange(0, 0, codeDocument.Source.Text.Lines.Count, 0)
         };
