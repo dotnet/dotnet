@@ -112,7 +112,7 @@ internal static class TestCommandParser
     {
         Description = CliCommandStrings.CmdBlameCrashCollectAlwaysDescription,
         Arity = ArgumentArity.Zero
-    }.ForwardIfEnabled(o => ["-property:VSTestBlameCrash=true", "-property:VSTestBlameCrashCollectAlways=true"]);
+    }.ForwardIfEnabled(["-property:VSTestBlameCrash=true", "-property:VSTestBlameCrashCollectAlways=true"]);
 
     public static readonly Option<bool> BlameHangOption = new ForwardedOption<bool>("--blame-hang")
     {
