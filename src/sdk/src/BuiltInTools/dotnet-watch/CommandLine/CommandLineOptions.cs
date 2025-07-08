@@ -43,7 +43,7 @@ internal sealed class CommandLineOptions
 
         verboseOption.Validators.Add(v =>
         {
-            if (v.GetResult(quietOption) is not null && v.GetResult(verboseOption) is not null)
+            if (v.GetValue(quietOption) && v.GetValue(verboseOption))
             {
                 v.AddError(Resources.Error_QuietAndVerboseSpecified);
             }
@@ -192,9 +192,15 @@ internal sealed class CommandLineOptions
                     continue;
                 }
 
+                // skip Option<bool> zero-arity options with an implicit optionresult - these weren't actually specified by the user:
+                if (optionResult.Option is Option<bool> boolOpt && boolOpt.Arity.Equals(ArgumentArity.Zero) && optionResult.Implicit)
+                {
+                    continue;
+                }
+
                 // Some options _may_ be computed or have defaults, so not all may have an IdentifierToken.
-                // For those that do not, use the Option's Name instead.
-                var optionNameToForward = optionResult.IdentifierToken?.Value ?? optionResult.Option.Name;
+                    // For those that do not, use the Option's Name instead.
+                    var optionNameToForward = optionResult.IdentifierToken?.Value ?? optionResult.Option.Name;
                 if (optionResult.Tokens.Count == 0 && !optionResult.Implicit)
                 {
                     arguments.Add(optionNameToForward);
