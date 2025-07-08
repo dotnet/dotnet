@@ -65,7 +65,7 @@ namespace Microsoft.TemplateEngine.Utils
         public static string PathRelativeTo(this IFileSystemInfo info, IFileSystemInfo relativeTo)
         {
             //The path should be relative to either source itself (in the case that it's a folder) or the parent of source)
-            IDirectory? relTo = (relativeTo as IDirectory) ?? relativeTo.Parent;
+            IDirectory? relTo = relativeTo as IDirectory ?? relativeTo.Parent;
 
             //If the thing to be relative to is the root (or a file in the root), just use the full path of the item
             if (relTo == null)
