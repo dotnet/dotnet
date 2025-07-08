@@ -3,21 +3,22 @@
   <PropertyGroup>
     <!-- We include both netframework and netcore in the target frameworks because Arcade's Tools.proj
          'targets' via net472. -->
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
+    <TargetFrameworks>$(NetMinimum);$(NetFrameworkMinimum)</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
     <Description>The MacOsPkg CLI tool is used for unpacking, packing, and validating MacOS .pkg files and nested .app bundles.</Description>
     <PackageTags>Arcade Build Tool MacOS Pkg</PackageTags>
     <DevelopmentDependency>false</DevelopmentDependency>
+    <RollForward>Major</RollForward>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
-    <PackageReference Include="System.CommandLine" Condition="'$(TargetFramework)' == '$(NetToolCurrent)'"/>
+    <ProjectReference Include="..\Core\Microsoft.DotNet.MacOsPkg.Core.csproj" Condition="'$(TargetFramework)' == '$(NetMinimum)'"/>
+    <PackageReference Include="System.CommandLine" Condition="'$(TargetFramework)' == '$(NetMinimum)'"/>
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetToolCurrent)'">
+  <PropertyGroup Condition="'$(TargetFramework)' == '$(NetMinimum)'">
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-macos-pkg</ToolCommandName>
   </PropertyGroup>

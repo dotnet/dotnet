@@ -15,7 +15,7 @@ An example project is included below:
   <Sdk Name="Microsoft.DotNet.SharedFramework.Sdk" />
   <PropertyGroup>
      <!-- Required properties -->
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SharedFrameworkName>Microsoft.Banana.App</SharedFrameworkName>
     <PlatformPackageType>RuntimePack</PlatformPackageType>

@@ -62,7 +62,7 @@
       <SNBinaryPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NuGetPackageRoot)sn\$(SNVersion)\sn.exe</SNBinaryPath>
       
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
-      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
+      <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetMinimum)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -90,7 +90,7 @@
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"
         WixToolsPath="$(WixInstallPath)"
-        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
+        TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetMinimum)\any\Microsoft.Dotnet.Tar.dll"
         PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"
         MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"

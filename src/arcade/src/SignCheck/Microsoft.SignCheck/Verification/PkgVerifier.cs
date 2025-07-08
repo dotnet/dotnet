@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.DotNet.MacOsPkg.Core;
 using Microsoft.Tools.WindowsInstallerXml;
-using System.IO.Pipelines;
 
 namespace Microsoft.SignCheck.Verification
 {

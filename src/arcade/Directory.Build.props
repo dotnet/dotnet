@@ -17,6 +17,9 @@
     <RepositoryUrl>https://github.com/dotnet/arcade</RepositoryUrl>
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
+    <NetMinimum Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NetCurrent)</NetMinimum>
+    <NetFrameworkMinimum>net472</NetFrameworkMinimum>
+    <XUnitPublishTargetFramework>$(NetMinimum)</XUnitPublishTargetFramework>
   </PropertyGroup>
 
 </Project>
