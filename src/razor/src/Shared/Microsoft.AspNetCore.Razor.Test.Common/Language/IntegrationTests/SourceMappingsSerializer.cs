@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
 public static class SourceMappingsSerializer
 {
-    internal static string Serialize(IRazorGeneratedDocument csharpDocument, RazorSourceDocument sourceDocument)
+    internal static string Serialize(RazorCSharpDocument csharpDocument, RazorSourceDocument sourceDocument)
     {
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 

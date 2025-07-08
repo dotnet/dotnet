@@ -106,7 +106,8 @@
     <WritePackageVersionsProps KnownPackages="@(ProducedPackage->Metadata('PackageId'))"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
-                               OutputPath="$(AllPackageVersionsPropsName)" />
+                               OutputPath="$(AllPackageVersionsPropsName)"
+                               PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
 
     <!-- Ensure the target parent dir has been created. -->
     <MakeDir Directories="$(SourceBuiltAssetsDir)" />

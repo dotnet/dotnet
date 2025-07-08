@@ -70,7 +70,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         var resolutionParams = new RazorCodeActionResolutionParams()
         {
             TextDocument = context.Request.TextDocument,
-            Action = LanguageServerConstants.CodeActions.SimplifyTagToSelfClosingAction,
+            Action = LanguageServerConstants.CodeActions.SimplifyTagToSelfClosing,
             Language = RazorLanguageKind.Razor,
             DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = actionParams,

@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.Telemetry;
 using WorkspacesSR = Microsoft.CodeAnalysis.Razor.Workspaces.Resources.SR;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
@@ -19,14 +20,17 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [Export(typeof(IIncompatibleProjectNotifier))]
 [method: ImportingConstructor]
 internal sealed class IncompatibleProjectNotifier(
+    ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory) : IIncompatibleProjectNotifier, IProjectCapabilityListener
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<IncompatibleProjectNotifier>();
 
     private readonly HashSet<string> _frameworkProjects = new(PathUtilities.OSSpecificPathComparer);
+    private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
     public void NotifyMiscFilesDocument(TextDocument textDocument)
     {
+        _telemetryReporter.ReportEvent("cohost/miscFilesDocument", Severity.Normal);
         _logger.Log(LogLevel.Error, $"{WorkspacesSR.FormatIncompatibleProject_MiscFiles(Path.GetFileName(textDocument.FilePath))}");
     }
 
@@ -41,11 +45,13 @@ internal sealed class IncompatibleProjectNotifier(
             if (_frameworkProjects.Contains(project.FilePath.AssumeNotNull()))
             {
                 // This project doesn't have the .NET Core C# capability, so it's a .NET Framework project and we don't want
+
                 // to notify the user, as those projects use a different editor.
                 return;
             }
         }
 
+        _telemetryReporter.ReportEvent("cohost/missingDocument", Severity.Normal);
         _logger.Log(LogLevel.Error, $"{(
             project.AdditionalDocuments.Any(d => d.FilePath is not null && d.FilePath.IsRazorFilePath())
                 ? WorkspacesSR.FormatIncompatibleProject_NotAnAdditionalFile(Path.GetFileName(filePath), project.Name)

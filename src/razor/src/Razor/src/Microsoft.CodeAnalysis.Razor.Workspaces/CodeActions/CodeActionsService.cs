@@ -134,14 +134,14 @@ internal class CodeActionsService(
         // For C# we have to map the ranges to the generated document
         var codeDocument = await documentSnapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, request.Range, out var projectedRange))
+        if (!_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, request.Range, out var projectedRange))
         {
             return null;
         }
 
         var newContext = request.Context;
         if (request.Context is VSInternalCodeActionContext { SelectionRange: not null } vsContext &&
-            _documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, vsContext.SelectionRange, out var selectionRange))
+            _documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, vsContext.SelectionRange, out var selectionRange))
         {
             vsContext.SelectionRange = selectionRange;
             newContext = vsContext;

@@ -158,7 +158,7 @@ internal class GenerateMethodCodeActionResolver(
                 editToSendToRoslyn.NewText = $"{formatting}{simplificationEdit.NewText.TrimEnd()}";
             }
         }
-        else if (_documentMappingService.TryMapToGeneratedDocumentRange(code.GetRequiredCSharpDocument(), editToSendToRoslyn.Range, out var remappedRange))
+        else if (_documentMappingService.TryMapToCSharpDocumentRange(code.GetRequiredCSharpDocument(), editToSendToRoslyn.Range, out var remappedRange))
         {
             // If the call to Roslyn is successful, the razor formatting service will format incorrectly if our manual formatting is present,
             // strip our manual formatting from the method so we just have a valid method signature.

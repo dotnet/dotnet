@@ -2,11 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -22,10 +20,8 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
 
     private readonly RazorSourceDocument _source;
     private readonly CodeWriter _codeWriter;
-    private readonly ImmutableArray<SourceMapping>.Builder _sourceMappings;
 
     private bool _isWritingHtml;
-    private (SourceSpan Original, SourceSpan Generated)? _lastSpans;
 
     // Rather than writing out C# characters as we find them (as '~') we keep a count so that consecutive characters
     // can be written as a block, allowing any block of 4 characters or more to be written as a comment (ie '/**/`)
@@ -33,11 +29,10 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
     // "@className" being written as '~/*~~~~~*/', which means Html formatting will insert a space which breaks things.
     private int _placeholderSize;
 
-    private RazorHtmlWriter(RazorSourceDocument source, CodeWriter codeWriter, ImmutableArray<SourceMapping>.Builder sourceMappings)
+    private RazorHtmlWriter(RazorSourceDocument source, CodeWriter codeWriter)
     {
         _source = source;
         _codeWriter = codeWriter;
-        _sourceMappings = sourceMappings;
         _isWritingHtml = true;
     }
 
@@ -46,10 +41,9 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
         var source = codeDocument.Source;
         var options = codeDocument.CodeGenerationOptions;
 
-        using var _ = ArrayBuilderPool<SourceMapping>.GetPooledObject(out var sourceMappings);
         using var codeWriter = new CodeWriter(options);
 
-        var htmlWriter = new RazorHtmlWriter(source, codeWriter, sourceMappings);
+        var htmlWriter = new RazorHtmlWriter(source, codeWriter);
         var syntaxTree = codeDocument.GetRequiredSyntaxTree();
 
         htmlWriter.Visit(syntaxTree);
@@ -60,7 +54,7 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
             source.Text.Length == text.Length,
             $"The backing HTML document should be the same length as the original document. Expected: {source.Text.Length} Actual: {text.Length}");
 
-        return new RazorHtmlDocument(codeDocument, text, sourceMappings.ToImmutableAndClear());
+        return new RazorHtmlDocument(text);
     }
 
     private void Visit(RazorSyntaxTree syntaxTree)
@@ -68,24 +62,6 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
         Visit(syntaxTree.Root);
 
         WriteCSharpContentPlaceholder();
-
-        // If we finished up with a source mapping being tracked, then add it to the list now
-        AddLastSourceMappingAndClear();
-    }
-
-    private void AddLastSourceMappingAndClear()
-    {
-        if (_lastSpans is var (original, generated))
-        {
-            AddSourceMapping(original, generated);
-            _lastSpans = null;
-        }
-    }
-
-    private void AddSourceMapping(SourceSpan original, SourceSpan generated)
-    {
-        var sourceMapping = new SourceMapping(original, generated);
-        _sourceMappings.Add(sourceMapping);
     }
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
@@ -247,42 +223,11 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
 
         WriteCSharpContentPlaceholder();
 
-        var newOriginal = token.GetSourceSpan(_source);
-        var newGenerated = new SourceSpan(_codeWriter.Location, newOriginal.Length);
-
         _codeWriter.Write(content);
-
-        // If we're currently tracking a source mapping, we need to check if the new token is adjacent to the last one.
-        // If so, we can extend the existing source mapping to include the new token.
-        // If not, we need to add the last source mapping to the list and start a new one for the current token.
-        if (_lastSpans is var (lastOriginal, lastGenerated))
-        {
-            if (newGenerated.LineCount <= 1 && TouchesLastSpan(newGenerated, lastGenerated) &&
-                newOriginal.LineCount <= 1 && TouchesLastSpan(newOriginal, lastOriginal))
-            {
-                _lastSpans = (
-                    ExtendSpan(lastOriginal, newOriginal.Length, newOriginal.EndCharacterIndex),
-                    ExtendSpan(lastGenerated, newOriginal.Length, newOriginal.EndCharacterIndex)
-                );
-
-                return;
-            }
-
-            // The new span is not directly next to the previous one, so add the previous to the list.
-            AddSourceMapping(lastOriginal, lastGenerated);
-        }
-
-        // Start tracking the new span.
-        _lastSpans = (newOriginal, newGenerated);
     }
 
     private void WriteNonHtmlToken(SyntaxToken token)
     {
-        // If we're tracking a source mapping span, add it to the list. There are cases where there
-        // are 0-length C# nodes, so it's important to perform this step before checking the token
-        // content to ensure the source mappings match the syntax tree.
-        AddLastSourceMappingAndClear();
-
         var content = token.Content.AsMemory();
         if (content.Length == 0)
         {
@@ -336,15 +281,6 @@ internal sealed class RazorHtmlWriter : SyntaxWalker
             _codeWriter.Write(content[whitespaceIndex..]);
         }
     }
-
-    /// <summary>
-    ///  Returns <see langword="true"/> if the new span starts immediately after the last span.
-    /// </summary>
-    private static bool TouchesLastSpan(SourceSpan newSpan, SourceSpan lastSpan)
-        => newSpan.AbsoluteIndex == lastSpan.AbsoluteIndex + lastSpan.Length;
-
-    private static SourceSpan ExtendSpan(SourceSpan span, int length, int endCharacterIndex)
-        => new(span.FilePath, span.AbsoluteIndex, span.LineIndex, span.CharacterIndex, length: span.Length + length, span.LineCount, endCharacterIndex);
 
     private void WriteCSharpContentPlaceholder()
     {
