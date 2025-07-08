@@ -12,7 +12,7 @@
       <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
-      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=$(SpectreConsoleReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Version=0.50.0</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:TargetFrameworks=$(NetCurrent)</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:UseBuildTimeTools=false</BuildCommandArgs>
       <BuildCommandArgs>$(BuildCommandArgs) /p:IsAotCompatible=false</BuildCommandArgs>
