@@ -47,13 +47,7 @@ internal sealed class LspDocumentMappingService(
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        if (!codeDocument.TryGetGeneratedDocument(generatedDocumentUri, _filePathService, out var generatedDocument))
-        {
-            return Assumed.Unreachable<(Uri, LinePositionSpan)>();
-        }
-
-        if (TryMapToHostDocumentRange(generatedDocument, generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
+        if (TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), generatedDocumentRange, MappingBehavior.Strict, out var mappedRange))
         {
             return (razorDocumentUri, mappedRange);
         }

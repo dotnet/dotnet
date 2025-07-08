@@ -60,12 +60,13 @@ public class CohostDocumentSpellCheckEndpointTest(ITestOutputHelper testOutputHe
         var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostDocumentSpellCheckEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostDocumentSpellCheckEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var span = new LinePositionSpan(new(0, 0), new(sourceText.Lines.Count, 0));
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, DisposalToken);
 
+        Assert.NotNull(result);
         var ranges = result.First().Ranges.AssumeNotNull();
 
         // To make for easier test failure analysis, we convert the ranges back to the test input, so we can show a diff

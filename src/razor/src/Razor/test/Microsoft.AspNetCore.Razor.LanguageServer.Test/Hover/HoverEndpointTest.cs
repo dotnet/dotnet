@@ -44,13 +44,13 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
         var outRange = new LinePositionSpan();
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
+            .Setup(x => x.TryMapToCSharpDocumentRange(It.IsAny<RazorCSharpDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
             .Returns(true);
 
         var projectedPosition = new LinePosition(1, 1);
         var projectedIndex = 1;
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnection);

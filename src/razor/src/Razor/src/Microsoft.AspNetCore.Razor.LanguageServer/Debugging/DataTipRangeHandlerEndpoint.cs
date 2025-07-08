@@ -71,13 +71,13 @@ internal sealed class DataTipRangeHandlerEndpoint(
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-        if (!DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, delegatedResponse.HoverRange, out var hoverRange))
+        if (!DocumentMappingService.TryMapToRazorDocumentRange(csharpDocument, delegatedResponse.HoverRange, out var hoverRange))
         {
             return null;
         }
 
         LspRange? expressionRange = null;
-        if (delegatedResponse.ExpressionRange != null && !DocumentMappingService.TryMapToHostDocumentRange(csharpDocument, delegatedResponse.ExpressionRange, out expressionRange))
+        if (delegatedResponse.ExpressionRange != null && !DocumentMappingService.TryMapToRazorDocumentRange(csharpDocument, delegatedResponse.ExpressionRange, out expressionRange))
         {
             return null;
         }

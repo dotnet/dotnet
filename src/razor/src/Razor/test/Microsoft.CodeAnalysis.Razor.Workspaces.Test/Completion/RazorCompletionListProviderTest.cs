@@ -62,54 +62,6 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         ];
 
     [Fact]
-    public void IsApplicableTriggerContext_Deletion_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Deletion
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Explicit_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Explicit
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void IsApplicableTriggerContext_Typing_ReturnsTrue()
-    {
-        // Arrange
-        var completionContext = new VSInternalCompletionContext()
-        {
-            InvokeKind = VSInternalCompletionInvokeKind.Typing
-        };
-
-        // Act
-        var result = RazorCompletionListProvider.IsApplicableTriggerContext(completionContext);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
     public void TryConvert_Directive_ReturnsTrue()
     {
         // Arrange
