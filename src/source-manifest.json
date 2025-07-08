@@ -1,16 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 273221,
+      "barId": 273885,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "0e335649fe2d2f98ea51e55cc1a0899af3617eba"
-    },
-    {
-      "barId": null,
-      "path": "aspire",
-      "remoteUri": "https://github.com/dotnet/aspire",
-      "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
+      "commitSha": "d1834121068b0df7974a380cebadb781e58ff098"
     },
     {
       "barId": 273508,
@@ -37,22 +31,22 @@
       "commitSha": "1478b7e6938013629e182b0656bfbde04d367cc5"
     },
     {
-      "barId": 273416,
+      "barId": 273928,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "e32a259690378945a52bc8ac5cc5e302d9beb193"
+      "commitSha": "f903b9dcd4a2099474aa08ea1f1b4dc923a71049"
     },
     {
-      "barId": 273318,
+      "barId": 274237,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "14b439c0bcf7cb81899457e4cbd14640cc365578"
+      "commitSha": "dabc66a02c95a437ec83e649f50906ad3d44d5ca"
     },
     {
-      "barId": 271912,
+      "barId": 274251,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "d7f601751622ebee331367f19b4310eaa9b70102"
+      "commitSha": "6c6421d38f085dd4822a9acd8abc4890debe4c59"
     },
     {
       "barId": 273624,
@@ -61,10 +55,10 @@
       "commitSha": "7346d84a24dd15155d74f8179788a423cbdd962a"
     },
     {
-      "barId": 273615,
+      "barId": 274071,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "0e2431add8a483acfd985c6fdd352ebfcade6755"
+      "commitSha": "4e1f2f285ff08a628e45f21d40b9f682f2b99de7"
     },
     {
       "barId": 271771,
@@ -73,10 +67,10 @@
       "commitSha": "772ee13d2bafaa1414d90dbfbd77e0941115ef19"
     },
     {
-      "barId": 273637,
+      "barId": 274090,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "58de0c1a5c1fadf56a848dd45d91440ae041e22c"
+      "commitSha": "0286b0e118d2ab3589ca64fb0ad4cc0bf49e1a74"
     },
     {
       "barId": 272940,
@@ -103,16 +97,16 @@
       "commitSha": "6ab0ec29e4e346465c767a6e04c37b179ee287f8"
     },
     {
-      "barId": 272606,
+      "barId": 274106,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "4177291d4d3dabd5341239d01b3e844125659304"
+      "commitSha": "feb621b704347e6fb72b816a257f1ba2fdc6a385"
     },
     {
-      "barId": 272612,
+      "barId": 274246,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "31f60141b67dc390bbcc1e3251c63d240379a0be"
+      "commitSha": "24d24fcadbda7343189b132956debb716d4de057"
     },
     {
       "barId": 273667,
@@ -145,10 +139,10 @@
       "commitSha": "3406b151b95d3c15cb98e038a05583fc865c575b"
     },
     {
-      "barId": 273305,
+      "barId": 274044,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "d93ffb3c466bb157f8a5ef3941d5e94aad1b3993"
+      "commitSha": "f95971e0b3ee0da4a123c0d264c2f6288c441363"
     },
     {
       "barId": 273132,
@@ -157,10 +151,10 @@
       "commitSha": "28843aafcedc8299336ae470c868f842a4ca52b4"
     },
     {
-      "barId": 273195,
+      "barId": 274010,
       "path": "xdt",
       "remoteUri": "https://github.com/dotnet/xdt",
-      "commitSha": "0d66c1314c16a831f1289b1e4b1adbe0d8b94404"
+      "commitSha": "d1231b22ac3ba77f8a7e506b10d922f6f7ace210"
     }
   ],
   "submodules": [
@@ -220,29 +214,14 @@
       "commitSha": "0a2e291c0d9c0c7675d445703e51750363a549ef"
     },
     {
+      "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
+      "remoteUri": "https://github.com/spectreconsole/spectre.console",
+      "commitSha": "f32f80dc57d8b0c8446a72ea0d382f3048f8bac1"
+    },
+    {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
       "remoteUri": "https://github.com/microsoft/vs-solutionpersistence.git",
       "commitSha": "0b6f82a4073ce0ff0419991ea0cd6dd6898a51ac"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit",
-      "remoteUri": "https://github.com/xunit/xunit",
-      "commitSha": "82543a6df6f5f13b5b70f8a9f9ccb41cd676084f"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/src/xunit.assert/Asserts",
-      "remoteUri": "https://github.com/xunit/assert.xunit",
-      "commitSha": "cac8b688c193c0f244a0bedf3bb60feeb32d377a"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/builder/common",
-      "remoteUri": "https://github.com/xunit/build-tools-v3",
-      "commitSha": "90dba1f5638a4f00d4978a73e23edde5b85061d9"
-    },
-    {
-      "path": "source-build-reference-packages/src/externalPackages/src/xunit/tools/media",
-      "remoteUri": "https://github.com/xunit/media",
-      "commitSha": "5738b6e86f08e0389c4392b939c20e3eca2d9822"
     }
   ]
 }
