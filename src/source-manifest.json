@@ -25,10 +25,10 @@
       "commitSha": "0c37e9e6823c3a71f7710f9ef660ed40618390c2"
     },
     {
-      "barId": 273003,
+      "barId": 274234,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "1478b7e6938013629e182b0656bfbde04d367cc5"
+      "commitSha": "227da60247996ce95c272cdb5941163c669224e8"
     },
     {
       "barId": 273928,
@@ -76,7 +76,7 @@
       "barId": 272940,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "d92a029dfde276aa7cb9a576c351d29d43c4c320"
+      "commitSha": "9eec48b9253e5c65e22dbe4a41cc30191ee6c974"
     },
     {
       "barId": 273285,
