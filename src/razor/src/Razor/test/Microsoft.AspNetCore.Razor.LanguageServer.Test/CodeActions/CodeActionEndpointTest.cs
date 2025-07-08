@@ -550,7 +550,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
             ? (projectedRange.GetValueOrDefault(), true)
             : (It.Ref<LinePositionSpan>.IsAny, false);
 
-        mock.Setup(x => x.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
+        mock.Setup(x => x.TryMapToCSharpDocumentRange(It.IsAny<RazorCSharpDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
             .Returns(result);
 
         return mock.Object;

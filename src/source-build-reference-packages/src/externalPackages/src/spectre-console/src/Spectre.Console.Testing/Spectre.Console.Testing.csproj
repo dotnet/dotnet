@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
+    <IsTestProject>false</IsTestProject>
+    <IsPackable>true</IsPackable>
+    <Description>Contains testing utilities for Spectre.Console.</Description>
+  </PropertyGroup>
+
+  <ItemGroup Label="REMOVE THIS">
+    <InternalsVisibleTo Include="Spectre.Console.Tests" />
+    <InternalsVisibleTo Include="Spectre.Console.Cli.Tests" />
+  </ItemGroup>
+
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\Spectre.Console.Cli\Spectre.Console.Cli.csproj" />
+    <ProjectReference Include="..\Spectre.Console\Spectre.Console.csproj" />
+  </ItemGroup>
+
+</Project>
