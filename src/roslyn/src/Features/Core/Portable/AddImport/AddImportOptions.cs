@@ -16,33 +16,21 @@ namespace Microsoft.CodeAnalysis.AddImport;
 internal readonly record struct AddImportOptions(
     [property: DataMember(Order = 0)] SymbolSearchOptions SearchOptions,
     [property: DataMember(Order = 1)] CodeCleanupOptions CleanupOptions,
-    [property: DataMember(Order = 2)] MemberDisplayOptions MemberDisplayOptions,
-    [property: DataMember(Order = 3)] bool CleanupDocument);
+    [property: DataMember(Order = 2)] MemberDisplayOptions MemberDisplayOptions);
 
 internal static class AddImportOptionsProviders
 {
-    public static AddImportOptions GetAddImportOptions(
-        this IOptionsReader options,
-        LanguageServices languageServices,
-        SymbolSearchOptions searchOptions,
-        bool allowImportsInHiddenRegions,
-        bool cleanupDocument)
+    public static AddImportOptions GetAddImportOptions(this IOptionsReader options, LanguageServices languageServices, SymbolSearchOptions searchOptions, bool allowImportsInHiddenRegions)
         => new()
         {
             SearchOptions = searchOptions,
             CleanupOptions = options.GetCodeCleanupOptions(languageServices, allowImportsInHiddenRegions),
-            MemberDisplayOptions = options.GetMemberDisplayOptions(languageServices.Language),
-            CleanupDocument = cleanupDocument,
+            MemberDisplayOptions = options.GetMemberDisplayOptions(languageServices.Language)
         };
 
-    public static async ValueTask<AddImportOptions> GetAddImportOptionsAsync(
-        this Document document,
-        SymbolSearchOptions searchOptions,
-        bool cleanupDocument,
-        CancellationToken cancellationToken)
+    public static async ValueTask<AddImportOptions> GetAddImportOptionsAsync(this Document document, SymbolSearchOptions searchOptions, CancellationToken cancellationToken)
     {
         var configOptions = await document.GetHostAnalyzerConfigOptionsAsync(cancellationToken).ConfigureAwait(false);
-        return configOptions.GetAddImportOptions(
-            document.Project.Services, searchOptions, document.AllowImportsInHiddenRegions(), cleanupDocument);
+        return configOptions.GetAddImportOptions(document.Project.Services, searchOptions, document.AllowImportsInHiddenRegions());
     }
 }

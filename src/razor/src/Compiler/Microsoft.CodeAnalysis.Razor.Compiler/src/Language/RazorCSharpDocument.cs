@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public sealed class RazorCSharpDocument : IRazorGeneratedDocument
+public sealed class RazorCSharpDocument
 {
     public RazorCodeDocument CodeDocument { get; }
     public SourceText Text { get; }

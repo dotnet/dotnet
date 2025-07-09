@@ -15,4 +15,6 @@ internal interface IFileSystem
     bool FileExists(string filePath);
 
     string ReadFile(string filePath);
+
+    Stream OpenReadStream(string filePath);
 }

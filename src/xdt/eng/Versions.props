@@ -1,8 +1,7 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>10.0.0</VersionPrefix>
+    <VersionPrefix>3.2.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
-    <UsingToolXliff>false</UsingToolXliff>
     <UseVSTestRunner>true</UseVSTestRunner>
     <!-- Prohibit the usage of .NET Standard 1.x dependencies. -->
     <FlagNetStandard1XDependencies>true</FlagNetStandard1XDependencies>
