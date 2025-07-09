@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 273885,
+      "barId": 274339,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "d1834121068b0df7974a380cebadb781e58ff098"
+      "commitSha": "4e526204e83e615efe8eb5743be7fbccfa4e492a"
     },
     {
-      "barId": 273508,
+      "barId": 274425,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "9e69f19a5c7efa19577627a62c029ff387810d50"
+      "commitSha": "e93c8894d08cc46c275dbda902d485dfeb690783"
     },
     {
       "barId": 272559,
@@ -25,10 +25,10 @@
       "commitSha": "68b6dad50acc558276958b19b4c9189d70721d76"
     },
     {
-      "barId": 273003,
+      "barId": 274234,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "1478b7e6938013629e182b0656bfbde04d367cc5"
+      "commitSha": "227da60247996ce95c272cdb5941163c669224e8"
     },
     {
       "barId": 273928,
@@ -49,10 +49,10 @@
       "commitSha": "6c6421d38f085dd4822a9acd8abc4890debe4c59"
     },
     {
-      "barId": 273624,
+      "barId": 274201,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "2cd0102635fd1bfeac91be1099b8c2094cf76d82"
+      "commitSha": "318345330ed997a88bd9152b2a661b7bd954cec9"
     },
     {
       "barId": 274071,
@@ -76,7 +76,7 @@
       "barId": 272940,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "d92a029dfde276aa7cb9a576c351d29d43c4c320"
+      "commitSha": "9eec48b9253e5c65e22dbe4a41cc30191ee6c974"
     },
     {
       "barId": 273285,
@@ -103,10 +103,10 @@
       "commitSha": "6abcc1555959a9c08db5cac78468ac880170d5bd"
     },
     {
-      "barId": 274246,
+      "barId": 274545,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "24d24fcadbda7343189b132956debb716d4de057"
+      "commitSha": "3676a477566bb9a42fbd6d1a5ab8d1f40bc5b6d4"
     },
     {
       "barId": 273667,
@@ -216,7 +216,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "f32f80dc57d8b0c8446a72ea0d382f3048f8bac1"
+      "commitSha": "68fcfe0de4c0602b1c4d4c3cf58ea70e9f06388c"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
