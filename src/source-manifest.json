@@ -103,10 +103,10 @@
       "commitSha": "9503f970726ab630abdf9e2d595c71e63e92ca5e"
     },
     {
-      "barId": 274246,
+      "barId": 274545,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "24d24fcadbda7343189b132956debb716d4de057"
+      "commitSha": "3676a477566bb9a42fbd6d1a5ab8d1f40bc5b6d4"
     },
     {
       "barId": 273667,
@@ -216,7 +216,7 @@
     {
       "path": "source-build-reference-packages/src/externalPackages/src/spectre-console",
       "remoteUri": "https://github.com/spectreconsole/spectre.console",
-      "commitSha": "f32f80dc57d8b0c8446a72ea0d382f3048f8bac1"
+      "commitSha": "68fcfe0de4c0602b1c4d4c3cf58ea70e9f06388c"
     },
     {
       "path": "source-build-reference-packages/src/externalPackages/src/vs-solutionpersistence",
