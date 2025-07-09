@@ -42,6 +42,9 @@ public sealed class MSBuildArgs
     /// </summary>
     public List<string> OtherMSBuildArgs { get; }
 
+    /// <summary>
+    /// Ensures that when we do our MSBuild-property re-parses we parse in the same way as the dotnet CLI's parser.
+    /// </summary>
     private static readonly ParserConfiguration _analysisParsingConfiguration = new()
     {
         EnablePosixBundling = false
@@ -61,7 +64,7 @@ public sealed class MSBuildArgs
             fakeCommand.Options.Add(option);
         }
 ;
-        var parseResult = propertyParsingConfiguration.Parse([.. forwardedAndUserFacingArgs], _analysisParsingConfiguration);
+        var parseResult = fakeCommand.Parse([.. forwardedAndUserFacingArgs], _analysisParsingConfiguration);
         var globalProperties = parseResult.GetResult("--property") is OptionResult propResult ? propResult.GetValueOrDefault<ReadOnlyDictionary<string, string>?>() : null;
         var restoreProperties = parseResult.GetResult("--restoreProperty") is OptionResult restoreResult ? restoreResult.GetValueOrDefault<ReadOnlyDictionary<string, string>?>() : null;
         var requestedTargets = parseResult.GetResult("--target") is OptionResult targetResult ? targetResult.GetValueOrDefault<string[]?>() : null;
