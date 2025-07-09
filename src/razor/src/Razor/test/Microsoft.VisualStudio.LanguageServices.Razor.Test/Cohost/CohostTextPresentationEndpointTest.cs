@@ -51,13 +51,13 @@ public class CohostTextPresentationEndpointTest(ITestOutputHelper testOutputHelp
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.TextDocumentTextPresentationName, htmlResponse)]);
 
-        var endpoint = new CohostTextPresentationEndpoint(FilePathService, requestInvoker);
+        var endpoint = new CohostTextPresentationEndpoint(IncompatibleProjectService, FilePathService, requestInvoker);
 
         var request = new VSInternalTextPresentationParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                DocumentUri = new(document.CreateUri())
+                DocumentUri = document.CreateDocumentUri()
             },
             Range = sourceText.GetRange(span),
             Text = text

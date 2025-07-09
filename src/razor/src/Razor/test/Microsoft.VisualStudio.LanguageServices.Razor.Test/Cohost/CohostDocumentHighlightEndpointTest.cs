@@ -152,11 +152,11 @@ public class CohostDocumentHighlightEndpointTest(ITestOutputHelper testOutputHel
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentDocumentHighlightName, htmlResponse)]);
 
-        var endpoint = new CohostDocumentHighlightEndpoint(RemoteServiceInvoker, requestInvoker);
+        var endpoint = new CohostDocumentHighlightEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker);
 
         var request = new DocumentHighlightParams()
         {
-            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Position = position
         };
 

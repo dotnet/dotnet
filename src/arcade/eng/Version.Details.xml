@@ -27,21 +27,21 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25324.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25353.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5fe468883c4a203f57a1b163167e61a24748625a</Sha>
+      <Sha>aea743edf7c9345cfdbdf9593756973baadc6b37</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25324.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25353.1">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5fe468883c4a203f57a1b163167e61a24748625a</Sha>
+      <Sha>aea743edf7c9345cfdbdf9593756973baadc6b37</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25324.1">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25351.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>b5e72fb50c5e3b6f231b736fce7079f3eb5ddf5f</Sha>
+      <Sha>22c6a0562dd81ab9178c095de04832999981f3f7</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25324.1">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25351.1">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>b5e72fb50c5e3b6f231b736fce7079f3eb5ddf5f</Sha>
+      <Sha>22c6a0562dd81ab9178c095de04832999981f3f7</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25318.1">
       <Uri>https://github.com/dotnet/xharness</Uri>
@@ -158,9 +158,9 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25320.2">
+    <Dependency Name="Microsoft.DncEng.SecretManager" Version="1.1.0-beta.25325.1">
       <Uri>https://github.com/dotnet/dnceng</Uri>
-      <Sha>f8e423db429900ec56bbbc7e76d8d8711ab0c1f9</Sha>
+      <Sha>02d0e33d3b027db11770eda8a0ad573e2f3e461a</Sha>
     </Dependency>
     <!-- Dependencies required for source build to lift to the previously-source-built version. -->
     <Dependency Name="Microsoft.Build" Version="17.12.36">

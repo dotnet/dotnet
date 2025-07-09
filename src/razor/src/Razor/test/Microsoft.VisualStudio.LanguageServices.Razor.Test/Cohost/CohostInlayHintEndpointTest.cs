@@ -138,11 +138,11 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
             <div></div>
             """;
         var document = CreateProjectAndRazorDocument(input);
-        var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostInlayHintEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var request = new InlayHintParams()
         {
-            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Range = LspFactory.CreateRange(startLine, starChar, endLine, endChar)
         };
 
@@ -199,12 +199,12 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
         var document = CreateProjectAndRazorDocument(input);
         var inputText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostInlayHintEndpoint(RemoteServiceInvoker);
-        var resolveEndpoint = new CohostInlayHintResolveEndpoint(RemoteServiceInvoker, LoggerFactory);
+        var endpoint = new CohostInlayHintEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
+        var resolveEndpoint = new CohostInlayHintResolveEndpoint(IncompatibleProjectService, RemoteServiceInvoker, LoggerFactory);
 
         var request = new InlayHintParams()
         {
-            TextDocument = new TextDocumentIdentifier() { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier() { DocumentUri = document.CreateDocumentUri() },
             Range = new()
             {
                 Start = new(0, 0),

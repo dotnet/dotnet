@@ -134,13 +134,13 @@ public class CohostGoToImplementationEndpointTest(ITestOutputHelper testOutputHe
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var filePathService = new RemoteFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToImplementationEndpoint(RemoteServiceInvoker, requestInvoker, filePathService);
+        var endpoint = new CohostGoToImplementationEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
 
         var position = inputText.GetPosition(input.Position);
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
             Position = position,
-            TextDocument = new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
         };
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(textDocumentPositionParams, document, DisposalToken);
