@@ -46,8 +46,6 @@ internal class RemoteLanguageServerFeatureOptions : LanguageServerFeatureOptions
 
     public override bool UseRazorCohostServer => _options.UseRazorCohostServer;
 
-    public override bool ForceRuntimeCodeGeneration => true;
-
     public override bool UseNewFormattingEngine => true;
 
     public override bool SupportsSoftSelectionInCompletion => _options.SupportsSoftSelectionInCompletion;

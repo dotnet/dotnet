@@ -3,7 +3,7 @@ trigger: none
 parameters:
 - name: artifactName
   type: string
-  default: CentOSStream9_Online_MsftSdk_x64_BuildLogs_Attempt1
+  default: CentOSStream10_Online_MsftSdk_x64_BuildLogs_Attempt1
   displayName: (Optional) Source Build Artrifact Name to retrieve sbrpPackageUsage.json from
 
 - name: skipPackages
@@ -51,8 +51,8 @@ stages:
   - group: Dotnet-SourceBuild-Secrets
 
   jobs:
-  - job: DownloadArtifact
-    displayName: Download Artifact from Dependency Pipeline
+  - job: Cleanup
+    displayName: Cleanup
 
     steps:
     - task: DownloadPipelineArtifact@2

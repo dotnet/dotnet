@@ -119,7 +119,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
                 continue;
             }
 
-            if (DocumentMappingService.TryMapToGeneratedDocumentPosition(csharpDocument, lineStart, out _, out var projectedLineStart))
+            if (DocumentMappingService.TryMapToCSharpDocumentPosition(csharpDocument, lineStart, out _, out var projectedLineStart))
             {
                 lineStartMap[lineStart] = projectedLineStart;
                 significantLocations.Add(projectedLineStart);
