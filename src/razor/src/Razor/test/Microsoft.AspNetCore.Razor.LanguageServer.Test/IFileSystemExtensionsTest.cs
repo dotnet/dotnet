@@ -103,5 +103,8 @@ public class IFileSystemExtensionsTest(ITestOutputHelper testOutput) : TagHelper
 
         public string ReadFile(string filePath)
             => throw new NotImplementedException();
+
+        public Stream OpenReadStream(string filePath)
+            => throw new NotImplementedException();
     }
 }

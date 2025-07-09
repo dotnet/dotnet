@@ -4,6 +4,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Collections;
 using Microsoft.CodeAnalysis.Editor.UnitTests.CallHierarchy;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
@@ -217,7 +218,7 @@ public sealed class CSharpCallHierarchyTests
         testState.VerifyResult(root, string.Format(EditorFeaturesResources.Calls_To_Base_Member_0, "N.C.Goo()"), ["N.D.Bar()"]);
     }
 
-    [WpfFact(Skip = "https://devdiv.visualstudio.com/DevDiv/_workitems/edit/2506733")]
+    [WpfFact]
     public async Task FieldInitializers()
     {
         var text = """

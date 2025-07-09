@@ -50,78 +50,25 @@
            Condition="('$(PackageName)' == '' or '$(PackageVersion)' == '') and '$(PackageCSV)' == ''" />
   </Target>
 
-  <!-- Parse the passed in CSV file into PackageInfo items with metadata.
-       An inline task is used beccause the PackageSourceGeneratorTask isn't build until after CollectPackageDownloads. -->
-  <UsingTask TaskName="ParsePackagesCsv" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <CsvPath ParameterType="System.String" Required="true" />
-      <PackageInfo ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
-      <GroupedPackageInfo ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.Collections.Generic" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Linq" />
-      <Code Type="Fragment" Language="cs">
-        <![CDATA[
-        string[] lines = File.ReadAllLines(CsvPath);
-        if (lines.Length == 0)
-        {
-            Log.LogError($"CsvPath '{CsvPath}' is empty.");
-            return false;
-        }
-
-        string[][] csvParts = lines.Select(line =>
-            {
-                string[] parts = line.Split(',');
-
-                if (parts.Length != 2 && parts.Length != 3)
-                {
-                    Log.LogError($"CsvPath '{CsvPath}' contains an invalid line: '{line}'.");
-                    return null;
-                }
-
-                return parts;
-            })
-            .Where(item => item is not null)
-            .ToArray()!;
-
-        PackageInfo = csvParts.Select(parts => new TaskItem(parts[0], new Dictionary<string, string>
-            {
-                { "PackageName", parts[0] },
-                { "PackageVersion", parts[1] },
-                { "TargetFrameworks", parts.Length == 3 ? parts[2] : string.Empty }
-            }))
-            .ToArray();
-
-        GroupedPackageInfo = csvParts.GroupBy(parts => parts[0])
-            .Select(group => new TaskItem(group.Key, new Dictionary<string, string>
-                {
-                    { "PackageName", group.Key },
-                    { "PackageVersions", group.Select(parts => $"[{parts[1]}]").Aggregate((working, next) => $"{working};{next}") }
-                }))
-            .ToArray();
-
-        return !Log.HasLoggedErrors;
-        ]]>
-      </Code>
-    </Task>
-  </UsingTask>
-
+  <UsingTask TaskName="Microsoft.NET.Build.Tasks.CollatePackageDownloads" AssemblyFile="$(MicrosoftNETBuildTasksAssembly)" TaskFactory="TaskHostFactory"/>
   <Target Name="ParseCsv"
           Condition="'$(PackageCSV)' != ''"
           AfterTargets="ValidateRestoreCsvContentProperties">
-    <ParsePackagesCsv CsvPath="$(PackageCSV)">
-      <Output TaskParameter="PackageInfo" ItemName="PackageInfo" />
-      <Output TaskParameter="GroupedPackageInfo" ItemName="GroupedPackageInfo" />
-    </ParsePackagesCsv>
 
-    <ItemGroup>
-      <PackageDownload Include="@(GroupedPackageInfo->Metadata('PackageName'))"
-              Version="%(PackageVersions)"
-              Condition="'@(GroupedPackageInfo)' != ''" />
+    <!-- Parse the passed in CSV file. -->
+    <ItemGroup Condition="'$(PackageCSV)' != ''">
+      <CsvLine Include="$([System.Text.RegularExpressions.Regex]::Split('$([System.IO.File]::ReadAllText('$(PackageCSV)'))', '\r\n|\n'))" />
+      <PackageInfo Include="@(CsvLine)"
+                   PackageName="$([System.String]::Copy('%(Identity)').Split(',')[0])"
+                   PackageVersion="$([System.String]::Copy('%(Identity)').Split(',')[1])" />
+      <Packages Include="@(PackageInfo->Metadata('PackageName'))"
+                Version="%(PackageVersion)" />
     </ItemGroup>
+
+    <!-- Collage the packages by name as required for PackageDownload e.g. Name: system.security.cryptography.xml Version: [6.0.1];[8.0.0] -->
+    <CollatePackageDownloads Packages="@(Packages)">
+      <Output TaskParameter="PackageDownloads" ItemName="PackageDownload" />
+    </CollatePackageDownloads>
   </Target>
 
   <!-- The entry point target that runs when a CSV file is provided which invokes the
