@@ -15,7 +15,8 @@
 # False positive
 src/arcade/Documentation/UnifiedBuild/Foundational-Concepts.md
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/src/BuildFPMToolPreReqs.cs|json
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|cecill-c
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/templates/debian/copyright|unknown-license-reference
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|unknown-license-reference
 src/arcade/src/SignCheck/SignCheck/THIRD-PARTY-NOTICES.TXT
 
 # Doesn't apply to code
@@ -27,6 +28,9 @@ src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/eula.rtf
 #
 # aspnetcore
 #
+
+# False positive
+src/aspnetcore/src/Installers/Debian/tools/templates/debian/copyright|unknown-license-reference
 
 # A generic statement about license applicability that is being detected as "unknown"
 src/aspnetcore/src/Components/THIRD-PARTY-NOTICES.txt|unknown
@@ -89,6 +93,7 @@ src/fsharp/setup/resources/eula/*.rtf
 src/installer/src/core-sdk-tasks/BuildFPMToolPreReqs.cs|json
 src/installer/src/redist/targets/packaging/osx/clisdk/resources/en.lproj/welcome.html|cecill-c
 src/installer/THIRD-PARTY-NOTICES|proprietary-license
+src/installer/src/redist/targets/packaging/rpm/templates/copyright|unknown-license-reference
 
 # Configuration, doesn't apply to source directly
 src/installer/src/VirtualMonoRepo/THIRD-PARTY-NOTICES.template.txt
@@ -103,14 +108,17 @@ src/msbuild/src/Directory.Build.props|ms-net-library-2018-11
 
 # False positive
 src/msbuild/src/Build/Instance/ProjectItemInstance.cs|generic-exception
+src/msbuild/src/Tasks/XamlRules/ProjectItemsSchema.xaml|unknown-license-reference
 
 #
 # nuget-client
 #
 
 # False positive
+src/nuget-client/.editorconfig|unknown-license-reference
 src/nuget-client/build/NOTICES.txt|other-copyleft
 src/nuget-client/README.md|unknown-license-reference
+src/nuget-client/scripts/utils/UpdateNuGetLicenseSPDXList.ps1|json
 src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.UI/Resources.Designer.cs|unknown-license-reference
 src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.UI/Actions/UIActionEngine.cs|unknown-license-reference
 src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.VisualStudio/Services/NuGetPackageFileService.cs|proprietary-license
@@ -128,6 +136,7 @@ src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/DefaultManifestValue
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/LicensesTests/LicenseExpressionTokenizerTests.cs
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/LicensesTests/NuGetLicenseExpressionParserTests.cs
 src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/LicensesTests/NuGetLicenseTests.cs
+src/nuget-client/test/NuGet.Core.Tests/NuGet.Packaging.Test/NuspecReaderTests.cs|unknown-license-reference
 src/nuget-client/test/TestUtilities/Test.Utility/JsonData.cs
 
 #
@@ -142,6 +151,7 @@ src/roslyn-analyzers/assets/EULA.txt|ms-net-library
 #
 
 # Test data
+src/roslyn/src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs|unknown-license-reference
 src/roslyn/src/Analyzers/VisualBasic/Tests/FileHeaders/FileHeaderTests.vb|unknown-license-reference
 src/roslyn/src/EditorFeatures/CSharpTest2/EmbeddedLanguages/RegularExpressions/Regex_RealWorldPatterns.json
 
@@ -183,6 +193,7 @@ src/runtime/src/mono/mono/mini/mini-windows.c|unknown-license-reference
 src/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
 src/runtime/src/tests/JIT/Performance/CodeQuality/V8/Crypto/Crypto.cs|unknown-license-reference
 src/runtime/src/tests/sizeondisk/sodbench/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
+src/runtime/src/tools/illink/.editorconfig|unknown-license-reference
 
 # Test data
 src/runtime/src/libraries/System.Private.Xml.Linq/tests/XDocument.Common/InputSpace.cs|other-permissive
@@ -203,12 +214,13 @@ src/runtime/src/mono/sample/wasm/browser-webpack/package-lock.json
 
 # False positive
 src/source-build-externals/src/abstractions-xunit/README.md|free-unknown
-src/source-build-externals/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown
+src/source-build-externals/src/application-insights/NETCORE/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/benchmark/Microsoft.IdentityModel.Benchmarks/CreateTokenTests.cs|proprietary-license
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.JsonWebTokens/JsonClaimValueTypes.cs|proprietary-license
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Tokens.Saml/Saml/ClaimProperties.cs|proprietary-license
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Tokens.Saml/Saml/SamlTokenUtilities.cs|proprietary-license
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Tokens.Saml/Saml2/ClaimProperties.cs|proprietary-license
+src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-externals/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/System.IdentityModel.Tokens.Jwt/JsonClaimValueTypes.cs|proprietary-license
 src/source-build-externals/src/humanizer/readme.md|free-unknown
 src/source-build-externals/src/humanizer/NuSpecs/*.nuspec*
