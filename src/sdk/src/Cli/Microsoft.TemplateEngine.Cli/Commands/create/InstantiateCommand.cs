@@ -435,7 +435,7 @@ namespace Microsoft.TemplateEngine.Cli.Commands
                     template,
                     validateDefaultLanguage);
 
-                Command parser = ParserFactory.CreateParser(command);
+                System.CommandLine.Command parser = ParserFactory.CreateParser(command);
                 ParseResult parseResult = parser.Parse(args.RemainingArguments ?? Array.Empty<string>(), ParserFactory.ParserConfiguration);
                 return (command, parseResult);
             }
