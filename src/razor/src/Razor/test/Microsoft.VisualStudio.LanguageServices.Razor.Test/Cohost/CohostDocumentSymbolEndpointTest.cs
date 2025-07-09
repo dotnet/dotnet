@@ -72,7 +72,7 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
         var document = CreateProjectAndRazorDocument(input);
 
-        var endpoint = new CohostDocumentSymbolEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostDocumentSymbolEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, hierarchical, DisposalToken);
 
