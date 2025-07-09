@@ -16,7 +16,7 @@ namespace Microsoft.TemplateEngine.Authoring.CLI
             rootCommand.Subcommands.Add(new VerifyCommand());
             rootCommand.Subcommands.Add(new ValidateCommand());
 
-            return rootCommand.Parse(args, new()
+            return rootCommand.Parse(args, new ParserConfiguration()
             {
                 EnablePosixBundling = false,
             }).InvokeAsync();
