@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsResolveEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostEndpointAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostDocSyncEndpointRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CohostInitializeReporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Completion\CohostCompletionListCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Completion\CohostDocumentCompletionEndpoint.cs" />

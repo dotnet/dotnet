@@ -303,7 +303,7 @@ internal static class DelegatedCompletionHelper
                     {
                         // nextCursorPosition is where VS Code will navigate to, so we translate it to our document, or set to 0 to do nothing.
                         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-                        args[3] = documentMappingService.TryMapToHostDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
+                        args[3] = documentMappingService.TryMapToRazorDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
                             ? nextCursorPosition
                             : 0;
                     }
