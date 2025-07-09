@@ -131,7 +131,7 @@ public static class Parser
     // Argument
     public static readonly Argument<string> DotnetSubCommand = new("subcommand") { Arity = ArgumentArity.ZeroOrOne, Hidden = true };
 
-    private static Command ConfigureCommandLine(RootCommand rootCommand)
+    private static RootCommand ConfigureCommandLine(RootCommand rootCommand)
     {
         for (int i = rootCommand.Options.Count - 1; i >= 0; i--)
         {
@@ -224,12 +224,40 @@ public static class Parser
         }
     }
 
-    public static CommandLineConfiguration Instance { get; } = new(ConfigureCommandLine(RootCommand))
+    public static ParserConfiguration ParserConfiguration { get; } = new()
     {
-        EnableDefaultExceptionHandler = false,
         EnablePosixBundling = false,
         ResponseFileTokenReplacer = TokenPerLine
     };
+
+    public static InvocationConfiguration InvocationConfiguration { get; } = new()
+    {
+        EnableDefaultExceptionHandler = false,
+    };
+
+    /// <summary>
+    /// The root command for the .NET CLI.
+    /// </summary>
+    /// <remarks>
+    /// If you use this Command directly, you _must_ use <see cref="ParserConfiguration"/>
+    /// and <see cref="InvocationConfiguration"/> to ensure that the command line parser
+    /// and invoker are configured correctly.
+    /// </remarks>
+    public static RootCommand RootCommand { get; } = ConfigureCommandLine(RootCommand);
+
+    /// <summary>
+    /// You probably want to use <see cref="Parse(string[])"/> instead of this method.
+    /// This has to internally split the string into an array of arguments
+    /// before parsing, which is not as efficient as using the array overload.
+    /// And also won't always split tokens the way the user will expect on their shell.
+    /// </summary>
+    public static ParseResult Parse(string commandLineUnsplit) => RootCommand.Parse(commandLineUnsplit, ParserConfiguration);
+    public static ParseResult Parse(string[] args) => RootCommand.Parse(args, ParserConfiguration);
+    public static int Invoke(ParseResult parseResult) => parseResult.Invoke(InvocationConfiguration);
+    public static Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = null) => parseResult.InvokeAsync(InvocationConfiguration, cancellationToken);
+    public static int Invoke(string[] args) => Invoke(Parse(args));
+    public static Task<int> InvokeAsync(string[] args, CancellationToken cancellationToken = null) => InvokeAsync(Parse(args), cancellationToken);
+
 
     internal static int ExceptionHandler(Exception exception, ParseResult parseResult)
     {

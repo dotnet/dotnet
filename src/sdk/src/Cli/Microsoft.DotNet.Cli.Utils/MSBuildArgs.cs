@@ -42,6 +42,11 @@ public sealed class MSBuildArgs
     /// </summary>
     public List<string> OtherMSBuildArgs { get; }
 
+    private static readonly ParserConfiguration _analysisParsingConfiguration = new()
+    {
+        EnablePosixBundling = false
+    };
+
     /// <summary>
     /// Takes all of the unstructured properties and arguments that have been accrued from the command line
     /// processing of the SDK and returns a structured set of MSBuild arguments grouped by purpose.
@@ -55,12 +60,8 @@ public sealed class MSBuildArgs
         {
             fakeCommand.Options.Add(option);
         }
-
-        var propertyParsingConfiguration = new CommandLineConfiguration(fakeCommand)
-        {
-            EnablePosixBundling = false
-        };
-        var parseResult = propertyParsingConfiguration.Parse([..forwardedAndUserFacingArgs]);
+;
+        var parseResult = propertyParsingConfiguration.Parse([.. forwardedAndUserFacingArgs], _analysisParsingConfiguration);
         var globalProperties = parseResult.GetResult("--property") is OptionResult propResult ? propResult.GetValueOrDefault<ReadOnlyDictionary<string, string>?>() : null;
         var restoreProperties = parseResult.GetResult("--restoreProperty") is OptionResult restoreResult ? restoreResult.GetValueOrDefault<ReadOnlyDictionary<string, string>?>() : null;
         var requestedTargets = parseResult.GetResult("--target") is OptionResult targetResult ? targetResult.GetValueOrDefault<string[]?>() : null;

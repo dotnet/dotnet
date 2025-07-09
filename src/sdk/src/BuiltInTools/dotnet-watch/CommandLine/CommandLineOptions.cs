@@ -90,17 +90,14 @@ internal sealed class CommandLineOptions
         var rootCommandInvoked = false;
         rootCommand.SetAction(parseResult => rootCommandInvoked = true);
 
-        var cliConfig = new CommandLineConfiguration(rootCommand)
+        ParserConfiguration parseConfig = new()
         {
-            Output = output,
-            Error = output,
-
             // To match dotnet command line parsing (see https://github.com/dotnet/sdk/blob/4712b35b94f2ad672e69ec35097cf86fc16c2e5e/src/Cli/dotnet/Parser.cs#L169):
             EnablePosixBundling = false,
         };
 
         // parse without forwarded options first:
-        var parseResult = rootCommand.Parse(args, cliConfig);
+        var parseResult = rootCommand.Parse(args, parseConfig);
         if (ReportErrors(parseResult, reporter))
         {
             errorCode = 1;
@@ -118,7 +115,7 @@ internal sealed class CommandLineOptions
         }
 
         // reparse with forwarded options:
-        parseResult = rootCommand.Parse(args, cliConfig);
+        parseResult = rootCommand.Parse(args, parseConfig);
         if (ReportErrors(parseResult, reporter))
         {
             errorCode = 1;
@@ -126,7 +123,11 @@ internal sealed class CommandLineOptions
         }
 
         // invoke to execute default actions for displaying help
-        errorCode = parseResult.Invoke();
+        errorCode = parseResult.Invoke(new()
+        {
+            Output = output,
+            Error = output
+        });
         if (!rootCommandInvoked)
         {
             // help displayed:
