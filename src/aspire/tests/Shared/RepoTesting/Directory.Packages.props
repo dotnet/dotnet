@@ -1,3 +1,0 @@
-<Project>
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Packages.Helix.props" Condition="'$(TestsRunningOutsideOfRepo)' == 'true'" />
-</Project>

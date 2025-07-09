@@ -39,7 +39,7 @@ internal class FoldingRangeService(
         {
             var span = GetLinePositionSpan(foldingRange);
 
-            if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, span, out var mappedSpan))
+            if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, span, out var mappedSpan))
             {
                 foldingRange.StartLine = mappedSpan.Start.Line;
                 foldingRange.StartCharacter = mappedSpan.Start.Character;

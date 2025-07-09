@@ -552,7 +552,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
         var projectedPosition = new LinePosition(1, 1);
         var projectedIndex = 1;
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
         var editMappingServiceMock = new StrictMock<IEditMappingService>();
@@ -704,7 +704,7 @@ public class RenameEndpointTest(ITestOutputHelper testOutput) : LanguageServerTe
             var projectedPosition = new LinePosition(1, 1);
             var projectedIndex = 1;
             documentMappingServiceMock
-                .Setup(c => c.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+                .Setup(c => c.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
                 .Returns(true);
             documentMappingService = documentMappingServiceMock.Object;
         }

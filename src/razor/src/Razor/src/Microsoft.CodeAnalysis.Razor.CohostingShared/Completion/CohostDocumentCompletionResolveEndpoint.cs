@@ -6,10 +6,10 @@ using System.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Completion.Delegation;
 using Microsoft.CodeAnalysis.Razor.Formatting;
@@ -33,12 +33,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 [method: ImportingConstructor]
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class CohostDocumentCompletionResolveEndpoint(
+    IIncompatibleProjectService incompatibleProjectService,
     CompletionListCache completionListCache,
     IRemoteServiceInvoker remoteServiceInvoker,
     IClientSettingsManager clientSettingsManager,
     IHtmlRequestInvoker requestInvoker,
     ILoggerFactory loggerFactory)
-    : AbstractRazorCohostDocumentRequestHandler<VSInternalCompletionItem, VSInternalCompletionItem?>, IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<VSInternalCompletionItem, VSInternalCompletionItem?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly CompletionListCache _completionListCache = completionListCache;
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
@@ -77,10 +78,7 @@ internal sealed class CohostDocumentCompletionResolveEndpoint(
         return null;
     }
 
-    protected override Task<VSInternalCompletionItem?> HandleRequestAsync(VSInternalCompletionItem request, RazorCohostRequestContext context, CancellationToken cancellationToken)
-        => HandleRequestAsync(request, context.TextDocument.AssumeNotNull(), cancellationToken);
-
-    private async Task<VSInternalCompletionItem?> HandleRequestAsync(
+    protected override async Task<VSInternalCompletionItem?> HandleRequestAsync(
         VSInternalCompletionItem completionItem,
         TextDocument razorDocument,
         CancellationToken cancellationToken)
