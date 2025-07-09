@@ -42,7 +42,7 @@ internal partial class NavigateToItemProvider
             }
         }
 
-        public Task AddResultsAsync(ImmutableArray<INavigateToSearchResult> results, Document? activeDocument, CancellationToken cancellationToken)
+        public Task AddResultsAsync(ImmutableArray<INavigateToSearchResult> results, CancellationToken cancellationToken)
         {
             foreach (var result in results)
             {

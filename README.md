@@ -166,7 +166,7 @@ You can also build the repository using a Docker image which has the required pr
 The example below creates a Docker volume named `vmr` and clones and builds the VMR there.
 
 ```sh
-docker run --rm -it -v vmr:/vmr -w /vmr mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
+docker run --rm -it -v vmr:/vmr -w /vmr mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream-10-amd64
 git clone https://github.com/dotnet/dotnet .
 
 # - Microsoft based build
