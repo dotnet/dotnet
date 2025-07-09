@@ -59,6 +59,8 @@
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <!-- By default, the VMR builds with online sources when not building source-only. -->
     <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildWithOnlineFeeds)' == '' and '$(DotNetBuildSourceOnly)' != 'true'">true</DotNetBuildWithOnlineFeeds>
+    <!-- Only build shared components in 1xx feature band. -->
+    <DotNetBuildSharedComponents Condition="'$(DotNetBuildSharedComponents)' == '' and '$(VersionSDKMinor)' == '1'">true</DotNetBuildSharedComponents>
     <!-- Don't use Arcade's ExcludeFrom* build infra in the VMR orchestrator. -->
     <DisableArcadeExcludeFromBuildSupport>true</DisableArcadeExcludeFromBuildSupport>
     <LangVersion>latest</LangVersion>

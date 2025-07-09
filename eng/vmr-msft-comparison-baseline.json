@@ -64,16 +64,6 @@
     "justification": "Resource dlls get per-build versioning but this doesn't matter."
   },
   {
-    "issueType": "MissingShipping",
-    "idMatch": "Aspire.*",
-    "justification": "Aspire to be removed from the VMR. Also .NET does not ship these packages."
-  },
-  {
-    "issueType": "MissingShipping",
-    "idMatch": "aspire/.*\\.zip",
-    "justification": "Aspire to be removed from the VMR. Also .NET does not ship these packages."
-  },
-  {
     "issueType": "AssemblyVersionMismatch",
     "descriptionMatch": "Microsoft\\.CodeAnalysis.*\\.(dll|exe)",
     "allowRevisionOnlyVariance": true,
@@ -132,16 +122,6 @@
     "descriptionMatch": "tools/.*/ILLink.Tasks.dll",
     "allowRevisionOnlyVariance": true,
     "justification": "ILLink versions vary build to build"
-  },
-  {
-    "issueType": "MissingShipping",
-    "idMatch": "Microsoft\\.Extensions\\.ServiceDiscovery.*",
-    "justification": "Aspire's packages are not produced in build"
-  },
-  {
-    "issueType": "MissingShipping",
-    "idMatch": "aspnet/.*",
-    "justification": "Aspire's packages are not produced in build"
   },
   {
     "issueType": "MissingNonShipping",
@@ -356,11 +336,6 @@
   {
     "issueType": "MissingNonShipping",
     "idMatch": ".*Microsoft.TemplateEngine.Cli.UnitTests.*",
-    "justification": "sdk non-shipping test packages are not published"
-  },
-  {
-    "issueType": "MissingNonShipping",
-    "idMatch": ".*Microsoft.WebTools.AspireService.Tests.*",
     "justification": "sdk non-shipping test packages are not published"
   },
   {

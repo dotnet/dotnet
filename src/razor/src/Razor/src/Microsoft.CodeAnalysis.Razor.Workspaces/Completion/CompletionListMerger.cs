@@ -22,7 +22,9 @@ internal static class CompletionListMerger
     [return: NotNullIfNotNull(nameof(delegatedCompletionList))]
     public static RazorVSInternalCompletionList? Merge(RazorVSInternalCompletionList? razorCompletionList, RazorVSInternalCompletionList? delegatedCompletionList)
     {
-        if (razorCompletionList is null)
+        // In VSCode case we always think completion was invoked explicitly and create empty Razor completion list,
+        // so check for empty Items collection as well. 
+        if (razorCompletionList is null || razorCompletionList.Items.Length == 0)
         {
             return delegatedCompletionList;
         }
@@ -38,7 +40,8 @@ internal static class CompletionListMerger
         var mergedIsIncomplete = razorCompletionList.IsIncomplete || delegatedCompletionList.IsIncomplete;
         var mergedItems = razorCompletionList.Items.Concat(delegatedCompletionList.Items).ToArray();
         var mergedData = MergeData(razorCompletionList.Data, delegatedCompletionList.Data);
-        var mergedCommitCharacters = razorCompletionList.CommitCharacters ?? delegatedCompletionList.CommitCharacters;
+        var mergedCommitCharacters = razorCompletionList.CommitCharacters
+            ?? delegatedCompletionList.CommitCharacters;
         var mergedSuggestionMode = razorCompletionList.SuggestionMode || delegatedCompletionList.SuggestionMode;
 
         // We don't fully support merging continue characters currently. Razor doesn't currently use them so delegated completion lists always win.
@@ -60,6 +63,8 @@ internal static class CompletionListMerger
             {
                 Data = mergedItemDefaultsData,
                 EditRange = mergedItemDefaultsEditRange,
+                // VSCode won't use VSInternalCompletionList.CommitCharacters, make sure we don't lose item defaults
+                CommitCharacters = razorCompletionList.ItemDefaults?.CommitCharacters ?? delegatedCompletionList.ItemDefaults?.CommitCharacters
             }
         };
 

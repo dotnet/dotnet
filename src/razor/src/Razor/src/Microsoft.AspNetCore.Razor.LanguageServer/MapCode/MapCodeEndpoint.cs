@@ -360,7 +360,7 @@ internal sealed class MapCodeEndpoint(
                 var hostDocumentRange = potentialLocation.Range.ToLinePositionSpan();
                 var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
-                if (_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
+                if (_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, hostDocumentRange, out var generatedDocumentRange))
                 {
                     var csharpLocation = new LspLocation
                     {
