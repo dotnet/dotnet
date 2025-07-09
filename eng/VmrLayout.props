@@ -44,8 +44,7 @@
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
 
-    <BaselineDataFile Condition="'$(OfficialBuild)' == 'false' and !$(ARCADE_BOOTSTRAP_VERSION.Contains('ci'))">$(ToolsDir)prebuilt-baseline-ci-stage1.xml</BaselineDataFile>
-    <BaselineDataFile Condition="'$(BaselineDataFile)' == ''">$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
+    <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
 
     <!-- Binary detection -->
@@ -77,5 +76,16 @@
     <MergedAssetManifestName Condition="'$(DotNetBuildSourceOnly)' == 'true' or '$(MergedAssetManifestName)' == ''">VerticalManifest.xml</MergedAssetManifestName>
     <MergedAssetManifestOutputPath>$(ArtifactsStagingDir)/manifests/$(Configuration)/$(MergedAssetManifestName)</MergedAssetManifestOutputPath>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageVersionPropertySuffix>Version</PackageVersionPropertySuffix>
+    <PackageVersionPropertyAlternateSuffix>PackageVersion</PackageVersionPropertyAlternateSuffix>
+    <PackagePreviousVersionPropertySuffix>PreviousVersion</PackagePreviousVersionPropertySuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <DefaultPackageVersionPropertySuffixes Include="$(PackageVersionPropertySuffix);$(PackageVersionPropertyAlternateSuffix)" />
+    <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
+  </ItemGroup>
 
 </Project>

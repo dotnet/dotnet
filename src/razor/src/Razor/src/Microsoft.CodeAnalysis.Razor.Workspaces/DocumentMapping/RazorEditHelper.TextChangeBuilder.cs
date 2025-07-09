@@ -51,7 +51,7 @@ internal static partial class RazorEditHelper
             var root = codeDocument.GetRequiredSyntaxRoot();
             var razorText = codeDocument.Source.Text;
             var csharpDocument = codeDocument.GetRequiredCSharpDocument();
-            var csharpText = csharpDocument.GetGeneratedSourceText();
+            var csharpText = csharpDocument.Text;
 
             foreach (var edit in csharpEdits)
             {
@@ -59,7 +59,7 @@ internal static partial class RazorEditHelper
 
                 var linePositionSpan = csharpText.GetLinePositionSpan(edit.Span.ToTextSpan());
 
-                if (!_documentMappingService.TryMapToHostDocumentRange(
+                if (!_documentMappingService.TryMapToRazorDocumentRange(
                     csharpDocument,
                     linePositionSpan,
                     MappingBehavior.Strict,

@@ -16,6 +16,10 @@ stages:
         os: linux
     container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-build-amd64
     steps:
+    - checkout: self
+      clean: true
+      submodules: recursive
+
     - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
 
     - script: $(Build.SourcesDirectory)/test.sh
@@ -44,6 +48,7 @@ stages:
     steps:
     - checkout: self
       clean: true
+      submodules: recursive
 
     - script: $(Build.SourcesDirectory)/test.cmd
       displayName: Run Tests

@@ -22,7 +22,8 @@ internal static class ILoggerFactoryExtensions
     {
         if (TryTrim(name, "Microsoft.VisualStudio.", out var trimmedName) ||
             TryTrim(name, "Microsoft.AspNetCore.Razor.", out trimmedName) ||
-            TryTrim(name, "Microsoft.CodeAnalysis.Razor.", out trimmedName))
+            TryTrim(name, "Microsoft.CodeAnalysis.Razor.", out trimmedName) ||
+            TryTrim(name, "Microsoft.VisualStudioCode.RazorExtension.", out trimmedName))
         {
             return trimmedName;
         }
