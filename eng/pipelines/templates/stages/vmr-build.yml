@@ -103,6 +103,7 @@ stages:
       parameters:
         publishUsingPipelines: true
         publishAssetsImmediately: true
+        enablePublishBuildArtifacts: true
         pool: ${{ parameters.pool_Linux }}
         symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
         publishingVersion: 4
