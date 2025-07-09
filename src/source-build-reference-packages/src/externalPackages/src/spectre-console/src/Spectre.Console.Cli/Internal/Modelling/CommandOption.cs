@@ -14,9 +14,8 @@ internal sealed class CommandOption : CommandParameter, ICommandOption
         CommandOptionAttribute optionAttribute, ParameterValueProviderAttribute? valueProvider,
         IEnumerable<ParameterValidationAttribute> validators,
         DefaultValueAttribute? defaultValue, bool valueIsOptional)
-        : base(parameterType, parameterKind, property, description, converter,
-            defaultValue, deconstructor, valueProvider, validators,
-            optionAttribute.IsRequired, optionAttribute.IsHidden)
+            : base(parameterType, parameterKind, property, description, converter,
+                  defaultValue, deconstructor, valueProvider, validators, false, optionAttribute.IsHidden)
     {
         LongNames = optionAttribute.LongNames;
         ShortNames = optionAttribute.ShortNames;
