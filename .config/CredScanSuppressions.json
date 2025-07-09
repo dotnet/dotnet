@@ -2,42 +2,6 @@
   "tool": "Credential Scanner",
   "suppressions": [
     {
-      "_justification": "This is a default PostgreSQL username and password, used in integration tests to connect to local db instance.",
-      "placeholder": [
-        "postgres"
-      ]
-    },
-    {
-      "_justification": "This is fake key name, used in integration tests to try to connect to Azure ServiceBus.",
-      "placeholder": [
-        "fake"
-      ]
-    },
-    {
-      "_justification": "This is fake API key, used in integration tests to try to connect to OTLP services and other various tests.",
-      "placeholder": [
-        "TestKey123!"
-      ]
-    },
-    {
-      "_justification": "This is fake API key, used in integration tests to try to connect to OTLP services.",
-      "placeholder": [
-        "!321yeKtseT"
-      ]
-    },
-    {
-      "_justification": "This is a fake password, used in integration, and other tests.",
-      "placeholder": [
-        "p@ssw0rd1"
-      ]
-    },
-    {
-      "_justification": "This isn\u0027t a real secret, it\u0027s used in one of the playground applications for testing purposes.",
-      "placeholder": [
-        "thisIsAFakeSecret"
-      ]
-    },
-    {
       "_justification": "This is a fake password used in test code.",
       "placeholder": [
         "aspnetcore"
