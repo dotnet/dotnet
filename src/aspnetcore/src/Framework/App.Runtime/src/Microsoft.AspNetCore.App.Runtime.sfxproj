@@ -114,6 +114,14 @@
       <_TransportPdbs Include="$(PkgMicrosoft_Internal_Runtime_AspNetCore_Transport)\**\*.pdb"
           Exclude="$(PkgMicrosoft_Internal_Runtime_AspNetCore_Transport)\**\*.ni.pdb" />
 
+      <!-- Dedupe System.Security.Cryptography.Pkcs.pdb based on RID -->
+      <!-- If we get rid of our custom reference resolution here, we can let nuget handle this -->
+      <_TransportPdbs Remove="$(PkgMicrosoft_Internal_Runtime_AspNetCore_Transport)\lib\**\System.Security.Cryptography.Pkcs.pdb"
+          Condition="'$(TargetOsName)' == 'win'" />
+
+      <_TransportPdbs Remove="$(PkgMicrosoft_Internal_Runtime_AspNetCore_Transport)\runtimes\win\**\System.Security.Cryptography.Pkcs.pdb"
+          Condition="'$(TargetOsName)' != 'win'" />
+
       <_SymbolFilesToPackage Include="@(_TransportPdbs)"
           Condition="'$(FileNameList)' != '' and $(FileNameList.Contains('%(Filename);'))" />
     </ItemGroup>
