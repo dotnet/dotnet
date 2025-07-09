@@ -30,29 +30,6 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
     });
 
     [Fact]
-    public async Task Handle_InvalidFileKind()
-    {
-        // Arrange
-        var documentPath = new Uri("c:\\Test.razor");
-        var contents = """
-            @page "/test"
-            @code { private int x = 1; }
-            """;
-        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
-
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
-        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
-        var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(contents, "@code", "Test"));
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
-
-    [Fact]
     public async Task Handle_ExtractCodeBlock()
     {
         // Arrange

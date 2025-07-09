@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsResolveEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostEndpointAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostDocSyncEndpointRegistration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CohostInitializeReporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Completion\CohostCompletionListCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Completion\CohostDocumentCompletionEndpoint.cs" />
@@ -25,6 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostDocumentFormattingEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FindAllReferences\CohostFindAllReferencesEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\SynchronizationResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IncompatibleProjectService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToDefinitionEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigation\CohostGoToImplementationEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LinkedEditingRange\CohostLinkedEditingRangeEndpoint.cs" />
@@ -32,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Formatting\CohostRangeFormattingEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertTriggerCharacterProviders.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RazorAnalyzerAssemblyRedirector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Rename\CohostRenameEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignatureHelp\CohostSignatureHelpEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FoldingRange\CohostFoldingRangeEndpoint.cs" />

@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Razor.Extensions;
+using Microsoft.VisualStudio.Razor.LanguageClient;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -127,6 +128,15 @@ internal class RazorLSPTextViewConnectionListener : ITextViewConnectionListener
         lock (_lock)
         {
             _activeTextViews.Add(textView);
+
+            if (!textView.TextBuffer.Properties.ContainsProperty(RazorLSPConstants.WebToolsWrapWithTagServerNameProperty))
+            {
+                // We have to tell web tools which language server to send requests to for this buffer, but that changes
+                // if cohosting is enabled.
+                textView.TextBuffer.Properties[RazorLSPConstants.WebToolsWrapWithTagServerNameProperty] = _featureOptions.UseRazorCohostServer
+                    ? RazorLSPConstants.RoslynLanguageServerName
+                    : RazorLSPConstants.RazorLanguageServerName;
+            }
 
             // Initialize the user's options and start listening for changes.
             // We only want to attach the option changed event once so we don't receive multiple
