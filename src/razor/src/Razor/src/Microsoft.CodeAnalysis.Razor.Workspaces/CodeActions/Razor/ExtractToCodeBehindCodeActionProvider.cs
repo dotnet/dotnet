@@ -113,7 +113,7 @@ internal class ExtractToCodeBehindCodeActionProvider(ILoggerFactory loggerFactor
         var resolutionParams = new RazorCodeActionResolutionParams()
         {
             TextDocument = context.Request.TextDocument,
-            Action = LanguageServerConstants.CodeActions.ExtractToCodeBehindAction,
+            Action = LanguageServerConstants.CodeActions.ExtractToCodeBehind,
             Language = RazorLanguageKind.Razor,
             DelegatedDocumentUri = context.DelegatedDocumentUri,
             Data = actionParams,

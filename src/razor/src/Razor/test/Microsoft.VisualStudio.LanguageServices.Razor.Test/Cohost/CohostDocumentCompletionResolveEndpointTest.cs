@@ -56,13 +56,14 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var completionListCache = new CompletionListCache();
         var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
         var endpoint = new CohostDocumentCompletionResolveEndpoint(
+            IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
             clientSettingsManager,
             requestInvoker,
             LoggerFactory);
 
-        var textDocumentIdentifier = new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier { DocumentUri = new(document.CreateUri()) }, Version: 0);
+        var textDocumentIdentifier = new TextDocumentIdentifierAndVersion(new TextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() }, Version: 0);
 
         var context = new DelegatedCompletionResolutionContext(
             textDocumentIdentifier,

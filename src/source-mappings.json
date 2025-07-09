@@ -31,14 +31,6 @@
             "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
-            "name": "aspire",
-            "defaultRemote": "https://github.com/dotnet/aspire",
-            "exclude": [
-                "src/Aspire.Dashboard/**/*",
-                "samples/**/*"
-            ],
-        },
-        {
             "name": "aspnetcore",
             "defaultRemote": "https://github.com/dotnet/aspnetcore"
         },

@@ -17,4 +17,6 @@
 
 metadata/workloads/x.y.z/userlocal|sdk
 packs/runtime.banana-rid.Microsoft.DotNet.ILCompiler/x.y.z/sdk/nonportable.txt|sdk
+packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/sdk/nonportable.txt|sdk
+packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/nonportable.txt|sdk
 sdk/x.y.z/Microsoft/Microsoft.NET.Build.Extensions/net471/_._|sdk
