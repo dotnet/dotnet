@@ -32,7 +32,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride,
         CancellationToken cancellationToken)
     {
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(context.CodeDocument.GetRequiredCSharpDocument(), spanToFormat, out var projectedSpan))
+        if (!_documentMappingService.TryMapToCSharpDocumentRange(context.CodeDocument.GetRequiredCSharpDocument(), spanToFormat, out var projectedSpan))
         {
             return [];
         }
@@ -59,7 +59,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
     private ImmutableArray<TextChange> MapEditsToHostDocument(RazorCodeDocument codeDocument, ImmutableArray<TextChange> csharpEdits)
     {
-        var actualEdits = _documentMappingService.GetHostDocumentEdits(codeDocument.GetRequiredCSharpDocument(), csharpEdits);
+        var actualEdits = _documentMappingService.GetRazorDocumentEdits(codeDocument.GetRequiredCSharpDocument(), csharpEdits);
 
         return [.. actualEdits];
     }

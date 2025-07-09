@@ -39,12 +39,7 @@ internal class CreateComponentCodeActionResolver(LanguageServerFeatureOptions la
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-
-        // VS Code in Windows expects path to start with '/'
-        var updatedPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !actionParams.Path.StartsWith("/")
-            ? '/' + actionParams.Path
-            : actionParams.Path;
-        var newComponentUri = LspFactory.CreateFilePathUri(updatedPath);
+        var newComponentUri = LspFactory.CreateFilePathUri(actionParams.Path, _languageServerFeatureOptions);
 
         using var documentChanges = new PooledArrayBuilder<SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>>();
         documentChanges.Add(new CreateFile() { DocumentUri = new(newComponentUri) });

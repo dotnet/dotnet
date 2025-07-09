@@ -153,6 +153,9 @@ namespace Xunit.Internal
 							&& p.GetMethod != null
 							&& p.GetMethod.IsPublic
 							&& !p.GetMethod.IsStatic
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+							&& !p.GetMethod.ReturnType.IsByRefLike
+#endif
 							&& p.GetIndexParameters().Length == 0
 							&& !p.GetCustomAttributes(typeof(ObsoleteAttribute)).Any()
 							&& !p.GetMethod.GetCustomAttributes(typeof(ObsoleteAttribute)).Any()
@@ -420,9 +423,9 @@ namespace Xunit.Internal
 			TypeInfo expectedTypeInfo;
 			expected = UnwrapLazy(expected, out expectedType, out expectedTypeInfo);
 
-			Type _;
+			Type actualType;
 			TypeInfo actualTypeInfo;
-			actual = UnwrapLazy(actual, out _, out actualTypeInfo);
+			actual = UnwrapLazy(actual, out actualType, out actualTypeInfo);
 #endif
 
 			// Check for null equivalence
@@ -470,6 +473,12 @@ namespace Xunit.Internal
 				if (fileSystemInfoTypeInfo.Value != null)
 					if (fileSystemInfoTypeInfo.Value.IsAssignableFrom(expectedTypeInfo) && fileSystemInfoTypeInfo.Value.IsAssignableFrom(actualTypeInfo))
 						return VerifyEquivalenceFileSystemInfo(expected, actual, strict, prefix, expectedRefs, actualRefs, depth);
+
+				// Uri can throw for relative URIs
+				var expectedUri = expected as Uri;
+				var actualUri = actual as Uri;
+				if (expectedUri != null && actualUri != null)
+					return VerifyEquivalenceUri(expectedUri, actualUri, prefix);
 
 #if !XUNIT_AOT
 				// IGrouping<TKey,TValue> is special, since it implements IEnumerable<TValue>
@@ -719,6 +728,21 @@ namespace Xunit.Internal
 				if (ex != null)
 					return ex;
 			}
+
+			return null;
+		}
+
+#if XUNIT_NULLABLE
+		static EquivalentException? VerifyEquivalenceUri(
+#else
+		static EquivalentException VerifyEquivalenceUri(
+#endif
+			Uri expected,
+			Uri actual,
+			string prefix)
+		{
+			if (expected.OriginalString != actual.OriginalString)
+				return EquivalentException.ForMemberValueMismatch(expected, actual, prefix);
 
 			return null;
 		}

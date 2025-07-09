@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="aspire" />
     <RepositoryReference Include="aspnetcore" />
     <RepositoryReference Include="command-line-api" />
     <RepositoryReference Include="deployment-tools" />
