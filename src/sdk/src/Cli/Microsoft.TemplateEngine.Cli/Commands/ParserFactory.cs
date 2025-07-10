@@ -8,7 +8,8 @@ namespace Microsoft.TemplateEngine.Cli.Commands
 {
     internal static class ParserFactory
     {
-        internal static readonly ParserConfiguration ParserConfiguration = new() {
+        internal static readonly ParserConfiguration ParserConfiguration = new()
+        {
             EnablePosixBundling = false,
         };
 
