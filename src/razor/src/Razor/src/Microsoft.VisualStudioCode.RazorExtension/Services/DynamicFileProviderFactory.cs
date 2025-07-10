@@ -11,16 +11,14 @@ namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 [ExportRazorLspServiceFactory(typeof(RazorLspDynamicFileInfoProvider)), Shared]
 [method: ImportingConstructor]
 internal sealed class DynamicFileProviderFactory(
-    LanguageServerFeatureOptions featureOptions,
-    VSCodeWorkspaceProvider workspaceProvider) : AbstractRazorLspServiceFactory
+    LanguageServerFeatureOptions featureOptions) : AbstractRazorLspServiceFactory
 {
     private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
-    private readonly VSCodeWorkspaceProvider _workspaceProvider = workspaceProvider;
 
     protected override AbstractRazorLspService CreateService(IRazorLspServices lspServices)
     {
         var clientLanguageServerManager = lspServices.GetRequiredService<IRazorClientLanguageServerManager>();
-        return new LspDynamicFileProvider(clientLanguageServerManager, _featureOptions, _workspaceProvider);
+        return new LspDynamicFileProvider(clientLanguageServerManager, _featureOptions);
     }
 }
 
