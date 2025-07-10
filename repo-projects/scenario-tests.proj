@@ -15,6 +15,9 @@
          as the scenario tests repo needs to be capable of being built by itself in a standalone validation job.
          This also requires the use of bootstrap arcade. -->
     <SkipScenarioTestsDependencies Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">true</SkipScenarioTestsDependencies>
+
+    <!-- In source only builds, tests are always allowed to use online sources -->
+    <DotNetBuildWithOnlineFeeds Condition="'$(DotNetBuildSourceOnly)' == 'true'">true</DotNetBuildWithOnlineFeeds>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(SkipScenarioTestsDependencies)' == 'true'">

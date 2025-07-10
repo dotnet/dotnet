@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.Editor.UnitTests.Formatting;
 [UseExportProvider]
 public sealed class InferredIndentationTests
 {
-    [WpfFact]
+    [Fact]
     public async Task BlankFileMatchesWorkspaceSettings()
     {
         using var testWorkspace = CreateWithLines(
@@ -28,7 +28,7 @@ public sealed class InferredIndentationTests
         Assert.Equal(FormattingOptions.UseTabs.DefaultValue, options.UseTabs);
     }
 
-    [WpfFact, WorkItem("https://github.com/dotnet/roslyn/issues/61109")]
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/61109")]
     public async Task SingleLineWithTab()
     {
         using var testWorkspace = CreateWithLines(
@@ -42,7 +42,7 @@ public sealed class InferredIndentationTests
         Assert.False(options.UseTabs);
     }
 
-    [WpfFact]
+    [Fact]
     public async Task SingleLineWithFourSpaces()
     {
         using var testWorkspace = CreateWithLines(

@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.Internal.Log;
 using Microsoft.CodeAnalysis.Remote;
 using Microsoft.CodeAnalysis.Shared.TestHooks;
 using Microsoft.VisualStudio.Composition;
@@ -101,7 +100,6 @@ public class UseExportProviderAttribute : BeforeAfterTestAttribute
             // Reset static state variables.
             _hostServices = null;
             ExportProviderCache.SetEnabled_OnlyUseExportProviderAttributeCanCall(false);
-            Logger.SetLogger(null);
         }
     }
 

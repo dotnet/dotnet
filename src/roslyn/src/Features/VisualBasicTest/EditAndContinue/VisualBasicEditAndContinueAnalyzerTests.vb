@@ -4,7 +4,6 @@
 
 Imports System.Collections.Immutable
 Imports System.IO
-Imports System.Text
 Imports System.Threading
 Imports Microsoft.CodeAnalysis.Contracts.EditAndContinue
 Imports Microsoft.CodeAnalysis.Differencing
