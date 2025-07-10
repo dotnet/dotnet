@@ -75,8 +75,6 @@ src/efcore/test/EFCore.Tests/ChangeTracking/PropertyEntryTest.cs|proprietary-lic
 # fsharp
 #
 
-# Applies to installer, not source
-
 # False positive
 src/fsharp/tests/fsharp/core/members/ops/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
