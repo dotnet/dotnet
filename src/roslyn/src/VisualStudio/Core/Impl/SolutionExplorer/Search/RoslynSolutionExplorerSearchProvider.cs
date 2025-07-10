@@ -82,7 +82,6 @@ internal sealed class RoslynSolutionExplorerSearchProvider(
 
         public Task AddResultsAsync(
             ImmutableArray<INavigateToSearchResult> results,
-            Document? activeDocument,
             CancellationToken cancellationToken)
         {
             foreach (var result in results)
