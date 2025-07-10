@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +28,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
 
     private Stream? _stream;
     private Workspace? _workspace;
+    private WorkspaceEventRegistration? _changeRegistration;
     private bool _disposed;
 
     internal record Work(ProjectId ProjectId);
@@ -45,10 +45,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
 
     public void Dispose()
     {
-        if (_workspace is not null)
-        {
-            _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
-        }
+        _changeRegistration?.Dispose();
 
         if (_disposed)
         {
@@ -57,7 +54,7 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
         }
 
         _disposed = true;
-        _logger.LogInformation("Tearing down named pipe for pid {pid}", Process.GetCurrentProcess().Id);
+        _logger.LogInformation("Tearing down named pipe for pid {pid}", Environment.ProcessId);
 
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
@@ -105,11 +102,11 @@ internal abstract class RazorWorkspaceListenerBase : IDisposable
         }
 
         _workspace = workspace;
-        _workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
+        _changeRegistration = _workspace.RegisterWorkspaceChangedHandler(Workspace_WorkspaceChanged);
         _stream = createStream();
     }
 
-    private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
+    private void Workspace_WorkspaceChanged(WorkspaceChangeEventArgs e)
     {
         switch (e.Kind)
         {

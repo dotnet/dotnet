@@ -6,8 +6,8 @@
   -->
   <PropertyGroup>
     <_MicrosoftWebToolsPackageVersion>17.11.11-preview-0001</_MicrosoftWebToolsPackageVersion>
-    <_MicrosoftVisualStudioShellPackagesVersion>17.13.40008</_MicrosoftVisualStudioShellPackagesVersion>
-    <_MicrosoftVisualStudioPackagesVersion>17.13.226</_MicrosoftVisualStudioPackagesVersion>
+    <_MicrosoftVisualStudioShellPackagesVersion>18.0.1306-preview.1</_MicrosoftVisualStudioShellPackagesVersion>
+    <_MicrosoftVisualStudioPackagesVersion>18.0.255-preview</_MicrosoftVisualStudioPackagesVersion>
     <_VisualStudioLanguageServerProtocolVersion>17.12.1-preview</_VisualStudioLanguageServerProtocolVersion>
     <_MicrosoftExtensionsPackageVersion>9.0.0</_MicrosoftExtensionsPackageVersion>
     <_BasicReferenceAssembliesVersion>1.7.2</_BasicReferenceAssembliesVersion>
@@ -16,7 +16,7 @@
     <_RoslynDiagnosticAnalyzersPackageVersion>3.11.0-beta1.24508.2</_RoslynDiagnosticAnalyzersPackageVersion>
     <_MicrosoftVisualStudioLanguageServicesPackageVersion>$(MicrosoftVisualStudioLanguageServicesPackageVersion)</_MicrosoftVisualStudioLanguageServicesPackageVersion>
     <_XunitPackageVersion>2.9.2</_XunitPackageVersion>
-    <_MicrosoftBuildPackageVersion>17.13.9</_MicrosoftBuildPackageVersion>
+    <_MicrosoftBuildPackageVersion>17.15.0-preview-25279-04</_MicrosoftBuildPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +25,7 @@
     <PackageVersion Include="BenchmarkDotNet" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="$(_BenchmarkDotNetPackageVersion)" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />
-    <PackageVersion Include="MessagePack" Version="2.5.192" />
+    <PackageVersion Include="MessagePack" Version="2.5.198" />
     <PackageVersion Include="Microsoft.AspNetCore.App.Runtime.$(NetCoreSDKRuntimeIdentifier)" Version="8.0.2" />
     <PackageVersion Include="Microsoft.Build.Framework" Version="$(_MicrosoftBuildPackageVersion)" />
     <PackageVersion Include="Microsoft.Build.Locator" Version="1.4.1" />
@@ -64,7 +64,6 @@
     <PackageVersion Include="Microsoft.Internal.VisualStudio.Interop" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.NET.Sdk.Razor" Version="$(MicrosoftNETSdkRazorPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Copilot" Version="0.2.28-beta" />
-    <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Editor" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Testing.Xunit" Version="$(_MicrosoftVisualStudioExtensibilityTestingVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Testing.SourceGenerator" Version="$(_MicrosoftVisualStudioExtensibilityTestingVersion)" />
@@ -80,14 +79,14 @@
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" Version="$(_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LiveShare" Version="0.3.1074" />
     <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.SDK" Version="17.7.294-pre" />
-    <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.13.7" />
+    <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.15.10-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.14.8" />
+    <PackageVersion Include="Microsoft.VisualStudio.Telemetry" Version="17.14.18" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Data" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Implementation" Version="$(_MicrosoftVisualStudioPackagesVersion)" NoWarn="NU1701" />
     <PackageVersion Include="Microsoft.VisualStudio.Text.Logic" Version="$(_MicrosoftVisualStudioPackagesVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.13.2" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading" Version="17.15.3-alpha" />
     <PackageVersion Include="Microsoft.VisualStudio.Validation" Version="17.8.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Web" Version="16.10.0-preview-1-31008-014" />
     <PackageVersion Include="Microsoft.WebTools.Languages.Html" Version="$(_MicrosoftWebToolsPackageVersion)" />
@@ -99,7 +98,7 @@
     <PackageVersion Include="Microsoft.WebTools.Shared" Version="$(_MicrosoftWebToolsPackageVersion)" />
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="Nerdbank.Streams" Version="2.11.79" />
+    <PackageVersion Include="Nerdbank.Streams" Version="2.12.87" />
     <PackageVersion Include="NuGet.VisualStudio" Version="17.9.1" />
     <PackageVersion Include="Roslyn.Diagnostics.Analyzers" Version="$(_RoslynDiagnosticAnalyzersPackageVersion)" />
     <PackageVersion Include="System.Collections.Immutable" Version="$(SystemCollectionsImmutablePackageVersion)" />

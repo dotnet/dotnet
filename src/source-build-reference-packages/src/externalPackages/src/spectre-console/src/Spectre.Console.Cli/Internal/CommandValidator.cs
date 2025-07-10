@@ -9,14 +9,12 @@ internal static class CommandValidator
         {
             foreach (var parameter in node.Unmapped)
             {
-                if (parameter.IsRequired)
+                if (parameter.Required)
                 {
                     switch (parameter)
                     {
                         case CommandArgument argument:
                             throw CommandRuntimeException.MissingRequiredArgument(node, argument);
-                        case CommandOption option:
-                            throw CommandRuntimeException.MissingRequiredOption(node, option);
                     }
                 }
             }

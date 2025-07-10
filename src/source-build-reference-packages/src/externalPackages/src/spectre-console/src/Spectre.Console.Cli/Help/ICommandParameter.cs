@@ -13,7 +13,7 @@ public interface ICommandParameter
     /// <summary>
     /// Gets a value indicating whether the parameter is required.
     /// </summary>
-    bool IsRequired { get; }
+    bool Required { get; }
 
     /// <summary>
     /// Gets the description of the parameter.
