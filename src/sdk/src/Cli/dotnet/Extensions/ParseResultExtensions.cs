@@ -5,10 +5,10 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Microsoft.DotNet.Cli;
 using Microsoft.DotNet.Cli.Commands.Run;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.Cli.Utils.Extensions;
-using static Microsoft.DotNet.Cli.Parser;
 using CommandResult = System.CommandLine.Parsing.CommandResult;
 
 namespace Microsoft.DotNet.Cli.Extensions;
@@ -32,7 +32,7 @@ public static class ParseResultExtensions
         // since commands can have arguments, we must take those as well in order to get accurate help
         var tokenList = parseResult.Tokens.TakeWhile(token => token.Type == TokenType.Argument || token.Type == TokenType.Command || token.Type == TokenType.Directive).Select(t => t.Value).ToList();
         tokenList.Add("-h");
-        Instance.Parse(tokenList).Invoke();
+        Parser.Parse(tokenList).Invoke();
     }
 
     public static void ShowHelpOrErrorIfAppropriate(this ParseResult parseResult)

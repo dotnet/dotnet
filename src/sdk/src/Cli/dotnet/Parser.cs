@@ -178,7 +178,7 @@ public static class Parser
             else
             {
                 // when user does not specify any args (just "dotnet"), a usage needs to be printed
-                parseResult.Configuration.Output.WriteLine(CliUsage.HelpText);
+                parseResult.InvocationConfiguration.Output.WriteLine(CliUsage.HelpText);
                 return 0;
             }
         });
@@ -433,7 +433,7 @@ public static class Parser
         }
         public override int Invoke(ParseResult parseResult)
         {
-            CliSchema.PrintCliSchema(parseResult.CommandResult, parseResult.Configuration.Output, Program.TelemetryClient);
+            CliSchema.PrintCliSchema(parseResult.CommandResult, parseResult.InvocationConfiguration.Output, Program.TelemetryClient);
             return 0;
         }
     }
