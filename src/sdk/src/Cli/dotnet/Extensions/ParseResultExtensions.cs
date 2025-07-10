@@ -30,9 +30,10 @@ public static class ParseResultExtensions
     {
         // take from the start of the list until we hit an option/--/unparsed token
         // since commands can have arguments, we must take those as well in order to get accurate help
-        var tokenList = parseResult.Tokens.TakeWhile(token => token.Type == TokenType.Argument || token.Type == TokenType.Command || token.Type == TokenType.Directive).Select(t => t.Value).ToList();
-        tokenList.Add("-h");
-        Parser.Parse(tokenList).Invoke();
+        Parser.Parse([
+            ..parseResult.Tokens.TakeWhile(token => token.Type == TokenType.Argument || token.Type == TokenType.Command || token.Type == TokenType.Directive).Select(t => t.Value),
+            "-h"
+        ]).Invoke();
     }
 
     public static void ShowHelpOrErrorIfAppropriate(this ParseResult parseResult)
@@ -92,7 +93,7 @@ public static class ParseResultExtensions
     public static bool IsDotnetBuiltInCommand(this ParseResult parseResult)
     {
         return string.IsNullOrEmpty(parseResult.RootSubCommandResult()) ||
-            GetBuiltInCommand(parseResult.RootSubCommandResult()) != null;
+            Parser.GetBuiltInCommand(parseResult.RootSubCommandResult()) != null;
     }
 
     public static bool IsTopLevelDotnetCommand(this ParseResult parseResult)
@@ -102,9 +103,9 @@ public static class ParseResultExtensions
 
     public static bool CanBeInvoked(this ParseResult parseResult)
     {
-        return GetBuiltInCommand(parseResult.RootSubCommandResult()) != null ||
+        return Parser.GetBuiltInCommand(parseResult.RootSubCommandResult()) != null ||
             parseResult.Tokens.Any(token => token.Type == TokenType.Directive) ||
-            (parseResult.IsTopLevelDotnetCommand() && string.IsNullOrEmpty(parseResult.GetValue(DotnetSubCommand)));
+            (parseResult.IsTopLevelDotnetCommand() && string.IsNullOrEmpty(parseResult.GetValue(Parser.DotnetSubCommand)));
     }
 
     public static int HandleMissingCommand(this ParseResult parseResult)
@@ -134,7 +135,7 @@ public static class ParseResultExtensions
         return
         [
             .. subargs
-                .SkipWhile(arg => DiagOption.Name.Equals(arg) || DiagOption.Aliases.Contains(arg) || arg.Equals("dotnet"))
+                .SkipWhile(arg => Parser.DiagOption.Name.Equals(arg) || Parser.DiagOption.Aliases.Contains(arg) || arg.Equals("dotnet"))
                 .Skip(1), // remove top level command (ex build or publish)
             .. runArgs
         ];
@@ -153,7 +154,7 @@ public static class ParseResultExtensions
             {
                 return false;
             }
-            else if (DiagOption.Name.Equals(args) || DiagOption.Aliases.Contains(args[i]))
+            else if (Parser.DiagOption.Name.Equals(args) || Parser.DiagOption.Aliases.Contains(args[i]))
             {
                 return true;
             }
@@ -166,7 +167,7 @@ public static class ParseResultExtensions
     {
         CommandResult commandResult => commandResult.Command.Name,
         ArgumentResult argResult => argResult.Tokens.FirstOrDefault()?.Value,
-        _ => parseResult.GetResult(DotnetSubCommand)?.GetValueOrDefault<string>()
+        _ => parseResult.GetResult(Parser.DotnetSubCommand)?.GetValueOrDefault<string>()
     };
 
     public static bool BothArchAndOsOptionsSpecified(this ParseResult parseResult) =>
