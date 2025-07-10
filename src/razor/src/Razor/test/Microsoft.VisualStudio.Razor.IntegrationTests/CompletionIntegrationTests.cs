@@ -438,14 +438,28 @@ public class CompletionIntegrationTests(ITestOutputHelper testOutputHelper) : Ab
     [InlineData("</PageTitle")]
     [InlineData("<div")]
     [InlineData("</div")]
+    [InlineData("// script block ")]
+    [InlineData("/* style block ")]
+    [InlineData("<!-- comment block ")]
     [WorkItem("https://github.com/dotnet/razor/issues/9427")]
-    public async Task Snippets_DoNotTrigger_InsideTag(string tag)
+    // Do not trigger snippets in start tags, end tags, script blocks, style blocks, or comments
+    public async Task Snippets_DoNotTrigger_InDisallowedContext(string tag)
     {
         await TestServices.SolutionExplorer.AddFileAsync(
             RazorProjectConstants.BlazorProjectName,
             "Test.razor",
             """
-            @page "Test"
+            @page "/Test"
+
+            <script>
+                // script block 
+            </script>
+
+            <style>
+                /* style block  */
+            </style>
+
+            <!-- comment block  -->
 
             <PageTitle>Test</PageTitle>
 

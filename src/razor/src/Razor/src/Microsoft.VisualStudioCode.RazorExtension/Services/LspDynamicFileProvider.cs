@@ -14,22 +14,16 @@ namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
 internal sealed partial class LspDynamicFileProvider(
     IRazorClientLanguageServerManager clientLanguageServerManager,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
-    VSCodeWorkspaceProvider workspaceProvider) : RazorLspDynamicFileInfoProvider
+    LanguageServerFeatureOptions languageServerFeatureOptions) : RazorLspDynamicFileInfoProvider
 {
     private const string ProvideRazorDynamicFileInfoMethodName = "razor/provideDynamicFileInfo";
     private const string RemoveRazorDynamicFileInfoMethodName = "razor/removeDynamicFileInfo";
 
     private readonly IRazorClientLanguageServerManager _clientLanguageServerManager = clientLanguageServerManager;
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
-    private readonly VSCodeWorkspaceProvider _workspaceProvider = workspaceProvider;
 
     public override async Task<RazorDynamicFileInfo?> GetDynamicFileInfoAsync(Workspace workspace, ProjectId projectId, string? projectFilePath, string filePath, CancellationToken cancellationToken)
     {
-        // TODO: Temporarily using this as a hook to get the workspace into cohosting. In future when we delete the IDynamicFileInfo
-        // system as a whole, we'll need some other hook to get to the LspWorkspace
-        _workspaceProvider.SetWorkspace(workspace);
-
         if (_languageServerFeatureOptions.UseRazorCohostServer)
         {
             return null;
