@@ -17,7 +17,7 @@ echo "  --binaryLog                         Create MSBuild binary log (short: -b
   echo "  --arch, --target-arch <value>     Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   echo "  --branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
   echo "  --verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. eg brotli+libunwind+rapidjson+zlib"
+  echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. 'all' will use all supported libraries. eg brotli+libunwind+rapidjson+zlib"
   echo ""
 
   echo "Actions:"
@@ -138,7 +138,12 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -with-system-libs)
-      properties+=( "/p:UseSystemLibs=$2" )
+      value="$2"
+      if [[ "$value" != +* ]]; then
+        # Ensure the value is prepended with a '+'
+        value="+$value"
+      fi
+      properties+=( "/p:UseSystemLibs=$value" )
       shift
       ;;
     -verbosity|-v)
