@@ -53,11 +53,6 @@ namespace Microsoft.DotNet.Cli;
 
 public static class Parser
 {
-    public static readonly RootCommand RootCommand = new()
-    {
-        Directives = { new DiagramDirective(), new SuggestDirective(), new EnvironmentVariablesDirective() }
-    };
-
     public static readonly Command InstallSuccessCommand = InternalReportInstallSuccessCommandParser.GetCommand();
 
     // Subcommands
@@ -243,7 +238,10 @@ public static class Parser
     /// and <see cref="InvocationConfiguration"/> to ensure that the command line parser
     /// and invoker are configured correctly.
     /// </remarks>
-    public static RootCommand RootCommand { get; } = ConfigureCommandLine(RootCommand);
+    public static RootCommand RootCommand { get; } = ConfigureCommandLine(new()
+    {
+        Directives = { new DiagramDirective(), new SuggestDirective(), new EnvironmentVariablesDirective() }
+    });
 
     /// <summary>
     /// You probably want to use <see cref="Parse(string[])"/> instead of this method.
@@ -254,9 +252,9 @@ public static class Parser
     public static ParseResult Parse(string commandLineUnsplit) => RootCommand.Parse(commandLineUnsplit, ParserConfiguration);
     public static ParseResult Parse(string[] args) => RootCommand.Parse(args, ParserConfiguration);
     public static int Invoke(ParseResult parseResult) => parseResult.Invoke(InvocationConfiguration);
-    public static Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = null) => parseResult.InvokeAsync(InvocationConfiguration, cancellationToken);
+    public static Task<int> InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken = default) => parseResult.InvokeAsync(InvocationConfiguration, cancellationToken);
     public static int Invoke(string[] args) => Invoke(Parse(args));
-    public static Task<int> InvokeAsync(string[] args, CancellationToken cancellationToken = null) => InvokeAsync(Parse(args), cancellationToken);
+    public static Task<int> InvokeAsync(string[] args, CancellationToken cancellationToken = default) => InvokeAsync(Parse(args), cancellationToken);
 
 
     internal static int ExceptionHandler(Exception exception, ParseResult parseResult)
