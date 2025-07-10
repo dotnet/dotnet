@@ -9,11 +9,6 @@ public sealed class CommandAppTester
     private Action<IConfigurator>? _configuration;
 
     /// <summary>
-    /// Gets the test console used by both the CommandAppTester and CommandApp.
-    /// </summary>
-    public TestConsole Console { get; }
-
-    /// <summary>
     /// Gets or sets the Registrar to use in the CommandApp.
     /// </summary>
     public ITypeRegistrar? Registrar { get; set; }
@@ -28,15 +23,10 @@ public sealed class CommandAppTester
     /// </summary>
     /// <param name="registrar">The registrar.</param>
     /// <param name="settings">The settings.</param>
-    /// <param name="console">The test console that overrides the default one.</param>
-    public CommandAppTester(
-        ITypeRegistrar? registrar = null,
-        CommandAppTesterSettings? settings = null,
-        TestConsole? console = null)
+    public CommandAppTester(ITypeRegistrar? registrar = null, CommandAppTesterSettings? settings = null)
     {
         Registrar = registrar;
         TestSettings = settings ?? new CommandAppTesterSettings();
-        Console = console ?? new TestConsole().Width(int.MaxValue);
     }
 
     /// <summary>
@@ -46,7 +36,6 @@ public sealed class CommandAppTester
     public CommandAppTester(CommandAppTesterSettings settings)
     {
         TestSettings = settings;
-        Console = new TestConsole().Width(int.MaxValue);
     }
 
     /// <summary>
@@ -96,23 +85,25 @@ public sealed class CommandAppTester
     public CommandAppFailure RunAndCatch<T>(params string[] args)
         where T : Exception
     {
+        var console = new TestConsole().Width(int.MaxValue);
+
         try
         {
-            Run(args, Console, c => c.PropagateExceptions());
+            Run(args, console, c => c.PropagateExceptions());
             throw new InvalidOperationException("Expected an exception to be thrown, but there was none.");
         }
         catch (T ex)
         {
             if (ex is CommandAppException commandAppException && commandAppException.Pretty != null)
             {
-                Console.Write(commandAppException.Pretty);
+                console.Write(commandAppException.Pretty);
             }
             else
             {
-                Console.WriteLine(ex.Message);
+                console.WriteLine(ex.Message);
             }
 
-            return new CommandAppFailure(ex, Console.Output);
+            return new CommandAppFailure(ex, console.Output);
         }
         catch (Exception ex)
         {
@@ -129,7 +120,8 @@ public sealed class CommandAppTester
     /// <returns>The result.</returns>
     public CommandAppResult Run(params string[] args)
     {
-        return Run(args, Console);
+        var console = new TestConsole().Width(int.MaxValue);
+        return Run(args, console);
     }
 
     private CommandAppResult Run(string[] args, TestConsole console, Action<IConfigurator>? config = null)
@@ -172,7 +164,8 @@ public sealed class CommandAppTester
     /// <returns>The result.</returns>
     public async Task<CommandAppResult> RunAsync(params string[] args)
     {
-        return await RunAsync(args, Console);
+        var console = new TestConsole().Width(int.MaxValue);
+        return await RunAsync(args, console);
     }
 
     private async Task<CommandAppResult> RunAsync(string[] args, TestConsole console, Action<IConfigurator>? config = null)

@@ -27,27 +27,44 @@ namespace Xunit.Sdk
 			base(message)
 		{ }
 
+		static IsNotTypeException Create(
+			Type expectedType,
+			Type actualType,
+			string compatiblityMessage)
+		{
+			Assert.GuardArgumentNotNull(nameof(expectedType), expectedType);
+			Assert.GuardArgumentNotNull(nameof(actualType), actualType);
+
+			return new IsNotTypeException(
+				string.Format(
+					CultureInfo.CurrentCulture,
+					"Assert.IsNotType() Failure: Value is {0}{1}Expected: {2}{3}Actual:   {4}",
+					compatiblityMessage,
+					Environment.NewLine,
+					ArgumentFormatter.Format(expectedType),
+					Environment.NewLine,
+					ArgumentFormatter.Format(actualType)
+				)
+			);
+		}
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="IsNotTypeException"/> class to be thrown
+		/// when the object is a compatible type.
+		/// </summary>
+		/// <param name="expectedType">The expected type</param>
+		/// <param name="actualType">The actual type</param>
+		public static IsNotTypeException ForCompatibleType(
+			Type expectedType,
+			Type actualType) =>
+				Create(expectedType, actualType, "a compatible type");
+
 		/// <summary>
 		/// Creates a new instance of the <see cref="IsNotTypeException"/> class to be thrown
 		/// when the object is the exact type.
 		/// </summary>
 		/// <param name="type">The expected type</param>
-		public static IsNotTypeException ForExactType(Type type)
-		{
-			Assert.GuardArgumentNotNull(nameof(type), type);
-
-			var formattedType = ArgumentFormatter.Format(type);
-
-			return new IsNotTypeException(
-				string.Format(
-					CultureInfo.CurrentCulture,
-					"Assert.IsNotType() Failure: Value is the exact type{0}Expected: {1}{2}Actual:   {3}",
-					Environment.NewLine,
-					formattedType,
-					Environment.NewLine,
-					formattedType
-				)
-			);
-		}
+		public static IsNotTypeException ForExactType(Type type) =>
+			Create(type, type, "the exact type");
 	}
 }
