@@ -229,7 +229,6 @@
 
   <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
   <ItemGroup>
-    <SharedRepositoryReference Include="aspire" />
     <SharedRepositoryReference Include="aspnetcore" />
     <SharedRepositoryReference Include="cecil" />
     <SharedRepositoryReference Include="command-line-api" />
