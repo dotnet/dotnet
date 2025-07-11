@@ -739,7 +739,7 @@ handle_branch (TransformData *td, int long_op, int offset)
 		guint16 samplepoint_profiling = 0;
 		if (mono_jit_trace_calls != NULL && mono_trace_eval (rtm->method))
 			samplepoint_profiling |= TRACING_FLAG;
-		if (rtm->prof_flags & (MONO_PROFILER_CALL_INSTRUMENTATION_SAMPLEPOINT | MONO_PROFILER_CALL_INSTRUMENTATION_SAMPLEPOINT_CONTEXT ))
+		if (rtm->prof_flags & (MONO_PROFILER_CALL_INSTRUMENTATION_SAMPLEPOINT))
 			samplepoint_profiling |= PROFILING_FLAG;
 		if (samplepoint_profiling) {
 			interp_add_ins (td, MINT_PROF_SAMPLEPOINT);
@@ -3394,6 +3394,12 @@ interp_realign_simd_params (TransformData *td, StackInfo *sp_params, int num_arg
 			td->last_ins->data [0] = GINT_TO_UINT16 (sp_params [i].offset + prev_offset);
 			td->last_ins->data [1] = offset_amount;
 			td->last_ins->data [2] = GINT_TO_UINT16 (get_stack_size (td, sp_params + i, num_args - i));
+
+			// The stack move applies to all arguments starting at this one. Because we push
+			// simd valuetypes in aligned fashion on the execution stack, the offset between two
+			// simd values will be a multiple of simd alignment. This means that if this arg is
+			// correctly aligned, all following args will be aligned as well.
+			return;
 		}
 	}
 }
