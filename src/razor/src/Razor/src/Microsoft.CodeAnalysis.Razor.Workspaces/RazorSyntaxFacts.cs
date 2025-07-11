@@ -207,4 +207,19 @@ internal static class RazorSyntaxFacts
 
         return false;
     }
+
+    internal static bool IsElementWithName(MarkupElementSyntax? element, string name)
+    {
+        return string.Equals(element?.StartTag.Name.Content, name, StringComparison.OrdinalIgnoreCase);
+    }
+
+    internal static bool IsStyleBlock(MarkupElementSyntax? node)
+    {
+        return IsElementWithName(node, "style");
+    }
+
+    internal static bool IsScriptBlock(MarkupElementSyntax? node)
+    {
+        return IsElementWithName(node, "script");
+    }
 }

@@ -37,7 +37,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
     private readonly ProjectSnapshotManager _projectManager;
     private readonly LanguageServerFeatureOptions _options;
     private readonly CodeAnalysis.Workspace _workspace;
-
+    private readonly WorkspaceEventRegistration _changeRegistration;
     private readonly CancellationTokenSource _disposeTokenSource;
     private readonly AsyncBatchingWorkQueue<Work> _workQueue;
     private readonly HashSet<Work> _workerSet;
@@ -80,7 +80,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         _projectManager.Changed += ProjectManager_Changed;
 
         _workspace = workspaceProvider.GetWorkspace();
-        _workspace.WorkspaceChanged += Workspace_WorkspaceChanged;
+        _changeRegistration = _workspace.RegisterWorkspaceChangedHandler(Workspace_WorkspaceChanged);
 
         // This will usually no-op, in the case that another project snapshot change trigger
         // immediately adds projects we want to be able to handle those projects.
@@ -95,7 +95,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         }
 
         _projectManager.Changed -= ProjectManager_Changed;
-        _workspace.WorkspaceChanged -= Workspace_WorkspaceChanged;
+        _changeRegistration.Dispose();
 
         _disposeTokenSource.Cancel();
         _disposeTokenSource.Dispose();
@@ -118,7 +118,7 @@ internal partial class ProjectStateChangeDetector : IRazorStartupService, IDispo
         return default;
     }
 
-    private void Workspace_WorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
+    private void Workspace_WorkspaceChanged(WorkspaceChangeEventArgs e)
     {
         switch (e.Kind)
         {
