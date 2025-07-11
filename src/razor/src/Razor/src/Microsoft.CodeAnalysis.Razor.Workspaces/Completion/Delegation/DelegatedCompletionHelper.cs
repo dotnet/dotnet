@@ -230,6 +230,12 @@ internal static class DelegatedCompletionHelper
 
         if (startOrEndTag is null)
         {
+            if (IsInScriptOrStyleOrHtmlComment(node))
+            {
+                // If we're in a style, script, or HTML comment block, we don't want to include HTML snippets.
+                return false;
+            }
+
             return token.Kind is not (SyntaxKind.OpenAngle or SyntaxKind.CloseAngle);
         }
 
@@ -241,6 +247,29 @@ internal static class DelegatedCompletionHelper
         }
 
         return !startOrEndTag.Span.Contains(absoluteIndex);
+
+        static bool IsInScriptOrStyleOrHtmlComment(AspNetCore.Razor.Language.Syntax.SyntaxNode? initialNode)
+        {
+            for (var node = initialNode; node != null; node = node.Parent)
+            {
+                if (node is MarkupElementSyntax elementNode)
+                {
+                    if (RazorSyntaxFacts.IsStyleBlock(elementNode) || RazorSyntaxFacts.IsScriptBlock(elementNode))
+                    {
+                        return true;
+                    }
+
+                    // If we're in an element but it's not a script or style block, stop looking
+                    break;
+                }
+                else if (node is MarkupCommentBlockSyntax commentNode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     public static object? GetOriginalCompletionItemData(
