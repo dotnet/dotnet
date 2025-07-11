@@ -1,10 +1,6 @@
 {
   "files": [
     {
-      "path": "src/native/external/zlib-ng/cmake/detect-install-dirs.cmake",
-      "detected_license_expression": "(proprietary-license AND apache-2.0) AND unknown-license-reference"
-    },
-    {
       "path": "src/tests/GC/Scenarios/GCBench/THIRD-PARTY-NOTICES",
       "detected_license_expression": "unknown-license-reference"
     },
