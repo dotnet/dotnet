@@ -17,8 +17,8 @@
     <diagnosticsOutputPackageVersion>8.0.0-preview.24416.1</diagnosticsOutputPackageVersion>
     <efcoreGitCommitHash>3fc3809b8da9bca07f42fa4fa3b49e617514c22f</efcoreGitCommitHash>
     <efcoreOutputPackageVersion>9.0.8</efcoreOutputPackageVersion>
-    <emsdkGitCommitHash>b567cdb6b8b461de79f2a2536a22ca3a67f2f33e</emsdkGitCommitHash>
-    <emsdkOutputPackageVersion>9.0.7-servicing.25304.2</emsdkOutputPackageVersion>
+    <emsdkGitCommitHash>0bcc3e67026ea44a16fb018a50e4e134c06ab3d6</emsdkGitCommitHash>
+    <emsdkOutputPackageVersion>9.0.8-servicing.25353.1</emsdkOutputPackageVersion>
     <fsharpGitCommitHash>47d4e3f91e4e5414b6dafbf14288b9c5a798ef99</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>9.0.101-beta.25070.7</fsharpOutputPackageVersion>
     <msbuildGitCommitHash>590305fc69a6af024c9d868d557be3efd5e42ddf</msbuildGitCommitHash>
@@ -31,11 +31,11 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.25173.3</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>3f5cf9fbbd91f2047e988801a5142ca1cb6bab45</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.12.0-3.25275.3</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>3c298d9f00936d651cc47d221762474e25277672</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>9.0.7-servicing.25316.16</runtimeOutputPackageVersion>
+    <runtimeGitCommitHash>a53bab00a73f56e1183242bec45cfd12c3b03758</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>9.0.8-servicing.25358.20</runtimeOutputPackageVersion>
     <scenariotestsGitCommitHash>45390d82e9b9686adeee65e046b8232f6814bea0</scenariotestsGitCommitHash>
     <scenariotestsOutputPackageVersion>9.0.0-preview.25316.1</scenariotestsOutputPackageVersion>
-    <sdkGitCommitHash>cf19f24b6067edceca86d1126cb55449c4fbb9e2</sdkGitCommitHash>
+    <sdkGitCommitHash>2b328bc5fa55d1a256fe689796be851547e97224</sdkGitCommitHash>
     <sourcebuildexternalsGitCommitHash>71dbdccd13f28cfd1a35649263b55ebbeab26ee7</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>9.0.0-alpha.1.25157.1</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>cbafdd754f3cd645081e32d30cb6a82300163288</sourcebuildreferencepackagesGitCommitHash>
