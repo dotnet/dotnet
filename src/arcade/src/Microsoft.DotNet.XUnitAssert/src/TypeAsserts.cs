@@ -118,6 +118,26 @@ namespace Xunit
 #pragma warning restore xUnit2007
 
 		/// <summary>
+		/// Verifies that an object is not of the given type.
+		/// </summary>
+		/// <typeparam name="T">The type the object should not be</typeparam>
+		/// <param name="object">The object to be evaluated</param>
+		/// <param name="exactMatch">Will only fail with an exact type match when <c>true</c> is
+		/// passed; will fail with a compatible type match when <c>false</c> is passed.</param>
+		/// <exception cref="IsNotTypeException">Thrown when the object is the given type</exception>
+#if XUNIT_NULLABLE
+		public static void IsNotType<T>(
+			object? @object,
+#else
+		public static void IsNotType<T>(
+			object @object,
+#endif
+			bool exactMatch) =>
+#pragma warning disable xUnit2007
+				IsNotType(typeof(T), @object, exactMatch);
+#pragma warning restore xUnit2007
+
+		/// <summary>
 		/// Verifies that an object is not exactly the given type.
 		/// </summary>
 		/// <param name="expectedType">The type the object should not be</param>
@@ -126,15 +146,43 @@ namespace Xunit
 		public static void IsNotType(
 			Type expectedType,
 #if XUNIT_NULLABLE
-			object? @object)
+			object? @object) =>
 #else
-			object @object)
+			object @object) =>
 #endif
+				IsNotType(expectedType, @object, exactMatch: true);
+
+		/// <summary>
+		/// Verifies that an object is not of the given type.
+		/// </summary>
+		/// <param name="expectedType">The type the object should not be</param>
+		/// <param name="object">The object to be evaluated</param>
+		/// <param name="exactMatch">Will only fail with an exact type match when <c>true</c> is
+		/// passed; will fail with a compatible type match when <c>false</c> is passed.</param>
+		/// <exception cref="IsNotTypeException">Thrown when the object is the given type</exception>
+		public static void IsNotType(
+			Type expectedType,
+#if XUNIT_NULLABLE
+			object? @object,
+#else
+			object @object,
+#endif
+			bool exactMatch)
 		{
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
-			if (@object != null && expectedType.Equals(@object.GetType()))
-				throw IsNotTypeException.ForExactType(expectedType);
+			if (exactMatch)
+			{
+				if (@object != null && expectedType.Equals(@object.GetType()))
+					throw IsNotTypeException.ForExactType(expectedType);
+			}
+			else
+			{
+				var actualType = @object?.GetType();
+
+				if (actualType != null && expectedType.GetTypeInfo().IsAssignableFrom(actualType.GetTypeInfo()))
+					throw IsNotTypeException.ForCompatibleType(expectedType, actualType);
+			}
 		}
 
 		/// <summary>
@@ -150,8 +198,34 @@ namespace Xunit
 		public static T IsType<T>(object @object)
 #endif
 		{
+#pragma warning disable CA2263
 #pragma warning disable xUnit2007
-			IsType(typeof(T), @object);
+			IsType(typeof(T), @object, exactMatch: true);
+#pragma warning restore xUnit2007
+#pragma warning restore CA2263
+			return (T)@object;
+		}
+
+		/// <summary>
+		/// Verifies that an object of is the given type.
+		/// </summary>
+		/// <typeparam name="T">The type the object should be</typeparam>
+		/// <param name="object">The object to be evaluated</param>
+		/// <param name="exactMatch">Will only pass with an exact type match when <c>true</c> is
+		/// passed; will pass with a compatible type match when <c>false</c> is passed.</param>
+		/// <returns>The object, casted to type T when successful</returns>
+		/// <exception cref="IsTypeException">Thrown when the object is not the given type</exception>
+#if XUNIT_NULLABLE
+		public static T IsType<T>(
+			[NotNull] object? @object,
+#else
+		public static T IsType<T>(
+			object @object,
+#endif
+			bool exactMatch)
+		{
+#pragma warning disable xUnit2007
+			IsType(typeof(T), @object, exactMatch);
 #pragma warning restore xUnit2007
 			return (T)@object;
 		}
@@ -165,18 +239,46 @@ namespace Xunit
 		public static void IsType(
 			Type expectedType,
 #if XUNIT_NULLABLE
-			[NotNull] object? @object)
+			[NotNull] object? @object) =>
 #else
-			object @object)
+			object @object) =>
 #endif
+				IsType(expectedType, @object, exactMatch: true);
+
+		/// <summary>
+		/// Verifies that an object is of the given type.
+		/// </summary>
+		/// <param name="expectedType">The type the object should be</param>
+		/// <param name="object">The object to be evaluated</param>
+		/// <param name="exactMatch">Will only pass with an exact type match when <c>true</c> is
+		/// passed; will pass with a compatible type match when <c>false</c> is passed.</param>
+		/// <exception cref="IsTypeException">Thrown when the object is not the given type</exception>
+		public static void IsType(
+			Type expectedType,
+#if XUNIT_NULLABLE
+			[NotNull] object? @object,
+#else
+			object @object,
+#endif
+			bool exactMatch)
 		{
 			GuardArgumentNotNull(nameof(expectedType), expectedType);
 
 			if (@object == null)
-				throw IsTypeException.ForMismatchedType(ArgumentFormatter.Format(expectedType), null);
+			{
+				if (exactMatch)
+					throw IsTypeException.ForMismatchedType(ArgumentFormatter.Format(expectedType), null);
+				else
+					throw IsTypeException.ForIncompatibleType(ArgumentFormatter.Format(expectedType), null);
+			}
 
 			var actualType = @object.GetType();
-			if (expectedType != actualType)
+			var compatible =
+				exactMatch
+					? expectedType == actualType
+					: expectedType.GetTypeInfo().IsAssignableFrom(actualType.GetTypeInfo());
+
+			if (!compatible)
 			{
 				var expectedTypeName = ArgumentFormatter.Format(expectedType);
 				var actualTypeName = ArgumentFormatter.Format(actualType);
@@ -187,7 +289,10 @@ namespace Xunit
 					actualTypeName += string.Format(CultureInfo.CurrentCulture, " (from {0})", actualType.GetTypeInfo().Assembly.GetName().FullName);
 				}
 
-				throw IsTypeException.ForMismatchedType(expectedTypeName, actualTypeName);
+				if (exactMatch)
+					throw IsTypeException.ForMismatchedType(expectedTypeName, actualTypeName);
+				else
+					throw IsTypeException.ForIncompatibleType(expectedTypeName, actualTypeName);
 			}
 		}
 	}

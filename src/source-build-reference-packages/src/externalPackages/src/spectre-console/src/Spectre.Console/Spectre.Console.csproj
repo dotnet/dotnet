@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Dependencies">
+    <PackageReference Include="System.Memory" />
     <PackageReference Include="Wcwidth.Sources">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -33,7 +34,6 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Memory" />
     <PackageReference Include="TunnelVisionLabs.ReferenceAssemblyAnnotator" PrivateAssets="all"/>
     <PackageDownload Include="Microsoft.NETCore.App.Ref" Version="[$(AnnotatedReferenceAssemblyVersion)]"/>
   </ItemGroup>
