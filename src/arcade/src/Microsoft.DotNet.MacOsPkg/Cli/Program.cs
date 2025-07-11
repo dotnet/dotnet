@@ -28,7 +28,7 @@ public class Program
         }
 
         RootCommand rootCommand = Setup();
-        return new CommandLineConfiguration(rootCommand).Invoke(args);
+        return rootCommand.Parse(args).Invoke();
     }
 
     /// <summary>

@@ -86,7 +86,7 @@ internal static class CommandModelValidator
         // Arguments
         foreach (var argument in arguments)
         {
-            if (argument.IsRequired && argument.DefaultValue != null)
+            if (argument.Required && argument.DefaultValue != null)
             {
                 throw CommandConfigurationException.RequiredArgumentsCannotHaveDefaultValue(argument);
             }
