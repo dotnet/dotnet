@@ -720,7 +720,7 @@ namespace System.CommandLine.Tests.Help
                 new Argument<bool>("boolArgument") { Description = "Some value" },
                 new Argument<int>("intArgument") { Description = "Another value" },
             };
-            
+
             var helpBuilder = GetHelpBuilder(SmallMaxWidth);
 
             helpBuilder.Write(command, _console);
@@ -777,16 +777,18 @@ namespace System.CommandLine.Tests.Help
 
             help.Should().Contain("[default: the-arg-value]");
         }
-        
-        [Fact]
-        public void Help_does_not_show_default_value_for_argument_when_default_value_is_empty()
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Help_does_not_show_default_value_for_argument_when_default_value_is_null_or_empty(string defaultValue)
         {
             var argument = new Argument<string>("the-arg")
-            { 
+            {
                 Description = "The argument description",
-                DefaultValueFactory = (_) => ""
+                DefaultValueFactory = _ => defaultValue
             };
-            
+
             var command = new Command("the-command", "The command description")
             {
                 argument
@@ -798,7 +800,32 @@ namespace System.CommandLine.Tests.Help
 
             var help = _console.ToString();
 
-            help.Should().NotContain("[default");
+            help.Should().NotContain("[]");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        public void Help_does_not_show_default_value_for_option_when_default_value_is_null_or_empty(string defaultValue)
+        {
+            var argument = new Option<string>("--opt")
+            {
+                Description = "The option description",
+                DefaultValueFactory = _ => defaultValue
+            };
+
+            var command = new Command("the-command", "The command description")
+            {
+                argument
+            };
+
+            var helpBuilder = GetHelpBuilder(SmallMaxWidth);
+
+            helpBuilder.Write(command, _console);
+
+            var help = _console.ToString();
+
+            help.Should().NotContain("[]");
         }
 
         [Fact]
@@ -823,6 +850,38 @@ namespace System.CommandLine.Tests.Help
 
             help.Should().NotContain("[default");
         }
+
+        [Flags]
+        public enum Letters
+        {
+            A = 1,
+            B = 2
+        }
+
+        [Fact]
+        public void Help_does_not_show_arguments_for_enum_backed_option_when_arity_is_zero()
+        {
+            var option = new Option<Letters>("--all")
+            {
+                Description = "Passes both A and B",
+                Arity = ArgumentArity.Zero,
+                CustomParser = _ => Letters.A | Letters.B
+            };
+
+            var command = new Command("the-command", "The command description")
+            {
+                option
+            };
+
+            var helpBuilder = GetHelpBuilder(SmallMaxWidth);
+
+            helpBuilder.Write(command, _console);
+
+            var help = _console.ToString();
+
+            help.Should().NotContain("--all <A|B>");
+        }
+
 
         [Fact]
         public void Command_arguments_default_value_provided()
@@ -864,7 +923,7 @@ namespace System.CommandLine.Tests.Help
                 new Argument<List<int>>("filter-size")
                 {
                     DefaultValueFactory = (_) => new List<int>() { 0, 2, 4 }
-                }   
+                }
             };
 
             _helpBuilder.Write(command, _console);
@@ -905,7 +964,7 @@ namespace System.CommandLine.Tests.Help
 
             _console.ToString().Should().Contain(expected);
         }
-        
+
         #endregion Arguments
 
         #region Options
@@ -1176,9 +1235,9 @@ namespace System.CommandLine.Tests.Help
         [Fact]
         public void Help_option_is_shown_in_help()
         {
-            var configuration = new CommandLineConfiguration(new RootCommand());
+            var rootCommand = new RootCommand();
 
-            _helpBuilder.Write(configuration.RootCommand, _console);
+            _helpBuilder.Write(rootCommand, _console);
 
             var help = _console.ToString();
 
@@ -1491,7 +1550,7 @@ namespace System.CommandLine.Tests.Help
             {
                 Hidden = true
             };
-            argument.DefaultValueFactory = _  => "the-arg-value";
+            argument.DefaultValueFactory = _ => "the-arg-value";
             otherArgumentHidden.DefaultValueFactory = _ => "the-other-hidden-arg-value";
 
             var command = new Command("outer", "outer command help")

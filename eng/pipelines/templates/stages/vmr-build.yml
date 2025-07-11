@@ -97,12 +97,15 @@ stages:
 - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish_Build_Assets
     displayName: Publish Assets
-    dependsOn: VMR_Vertical_Build
+    dependsOn:
+    - VMR_Vertical_Build
+    - VMR_SourceOnly_Build
     jobs:
     - template: /eng/common/templates-official/job/publish-build-assets.yml
       parameters:
         publishUsingPipelines: true
         publishAssetsImmediately: true
+        enablePublishBuildArtifacts: true
         pool: ${{ parameters.pool_Linux }}
         symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
         publishingVersion: 4
