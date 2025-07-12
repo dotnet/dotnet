@@ -362,7 +362,7 @@ namespace ILVerify
                 fullName.Append(GetFullClassName(metadataReader, declaringType));
                 fullName.Append('+');
             }
-
+            
             var namespaceName = metadataReader.GetString(typeDef.Namespace);
             if (!string.IsNullOrEmpty(namespaceName))
             {
@@ -372,7 +372,7 @@ namespace ILVerify
 
             var typeName = metadataReader.GetString(typeDef.Name);
             fullName.Append(typeName);
-
+            
             return fullName.ToString();
         }
 
@@ -479,14 +479,10 @@ namespace ILVerify
         private T Get<T>(Argument<T> argument) => _command.Result.GetValue(argument);
 
         private static int Main(string[] args) =>
-            new ILVerifyRootCommand().UseVersion()
-            .Parse(args, new()
+            new CommandLineConfiguration(new ILVerifyRootCommand().UseVersion())
             {
                 ResponseFileTokenReplacer = Helpers.TryReadResponseFile,
-            })
-            .Invoke(new()
-            {
-                EnableDefaultExceptionHandler = false
-            });
+                EnableDefaultExceptionHandler = false,
+            }.Invoke(args);
     }
 }
