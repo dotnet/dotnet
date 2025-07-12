@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -242,26 +243,16 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             .Setup(manager => manager.TryGetDocument(It.IsAny<Uri>(), out testDocument))
             .Returns(true);
 
-        var languageServer1Response = new[] { new VSInternalCodeAction() { Title = "Response 1" } };
-        var languageServer2Response = new[] { new VSInternalCodeAction() { Title = "Response 2" } };
+        var languageServerResponse = new[] { new VSInternalCodeAction() { Title = "Response 1" } };
 
-        async IAsyncEnumerable<ReinvocationResponse<IReadOnlyList<VSInternalCodeAction>>> GetExpectedResultsAsync()
-        {
-            yield return new ReinvocationResponse<IReadOnlyList<VSInternalCodeAction>>("languageClient", languageServer1Response);
-            yield return new ReinvocationResponse<IReadOnlyList<VSInternalCodeAction>>("languageClient", languageServer2Response);
-
-            await Task.CompletedTask;
-        }
-
-        var expectedResults = GetExpectedResultsAsync();
         var requestInvoker = new Mock<LSPRequestInvoker>(MockBehavior.Strict);
         requestInvoker
-            .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
-                _textBuffer,
+            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
                 Methods.TextDocumentCodeActionName,
+                RazorLSPConstants.RazorCSharpLanguageServerName,
                 It.IsAny<VSCodeActionParams>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResults);
+            .ReturnsAsync(new ReinvokeResponse<IReadOnlyList<VSInternalCodeAction>>(languageClient: null, languageServerResponse));
 
         var documentSynchronizer = GetDocumentSynchronizer(GetCSharpSnapshot());
         var telemetryReporter = new Mock<ITelemetryReporter>(MockBehavior.Strict);
@@ -304,8 +295,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
 
         // Assert
         Assert.Collection(result,
-            r => Assert.Equal(languageServer1Response[0].Title, r.Title),
-            r => Assert.Equal(languageServer2Response[0].Title, r.Title));
+            r => Assert.Equal(languageServerResponse[0].Title, r.Title));
     }
 
     [Fact]
@@ -322,28 +312,14 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             Title = "Something",
             Data = new object()
         };
-        var unexpectedCodeAction = new VSInternalCodeAction()
-        {
-            Title = "Something Else",
-            Data = new object()
-        };
 
-        async IAsyncEnumerable<ReinvocationResponse<VSInternalCodeAction>> GetExpectedResultsAsync()
-        {
-            yield return new ReinvocationResponse<VSInternalCodeAction>("languageClient", expectedCodeAction);
-            yield return new ReinvocationResponse<VSInternalCodeAction>("languageClient", unexpectedCodeAction);
-
-            await Task.CompletedTask;
-        }
-
-        var expectedResponses = GetExpectedResultsAsync();
         requestInvoker
-            .Setup(invoker => invoker.ReinvokeRequestOnMultipleServersAsync<CodeAction, VSInternalCodeAction>(
-                It.IsAny<ITextBuffer>(),
+            .Setup(invoker => invoker.ReinvokeRequestOnServerAsync<CodeAction, VSInternalCodeAction>(
                 Methods.CodeActionResolveName,
+                RazorLSPConstants.RazorCSharpLanguageServerName,
                 It.IsAny<VSInternalCodeAction>(),
                 It.IsAny<CancellationToken>()))
-            .Returns(expectedResponses);
+            .ReturnsAsync(new ReinvokeResponse<VSInternalCodeAction>(languageClient: null, expectedCodeAction));
 
         var documentSynchronizer = new Mock<LSPDocumentSynchronizer>(MockBehavior.Strict);
         documentSynchronizer

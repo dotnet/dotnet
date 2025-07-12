@@ -6,14 +6,19 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Tooltip;
 using Microsoft.VisualStudio.Editor.Razor;
+using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
 internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeCompletionItemProviderBase
 {
+    private static ReadOnlyMemory<char> QuotedAttributeValueSnippet => "=\"$0\"".AsMemory();
+    private static ReadOnlyMemory<char> UnquotedAttributeValueSnippet => "=$0".AsMemory();
+
     public override ImmutableArray<RazorCompletionItem> GetCompletionItems(RazorCompletionContext context)
     {
         if (!context.SyntaxTree.Options.FileKind.IsComponent())
@@ -48,7 +53,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
         // At this point we've determined that completions have been requested for the name portion of the selected attribute.
 
-        var completionItems = GetAttributeCompletions(attributeName, containingTagName, attributes, context.TagHelperDocumentContext);
+        var completionItems = GetAttributeCompletions(owner, attributeName, containingTagName, attributes, context.TagHelperDocumentContext, context.Options);
 
         // We don't provide Directive Attribute completions when we're in the middle of
         // another unrelated (doesn't start with @) partially completed attribute.
@@ -63,10 +68,12 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
     // Internal for testing
     internal static ImmutableArray<RazorCompletionItem> GetAttributeCompletions(
+        RazorSyntaxNode containingAttribute,
         string selectedAttributeName,
         string containingTagName,
         ImmutableArray<string> attributes,
-        TagHelperDocumentContext tagHelperDocumentContext)
+        TagHelperDocumentContext tagHelperDocumentContext,
+        RazorCompletionOptions razorCompletionOptions)
     {
         var descriptorsForTag = TagHelperFacts.GetTagHelpersGivenTag(tagHelperDocumentContext, containingTagName, parentTag: null);
         if (descriptorsForTag.Length == 0)
@@ -115,21 +122,35 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
         foreach (var (displayText, (attributeDescriptions, commitCharacters)) in attributeCompletions)
         {
-            var insertText = displayText;
+            var insertTextSpan = displayText.AsSpan();
+            var originalInsertTextSpan = insertTextSpan;
 
             // Strip off the @ from the insertion text. This change is here to align the insertion text with the
             // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
             // want to insert `@bind` because `@` already exists.
-            var startIndex = insertText.StartsWith('@') ? 1 : 0;
-
-            // Indexer attribute, we don't want to insert with the triple dot.
-            var endIndex = insertText.EndsWith("...", StringComparison.Ordinal) ? ^3 : ^0;
-
-            // Don't allocate a new string unless we need to make a change.
-            if (startIndex > 0 || endIndex.Value > 0)
+            if (SpanExtensions.StartsWith(insertTextSpan, '@'))
             {
-                insertText = insertText[startIndex..endIndex];
+                insertTextSpan = insertTextSpan[1..];
             }
+
+            var isSnippet = false;
+            // Indexer attribute, we don't want to insert with the triple dot.
+            if (MemoryExtensions.EndsWith(insertTextSpan, "...".AsSpan()))
+            {
+                insertTextSpan = insertTextSpan[..^3];
+            }
+            else
+            {
+                // We are trying for snippet text only for non-indexer attributes, e.g. *not* something like "@bind-..."
+                if (TryGetSnippetText(containingAttribute, insertTextSpan, razorCompletionOptions, out var snippetTextSpan))
+                {
+                    insertTextSpan = snippetTextSpan;
+                    isSnippet = true;
+                }
+            }
+
+            // Don't create another string annecessarily, even thouth ReadOnlySpan.ToString() special-cases the string to avoid allocation
+            var insertText = insertTextSpan == originalInsertTextSpan ? displayText : insertTextSpan.ToString();
 
             using var razorCommitCharacters = new PooledArrayBuilder<RazorCommitCharacter>(capacity: commitCharacters.Count);
 
@@ -142,12 +163,39 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 displayText,
                 insertText,
                 descriptionInfo: new([.. attributeDescriptions]),
-                commitCharacters: razorCommitCharacters.ToImmutableAndClear());
+                commitCharacters: razorCommitCharacters.ToImmutableAndClear(),
+                isSnippet);
 
             completionItems.Add(razorCompletionItem);
         }
 
         return completionItems.ToImmutableAndClear();
+
+        static bool TryGetSnippetText(
+            RazorSyntaxNode owner,
+            ReadOnlySpan<char> baseTextSpan,
+            RazorCompletionOptions razorCompletionOptions,
+            out ReadOnlySpan<char> snippetTextSpan)
+        {
+            if (razorCompletionOptions.SnippetsSupported
+                // Don't create snippet text when attribute is already in the tag and we are trying to replace it
+                // Otherwise you could have something like @onabort=""=""
+                && owner is not (MarkupTagHelperDirectiveAttributeSyntax or MarkupAttributeBlockSyntax)
+                && owner.Parent is not (MarkupTagHelperDirectiveAttributeSyntax or MarkupAttributeBlockSyntax))
+            {
+                var suffixTextSpan = razorCompletionOptions.AutoInsertAttributeQuotes ? QuotedAttributeValueSnippet : UnquotedAttributeValueSnippet;
+
+                var buffer = new char[baseTextSpan.Length + suffixTextSpan.Length];
+                baseTextSpan.CopyTo(buffer);
+                suffixTextSpan.CopyTo(buffer.AsMemory()[baseTextSpan.Length..]);
+
+                snippetTextSpan = buffer.AsSpan();
+                return true;
+            }
+
+            snippetTextSpan = [];
+            return false;
+        }
 
         bool TryAddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor)
         {

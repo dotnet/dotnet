@@ -1,12 +1,13 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
@@ -14,34 +15,23 @@ using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
-internal class DefaultTagHelperDescriptorFactory
+internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentation, bool excludeHidden)
 {
     private const string TagHelperNameEnding = "TagHelper";
 
-    public DefaultTagHelperDescriptorFactory(Compilation compilation, bool includeDocumentation, bool excludeHidden)
+    private readonly bool _excludeHidden = excludeHidden;
+    private readonly bool _includeDocumentation = includeDocumentation;
+
+    public TagHelperDescriptor? CreateDescriptor(INamedTypeSymbol type)
     {
-        IncludeDocumentation = includeDocumentation;
-        ExcludeHidden = excludeHidden;
-    }
-
-    protected bool ExcludeHidden { get; }
-
-    protected bool IncludeDocumentation { get; }
-
-    /// <inheritdoc />
-    public virtual TagHelperDescriptor CreateDescriptor(INamedTypeSymbol type)
-    {
-        if (type == null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
+        ArgHelper.ThrowIfNull(type);
 
         if (ShouldSkipDescriptorCreation(type))
         {
             return null;
         }
 
-        var typeName = GetFullName(type);
+        var typeName = type.GetFullName();
         var assemblyName = type.ContainingAssembly.Identity.Name;
 
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
@@ -51,7 +41,7 @@ internal class DefaultTagHelperDescriptorFactory
         descriptorBuilder.SetMetadata(
             RuntimeName(TagHelperConventions.DefaultKind),
             TypeName(typeName),
-            TypeNamespace(type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat)),
+            TypeNamespace(type.ContainingNamespace.GetFullName()),
             TypeNameIdentifier(type.Name));
 
         AddBoundAttributes(type, descriptorBuilder);
@@ -60,24 +50,38 @@ internal class DefaultTagHelperDescriptorFactory
         AddDocumentation(type, descriptorBuilder);
         AddTagOutputHint(type, descriptorBuilder);
 
-        var descriptor = descriptorBuilder.Build();
+        return descriptorBuilder.Build();
+    }
 
-        return descriptor;
+    private bool ShouldSkipDescriptorCreation(ISymbol symbol)
+    {
+        if (!_excludeHidden)
+        {
+            return false;
+        }
+
+        if (!symbol.TryGetAttribute(typeof(EditorBrowsableAttribute).FullName!, out var editorBrowsableAttribute))
+        {
+            return false;
+        }
+
+        // We need to be careful with pattern matching below because TypedConstant.Value
+        // is an object and not an enum value.
+        return editorBrowsableAttribute?.ConstructorArguments is [{ Value: object value }, ..] &&
+               (EditorBrowsableState)value == EditorBrowsableState.Never;
     }
 
     private static void AddTagMatchingRules(INamedTypeSymbol type, TagHelperDescriptorBuilder descriptorBuilder)
     {
-        using var builder = new PooledArrayBuilder<AttributeData>();
+        using var targetElementAttributes = new PooledArrayBuilder<AttributeData>();
 
         foreach (var attribute in type.GetAttributes())
         {
-            if (attribute.AttributeClass.HasFullName(TagHelperTypes.HtmlTargetElementAttribute))
+            if (attribute.HasFullName(TagHelperTypes.HtmlTargetElementAttribute))
             {
-                builder.Add(attribute);
+                targetElementAttributes.Add(attribute);
             }
         }
-
-        var targetElementAttributes = builder.ToImmutableAndClear();
 
         // If there isn't an attribute specifying the tag name derive it from the name
         if (!targetElementAttributes.Any())
@@ -112,14 +116,20 @@ internal class DefaultTagHelperDescriptorFactory
                 ruleBuilder.TagStructure = tagStructure;
 
                 var requiredAttributeString = HtmlTargetElementAttribute_Attributes(targetElementAttribute);
-                RequiredAttributeParser.AddRequiredAttributes(requiredAttributeString, ruleBuilder);
+
+                if (requiredAttributeString is not null)
+                {
+                    RequiredAttributeParser.AddRequiredAttributes(requiredAttributeString, ruleBuilder);
+                }
             });
         }
     }
 
     private void AddBoundAttributes(INamedTypeSymbol type, TagHelperDescriptorBuilder builder)
     {
-        var accessibleProperties = GetAccessibleProperties(type);
+        using var accessibleProperties = new PooledArrayBuilder<IPropertySymbol>();
+
+        CollectAccessibleProperties(type, ref accessibleProperties.AsRef());
 
         foreach (var property in accessibleProperties)
         {
@@ -137,26 +147,33 @@ internal class DefaultTagHelperDescriptorFactory
 
     private static void AddAllowedChildren(INamedTypeSymbol type, TagHelperDescriptorBuilder builder)
     {
-        var restrictChildrenAttribute = type.GetAttributes().FirstOrDefault(static a => a.AttributeClass.HasFullName(TagHelperTypes.RestrictChildrenAttribute));
-        if (restrictChildrenAttribute == null)
+        if (!type.TryGetAttribute(TagHelperTypes.RestrictChildrenAttribute, out var restrictChildrenAttribute))
         {
             return;
         }
 
-        builder.AllowChildTag(childTagBuilder => childTagBuilder.Name = (string)restrictChildrenAttribute.ConstructorArguments[0].Value);
+        var constructorArguments = restrictChildrenAttribute.ConstructorArguments;
 
-        if (restrictChildrenAttribute.ConstructorArguments.Length == 2)
+        if (constructorArguments is [var arg0, ..])
         {
-            foreach (var value in restrictChildrenAttribute.ConstructorArguments[1].Values)
+            builder.AllowChildTag(childTagBuilder =>
             {
-                builder.AllowChildTag(childTagBuilder => childTagBuilder.Name = (string)value.Value);
+                childTagBuilder.Name = (string?)arg0.Value;
+            });
+
+            if (constructorArguments is [_, var arg1, ..])
+            {
+                foreach (var value in arg1.Values)
+                {
+                    builder.AllowChildTag(childTagBuilder => childTagBuilder.Name = (string?)value.Value);
+                }
             }
         }
     }
 
     private void AddDocumentation(INamedTypeSymbol type, TagHelperDescriptorBuilder builder)
     {
-        if (!IncludeDocumentation)
+        if (!_includeDocumentation)
         {
             return;
         }
@@ -171,12 +188,10 @@ internal class DefaultTagHelperDescriptorFactory
 
     private static void AddTagOutputHint(INamedTypeSymbol type, TagHelperDescriptorBuilder builder)
     {
-        string outputElementHint = null;
-        var outputElementHintAttribute = type.GetAttributes().FirstOrDefault(static a => a.AttributeClass.HasFullName(TagHelperTypes.OutputElementHintAttribute));
-        if (outputElementHintAttribute != null)
+        if (type.TryGetAttribute(TagHelperTypes.OutputElementHintAttribute, out var attribute) &&
+            attribute.ConstructorArguments is [{ Value: string value }, ..])
         {
-            outputElementHint = (string)outputElementHintAttribute.ConstructorArguments[0].Value;
-            builder.TagOutputHint = outputElementHint;
+            builder.TagOutputHint = value;
         }
     }
 
@@ -185,29 +200,16 @@ internal class DefaultTagHelperDescriptorFactory
         IPropertySymbol property,
         INamedTypeSymbol containingType)
     {
-        var attributeNameAttribute = property
-            .GetAttributes()
-            .FirstOrDefault(static a => a.AttributeClass.HasFullName(TagHelperTypes.HtmlAttributeNameAttribute));
+        var attributeNameAttribute = property.GetAttribute(TagHelperTypes.HtmlAttributeNameAttribute);
 
-        bool hasExplicitName;
-        string attributeName;
-        if (attributeNameAttribute == null ||
-            attributeNameAttribute.ConstructorArguments.Length == 0 ||
-            string.IsNullOrEmpty((string)attributeNameAttribute.ConstructorArguments[0].Value))
-        {
-            hasExplicitName = false;
-            attributeName = HtmlConventions.ToHtmlCase(property.Name);
-        }
-        else
-        {
-            hasExplicitName = true;
-            attributeName = (string)attributeNameAttribute.ConstructorArguments[0].Value;
-        }
+        var (hasExplicitName, attributeName) = attributeNameAttribute?.ConstructorArguments is [{ Value: string { Length: > 0 } value }, ..]
+            ? (true, value)
+            : (false, HtmlConventions.ToHtmlCase(property.Name));
 
-        var hasPublicSetter = property.SetMethod != null && property.SetMethod.DeclaredAccessibility == Accessibility.Public;
-        var typeName = GetFullName(property.Type);
-        builder.TypeName = typeName;
+        builder.TypeName = property.Type.GetFullName();
         builder.SetMetadata(PropertyName(property.Name));
+
+        var hasPublicSetter = HasPublicSetter(property);
 
         if (hasPublicSetter)
         {
@@ -218,7 +220,7 @@ internal class DefaultTagHelperDescriptorFactory
                 builder.IsEnum = true;
             }
 
-            if (IncludeDocumentation)
+            if (_includeDocumentation)
             {
                 var xml = property.GetDocumentationCommentXml();
 
@@ -231,7 +233,7 @@ internal class DefaultTagHelperDescriptorFactory
         else if (hasExplicitName && !IsPotentialDictionaryProperty(property))
         {
             // Specified HtmlAttributeNameAttribute.Name though property has no public setter.
-            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributeNameNullOrEmpty(GetFullName(containingType), property.Name);
+            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributeNameNullOrEmpty(containingType.GetFullName(), property.Name);
             builder.Diagnostics.Add(diagnostic);
         }
 
@@ -242,107 +244,103 @@ internal class DefaultTagHelperDescriptorFactory
         BoundAttributeDescriptorBuilder builder,
         IPropertySymbol property,
         INamedTypeSymbol containingType,
-        AttributeData attributeNameAttribute,
+        AttributeData? attributeNameAttribute,
         string attributeName,
         bool hasPublicSetter)
     {
-        string dictionaryAttributePrefix = null;
+        string? dictionaryAttributePrefix = null;
         var dictionaryAttributePrefixSet = false;
 
         if (attributeNameAttribute != null)
         {
-            foreach (var argument in attributeNameAttribute.NamedArguments)
+            foreach (var (name, argument) in attributeNameAttribute.NamedArguments)
             {
-                if (argument.Key == TagHelperTypes.HtmlAttributeName.DictionaryAttributePrefix)
+                if (name == TagHelperTypes.HtmlAttributeName.DictionaryAttributePrefix)
                 {
-                    dictionaryAttributePrefix = (string)argument.Value.Value;
+                    dictionaryAttributePrefix = (string?)argument.Value;
                     dictionaryAttributePrefixSet = true;
                     break;
                 }
             }
         }
 
-        var dictionaryArgumentTypes = GetDictionaryArgumentTypes(property);
-        if (dictionaryArgumentTypes != null)
+        var dictionaryTypeArguments = GetDictionaryArgumentTypes(property);
+
+        if (!dictionaryTypeArguments.IsEmpty)
         {
-            var prefix = dictionaryAttributePrefix;
-            if (attributeNameAttribute == null || !dictionaryAttributePrefixSet)
-            {
-                prefix = attributeName + "-";
-            }
+            var prefix = attributeNameAttribute is null || !dictionaryAttributePrefixSet
+                ? attributeName + "-"
+                : dictionaryAttributePrefix;
 
             if (prefix != null)
             {
-                var dictionaryValueType = dictionaryArgumentTypes[1];
-                var dictionaryValueTypeName = GetFullName(dictionaryValueType);
+                var dictionaryValueType = dictionaryTypeArguments[1];
+                var dictionaryValueTypeName = dictionaryValueType.GetFullName();
                 builder.AsDictionary(prefix, dictionaryValueTypeName);
             }
         }
 
-        var dictionaryKeyType = dictionaryArgumentTypes?[0];
-
-        if (dictionaryKeyType?.SpecialType != SpecialType.System_String)
+        if (dictionaryTypeArguments is not [{ SpecialType: SpecialType.System_String }, ..])
         {
             if (dictionaryAttributePrefix != null)
             {
                 // DictionaryAttributePrefix is not supported unless associated with an
                 // IDictionary<string, TValue> property.
-                var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributePrefixNotNull(GetFullName(containingType), property.Name);
+                var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributePrefixNotNull(containingType.GetFullName(), property.Name);
                 builder.Diagnostics.Add(diagnostic);
             }
 
             return;
         }
-        else if (!hasPublicSetter && attributeNameAttribute != null && !dictionaryAttributePrefixSet)
+
+        if (!hasPublicSetter && attributeNameAttribute != null && !dictionaryAttributePrefixSet)
         {
             // Must set DictionaryAttributePrefix when using HtmlAttributeNameAttribute with a dictionary property
             // that lacks a public setter.
-            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributePrefixNull(GetFullName(containingType), property.Name);
+            var diagnostic = RazorDiagnosticFactory.CreateTagHelper_InvalidAttributePrefixNull(containingType.GetFullName(), property.Name);
             builder.Diagnostics.Add(diagnostic);
-
-            return;
         }
     }
 
-    private static IReadOnlyList<ITypeSymbol> GetDictionaryArgumentTypes(IPropertySymbol property)
+    private static ImmutableArray<ITypeSymbol> GetDictionaryArgumentTypes(IPropertySymbol property)
     {
-        INamedTypeSymbol dictionaryType;
-        if ((property.Type as INamedTypeSymbol)?.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary) == true)
+        if (property.Type is INamedTypeSymbol propertyType &&
+            propertyType.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary))
         {
-            dictionaryType = (INamedTypeSymbol)property.Type;
-        }
-        else if (property.Type.AllInterfaces.Any(static s => s.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary)))
-        {
-            dictionaryType = property.Type.AllInterfaces.First(static s => s.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary));
-        }
-        else
-        {
-            dictionaryType = null;
+            return propertyType.TypeArguments;
         }
 
-        return dictionaryType?.TypeArguments;
+        var dictionaryType = property.Type.AllInterfaces
+            .FirstOrDefault(static s => s.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary));
+
+        var result = dictionaryType?.TypeArguments ?? [];
+
+        Debug.Assert(result.Length == 2 || result.Length == 0,
+            "Expected IDictionary to have 2 type arguments (key and value) or none if not a dictionary.");
+
+        return result;
     }
 
-    private static string HtmlTargetElementAttribute_Attributes(AttributeData attribute)
+    private static string? HtmlTargetElementAttribute_Attributes(AttributeData attribute)
     {
-        foreach (var kvp in attribute.NamedArguments)
+        foreach (var (name, argument) in attribute.NamedArguments)
         {
-            if (kvp.Key == TagHelperTypes.HtmlTargetElement.Attributes)
+            if (name == TagHelperTypes.HtmlTargetElement.Attributes)
             {
-                return (string)kvp.Value.Value;
+                return (string?)argument.Value;
             }
         }
 
         return null;
     }
 
-    private static string HtmlTargetElementAttribute_ParentTag(AttributeData attribute)
+    private static string? HtmlTargetElementAttribute_ParentTag(AttributeData attribute)
     {
-        foreach (var kvp in attribute.NamedArguments)
+        foreach (var (name, value) in attribute.NamedArguments)
         {
-            if (kvp.Key == TagHelperTypes.HtmlTargetElement.ParentTag)
+            if (name == TagHelperTypes.HtmlTargetElement.ParentTag)
             {
-                return (string)kvp.Value.Value;
+                return (string?)value.Value;
             }
         }
 
@@ -351,89 +349,91 @@ internal class DefaultTagHelperDescriptorFactory
 
     private static string HtmlTargetElementAttribute_Tag(AttributeData attribute)
     {
-        if (attribute.ConstructorArguments.Length == 0)
+        if (attribute.ConstructorArguments is [{ Value: string value }, ..])
         {
-            return TagHelperMatchingConventions.ElementCatchAllName;
+            return value;
         }
-        else
-        {
-            return (string)attribute.ConstructorArguments[0].Value;
-        }
+
+        return TagHelperMatchingConventions.ElementCatchAllName;
     }
 
     private static TagStructure HtmlTargetElementAttribute_TagStructure(AttributeData attribute)
     {
-        foreach (var kvp in attribute.NamedArguments)
+        foreach (var (name, argument) in attribute.NamedArguments)
         {
-            if (kvp.Key == TagHelperTypes.HtmlTargetElement.TagStructure)
+            if (name == TagHelperTypes.HtmlTargetElement.TagStructure &&
+                argument is { Value: object value })
             {
-                return (TagStructure)kvp.Value.Value;
+                return (TagStructure)value;
             }
         }
 
         return TagStructure.Unspecified;
     }
 
-    private static bool IsPotentialDictionaryProperty(IPropertySymbol property)
-    {
-        return
-            ((property.Type as INamedTypeSymbol)?.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary) == true || property.Type.AllInterfaces.Any(static s => s.ConstructedFrom.HasFullName(TagHelperTypes.IDictionary))) &&
-            GetDictionaryArgumentTypes(property)?[0].SpecialType == SpecialType.System_String;
-    }
+    private static bool HasPublicSetter(IPropertySymbol property)
+        => property is { SetMethod.DeclaredAccessibility: Accessibility.Public };
 
-    private static IPropertySymbol[] GetAccessibleProperties(INamedTypeSymbol typeSymbol)
+    private static bool IsPotentialDictionaryProperty(IPropertySymbol property)
+        => GetDictionaryArgumentTypes(property) is [{ SpecialType: SpecialType.System_String }, ..];
+
+    private static void CollectAccessibleProperties(
+        INamedTypeSymbol typeSymbol, ref PooledArrayBuilder<IPropertySymbol> properties)
     {
         using var names = new PooledHashSet<string>(StringHashSetPool.Ordinal);
-        using var resultList = new PooledList<IPropertySymbol>();
+
+        // Traverse the type hierarchy to find all accessible properties.
+        var currentType = typeSymbol;
 
         do
         {
-            foreach (var member in typeSymbol.GetMembers())
+            foreach (var member in currentType.GetMembers())
             {
-                if (member is IPropertySymbol property &&
-                    property.Parameters.Length == 0 &&
-                    property.GetMethod != null &&
-                    property.GetMethod.DeclaredAccessibility == Accessibility.Public &&
-                    property.GetAttributes().FirstOrDefault(static a => a.AttributeClass.HasFullName(TagHelperTypes.HtmlAttributeNotBoundAttribute)) == null &&
-                    (property.GetAttributes().Any(static a => a.AttributeClass.HasFullName(TagHelperTypes.HtmlAttributeNameAttribute)) ||
-                    property.SetMethod != null && property.SetMethod.DeclaredAccessibility == Accessibility.Public ||
-                    IsPotentialDictionaryProperty(property)) &&
-                    !names.Contains(property.Name))
+                if (member is not IPropertySymbol property ||
+                    !IsAccessibleProperty(property) ||
+                    !names.Add(property.Name))
                 {
-                    names.Add(property.Name);
-                    resultList.Add(property);
+                    continue;
                 }
+
+                properties.Add(property);
             }
 
-            typeSymbol = typeSymbol.BaseType;
+            currentType = currentType.BaseType;
         }
-        while (typeSymbol != null);
-
-        return resultList.ToArray();
+        while (currentType != null);
     }
 
-    private bool ShouldSkipDescriptorCreation(ISymbol symbol)
+    private static bool IsAccessibleProperty(IPropertySymbol property)
     {
-        if (ExcludeHidden)
+        // First, the property must have a public getter and no parameters.
+        if (property is not { GetMethod.DeclaredAccessibility: Accessibility.Public, Parameters: [] })
         {
-            var editorBrowsableAttribute = symbol.GetAttributes().FirstOrDefault(static a => a.AttributeClass.HasFullName(typeof(EditorBrowsableAttribute).FullName));
+            return false;
+        }
 
-            if (editorBrowsableAttribute == null)
+        var foundHtmlAttributeNameAttribute = false;
+
+        foreach (var attribute in property.GetAttributes())
+        {
+            if (attribute.HasFullName(TagHelperTypes.HtmlAttributeNotBoundAttribute))
             {
+                // If the property has a HtmlAttributeNotBoundAttribute, it should not be considered for binding.
                 return false;
             }
 
-            var constructorArguments = editorBrowsableAttribute.ConstructorArguments;
-
-            if (constructorArguments.Length > 0)
+            if (!foundHtmlAttributeNameAttribute &&
+                attribute.HasFullName(TagHelperTypes.HtmlAttributeNameAttribute))
             {
-                return (EditorBrowsableState)constructorArguments[0].Value == EditorBrowsableState.Never;
+                foundHtmlAttributeNameAttribute = true;
             }
         }
 
-        return false;
-    }
+        // Finally, the property must either have a HtmlAttributeNameAttribute, a public setter,
+        // or be a potential dictionary property.
 
-    protected static string GetFullName(ITypeSymbol type)
-        => type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
+        return foundHtmlAttributeNameAttribute ||
+               property is { SetMethod.DeclaredAccessibility: Accessibility.Public } ||
+               IsPotentialDictionaryProperty(property);
+    }
 }

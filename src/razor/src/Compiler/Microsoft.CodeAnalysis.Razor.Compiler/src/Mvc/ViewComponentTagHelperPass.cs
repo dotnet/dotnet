@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -36,10 +34,8 @@ public class ViewComponentTagHelperPass : IntermediateNodePassBase, IRazorOptimi
 
         // For each VCTH *usage* we need to rewrite the tag helper node to use the tag helper runtime to construct
         // and set properties on the the correct field, and using the name of the type we will generate.
-        var nodes = documentNode.FindDescendantNodes<TagHelperIntermediateNode>();
-        for (var i = 0; i < nodes.Count; i++)
+        foreach (var node in documentNode.FindDescendantNodes<TagHelperIntermediateNode>())
         {
-            var node = nodes[i];
             foreach (var tagHelper in node.TagHelpers)
             {
                 RewriteUsage(context, node, tagHelper);

@@ -174,7 +174,8 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
             displayText: "@testDisplay",
             insertText: "testInsert",
             descriptionInfo: null!,
-            commitCharacters: RazorCommitCharacter.CreateArray(["=", ":"]));
+            commitCharacters: RazorCommitCharacter.CreateArray(["=", ":"]),
+            isSnippet: false);
 
         // Act
         Assert.True(RazorCompletionListProvider.TryConvert(completionItem, _clientCapabilities, out var converted));

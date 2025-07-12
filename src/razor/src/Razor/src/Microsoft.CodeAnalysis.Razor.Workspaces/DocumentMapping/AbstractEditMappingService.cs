@@ -55,6 +55,13 @@ internal abstract class AbstractEditMappingService(
         {
             var generatedDocumentUri = new Uri(uriString);
 
+            // For Html we just map the Uri, the range will be the same
+            if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
+            {
+                var razorUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
+                remappedChanges[razorUri.AbsoluteUri] = edits;
+            }
+
             // Check if the edit is actually for a generated document, because if not we don't need to do anything
             if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))
             {
@@ -110,6 +117,18 @@ internal abstract class AbstractEditMappingService(
         foreach (var entry in documentEdits)
         {
             var generatedDocumentUri = entry.TextDocument.DocumentUri.GetRequiredParsedUri();
+
+            // For Html we just map the Uri, the range will be the same
+            if (_filePathService.IsVirtualHtmlFile(generatedDocumentUri))
+            {
+                var razorUri = _filePathService.GetRazorDocumentUri(generatedDocumentUri);
+                entry.TextDocument = new OptionalVersionedTextDocumentIdentifier()
+                {
+                    DocumentUri = new(razorUri),
+                };
+                remappedDocumentEdits.Add(entry);
+                continue;
+            }
 
             // Check if the edit is actually for a generated document, because if not we don't need to do anything
             if (!_filePathService.IsVirtualCSharpFile(generatedDocumentUri))

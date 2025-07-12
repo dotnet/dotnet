@@ -34,9 +34,9 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         // APIs.
         var usings = documentNode.FindDescendantNodes<UsingDirectiveIntermediateNode>();
         var references = documentNode.FindDescendantReferences<TagHelperIntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
+
+        foreach (var reference in references)
         {
-            var reference = references[i];
             var node = (TagHelperIntermediateNode)reference.Node;
             if (node.TagHelpers.Any(t => t.IsChildContentTagHelper))
             {
@@ -46,9 +46,9 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
             // The element didn't match any child content descriptors. Look for any matching component descriptors.
             var count = 0;
-            for (var j = 0; j < node.TagHelpers.Count; j++)
+            foreach (var tagHelper in node.TagHelpers)
             {
-                if (node.TagHelpers[j].IsComponentTagHelper)
+                if (tagHelper.IsComponentTagHelper)
                 {
                     // Only allow a single component tag helper per element. If there are multiple, we'll just consider
                     // the first one and ignore the others.

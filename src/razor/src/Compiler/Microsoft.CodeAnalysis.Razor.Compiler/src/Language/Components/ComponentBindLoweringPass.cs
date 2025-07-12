@@ -42,17 +42,18 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         }
 
         // For each @bind *usage* we need to rewrite the tag helper node to map to basic constructs.
+        using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         var parameterReferences = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeParameterIntermediateNode>();
 
-        var parents = new HashSet<IntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
+        foreach (var reference in references)
         {
-            parents.Add(references[i].Parent);
+            parents.Add(reference.Parent);
         }
-        for (var i = 0; i < parameterReferences.Count; i++)
+
+        foreach (var parameterReference in parameterReferences)
         {
-            parents.Add(parameterReferences[i].Parent);
+            parents.Add(parameterReference.Parent);
         }
 
         foreach (var parent in parents)
@@ -65,9 +66,9 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         // We don't have to worry about duplicate bound attributes in the same element
         // like, <Foo @bind="bar" @bind="bar" />, because IR lowering takes care of that.
         var bindEntries = new Dictionary<(IntermediateNode, string), BindEntry>();
-        for (var i = 0; i < references.Count; i++)
+
+        foreach (var reference in references)
         {
-            var reference = references[i];
             var parent = reference.Parent;
             var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
 
@@ -85,11 +86,10 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
 
         // Do a pass to look for (@bind:get, @bind:set) pairs as this alternative form might have been used
         // to define the binding.
-        for (var i = 0; i < parameterReferences.Count; i++)
+        foreach (var parameterReference in parameterReferences)
         {
-            var reference = parameterReferences[i];
-            var parent = reference.Parent;
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)reference.Node;
+            var parent = parameterReference.Parent;
+            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
 
             if (!parent.Children.Contains(node))
             {
@@ -105,9 +105,9 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                         node.Source,
                         node.AttributeName));
                 }
-                if (!bindEntries.TryGetValue((reference.Parent, node.AttributeNameWithoutParameter), out var existingEntry))
+                if (!bindEntries.TryGetValue((parameterReference.Parent, node.AttributeNameWithoutParameter), out var existingEntry))
                 {
-                    bindEntries[(reference.Parent, node.AttributeNameWithoutParameter)] = new BindEntry(reference);
+                    bindEntries[(parameterReference.Parent, node.AttributeNameWithoutParameter)] = new BindEntry(parameterReference);
                 }
                 else
                 {
@@ -119,9 +119,8 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
         }
 
         // Now collect all the parameterized attributes and store them along with their corresponding @bind or @bind-* attributes.
-        for (var i = 0; i < parameterReferences.Count; i++)
+        foreach (var parameterReference in parameterReferences)
         {
-            var parameterReference = parameterReferences[i];
             var parent = parameterReference.Parent;
             var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
 
@@ -1098,12 +1097,12 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
     private static IntermediateToken GetAttributeContent(IntermediateNode node)
     {
         var nodes = node.FindDescendantNodes<TemplateIntermediateNode>();
-        var template = nodes.Count > 0 ? nodes[0] : default;
+        var template = nodes.Length > 0 ? nodes[0] : default;
         if (template != null)
         {
             // See comments in TemplateDiagnosticPass
             node.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
-            return new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty, };
+            return new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty };
         }
 
         if (node.Children[0] is HtmlContentIntermediateNode htmlContentNode)

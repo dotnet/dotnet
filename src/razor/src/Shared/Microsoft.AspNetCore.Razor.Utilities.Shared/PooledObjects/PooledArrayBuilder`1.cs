@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.Extensions.ObjectPool;
 
@@ -89,6 +88,20 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
             _builderPool?.Return(innerBuilder);
             _builder = null;
         }
+    }
+
+    /// <summary>
+    ///  Retrieves the inner <see cref="_builder"/>, moving any inline elements to it if necessary.
+    /// </summary>
+    private ImmutableArray<T>.Builder GetBuilder()
+    {
+        if (!TryGetBuilder(out var builder))
+        {
+            MoveInlineItemsToBuilder();
+            builder = _builder;
+        }
+
+        return builder;
     }
 
     /// <summary>
@@ -236,23 +249,6 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
     public readonly int Capacity
         => _builder?.Capacity ?? _capacity ?? InlineCapacity;
-
-    public void SetCapacityIfLarger(int value)
-    {
-        if (value > Capacity)
-        {
-            if (TryGetBuilder(out var builder))
-            {
-                Debug.Assert(value > builder.Capacity);
-                builder.Capacity = value;
-            }
-            else
-            {
-                Debug.Assert(value > (_capacity ?? InlineCapacity));
-                _capacity = value;
-            }
-        }
-    }
 
     public void Add(T item)
         => Insert(Count, item);
@@ -1582,7 +1578,11 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
         if (_capacity is int capacity)
         {
-            builder.SetCapacityIfLarger(capacity);
+            builder.Capacity = capacity;
+        }
+        else if (builder.Capacity < InlineCapacity)
+        {
+            builder.Capacity = InlineCapacity;
         }
 
         _builder = builder;
@@ -1609,6 +1609,33 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
         {
             SetInlineElement(i + offset, GetInlineElement(i));
         }
+    }
+
+    /// <summary>
+    ///  Sorts the contents of this builder.
+    /// </summary>
+    public void Sort()
+    {
+        var builder = GetBuilder();
+        builder.Sort();
+    }
+
+    /// <summary>
+    ///  Sorts the contents of this builder using the provided <see cref="IComparer{T}"/>.
+    /// </summary>
+    public void Sort(IComparer<T> comparer)
+    {
+        var builder = GetBuilder();
+        builder.Sort(comparer);
+    }
+
+    /// <summary>
+    ///  Sorts the contents of this builder using the provided <see cref="Comparison{T}"/>.
+    /// </summary>
+    public void Sort(Comparison<T> comparison)
+    {
+        var builder = GetBuilder();
+        builder.Sort(comparison);
     }
 
     public readonly ImmutableArray<T> ToImmutableOrdered()

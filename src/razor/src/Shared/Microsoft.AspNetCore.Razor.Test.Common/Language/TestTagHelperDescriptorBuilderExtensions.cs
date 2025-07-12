@@ -144,4 +144,105 @@ public static class TestTagHelperDescriptorBuilderExtensions
 
         return builder;
     }
+
+#nullable enable
+
+    public static TagHelperDescriptorBuilder AllowedChildTag(
+        this TagHelperDescriptorBuilder builder,
+        string tagName,
+        Action<AllowedChildTagDescriptorBuilder>? configure = null)
+    {
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
+        builder.AllowChildTag(childTag =>
+        {
+            childTag.Name = tagName;
+
+            configure?.Invoke(childTag);
+        });
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder BoundAttribute<T>(
+        this TagHelperDescriptorBuilder builder,
+        string name,
+        string propertyName,
+        Action<BoundAttributeDescriptorBuilder>? configure = null)
+        where T : notnull
+        => BoundAttribute(builder, name, propertyName, typeof(T), configure);
+
+    public static TagHelperDescriptorBuilder BoundAttribute(
+        this TagHelperDescriptorBuilder builder,
+        string name,
+        string propertyName,
+        Type type,
+        Action<BoundAttributeDescriptorBuilder>? configure = null)
+        => BoundAttribute(builder, name, propertyName, type.FullName!, configure);
+
+    public static TagHelperDescriptorBuilder BoundAttribute(
+        this TagHelperDescriptorBuilder builder,
+        string name,
+        string propertyName,
+        string typeName,
+        Action<BoundAttributeDescriptorBuilder>? configure = null)
+    {
+        builder.BoundAttributeDescriptor(attribute =>
+         {
+             attribute.Name(name);
+             attribute.Metadata(PropertyName(propertyName));
+             attribute.TypeName(typeName);
+
+             configure?.Invoke(attribute);
+         });
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder TagMatchingRule(
+        this TagHelperDescriptorBuilder builder,
+        Action<TagMatchingRuleDescriptorBuilder> configure)
+        => builder.TagMatchingRule(tagName: null, parentTagName: null, tagStructure: TagStructure.Unspecified, configure);
+
+    public static TagHelperDescriptorBuilder TagMatchingRule(
+        this TagHelperDescriptorBuilder builder,
+        string tagName,
+        Action<TagMatchingRuleDescriptorBuilder> configure)
+        => builder.TagMatchingRule(tagName, parentTagName: null, tagStructure: TagStructure.Unspecified, configure);
+
+    public static TagHelperDescriptorBuilder TagMatchingRule(
+        this TagHelperDescriptorBuilder builder,
+        string tagName,
+        string parentTagName,
+        Action<TagMatchingRuleDescriptorBuilder> configure)
+        => builder.TagMatchingRule(tagName, parentTagName, tagStructure: TagStructure.Unspecified, configure);
+
+    public static TagHelperDescriptorBuilder TagMatchingRule(
+        this TagHelperDescriptorBuilder builder,
+        string tagName,
+        TagStructure tagStructure,
+        Action<TagMatchingRuleDescriptorBuilder> configure)
+        => builder.TagMatchingRule(tagName, parentTagName: null, tagStructure, configure);
+
+    public static TagHelperDescriptorBuilder TagMatchingRule(
+        this TagHelperDescriptorBuilder builder,
+        string? tagName = null,
+        string? parentTagName = null,
+        TagStructure tagStructure = TagStructure.Unspecified,
+        Action<TagMatchingRuleDescriptorBuilder>? configure = null)
+    {
+        builder.TagMatchingRule(rule =>
+        {
+            rule.TagName = tagName;
+            rule.ParentTag = parentTagName;
+            rule.TagStructure = tagStructure;
+
+            configure?.Invoke(rule);
+        });
+
+        return builder;
+    }
 }

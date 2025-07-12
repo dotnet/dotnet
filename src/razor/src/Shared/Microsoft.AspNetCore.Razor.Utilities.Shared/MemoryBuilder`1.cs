@@ -41,6 +41,18 @@ internal ref struct MemoryBuilder<T>
         }
     }
 
+    public int Length
+    {
+        get => _length;
+        set
+        {
+            Debug.Assert(value >= 0);
+            Debug.Assert(value <= _memory.Length);
+
+            _length = value;
+        }
+    }
+
     public readonly ReadOnlyMemory<T> AsMemory()
         => _memory[.._length];
 

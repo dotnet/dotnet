@@ -92,11 +92,6 @@ public static class TestBoundAttributeDescriptorBuilderExtensions
         string attributeNamePrefix,
         string valueTypeName)
     {
-        if (builder == null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         builder.IsDictionary = true;
         builder.IndexerAttributeNamePrefix = attributeNamePrefix;
         builder.IndexerValueTypeName = valueTypeName;
@@ -127,4 +122,17 @@ public static class TestBoundAttributeDescriptorBuilderExtensions
 
         return builder;
     }
+
+#nullable enable
+
+    public static BoundAttributeDescriptorBuilder AsDictionaryAttribute<TValue>(
+        this BoundAttributeDescriptorBuilder builder,
+        string attributeNamePrefix)
+        => builder.AsDictionaryAttribute(attributeNamePrefix, typeof(TValue));
+
+    public static BoundAttributeDescriptorBuilder AsDictionaryAttribute(
+        this BoundAttributeDescriptorBuilder builder,
+        string attributeNamePrefix,
+        Type valueType)
+        => builder.AsDictionaryAttribute(attributeNamePrefix, valueType.FullName);
 }

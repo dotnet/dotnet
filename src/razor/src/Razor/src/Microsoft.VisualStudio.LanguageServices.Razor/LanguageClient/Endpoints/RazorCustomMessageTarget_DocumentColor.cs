@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.ColorPresentation;
-using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -26,27 +25,17 @@ internal partial class RazorCustomMessageTarget
         var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(documentColorParams.HostDocumentVersion, documentColorParams.TextDocument, cancellationToken);
         if (!synchronized || htmlDoc is null)
         {
-            return new List<ColorInformation>();
+            return [];
         }
 
         documentColorParams.TextDocument.DocumentUri = new(htmlDoc.Uri);
-        var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
-        var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<DocumentColorParams, ColorInformation[]>(
-            htmlTextBuffer,
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<DocumentColorParams, ColorInformation[]>(
             Methods.TextDocumentDocumentColor.Name,
+            RazorLSPConstants.HtmlLanguageServerName,
             documentColorParams,
             cancellationToken).ConfigureAwait(false);
 
-        var colorInformation = new List<ColorInformation>();
-        await foreach (var response in requests)
-        {
-            if (response.Response is not null)
-            {
-                colorInformation.AddRange(response.Response);
-            }
-        }
-
-        return colorInformation;
+        return response.Result;
     }
 
     // Called by the Razor Language Server to provide color presentation from the platform.
@@ -61,26 +50,16 @@ internal partial class RazorCustomMessageTarget
         var (synchronized, htmlDoc) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(colorPresentationParams.RequiredHostDocumentVersion, colorPresentationParams.TextDocument, cancellationToken);
         if (!synchronized || htmlDoc is null)
         {
-            return new List<ColorPresentation>();
+            return [];
         }
 
         colorPresentationParams.TextDocument.DocumentUri = new(htmlDoc.Uri);
-        var htmlTextBuffer = htmlDoc.Snapshot.TextBuffer;
-        var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<ColorPresentationParams, ColorPresentation[]>(
-            htmlTextBuffer,
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<ColorPresentationParams, ColorPresentation[]>(
             Methods.TextDocumentColorPresentationName,
+            RazorLSPConstants.HtmlLanguageServerName,
             colorPresentationParams,
             cancellationToken).ConfigureAwait(false);
 
-        var colorPresentation = new List<ColorPresentation>();
-        await foreach (var response in requests)
-        {
-            if (response.Response is not null)
-            {
-                colorPresentation.AddRange(response.Response);
-            }
-        }
-
-        return colorPresentation;
+        return response.Result;
     }
 }

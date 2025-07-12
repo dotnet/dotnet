@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -28,15 +26,14 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
         }
 
         var scopeWithSeparator = " " + cssScope;
-        var nodes = documentNode.FindDescendantNodes<HtmlContentIntermediateNode>();
-        IntermediateToken previousTokenOpt = null;
-        foreach (var node in nodes)
+        IntermediateToken? previousToken = null;
+        foreach (var node in documentNode.FindDescendantNodes<HtmlContentIntermediateNode>())
         {
-            ProcessElement(node, scopeWithSeparator, ref previousTokenOpt);
+            ProcessElement(node, scopeWithSeparator, ref previousToken);
         }
     }
 
-    private void ProcessElement(HtmlContentIntermediateNode node, string cssScope, ref IntermediateToken previousTokenOpt)
+    private void ProcessElement(HtmlContentIntermediateNode node, string cssScope, ref IntermediateToken? previousToken)
     {
         // Add a minimized attribute whose name is simply the CSS scope
         for (var i = 0; i < node.Children.Count; i++)
@@ -44,7 +41,7 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
             var child = node.Children[i];
             if (child is IntermediateToken token && token.IsHtml)
             {
-                if (IsValidElement(token, previousTokenOpt))
+                if (IsValidElement(token, previousToken))
                 {
                     node.Children.Insert(i + 1, new IntermediateToken()
                     {
@@ -55,16 +52,16 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
                     i++;
                 }
 
-                previousTokenOpt = token;
+                previousToken = token;
             }
         }
 
-        static bool IsValidElement(IntermediateToken token, IntermediateToken previousTokenOpt)
+        static bool IsValidElement(IntermediateToken token, IntermediateToken? previousToken)
         {
             var content = token.Content.AsSpan();
 
             // `<!tag` is lowered into separate nodes `<` and `tag`, we process the latter.
-            if (previousTokenOpt?.Content == "<" && content is [not '<', ..])
+            if (previousToken?.Content == "<" && content is [not '<', ..])
             {
                 // There is no leading `<` to trim.
             }

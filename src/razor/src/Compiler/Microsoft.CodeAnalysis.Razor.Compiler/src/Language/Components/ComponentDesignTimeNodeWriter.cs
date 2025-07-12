@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -104,7 +102,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         WriteCSharpExpressionInnards(context, node);
     }
 
-    private void WriteCSharpExpressionInnards(CodeRenderingContext context, CSharpExpressionIntermediateNode node, string type = null)
+    private void WriteCSharpExpressionInnards(CodeRenderingContext context, CSharpExpressionIntermediateNode node, string? type = null)
     {
         if (node.Children.Count == 0)
         {
@@ -191,7 +189,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             }
         }
 
-        IDisposable linePragmaScope = null;
+        IDisposable? linePragmaScope = null;
         if (node.Source != null)
         {
             if (!isWhitespaceStatement)
@@ -372,7 +370,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         // We might need a scope for inferring types,
         CodeWriterExtensions.CSharpCodeWritingScope? typeInferenceCaptureScope = null;
-        string typeInferenceLocalName = null;
+        string? typeInferenceLocalName = null;
 
         var suppressTypeInference = ShouldSuppressTypeInferenceCall(node);
         if (suppressTypeInference)
@@ -563,7 +561,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // the "usings directive is unnecessary" message.
         // Looks like:
         // __o = typeof(SomeNamespace.SomeComponent);
-        using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+        using (context.CodeWriter.BuildLinePragma(node.Source.AssumeNotNull(), context))
         {
             context.CodeWriter.Write(DesignTimeVariable);
             context.CodeWriter.Write(" = ");
@@ -677,7 +675,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.WriteLine();
     }
 
-    private void WritePropertyAccess(CodeRenderingContext context, ComponentAttributeIntermediateNode node, ComponentIntermediateNode componentNode, string typeInferenceLocalName, bool shouldWriteBL0005Disable, out bool wrotePropertyAccess)
+    private void WritePropertyAccess(CodeRenderingContext context, ComponentAttributeIntermediateNode node, ComponentIntermediateNode componentNode, string? typeInferenceLocalName, bool shouldWriteBL0005Disable, out bool wrotePropertyAccess)
     {
         wrotePropertyAccess = false;
         if (node?.TagHelper?.Name is null || node.OriginalAttributeSpan is null)
