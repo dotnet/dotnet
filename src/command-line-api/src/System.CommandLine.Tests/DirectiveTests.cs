@@ -1,6 +1,7 @@
 ﻿// Copyright (c) .NET Foundation and contributors. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.CommandLine.Parsing;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -22,14 +23,14 @@ namespace System.CommandLine.Tests
         }
 
         [Fact]
-        public void Raw_tokens_still_hold_directives()
+        public void Tokens_still_hold_directives()
         {
             Directive directive = new ("parse");
 
             ParseResult result = Parse(new Option<bool>("-y"), directive, "[parse] -y");
 
             result.GetResult(directive).Should().NotBeNull();
-            result.Tokens.Should().Contain(t => t.Value == "[parse]");
+            result.Tokens.Should().Contain(t => t.Value == "[parse]" && t.Type == TokenType.Directive);
         }
 
         [Fact]
@@ -48,11 +49,11 @@ namespace System.CommandLine.Tests
             RootCommand root = new() { new Option<bool>("-y") };
             Directive parseDirective = new ("parse");
             Directive suggestDirective = new ("suggest");
-            CommandLineConfiguration config = new(root);
+
             root.Add(parseDirective);
             root.Add(suggestDirective);
 
-            var result = root.Parse("[parse] [suggest] -y", config);
+            var result = root.Parse("[parse] [suggest] -y");
 
             result.GetResult(parseDirective).Should().NotBeNull();
             result.GetResult(suggestDirective).Should().NotBeNull();
@@ -76,21 +77,21 @@ namespace System.CommandLine.Tests
                              : new SynchronousTestAction(incrementCallCount, terminating: false)
             };
 
-            var config = new CommandLineConfiguration(new RootCommand
+            var rootCommand = new RootCommand
             {
                 Action = invokeAsync
                              ? new AsynchronousTestAction(verifyActionWasCalled, terminating: false)
                              : new SynchronousTestAction(verifyActionWasCalled, terminating: false),
                 Directives = { testDirective }
-            });
+            };
 
             if (invokeAsync)
             {
-                await config.InvokeAsync("[test:1] [test:2]");
+                await rootCommand.Parse("[test:1] [test:2]").InvokeAsync();
             }
             else
             {
-                config.Invoke("[test:1] [test:2]");
+                rootCommand.Parse("[test:1] [test:2]").Invoke();
             }
 
             using var _ = new AssertionScope();
@@ -116,18 +117,19 @@ namespace System.CommandLine.Tests
             {
                 Action = new SynchronousTestAction(_ => directiveTwoActionWasCalled = true, terminating: false)
             };
-            var config = new CommandLineConfiguration(new RootCommand
+
+            var rootCommand = new RootCommand
             {
                 Action = new SynchronousTestAction(_ => commandActionWasCalled = true, terminating: false), Directives = { directiveOne, directiveTwo }
-            });
+            };
 
             if (invokeAsync)
             {
-                await config.InvokeAsync("[one] [two]");
+                await rootCommand.Parse("[one] [two]").InvokeAsync();
             }
             else
             {
-                config.Invoke("[one] [two]");
+                rootCommand.Parse("[one] [two]").Invoke();
             }
 
             using var _ = new AssertionScope();
@@ -212,10 +214,10 @@ namespace System.CommandLine.Tests
         private static ParseResult Parse(Option option, Directive directive, string commandLine)
         {
             RootCommand root = new() { option };
-            CommandLineConfiguration config = new(root);
+
             root.Directives.Add(directive);
 
-            return root.Parse(commandLine, config);
+            return root.Parse(commandLine);
         }
     }
 }
