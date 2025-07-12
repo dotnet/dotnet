@@ -35,11 +35,8 @@ namespace Microsoft.Diagnostics.Tools.Trace
                     ProcessLauncher.Launcher.PrepareChildProcess(args);
                 }
             }
-            return parseResult.InvokeAsync(new()
-            {
-                // System.CommandLine should not interfere with Ctrl+C
-                ProcessTerminationTimeout = null
-            });
+
+            return ProcessTerminationHandler.InvokeAsync(parseResult);
         }
     }
 }
