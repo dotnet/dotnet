@@ -33,7 +33,7 @@ namespace Microsoft.DotNet.CoreSetup.Test.HostActivation.FrameworkResolution
         public void Default(string requestedVersion, string resolvedVersion)
         {
             CommandResult result = RunTest(
-                new TestSettings().WithRuntimeConfigCustomizer(rc =>
+                new TestSettings().WithRuntimeConfigCustomizer(rc => 
                     rc.WithFramework(MicrosoftNETCoreApp, requestedVersion)));
 
             result.ShouldHaveResolvedFrameworkOrFailToFind(MicrosoftNETCoreApp, resolvedVersion);

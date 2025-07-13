@@ -44,6 +44,8 @@ public class DefaultTagHelperOptimizationPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
 
         var @class = documentNode.FindPrimaryClass();
+        Assert.NotNull(@class);
+
         Assert.IsType<DefaultTagHelperRuntimeIntermediateNode>(@class.Children[0]);
 
         var fieldDeclaration = Assert.IsType<FieldDeclarationIntermediateNode>(@class.Children[1]);

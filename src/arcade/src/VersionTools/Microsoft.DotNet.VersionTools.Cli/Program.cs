@@ -59,6 +59,6 @@ class Program
         });
 
         rootCommand.Subcommands.Add(trimAssetVersionCommand);
-        return new CommandLineConfiguration(rootCommand).Invoke(args);
+        return rootCommand.Parse(args).Invoke();
     }
 }
