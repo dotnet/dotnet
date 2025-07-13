@@ -31,10 +31,10 @@
       "commitSha": "227da60247996ce95c272cdb5941163c669224e8"
     },
     {
-      "barId": 274163,
+      "barId": 274994,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "4e54d322759e7248b14ce40d8b24eb5947a054a1"
+      "commitSha": "7d70948126274735f24d6f7feb6d879a155aa803"
     },
     {
       "barId": 274610,
@@ -73,10 +73,10 @@
       "commitSha": "dc47633c6e0f8c940b8c6b0c6adb50e44693ee20"
     },
     {
-      "barId": 274741,
+      "barId": 274992,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "01e9518db0e10f4a1886b0613b5bf63dbd2caa4a"
+      "commitSha": "d3571ef089ef13c74ea786dce8ef615916a097cd"
     },
     {
       "barId": 273951,
