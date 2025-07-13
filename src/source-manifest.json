@@ -19,10 +19,10 @@
       "commitSha": "95da703c5b2c85bf4c81b92c1ea1994c7de4970f"
     },
     {
-      "barId": 272511,
+      "barId": 274651,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "68b6dad50acc558276958b19b4c9189d70721d76"
+      "commitSha": "12473cd29fac1b9070c71ed8f5a43cada6872905"
     },
     {
       "barId": 274234,
@@ -31,10 +31,10 @@
       "commitSha": "227da60247996ce95c272cdb5941163c669224e8"
     },
     {
-      "barId": 274163,
+      "barId": 274994,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "4e54d322759e7248b14ce40d8b24eb5947a054a1"
+      "commitSha": "7d70948126274735f24d6f7feb6d879a155aa803"
     },
     {
       "barId": 274610,
@@ -73,10 +73,10 @@
       "commitSha": "dc47633c6e0f8c940b8c6b0c6adb50e44693ee20"
     },
     {
-      "barId": 272940,
+      "barId": 274992,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "9eec48b9253e5c65e22dbe4a41cc30191ee6c974"
+      "commitSha": "d3571ef089ef13c74ea786dce8ef615916a097cd"
     },
     {
       "barId": 273951,
@@ -85,10 +85,10 @@
       "commitSha": "714a51c57430dab50b67e5b468016288f5f7b0bd"
     },
     {
-      "barId": 273675,
+      "barId": 275015,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "61f2ad644f82a7208eb925bedc3bae49754e4440"
+      "commitSha": "f21eb18e3f2c01dcbfa583eee72e86f1259776af"
     },
     {
       "barId": 273704,
