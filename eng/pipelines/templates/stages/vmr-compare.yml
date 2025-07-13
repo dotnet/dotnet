@@ -109,22 +109,6 @@ stages:
           unifiedBuildRunId: ${{ parameters.unifiedBuildRunId }}
           sourceManifestCommit: ${{ parameters.sourceManifestCommit }}
           command: signing
-          assetType: Blob
-          OS: Darwin
-          clean: true
-    
-    - job: CompareSigning_Mac_Packages
-      displayName: Compare Signing - Mac (Packages)
-      pool: ${{ parameters.pool_Mac }}
-      timeoutInMinutes: 240
-      steps:
-      - template: ../steps/vmr-compare.yml
-        parameters:
-          continueOnError: false
-          unifiedBuildRunId: ${{ parameters.unifiedBuildRunId }}
-          sourceManifestCommit: ${{ parameters.sourceManifestCommit }}
-          command: signing
-          assetType: Package
           OS: Darwin
           clean: true
 
