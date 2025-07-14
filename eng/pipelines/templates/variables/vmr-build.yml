@@ -73,7 +73,7 @@ variables:
 
 - ${{ if eq(variables['isOfficialBuild'], true) }}:
   - name: officialBuildProperties
-    value: '/p:OfficialBuildId=$(Build.BuildNumber) $(officialBuilderProperty)'
+    value: '$(officialBuilderProperty)'
 - ${{ else }}:
   - name: officialBuildProperties
     value: ''
