@@ -59,7 +59,6 @@ src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 #
 
 # False positive
-src/diagnostics/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
 
 #
 # efcore
