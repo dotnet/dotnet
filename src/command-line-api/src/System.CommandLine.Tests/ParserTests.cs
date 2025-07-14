@@ -10,27 +10,20 @@ using FluentAssertions.Equivalency;
 using System.Linq;
 using FluentAssertions.Common;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace System.CommandLine.Tests
 {
     public partial class ParserTests
     {
-        private T GetValue<T>(ParseResult parseResult, Option<T> option)
-            => parseResult.GetValue(option);
-
-        private T GetValue<T>(ParseResult parseResult, Argument<T> argument)
-            => parseResult.GetValue(argument);
-
         [Fact]
         public void An_option_can_be_checked_by_object_instance()
         {
-            var option = new Option<bool>("--flag");
-            var option2 = new Option<bool>("--flag2");
-            var result = new RootCommand { option, option2 }
-                .Parse("--flag");
+            var option1 = new Option<string>("--option1");
+            var option2 = new Option<string>("--option2");
 
-            result.GetResult(option).Should().NotBeNull();
+            var result = new RootCommand { option1, option2 }.Parse("--option1");
+
+            result.GetResult(option1).Should().NotBeNull();
             result.GetResult(option2).Should().BeNull();
         }
 
@@ -138,7 +131,7 @@ namespace System.CommandLine.Tests
                 }
             };
 
-            CommandLineConfiguration configuration = new (rootCommand)
+            ParserConfiguration configuration = new()
             {
                 EnablePosixBundling = false
             };
@@ -166,7 +159,9 @@ namespace System.CommandLine.Tests
 
             result.CommandResult
                   .Children
-                  .Select(o => ((OptionResult)o).Option.Name)
+                  .OfType<OptionResult>()
+                  .Where(r => !r.Implicit)
+                  .Select(o => o.Option.Name)
                   .Should()
                   .BeEquivalentTo("--xyz");
         }
@@ -660,9 +655,9 @@ namespace System.CommandLine.Tests
                   .Should()
                   .BeOfType<CommandResult>()
                   .Which
-                  .Children
+                  .Command
                   .Should()
-                  .AllBeAssignableTo<CommandResult>();
+                  .Be(outer);
             result.CommandResult
                   .Children
                   .Should()
@@ -673,25 +668,17 @@ namespace System.CommandLine.Tests
         public void When_options_with_the_same_name_are_defined_on_parent_and_child_commands_and_specified_in_between_then_it_attaches_to_the_outer_command()
         {
             var outer = new Command("outer");
-            outer.Options.Add(new Option<bool>("-x"));
+            var outerOption = new Option<bool>("-x");
+            outer.Options.Add(outerOption);
             var inner = new Command("inner");
-            inner.Options.Add(new Option<bool>("-x"));
+            var innerOption = new Option<bool>("-x");
+            inner.Options.Add(innerOption);
             outer.Subcommands.Add(inner);
 
             var result = outer.Parse("outer -x inner");
 
-            result.CommandResult
-                  .Children
-                  .Should()
-                  .BeEmpty();
-            result.CommandResult
-                  .Parent
-                  .Should()
-                  .BeOfType<CommandResult>()
-                  .Which
-                  .Children
-                  .Should()
-                  .ContainSingle(o => o is OptionResult && ((OptionResult)o).Option.Name == "-x");
+            result.GetValue(outerOption).Should().BeTrue();
+            result.GetValue(innerOption).Should().BeFalse();
         }
 
         [Fact]
@@ -823,7 +810,7 @@ namespace System.CommandLine.Tests
 
             ParseResult result = command.Parse("command");
 
-            GetValue(result, argument)
+            result.GetValue(argument)
                   .Should()
                   .Be("default");
 
@@ -868,7 +855,7 @@ namespace System.CommandLine.Tests
             ParseResult result = command.Parse("command");
 
             result.GetResult(option).Should().NotBeNull();
-            GetValue(result, option).Should().Be("the-default");
+            result.GetValue(option).Should().Be("the-default");
         }
 
         [Fact]
@@ -934,6 +921,48 @@ namespace System.CommandLine.Tests
         }
 
         [Fact]
+        public void When_an_argument_with_a_default_value_is_matched_then_the_option_result_is_implicit()
+        {
+            var argument = new Argument<string>("the-arg")
+            {
+                DefaultValueFactory = _ => "the-default"
+            };
+
+            var command = new Command("command")
+            {
+                argument
+            };
+
+            var result = command.Parse("command the-explicit-value");
+
+            result.GetResult(argument)
+                  .Implicit
+                  .Should()
+                  .BeFalse();
+        }
+
+        [Fact]
+        public void When_an_argument_with_a_default_value_is_not_matched_then_the_option_result_is_implicit()
+        {
+            var argument = new Argument<string>("the-arg")
+            {
+                DefaultValueFactory = _ => "the-default"
+            };
+
+            var command = new Command("command")
+            {
+                argument
+            };
+
+            var result = command.Parse("command");
+
+            result.GetResult(argument)
+                  .Implicit
+                  .Should()
+                  .BeTrue();
+        }
+
+        [Fact]
         public void Command_default_argument_value_does_not_override_parsed_value()
         {
             var argument = new Argument<DirectoryInfo>("the-arg")
@@ -948,7 +977,7 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("the-directory");
 
-            GetValue(result, argument)
+            result.GetValue(argument)
                   .Name
                   .Should()
                   .Be("the-directory");
@@ -1049,8 +1078,8 @@ namespace System.CommandLine.Tests
         [Fact]
         public void Options_can_have_the_same_alias_differentiated_only_by_prefix()
         {
-            var option1 = new Option<bool>("-a");
-            var option2 = new Option<bool>("--a");
+            var option1 = new Option<string>("-a");
+            var option2 = new Option<string>("--a");
 
             var parser = new RootCommand
             {
@@ -1058,16 +1087,16 @@ namespace System.CommandLine.Tests
                 option2
             };
 
-            parser.Parse("-a").CommandResult
+            parser.Parse("-a value").CommandResult
                   .Children
                   .Select(s => ((OptionResult)s).Option)
                   .Should()
-                  .BeEquivalentTo(new[] { option1 });
-            parser.Parse("--a").CommandResult
+                  .BeEquivalentTo([option1]);
+            parser.Parse("--a value").CommandResult
                   .Children
                   .Select(s => ((OptionResult)s).Option)
                   .Should()
-                  .BeEquivalentTo(new[] { option2 });
+                  .BeEquivalentTo([option2]);
         }
 
         [Theory]
@@ -1132,7 +1161,7 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse(input);
 
-            GetValue(result, optionX).Should().Be("-y");
+            result.GetValue(optionX).Should().Be("-y");
         }
         
         [Fact]
@@ -1151,9 +1180,9 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-a -bc");
 
-            GetValue(result, optionA).Should().Be("-bc");
-            GetValue(result, optionB).Should().BeFalse();
-            GetValue(result, optionC).Should().BeFalse();
+            result.GetValue(optionA).Should().Be("-bc");
+            result.GetValue(optionB).Should().BeFalse();
+            result.GetValue(optionC).Should().BeFalse();
         }
 
         [Fact]
@@ -1168,7 +1197,7 @@ namespace System.CommandLine.Tests
 
             var result = root.Parse("-a subcommand");
 
-            GetValue(result, optionA).Should().Be("subcommand");
+            result.GetValue(optionA).Should().Be("subcommand");
             result.CommandResult.Command.Should().BeSameAs(root);
         }
 
@@ -1189,7 +1218,7 @@ namespace System.CommandLine.Tests
 
             result.CommandResult.Command.Should().BeSameAs(subcommand);
 
-            GetValue(result, argument)
+            result.GetValue(argument)
                   .Should()
                   .BeEquivalentSequenceTo("one", "two", "three", "subcommand", "four");
 
@@ -1214,7 +1243,7 @@ namespace System.CommandLine.Tests
             var result = command.Parse(input);
 
             result.Errors.Should().BeEmpty();
-            GetValue(result, optionX).Should().Be("-y");
+            result.GetValue(optionX).Should().Be("-y");
         }
 
         [Fact]
@@ -1229,7 +1258,7 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-x -x");
 
-            GetValue(result, optionX).Should().Be("-x");
+            result.GetValue(optionX).Should().Be("-x");
         }
 
         [Theory]
@@ -1256,8 +1285,8 @@ namespace System.CommandLine.Tests
 
             result.Errors.Should().BeEmpty();
 
-            GetValue(result, optX).Should().BeTrue();
-            GetValue(result, optY).Should().BeTrue();
+            result.GetValue(optX).Should().BeTrue();
+            result.GetValue(optY).Should().BeTrue();
         }
 
         [Fact]
@@ -1274,8 +1303,8 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-x -x -x -y -y -x -y -y -y -x -x -y");
 
-            GetValue(result, optionX).Should().BeEquivalentTo(new[] { "-x", "-y", "-y" });
-            GetValue(result, optionY).Should().BeEquivalentTo(new[] { "-x", "-y", "-x" });
+            result.GetValue(optionX).Should().BeEquivalentTo(new[] { "-x", "-y", "-y" });
+            result.GetValue(optionY).Should().BeEquivalentTo(new[] { "-x", "-y", "-x" });
         }
 
         [Fact]
@@ -1292,7 +1321,7 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-yxx");
 
-            GetValue(result, optionX).Should().Be("x");
+            result.GetValue(optionX).Should().Be("x");
         }
 
         [Fact]
@@ -1309,8 +1338,8 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("name one two three");
 
-            GetValue(result, nameArg).Should().Be("name");
-            GetValue(result, columnsArg).Should().BeEquivalentTo("one", "two", "three");
+            result.GetValue(nameArg).Should().Be("name");
+            result.GetValue(columnsArg).Should().BeEquivalentTo("one", "two", "three");
         }
 
         [Fact]
@@ -1335,7 +1364,7 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-v an-argument");
 
-            GetValue(result, option).Should().BeTrue();
+            result.GetValue(option).Should().BeTrue();
         }
 
         [Fact]
@@ -1352,8 +1381,8 @@ namespace System.CommandLine.Tests
 
             var result = command.Parse("-x 23 unmatched-token -y 42");
 
-            GetValue(result, optionX).Should().Be("23");
-            GetValue(result, optionY).Should().Be("42");
+            result.GetValue(optionX).Should().Be("23");
+            result.GetValue(optionY).Should().Be("42");
             result.UnmatchedTokens.Should().BeEquivalentTo("unmatched-token");
         }
 
@@ -1655,7 +1684,7 @@ namespace System.CommandLine.Tests
 
             var result = rootCommand.Parse(new[] { arg1, arg2 });
 
-            GetValue(result, option).Should().BeEmpty();
+            result.GetValue(option).Should().BeEmpty();
         }
     }
 }

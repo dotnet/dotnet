@@ -211,8 +211,8 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_response_file_does_not_exist_then_error_is_returned()
         {
-            var optionOne = new Option<bool>("--flag");
-            var optionTwo = new Option<bool>("--flag2");
+            var optionOne = new Option<string>("-x");
+            var optionTwo = new Option<string>("-y");
 
             var result = new RootCommand
                          {
@@ -229,8 +229,8 @@ namespace System.CommandLine.Tests
         [Fact]
         public void When_response_filepath_is_not_specified_then_error_is_returned()
         {
-            var optionOne = new Option<bool>("--flag");
-            var optionTwo = new Option<bool>("--flag2");
+            var optionOne = new Option<string>("-x");
+            var optionTwo = new Option<string>("-y");
 
             var result = new RootCommand
                          {
@@ -253,8 +253,8 @@ namespace System.CommandLine.Tests
         public void When_response_file_cannot_be_read_then_specified_error_is_returned()
         {
             var nonexistent = Path.GetTempFileName();
-            var optionOne = new Option<bool>("--flag");
-            var optionTwo = new Option<bool>("--flag2");
+            var optionOne = new Option<string>("--flag");
+            var optionTwo = new Option<string>("--flag2");
 
             using (File.Open(nonexistent, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             {
@@ -287,9 +287,8 @@ namespace System.CommandLine.Tests
                 optionOne,
                 optionTwo
             };
-            CommandLineConfiguration config = new (rootCommand);
 
-            var result = rootCommand.Parse($"@{responseFile}", config);
+            var result = rootCommand.Parse($"@{responseFile}");
 
             result.GetValue(optionOne).Should().Be("first value");
             result.GetValue(optionTwo).Should().Be(123);
@@ -302,7 +301,7 @@ namespace System.CommandLine.Tests
             {
                 new Argument<List<string>>("arg")
             };
-            CommandLineConfiguration configuration = new(command)
+            ParserConfiguration configuration = new()
             {
                 ResponseFileTokenReplacer = null
             };
