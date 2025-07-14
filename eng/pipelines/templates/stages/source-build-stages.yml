@@ -66,16 +66,6 @@ stages:
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
 
-        - buildNameFormat: '{0}_Offline_MsftSdk'
-          distro: fedora
-          targetArchitecture: x64
-          buildFromArchive: true             # ✅
-          enablePoison: false                # 🚫
-          runOnline: false                   # 🚫
-          useMonoRuntime: false              # 🚫
-          useSystemLibraries: true           # ✅
-          withPreviousSDK: false             # 🚫
-
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
           - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
