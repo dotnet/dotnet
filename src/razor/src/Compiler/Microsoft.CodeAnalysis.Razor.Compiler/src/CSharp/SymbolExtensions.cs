@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -13,8 +15,40 @@ internal static class SymbolExtensions
             .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
             .RemoveMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
 
+    internal static string GetFullName(this ITypeSymbol typeSymbol)
+        => typeSymbol.ToDisplayString(FullNameTypeDisplayFormat);
+
+    internal static string GetFullName(this INamespaceSymbol namespaceSymbol)
+        => namespaceSymbol.ToDisplayString(FullNameTypeDisplayFormat);
+
     internal static bool HasFullName(this AttributeData attribute, string fullName)
         => attribute.AttributeClass is { } attributeClass && attributeClass.HasFullName(fullName);
+
+    internal static bool TryGetAttribute(
+        this ISymbol symbol, string fullName, [NotNullWhen(true)] out AttributeData? result)
+        => TryGetAttribute(symbol.GetAttributes(), fullName, out result);
+
+    private static bool TryGetAttribute(ImmutableArray<AttributeData> attributes, string fullName, [NotNullWhen(true)] out AttributeData? result)
+    {
+        result = GetAttribute(attributes, fullName);
+        return result != null;
+    }
+
+    internal static AttributeData? GetAttribute(this ISymbol symbol, string fullName)
+        => GetAttribute(symbol.GetAttributes(), fullName);
+
+    private static AttributeData? GetAttribute(ImmutableArray<AttributeData> attributes, string fullName)
+    {
+        foreach (var attribute in attributes)
+        {
+            if (attribute.HasFullName(fullName))
+            {
+                return attribute;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Checks if <paramref name="typeSymbol"/> has the same fully qualified name as <paramref name="fullName"/>.
@@ -28,7 +62,7 @@ internal static class SymbolExtensions
     internal static bool HasFullName(this ITypeSymbol typeSymbol, string fullName)
     {
         // generally we expect this call to fail, so try and match on the simple name first, before
-        // checking the fully qualified name, to prevent unnecessary string allocation from ToDisplayString 
+        // checking the fully qualified name, to prevent unnecessary string allocation from ToDisplayString
         if (typeSymbol.Name.Length > fullName.Length)
         {
             return false;
