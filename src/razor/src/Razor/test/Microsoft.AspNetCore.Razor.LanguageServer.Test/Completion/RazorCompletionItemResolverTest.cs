@@ -123,7 +123,8 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
             displayText: "TestItem",
             insertText: "TestItem",
             _attributeDescription,
-            commitCharacters: []);
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 
@@ -212,7 +213,8 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttribute(
             displayText: "TestItem",
             insertText: "TestItem", _attributeDescription,
-            commitCharacters: []);
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -28,9 +26,9 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
         }
 
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
-        for (var i = 0; i < references.Count; i++)
+
+        foreach (var reference in references)
         {
-            var reference = references[i];
             var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
 
             if (node.TagHelper.IsRefTagHelper())
@@ -63,9 +61,9 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
         }
     }
 
-    private IntermediateToken DetermineIdentifierToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
+    private IntermediateToken? DetermineIdentifierToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
     {
-        IntermediateToken foundToken = null;
+        IntermediateToken? foundToken = null;
 
         if (attributeNode.Children.Count == 1)
         {
