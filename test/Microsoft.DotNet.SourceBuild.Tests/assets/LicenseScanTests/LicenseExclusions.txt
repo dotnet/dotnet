@@ -55,12 +55,6 @@ src/command-line-api/System.CommandLine.sln|json
 src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 #
-# diagnostics
-#
-
-# False positive
-
-#
 # efcore
 #
 
