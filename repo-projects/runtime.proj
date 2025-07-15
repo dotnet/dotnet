@@ -46,13 +46,12 @@
     <BuildArgs Condition="'$(PgoInstrument)' == 'true'">$(BuildArgs) $(FlagParameterPrefix)pgoinstrument</BuildArgs>
 
     <!-- Handle system libraries -->
-    <UseSystemLibs Condition="'$(UseSystemLibs)' != ''">+$(UseSystemLibs)</UseSystemLibs>
-    <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
-    <BuildArgs Condition="$(UseSystemLibs.Contains('+libunwind'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+brotli')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_BROTLI=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+libunwind')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_LIBUNWIND=true</BuildArgs>
     <!-- TODO: llvm-libunwind -->
     <!-- TODO: LinuxTracepoints -->
-    <BuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</BuildArgs>
-    <BuildArgs Condition="$(UseSystemLibs.Contains('+zlib'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+rapidjson')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_RAPIDJSON=true</BuildArgs>
+    <BuildArgs Condition="$(UseSystemLibs.Contains('+zlib')) or $(UseSystemLibs.Contains('+all'))">$(BuildArgs) --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true</BuildArgs>
     <BuildArgs Condition="$(UseSystemLibs.Contains('-lttng'))">$(BuildArgs) /p:FeatureXplatEventSource=false</BuildArgs>
   </PropertyGroup>
 
