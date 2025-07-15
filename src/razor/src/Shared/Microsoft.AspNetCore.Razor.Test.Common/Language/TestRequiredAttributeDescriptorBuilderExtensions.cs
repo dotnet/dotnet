@@ -27,7 +27,7 @@ public static class TestRequiredAttributeDescriptorBuilderExtensions
     }
 
     public static RequiredAttributeDescriptorBuilder Value(
-        this RequiredAttributeDescriptorBuilder builder, string value, RequiredAttributeValueComparison? valueComparison = null)
+        this RequiredAttributeDescriptorBuilder builder, string? value, RequiredAttributeValueComparison? valueComparison = null)
     {
         builder.Value = value;
 
