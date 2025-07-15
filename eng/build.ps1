@@ -9,6 +9,7 @@ Param(
   [string][Alias('v')]$verbosity = "minimal",
   [Parameter()][ValidateSet("preview", "rtm", "default")]
   [string]$branding = "default",
+  [Parameter()][ValidatePattern("^\d{8}\.\d{1,3}$")]
   [string][Alias('obid')]$officialBuildId,
 
   # Actions

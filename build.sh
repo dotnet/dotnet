@@ -149,7 +149,12 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -official-build-id)
-      properties+=( "/p:OfficialBuildId=$2" )
+      officialBuildId="$2"
+      if [[ ! "$officialBuildId" =~ ^[0-9]{8}\.[0-9]{1,3}$ ]]; then
+        echo "ERROR: Invalid official-build-id format. Expected format: YYYYYMMDD.X"
+        #exit 1
+      fi
+      properties+=( "/p:OfficialBuildId=$officialBuildId" )
       shift
       ;;
     -verbosity|-v)
