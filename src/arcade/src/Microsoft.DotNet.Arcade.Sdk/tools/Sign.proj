@@ -74,7 +74,7 @@
       <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="$(_DotNetCoreRequired)">
       <_SigningGlobalJsonLines Include="{" />
       <_SigningGlobalJsonLines Include="  &quot;sdk&quot;: {" />
       <_SigningGlobalJsonLines Include="    &quot;paths&quot;: [" />
@@ -90,7 +90,7 @@
                       Encoding="utf-8"
                       WriteOnlyWhenDifferent="true" />
 
-    <ItemGroup>
+    <ItemGroup Condition="$(_DotNetCoreRequired)">
       <FileWrites Include="$(SigningTempPath)/global.json" />
     </ItemGroup>
 
