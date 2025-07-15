@@ -102,6 +102,17 @@
           DestinationFolder="$(SourceBuiltLayoutDir)"
           UseSymbolicLinksIfPossible="true" />
 
+    <ItemGroup>
+      <_RuntimeTarballs Include="$(ArtifactsAssetsDir)Runtime/**/dotnet-runtime-*$(ArchiveExtension)" />
+      <_RuntimeTarballs Include="$(ArtifactsAssetsDir)aspnetcore/Runtime/**/aspnetcore-runtime-*$(ArchiveExtension)"
+                        Exclude="$(ArtifactsAssetsDir)aspnetcore/Runtime/**/aspnetcore-runtime-composite-*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <!-- Copy runtime tarballs into the tarball preserving directory structure -->
+    <Copy SourceFiles="@(_RuntimeTarballs)"
+          DestinationFiles="@(_RuntimeTarballs->'$(SourceBuiltLayoutDir)$([MSBuild]::MakeRelative('$(ArtifactsAssetsDir)../../', '%(FullPath)'))')"
+          UseSymbolicLinksIfPossible="true" />
+
     <!-- Create a PackageVersions.props file that includes entries for all packages. -->
     <WritePackageVersionsProps KnownPackages="@(ProducedPackage->Metadata('PackageId'))"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
