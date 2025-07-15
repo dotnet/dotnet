@@ -63,6 +63,8 @@
       
       <!-- .pkgs and .app bundle tooling is only available on MacOS -->
       <PkgToolPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(NuGetPackageRoot)microsoft.dotnet.macospkg.cli\$(MicrosoftDotNetMacOsPkgVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.MacOsPkg.Cli.dll</PkgToolPath>
+
+      <SigningTempPath>$(ArtifactsTmpDir)/Signing</SigningTempPath>
     </PropertyGroup>
 
     <Error Condition="'$(AllowEmptySignList)' != 'true' AND '@(ItemsToSign)' == ''" 
@@ -71,6 +73,26 @@
     <PropertyGroup Condition="$(_DotNetCoreRequired)">
       <_DotNetCorePath>$(DotNetTool)</_DotNetCorePath>
     </PropertyGroup>
+
+    <ItemGroup>
+      <_SigningGlobalJsonLines Include="{" />
+      <_SigningGlobalJsonLines Include="  &quot;sdk&quot;: {" />
+      <_SigningGlobalJsonLines Include="    &quot;paths&quot;: [" />
+      <_SigningGlobalJsonLines Include="      &quot;$([System.IO.Path]::GetDirectoryName('$(_DotNetCorePath)'))&quot;" />
+      <_SigningGlobalJsonLines Include="    ]" />
+      <_SigningGlobalJsonLines Include="  }" />
+      <_SigningGlobalJsonLines Include="}" />
+    </ItemGroup>
+  
+    <WriteLinesToFile File="$(SigningTempPath)/global.json"
+                      Lines="@(_SigningGlobalJsonLines)"
+                      Overwrite="true"
+                      Encoding="utf-8"
+                      WriteOnlyWhenDifferent="true" />
+
+    <ItemGroup>
+      <FileWrites Include="$(SigningTempPath)/global.json" />
+    </ItemGroup>
 
     <!-- Keep TarToolPath TFM in sync with TarTool project TFM. -->
     <Microsoft.DotNet.SignTool.SignToolTask
@@ -84,7 +106,7 @@
         FileSignInfo="@(FileSignInfo)"
         ItemsToSkip3rdPartyCheck="@(ItemsToSkip3rdPartyCheck)"
         FileExtensionSignInfo="@(FileExtensionSignInfo)"
-        TempDir="$(ArtifactsTmpDir)"
+        TempDir="$(SigningTempPath)"
         LogDir="$(ArtifactsLogDir)"
         DotNetPath="$(_DotNetCorePath)"
         SNBinaryPath="$(SNBinaryPath)"
