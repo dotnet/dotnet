@@ -23,8 +23,7 @@ public class SymbolsTests : SdkTests
     /// <summary>
     /// Verifies that all symbols have valid sourcelinks.
     /// </summary>
-    // Temporarily disabled due until https://github.com/dotnet/dotnet/issues/1465 is fixed
-    //[Fact]
+    [Fact]
     public void VerifySdkSymbols()
     {
         try
