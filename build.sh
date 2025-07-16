@@ -35,7 +35,7 @@ echo "  --binaryLog                         Create MSBuild binary log (short: -b
   echo "  --source-repository <URL>         Source Link repository URL, required when building from tarball"
   echo "  --source-version <SHA>            Source Link revision, required when building from tarball"
   echo "  --with-packages <DIR>             Use the specified directory of previously-built packages"
-  echo "  --with-shared-components <FILE>   Use the specified shared components artifacts tarball file"
+  echo "  --with-shared-components <DIR>    Use the specified shared components artifacts (e.g. from a build of a 1xx branch)"
   echo "  --with-sdk <DIR>                  Use the SDK in the specified directory for bootstrapping"
   echo "  --prep                            Run prep-source-build.sh to download bootstrap binaries before building"
   echo ""
@@ -85,7 +85,7 @@ sourceRepository=''
 sourceVersion=''
 CUSTOM_PACKAGES_DIR=''
 CUSTOM_SDK_DIR=''
-sharedComponentsArchivePath=''
+sharedComponentsDir=''
 packagesDir="$scriptroot/prereqs/packages/"
 commonArchivesDir="${packagesDir}archives/common/"
 packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
@@ -200,12 +200,12 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -with-shared-components)
-      sharedComponentsArchivePath="$2"
-      if [ ! -f "$sharedComponentsArchivePath" ]; then
-          echo "Shared components archive '$sharedComponentsArchivePath' does not exist"
+      sharedComponentsDir="$2"
+      if [ ! -d "$sharedComponentsDir" ]; then
+          echo "Shared components directory '$sharedComponentsDir' does not exist"
           exit 1
       fi
-      properties+=( "/p:PreviouslySourceBuiltSharedComponentsArchivePath=$sharedComponentsArchivePath" )
+      properties+=( "/p:CustomSharedComponentsArtifactsPath=$sharedComponentsDir" )
       shift
       ;;
     -with-sdk)

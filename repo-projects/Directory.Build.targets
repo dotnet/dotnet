@@ -226,8 +226,8 @@
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
-                            SourcePath="$(PreviouslySourceBuiltSharedComponentsPackagesPath)"
-                            Condition="'$(AddPrebuiltFeeds)' == 'true' and Exists('$(PreviouslySourceBuiltSharedComponentsPackagesPath)')" />
+                            SourcePath="$(SharedComponentsArtifactsPath)"
+                            Condition="'$(AddPrebuiltFeeds)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ReferencePackagesNuGetSourceName)"
@@ -333,7 +333,7 @@
     <!-- Get the previously-built-source-built package information from the manifest from that build. -->
     <ItemGroup>
       <_PreviouslySourceBuiltAssetManifests Include="$(PreviouslySourceBuiltPackagesPath)VerticalManifest.xml" />
-      <_PreviouslySourceBuiltSharedComponentAssetManifests Include="$(PreviouslySourceBuiltSharedComponentsPackagesPath)VerticalManifest.xml" />
+      <_PreviouslySourceBuiltSharedComponentAssetManifests Include="$(SharedComponentsArtifactsPath)VerticalManifest.xml" />
     </ItemGroup>
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="@(_PreviouslySourceBuiltAssetManifests)" Condition="Exists(@(_PreviouslySourceBuiltAssetManifests))">

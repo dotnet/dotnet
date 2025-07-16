@@ -39,34 +39,54 @@
       Include="$(SharedComponentArchivesDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
   </ItemGroup>
 
+  <Target Name="ReferenceSharedComponents"
+          Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
+    
+    <!-- Copy assets from custom shared components artifacts path to artifacts directory -->
+    <ItemGroup>
+      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SharedComponentsAssets)"
+          DestinationFolder="$(ArtifactsDir)/assets/%(RecursiveDir)"
+          UseSymbolicLinksIfPossible="true"
+          Condition="'@(SharedComponentsAssets)' != ''" />
+  
+  </Target>  
+
+  <Target Name="UnpackSharedComponentsPrereqsArchive"
+          Condition="'@(SharedComponentsPrereqsArchivePath)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''"
+          Inputs="$(SharedComponentArchivesDir)"
+          Outputs="$(SharedComponentsArtifactsPath)">
+
+    <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
+
+    <PropertyGroup>
+      <_SharedComponentsArchivePath>@(SharedComponentsPrereqsArchivePath)</_SharedComponentsArchivePath>
+    </PropertyGroup>
+
+    <!-- Extract everything except the assets directory to the shared components packages path -->
+    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) --exclude='assets'"
+          WorkingDirectory="$(SharedComponentsArtifactsPath)" />
+
+    <!-- Extract only the assets directory directly to the artifacts directory -->
+    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) assets"
+          WorkingDirectory="$(ArtifactsDir)" />
+  </Target>
+
   <!--
-    Unpacks the previously source built archive produced from the 1xx feature band.
-    There are two possible sources for this archive:
-    1. The archive is specified by the user via the with-shared-components option in the build script.
-       This is what distro maintainers would typically use. This maps to the PreviouslySourceBuiltSharedComponentsArchivePath
+    Prepares the source built artifacts produced from the 1xx feature band so that they can be used in the current build.
+    There are two possible sources for these artifacts:
+    1. The directory to the extracted artifacts is specified by the user via the with-shared-components option in the build script.
+       This is what distro maintainers would typically use. This maps to the CustomSharedComponentsArtifactsPath
        property. This source takes precedence.
     2. The archive is contained in the prereqs/packages/archives/shared-components directory.
        This is what the prep script does by default. This provides a seamless experience for devs working in
        the VMR, not requiring them to pass extra parameters by default when working in a non-1xx branch.
        This scenario maps to the SharedComponentsPrereqsArchivePath item.
   -->
-  <Target Name="UnpackSourceBuiltSharedComponentsArtifactsArchive"
-          Condition="'$(PreviouslySourceBuiltSharedComponentsArchivePath)' != '' or @(SharedComponentsPrereqsArchivePath) != ''">
-    <MakeDir Directories="$(PreviouslySourceBuiltSharedComponentsPackagesPath)" />
-
-    <PropertyGroup>
-      <_SharedComponentsArchivePath Condition="'$(PreviouslySourceBuiltSharedComponentsArchivePath)' != ''">$(PreviouslySourceBuiltSharedComponentsArchivePath)</_SharedComponentsArchivePath>
-      <_SharedComponentsArchivePath Condition="'$(_SharedComponentsArchivePath)' == ''">@(SharedComponentsPrereqsArchivePath)</_SharedComponentsArchivePath>
-    </PropertyGroup>
-
-    <!-- Extract everything except the assets directory to the shared components packages path -->
-    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) --exclude='assets'"
-          WorkingDirectory="$(PreviouslySourceBuiltSharedComponentsPackagesPath)" />
-
-    <!-- Extract only the assets directory directly to the artifacts directory -->
-    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) assets"
-          WorkingDirectory="$(ArtifactsDir)" />
-  </Target>
+  <Target Name="PrepareSharedComponents"
+          DependsOnTargets="ReferenceSharedComponents;UnpackSharedComponentsPrereqsArchive" />
 
   <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
        the build to be working without prebuilts. -->
@@ -84,8 +104,8 @@
 
   <Target Name="UnpackTarballs"
           DependsOnTargets="UnpackSourceBuiltArtifactsArchive;
-                            UnpackSourceBuiltSharedComponentsArtifactsArchive;
-                            UnpackSourceBuiltPrebuiltsArchive" />
+                            UnpackSourceBuiltPrebuiltsArchive;
+                            PrepareSharedComponents" />
 
   <!-- Build the custom msbuild sdk resolver. -->
   <Target Name="BuildMSBuildSdkResolver"
