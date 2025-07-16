@@ -138,17 +138,17 @@ then
 fi
 
 # Check if Private.SourceBuilt artifacts archive exists
-downloadPsbArtifacts=true
+downloadPsbArtifacts=$downloadArtifacts
 commonArchiveDir="$archivesDir/common/"
-if [ "$downloadArtifacts" == true ] && [ -f ${commonArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
+if [ "$downloadPsbArtifacts" == true ] && [ -f ${commonArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
   echo "  $artifactsTarballPattern exists in $commonArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
 fi
 
 # Check if Private.SourceBuilt shared components archive exists
-downloadSharedComponentsArtifacts=true
+downloadSharedComponentsArtifacts=$downloadArtifacts
 packagesArchiveSharedComponentsDir="$archivesDir/shared-components/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveSharedComponentsDir}${artifactsBaseFileName}.*.tar.gz ]; then
+if [ "$downloadSharedComponentsArtifacts" == true ] && [ -f ${packagesArchiveSharedComponentsDir}${artifactsBaseFileName}.*.tar.gz ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveSharedComponentsDir...it will not be downloaded"
   downloadSharedComponentsArtifacts=false
 fi
