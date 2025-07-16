@@ -25,17 +25,6 @@ parameters:
   type: string
   default: ''
 
-# This parameter is used to determine the type of asset to compare.
-# This is used to workaround limitations with the available space
-# on the MacOS agents.
-- name: assetType
-  type: string
-  default: ' '
-  values:
-    - ' '
-    - Package
-    - Blob
-
 # This is used to workaround limitations with the available space
 # on the MacOS agents.
 - name: clean
@@ -163,11 +152,6 @@ steps:
       }
 
       $assetFilter = "`".*`""
-      if ("${{ parameters.assetType }}" -eq "Package") {
-        $assetFilter = "`"^[^/]*$`""
-      } elseif ("${{ parameters.assetType }}" -eq "Blob") {
-        $assetFilter = "`".*\/.*`""
-      }
 
       $(Build.SourcesDirectory)/eng/GatherDrops.ps1 `
         -filePath $filePath `
@@ -178,18 +162,28 @@ steps:
         -assetFilter $assetFilter `
         -nonShipping:$nonShipping
 
+# If running on MacOS, the total output size is too large
+# to download entirely. Instead, we use the patterns of the artifacts
+# that should validated on Mac.
 - template: ../steps/vmr-download-artifact.yml
   parameters:
     displayName: Download VMR Artifacts
     buildId: $(GetBuildInfo.UnifiedBuildRunId)
-    ${{ if eq(parameters.assetType, 'Blob') }}:
+    ${{ if eq(parameters.OS, 'Darwin') }}:
       itemPattern: |
-        *_Artifacts/assets/**
-        *_Artifacts/manifests/**
-    ${{ elseif eq(parameters.assetType, 'Package') }}:
-      itemPattern: |
-        *_Artifacts/packages/**
-        *_Artifacts/manifests/**
+        iOS*_Artifacts/assets/**
+        iOS*_Artifacts/packages/**
+        iOS*_Artifacts/manifests/**
+        tvOS*_Artifacts/assets/**
+        tvOS*_Artifacts/packages/**
+        tvOS*_Artifacts/manifests/**
+
+        MacCatalyst*_Artifacts/assets/**
+        MacCatalyst*_Artifacts/packages/**
+        MacCatalyst*_Artifacts/manifests/**
+        OSX*_Artifacts/assets/**
+        OSX*_Artifacts/packages/**
+        OSX*_Artifacts/manifests/**
     ${{ else }}:
       itemPattern: |
         *_Artifacts/assets/**
@@ -224,10 +218,6 @@ steps:
         } else {
             $additionalArgs += " -sdkTaskScript $(Build.SourcesDirectory)/eng/common/sdk-task.sh"
         }
-    }
-
-    if (![string]::IsNullOrWhiteSpace("${{ parameters.assetType }}")) {
-        $additionalArgs += " -assetType ${{ parameters.assetType }}"
     }
 
     if ("${{ parameters.clean }}" -eq "True") {

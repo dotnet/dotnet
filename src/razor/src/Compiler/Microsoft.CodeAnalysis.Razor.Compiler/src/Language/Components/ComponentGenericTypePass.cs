@@ -175,8 +175,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes = null;
             foreach (var uncoveredBindingKey in bindings.Keys.ToList())
             {
-                foreach (var candidateAncestor in Ancestors.OfType<ComponentIntermediateNode>())
+                foreach (var ancestor in Ancestors)
                 {
+                    if (ancestor is not ComponentIntermediateNode candidateAncestor)
+                    {
+                        continue;
+                    }
+
                     if (candidateAncestor.ProvidesCascadingGenericTypes != null
                         && candidateAncestor.ProvidesCascadingGenericTypes.TryGetValue(uncoveredBindingKey, out var genericTypeProvider))
                     {
@@ -247,7 +252,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             // Next we need to generate a type inference 'method' node. This represents a method that we will codegen that
             // contains all of the operations on the render tree building. Calling a method to operate on the builder
             // will allow the C# compiler to perform type inference.
-            var documentNode = (DocumentIntermediateNode)Ancestors[Ancestors.Count - 1];
+            var documentNode = (DocumentIntermediateNode)Ancestors[^1];
             CreateTypeInferenceMethod(documentNode, node, receivesCascadingGenericTypes);
         }
 
@@ -408,9 +413,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void CreateTypeInferenceMethod(DocumentIntermediateNode documentNode, ComponentIntermediateNode node, List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes)
         {
-            var @namespace = documentNode.FindPrimaryNamespace().Content;
+            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Content;
             @namespace = string.IsNullOrEmpty(@namespace) ? "__Blazor" : "__Blazor." + @namespace;
-            @namespace += "." + documentNode.FindPrimaryClass().ClassName;
+            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().ClassName;
 
             var genericTypeConstraints = node.Component.BoundAttributes
                 .Where(t => t.Metadata.ContainsKey(ComponentMetadata.Component.TypeParameterConstraintsKey))

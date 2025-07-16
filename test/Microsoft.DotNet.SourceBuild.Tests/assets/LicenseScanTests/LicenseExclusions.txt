@@ -39,7 +39,6 @@ src/aspnetcore/src/Installers/Windows/**/*.wxs|unknown-license-reference
 
 # License reference used in configuration, but not applying to code
 src/aspnetcore/src/Mvc/Settings.StyleCop|unknown-license-reference
-src/aspnetcore/src/submodules/MessagePack-CSharp/stylecop.json|unknown
 
 #
 # command-line-api
@@ -56,13 +55,6 @@ src/command-line-api/System.CommandLine.sln|json
 src/deployment-tools/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 
 #
-# diagnostics
-#
-
-# False positive
-src/diagnostics/THIRD-PARTY-NOTICES.TXT|codesourcery-2004
-
-#
 # efcore
 #
 
@@ -75,9 +67,6 @@ src/efcore/test/EFCore.Tests/ChangeTracking/PropertyEntryTest.cs|proprietary-lic
 #
 # fsharp
 #
-
-# Applies to installer, not source
-src/fsharp/setup/resources/eula/*.rtf
 
 # False positive
 src/fsharp/tests/fsharp/core/members/ops/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
@@ -158,8 +147,7 @@ src/runtime/src/libraries/System.Security.Cryptography.Xml/src/System/Security/C
 src/runtime/src/mono/mono/mini/mini-posix.c|unknown-license-reference
 src/runtime/src/mono/mono/mini/mini-windows.c|unknown-license-reference
 src/runtime/src/native/external/libunwind/doc/libunwind-ia64.*|generic-exception
-src/runtime/src/native/external/zlib-ng/cmake/detect-*|unknown-license-reference
-src/runtime/src/native/external/zlib-ng/cmake/detect-install-dirs.cmake|proprietary-license,unknown-license-reference
+src/runtime/src/native/external/zlib-ng/cmake/detect-*|unknown-license-reference,proprietary-license
 src/runtime/src/native/external/zlib-ng/cmake/fallback-macros.cmake|unknown-license-reference
 src/runtime/src/tests/JIT/Performance/CodeQuality/V8/Crypto/Crypto.cs|unknown-license-reference
 

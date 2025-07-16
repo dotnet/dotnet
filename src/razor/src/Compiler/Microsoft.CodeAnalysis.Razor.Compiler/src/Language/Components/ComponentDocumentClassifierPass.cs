@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -117,10 +116,10 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
             var directiveType = razorLanguageVersion >= RazorLanguageVersion.Version_6_0
                 ? ComponentConstrainedTypeParamDirective.Directive
                 : ComponentTypeParamDirective.Directive;
-            var typeParamReferences = documentNode.FindDirectiveReferences(directiveType);
-            for (var i = 0; i < typeParamReferences.Count; i++)
+
+            foreach (var typeParamReference in documentNode.FindDirectiveReferences(directiveType))
             {
-                var typeParamNode = (DirectiveIntermediateNode)typeParamReferences[i].Node;
+                var typeParamNode = (DirectiveIntermediateNode)typeParamReference.Node;
                 if (typeParamNode.HasDiagnostics)
                 {
                     continue;
@@ -154,7 +153,7 @@ internal class ComponentDocumentClassifierPass : DocumentClassifierPassBase
         }
     }
 
-    private bool TryComputeClassName(RazorCodeDocument codeDocument, out string className)
+    private static bool TryComputeClassName(RazorCodeDocument codeDocument, [NotNullWhen(true)] out string? className)
     {
         className = null;
         if (codeDocument.Source.FilePath == null || codeDocument.Source.RelativePath == null)
