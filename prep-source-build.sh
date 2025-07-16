@@ -37,6 +37,7 @@ function print_help () {
 }
 
 packagesDir="$REPO_ROOT/prereqs/packages"
+archivesDir="$packagesDir/archives"
 
 # SB prep default arguments
 defaultArtifactsRid='centos.10-x64'
@@ -138,23 +139,23 @@ fi
 
 # Check if Private.SourceBuilt artifacts archive exists
 downloadPsbArtifacts=true
-packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
-  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+commonArchiveDir="$archivesDir/common/"
+if [ "$downloadArtifacts" == true ] && [ -f ${commonArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
+  echo "  $artifactsTarballPattern exists in $commonArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
 fi
 
 # Check if Private.SourceBuilt shared components archive exists
 downloadSharedComponentsArtifacts=true
-packagesArchiveSharedComponentsDir="$packagesDir/archive-shared-components/"
+packagesArchiveSharedComponentsDir="$archivesDir/shared-components/"
 if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveSharedComponentsDir}${artifactsBaseFileName}.*.tar.gz ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveSharedComponentsDir...it will not be downloaded"
   downloadSharedComponentsArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
-  echo "  $prebuiltsBaseFileName.*.tar.gz exists in $packagesArchiveDir...it will not be downloaded"
+if [ "$downloadPrebuilts" == true ] && [ -f ${commonArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
+  echo "  $prebuiltsBaseFileName.*.tar.gz exists in $commonArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
@@ -267,7 +268,7 @@ function BootstrapArtifacts {
   # Copy NuGet.config from the sdk repo to have the right feeds
   cp "$REPO_ROOT/src/sdk/NuGet.config" "$workingDir"
 
-  properties=( "/p:ArchiveDir=$packagesArchiveDir" )
+  properties=( "/p:ArchiveDir=$commonArchiveDir" )
   if [[ -n "$bootstrap_rid" ]]; then
     properties+=( "/p:PortableTargetRid=$bootstrap_rid" )
   fi
@@ -288,10 +289,10 @@ fi
 
 # Read the eng/Versions.props to get the archives to download and download them
 if [ "$downloadPsbArtifacts" == true ]; then
-  DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$packagesArchiveDir"
+  DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$commonArchiveDir"
 
   if [ "$buildBootstrap" == true ]; then
-    BootstrapArtifacts "$packagesArchiveDir"
+    BootstrapArtifacts "$commonArchiveDir"
   fi
 fi
 
@@ -305,7 +306,7 @@ fi
 
 if [ "$downloadPrebuilts" == true ]; then
 
-  DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
+  DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$commonArchiveDir"
 fi
 
 if [ "$removeBinaries" == true ]; then
@@ -317,7 +318,7 @@ if [ "$removeBinaries" == true ]; then
   # If --with-packages is not passed, unpack PSB artifacts
   if [[ $psbDir == $defaultPsbDir ]]; then
     echo "  Extracting previously source-built to $workingDir"
-    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern")
+    sourceBuiltArchive=$(find "$commonArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern")
 
     if [ ! -f "$sourceBuiltArchive" ]; then
       echo "  ERROR: $artifactsTarballPattern does not exist..."\

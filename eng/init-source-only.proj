@@ -14,8 +14,8 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <ExternalTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive'))</ExternalTarballsDir>
-    <ExternalSharedComponentsTarballsDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archive-shared-components'))</ExternalSharedComponentsTarballsDir>
+    <CommonArchivesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackageArchivesDir)', 'common'))</CommonArchivesDir>
+    <SharedComponentArchivesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackageArchivesDir)', 'shared-components'))</SharedComponentArchivesDir>
   </PropertyGroup>
 
   <Target Name="Build"
@@ -27,16 +27,16 @@
   <!-- Unpacks the Private.SourceBuilt.Artifacts archive -->
   <Target Name="UnpackSourceBuiltArtifactsArchive"
           Condition="'$(CustomPreviouslySourceBuiltPackagesPath)' == ''"
-          Inputs="$(ExternalTarballsDir)"
+          Inputs="$(CommonArchivesDir)"
           Outputs="$(PreviouslySourceBuiltPackagesPath)">
     <MakeDir Directories="$(PreviouslySourceBuiltPackagesPath)" />
-    <Exec Command="tar -xzf $(ExternalTarballsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)"
+    <Exec Command="tar -xzf $(CommonArchivesDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)"
           WorkingDirectory="$(PreviouslySourceBuiltPackagesPath)" />
   </Target>
 
   <ItemGroup>
     <SharedComponentsPrereqsArchivePath
-      Include="$(ExternalSharedComponentsTarballsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      Include="$(SharedComponentArchivesDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
   </ItemGroup>
 
   <!--
@@ -45,7 +45,7 @@
     1. The archive is specified by the user via the with-shared-components option in the build script.
        This is what distro maintainers would typically use. This maps to the PreviouslySourceBuiltSharedComponentsArchivePath
        property. This source takes precedence.
-    2. The archive is contained in the prereqs/packages/archive-shared-components directory.
+    2. The archive is contained in the prereqs/packages/archives/shared-components directory.
        This is what the prep script does by default. This provides a seamless experience for devs working in
        the VMR, not requiring them to pass extra parameters by default when working in a non-1xx branch.
        This scenario maps to the SharedComponentsPrereqsArchivePath item.
@@ -71,10 +71,10 @@
   <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
        the build to be working without prebuilts. -->
   <Target Name="UnpackSourceBuiltPrebuiltsArchive"
-          Inputs="$(ExternalTarballsDir)"
+          Inputs="$(CommonArchivesDir)"
           Outputs="$(PrebuiltPackagesPath)">
     <ItemGroup>
-      <SourceBuiltPrebuiltsTarballFile Include="$(ExternalTarballsDir)$(SourceBuiltPrebuiltsTarballName).*$(ArchiveExtension)" />
+      <SourceBuiltPrebuiltsTarballFile Include="$(CommonArchivesDir)$(SourceBuiltPrebuiltsTarballName).*$(ArchiveExtension)" />
     </ItemGroup>
 
     <Exec Command="tar -xzf %(SourceBuiltPrebuiltsTarballFile.FullPath)"

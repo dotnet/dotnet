@@ -16,6 +16,7 @@
     <PrereqsDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'prereqs'))</PrereqsDir>
     <KeysDir>$([MSBuild]::NormalizeDirectory('$(PrereqsDir)', 'keys'))</KeysDir>
     <PrereqsPackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsDir)', 'packages'))</PrereqsPackagesDir>
+    <PrereqsPackageArchivesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archives'))</PrereqsPackageArchivesDir>
 
     <!-- When SB mode, the initial toolsets are unzipped to the "BootstrapPackages" dir.
          When running in non-source-build, the bootstrap package is the one restored at the beginning of the build. -->
