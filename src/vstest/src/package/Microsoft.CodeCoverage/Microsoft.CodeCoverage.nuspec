@@ -18,67 +18,6 @@
     <file src="net462\Microsoft.CodeCoverage.props" target="build\netstandard2.0\" />
     <file src="net462\Microsoft.CodeCoverage.targets" target="build\netstandard2.0\" />
 
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\Microsoft.VisualStudio.TraceDataCollector.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Core\Microsoft.CodeCoverage.Core.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Interprocess\Microsoft.CodeCoverage.Interprocess.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Instrumentation\Microsoft.CodeCoverage.Instrumentation.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Instrumentation.Core\Microsoft.CodeCoverage.Instrumentation.Core.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.Pdb.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.CodeCoverage.Instrumentation\Mono.Cecil.Rocks.dll" target="build\netstandard2.0\" />
-    <file src="net462\Microsoft.DiaSymReader.dll" target="build\netstandard2.0\" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\CodeCoverage.config" target="build\netstandard2.0\CodeCoverage\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\CodeCoverage.exe" target="build\netstandard2.0\CodeCoverage\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\codecoveragemessages.dll" target="build\netstandard2.0\CodeCoverage\codecoveragemessages.dll" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\covrun32.dll" target="build\netstandard2.0\CodeCoverage\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\msdia140.dll" target="build\netstandard2.0\CodeCoverage\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\Cov_x86.config" target="build\netstandard2.0\CodeCoverage\" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="build\netstandard2.0\CodeCoverage\coreclr\" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\CodeCoverage.exe" target="build\netstandard2.0\CodeCoverage\amd64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\covrun64.dll" target="build\netstandard2.0\CodeCoverage\amd64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\msdia140.dll" target="build\netstandard2.0\CodeCoverage\amd64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\amd64\Cov_x64.config" target="build\netstandard2.0\CodeCoverage\amd64\" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\covrunarm64.dll" target="build\netstandard2.0\CodeCoverage\arm64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\msdia140.dll" target="build\netstandard2.0\CodeCoverage\arm64\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\CodeCoverage\arm64\Cov_arm64.config" target="build\netstandard2.0\CodeCoverage\arm64\" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x86\MicrosoftInstrumentationEngine_x86.dll"	target="build\netstandard2.0\x86\MicrosoftInstrumentationEngine_x86.dll" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\x64\MicrosoftInstrumentationEngine_x64.dll"	target="build\netstandard2.0\x64\MicrosoftInstrumentationEngine_x64.dll" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\arm64\MicrosoftInstrumentationEngine_arm64.dll"	target="build\netstandard2.0\arm64\MicrosoftInstrumentationEngine_arm64.dll" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\ubuntu\x64\libCoverageInstrumentationMethod.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\ubuntu\x64\libInstrumentationEngine.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\ubuntu\x64\Cov_x64.config"	target="build\netstandard2.0\ubuntu\x64\Cov_x64.config" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libCoverageInstrumentationMethod.so"	target="build\netstandard2.0\alpine\x64\libCoverageInstrumentationMethod.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\libInstrumentationEngine.so"	target="build\netstandard2.0\alpine\x64\libInstrumentationEngine.so" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\alpine\x64\Cov_x64.config"	target="build\netstandard2.0\alpine\x64\Cov_x64.config" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libCoverageInstrumentationMethod.dylib"	target="build\netstandard2.0\macos\x64\libCoverageInstrumentationMethod.dylib" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\libInstrumentationEngine.dylib"	target="build\netstandard2.0\macos\x64\libInstrumentationEngine.dylib" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\InstrumentationEngine\macos\x64\Cov_x64.config"	target="build\netstandard2.0\macos\x64\Cov_x64.config" />
-
-    <file src="net462\Microsoft.Internal.CodeCoverage\Shim\netcoreapp1.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\net8.0\" />
-    <file src="net462\Microsoft.Internal.CodeCoverage\Shim\net45\Microsoft.VisualStudio.CodeCoverage.Shim.dll" target="lib\net462\" />
-
-
-    <!-- Add localized resources for trace data collector -->
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\cs\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\cs" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\de\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\de" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\es\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\es" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\fr\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\fr" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\it\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\it" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\ja\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\ja" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\ko\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\ko" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\pl\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\pl" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\pt-BR\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\pt-BR" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\ru\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\ru" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\tr\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\tr" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\zh-Hans\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\zh-Hans" />
-    <file src="net462\Microsoft.VisualStudio.TraceDataCollector\zh-Hant\Microsoft.VisualStudio.TraceDataCollector.resources.dll" target="build\netstandard2.0\zh-Hant" />
+    <file src="net462\Microsoft.Internal.CodeCoverage\**\*" target="" />
   </files>
 </package>
