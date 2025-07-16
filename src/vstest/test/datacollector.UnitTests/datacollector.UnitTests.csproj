@@ -9,7 +9,7 @@
     <RootNamespace>Microsoft.VisualStudio.TestPlatform.DataCollector.UnitTests</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFrameworks>net9.0;net48</TargetFrameworks>
     <AssemblyName>datacollector.UnitTests</AssemblyName>
   </PropertyGroup>

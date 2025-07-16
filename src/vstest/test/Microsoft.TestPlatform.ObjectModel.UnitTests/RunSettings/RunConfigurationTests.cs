@@ -119,23 +119,23 @@ public class RunConfigurationTests
     {
         var runConfiguration = new RunConfiguration();
         runConfiguration.TargetFrameworkVersion = FrameworkVersion.Framework35;
-        Equals(Framework.FromString("Framework35")!.Name, runConfiguration.TargetFramework!.Name);
+        Assert.AreEqual(Framework.FromString("Framework35")!.Name, runConfiguration.TargetFramework!.Name);
         Assert.AreEqual(FrameworkVersion.Framework35, runConfiguration.TargetFrameworkVersion);
 
         runConfiguration.TargetFrameworkVersion = FrameworkVersion.Framework40;
-        Equals(Framework.FromString("Framework40")!.Name, runConfiguration.TargetFramework.Name);
+        Assert.AreEqual(Framework.FromString("Framework40")!.Name, runConfiguration.TargetFramework.Name);
         Assert.AreEqual(FrameworkVersion.Framework40, runConfiguration.TargetFrameworkVersion);
 
         runConfiguration.TargetFrameworkVersion = FrameworkVersion.Framework45;
-        Equals(Framework.FromString("Framework45")!.Name, runConfiguration.TargetFramework.Name);
+        Assert.AreEqual(Framework.FromString("Framework45")!.Name, runConfiguration.TargetFramework.Name);
         Assert.AreEqual(FrameworkVersion.Framework45, runConfiguration.TargetFrameworkVersion);
 
         runConfiguration.TargetFrameworkVersion = FrameworkVersion.FrameworkCore10;
-        Equals(Framework.FromString("FrameworkCore10")!.Name, runConfiguration.TargetFramework.Name);
+        Assert.AreEqual(Framework.FromString("FrameworkCore10")!.Name, runConfiguration.TargetFramework.Name);
         Assert.AreEqual(FrameworkVersion.FrameworkCore10, runConfiguration.TargetFrameworkVersion);
 
         runConfiguration.TargetFrameworkVersion = FrameworkVersion.FrameworkUap10;
-        Equals(Framework.FromString("FrameworkUap10")!.Name, runConfiguration.TargetFramework.Name);
+        Assert.AreEqual(Framework.FromString("FrameworkUap10")!.Name, runConfiguration.TargetFramework.Name);
         Assert.AreEqual(FrameworkVersion.FrameworkUap10, runConfiguration.TargetFrameworkVersion);
     }
 
