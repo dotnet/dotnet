@@ -24,21 +24,15 @@ internal class ComponentCssScopePass : ComponentIntermediateNodePassBase, IRazor
             return;
         }
 
-        var nodes = documentNode.FindDescendantNodes<MarkupElementIntermediateNode>();
-        for (var i = 0; i < nodes.Count; i++)
+        foreach (var node in documentNode.FindDescendantNodes<MarkupElementIntermediateNode>())
         {
-            ProcessElement(nodes[i], cssScope);
+            // Add a minimized attribute whose name is simply the CSS scope
+            node.Children.Add(new HtmlAttributeIntermediateNode
+            {
+                AttributeName = cssScope,
+                Prefix = cssScope,
+                Suffix = string.Empty,
+            });
         }
-    }
-
-    private void ProcessElement(MarkupElementIntermediateNode node, string cssScope)
-    {
-        // Add a minimized attribute whose name is simply the CSS scope
-        node.Children.Add(new HtmlAttributeIntermediateNode
-        {
-            AttributeName = cssScope,
-            Prefix = cssScope,
-            Suffix = string.Empty,
-        });
     }
 }
