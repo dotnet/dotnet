@@ -22,6 +22,7 @@ public class TestPlatformNugetPackageTests : CodeCoverageAcceptanceTestBase
 
     [TestMethod]
     [TestCategory("Windows-Review")]
+    [Ignore("Code Coverage is using 17.x.x dependency, will be solved in other PR. https://github.com/microsoft/vstest/issues/15223")]
     [NetFullTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
     [NetCoreTargetFrameworkDataSourceAttribute(useCoreRunner: false)]
     public void RunMultipleTestAssembliesWithCodeCoverage(RunnerInfo runnerInfo)

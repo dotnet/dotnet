@@ -4,10 +4,11 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <UseBannedApiAnalyzers>true</UseBannedApiAnalyzers>
+    <TestRunnerAdditionalArguments>$(TestRunnerAdditionalArguments) --settings "$(MSBuildThisFileDirectory)\.runsettings"</TestRunnerAdditionalArguments>
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFrameworks>net9.0;net48</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>

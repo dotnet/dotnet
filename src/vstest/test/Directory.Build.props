@@ -3,5 +3,16 @@
 
   <PropertyGroup>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <EnableMSTestRunner>true</EnableMSTestRunner>
+    <!--
+      Arcade uses UseMSTestRunner instead of EnableMSTestRunner
+      https://github.com/dotnet/arcade/blob/c9ed073c0a2a828aed8f5c6ecb0a544b0f0fd3f8/src/Microsoft.DotNet.Arcade.Sdk/tools/MSTest/MSTest.targets#L29
+      https://github.com/dotnet/arcade/issues/15875      
+    -->
+    <UseMSTestRunner>true</UseMSTestRunner>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Condition="'$(IsTestProject)'=='true' AND '$(EnableMSTestRunner)'=='true'" Include="Microsoft.Testing.Extensions.TrxReport" Version="$(MicrosoftTestingPlatformVersion)" />
+  </ItemGroup>
 </Project>

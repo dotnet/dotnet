@@ -147,7 +147,7 @@ default, `Debug` configuration is run.
 If you want to run a particular test. Eg: Test Name that contains Blame in Acceptance test
 
 ```shell
-> test.cmd -p accept -f net451 -filter blame
+> .\test.cmd -bl -c release /p:TestRunnerAdditionalArguments="'--filter Blame'" -Integration
 ```
 
 ## Deployment
