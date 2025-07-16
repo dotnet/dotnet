@@ -18,6 +18,11 @@ resources:
         include:
         - refs/heads/release/*.0.1xx-preview*
         - refs/heads/internal/release/*.0.1xx*
+      # Trigger on build stages vs successful pipeline completion for a higher run frequency when there are
+      # publish/validation failures.
+      stages:
+        - VMR_Vertical_Build
+        - VMR_SourceOnly_Build
 
   - pipeline: dotnet-source-build-pre10.0
     source: dotnet-source-build-pre10.0
