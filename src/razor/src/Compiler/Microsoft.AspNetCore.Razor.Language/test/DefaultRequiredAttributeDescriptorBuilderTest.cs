@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -12,87 +11,33 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
     public void Build_DisplayNameIsName_NameComparisonFullMatch()
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-
-        builder
-            .Name("asp-action")
-            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.FullMatch);
+        var builder = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+            .TagMatchingRuleDescriptor(rule => rule
+                .RequireAttributeDescriptor(attribute => attribute
+                    .Name("asp-action", RequiredAttributeNameComparison.FullMatch)));
 
         // Act
-        var descriptor = builder.Build();
+        var tagHelper = builder.Build();
+        var attribute = tagHelper.TagMatchingRules[0].Attributes[0];
 
         // Assert
-        Assert.Equal("asp-action", descriptor.DisplayName);
+        Assert.Equal("asp-action", attribute.DisplayName);
     }
 
     [Fact]
     public void Build_DisplayNameIsNameWithDots_NameComparisonPrefixMatch()
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-
-        builder
-            .Name("asp-route-")
-            .NameComparisonMode(RequiredAttributeDescriptor.NameComparisonMode.PrefixMatch);
+        var builder = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+            .TagMatchingRuleDescriptor(rule => rule
+                .RequireAttributeDescriptor(attribute => attribute
+                    .Name("asp-route-", RequiredAttributeNameComparison.PrefixMatch)));
 
         // Act
-        var descriptor = builder.Build();
+        var tagHelper = builder.Build();
+        var attribute = tagHelper.TagMatchingRules[0].Attributes[0];
 
         // Assert
-        Assert.Equal("asp-route-...", descriptor.DisplayName);
-    }
-
-    [Fact]
-    public void Metadata_Same()
-    {
-        // When SetMetadata is called on multiple builders with the same metadata collection,
-        // they should share the instance.
-
-        // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-
-        var metadata = MetadataCollection.Create(PropertyName("SomeProperty"));
-
-        var builder1 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-        var builder2 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-
-        builder1.SetMetadata(metadata);
-        builder2.SetMetadata(metadata);
-
-        // Act
-        var descriptor1 = builder1.Build();
-        var descriptor2 = builder2.Build();
-
-        // Assert
-        Assert.Same(descriptor1.Metadata, descriptor2.Metadata);
-    }
-
-    [Fact]
-    public void Metadata_NotSame()
-    {
-        // When Metadata is accessed on multiple builders with the same metadata,
-        // they do not share the instance.
-
-        // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-
-        var builder1 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-        var builder2 = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
-
-        builder1.Metadata.Add(PropertyName("SomeProperty"));
-        builder2.Metadata.Add(PropertyName("SomeProperty"));
-
-        // Act
-        var descriptor1 = builder1.Build();
-        var descriptor2 = builder2.Build();
-
-        // Assert
-        Assert.NotSame(descriptor1.Metadata, descriptor2.Metadata);
+        Assert.Equal("asp-route-...", attribute.DisplayName);
     }
 }

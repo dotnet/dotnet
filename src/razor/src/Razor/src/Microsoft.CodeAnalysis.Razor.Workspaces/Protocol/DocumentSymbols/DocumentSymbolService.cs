@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
             {
 #pragma warning disable CS0618 // Type or member is obsolete
                 // SymbolInformation is obsolete, but things still return it so we have to handle it
-                if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, symbolInformation.Location.Range, out var newRange))
+                if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, symbolInformation.Location.Range, out var newRange))
                 {
                     symbolInformation.Location.Range = newRange;
                     symbolInformation.Location.Uri = razorDocumentUri;
@@ -75,8 +75,8 @@ internal class DocumentSymbolService(IDocumentMappingService documentMappingServ
 
         bool TryRemapRanges(RazorCSharpDocument csharpDocument, DocumentSymbol documentSymbol)
         {
-            if (_documentMappingService.TryMapToHostDocumentRange(csharpDocument, documentSymbol.Range, out var newRange) &&
-                _documentMappingService.TryMapToHostDocumentRange(csharpDocument, documentSymbol.SelectionRange, out var newSelectionRange))
+            if (_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, documentSymbol.Range, out var newRange) &&
+                _documentMappingService.TryMapToRazorDocumentRange(csharpDocument, documentSymbol.SelectionRange, out var newSelectionRange))
             {
                 documentSymbol.Range = newRange;
                 documentSymbol.SelectionRange = newSelectionRange;

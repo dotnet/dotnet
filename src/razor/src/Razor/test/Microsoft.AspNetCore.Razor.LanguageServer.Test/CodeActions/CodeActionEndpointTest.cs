@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -65,7 +65,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -91,7 +91,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -121,7 +121,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -147,7 +147,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -183,7 +183,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -218,7 +218,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -244,7 +244,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -281,7 +281,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -313,7 +313,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -355,7 +355,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -398,7 +398,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
 
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = LspFactory.CreateZeroWidthRange(0, 1),
             Context = new VSInternalCodeActionContext()
         };
@@ -437,7 +437,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var initialRange = LspFactory.CreateZeroWidthRange(0, 1);
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
         };
@@ -466,7 +466,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var initialRange = LspFactory.CreateZeroWidthRange(0, 1);
         var request = new VSCodeActionParams()
         {
-            TextDocument = new VSTextDocumentIdentifier { Uri = documentPath },
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = new(documentPath) },
             Range = initialRange,
             Context = new VSInternalCodeActionContext()
             {
@@ -550,7 +550,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
             ? (projectedRange.GetValueOrDefault(), true)
             : (It.Ref<LinePositionSpan>.IsAny, false);
 
-        mock.Setup(x => x.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
+        mock.Setup(x => x.TryMapToCSharpDocumentRange(It.IsAny<RazorCSharpDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
             .Returns(result);
 
         return mock.Object;

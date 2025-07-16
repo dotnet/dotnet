@@ -124,7 +124,8 @@
     <WriteUsageReports DataFile="$(PackageReportDataFile)"
                        PackageVersionPropsSnapshots="@(PackageVersionPropsSavedSnapshotFile)"
                        PoisonedReportFile="$(PoisonedReportFile)"
-                       OutputDirectory="$(ArtifactsLogDir)" />
+                       OutputDirectory="$(ArtifactsLogDir)"
+                       VersionPropertySuffix="$(PackageVersionPropertySuffix)" />
 
     <PropertyGroup Condition="'$(ContinueOnPrebuiltBaselineError)' == ''">
       <ContinueOnPrebuiltBaselineError>false</ContinueOnPrebuiltBaselineError>

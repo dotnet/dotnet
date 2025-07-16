@@ -32,8 +32,15 @@ catch (IOException)
 
 WindowsErrorReporting.SetErrorModeOnWindows();
 
-var parser = CreateCommandLineParser();
-return await parser.Parse(args).InvokeAsync(CancellationToken.None);
+var command = CreateCommand();
+var invocationConfiguration = new InvocationConfiguration()
+{
+    // By default, System.CommandLine will catch all exceptions, log them to the console, and return a non-zero exit code.
+    // Unfortunately this makes .NET's crash dump collection environment variables (e.g. 'DOTNET_DbgEnableMiniDump')
+    // entirely useless as it never detects an actual crash.  Disable this behavior so we can collect crash dumps when asked to.
+    EnableDefaultExceptionHandler = false
+};
+return await command.Parse(args).InvokeAsync(invocationConfiguration, CancellationToken.None);
 
 static async Task RunAsync(ServerConfiguration serverConfiguration, CancellationToken cancellationToken)
 {
@@ -167,7 +174,7 @@ static async Task RunAsync(ServerConfiguration serverConfiguration, Cancellation
     }
 }
 
-static CommandLineConfiguration CreateCommandLineParser()
+static RootCommand CreateCommand()
 {
     var debugOption = new Option<bool>("--debug")
     {
@@ -273,7 +280,6 @@ static CommandLineConfiguration CreateCommandLineParser()
         var sessionId = parseResult.GetValue(sessionIdOption);
         var extensionAssemblyPaths = parseResult.GetValue(extensionAssemblyPathsOption) ?? [];
         var devKitDependencyPath = parseResult.GetValue(devKitDependencyPathOption);
-        var razorSourceGenerator = parseResult.GetValue(razorSourceGeneratorOption);
         var razorDesignTimePath = parseResult.GetValue(razorDesignTimePathOption);
         var extensionLogDirectory = parseResult.GetValue(extensionLogDirectoryOption)!;
         var serverPipeName = parseResult.GetValue(serverPipeNameOption);
@@ -287,7 +293,6 @@ static CommandLineConfiguration CreateCommandLineParser()
             SessionId: sessionId,
             ExtensionAssemblyPaths: extensionAssemblyPaths,
             DevKitDependencyPath: devKitDependencyPath,
-            RazorSourceGenerator: razorSourceGenerator,
             RazorDesignTimePath: razorDesignTimePath,
             ServerPipeName: serverPipeName,
             UseStdIo: useStdIo,
@@ -296,15 +301,7 @@ static CommandLineConfiguration CreateCommandLineParser()
         return RunAsync(serverConfiguration, cancellationToken);
     });
 
-    var config = new CommandLineConfiguration(rootCommand)
-    {
-        // By default, System.CommandLine will catch all exceptions, log them to the console, and return a non-zero exit code.
-        // Unfortunately this makes .NET's crash dump collection environment variables (e.g. 'DOTNET_DbgEnableMiniDump')
-        // entirely useless as it never detects an actual crash.  Disable this behavior so we can collect crash dumps when asked to.
-        EnableDefaultExceptionHandler = false
-    };
-
-    return config;
+    return rootCommand;
 }
 
 static (string clientPipe, string serverPipe) CreateNewPipeNames()

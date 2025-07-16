@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace Microsoft.CodeAnalysis.Razor.Protocol;
 
@@ -33,36 +33,40 @@ internal static class LanguageServerConstants
 
     public static class CodeActions
     {
-        public const string GenerateEventHandler = "GenerateEventHandler";
+        public const string GenerateEventHandler = nameof(GenerateEventHandler);
 
-        public const string GenerateAsyncEventHandler = "GenerateAsyncEventHandler";
+        public const string GenerateAsyncEventHandler = nameof(GenerateAsyncEventHandler);
 
-        public const string EditBasedCodeActionCommand = "EditBasedCodeActionCommand";
+        public const string EditBasedCodeActionCommand = nameof(EditBasedCodeActionCommand);
 
-        public const string ExtractToCodeBehindAction = "ExtractToCodeBehind";
+        public const string ExtractToCodeBehind = nameof(ExtractToCodeBehind);
 
-        public const string ExtractToNewComponentAction = "ExtractToNewComponent";
+        public const string ExtractToCss = nameof(ExtractToCss);
 
-        public const string CreateComponentFromTag = "CreateComponentFromTag";
+        public const string ExtractToNewComponent = nameof(ExtractToNewComponent);
 
-        public const string AddUsing = "AddUsing";
+        public const string SimplifyTagToSelfClosing = nameof(SimplifyTagToSelfClosing);
 
-        public const string FullyQualify = "FullyQualify";
+        public const string CreateComponentFromTag = nameof(CreateComponentFromTag);
 
-        public const string PromoteUsingDirective = "PromoteUsingDirective";
+        public const string AddUsing = nameof(AddUsing);
 
-        public const string CodeActionFromVSCode = "CodeActionFromVSCode";
+        public const string FullyQualify = nameof(FullyQualify);
 
-        public const string WrapAttributes = "WrapAttributes";
+        public const string PromoteUsingDirective = nameof(PromoteUsingDirective);
+
+        public const string CodeActionFromVSCode = nameof(CodeActionFromVSCode);
+
+        public const string WrapAttributes = nameof(WrapAttributes);
 
         /// <summary>
         /// Remaps without formatting the resolved code action edit
         /// </summary>
-        public const string UnformattedRemap = "UnformattedRemap";
+        public const string UnformattedRemap = nameof(UnformattedRemap);
 
         /// <summary>
         /// Remaps and formats the resolved code action edit
         /// </summary>
-        public const string Default = "Default";
+        public const string Default = nameof(Default);
     }
 }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Threading;
+using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.Completion;
@@ -28,7 +29,7 @@ internal partial class RazorCustomMessageTarget
             throw new ArgumentNullException(nameof(inlineCompletionParams));
         }
 
-        var hostDocumentUri = inlineCompletionParams.TextDocument.Uri;
+        var hostDocumentUri = inlineCompletionParams.TextDocument.DocumentUri.GetRequiredParsedUri();
         if (!_documentManager.TryGetDocument(hostDocumentUri, out var documentSnapshot))
         {
             return null;
@@ -64,7 +65,7 @@ internal partial class RazorCustomMessageTarget
         DelegatedCompletionParams request,
         CancellationToken cancellationToken)
     {
-        var hostDocumentUri = request.Identifier.TextDocumentIdentifier.Uri;
+        var hostDocumentUri = request.Identifier.TextDocumentIdentifier.DocumentUri.GetRequiredParsedUri();
 
         string languageServerName;
         bool synchronized;
@@ -96,7 +97,7 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        var completionParams = new CompletionParams()
+        var completionParams = new RazorVSInternalCompletionParams()
         {
             Context = request.Context,
             Position = request.ProjectedPosition,
@@ -134,7 +135,7 @@ internal partial class RazorCustomMessageTarget
             ReinvocationResponse<RazorVSInternalCompletionList?>? response;
             using (_telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, request.CorrelationId))
             {
-                response = await _requestInvoker.ReinvokeRequestOnServerAsync<CompletionParams, RazorVSInternalCompletionList?>(
+                response = await _requestInvoker.ReinvokeRequestOnServerAsync<RazorVSInternalCompletionParams, RazorVSInternalCompletionList?>(
                     textBuffer,
                     lspMethodName,
                     languageServerName,
@@ -312,7 +313,7 @@ internal partial class RazorCustomMessageTarget
     [JsonRpcMethod(LanguageServerConstants.RazorGetFormattingOptionsEndpointName, UseSingleObjectParameterDeserialization = true)]
     public Task<FormattingOptions?> GetFormattingOptionsAsync(TextDocumentIdentifierAndVersion document, CancellationToken _)
     {
-        var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.Uri);
+        var formattingOptions = _formattingOptionsProvider.GetOptions(document.TextDocumentIdentifier.DocumentUri.GetRequiredParsedUri());
 
         if (formattingOptions is null)
         {

@@ -10,6 +10,10 @@ parameters:
   type: string
   default: ''
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 # Scope of jobs which are executed
 - name: scope
   type: string
@@ -85,6 +89,7 @@ stages:
   parameters:
     desiredSigning: ${{ parameters.desiredSigning }}
     desiredIbc: ${{ parameters.desiredIbc }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
@@ -92,18 +97,21 @@ stages:
 - ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
   - stage: Publish_Build_Assets
     displayName: Publish Assets
-    dependsOn: VMR_Vertical_Build
+    dependsOn:
+    - VMR_Vertical_Build
+    - VMR_SourceOnly_Build
     jobs:
     - template: /eng/common/templates-official/job/publish-build-assets.yml
       parameters:
         publishUsingPipelines: true
         publishAssetsImmediately: true
+        enablePublishBuildArtifacts: true
         pool: ${{ parameters.pool_Linux }}
         symbolPublishingAdditionalParameters: '/p:PublishSpecialClrFiles=true'
         publishingVersion: 4
         assetManifestsPattern: |
           **/manifests/**/*.xml
-          !*Sdk_*_Artifacts/**/*.xml
+          !*Sdk_*_Artifacts/**/VerticalManifest.xml
 
   - template: vmr-validation.yml
     parameters:
@@ -115,6 +123,7 @@ stages:
     pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
     scope: ${{ parameters.scope }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     verifications: ${{ parameters.verifications }}
     ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
       # For PR builds, we don't rely on Microsoft build assets for testing because not all of the required assets

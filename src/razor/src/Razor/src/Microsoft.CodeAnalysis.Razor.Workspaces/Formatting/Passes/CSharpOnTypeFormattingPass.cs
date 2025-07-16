@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -41,7 +41,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
         if (changes.Length == 0)
         {
-            if (!DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
+            if (!DocumentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), context.HostDocumentIndex, out _, out var projectedIndex))
             {
                 _logger.LogWarning($"Failed to map to projected position for document {context.OriginalSnapshot.FilePath}.");
                 return [];
@@ -58,6 +58,7 @@ internal sealed class CSharpOnTypeFormattingPass(
                 context.Options.ToIndentationOptions(),
                 autoFormattingOptions,
                 indentStyle: CodeAnalysis.Formatting.FormattingOptions.IndentStyle.Smart,
+                _csharpSyntaxFormattingOptionsOverride,
                 cancellationToken).ConfigureAwait(false);
 
             if (formattingChanges.IsEmpty)
@@ -192,7 +193,7 @@ internal sealed class CSharpOnTypeFormattingPass(
 
     private ImmutableArray<TextChange> RemapTextChanges(RazorCodeDocument codeDocument, ImmutableArray<TextChange> projectedTextChanges)
     {
-        var changes = DocumentMappingService.GetHostDocumentEdits(codeDocument.GetRequiredCSharpDocument(), projectedTextChanges);
+        var changes = DocumentMappingService.GetRazorDocumentEdits(codeDocument.GetRequiredCSharpDocument(), projectedTextChanges);
 
         return changes.ToImmutableArray();
     }

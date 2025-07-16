@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ internal static partial class RazorEditHelper
             var root = codeDocument.GetRequiredSyntaxRoot();
             var razorText = codeDocument.Source.Text;
             var csharpDocument = codeDocument.GetRequiredCSharpDocument();
-            var csharpText = csharpDocument.GetGeneratedSourceText();
+            var csharpText = csharpDocument.Text;
 
             foreach (var edit in csharpEdits)
             {
@@ -59,7 +59,7 @@ internal static partial class RazorEditHelper
 
                 var linePositionSpan = csharpText.GetLinePositionSpan(edit.Span.ToTextSpan());
 
-                if (!_documentMappingService.TryMapToHostDocumentRange(
+                if (!_documentMappingService.TryMapToRazorDocumentRange(
                     csharpDocument,
                     linePositionSpan,
                     MappingBehavior.Strict,

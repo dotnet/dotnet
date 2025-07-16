@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #if !NET
 using System;
@@ -27,7 +27,7 @@ internal class ExtractToComponentCodeActionResolver(
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
 
-    public string Action => LanguageServerConstants.CodeActions.ExtractToNewComponentAction;
+    public string Action => LanguageServerConstants.CodeActions.ExtractToNewComponent;
 
     public async Task<WorkspaceEdit?> ResolveAsync(DocumentContext documentContext, JsonElement data, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
@@ -50,13 +50,7 @@ internal class ExtractToComponentCodeActionResolver(
         var templatePath = Path.Combine(directoryName, "Component.razor");
         var componentPath = FileUtilities.GenerateUniquePath(templatePath, ".razor");
         var componentName = Path.GetFileNameWithoutExtension(componentPath);
-
-        // VS Code in Windows expects path to start with '/'
-        componentPath = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !componentPath.StartsWith('/')
-            ? '/' + componentPath
-            : componentPath;
-
-        var newComponentUri = LspFactory.CreateFilePathUri(componentPath);
+        var newComponentUri = new DocumentUri(LspFactory.CreateFilePathUri(componentPath, _languageServerFeatureOptions));
 
         using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
@@ -89,10 +83,10 @@ internal class ExtractToComponentCodeActionResolver(
 
         var documentChanges = new SumType<TextDocumentEdit, CreateFile, RenameFile, DeleteFile>[]
         {
-            new CreateFile { Uri = newComponentUri },
+            new CreateFile { DocumentUri = newComponentUri },
             new TextDocumentEdit
             {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = documentContext.Uri },
+                TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = new(documentContext.Uri) },
                 Edits =
                 [
                     new TextEdit
@@ -104,7 +98,7 @@ internal class ExtractToComponentCodeActionResolver(
             },
             new TextDocumentEdit
             {
-                TextDocument = new OptionalVersionedTextDocumentIdentifier { Uri = newComponentUri },
+                TextDocument = new OptionalVersionedTextDocumentIdentifier { DocumentUri = newComponentUri },
                 Edits  =
                 [
                     new TextEdit

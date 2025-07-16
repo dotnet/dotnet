@@ -28,8 +28,6 @@ internal static class WorkloadCommandParser
 {
     public static readonly string DocsLink = "https://aka.ms/dotnet-workload";
 
-    private static readonly Command Command = ConstructCommand();
-
     public static readonly Option<bool> InfoOption = new("--info")
     {
         Description = CliCommandStrings.WorkloadInfoDescription,
@@ -44,10 +42,10 @@ internal static class WorkloadCommandParser
 
     public static Command GetCommand()
     {
-        Command.Options.Add(InfoOption);
-        Command.Options.Add(VersionOption);
         return Command;
     }
+
+    private static readonly Command Command = ConstructCommand();
 
     internal static string GetWorkloadsVersion(WorkloadInfoHelper workloadInfoHelper = null)
     {
@@ -80,11 +78,11 @@ internal static class WorkloadCommandParser
                 reporter.WriteLine(indent + CliCommandStrings.ShouldInstallAWorkloadSet);
             }
         }
-        
+
         if (showVersion)
         {
             reporter.WriteLine($" Workload version: {GetWorkloadsVersion()}");
-            
+
             WriteUpdateModeAndAnyError(indent: " ");
             reporter.WriteLine();
         }
@@ -169,9 +167,12 @@ internal static class WorkloadCommandParser
         command.Subcommands.Add(WorkloadConfigCommandParser.GetCommand());
         command.Subcommands.Add(WorkloadHistoryCommandParser.GetCommand());
 
+        command.Options.Add(InfoOption);
+        command.Options.Add(VersionOption);
+
         command.Validators.Add(commandResult =>
         {
-            if (commandResult.GetResult(InfoOption) is null && commandResult.GetResult(VersionOption) is null && !commandResult.Children.Any(child => child is System.CommandLine.Parsing.CommandResult))
+            if (commandResult.HasOption(InfoOption) && commandResult.HasOption(VersionOption) && !commandResult.Children.Any(child => child is System.CommandLine.Parsing.CommandResult))
             {
                 commandResult.AddError(CliStrings.RequiredCommandNotPassed);
             }

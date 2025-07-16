@@ -1,11 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.ObjectModel;
-using System.Dynamic;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.TestModels.BasicTypesModel;
 
 // ReSharper disable InconsistentNaming
 namespace Microsoft.EntityFrameworkCore.ModelBuilding;
@@ -1442,7 +1439,7 @@ public abstract partial class ModelBuilderTest
                 .HasValueGeneratorFactory(typeof(CustomValueGeneratorFactory))
                 .IsRequired();
 
-        [ConditionalFact]
+        [ConditionalFact(Skip = "Issue #31411")]
         public virtual void Can_map_a_tuple_collection()
         {
             var modelBuilder = CreateModelBuilder();

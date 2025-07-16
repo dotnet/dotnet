@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Linq;
@@ -44,13 +44,13 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
         var outRange = new LinePositionSpan();
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentRange(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
+            .Setup(x => x.TryMapToCSharpDocumentRange(It.IsAny<RazorCSharpDocument>(), It.IsAny<LinePositionSpan>(), out outRange))
             .Returns(true);
 
         var projectedPosition = new LinePosition(1, 1);
         var projectedIndex = 1;
         documentMappingServiceMock
-            .Setup(x => x.TryMapToGeneratedDocumentPosition(It.IsAny<IRazorGeneratedDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
+            .Setup(x => x.TryMapToCSharpDocumentPosition(It.IsAny<RazorCSharpDocument>(), It.IsAny<int>(), out projectedPosition, out projectedIndex))
             .Returns(true);
 
         var endpoint = CreateEndpoint(languageServerFeatureOptions, documentMappingServiceMock.Object, clientConnection);
@@ -60,7 +60,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
         var request = new TextDocumentPositionParams
         {
-            TextDocument = new() { Uri = new Uri("C:/text.razor") },
+            TextDocument = new() { DocumentUri = new(new Uri("C:/text.razor")) },
             Position = position,
         };
 
@@ -217,7 +217,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
         var razorFileUri = new Uri(razorFilePath);
         var request = new TextDocumentPositionParams
         {
-            TextDocument = new() { Uri = razorFileUri, },
+            TextDocument = new() { DocumentUri = new(razorFileUri), },
             Position = codeDocument.Source.Text.GetPosition(code.Position)
         };
 
@@ -325,7 +325,7 @@ public class HoverEndpointTest(ITestOutputHelper testOutput) : TagHelperServiceT
 
             var hoverRequest = new TextDocumentPositionParams()
             {
-                TextDocument = new() { Uri = csharpDocumentUri, },
+                TextDocument = new() { DocumentUri = new(csharpDocumentUri), },
                 Position = hoverParams.ProjectedPosition
             };
 

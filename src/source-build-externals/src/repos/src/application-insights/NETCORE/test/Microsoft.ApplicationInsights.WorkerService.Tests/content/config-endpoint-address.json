@@ -1,7 +1,0 @@
-﻿{
-  "ApplicationInsights": {
-    "TelemetryChannel": {
-      "EndpointAddress":  "http://localhost:1234/v2/track/"
-    }
-  }
-}

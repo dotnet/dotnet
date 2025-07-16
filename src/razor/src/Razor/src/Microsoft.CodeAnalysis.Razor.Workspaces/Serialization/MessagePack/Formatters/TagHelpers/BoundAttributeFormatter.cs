@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using MessagePack;
@@ -10,6 +10,8 @@ namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagH
 
 internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDescriptor>
 {
+    private const int PropertyCount = 14;
+
     public static readonly ValueFormatter<BoundAttributeDescriptor> Instance = new BoundAttributeFormatter();
 
     private BoundAttributeFormatter()
@@ -18,9 +20,8 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
 
     public override BoundAttributeDescriptor Deserialize(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(15);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
-        var kind = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
         var typeName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
         var isEnum = reader.ReadBoolean();
@@ -38,7 +39,7 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
         var diagnostics = reader.Deserialize<ImmutableArray<RazorDiagnostic>>(options);
 
         return new BoundAttributeDescriptor(
-            kind, name!, typeName, isEnum,
+            name!, typeName, isEnum,
             hasIndexer, indexerNamePrefix, indexerTypeName,
             documentationObject, displayName, containingType, caseSensitive, isEditorRequired,
             parameters, metadata, diagnostics);
@@ -46,9 +47,8 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
 
     public override void Serialize(ref MessagePackWriter writer, BoundAttributeDescriptor value, SerializerCachingOptions options)
     {
-        writer.WriteArrayHeader(15);
+        writer.WriteArrayHeader(PropertyCount);
 
-        CachedStringFormatter.Instance.Serialize(ref writer, value.Kind, options);
         CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
         CachedStringFormatter.Instance.Serialize(ref writer, value.TypeName, options);
         writer.Write(value.IsEnum);
@@ -68,9 +68,8 @@ internal sealed class BoundAttributeFormatter : ValueFormatter<BoundAttributeDes
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
     {
-        reader.ReadArrayHeaderAndVerify(15);
+        reader.ReadArrayHeaderAndVerify(PropertyCount);
 
-        CachedStringFormatter.Instance.Skim(ref reader, options); // Kind;
         CachedStringFormatter.Instance.Skim(ref reader, options); // Name
         CachedStringFormatter.Instance.Skim(ref reader, options); // TypeName
         reader.Skip(); // IsEnum

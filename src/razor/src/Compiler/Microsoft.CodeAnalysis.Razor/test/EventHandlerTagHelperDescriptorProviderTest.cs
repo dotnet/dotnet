@@ -81,16 +81,16 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Empty(requiredAttribute.Diagnostics);
         Assert.Equal("@onclick", requiredAttribute.DisplayName);
         Assert.Equal("@onclick", requiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, requiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, requiredAttribute.NameComparison);
         Assert.Null(requiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, requiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, requiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(item.BoundAttributes);
 
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -191,9 +191,9 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Empty(catchAllRequiredAttribute.Diagnostics);
         Assert.Equal("@onclick", catchAllRequiredAttribute.DisplayName);
         Assert.Equal("@onclick", catchAllRequiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, catchAllRequiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, catchAllRequiredAttribute.NameComparison);
         Assert.Null(catchAllRequiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, catchAllRequiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, catchAllRequiredAttribute.ValueComparison);
 
         var preventDefaultRule = item.TagMatchingRules[1];
         Assert.Empty(preventDefaultRule.Diagnostics);
@@ -206,9 +206,9 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Empty(preventDefaultRequiredAttribute.Diagnostics);
         Assert.Equal("@onclick:preventDefault", preventDefaultRequiredAttribute.DisplayName);
         Assert.Equal("@onclick:preventDefault", preventDefaultRequiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, preventDefaultRequiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, preventDefaultRequiredAttribute.NameComparison);
         Assert.Null(preventDefaultRequiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, preventDefaultRequiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, preventDefaultRequiredAttribute.ValueComparison);
 
         var stopPropagationRule = item.TagMatchingRules[2];
         Assert.Empty(stopPropagationRule.Diagnostics);
@@ -221,16 +221,16 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Empty(stopPropagationRequiredAttribute.Diagnostics);
         Assert.Equal("@onclick:stopPropagation", stopPropagationRequiredAttribute.DisplayName);
         Assert.Equal("@onclick:stopPropagation", stopPropagationRequiredAttribute.Name);
-        Assert.Equal(RequiredAttributeDescriptor.NameComparisonMode.FullMatch, stopPropagationRequiredAttribute.NameComparison);
+        Assert.Equal(RequiredAttributeNameComparison.FullMatch, stopPropagationRequiredAttribute.NameComparison);
         Assert.Null(stopPropagationRequiredAttribute.Value);
-        Assert.Equal(RequiredAttributeDescriptor.ValueComparisonMode.None, stopPropagationRequiredAttribute.ValueComparison);
+        Assert.Equal(RequiredAttributeValueComparison.None, stopPropagationRequiredAttribute.ValueComparison);
 
         var attribute = Assert.Single(item.BoundAttributes);
 
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Kind);
+        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);

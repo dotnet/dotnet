@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -229,6 +230,12 @@ internal static class DelegatedCompletionHelper
 
         if (startOrEndTag is null)
         {
+            if (IsInScriptOrStyleOrHtmlComment(node))
+            {
+                // If we're in a style, script, or HTML comment block, we don't want to include HTML snippets.
+                return false;
+            }
+
             return token.Kind is not (SyntaxKind.OpenAngle or SyntaxKind.CloseAngle);
         }
 
@@ -240,6 +247,29 @@ internal static class DelegatedCompletionHelper
         }
 
         return !startOrEndTag.Span.Contains(absoluteIndex);
+
+        static bool IsInScriptOrStyleOrHtmlComment(AspNetCore.Razor.Language.Syntax.SyntaxNode? initialNode)
+        {
+            for (var node = initialNode; node != null; node = node.Parent)
+            {
+                if (node is MarkupElementSyntax elementNode)
+                {
+                    if (RazorSyntaxFacts.IsStyleBlock(elementNode) || RazorSyntaxFacts.IsScriptBlock(elementNode))
+                    {
+                        return true;
+                    }
+
+                    // If we're in an element but it's not a script or style block, stop looking
+                    break;
+                }
+                else if (node is MarkupCommentBlockSyntax commentNode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     public static object? GetOriginalCompletionItemData(
@@ -285,7 +315,7 @@ internal static class DelegatedCompletionHelper
     {
         // In VS Code, Roslyn does resolve via a custom command. Thats fine, but we have to modify the text edit sitting within it,
         // rather than the one LSP knows about.
-        if (resolvedCompletionItem.Command is { CommandIdentifier: "roslyn.client.completionComplexEdit", Arguments: var args })
+        if (resolvedCompletionItem.Command is { CommandIdentifier: Constants.CompleteComplexEditCommand, Arguments: var args })
         {
             if (args is [TextDocumentIdentifier, TextEdit complexEdit, _, int nextCursorPosition])
             {
@@ -302,7 +332,7 @@ internal static class DelegatedCompletionHelper
                     {
                         // nextCursorPosition is where VS Code will navigate to, so we translate it to our document, or set to 0 to do nothing.
                         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-                        args[3] = documentMappingService.TryMapToHostDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
+                        args[3] = documentMappingService.TryMapToRazorDocumentPosition(codeDocument.GetRequiredCSharpDocument(), nextCursorPosition, out _, out nextCursorPosition)
                             ? nextCursorPosition
                             : 0;
                     }
@@ -310,7 +340,7 @@ internal static class DelegatedCompletionHelper
             }
             else
             {
-                logger.LogError($"Unexpected arguments for command '{resolvedCompletionItem.Command.CommandIdentifier}': Expected: [TextDocumentIdentifier, TextEdit, _, int], Actual: {GetArgumentTypesLogString(resolvedCompletionItem)}");
+                logger.LogError($"Unexpected arguments for command '{Constants.CompleteComplexEditCommand}': Expected: [TextDocumentIdentifier, TextEdit, _, int], Actual: {GetArgumentTypesLogString(resolvedCompletionItem)}");
                 Debug.Fail("Unexpected arguments for Roslyn complex edit command. Have they changed things?");
             }
         }

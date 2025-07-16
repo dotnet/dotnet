@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -18,7 +18,7 @@ internal class CompletionTriggerAndCommitCharacters
     private static readonly char[] s_vsCodeHtmlTriggerCharacters = ['#', '.', '!', ',', '-', '<'];
     private static readonly char[] s_razorTriggerCharacters = ['<', ':', ' '];
     private static readonly char[] s_csharpTriggerCharacters = [' ', '(', '=', '#', '.', '<', '[', '{', '"', '/', ':', '~'];
-    private static readonly char[] s_commitCharacters = [' ', '>', ';', '='];
+    private static readonly ImmutableArray<string> s_commitCharacters = [" ", ">", ";", "="];
 
     private readonly HashSet<char> _csharpTriggerCharacters;
     private readonly HashSet<char> _delegationTriggerCharacters;
@@ -67,15 +67,16 @@ internal class CompletionTriggerAndCommitCharacters
         allTriggerCharacters.UnionWith(razorTriggerCharacters);
         allTriggerCharacters.UnionWith(delegationTriggerCharacters);
 
-        var commitCharacters = new HashSet<char>();
-        commitCharacters.UnionWith(s_commitCharacters);
-
         _csharpTriggerCharacters = csharpTriggerCharacters;
         _htmlTriggerCharacters = htmlTriggerCharacters;
         _razorTriggerCharacters = razorTriggerCharacters;
         _delegationTriggerCharacters = delegationTriggerCharacters;
+
+        // We shouldn't specify commit characters for VSCode.
+        // It doesn't appear to need them and they interfere with normal item commit.
+        // E.g. see https://github.com/dotnet/vscode-csharp/issues/7678
+        AllCommitCharacters = languageServerFeatureOptions.UseVsCodeCompletionTriggerCharacters ? [] : s_commitCharacters;
         AllTriggerCharacters = allTriggerCharacters.SelectAsArray(static c => c.ToString());
-        AllCommitCharacters = commitCharacters.SelectAsArray(static c => c.ToString());
     }
 
     public bool IsValidCSharpTrigger(CompletionContext completionContext)

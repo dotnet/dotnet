@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.IO;
@@ -19,6 +19,7 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
+using Microsoft.CodeAnalysis.Remote.Razor.Logging;
 using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
@@ -32,11 +33,13 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
 {
     private ExportProvider? _exportProvider;
+    private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private RemoteClientInitializationOptions _clientInitializationOptions;
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
     private IFilePathService? _filePathService;
 
+    private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
     private protected TestRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
@@ -68,6 +71,11 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         }
 
         AddDisposable(_exportProvider);
+
+        _incompatibleProjectService = new TestIncompatibleProjectService();
+
+        var remoteLogger = _exportProvider.GetExportedValue<RemoteLoggerFactory>();
+        remoteLogger.SetTargetLoggerFactory(LoggerFactory);
 
         _remoteServiceInvoker = new TestRemoteServiceInvoker(JoinableTaskContext, _exportProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);

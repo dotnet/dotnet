@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
-using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
@@ -52,35 +51,22 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        codeActionParams.CodeActionParams.TextDocument.Uri = virtualDocumentSnapshot.Uri;
+        codeActionParams.CodeActionParams.TextDocument.DocumentUri = new(virtualDocumentSnapshot.Uri);
 
-        var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var lspMethodName = Methods.TextDocumentCodeActionName;
         using var _ = _telemetryReporter.TrackLspRequest(lspMethodName, languageServerName, TelemetryThresholds.CodeActionSubLSPTelemetryThreshold, codeActionParams.CorrelationId);
-        var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
-            textBuffer,
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<VSCodeActionParams, IReadOnlyList<VSInternalCodeAction>>(
             lspMethodName,
+            languageServerName,
             codeActionParams.CodeActionParams,
             cancellationToken).ConfigureAwait(false);
 
-        var codeActions = new List<VSInternalCodeAction>();
-        await foreach (var response in requests.WithCancellation(cancellationToken).ConfigureAwait(false))
+        if (response.Result is { } codeActions)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                break;
-            }
-
-            if (response.Response != null)
-            {
-                foreach (var codeAction in response.Response)
-                {
-                    codeActions.Add(codeAction);
-                }
-            }
+            return codeActions;
         }
 
-        return codeActions;
+        return [];
     }
 
     // Called by the Razor Language Server to resolve code actions from the platform.
@@ -94,12 +80,14 @@ internal partial class RazorCustomMessageTarget
 
         bool synchronized;
         VirtualDocumentSnapshot virtualDocumentSnapshot;
+        string languageServerName;
         if (resolveCodeActionParams.LanguageKind == RazorLanguageKind.Html)
         {
             (synchronized, virtualDocumentSnapshot) = await TrySynchronizeVirtualDocumentAsync<HtmlVirtualDocumentSnapshot>(
                 resolveCodeActionParams.HostDocumentVersion,
                 resolveCodeActionParams.Identifier,
                 cancellationToken).ConfigureAwait(false);
+            languageServerName = RazorLSPConstants.HtmlLanguageServerName;
         }
         else if (resolveCodeActionParams.LanguageKind == RazorLanguageKind.CSharp)
         {
@@ -107,6 +95,7 @@ internal partial class RazorCustomMessageTarget
                 resolveCodeActionParams.HostDocumentVersion,
                 resolveCodeActionParams.Identifier,
                 cancellationToken).ConfigureAwait(false);
+            languageServerName = RazorLSPConstants.RazorCSharpLanguageServerName;
         }
         else
         {
@@ -120,22 +109,17 @@ internal partial class RazorCustomMessageTarget
             return null;
         }
 
-        var textBuffer = virtualDocumentSnapshot.Snapshot.TextBuffer;
         var codeAction = resolveCodeActionParams.CodeAction;
 
-        var requests = _requestInvoker.ReinvokeRequestOnMultipleServersAsync<CodeAction, VSInternalCodeAction?>(
-            textBuffer,
+        var response = await _requestInvoker.ReinvokeRequestOnServerAsync<CodeAction, VSInternalCodeAction?>(
             Methods.CodeActionResolveName,
+            languageServerName,
             codeAction,
             cancellationToken).ConfigureAwait(false);
 
-        await foreach (var response in requests.WithCancellation(cancellationToken).ConfigureAwait(false))
+        if (response.Result is { } resolvedCodeAction)
         {
-            if (response.Response is not null)
-            {
-                // Only take the first response from a resolution
-                return response.Response;
-            }
+            return resolvedCodeAction;
         }
 
         return null;

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -160,7 +160,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
             // This single range is the minimal range that contains all of the C# code in the document.
             // We'll try to call into the mapping service to map to the projected range for us. If that doesn't work,
             // we'll try to find the minimal range ourselves.
-            if (!_documentMappingService.TryMapToGeneratedDocumentRange(generatedDocument, razorSpan, out var csharpRange) &&
+            if (!_documentMappingService.TryMapToCSharpDocumentRange(generatedDocument, razorSpan, out var csharpRange) &&
                 !codeDocument.TryGetMinimalCSharpRange(razorSpan, out csharpRange))
             {
                 // There's no C# in the range.
@@ -200,7 +200,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
             var tokenModifiers = csharpResponse[i + 4];
 
             var semanticRange = CSharpDataToSemanticRange(lineDelta, charDelta, length, tokenType, tokenModifiers, previousSemanticRange);
-            if (_documentMappingService.TryMapToHostDocumentRange(generatedDocument, semanticRange.AsLinePositionSpan(), out var originalRange))
+            if (_documentMappingService.TryMapToRazorDocumentRange(generatedDocument, semanticRange.AsLinePositionSpan(), out var originalRange))
             {
                 if (razorSpan.OverlapsWith(originalRange))
                 {

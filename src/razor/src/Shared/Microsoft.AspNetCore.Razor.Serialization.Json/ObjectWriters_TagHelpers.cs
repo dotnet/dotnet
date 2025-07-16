@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #if !NET
 using System.Collections.Generic;
@@ -60,6 +60,18 @@ internal static partial class ObjectWriters
             }
         }
 
+        static void WriteTypeNameObject(JsonDataWriter writer, string propertyName, TypeNameObject typeNameObject)
+        {
+            if (typeNameObject.Index is byte index)
+            {
+                writer.Write(propertyName, index);
+            }
+            else if (typeNameObject.StringValue is string stringValue)
+            {
+                writer.Write(propertyName, stringValue);
+            }
+        }
+
         static void WriteTagMatchingRule(JsonDataWriter writer, TagMatchingRuleDescriptor value)
         {
             writer.WriteObject(value, static (writer, value) =>
@@ -77,14 +89,11 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
+                writer.Write(nameof(value.Flags), (byte)value.Flags);
                 writer.Write(nameof(value.Name), value.Name);
-                writer.WriteIfNotZero(nameof(value.NameComparison), (int)value.NameComparison);
-                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
+                writer.WriteIfNotZero(nameof(value.NameComparison), (byte)value.NameComparison);
                 writer.WriteIfNotNull(nameof(value.Value), value.Value);
-                writer.WriteIfNotZero(nameof(value.ValueComparison), (int)value.ValueComparison);
-                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
-
-                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
+                writer.WriteIfNotZero(nameof(value.ValueComparison), (byte)value.ValueComparison);
                 writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
@@ -93,7 +102,6 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
-                writer.Write(nameof(value.Kind), value.Kind);
                 writer.Write(nameof(value.Name), value.Name);
                 writer.Write(nameof(value.TypeName), value.TypeName);
                 writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
@@ -116,15 +124,12 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
-                writer.Write(nameof(value.Kind), value.Kind);
+                writer.Write(nameof(value.Flags), (byte)value.Flags);
                 writer.Write(nameof(value.Name), value.Name);
-                writer.Write(nameof(value.TypeName), value.TypeName);
-                writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
+                writer.Write(nameof(value.PropertyName), value.PropertyName);
+                WriteTypeNameObject(writer, nameof(value.TypeName), value.TypeNameObject);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
-                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
 
-                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
                 writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }

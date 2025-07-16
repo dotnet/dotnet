@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -15,6 +15,9 @@ internal sealed class OOPDirectiveAttributeCompletionItemProvider : DirectiveAtt
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
 internal sealed class OOPDirectiveAttributeParameterCompletionItemProvider : DirectiveAttributeParameterCompletionItemProvider;
+
+[Export(typeof(IRazorCompletionItemProvider)), Shared]
+internal sealed class OOPDirectiveAttributeEventParameterCompletionItemProvider : DirectiveAttributeEventParameterCompletionItemProvider;
 
 [Export(typeof(IRazorCompletionItemProvider)), Shared]
 [method: ImportingConstructor]

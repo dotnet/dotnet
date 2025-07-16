@@ -1,9 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -33,19 +32,20 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         // For each event handler *usage* we need to rewrite the tag helper node to map to basic constructs.
         // Each usage will be represented by a tag helper property that is a descendant of either
         // a component or element.
-        var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         using var _ = ReferenceEqualityHashSetPool<IntermediateNode>.GetPooledObject(out var parents);
+        var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
 
-        for (var i = 0; i < references.Count; i++)
+        foreach (var reference in references)
         {
-            parents.Add(references[i].Parent);
+            parents.Add(reference.Parent);
         }
 
         // We need to do something similar for directive attribute parameters like @onclick:preventDefault.
         var parameterReferences = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeParameterIntermediateNode>();
-        for (var i = 0; i < parameterReferences.Count; i++)
+
+        foreach (var parameterReference in parameterReferences)
         {
-            parents.Add(parameterReferences[i].Parent);
+            parents.Add(parameterReference.Parent);
         }
 
         foreach (var parent in parents)
@@ -53,9 +53,8 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
             ProcessDuplicates(parent);
         }
 
-        for (var i = 0; i < references.Count; i++)
+        foreach (var reference in references)
         {
-            var reference = references[i];
             var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
 
             if (!reference.Parent.Children.Contains(node))
@@ -70,12 +69,11 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
             }
         }
 
-        for (var i = 0; i < parameterReferences.Count; i++)
+        foreach (var parameterReference in parameterReferences)
         {
-            var reference = parameterReferences[i];
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)reference.Node;
+            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
 
-            if (!reference.Parent.Children.Contains(node))
+            if (!parameterReference.Parent.Children.Contains(node))
             {
                 // This node was removed as a duplicate, skip it.
                 continue;
@@ -83,7 +81,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
             if (node.TagHelper.IsEventHandlerTagHelper())
             {
-                reference.Replace(RewriteParameterUsage(node));
+                parameterReference.Replace(RewriteParameterUsage(node));
             }
         }
     }
@@ -159,7 +157,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
     private static IntermediateNode RewriteUsage(IntermediateNode parent, TagHelperDirectiveAttributeIntermediateNode node)
     {
         var original = GetAttributeContent(node);
-        if (original.Count == 0)
+        if (original.Length == 0)
         {
             // This can happen in error cases, the parser will already have flagged this
             // as an error, so ignore it.
@@ -174,8 +172,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         // correct context for intellisense when typing in the attribute.
         var eventArgsType = node.TagHelper.GetEventArgsType();
 
-        using var _ = ListPool<IntermediateToken>.GetPooledObject(out var tokens);
-        tokens.SetCapacityIfLarger(original.Count + 2);
+        using var tokens = new PooledArrayBuilder<IntermediateToken>(capacity: original.Length + 2);
 
         tokens.Add(
             new IntermediateToken()
@@ -184,10 +181,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
                 Kind = TokenKind.CSharp
             });
 
-        for (var i = 0; i < original.Count; i++)
-        {
-            tokens.Add(original[i]);
-        }
+        tokens.AddRange(original);
 
         tokens.Add(
             new IntermediateToken()
@@ -243,15 +237,15 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         }
     }
 
-    private static IReadOnlyList<IntermediateToken> GetAttributeContent(IntermediateNode node)
+    private static ImmutableArray<IntermediateToken> GetAttributeContent(IntermediateNode node)
     {
         var nodes = node.FindDescendantNodes<TemplateIntermediateNode>();
-        var template = nodes.Count > 0 ? nodes[0] : default;
+        var template = nodes.Length > 0 ? nodes[0] : null;
         if (template != null)
         {
             // See comments in TemplateDiagnosticPass
             node.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(template.Source));
-            return new[] { new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty, }, };
+            return [new IntermediateToken() { Kind = TokenKind.CSharp, Content = string.Empty }];
         }
 
         if (node.Children.Count == 1 && node.Children[0] is HtmlContentIntermediateNode htmlContentNode)
@@ -261,12 +255,10 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
             var tokens = htmlContentNode.FindDescendantNodes<IntermediateToken>();
 
             var content = "\"" + string.Join(string.Empty, tokens.Select(t => t.Content.Replace("\"", "\\\""))) + "\"";
-            return new[] { new IntermediateToken() { Content = content, Kind = TokenKind.CSharp, } };
+            return [new IntermediateToken() { Content = content, Kind = TokenKind.CSharp }];
         }
-        else
-        {
-            return node.FindDescendantNodes<IntermediateToken>();
-        }
+
+        return node.FindDescendantNodes<IntermediateToken>();
     }
 
     private static IntermediateNode RewriteParameterUsage(TagHelperDirectiveAttributeParameterIntermediateNode node)

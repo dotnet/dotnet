@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -23,7 +23,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
         var requestContext = CreateRazorRequestContext(documentContext: null);
@@ -49,7 +49,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3) // <te[||]st1></test1>
         };
 
@@ -82,7 +82,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 6) // <test1[||]></test1>
         };
 
@@ -115,7 +115,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 9) // <test1></[||]test1>
         };
 
@@ -148,7 +148,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(0, 1) // @[||]addTagHelper *
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -174,7 +174,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3) // <te[||]st1 />
         };
         var requestContext = CreateRazorRequestContext(documentContext);
@@ -200,7 +200,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 1) // <[||]test1><test1></test1></test1>
         };
 
@@ -233,7 +233,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy></body>
         };
 
@@ -266,7 +266,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 8) // <body></[||]body>
         };
 
@@ -299,7 +299,7 @@ public class LinkedEditingRangeEndpointTest(ITestOutputHelper testOutput) : TagH
         var endpoint = new LinkedEditingRangeEndpoint(LoggerFactory);
         var request = new LinkedEditingRangeParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri },
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) },
             Position = LspFactory.CreatePosition(1, 3) // <bo[||]dy />
         };
         var requestContext = CreateRazorRequestContext(documentContext);

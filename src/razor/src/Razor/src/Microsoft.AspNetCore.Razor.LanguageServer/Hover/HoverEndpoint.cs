@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,7 +78,7 @@ internal sealed class HoverEndpoint(
 
         // Sometimes what looks like a html attribute can actually map to C#, in which case its better to let Roslyn try to handle this.
         // We can only do this if we're in single server mode though, otherwise we won't be delegating to Roslyn at all
-        if (SingleServerSupport && DocumentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
+        if (SingleServerSupport && DocumentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), positionInfo.HostDocumentIndex, out _, out _))
         {
             return null;
         }
@@ -118,7 +118,7 @@ internal sealed class HoverEndpoint(
         }
         else if (positionInfo.LanguageKind == RazorLanguageKind.CSharp)
         {
-            if (DocumentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), response.Range, out var projectedRange))
+            if (DocumentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), response.Range, out var projectedRange))
             {
                 response.Range = projectedRange;
             }

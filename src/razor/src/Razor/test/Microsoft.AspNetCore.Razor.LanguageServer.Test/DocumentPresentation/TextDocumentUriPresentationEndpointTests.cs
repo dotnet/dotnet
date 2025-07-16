@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading.Tasks;
@@ -62,7 +62,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
@@ -122,7 +122,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris =
             [
@@ -193,7 +193,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
@@ -229,7 +229,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
@@ -258,7 +258,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris =
             [
@@ -293,7 +293,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri]
         };
@@ -348,7 +348,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1),
             Uris = [droppedUri1, droppedUri2]
         };
@@ -382,7 +382,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 
@@ -410,7 +410,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 
@@ -438,7 +438,7 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var parameters = new UriPresentationParams()
         {
-            TextDocument = new() { Uri = uri },
+            TextDocument = new() { DocumentUri = new(uri) },
             Range = LspFactory.CreateSingleLineRange(line: 0, character: 1, length: 1)
         };
 

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -51,13 +51,13 @@ internal class RazorBreakpointSpanEndpoint(
         var languageKind = codeDocument.GetLanguageKind(hostDocumentIndex, rightAssociative: false);
         // If we're in C#, then map to the right position in the generated document
         if (languageKind == RazorLanguageKind.CSharp &&
-            !_documentMappingService.TryMapToGeneratedDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToCSharpDocumentPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }
         // Otherwise see if there is more C# on the line to map to
         else if (languageKind == RazorLanguageKind.Html &&
-            !_documentMappingService.TryMapToGeneratedDocumentOrNextCSharpPosition(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
+            !_documentMappingService.TryMapToCSharpPositionOrNext(codeDocument.GetRequiredCSharpDocument(), hostDocumentIndex, out _, out projectedIndex))
         {
             return null;
         }
@@ -91,7 +91,7 @@ internal class RazorBreakpointSpanEndpoint(
         // This in turn results in a breakpoint span encompassing `|__o = DateTime.Now;|`. Problem is that if we're doing "strict" mapping
         // Razor only maps `DateTime.Now` so mapping would fail. Therefore we use inclusive mapping which allows C# mappings that intersect
         // to be acceptable mapping locations
-        if (!_documentMappingService.TryMapToHostDocumentRange(codeDocument.GetRequiredCSharpDocument(), projectedRange, MappingBehavior.Inclusive, out var hostDocumentRange))
+        if (!_documentMappingService.TryMapToRazorDocumentRange(codeDocument.GetRequiredCSharpDocument(), projectedRange, MappingBehavior.Inclusive, out var hostDocumentRange))
         {
             return null;
         }

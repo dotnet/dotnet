@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading;
@@ -92,8 +92,8 @@ internal class SpellCheckService(
 
             // We need to map the start index to produce results, and we validate that we can map the end index so we don't have
             // squiggles that go from C# into Razor/Html.
-            if (_documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteCSharpStartIndex, out _, out var hostDocumentIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteCSharpStartIndex + length, out _, out _))
+            if (_documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteCSharpStartIndex, out _, out var hostDocumentIndex) &&
+                _documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteCSharpStartIndex + length, out _, out _))
             {
                 ranges.Add(range with { AbsoluteStartIndex = hostDocumentIndex });
             }

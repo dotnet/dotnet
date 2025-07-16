@@ -129,7 +129,7 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeStructure = directiveAttributeParameterNode.AttributeStructure;
         BoundAttribute = directiveAttributeParameterNode.BoundAttribute;
         OriginalAttributeSpan = directiveAttributeParameterNode.OriginalAttributeSpan;
-        PropertyName = directiveAttributeParameterNode.BoundAttributeParameter.GetPropertyName();
+        PropertyName = directiveAttributeParameterNode.BoundAttributeParameter.PropertyName;
         Source = directiveAttributeParameterNode.Source;
         TagHelper = directiveAttributeParameterNode.TagHelper;
         TypeName = directiveAttributeParameterNode.BoundAttributeParameter.TypeName;

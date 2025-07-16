@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
 using System.Text.Json;
@@ -41,7 +41,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
         // We are given a range by the client, but our mapping only succeeds if the start and end of the range can both be mapped
         // to C#. Since that doesn't logically match what we want from inlay hints, we instead get the minimum range of mappable
         // C# to get hints for. We'll filter that later, to remove the sections that can't be mapped back.
-        if (!_documentMappingService.TryMapToGeneratedDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
+        if (!_documentMappingService.TryMapToCSharpDocumentRange(csharpDocument, span, out var projectedLinePositionSpan) &&
             !codeDocument.TryGetMinimalCSharpRange(span, out projectedLinePositionSpan))
         {
             // There's no C# in the range.
@@ -71,7 +71,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
         foreach (var hint in inlayHints)
         {
             if (csharpSourceText.TryGetAbsoluteIndex(hint.Position, out var absoluteIndex) &&
-                _documentMappingService.TryMapToHostDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
+                _documentMappingService.TryMapToRazorDocumentPosition(csharpDocument, absoluteIndex, out Position? hostDocumentPosition, out var hostDocumentIndex))
             {
                 // We know this C# maps to Razor, but does it map to Razor that we like?
                 var node = await documentContext.GetSyntaxNodeAsync(hostDocumentIndex, cancellationToken).ConfigureAwait(false);
@@ -82,7 +82,7 @@ internal sealed class InlayHintService(IDocumentMappingService documentMappingSe
 
                 if (hint.TextEdits is not null)
                 {
-                    hint.TextEdits = _documentMappingService.GetHostDocumentEdits(csharpDocument, hint.TextEdits);
+                    hint.TextEdits = _documentMappingService.GetRazorDocumentEdits(csharpDocument, hint.TextEdits);
                 }
 
                 hint.Data = new RazorInlayHintWrapper

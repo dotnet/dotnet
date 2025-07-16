@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using Microsoft.AspNetCore.Razor.LanguageServer.CodeActions;
@@ -89,6 +89,7 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeParameterCompletionItemProvider>();
+        services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeEventParameterCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, DirectiveAttributeTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, MarkupTransitionCompletionItemProvider>();
         services.AddSingleton<IRazorCompletionItemProvider, TagHelperCompletionProvider>();
@@ -142,6 +143,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<ICSharpCodeActionResolver, UnformattedRemappingCSharpCodeActionResolver>();
 
         // Razor Code actions
+        services.AddSingleton<IRazorCodeActionProvider, ExtractToCssCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, ExtractToCssCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ExtractToCodeBehindCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, ExtractToCodeBehindCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, ExtractToComponentCodeActionProvider>();
@@ -155,6 +158,8 @@ internal static class IServiceCollectionExtensions
         services.AddSingleton<IRazorCodeActionResolver, PromoteUsingCodeActionResolver>();
         services.AddSingleton<IRazorCodeActionProvider, WrapAttributesCodeActionProvider>();
         services.AddSingleton<IRazorCodeActionResolver, WrapAttributesCodeActionResolver>();
+        services.AddSingleton<IRazorCodeActionProvider, SimplifyTagToSelfClosingCodeActionProvider>();
+        services.AddSingleton<IRazorCodeActionResolver, SimplifyTagToSelfClosingCodeActionResolver>();
 
         // Html Code actions
         services.AddSingleton<IHtmlCodeActionProvider, HtmlCodeActionProvider>();

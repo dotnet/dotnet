@@ -1,8 +1,9 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Diagnostics;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Roslyn.LanguageServer.Protocol;
@@ -170,13 +171,13 @@ internal static class LspFactory
         => CreateLocation(CreateFilePathUri(filePath), range);
 
     public static LspLocation CreateLocation(Uri uri, LspRange range)
-        => new() { Uri = uri, Range = range };
+        => new() { DocumentUri = new(uri), Range = range };
 
     public static DocumentLink CreateDocumentLink(Uri target, LspRange range)
-        => new() { Target = target, Range = range };
+        => new() { DocumentTarget = new(target), Range = range };
 
     public static DocumentLink CreateDocumentLink(Uri target, LinePositionSpan span)
-        => new() { Target = target, Range = CreateRange(span) };
+        => new() { DocumentTarget = new(target), Range = CreateRange(span) };
 
     public static TextEdit CreateTextEdit(Range range, string newText)
         => new() { Range = range, NewText = newText };
@@ -204,6 +205,16 @@ internal static class LspFactory
 
     public static TextEdit CreateTextEdit((int line, int character) position, string newText)
         => CreateTextEdit(CreateZeroWidthRange(position), newText);
+
+    public static Uri CreateFilePathUri(string filePath, LanguageServerFeatureOptions options)
+    {
+        // VS Code in Windows expects path to start with '/'
+        var updateFilePath = options.ReturnCodeActionAndRenamePathsWithPrefixedSlash && !filePath.StartsWith('/')
+            ? $"/{filePath}"
+            : filePath;
+
+        return CreateFilePathUri(updateFilePath);
+    }
 
     public static Uri CreateFilePathUri(string filePath)
     {

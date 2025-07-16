@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -126,7 +126,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             {
                 var currentCount = 0;
 
-                Workspace.WorkspaceChanged += OnWorkspaceChanged;
+                using var _ = Workspace.RegisterWorkspaceChangedHandler(OnWorkspaceChanged);
 
                 if (!Workspace.TryApplyChanges(solution))
                 {
@@ -142,10 +142,9 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
                 }
                 while (lastCount != currentCount);
 
-                Workspace.WorkspaceChanged -= OnWorkspaceChanged;
                 return true;
 
-                void OnWorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
+                void OnWorkspaceChanged(WorkspaceChangeEventArgs e)
                 {
                     currentCount++;
                 }

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -123,7 +123,8 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
             displayText: "TestItem",
             insertText: "TestItem",
             _attributeDescription,
-            commitCharacters: []);
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 
@@ -212,7 +213,8 @@ public class RazorCompletionItemResolverTest : LanguageServerTestBase
         var razorCompletionItem = RazorCompletionItem.CreateDirectiveAttribute(
             displayText: "TestItem",
             insertText: "TestItem", _attributeDescription,
-            commitCharacters: []);
+            commitCharacters: [],
+            isSnippet: false);
         var completionList = CreateLSPCompletionList(razorCompletionItem);
         var completionItem = (VSInternalCompletionItem)completionList.Items.Single();
 

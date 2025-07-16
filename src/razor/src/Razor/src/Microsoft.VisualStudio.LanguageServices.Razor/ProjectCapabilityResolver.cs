@@ -1,7 +1,8 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -21,6 +22,7 @@ namespace Microsoft.VisualStudio.Razor;
 internal sealed class ProjectCapabilityResolver : IProjectCapabilityResolver, IDisposable
 {
     private readonly ILiveShareSessionAccessor _liveShareSessionAccessor;
+    private readonly IEnumerable<IProjectCapabilityListener> _projectCapabilityListeners;
     private readonly AsyncLazy<IVsUIShellOpenDocument> _lazyVsUIShellOpenDocument;
     private readonly ILogger _logger;
     private readonly JoinableTaskFactory _jtf;
@@ -30,10 +32,12 @@ internal sealed class ProjectCapabilityResolver : IProjectCapabilityResolver, ID
     public ProjectCapabilityResolver(
         ILiveShareSessionAccessor liveShareSessionAccessor,
         IVsService<SVsUIShellOpenDocument, IVsUIShellOpenDocument> vsUIShellOpenDocumentService,
+        [ImportMany] IEnumerable<IProjectCapabilityListener> projectCapabilityListeners,
         ILoggerFactory loggerFactory,
         JoinableTaskContext joinableTaskContext)
     {
         _liveShareSessionAccessor = liveShareSessionAccessor;
+        _projectCapabilityListeners = projectCapabilityListeners;
         _jtf = joinableTaskContext.Factory;
         _logger = loggerFactory.GetOrCreateLogger<ProjectCapabilityResolver>();
         _disposeTokenSource = new();
@@ -120,20 +124,30 @@ internal sealed class ProjectCapabilityResolver : IProjectCapabilityResolver, ID
             return false;
         }
 
+        var isMatch = false;
         try
         {
-            return vsHierarchy.IsCapabilityMatch(capability);
+            isMatch = vsHierarchy.IsCapabilityMatch(capability);
+
+            if (vsHierarchy.GetProjectFilePath(_jtf) is { } projectFilePath)
+            {
+                foreach (var listener in _projectCapabilityListeners)
+                {
+                    // Notify all listeners of the capability match.
+                    listener.OnProjectCapabilityMatched(projectFilePath, capability, isMatch);
+                }
+            }
         }
         catch (NotSupportedException)
         {
             // IsCapabilityMatch throws a NotSupportedException if it can't create a
             // BooleanSymbolExpressionEvaluator COM object
-            return false;
         }
         catch (ObjectDisposedException)
         {
             // IsCapabilityMatch throws an ObjectDisposedException if the underlying hierarchy has been disposed
-            return false;
         }
+
+        return isMatch;
     }
 }

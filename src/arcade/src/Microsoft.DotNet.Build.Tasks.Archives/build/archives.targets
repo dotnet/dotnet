@@ -91,11 +91,12 @@
           DependsOnTargets="_CheckPigzAvailability"
           Condition="'$(SkipArchivesBuild)' != 'true'">
     <PropertyGroup>
-      <_OutputPathRoot>$(IntermediateOutputPath)output/</_OutputPathRoot>
+      <_OutputPathRoot>$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath), 'output'))</_OutputPathRoot>
       <_ArchiveFileName>$(ArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(ArchiveName)-$(Version)-$(RuntimeIdentifier)</_ArchiveFileName>
-      <_DestinationFileName>$(PackageOutputPath)/$(_ArchiveFileName).$(ArchiveFormat)</_DestinationFileName>
+      <_DestinationFileName>$([MSBuild]::NormalizePath($(PackageOutputPath), '$(_ArchiveFileName).$(ArchiveFormat)'))</_DestinationFileName>
     </PropertyGroup>
+    <MakeDir Directories="$(_OutputPathRoot)" />
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="PublishToDisk"
              Properties="OutputPath=$(_OutputPathRoot)" />
@@ -106,14 +107,16 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -C '$(_OutputPathRoot)' -cf - . | pigz &gt; '$(_DestinationFileName)'"
+    <Exec Command="tar -cf - . | pigz &gt; '$(_DestinationFileName)'"
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
+          WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -C '$(_OutputPathRoot)' -czf '$(_DestinationFileName)' ."
+    <Exec Command="tar -czf '$(_DestinationFileName)' ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
+          WorkingDirectory="$(_OutputPathRoot)"
           Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
     <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_OutputPathRoot)'" Importance="high" />
@@ -123,11 +126,12 @@
           DependsOnTargets="_CheckPigzAvailability"
           Condition="'$(CreateSymbolsArchive)' == 'true' and '$(SkipArchivesBuild)' != 'true'">
     <PropertyGroup>
-      <_SymbolsOutputPathRoot>$(IntermediateOutputPath)symbols/</_SymbolsOutputPathRoot>
+      <_SymbolsOutputPathRoot>$([MSBuild]::NormalizeDirectory($(IntermediateOutputPath), 'symbols'))</_SymbolsOutputPathRoot>
       <_ArchiveFileName>$(SymbolsArchiveName)-$(Version)</_ArchiveFileName>
       <_ArchiveFileName Condition="'$(RuntimeIdentifier)' != ''">$(SymbolsArchiveName)-$(RuntimeIdentifier)-$(Version)</_ArchiveFileName>
-      <_DestinationFileName>$(PackageOutputPath)/$(_ArchiveFileName).$(ArchiveFormat)</_DestinationFileName>
+      <_DestinationFileName>$([MSBuild]::NormalizePath($(PackageOutputPath), '$(_ArchiveFileName).$(ArchiveFormat)'))</_DestinationFileName>
     </PropertyGroup>
+    <MakeDir Directories="$(_SymbolsOutputPathRoot)" />
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="PublishSymbolsToDisk"
              Properties="SymbolsOutputPath=$(_SymbolsOutputPathRoot)" />
@@ -138,14 +142,16 @@
                   DestinationFile="$(_DestinationFileName)"
                   Condition="'$(ArchiveFormat)' == 'zip'"/>
     <!-- use parallel gzip implementation when available -->
-    <Exec Command="tar -C '$(_OutputPathRoot)' -cf - . | pigz &gt; '$(_DestinationFileName)'"
+    <Exec Command="tar -cf - . | pigz &gt; '$(_DestinationFileName)'"
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
+          WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' == '0'"/>
     <!-- otherwise, use built-in gzip feature (-z) -->
-    <Exec Command="tar -C '$(_OutputPathRoot)' -czf '$(_DestinationFileName)' ."
+    <Exec Command="tar -czf '$(_DestinationFileName)' ."
           IgnoreExitCode="true"
           IgnoreStandardErrorWarningFormat="true"
+          WorkingDirectory="$(_SymbolsOutputPathRoot)"
           Condition="'$(ArchiveFormat)' == 'tar.gz' and '$(_PigzFoundExitCode)' != '0'"/>
 
     <Message Text="Successfully created archive -> '$(_DestinationFileName)' from '$(_SymbolsOutputPathRoot)'" Importance="high" />

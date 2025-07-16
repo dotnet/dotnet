@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -52,7 +52,7 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
         var uri = new Uri(razorFilePath);
         Request = new VSInternalDocumentDiagnosticsParams
         {
-            TextDocument = new TextDocumentIdentifier { Uri = uri }
+            TextDocument = new TextDocumentIdentifier { DocumentUri = new(uri) }
         };
         var sourceDocument = RazorSourceDocument.Create(GetFileContents(), UTF8Encoding.UTF8, RazorSourceDocumentProperties.Default);
         var codeDocument = RazorCodeDocument.Create(sourceDocument, RazorParserOptions.Default, RazorCodeGenerationOptions.DesignTimeDefault);
@@ -117,12 +117,12 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         LspRange? hostDocumentRange;
         razorDocumentMappingService.Setup(
-            r => r.TryMapToHostDocumentRange(
-                It.IsAny<IRazorGeneratedDocument>(),
+            r => r.TryMapToRazorDocumentRange(
+                It.IsAny<RazorCSharpDocument>(),
                 InRange,
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange))
-            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
+            .Returns((RazorCSharpDocument csharpDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = OutRange;
                 return true;
@@ -130,12 +130,12 @@ public class RazorDiagnosticsBenchmark : RazorLanguageServerBenchmarkBase
 
         LspRange? hostDocumentRange2;
         razorDocumentMappingService.Setup(
-            r => r.TryMapToHostDocumentRange(
-                It.IsAny<IRazorGeneratedDocument>(),
+            r => r.TryMapToRazorDocumentRange(
+                It.IsAny<RazorCSharpDocument>(),
                 It.IsNotIn(InRange),
                 It.IsAny<MappingBehavior>(),
                 out hostDocumentRange2))
-            .Returns((IRazorGeneratedDocument generatedDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
+            .Returns((RazorCSharpDocument csharpDocument, LspRange range, MappingBehavior mappingBehavior, out LspRange? actualOutRange) =>
             {
                 actualOutRange = null;
                 return false;

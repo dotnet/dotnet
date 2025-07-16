@@ -111,7 +111,7 @@ public abstract class IntegrationTestBase
         return syntaxTree;
     }
 
-    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml", [CallerMemberName]string testName = "")
+    protected RazorProjectItem AddProjectItemFromText(string text, string filePath = "_ViewImports.cshtml", [CallerMemberName] string testName = "")
     {
         var projectItem = CreateProjectItemFromText(text, filePath, GetTestFileName(testName));
         FileSystem.Add(projectItem);
@@ -168,6 +168,7 @@ public abstract class IntegrationTestBase
         {
             throw new XunitException($"The resource {sourceFileName} was not found.");
         }
+
         var fileContent = testFile.ReadAllText();
 
         var workingDirectory = Path.GetDirectoryName(fileName);
@@ -197,7 +198,7 @@ public abstract class IntegrationTestBase
         return projectItem;
     }
 
-    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null, [CallerMemberName]string testName = "")
+    protected CompiledCSharpCode CompileToCSharp(string text, string path = "test.cshtml", bool? designTime = null, string? cssScope = null, [CallerMemberName] string testName = "")
     {
         var projectItem = CreateProjectItemFromText(text, path, GetTestFileName(testName), cssScope);
         return CompileToCSharp(projectItem, designTime);
@@ -338,7 +339,7 @@ public abstract class IntegrationTestBase
         });
     }
 
-    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document, [CallerMemberName]string testName = "")
+    protected void AssertDocumentNodeMatchesBaseline(DocumentIntermediateNode document, [CallerMemberName] string testName = "")
     {
         var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".ir.txt");
 
@@ -547,71 +548,27 @@ public abstract class IntegrationTestBase
         }
     }
 
-    protected void AssertHtmlSourceMappingsMatchBaseline(RazorCodeDocument codeDocument, [CallerMemberName] string testName = "")
-    {
-        var htmlDocument = codeDocument.GetHtmlDocument();
-        Assert.NotNull(htmlDocument);
-
-        var baselineFileName = Path.ChangeExtension(GetTestFileName(testName), ".html.mappings.txt");
-        var serializedMappings = SourceMappingsSerializer.Serialize(htmlDocument, codeDocument.Source);
-
-        if (GenerateBaselines.ShouldGenerate)
-        {
-            var baselineFullPath = Path.Combine(TestProjectRoot, baselineFileName);
-            File.WriteAllText(baselineFullPath, serializedMappings, _baselineEncoding);
-            return;
-        }
-
-        var testFile = TestFile.Create(baselineFileName, GetType().GetTypeInfo().Assembly);
-        if (!testFile.Exists())
-        {
-            throw new XunitException($"The resource {baselineFileName} was not found.");
-        }
-
-        var baseline = testFile.ReadAllText();
-
-        AssertEx.AssertEqualToleratingWhitespaceDifferences(baseline, serializedMappings);
-
-        var charBuffer = new char[codeDocument.Source.Text.Length];
-        codeDocument.Source.Text.CopyTo(0, charBuffer, 0, codeDocument.Source.Text.Length);
-        var sourceContent = new string(charBuffer);
-
-        var problems = new List<string>();
-        foreach (var mapping in htmlDocument.SourceMappings)
-        {
-            var actualSpan = htmlDocument.Text.ToString(mapping.GeneratedSpan.AsTextSpan());
-            var expectedSpan = sourceContent.Substring(mapping.OriginalSpan.AbsoluteIndex, mapping.OriginalSpan.Length);
-
-            if (expectedSpan != actualSpan)
-            {
-                problems.Add(
-                    $"Found the span {mapping.OriginalSpan} in the output mappings but it contains " +
-                    $"'{EscapeWhitespace(actualSpan)}' instead of '{EscapeWhitespace(expectedSpan)}'.");
-            }
-        }
-
-        if (problems.Count > 0)
-        {
-            throw new XunitException(string.Join(Environment.NewLine, problems));
-        }
-    }
-
-    protected void AssertLinePragmas(RazorCodeDocument codeDocument, bool designTime)
+    protected void AssertLinePragmas(RazorCodeDocument codeDocument)
     {
         var csharpDocument = codeDocument.GetCSharpDocument();
         Assert.NotNull(csharpDocument);
         var linePragmas = csharpDocument.LinePragmas;
-        designTime = false;
-        if (designTime)
+
+        var syntaxTree = codeDocument.GetRequiredSyntaxTree();
+        var sourceContent = syntaxTree.Source.Text.ToString();
+        var classifiedSpans = syntaxTree.GetClassifiedSpans();
+        foreach (var classifiedSpan in classifiedSpans)
         {
-            var sourceMappings = csharpDocument.SourceMappings;
-            foreach (var sourceMapping in sourceMappings)
+            var content = sourceContent.Substring(classifiedSpan.Span.AbsoluteIndex, classifiedSpan.Span.Length);
+            if (!string.IsNullOrWhiteSpace(content) &&
+                classifiedSpan.BlockKind != BlockKindInternal.Directive &&
+                classifiedSpan.SpanKind == SpanKindInternal.Code)
             {
                 var foundMatchingPragma = false;
                 foreach (var linePragma in linePragmas)
                 {
-                    if (sourceMapping.OriginalSpan.LineIndex >= linePragma.StartLineIndex &&
-                        sourceMapping.OriginalSpan.LineIndex <= linePragma.EndLineIndex)
+                    if (classifiedSpan.Span.LineIndex >= linePragma.StartLineIndex &&
+                        classifiedSpan.Span.LineIndex <= linePragma.EndLineIndex)
                     {
                         // Found a match.
                         foundMatchingPragma = true;
@@ -619,35 +576,7 @@ public abstract class IntegrationTestBase
                     }
                 }
 
-                Assert.True(foundMatchingPragma, $"No line pragma found for code at line {sourceMapping.OriginalSpan.LineIndex + 1}.");
-            }
-        }
-        else
-        {
-            var syntaxTree = codeDocument.GetRequiredSyntaxTree();
-            var sourceContent = syntaxTree.Source.Text.ToString();
-            var classifiedSpans = syntaxTree.GetClassifiedSpans();
-            foreach (var classifiedSpan in classifiedSpans)
-            {
-                var content = sourceContent.Substring(classifiedSpan.Span.AbsoluteIndex, classifiedSpan.Span.Length);
-                if (!string.IsNullOrWhiteSpace(content) &&
-                    classifiedSpan.BlockKind != BlockKindInternal.Directive &&
-                    classifiedSpan.SpanKind == SpanKindInternal.Code)
-                {
-                    var foundMatchingPragma = false;
-                    foreach (var linePragma in linePragmas)
-                    {
-                        if (classifiedSpan.Span.LineIndex >= linePragma.StartLineIndex &&
-                            classifiedSpan.Span.LineIndex <= linePragma.EndLineIndex)
-                        {
-                            // Found a match.
-                            foundMatchingPragma = true;
-                            break;
-                        }
-                    }
-
-                    Assert.True(foundMatchingPragma, $"No line pragma found for code '{content}' at line {classifiedSpan.Span.LineIndex + 1}.");
-                }
+                Assert.True(foundMatchingPragma, $"No line pragma found for code '{content}' at line {classifiedSpan.Span.LineIndex + 1}.");
             }
         }
     }
@@ -736,6 +665,7 @@ public abstract class IntegrationTestBase
             {
                 CodeSpans.Add(node);
             }
+
             return base.VisitCSharpStatementLiteral(node);
         }
 
@@ -745,6 +675,7 @@ public abstract class IntegrationTestBase
             {
                 CodeSpans.Add(node);
             }
+
             return base.VisitCSharpExpressionLiteral(node);
         }
 

@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,7 +51,7 @@ internal sealed partial class RemoteCodeActionsService(in ServiceArgs args) : Ra
             {
                 // Since we're here, we may as well fill in the generated document Uri so the other caller won't have to calculate it
                 var generatedDocument = await context.Snapshot.GetGeneratedDocumentAsync(cancellationToken).ConfigureAwait(false);
-                csharpRequest.TextDocument.Uri = generatedDocument.CreateUri();
+                csharpRequest.TextDocument.DocumentUri = generatedDocument.CreateDocumentUri();
             }
         }
 

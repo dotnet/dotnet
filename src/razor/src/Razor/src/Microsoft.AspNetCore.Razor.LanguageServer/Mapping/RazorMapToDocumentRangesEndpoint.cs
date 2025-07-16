@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Threading;
@@ -14,16 +14,10 @@ using Microsoft.CommonLanguageServerProtocol.Framework;
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Mapping;
 
 [RazorLanguageServerEndpoint(LanguageServerConstants.RazorMapToDocumentRangesEndpoint)]
-internal sealed class RazorMapToDocumentRangesEndpoint :
-    IRazorDocumentlessRequestHandler<RazorMapToDocumentRangesParams, RazorMapToDocumentRangesResponse?>,
-    ITextDocumentIdentifierHandler<RazorMapToDocumentRangesParams, Uri>
+internal sealed class RazorMapToDocumentRangesEndpoint(IDocumentMappingService documentMappingService)
+    : IRazorDocumentlessRequestHandler<RazorMapToDocumentRangesParams, RazorMapToDocumentRangesResponse?>, ITextDocumentIdentifierHandler<RazorMapToDocumentRangesParams, Uri>
 {
-    private readonly IDocumentMappingService _documentMappingService;
-
-    public RazorMapToDocumentRangesEndpoint(IDocumentMappingService documentMappingService)
-    {
-        _documentMappingService = documentMappingService;
-    }
+    private readonly IDocumentMappingService _documentMappingService = documentMappingService;
 
     public bool MutatesSolutionState { get; } = false;
 
@@ -46,29 +40,23 @@ internal sealed class RazorMapToDocumentRangesEndpoint :
         }
 
         var codeDocument = await documentContext.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
-        IRazorGeneratedDocument? generatedDocument = request.Kind switch
-        {
-            RazorLanguageKind.CSharp => codeDocument.GetRequiredCSharpDocument(),
-            RazorLanguageKind.Html => codeDocument.GetHtmlDocument(),
-            _ => throw new NotSupportedException($"Unsupported language kind '{request.Kind}'."),
-        };
-
-        if (generatedDocument is null)
-        {
-            return null;
-        }
+        var csharpDocument = codeDocument.GetRequiredCSharpDocument();
 
         var ranges = new LspRange[request.ProjectedRanges.Length];
         var spans = new RazorTextSpan[request.ProjectedRanges.Length];
 
         for (var i = 0; i < request.ProjectedRanges.Length; i++)
         {
-            var projectedRange = request.ProjectedRanges[i];
-            if (!_documentMappingService.TryMapToHostDocumentRange(generatedDocument, projectedRange, request.MappingBehavior, out var originalRange))
+            var originalRange = request.ProjectedRanges[i];
+            if (request.Kind is RazorLanguageKind.CSharp)
             {
-                // All language queries on unsupported documents return Html. This is equivalent to what pre-VSCode Razor was capable of.
-                ranges[i] = LspFactory.UndefinedRange;
-                continue;
+                var projectedRange = request.ProjectedRanges[i];
+                if (!_documentMappingService.TryMapToRazorDocumentRange(csharpDocument, projectedRange, request.MappingBehavior, out originalRange))
+                {
+                    // All language queries on unsupported documents return Html. This is equivalent to what pre-VSCode Razor was capable of.
+                    ranges[i] = LspFactory.UndefinedRange;
+                    continue;
+                }
             }
 
             ranges[i] = originalRange;

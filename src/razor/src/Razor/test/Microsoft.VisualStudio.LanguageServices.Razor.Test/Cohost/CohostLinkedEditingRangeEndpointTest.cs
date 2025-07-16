@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -161,13 +161,13 @@ public class CohostLinkedEditingRangeEndpointTest(ITestOutputHelper testOutputHe
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var endpoint = new CohostLinkedEditingRangeEndpoint(RemoteServiceInvoker);
+        var endpoint = new CohostLinkedEditingRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
         var request = new LinkedEditingRangeParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
-                Uri = document.CreateUri()
+                DocumentUri = document.CreateDocumentUri()
             },
             Position = sourceText.GetPosition(cursorPosition)
         };

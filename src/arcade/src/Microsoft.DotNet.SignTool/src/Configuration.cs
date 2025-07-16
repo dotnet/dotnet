@@ -775,19 +775,15 @@ namespace Microsoft.DotNet.SignTool
             {
                 var nestedParts = new Dictionary<string, ZipPart>();
                 
-                foreach (var (relativePath, contentStream, contentSize) in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
+                foreach (var entry in ZipData.ReadEntries(archivePath, _pathToContainerUnpackingDirectory, _tarToolPath, _pkgToolPath))
                 {
-                    if (contentStream == null)
+                    if (entry.ContentHash == null)
                     {
+                        // this might be just a pointer to a folder. We skip those.
                         continue;
                     }
-                    
-                    using var entryMemoryStream = new MemoryStream((int)contentSize);
-                    contentStream.CopyTo(entryMemoryStream);
-                    entryMemoryStream.Position = 0;
-                    ImmutableArray<byte> contentHash = ContentUtil.GetContentHash(entryMemoryStream);
 
-                    var fileUniqueKey = new SignedFileContentKey(contentHash, Path.GetFileName(relativePath));
+                    var fileUniqueKey = new SignedFileContentKey(entry.ContentHash, Path.GetFileName(entry.RelativePath));
 
                     if (!_whichPackagesTheFileIsIn.TryGetValue(fileUniqueKey, out var packages))
                     {
@@ -799,29 +795,27 @@ namespace Microsoft.DotNet.SignTool
                     _whichPackagesTheFileIsIn[fileUniqueKey] = packages;
 
                     // if we already encountered file that has the same content we can reuse its signed version when repackaging the container.
-                    var fileName = Path.GetFileName(relativePath);
+                    var fileName = Path.GetFileName(entry.RelativePath);
                     if (!_filesByContentKey.TryGetValue(fileUniqueKey, out var fileSignInfo))
                     {
                         string extractPathRoot = _useHashInExtractionPath ? fileUniqueKey.StringHash : _filesByContentKey.Count().ToString();
-                        string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, relativePath);
+                        string tempPath = Path.Combine(_pathToContainerUnpackingDirectory, extractPathRoot, entry.RelativePath);
                         _log.LogMessage($"Extracting file '{fileName}' from '{archivePath}' to '{tempPath}'.");
 
                         Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
 
-                        entryMemoryStream.Position = 0;
-                        using (var tempFileStream = File.OpenWrite(tempPath))
-                        {
-                            entryMemoryStream.CopyTo(tempFileStream);
-                        }
+                        entry.WriteToFile(tempPath);
 
                         _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
-                        PathWithHash nestedFile = new PathWithHash(tempPath, contentHash);
+                        PathWithHash nestedFile = new PathWithHash(tempPath, entry.ContentHash);
                         fileSignInfo = TrackFile(nestedFile, zipFileSignInfo.File, collisionPriorityId);
                     }
 
+                    entry.Dispose();
+
                     if (fileSignInfo.ShouldTrack)
                     {
-                        nestedParts.Add(relativePath, new ZipPart(relativePath, fileSignInfo));
+                        nestedParts.Add(entry.RelativePath, new ZipPart(entry.RelativePath, fileSignInfo));
                     }
                 }
 

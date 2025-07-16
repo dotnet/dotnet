@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 #nullable disable
 
@@ -115,26 +115,21 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
         LinePosition position = default;
         foreach (var index in Indexes)
         {
-            DocumentMappingService.TryMapToHostDocumentPosition(CSharpDocument, index, out position, out _);
+            DocumentMappingService.TryMapToRazorDocumentPosition(CSharpDocument, index, out position, out _);
         }
 
         return position;
     }
 
     // old code, copied from RazorDocumentMappingService before making changes
-    private bool TryMapToHostDocumentPosition(IRazorGeneratedDocument generatedDocument, int generatedDocumentIndex, out LinePosition hostDocumentPosition, out int hostDocumentIndex)
+    private bool TryMapToHostDocumentPosition(RazorCSharpDocument csharpDocument, int generatedDocumentIndex, out LinePosition hostDocumentPosition, out int hostDocumentIndex)
     {
-        if (generatedDocument is null)
+        if (csharpDocument is null)
         {
-            throw new ArgumentNullException(nameof(generatedDocument));
+            throw new ArgumentNullException(nameof(csharpDocument));
         }
 
-        if (generatedDocument.CodeDocument is not { } codeDocument)
-        {
-            throw new InvalidOperationException("Cannot use document mapping service on a generated document that has a null CodeDocument.");
-        }
-
-        foreach (var mapping in generatedDocument.SourceMappings)
+        foreach (var mapping in csharpDocument.SourceMappings)
         {
             var generatedSpan = mapping.GeneratedSpan;
             var generatedAbsoluteIndex = generatedSpan.AbsoluteIndex;
@@ -148,7 +143,7 @@ public class RazorDocumentMappingBenchmark : RazorLanguageServerBenchmarkBase
                     // Found the generated span that contains the generated absolute index
 
                     hostDocumentIndex = mapping.OriginalSpan.AbsoluteIndex + distanceIntoGeneratedSpan;
-                    hostDocumentPosition = codeDocument.Source.Text.GetLinePosition(hostDocumentIndex);
+                    hostDocumentPosition = csharpDocument.CodeDocument.Source.Text.GetLinePosition(hostDocumentIndex);
                     return true;
                 }
             }

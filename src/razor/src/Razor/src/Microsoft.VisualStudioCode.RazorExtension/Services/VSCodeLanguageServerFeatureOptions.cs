@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Composition;
 using System.Text.Json.Nodes;
@@ -23,7 +23,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
 {
     private bool _useRazorCohostServer = false;
     private bool _useNewFormattingEngine = true;
-    private bool _forceRuntimeCodeGeneration = false;
 
     private readonly RazorClientServerManagerProvider _razorClientServerManagerProvider = razorClientServerManagerProvider;
 
@@ -46,7 +45,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
 
     // User configurable options
     public override bool UseRazorCohostServer => _useRazorCohostServer;
-    public override bool ForceRuntimeCodeGeneration => _forceRuntimeCodeGeneration;
     public override bool UseNewFormattingEngine => _useNewFormattingEngine;
 
     public int Order => WellKnownStartupOrder.LanguageServerFeatureOptions;
@@ -62,7 +60,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
                 // Roslyn's typescript config handler will convert underscores to camelcase, ie 'razor.languageServer.cohostingEnabled'
                 new ConfigurationItem { Section = "razor.language_server.cohosting_enabled" },
                 new ConfigurationItem { Section = "razor.language_server.use_new_formatting_engine" },
-                new ConfigurationItem { Section = "razor.language_server.force_runtime_code_generation" },
             ]
         };
         var options = await razorClientLanguageServerManager.SendRequestAsync<ConfigurationParams, JsonArray>(
@@ -72,7 +69,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
 
         _useRazorCohostServer = GetBooleanOptionValue(options[0], _useRazorCohostServer);
         _useNewFormattingEngine = GetBooleanOptionValue(options[1], _useNewFormattingEngine);
-        _forceRuntimeCodeGeneration = GetBooleanOptionValue(options[2], _forceRuntimeCodeGeneration);
 
         RazorCohostingOptions.UseRazorCohostServer = _useRazorCohostServer;
     }

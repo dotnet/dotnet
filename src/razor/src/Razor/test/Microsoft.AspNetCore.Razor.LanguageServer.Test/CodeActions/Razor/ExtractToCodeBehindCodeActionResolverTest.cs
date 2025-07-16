@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Generic;
@@ -28,29 +28,6 @@ public class ExtractToCodeBehindCodeActionResolverTest(ITestOutputHelper testOut
     {
         builder.Add(CustomMessageNames.RazorFormatNewFileEndpointName, (string?)null);
     });
-
-    [Fact]
-    public async Task Handle_InvalidFileKind()
-    {
-        // Arrange
-        var documentPath = new Uri("c:\\Test.razor");
-        var contents = """
-            @page "/test"
-            @code { private int x = 1; }
-            """;
-        var codeDocument = CreateCodeDocument(contents, fileKind: RazorFileKind.Legacy);
-
-        var documentContext = CreateDocumentContext(documentPath, codeDocument);
-        var roslynCodeActionHelpers = new RoslynCodeActionHelpers(_clientConnection);
-        var resolver = new ExtractToCodeBehindCodeActionResolver(TestLanguageServerFeatureOptions.Instance, roslynCodeActionHelpers);
-        var data = JsonSerializer.SerializeToElement(CreateExtractToCodeBehindCodeActionParams(contents, "@code", "Test"));
-
-        // Act
-        var workspaceEdit = await resolver.ResolveAsync(documentContext, data, new RazorFormattingOptions(), DisposalToken);
-
-        // Assert
-        Assert.Null(workspaceEdit);
-    }
 
     [Fact]
     public async Task Handle_ExtractCodeBlock()

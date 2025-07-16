@@ -1,5 +1,5 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT license. See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
 using System.Collections.Immutable;
@@ -64,8 +64,9 @@ internal sealed class RazorCompletionItem
     public static RazorCompletionItem CreateDirectiveAttribute(
         string displayText, string insertText,
         AggregateBoundAttributeDescription descriptionInfo,
-        ImmutableArray<RazorCommitCharacter> commitCharacters)
-        => new(RazorCompletionItemKind.DirectiveAttribute, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet: false);
+        ImmutableArray<RazorCommitCharacter> commitCharacters,
+        bool isSnippet)
+        => new(RazorCompletionItemKind.DirectiveAttribute, displayText, insertText, sortText: null, descriptionInfo, commitCharacters, isSnippet);
 
     public static RazorCompletionItem CreateDirectiveAttributeParameter(
         string displayText, string insertText,
@@ -89,4 +90,9 @@ internal sealed class RazorCompletionItem
         AggregateBoundAttributeDescription descriptionInfo,
         ImmutableArray<RazorCommitCharacter> commitCharacters, bool isSnippet)
         => new(RazorCompletionItemKind.TagHelperAttribute, displayText, insertText, sortText, descriptionInfo, commitCharacters, isSnippet);
+
+    public static RazorCompletionItem CreateDirectiveAttributeEventParameterHtmlEventValue(
+        string displayText, string insertText,
+        ImmutableArray<RazorCommitCharacter> commitCharacters)
+        => new(RazorCompletionItemKind.DirectiveAttributeParameterEventValue, displayText, insertText, sortText: null, descriptionInfo: AggregateBoundAttributeDescription.Empty, commitCharacters, isSnippet: false);
 }

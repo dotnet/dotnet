@@ -16,6 +16,10 @@ parameters:
   type: boolean
   default: true
 
+- name: desiredFinalVersionKind
+  type: string
+  default: ''
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -24,6 +28,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
   - ${{ each leg in parameters.legs }}:
     - template: ../jobs/vmr-build.yml
@@ -96,7 +101,12 @@ stages:
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
         useMonoRuntime: ${{ leg.useMonoRuntime }}
+        useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
+        
+        # We only want to publish SB artifacts for each distinct distro/version/arch combination
+        ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
+          extraProperties: /p:DotNetSourceOnlyPublishArtifacts=true
 
 - ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
@@ -108,6 +118,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         buildSourceOnly: true
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
     - ${{ each leg in parameters.legs }}:
       - template: ../jobs/vmr-build.yml
