@@ -85,7 +85,6 @@ sourceRepository=''
 sourceVersion=''
 CUSTOM_PACKAGES_DIR=''
 CUSTOM_SDK_DIR=''
-sharedComponentsDir=''
 packagesDir="$scriptroot/prereqs/packages/"
 commonArchivesDir="${packagesDir}archives/common/"
 packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
