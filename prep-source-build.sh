@@ -61,9 +61,13 @@ dotnetSdk=$defaultDotnetSdk
 psbDir=$defaultPsbDir
 
 artifactsBaseFileName="Private.SourceBuilt.Artifacts"
-sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
-prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
 artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
+
+sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
+sharedComponentsTarballPattern="$sharedComponentsBaseFileName.*.tar.gz"
+
+prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
+prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
 
 positional_args=()
 while :; do
@@ -140,21 +144,21 @@ fi
 # Check if Private.SourceBuilt artifacts archive exists
 downloadPsbArtifacts=$downloadArtifacts
 packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
   echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPsbArtifacts=false
 fi
 
-# Check if Private.SourceBuilt shared components archive exists
+# Check if shared components archive exists
 downloadSharedComponentsArtifacts=$downloadArtifacts
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsBaseFileName}.*.tar.gz ]; then
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
   echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadSharedComponentsArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
-  echo "  $prebuiltsBaseFileName.*.tar.gz exists in $packagesArchiveDir...it will not be downloaded"
+if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
