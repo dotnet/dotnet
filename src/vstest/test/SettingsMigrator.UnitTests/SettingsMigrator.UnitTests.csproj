@@ -4,6 +4,7 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <IsTestProject Condition=" '$(OS)' != 'Windows_NT' ">false</IsTestProject>
+    <OutputType Condition=" '$(OS)' == 'Windows_NT' ">Exe</OutputType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -14,6 +15,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\SettingsMigrator\SettingsMigrator.csproj" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" Condition=" '$(OS)' != 'Windows_NT' " />
   </ItemGroup>
   
   <ItemGroup>

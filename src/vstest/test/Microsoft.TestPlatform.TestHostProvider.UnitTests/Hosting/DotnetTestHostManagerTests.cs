@@ -86,7 +86,6 @@ public class DotnetTestHostManagerTests
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessFileName()).Returns(DefaultDotnetPath);
         _mockProcessHelper.Setup(ph => ph.GetTestEngineDirectory()).Returns(DefaultDotnetPath);
         _mockProcessHelper.Setup(ph => ph.GetCurrentProcessArchitecture()).Returns(PlatformArchitecture.X64);
-        _mockEnvironmentVariable.Setup(ev => ev.GetEnvironmentVariable(It.IsAny<string>())).Returns(Path.GetDirectoryName(DefaultDotnetPath)!);
         _mockFileHelper.Setup(ph => ph.Exists(_defaultTestHostPath)).Returns(true);
         _mockFileHelper.Setup(ph => ph.Exists(DefaultDotnetPath)).Returns(true);
 
