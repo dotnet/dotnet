@@ -86,7 +86,7 @@ sourceVersion=''
 CUSTOM_PACKAGES_DIR=''
 CUSTOM_SDK_DIR=''
 packagesDir="$scriptroot/prereqs/packages/"
-commonArchivesDir="${packagesDir}archives/common/"
+packagesArchiveDir="${packagesDir}archive/"
 packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
 
 # Advanced settings
@@ -460,8 +460,8 @@ if [[ "$sourceOnly" == "true" ]]; then
 
   if [[ "$CUSTOM_PACKAGES_DIR" != "" && -f "$CUSTOM_PACKAGES_DIR/PackageVersions.props" ]]; then
     packageVersionsPath="$CUSTOM_PACKAGES_DIR/PackageVersions.props"
-  elif [ -d "$commonArchivesDir" ]; then
-    sourceBuiltArchive=$(find "$commonArchivesDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
+  elif [ -d "$packagesArchiveDir" ]; then
+    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
     if [ -f "${packagesPreviouslySourceBuiltDir}PackageVersions.props" ]; then
       packageVersionsPath=${packagesPreviouslySourceBuiltDir}PackageVersions.props
     elif [ -f "$sourceBuiltArchive" ]; then
@@ -474,7 +474,7 @@ if [[ "$sourceOnly" == "true" ]]; then
     echo "Cannot find PackagesVersions.props.  Debugging info:"
     echo "  Attempted custom PVP path: $CUSTOM_PACKAGES_DIR/PackageVersions.props"
     echo "  Attempted previously-source-built path: ${packagesPreviouslySourceBuiltDir}PackageVersions.props"
-    echo "  Attempted archive path: $commonArchivesDir"
+    echo "  Attempted archive path: $packagesArchiveDir"
     exit 1
   fi
 

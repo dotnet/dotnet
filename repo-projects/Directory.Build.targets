@@ -172,7 +172,7 @@
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <PrebuiltNuGetSourceName>prebuilt</PrebuiltNuGetSourceName>
       <PreviouslySourceBuiltNuGetSourceName>previously-source-built</PreviouslySourceBuiltNuGetSourceName>
-      <PreviouslySourceBuiltSharedComponentsNuGetSourceName>previously-source-built-shared-components</PreviouslySourceBuiltSharedComponentsNuGetSourceName>
+      <PreviouslySourceBuiltSharedComponentsNuGetSourceName>shared-components</PreviouslySourceBuiltSharedComponentsNuGetSourceName>
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
       
       <AddPrebuiltFeeds>true</AddPrebuiltFeeds>

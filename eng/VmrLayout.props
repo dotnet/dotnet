@@ -16,7 +16,6 @@
     <PrereqsDir>$([MSBuild]::NormalizeDirectory('$(RepoRoot)', 'prereqs'))</PrereqsDir>
     <KeysDir>$([MSBuild]::NormalizeDirectory('$(PrereqsDir)', 'keys'))</KeysDir>
     <PrereqsPackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsDir)', 'packages'))</PrereqsPackagesDir>
-    <PrereqsPackageArchivesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'archives'))</PrereqsPackageArchivesDir>
 
     <!-- When SB mode, the initial toolsets are unzipped to the "BootstrapPackages" dir.
          When running in non-source-build, the bootstrap package is the one restored at the beginning of the build. -->
@@ -37,7 +36,7 @@
     <PreviouslySourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built'))</PreviouslySourceBuiltPackagesPath>
     <PreviouslySourceBuiltPackagesPath Condition="'$(CustomPreviouslySourceBuiltPackagesPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomPreviouslySourceBuiltPackagesPath)'))</PreviouslySourceBuiltPackagesPath>
     <PreviouslySourceBuiltPackageVersionsPropsFile>$(PreviouslySourceBuiltPackagesPath)PackageVersions.props</PreviouslySourceBuiltPackageVersionsPropsFile>
-    <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built-shared-components'))</SharedComponentsArtifactsPath>
+    <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'shared-components'))</SharedComponentsArtifactsPath>
     <SharedComponentsArtifactsPath Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomSharedComponentsArtifactsPath)'))</SharedComponentsArtifactsPath>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
@@ -45,6 +44,7 @@
     <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
     <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
+    <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
 
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
