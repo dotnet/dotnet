@@ -363,7 +363,6 @@
     <PropertyGroup>
       <_UsePackageVersionPropsAggregation>true</_UsePackageVersionPropsAggregation>
       <_UsePackageVersionPropsAggregation Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">false</_UsePackageVersionPropsAggregation>
-      <_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)</_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>
       <_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>;@(_PreviouslyBuiltSourceBuiltSharedComponentPackages, ';');</_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>
     </PropertyGroup>
 
