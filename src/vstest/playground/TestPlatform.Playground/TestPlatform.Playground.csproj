@@ -4,6 +4,14 @@
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <!-- MSB3276 Suppress warnings about conflicts between different versions of the same dependent assembly -->
     <MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3276</MSBuildWarningsAsMessages>
+
+    <EnableMSTestRunner>false</EnableMSTestRunner>
+    <!--
+      Arcade uses UseMSTestRunner instead of EnableMSTestRunner
+      https://github.com/dotnet/arcade/blob/c9ed073c0a2a828aed8f5c6ecb0a544b0f0fd3f8/src/Microsoft.DotNet.Arcade.Sdk/tools/MSTest/MSTest.targets#L29
+      https://github.com/dotnet/arcade/issues/15875      
+    -->
+    <UseMSTestRunner>false</UseMSTestRunner>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,8 +20,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="3.3.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.9.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.9.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,8 +64,8 @@
 
     <ItemGroup>
       <!-- .NET Framework console -->
-      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkMinimum)\win7-x64\**\*.*" SubFolder="netfx" />
-      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkMinimum)\**\*.*" SubFolder="netfx\Extensions\" />
+      <FileToCopy Include="$(SourcePath)bin\vstest.console\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\win7-x64\**\*.*" SubFolder="netfx" />
+      <FileToCopy Include="$(SourcePath)bin\Microsoft.TestPlatform.TestHostProvider\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\**\*.*" SubFolder="netfx\Extensions\" />
 
       <!-- copy net462, net47, net471, net472, net48 and net481 testhosts -->
       <FileToCopy Include="$(SourcePath)bin\testhost.x86\$(Configuration)\$(NetFrameworkMinimum)\win-x86\**\*.*" SubFolder="netfx\TestHostNetFramework\" />

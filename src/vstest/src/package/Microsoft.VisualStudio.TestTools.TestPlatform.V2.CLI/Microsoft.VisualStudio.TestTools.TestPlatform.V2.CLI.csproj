@@ -31,7 +31,6 @@
     <TestPlatformCliBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform.CLI\$(Configuration)\$(NetFrameworkMinimum)\</TestPlatformCliBinFolder>
     <TestPlatformBinFolder>$(ArtifactsBinDir)Microsoft.TestPlatform\$(Configuration)\$(NetFrameworkRunnerTargetFramework)\</TestPlatformBinFolder>
     <MsDiaFolder>$(TestPlatformBinFolder)Microsoft.Internal.Dia\</MsDiaFolder>
-    <CUITFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.CUIT\</CUITFolder>
     <CodeCoverageIOFolder>$(TestPlatformBinFolder)Microsoft.CodeCoverage.IO\</CodeCoverageIOFolder>
     <VSQualityToolsFolder>$(TestPlatformBinFolder)Microsoft.VisualStudio.QualityTools\</VSQualityToolsFolder>
     <DependencyModelFolder>$(TestPlatformBinFolder)Microsoft.Extensions.DependencyModel\</DependencyModelFolder>
@@ -139,25 +138,6 @@
       <VsixSourceItem Include="$(MsDiaFolder)x86\*">
         <VSIXSubPath>x86</VSIXSubPath>
       </VsixSourceItem>
-    </ItemGroup>
-
-    <!-- CUIT -->
-    <ItemGroup>
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.MSAA.dll">
-        <VSIXSubPath>CUITPlugins</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CUITFolder)IEPropertyConfiguration.*">
-        <VSIXSubPath>CUITPlugins</VSIXSubPath>
-      </VsixSourceItem>
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.*.dll" Exclude="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.CrossBrowser.dll;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE*;$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.Uia*;" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITest.Extension.IE.Communication.Interop.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.QualityTools.*.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Interop.UIAutomationClient.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.ShDocVw.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.Diagnostics.Measurement.dll" />
-      <VsixSourceItem Include="$(CUITFolder)Microsoft.VisualStudio.TestTools.UITesting.dll" />
-      <VsixSourceItem Include="$(CUITFolder)UIAComWrapper.dll" />
     </ItemGroup>
 
     <!-- Code Coverage -->
