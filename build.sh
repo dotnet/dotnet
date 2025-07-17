@@ -59,6 +59,33 @@ usage()
   echo "Arguments can also be passed in with a single hyphen."
 }
 
+function SetBranding()
+{
+  local brandingValue="$1"
+  
+  if [[ "$brandingValue" == "preview" ]]; then
+    properties+=( "/p:DotNetFinalVersionKind=prerelease" )
+  elif [[ "$brandingValue" == "rtm" ]]; then
+    properties+=( "/p:DotNetFinalVersionKind=release" )
+  elif [[ "$brandingValue" == "default" ]]; then
+    # default branding; no extra property needed
+    :
+  else
+    echo "ERROR: Invalid branding '$brandingValue'. Allowed values are 'preview', 'rtm', or 'default'."
+    exit 1
+  fi
+}
+
+function SetOfficialBuildId()
+{
+  local officialBuildIdValue="$1"
+  if [[ ! "$officialBuildIdValue" =~ ^[0-9]{8}\.[0-9]{1,3}$ ]]; then
+    echo "ERROR: Invalid official-build-id format. Expected format: YYYYYMMDD.X"
+    exit 1
+  fi
+  properties+=( "/p:OfficialBuildId=$officialBuildIdValue" )
+}
+
 source="${BASH_SOURCE[0]}"
 
 # resolve $source until the file is no longer a symlink
@@ -75,6 +102,8 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 binary_log=''
 configuration='Release'
 verbosity='minimal'
+officialBuildId=''
+branding=''
 
 # Actions
 clean=false
@@ -127,17 +156,8 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -branding)
-      if [[ "$2" == "preview" ]]; then
-        properties+=( "/p:DotNetFinalVersionKind=prerelease" )
-      elif [[ "$2" == "rtm" ]]; then
-        properties+=( "/p:DotNetFinalVersionKind=release" )
-      elif [[ "$2" == "default" ]]; then
-        # default branding; no extra property needed
-        :
-      else
-        echo "ERROR: Invalid branding '$2'. Allowed values are 'preview', 'rtm', or 'default'."
-        exit 1
-      fi
+      branding="$2"
+      SetBranding "$branding"
       shift
       ;;
     -with-system-libs)
@@ -151,11 +171,7 @@ while [[ $# > 0 ]]; do
       ;;
     -official-build-id)
       officialBuildId="$2"
-      if [[ ! "$officialBuildId" =~ ^[0-9]{8}\.[0-9]{1,3}$ ]]; then
-        echo "ERROR: Invalid official-build-id format. Expected format: YYYYYMMDD.X"
-        #exit 1
-      fi
-      properties+=( "/p:OfficialBuildId=$officialBuildId" )
+      SetOfficialBuildId "$officialBuildId"
       shift
       ;;
     -verbosity|-v)
@@ -332,16 +348,18 @@ function Build {
     check="/check"
   fi
 
-  InitializeToolset
+  echo "Building with properties: ${properties[*]}"
 
-  MSBuild $_InitializeToolset \
-    $bl \
-    $check \
-    "-tl:off" \
-    "${actions[@]}" \
-    "${properties[@]}"
+  # InitializeToolset
 
-  ExitWithExitCode 0
+  # MSBuild $_InitializeToolset \
+  #   $bl \
+  #   $check \
+  #   "-tl:off" \
+  #   "${actions[@]}" \
+  #   "${properties[@]}"
+
+  # ExitWithExitCode 0
 }
 
 if [[ "$clean" == true ]]; then
@@ -416,20 +434,18 @@ if [[ "$sourceOnly" == "true" ]]; then
 
     # If the release manifest is provided
     if [ -n "$releaseManifest" ] ; then
-      # Check if OfficialBuildId was explicitly provided as an MSBuild property. This overrides any value in the release manifest.
-      officialBuildIdProvided=false
-      for prop in "${properties[@]}"; do
-        if [[ $prop =~ ^[-/]p:OfficialBuildId=[^\s]+$ ]]; then
-          officialBuildIdProvided=true
-          break
-        fi
-      done
-
       # If OfficialBuildId was not provided, extract it from the release manifest
-      if [ "$officialBuildIdProvided" == "false" ]; then
+      if [ "$officialBuildId" == "" ]; then
         officialBuildId=$(get_property "$releaseManifest" officialBuildId) \
             || (echo "ERROR: Failed to find officialBuildId in $releaseManifest" && exit 1)
-        properties+=( "/p:OfficialBuildId=$officialBuildId" )
+        SetOfficialBuildId "$officialBuildId"
+      fi
+
+      # If branding was not provided, extract it from the release manifest
+      if [[ "$branding" == "" ]]; then
+        branding=$(get_property "$releaseManifest" branding) \
+          || (echo "ERROR: Failed to find branding in $releaseManifest" && exit 1)
+        SetBranding "$branding"
       fi
     fi
   fi
