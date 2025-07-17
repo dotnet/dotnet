@@ -39,7 +39,7 @@
       Include="$(SharedComponentArchivesDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
   </ItemGroup>
 
-  <Target Name="ReferenceSharedComponents"
+  <Target Name="CopyCustomSharedComponentAssets"
           Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
     
     <!-- Copy assets from custom shared components artifacts path to artifacts directory -->
@@ -86,7 +86,8 @@
        This scenario maps to the SharedComponentsPrereqsArchivePath item.
   -->
   <Target Name="PrepareSharedComponents"
-          DependsOnTargets="ReferenceSharedComponents;UnpackSharedComponentsPrereqsArchive" />
+          DependsOnTargets="CopyCustomSharedComponentAssets;
+                            UnpackSharedComponentsPrereqsArchive" />
 
   <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
        the build to be working without prebuilts. -->
