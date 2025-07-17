@@ -1600,6 +1600,7 @@ internal static class KnownPlatformSourceFilter
         "Microsoft.Testing.Extensions.HangDump.resources.dll",
         "Microsoft.Testing.Extensions.HotReload.dll",
         "Microsoft.Testing.Extensions.HotReload.resources.dll",
+        "Microsoft.Testing.Extensions.MSBuild.dll",
         "Microsoft.Testing.Extensions.Retry.dll",
         "Microsoft.Testing.Extensions.Retry.resources.dll",
         "Microsoft.Testing.Extensions.Telemetry.dll",

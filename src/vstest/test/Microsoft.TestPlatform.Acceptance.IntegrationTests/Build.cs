@@ -62,7 +62,17 @@ public class Build : IntegrationTestBase
         // e.g. artifacts\tmp\.dotnet\sdk\
         var sdkDirectory = Path.Combine(patchedDotnetDir, "sdk");
         // e.g. artifacts\tmp\.dotnet\sdk\8.0.100-preview.6.23330.14
-        var dotnetSdkDirectory = Directory.GetDirectories(sdkDirectory).Single();
+        var dotnetSdkDirectories = Directory.GetDirectories(sdkDirectory);
+        if (dotnetSdkDirectories.Length == 0)
+        {
+            throw new InvalidOperationException($"No .NET SDK directories found in '{sdkDirectory}'.");
+        }
+        if (dotnetSdkDirectories.Length > 1)
+        {
+            throw new InvalidOperationException($"More than 1 .NET SDK directories found in '{sdkDirectory}': {string.Join(", ", dotnetSdkDirectories)}.");
+        }
+
+        var dotnetSdkDirectory = dotnetSdkDirectories.Single();
         DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "lib", "netstandard2.0"), dotnetSdkDirectory);
         DirectoryUtils.CopyDirectory(Path.Combine(packagePath, "runtimes", "any", "native"), dotnetSdkDirectory);
     }

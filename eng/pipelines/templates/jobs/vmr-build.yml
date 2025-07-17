@@ -69,6 +69,11 @@ parameters:
   type: object
   default: ''
 
+# Enables usage of the system libraries when building.
+- name: useSystemLibraries
+  type: boolean
+  default: false
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -227,8 +232,24 @@ jobs:
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
 
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: officialBuildArgument
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)officialBuildId $(Build.BuildNumber)
+      ${{ else }}:
+        value: $(commandPrefix)official-build-id $(Build.BuildNumber)
+  - ${{ else }}:
+    - name: officialBuildArgument
+      value: ''
+
+  - name: useSystemLibrariesArgument
+    ${{ if eq(parameters.useSystemLibraries, 'true') }}:
+      value: $(commandPrefix)with-system-libs all
+    ${{ else }}:
+      value: ''
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
