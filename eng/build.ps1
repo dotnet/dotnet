@@ -9,6 +9,8 @@ Param(
   [string][Alias('v')]$verbosity = "minimal",
   [Parameter()][ValidateSet("preview", "rtm", "default")]
   [string]$branding = "default",
+  [Parameter()][ValidatePattern("^\d{8}\.\d{1,3}$")]
+  [string][Alias('obid')]$officialBuildId,
 
   # Actions
   [switch]$clean,
@@ -31,13 +33,14 @@ Param(
 
 function Get-Usage() {
   Write-Host "Common settings:"
-  Write-Host "  -binaryLog                  Output binary log (short: -bl)"
-  Write-Host "  -configuration <value>      Build configuration: 'Debug' or 'Release' (short: -c). [Default: Release]"
-  Write-Host "  -rid, -targetRid <value>    Overrides the rid that is produced by the build. e.g. win-arm64, win-x64"
-  Write-Host "  -os, -targetOS <value>      Target operating system: e.g. windows."
-  Write-Host "  -arch, -targetArch <value>  Target architecture: e.g. x64, x86, arm64, arm, riscv64"
-  Write-Host "  -verbosity <value>          Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
+  Write-Host "  -binaryLog                       Output binary log (short: -bl)"
+  Write-Host "  -configuration <value>           Build configuration: 'Debug' or 'Release' (short: -c). [Default: Release]"
+  Write-Host "  -rid, -targetRid <value>         Overrides the rid that is produced by the build. e.g. win-arm64, win-x64"
+  Write-Host "  -os, -targetOS <value>           Target operating system: e.g. windows."
+  Write-Host "  -arch, -targetArch <value>       Target architecture: e.g. x64, x86, arm64, arm, riscv64"
+  Write-Host "  -verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
   Write-Host "  -branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
+  Write-Host "  -officialBuildId <YYYYMMDD.X>    Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
   Write-Host ""
 
   Write-Host "Actions:"
@@ -95,6 +98,7 @@ if ($branding) {
         "default" { $arguments += "" }
     }
 }
+if ($officialBuildId) { $arguments += "/p:OfficialBuildId=$officialBuildId" }
 
 function Build {
   $toolsetBuildProj = InitializeToolset

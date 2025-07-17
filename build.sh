@@ -10,14 +10,16 @@ set -e
 usage()
 {
   echo "Common settings:"
-echo "  --binaryLog                         Create MSBuild binary log (short: -bl)"
+  echo "  --binaryLog                       Create MSBuild binary log (short: -bl)"
   echo "  --configuration <value>           Build configuration: 'Debug' or 'Release' (short: -c)"
   echo "  --rid, --target-rid <value>       Overrides the rid that is produced by the build. e.g. alpine.3.18-arm64, fedora.37-x64, freebsd.13-arm64, ubuntu.19.10-x64"
   echo "  --os, --target-os <value>         Target operating system: e.g. linux, osx, freebsd. Note: this is the base OS name, not the distro"
   echo "  --arch, --target-arch <value>     Target architecture: e.g. x64, x86, arm64, arm, riscv64"
   echo "  --branding <preview|rtm|default>  Specify versioning for shipping packages/assets. 'preview' will produce assets suffixed with '.final', 'rtm' will not contain a pre-release suffix. Default or unspecified will use VMR repo defaults."
   echo "  --verbosity <value>               Msbuild verbosity: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic] (short: -v)"
-  echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. eg brotli+libunwind+rapidjson+zlib"
+  echo "  --with-system-libs <libs>         Use system versions of these libraries. Combine with a plus. 'all' will use all supported libraries. e.g. brotli+libunwind+rapidjson+zlib"
+  echo "  --official-build-id <YYYYMMDD.X>  Official build ID to use for the build. This is used to set the OfficialBuildId MSBuild property."
+
   echo ""
 
   echo "Actions:"
@@ -138,7 +140,21 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -with-system-libs)
-      properties+=( "/p:UseSystemLibs=$2" )
+      value="$2"
+      if [[ "$value" != +* ]]; then
+        # Ensure the value is prepended with a '+'
+        value="+$value"
+      fi
+      properties+=( "/p:UseSystemLibs=$value" )
+      shift
+      ;;
+    -official-build-id)
+      officialBuildId="$2"
+      if [[ ! "$officialBuildId" =~ ^[0-9]{8}\.[0-9]{1,3}$ ]]; then
+        echo "ERROR: Invalid official-build-id format. Expected format: YYYYYMMDD.X"
+        #exit 1
+      fi
+      properties+=( "/p:OfficialBuildId=$officialBuildId" )
       shift
       ;;
     -verbosity|-v)
