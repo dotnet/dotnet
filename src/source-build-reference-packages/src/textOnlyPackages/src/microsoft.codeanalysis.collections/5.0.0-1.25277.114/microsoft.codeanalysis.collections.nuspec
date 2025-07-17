@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.CodeAnalysis.Collections</id>
+    <version>5.0.0-1.25277.114</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/roslyn</projectUrl>
+    <description>Package containing sources of Microsoft .NET Compiler Platform ("Roslyn") collections.
+    
+
+      The source code included in this package is subject to arbitrary changes in future versions. 
+      Updating a reference to this package to a newer version of the package may require changes in the referencing project.
+      No compatibility guarantees are provided.
+    
+      More details at https://aka.ms/roslyn-packages
+      This package was built from the source at https://github.com/dotnet/dotnet/commit/ddf39a1b4690fbe23aea79c78da67004a5c31094.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</tags>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/dotnet" commit="ddf39a1b4690fbe23aea79c78da67004a5c31094" />
+    <dependencies>
+      <group targetFramework="net9.0">
+        <dependency id="System.Collections.Immutable" version="9.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="System.Collections.Immutable" version="9.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Threading.Tasks.Extensions" version="4.5.4" exclude="Build,Analyzers" />
+        <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
+        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
+        <dependency id="System.Numerics.Vectors" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="cs/net9.0/Extensions/ICollectionExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Extensions/ICollectionExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Extensions/IEnumerableExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Extensions/IEnumerableExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Extensions/ImmutableArrayExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Extensions/ImmutableArrayExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/ArraySortHelper.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/ArraySortHelper.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/BitHelper.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/BitHelper.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/HashHelpers.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/HashHelpers.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/ICollectionCalls.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/ICollectionCalls.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/ICollectionCalls`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/ICollectionCalls`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/ICollectionDebugView`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/ICollectionDebugView`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/IDictionaryCalls.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/IDictionaryCalls.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/IDictionaryDebugView`2.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/IDictionaryDebugView`2.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/IEnumerableCalls.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/IEnumerableCalls.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/IEnumerableCalls`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/IEnumerableCalls`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/IListCalls.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/IListCalls.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/InsertionBehavior.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/InsertionBehavior.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/RoslynUnsafe.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/RoslynUnsafe.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/SegmentedArrayHelper.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/SegmentedArrayHelper.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/SegmentedArraySegment`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/SegmentedArraySegment`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/SegmentedHashSetEqualityComparer`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/SegmentedHashSetEqualityComparer`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/SR.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/SR.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Internal/ThrowHelper.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Internal/ThrowHelper.cs" buildAction="Compile" />
+      <files include="cs/net9.0/OneOrMany.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/OneOrMany.cs" buildAction="Compile" />
+      <files include="cs/net9.0/RoslynEnumerable.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/RoslynEnumerable.cs" buildAction="Compile" />
+      <files include="cs/net9.0/RoslynImmutableInterlocked.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/RoslynImmutableInterlocked.cs" buildAction="Compile" />
+      <files include="cs/net9.0/TemporaryArrayExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/TemporaryArrayExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/TemporaryArray`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/TemporaryArray`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+Builder+KeyCollection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+Builder+KeyCollection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+Builder+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+Builder+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+Builder+ValueCollection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+Builder+ValueCollection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+Builder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+Builder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+KeyCollection+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+KeyCollection+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+KeyCollection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+KeyCollection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+ValueCollection+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+ValueCollection+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2+ValueCollection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2+ValueCollection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedDictionary`2.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedDictionary`2.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet`1+Builder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet`1+Builder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet`1+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet`1+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet`1+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet`1+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedHashSet`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedHashSet`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedListExtensions.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedListExtensions.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList`1+Builder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList`1+Builder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList`1+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList`1+Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList`1+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList`1+ValueBuilder.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/ImmutableSegmentedList`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/ImmutableSegmentedList`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedArray.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedArray.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedArray`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedArray`1+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedArray`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedArray`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedCollectionsMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedCollectionsMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedDictionary`2+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedDictionary`2+PrivateMarshal.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedDictionary`2.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedDictionary`2.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedHashSet`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedHashSet`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Segmented/SegmentedList`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Segmented/SegmentedList`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Collection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Collection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Dictionary.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Dictionary.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Enumerable.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Enumerable.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Enumerator.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Enumerator.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Enumerator`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Enumerator`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.List.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.List.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Empty.Set.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Empty.Set.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.ReadOnly.Collection.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.ReadOnly.Collection.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.ReadOnly.Enumerable`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.ReadOnly.Enumerable`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.ReadOnly.Enumerable`2.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.ReadOnly.Enumerable`2.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.ReadOnly.Set.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.ReadOnly.Set.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Singleton.Collection`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Singleton.Collection`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Specialized/SpecializedCollections.Singleton.Enumerator`1.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Specialized/SpecializedCollections.Singleton.Enumerator`1.cs" buildAction="Compile" />
+      <files include="cs/net9.0/.editorconfig" buildAction="None" />
+      <files include="cs/netstandard2.0/.editorconfig" buildAction="None" />
+    </contentFiles>
+  </metadata>
+</package>

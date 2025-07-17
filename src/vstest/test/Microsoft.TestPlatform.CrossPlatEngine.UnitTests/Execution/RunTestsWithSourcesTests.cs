@@ -382,6 +382,7 @@ public class RunTestsWithSourcesTests
     }
 
     [FileExtension(".dll")]
+    [FileExtension(".exe")]
     [DefaultExecutorUri(RunTestsWithSourcesTestsExecutorUri)]
     private class RunTestWithSourcesDiscoverer : ITestDiscoverer
     {
