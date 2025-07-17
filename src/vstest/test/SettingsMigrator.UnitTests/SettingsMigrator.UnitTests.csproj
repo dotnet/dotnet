@@ -15,6 +15,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\src\SettingsMigrator\SettingsMigrator.csproj" />
+    <PackageReference Include="MSTest.TestFramework" Version="$(MSTestTestFrameworkVersion)" Condition=" '$(OS)' != 'Windows_NT' " />
   </ItemGroup>
   
   <ItemGroup>
