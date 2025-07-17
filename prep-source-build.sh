@@ -227,7 +227,7 @@ function DownloadArchive {
 
   local archiveUrl
   if [[ "$propertyName" == "MicrosoftNETSdkVersion" ]]; then
-    archiveUrl="http://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
+    archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
   elif [[ "$propertyName" == *Prebuilts* ]]; then
     archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
   elif [[ "$propertyName" == *Artifacts* ]]; then
