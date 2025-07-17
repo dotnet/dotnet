@@ -112,6 +112,7 @@ stages:
             -nobl
             -integrationTest
             -performanceTest
+            /bl:$(Build.SourcesDirectory)/artifacts/TestResults/$(_BuildConfig)/Test.binlog
           name: Test
           displayName: Test
 

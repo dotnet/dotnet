@@ -15,17 +15,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!--
-      This version is read by vsts-prebuild.ps1 and is a base for the current version, this should be updated at the start of
-      new iteration to the goal number. This is also used to version the local packages. This version needs to be statically
-      readable when we read the file as xml, don't move it to a .props file, unless you change the build server process
-    -->
-    <TPVersionPrefix>17.10.0</TPVersionPrefix>
-    <!--
-        Versioning is defined from the build script. Use a default dev build if it's not defined.
-        Sets the AssemblyVersion, AssemblyFileVersion and AssemblyInformationalVersion
-      -->
-    <Version Condition="'$(Version)' == ''">$(TPVersionPrefix)-dev</Version>
     <!-- Override the AssemblyVersion as 15.0.0 since protocol depends on this version for serialization. This is also defined in build script. -->
     <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">15.0.0</AssemblyVersion>
     <!-- Auto generating binding redirects breaks testhost when running under net8.0 vstest.console as .NET Framework net462.  -->
@@ -147,6 +136,8 @@
     <TestRunnerName>MSTest</TestRunnerName>
     <!-- Skip windows only tests on non-windows systems. -->
     <TestRunnerAdditionalArguments Condition=" '$(OS)' != 'Windows_NT' ">$(TestRunnerAdditionalArguments) --filter "TestCategory!=Windows&amp;TestCategory!=Windows-Review"</TestRunnerAdditionalArguments>
+    <!-- Do not capture test output on CI to help community see errors -->
+    <TestCaptureOutput Condition=" '$(ContinuousIntegrationBuild)' == 'true' ">false</TestCaptureOutput>
   </PropertyGroup>
 
 </Project>

@@ -513,23 +513,115 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
         // i.e. I've got only private install and no global installation, in this case apphost needs to use env var to locate runtime.
         if (testHostExeFound)
         {
-            string prefix = "VSTEST_WINAPPHOST_";
-            string dotnetRootEnvName = $"{prefix}DOTNET_ROOT(x86)";
-            var dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
-            if (dotnetRoot is null)
+            // This change needs to happen first on vstest side, and then on dotnet/sdk, so prefer this approach and fallback to the old one.
+            // VSTEST_DOTNET_ROOT v2
+            string? dotnetRootPath = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_PATH");
+            if (!StringUtils.IsNullOrWhiteSpace(dotnetRootPath))
             {
-                dotnetRootEnvName = $"{prefix}DOTNET_ROOT";
-                dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
-            }
+                // This is v2 of the environment variables that we are passing, we are in new dotnet sdk. So also grab the architecture.
+                string? dotnetRootArchitecture = _environmentVariableHelper.GetEnvironmentVariable("VSTEST_DOTNET_ROOT_ARCHITECTURE");
 
-            if (dotnetRoot != null)
-            {
-                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Found '{dotnetRootEnvName}' in env variables, value '{dotnetRoot}', forwarding to '{dotnetRootEnvName.Replace(prefix, string.Empty)}'");
-                startInfo.EnvironmentVariables.Add(dotnetRootEnvName.Replace(prefix, string.Empty), dotnetRoot);
+                if (StringUtils.IsNullOrWhiteSpace(dotnetRootArchitecture))
+                {
+                    throw new InvalidOperationException("'VSTEST_DOTNET_ROOT_PATH' and 'VSTEST_DOTNET_ROOT_ARCHITECTURE' must be both always set. If you are seeing this error, this is a bug in dotnet SDK that sets those variables.");
+                }
+
+                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_PATH={dotnetRootPath}");
+                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: VSTEST_DOTNET_ROOT_ARCHITECTURE={dotnetRootArchitecture}");
+
+                // The parent process is passing to us the path in which the dotnet.exe is and is passing the architecture of the dotnet.exe,
+                // so if the child process (testhost) is the same architecture it can pick up that dotnet.exe location and run. This is to allow
+                // local installations of dotnet/sdk to work with testhost.
+                //
+                // There are 2 complications in this process:
+                // 1) There are differences between how .NET Apphosts are handling DOTNET_ROOT, versions pre-net6 are only looking at
+                //    DOTNET_ROOT(x86) and then DOTNET_ROOT. This makes is really easy to set DOTNET_ROOT to point at x64 dotnet installation
+                //    and have that picked up by x86 testhost and fail.
+                //    Unfortunately vstest.console has to support both new (17.14+) testhosts that are built against net8, and old (pre 17.14)
+                //    testhosts that are built using netcoreapp3.1 apphost, and so their approach to resolving DOTNET_ROOT differ.
+                //
+                //    /!\ The apphost version does not align with the targeted framework (tfm), an older testhost is built against netcoreapp3.1
+                //        but can be used to run net8 tests. The only way to tell is the version of the testhost.
+                //
+                //    netcoreapp3.1 hosts only support DOTNET_ROOT and DOTNET_ROOT(x86) env variables.
+                //    net8          hosts, support also DOTNET_ROOT_<ARCH> variables, which is what we should prefer to set the location of dotnet
+                //                  in a more architecture specific way.
+                //
+                // 2) The surrounding environment might already have the environment variables set, most likely by setting DOTNET_ROOT, which is
+                //    a universal way of setting where the dotnet is, that works across all different architectures of the .NET apphost.
+                //    By setting our (hopefully more specific variable) we might overwrite what user specified, and in case of DOTNET_ROOT it is probably
+                //    preferable when we can set the DOTNET_ROOT_<ARCH> variable.
+                var testhostDllPath = Path.ChangeExtension(startInfo.FileName, ".dll");
+                // This file check is for unit tests, we expect the file to always be there. Otherwise testhost.exe would not be able to run.
+                var testhostVersionInfo = _fileHelper.Exists(testhostDllPath) ? FileVersionInfo.GetVersionInfo(testhostDllPath) : null;
+                if (testhostVersionInfo != null && testhostVersionInfo.ProductMajorPart >= 17 && testhostVersionInfo.ProductMinorPart >= 14)
+                {
+                    // This is a new testhost that builds at least against net8 we should set the architecture specific DOTNET_ROOT_<ARCH>.
+                    //
+                    // We ship just testhost.exe and testhost.x86.exe if the architecture is different we won't find the testhost*.exe and
+                    // won't reach this code, but let's write this in a generic way anyway, to avoid breaking if we add more variants of testhost*.exe.
+                    var environmentVariableName = $"DOTNET_ROOT_{_architecture.ToString().ToUpperInvariant()}";
+
+                    var existingDotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(environmentVariableName);
+                    if (!StringUtilities.IsNullOrWhiteSpace(existingDotnetRoot))
+                    {
+                        // The variable is already set in the surrounding environment, don't set it, because we want to keep what user provided.
+                    }
+                    else
+                    {
+                        // Set the architecture specific variable to the environment of the process so it is picked up.
+                        startInfo.EnvironmentVariables.Add(environmentVariableName, dotnetRootPath);
+                    }
+                }
+                else
+                {
+                    // This is an old testhost that built against netcoreapp3.1, it does not understand architecture specific DOTNET_ROOT_<ARCH>, we have to set it more carefully
+                    // to avoid setting DOTNET_ROOT that points to x64 but is picked up by x86 host.
+                    //
+                    // Also avoid setting it if we are already getting it from the surrounding environment.
+                    var architectureFromEnv = (Architecture)Enum.Parse(typeof(Architecture), dotnetRootArchitecture, ignoreCase: true);
+                    if (architectureFromEnv == _architecture)
+                    {
+                        if (_architecture == Architecture.X86)
+                        {
+                            const string dotnetRootX86 = "DOTNET_ROOT(x86)";
+                            if (StringUtils.IsNullOrWhiteSpace(_environmentVariableHelper.GetEnvironmentVariable(dotnetRootX86)))
+                            {
+                                startInfo.EnvironmentVariables.Add(dotnetRootX86, dotnetRootPath);
+                            }
+                        }
+                        else
+                        {
+                            const string dotnetRoot = "DOTNET_ROOT";
+                            if (StringUtils.IsNullOrWhiteSpace(_environmentVariableHelper.GetEnvironmentVariable(dotnetRoot)))
+                            {
+                                startInfo.EnvironmentVariables.Add(dotnetRoot, dotnetRootPath);
+                            }
+                        }
+                    }
+                }
             }
             else
             {
-                EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Prefix '{prefix}*' not found in env variables");
+                // Fallback, can delete this once the change is in dotnet sdk. because they are always used together.
+                string prefix = "VSTEST_WINAPPHOST_";
+                string dotnetRootEnvName = $"{prefix}DOTNET_ROOT(x86)";
+                var dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
+                if (dotnetRoot is null)
+                {
+                    dotnetRootEnvName = $"{prefix}DOTNET_ROOT";
+                    dotnetRoot = _environmentVariableHelper.GetEnvironmentVariable(dotnetRootEnvName);
+                }
+
+                if (dotnetRoot != null)
+                {
+                    EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Found '{dotnetRootEnvName}' in env variables, value '{dotnetRoot}', forwarding to '{dotnetRootEnvName.Replace(prefix, string.Empty)}'");
+                    startInfo.EnvironmentVariables.Add(dotnetRootEnvName.Replace(prefix, string.Empty), dotnetRoot);
+                }
+                else
+                {
+                    EqtTrace.Verbose($"DotnetTestHostmanager.LaunchTestHostAsync: Prefix '{prefix}*' not found in env variables");
+                }
             }
         }
 

@@ -232,6 +232,16 @@ jobs:
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
 
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: officialBuildArgument
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)officialBuildId $(Build.BuildNumber)
+      ${{ else }}:
+        value: $(commandPrefix)official-build-id $(Build.BuildNumber)
+  - ${{ else }}:
+    - name: officialBuildArgument
+      value: ''
+
   - name: useSystemLibrariesArgument
     ${{ if eq(parameters.useSystemLibraries, 'true') }}:
       value: $(commandPrefix)with-system-libs all
@@ -239,7 +249,7 @@ jobs:
       value: ''
 
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)

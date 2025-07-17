@@ -4,6 +4,7 @@
     <TestProject>true</TestProject>
     <IsTestProject>true</IsTestProject>
     <IsTestProject Condition=" '$(OS)' != 'Windows_NT' ">false</IsTestProject>
+    <OutputType Condition=" '$(OS)' == 'Windows_NT' ">Exe</OutputType>
   </PropertyGroup>
 
   <PropertyGroup>
