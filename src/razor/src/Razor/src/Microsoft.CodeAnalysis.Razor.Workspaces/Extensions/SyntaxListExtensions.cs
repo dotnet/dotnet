@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language.Syntax;
 

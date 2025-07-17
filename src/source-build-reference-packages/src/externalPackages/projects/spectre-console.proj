@@ -4,6 +4,7 @@
     <PackagesOutput>$(ProjectDirectory)src/Spectre.Console/bin/$(Configuration)/</PackagesOutput>
     <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
     <CustomRepoBuild>true</CustomRepoBuild>
+    <SpectreConsoleReleaseVersion>0.50.0</SpectreConsoleReleaseVersion>
   </PropertyGroup>
 
   <Target Name="CustomRepoBuild">

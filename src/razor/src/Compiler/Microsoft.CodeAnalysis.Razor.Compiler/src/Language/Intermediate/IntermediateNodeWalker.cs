@@ -1,41 +1,40 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
+using System;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
-public abstract class IntermediateNodeWalker : IntermediateNodeVisitor
+public abstract partial class IntermediateNodeWalker : IntermediateNodeVisitor
 {
-    private readonly List<IntermediateNode> _ancestors = new List<IntermediateNode>();
+    private Stack _ancestorStack;
 
-    protected IReadOnlyList<IntermediateNode> Ancestors => _ancestors;
+    protected ReadOnlySpan<IntermediateNode> Ancestors => _ancestorStack.Span;
 
-    protected IntermediateNode Parent => _ancestors.Count > 0 ? _ancestors[0] : null;
+    protected IntermediateNode? Parent
+        => _ancestorStack.Span is [var parent, ..] ? parent : null;
 
     public override void VisitDefault(IntermediateNode node)
     {
         var children = node.Children;
-        if (node.Children.Count == 0)
+        if (children.Count == 0)
         {
             return;
         }
 
-        _ancestors.Insert(0, node);
+        _ancestorStack.Push(node);
 
         try
         {
-            for (var i = 0; i < node.Children.Count; i++)
+            // Visiting a child may mutate it's parent's children, so we don't use foreach here.
+            for (var i = 0; i < children.Count; i++)
             {
-                var child = children[i];
-                Visit(child);
+                Visit(children[i]);
             }
         }
         finally
         {
-            _ancestors.RemoveAt(0);
+            _ancestorStack.Pop();
         }
     }
 }

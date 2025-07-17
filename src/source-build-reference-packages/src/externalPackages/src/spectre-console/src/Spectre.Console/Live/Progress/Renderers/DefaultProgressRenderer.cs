@@ -118,7 +118,7 @@ internal sealed class DefaultProgressRenderer : ProgressRenderer
     {
         lock (_lock)
         {
-            yield return _live.PositionCursor(options);
+            yield return _live.PositionCursor();
 
             foreach (var renderable in renderables)
             {

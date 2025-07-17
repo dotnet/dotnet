@@ -126,7 +126,7 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             {
                 var currentCount = 0;
 
-                Workspace.WorkspaceChanged += OnWorkspaceChanged;
+                using var _ = Workspace.RegisterWorkspaceChangedHandler(OnWorkspaceChanged);
 
                 if (!Workspace.TryApplyChanges(solution))
                 {
@@ -142,10 +142,9 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
                 }
                 while (lastCount != currentCount);
 
-                Workspace.WorkspaceChanged -= OnWorkspaceChanged;
                 return true;
 
-                void OnWorkspaceChanged(object? sender, WorkspaceChangeEventArgs e)
+                void OnWorkspaceChanged(WorkspaceChangeEventArgs e)
                 {
                     currentCount++;
                 }

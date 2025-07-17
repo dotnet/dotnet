@@ -43,17 +43,10 @@ namespace System.CommandLine.Parsing
         internal override bool UseDefaultValueFor(ArgumentResult argumentResult)
             => argumentResult.Argument.HasDefaultValue && argumentResult.Tokens.Count == 0;
 
-        /// <param name="completeValidation">Only the inner most command goes through complete validation.</param>
-        internal void Validate(bool completeValidation)
+        internal void Validate(bool isInnermostCommand)
         {
-            if (completeValidation)
+            if (isInnermostCommand)
             {
-                if (Command.Action is null && Command.HasSubcommands)
-                {
-                    SymbolResultTree.InsertFirstError(
-                        new ParseError(LocalizationResources.RequiredCommandWasNotProvided(), this));
-                }
-
                 if (Command.HasValidators)
                 {
                     int errorCountBefore = SymbolResultTree.ErrorCount;
@@ -71,16 +64,16 @@ namespace System.CommandLine.Parsing
 
             if (Command.HasOptions)
             {
-                ValidateOptions(completeValidation);
+                ValidateOptionsAndAddDefaultResults(isInnermostCommand);
             }
 
             if (Command.HasArguments)
             {
-                ValidateArguments(completeValidation);
+                ValidateArgumentsAndAddDefaultResults(isInnermostCommand);
             }
         }
 
-        private void ValidateOptions(bool completeValidation)
+        private void ValidateOptionsAndAddDefaultResults(bool completeValidation)
         {
             var options = Command.Options;
             for (var i = 0; i < options.Count; i++)
@@ -105,7 +98,7 @@ namespace System.CommandLine.Parsing
                         argumentResult = new(optionResult.Option.Argument, SymbolResultTree, optionResult);
                         SymbolResultTree.Add(optionResult.Option.Argument, argumentResult);
 
-                        if (option.Required && !option.Argument.HasDefaultValue)
+                        if (option is { Required: true, Argument.HasDefaultValue: false })
                         {
                             argumentResult.AddError(LocalizationResources.RequiredOptionWasNotProvided(option.Name));
                             continue;
@@ -148,7 +141,7 @@ namespace System.CommandLine.Parsing
             }
         }
 
-        private void ValidateArguments(bool completeValidation)
+        private void ValidateArgumentsAndAddDefaultResults(bool completeValidation)
         {
             var arguments = Command.Arguments;
             for (var i = 0; i < arguments.Count; i++)

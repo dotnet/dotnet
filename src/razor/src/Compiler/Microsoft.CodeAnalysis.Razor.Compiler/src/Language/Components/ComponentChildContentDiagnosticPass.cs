@@ -1,9 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
@@ -25,7 +22,7 @@ internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePa
         visitor.Visit(documentNode);
     }
 
-    private class Visitor : IntermediateNodeWalker
+    private sealed class Visitor : IntermediateNodeWalker
     {
         public override void VisitComponent(ComponentIntermediateNode node)
         {
@@ -43,7 +40,7 @@ internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePa
                 }
             }
 
-            base.VisitDefault(node);
+            VisitDefault(node);
         }
 
         public override void VisitComponentChildContent(ComponentChildContentIntermediateNode node)
@@ -52,26 +49,31 @@ internal class ComponentChildContentDiagnosticPass : ComponentIntermediateNodePa
             // because the parameter name can be implicit, and it doesn't work well when nested.
             if (node.IsParameterized)
             {
-                for (var i = 0; i < Ancestors.Count - 1; i++)
+                var ancestors = Ancestors;
+                var parentComponent = (ComponentIntermediateNode)ancestors[0];
+
+                // Skip the immediate parent component as we've already validated against it.
+                // Loop to ancestors.Length - 1 because we're always checking pairs.
+
+                for (var i = 1; i < ancestors.Length - 1; i++)
                 {
-                    var ancestor = Ancestors[i] as ComponentChildContentIntermediateNode;
-                    if (ancestor != null &&
-                        ancestor.IsParameterized &&
-                        string.Equals(node.ParameterName, ancestor.ParameterName, StringComparison.Ordinal))
+                    if (ancestors[i] is ComponentChildContentIntermediateNode { IsParameterized: true } ancestor &&
+                        ancestor.ParameterName == node.ParameterName &&
+                        ancestors[i + 1] is ComponentIntermediateNode ancestorParentComponent)
                     {
                         // Duplicate name. We report an error because this will almost certainly also lead to an error
                         // from the C# compiler that's way less clear.
                         node.AddDiagnostic(ComponentDiagnosticFactory.Create_ChildContentRepeatedParameterName(
                             node.Source,
-                            node,
-                            (ComponentIntermediateNode)Ancestors[0], // Enclosing component
-                            ancestor, // conflicting child content node
-                            (ComponentIntermediateNode)Ancestors[i + 1]));  // Enclosing component of conflicting child content node
+                            childContent1: node,
+                            component1: parentComponent,
+                            childContent2: ancestor,
+                            component2: ancestorParentComponent));
                     }
                 }
             }
 
-            base.VisitDefault(node);
+            VisitDefault(node);
         }
     }
 }

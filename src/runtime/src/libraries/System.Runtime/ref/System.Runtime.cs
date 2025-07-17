@@ -8552,7 +8552,7 @@ namespace System.ComponentModel
         public DefaultValueAttribute(sbyte value) { }
         public DefaultValueAttribute(float value) { }
         public DefaultValueAttribute(string? value) { }
-        public DefaultValueAttribute([System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)] System.Type type, string? value) { }
+        public DefaultValueAttribute(System.Type type, string? value) { }
         [System.CLSCompliantAttribute(false)]
         public DefaultValueAttribute(ushort value) { }
         [System.CLSCompliantAttribute(false)]
@@ -8894,6 +8894,7 @@ namespace System.Diagnostics.CodeAnalysis
     [System.FlagsAttribute]
     public enum DynamicallyAccessedMemberTypes
     {
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
         All = -1,
         None = 0,
         PublicParameterlessConstructor = 1,
@@ -8934,6 +8935,8 @@ namespace System.Diagnostics.CodeAnalysis
         public DynamicDependencyAttribute(string memberSignature, string typeName, string assemblyName) { }
         public DynamicDependencyAttribute(string memberSignature, System.Type type) { }
         public string? AssemblyName { get { throw null; } }
+        [System.Obsolete("This property is no longer supported.")]
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public string? Condition { get { throw null; } set { } }
         public string? MemberSignature { get { throw null; } }
         public System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes MemberTypes { get { throw null; } }

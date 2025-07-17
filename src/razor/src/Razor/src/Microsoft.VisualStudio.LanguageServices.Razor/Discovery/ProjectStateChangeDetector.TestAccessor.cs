@@ -39,7 +39,7 @@ internal partial class ProjectStateChangeDetector
 
         public void WorkspaceChanged(WorkspaceChangeEventArgs e)
         {
-            instance.Workspace_WorkspaceChanged(instance, e);
+            instance.Workspace_WorkspaceChanged(e);
         }
     }
 }
