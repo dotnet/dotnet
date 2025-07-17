@@ -35,15 +35,18 @@
   </Target>
 
   <ItemGroup>
-    <SharedComponentsPrereqsArchivePath
+    <SharedComponentsPrereqsArchivePathItem
       Include="$(SharedComponentArchivesDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
   </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchivePath>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchivePath>
+  </PropertyGroup>
 
   <Target Name="ValidateSharedComponents">
-    <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '@(SharedComponentsPrereqsArchivePath)' != '')"
+    <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '$(SharedComponentsPrereqsArchivePath)' != '')"
            Text="Shared components cannot be provided as input to a build which produces shared components." />
 
-    <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '@(SharedComponentsPrereqsArchivePath)' == ''"
+    <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(SharedComponentsPrereqsArchivePath)' == ''"
            Text="Shared components must be provided as input to a build which does not produce shared components." />
   </Target>
 
@@ -63,23 +66,24 @@
   </Target>  
 
   <Target Name="UnpackSharedComponentsPrereqsArchive"
-          Condition="'@(SharedComponentsPrereqsArchivePath)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''"
-          Inputs="$(SharedComponentArchivesDir)"
-          Outputs="$(SharedComponentsArtifactsPath)">
+          Condition="'$(SharedComponentsPrereqsArchivePath)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''"
+          Inputs="$(SharedComponentsPrereqsArchivePath)"
+          Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
 
     <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
 
-    <PropertyGroup>
-      <_SharedComponentsArchivePath>@(SharedComponentsPrereqsArchivePath)</_SharedComponentsArchivePath>
-    </PropertyGroup>
-
     <!-- Extract everything except the assets directory to the shared components packages path -->
-    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) --exclude='assets'"
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchivePath) --exclude='assets'"
           WorkingDirectory="$(SharedComponentsArtifactsPath)" />
 
     <!-- Extract only the assets directory directly to the artifacts directory -->
-    <Exec Command="tar -xzf $(_SharedComponentsArchivePath) assets"
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchivePath) assets"
           WorkingDirectory="$(ArtifactsDir)" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
   </Target>
 
   <!--
