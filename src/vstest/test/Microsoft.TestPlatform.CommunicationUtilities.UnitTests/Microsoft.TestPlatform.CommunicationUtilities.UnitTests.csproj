@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net48</TargetFrameworks>
-    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <AssemblyName>Microsoft.TestPlatform.CommunicationUtilities.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetFrameworkMinimum)'))">

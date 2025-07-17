@@ -63,6 +63,7 @@ stages:
           enablePoison: false                # 🚫
           runOnline: true                    # ✅
           useMonoRuntime: false              # 🚫
+          useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
 
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
@@ -74,6 +75,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
 
@@ -88,6 +90,7 @@ stages:
             excludeOmniSharpTests: false       # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Offline_PreviousSourceBuiltSdk'
@@ -97,6 +100,7 @@ stages:
             enablePoison: true                 # ✅
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
@@ -106,6 +110,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
@@ -115,6 +120,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
@@ -124,6 +130,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Online_PreviousSourceBuiltSdk'
@@ -133,6 +140,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: true                    # ✅
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
 
           - buildNameFormat: '{0}_Mono_Offline_MsftSdk'
@@ -142,6 +150,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: true               # ✅
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
@@ -151,6 +160,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
@@ -160,6 +170,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
 
           - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
@@ -169,6 +180,7 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: false              # 🚫
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
 
@@ -179,5 +191,6 @@ stages:
             enablePoison: false                # 🚫
             runOnline: false                   # 🚫
             useMonoRuntime: true               # ✅
+            useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             reuseBuildArtifactsFrom: '{0}_Mono_Offline_MsftSdk_x64'
