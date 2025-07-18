@@ -49,8 +49,6 @@ extends:
       - template: /eng/common/templates-official/jobs/jobs.yml@self
         parameters:
           enablePublishBuildArtifacts: true
-          enablePublishBuildAssets: true
-          enablePublishUsingPipelines: true
 
           jobs:
           ############ macOS BUILD ############

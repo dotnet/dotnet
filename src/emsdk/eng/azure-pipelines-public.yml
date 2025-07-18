@@ -26,10 +26,8 @@ stages:
   - template: /eng/common/templates/jobs/jobs.yml
     parameters:
       enablePublishBuildArtifacts: true
-      enablePublishBuildAssets: true
-      enablePublishUsingPipelines: true
-      jobs:
 
+      jobs:
       ############ macOS BUILD ############
       - job: Build_macOS
         displayName: macOS
