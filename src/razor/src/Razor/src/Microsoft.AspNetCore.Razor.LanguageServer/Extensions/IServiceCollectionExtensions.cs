@@ -74,7 +74,7 @@ internal static class IServiceCollectionExtensions
     {
         services.AddHandlerWithCapabilities<InlineCompletionEndpoint>();
         services.AddHandlerWithCapabilities<RazorCompletionEndpoint>();
-        services.AddHandlerWithCapabilities<RazorCompletionResolveEndpoint>();
+        services.AddHandler<RazorCompletionResolveEndpoint>();
         services.AddSingleton<CompletionListCache>();
         services.AddSingleton<CompletionListProvider>();
         services.AddSingleton<DelegatedCompletionListProvider>();
