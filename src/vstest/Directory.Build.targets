@@ -61,7 +61,6 @@
           <FromP2P>true</FromP2P>
         </ProjectReference>
 
-        <PackageReference Include="MSTest.Assert.Extensions" Version="$(MSTestAssertExtensionVersion)" />
         <PackageReference Include="Moq" Version="$(MoqVersion)" />
         <PackageReference Include="Microsoft.CodeCoverage" Version="$(MicrosoftCodeCoverageVersion)" />
         <!--
