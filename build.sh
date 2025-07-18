@@ -348,18 +348,16 @@ function Build {
     check="/check"
   fi
 
-  echo "Building with properties: ${properties[*]}"
+  InitializeToolset
 
-  # InitializeToolset
+  MSBuild $_InitializeToolset \
+    $bl \
+    $check \
+    "-tl:off" \
+    "${actions[@]}" \
+    "${properties[@]}"
 
-  # MSBuild $_InitializeToolset \
-  #   $bl \
-  #   $check \
-  #   "-tl:off" \
-  #   "${actions[@]}" \
-  #   "${properties[@]}"
-
-  # ExitWithExitCode 0
+  ExitWithExitCode 0
 }
 
 if [[ "$clean" == true ]]; then
