@@ -106,4 +106,13 @@ internal sealed record RazorLSPOptions(
         hash.Add(TaskListDescriptors);
         return hash;
     }
+
+    internal FormattingOptions ToFormattingOptions()
+    {
+        return new FormattingOptions()
+        {
+            InsertSpaces = InsertSpaces,
+            TabSize = TabSize,
+        };
+    }
 }
