@@ -21,7 +21,6 @@
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.vsdconfig" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Concord.vsdconfig" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.ConfigUI.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.ConfigUI.dll" />
-    <file src="net48\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Core.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.Common.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.Common.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Debugger.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.DebuggerMargin.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.DebuggerMargin.dll" />
@@ -44,6 +43,7 @@
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe.config" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\TDEnvCleanup.exe.config" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\1033\Microsoft.IntelliTrace.Profilerui.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\1033\Microsoft.IntelliTrace.Profilerui.dll" />
+    <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.Core.dll" />
     <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.DiaSymReader.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\deps\Microsoft.DiaSymReader.dll" />
     <file src="net48\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\deps\Microsoft.VisualStudio.Enterprise.AspNetHelper.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace\x86\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" target="tools\net462\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\en\collectionplan.xml" />
@@ -60,7 +60,7 @@
     <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.DiaSymReader.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.DiaSymReader.dll" />
     <file src="net48\Microsoft.Extensions.DependencyModel.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.Extensions.DependencyModel.dll" />
     <file src="net48\Microsoft.Extensions.FileSystemGlobbing\Microsoft.Extensions.FileSystemGlobbing.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.Extensions.FileSystemGlobbing.dll" />
-    <file src="net48\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.IntelliTrace.Core.dll" />
+    <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.IntelliTrace.Core.dll" />
     <file src="net48\Microsoft.TestPlatform.CommunicationUtilities.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CommunicationUtilities.dll" />
     <file src="net48\Microsoft.TestPlatform.CoreUtilities.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CoreUtilities.dll" />
     <file src="net48\Microsoft.TestPlatform.CrossPlatEngine.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\Microsoft.TestPlatform.CrossPlatEngine.dll" />
@@ -425,7 +425,7 @@
     <file src="net48\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll" />
     <file src="net48\zh-Hant\vstest.console.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\vstest.console.resources.dll" />
     <file src="net48\zh-Hant\SettingsMigrator.resources.dll" target="tools\net462\Common7\IDE\Extensions\TestPlatform\zh-Hant\SettingsMigrator.resources.dll" />
-    <file src="net48\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.Core.dll" />
+    <file src="net48\Microsoft.Internal.TestPlatform.Extensions\Microsoft.IntelliTrace.Core.dll" target="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.Core.dll" />
     <file src="net48\Microsoft.Internal.Intellitrace.Extensions\x86\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" target="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.IntelliTrace.ObjectModel.dll" />
     <file src="net48\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" target="tools\net462\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.ArchitectureTools.PEReader.dll" />
 
