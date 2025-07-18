@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProjectx86", "Sim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTestProjectARM64", "SimpleTestProjectARM64\SimpleTestProjectARM64.csproj", "{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CUITTestProject", "CUITTestProject\CUITTestProject.csproj", "{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisableAppdomainTest1", "DisableAppdomainTest1\DisableAppdomainTest1.csproj", "{36C7990F-0A36-47CE-8E10-7887D24E2F9A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisableAppdomainTest2", "DisableAppdomainTest2\DisableAppdomainTest2.csproj", "{A09B21CC-F726-413A-B185-3AE1172BAED0}"
@@ -198,10 +196,6 @@ Global
 		{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C865EAA-C6C2-4CAF-A6AD-D9CF29577A36}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF46C8A0-E9FA-40E9-96CA-DCD3797546D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{36C7990F-0A36-47CE-8E10-7887D24E2F9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{36C7990F-0A36-47CE-8E10-7887D24E2F9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36C7990F-0A36-47CE-8E10-7887D24E2F9A}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -24,7 +24,7 @@ public sealed class DefaultTagHelperDescriptorProvider : TagHelperDescriptorProv
         }
 
         var targetSymbol = context.TargetSymbol;
-        var factory = new DefaultTagHelperDescriptorFactory(compilation, context.IncludeDocumentation, context.ExcludeHidden);
+        var factory = new DefaultTagHelperDescriptorFactory(context.IncludeDocumentation, context.ExcludeHidden);
         var collector = new Collector(compilation, targetSymbol, factory, tagHelperTypeSymbol);
         collector.Collect(context);
     }

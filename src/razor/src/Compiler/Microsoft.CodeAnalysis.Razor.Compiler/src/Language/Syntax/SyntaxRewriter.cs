@@ -47,7 +47,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
             return list;
         }
 
-        using PooledArrayBuilder<TNode> builder = [];
+        using var builder = new PooledArrayBuilder<TNode>(capacity: count);
 
         var isUpdating = false;
 
@@ -61,8 +61,6 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
             {
                 // The list is being updated, so we need to initialize the builder
                 // add the items we've seen so far.
-                builder.SetCapacityIfLarger(count);
-
                 builder.AddRange(list, startIndex: 0, count: i);
 
                 isUpdating = true;
@@ -93,7 +91,7 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
             return list;
         }
 
-        using PooledArrayBuilder<SyntaxToken> builder = [];
+        using var builder =  new PooledArrayBuilder<SyntaxToken>(count);
 
         var isUpdating = false;
 
@@ -107,8 +105,6 @@ internal abstract partial class SyntaxRewriter : SyntaxVisitor<SyntaxNode>
             {
                 // The list is being updated, so we need to initialize the builder
                 // add the items we've seen so far.
-                builder.SetCapacityIfLarger(count);
-
                 builder.AddRange(list, startIndex: 0, count: i);
 
                 isUpdating = true;

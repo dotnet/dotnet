@@ -1,11 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 
@@ -190,8 +187,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         switch (node)
         {
             case ValuesExpression { ValuesParameter: SqlParameterExpression valuesParameter } valuesExpression
-                when ParameterizedCollectionMode is ParameterizedCollectionMode.MultipleParameters
-                    && !valuesParameter.ShouldBeConstantized:
+                when (valuesParameter.TranslationMode ?? CollectionParameterTranslationMode) is ParameterTranslationMode.MultipleParameters:
             {
                 Check.DebugAssert(valuesParameter.TypeMapping is not null);
                 Check.DebugAssert(valuesParameter.TypeMapping.ElementTypeMapping is not null);
@@ -237,8 +233,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         switch (inExpression.ValuesParameter)
         {
             case SqlParameterExpression valuesParameter
-                when ParameterizedCollectionMode is ParameterizedCollectionMode.MultipleParameters
-                    && !valuesParameter.ShouldBeConstantized:
+                when (valuesParameter.TranslationMode ?? CollectionParameterTranslationMode) is ParameterTranslationMode.MultipleParameters:
             {
                 Check.DebugAssert(valuesParameter.TypeMapping is not null);
                 Check.DebugAssert(valuesParameter.TypeMapping.ElementTypeMapping is not null);

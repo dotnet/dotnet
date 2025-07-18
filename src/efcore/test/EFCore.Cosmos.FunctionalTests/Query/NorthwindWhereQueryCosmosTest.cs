@@ -3,7 +3,6 @@
 
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
-using Xunit.Sdk;
 
 namespace Microsoft.EntityFrameworkCore.Query;
 
@@ -2339,8 +2338,8 @@ WHERE (c["id"] = @entity_equality_customer_CustomerID)
     public override async Task EF_Constant_with_non_evaluatable_argument_throws(bool async)
     {
         await base.EF_Constant_with_non_evaluatable_argument_throws(async);
-        AssertSql(
-        );
+
+        AssertSql();
     }
 
     public override Task EF_Parameter(bool async)
