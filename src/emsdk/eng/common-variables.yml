@@ -1,32 +1,15 @@
 variables:
   # Cannot use key:value syntax in root defined variables
-  - name: _TeamName
-    value: DotNetCore
-  - name: HelixApiAccessToken
-    value: ''
   - name: _InternalBuildArgs
-    value: ''
-  - name: _InternalPublishArg
     value: ''
   - name: _BuildConfig
     value: Release
-  - name: PostBuildSign
-    value: false
 
-  # If post build signing, then OSX and Linux don't publish during their main pass. Otherwise, always publish
-  - name: _NonWindowsInternalPublishArg
-    ${{ if eq(variables['PostBuildSign'], 'true') }}:
-      value: -publish
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - name: _SignType
-      value: real
     # Publish-Build-Assets provides: MaestroAccessToken, BotAccount-dotnet-maestro-bot-PAT
     # DotNet-HelixApi-Access provides: HelixApiAccessToken
     - group: Publish-Build-Assets
     - group: DotNet-HelixApi-Access
     - group: SDL_Settings
     - name: _InternalBuildArgs
-      value: /p:DotNetSignType=$(_SignType) 
-        /p:TeamName=$(_TeamName)
-        /p:DotNetPublishUsingPipelines=true
-        /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+      value: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)

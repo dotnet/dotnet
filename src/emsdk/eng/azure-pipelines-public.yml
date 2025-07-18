@@ -28,7 +28,6 @@ stages:
       enablePublishBuildArtifacts: true
       enablePublishBuildAssets: true
       enablePublishUsingPipelines: true
-      enableMicrobuild: true
       jobs:
 
       ############ macOS BUILD ############
@@ -52,16 +51,13 @@ stages:
             --ci
             --prepareMachine
             --configuration $(_BuildConfig)
-            --test
             --pack
+            --publish
             /p:TargetArchitecture=$(targetArchitecture)
             /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
             $(_InternalBuildArgs)
-            $(_NonWindowsInternalPublishArg)
           displayName: Build
-        - publish: artifacts/packages
-          artifact: Packages_macOS_$(assetManifestPlatform)
         - bash: |
             rm -rf binaryen node python llvm emscripten
           displayName: Remove temporary artifacts
@@ -98,16 +94,13 @@ stages:
             --ci
             --prepareMachine
             --configuration $(_BuildConfig)
-            --test
             --pack
+            --publish
             /p:TargetArchitecture=$(targetArchitecture)
             /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
             $(_InternalBuildArgs)
-            $(_NonWindowsInternalPublishArg)
-          displayName: Build
-        - publish: artifacts/packages
-          artifact: Packages_$(assetManifestOS)_$(assetManifestPlatform)
+          displayName: Build and Publish
         - bash: |
             rm -rf binaryen node llvm emscripten
           displayName: Remove temporary artifacts
@@ -136,112 +129,16 @@ stages:
             -ci
             -prepareMachine
             -configuration $(_BuildConfig)
-            -test
             -pack
-            -sign
             -publish
+            -sign
             /p:TargetArchitecture=$(targetArchitecture)
-            /p:SkipWorkloads=true
             /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
             /p:AssetManifestOS=$(assetManifestOS)
-            /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
             $(_InternalBuildArgs)
           displayName: Build and Publish
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-            CleanTargetFolder: false
-            Overwrite: true
-        - task: PublishBuildArtifacts@1
-          displayName: Publish intermediate artifacts
-          inputs:
-            pathToPublish: '$(Build.StagingDirectory)/IntermediateArtifacts'
-            artifactName: IntermediateArtifacts
-            artifactType: container
         - script: |
             rmdir /s /q binaryen node python llvm emscripten
           displayName: Remove temporary artifacts
-
-      - job: Build_Workloads
-        displayName: Workloads
-        dependsOn:
-          - Build_Windows
-        timeoutInMinutes: 120
-        pool:
-          name: $(DncEngPublicBuildPool)
-          demands: ImageOverride -equals windows.vs2022.amd64.open
-        strategy:
-          matrix:
-            x64:
-              assetManifestOS: win
-              assetManifestPlatform: x64
-              targetArchitecture: x64
-        steps:
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifact: IntermediateArtifacts
-            path: 'artifacts/packages'
-            patterns: |
-              IntermediateArtifacts/windows/Shipping/*.*
-        - script: build.cmd
-            -ci
-            -prepareMachine
-            -configuration $(_BuildConfig)
-            -test
-            -pack
-            -sign
-            -publish
-            /p:TargetArchitecture=$(targetArchitecture)
-            /p:SkipBuild=true
-            /p:TargetRid=$(assetManifestOS)-$(assetManifestPlatform)
-            /p:AssetManifestFileName=win-workloads.xml
-            /p:AssetManifestOS=$(assetManifestOS)
-            /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
-            $(_InternalBuildArgs)
-          displayName: Build and Publish
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-            CleanTargetFolder: false
-            Overwrite: true
-        - task: PublishBuildArtifacts@1
-          displayName: Publish intermediate artifacts
-          inputs:
-            pathToPublish: '$(Build.StagingDirectory)/IntermediateArtifacts'
-            artifactName: IntermediateArtifacts
-            artifactType: container
-        # Upload packages wrapping msis
-        - task: CopyFiles@2
-          displayName: Prepare job-specific intermediate artifacts subdirectory
-          inputs:
-            SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/windows'
-            Contents: |
-              Shipping/**/*
-              NonShipping/**/*
-            TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/workloads'
-            CleanTargetFolder: true
-        # Delete wixpdb files before they are uploaded to artifacts
-        - task: DeleteFiles@1
-          displayName: Delete wixpdb's
-          inputs:
-            SourceFolder: $(Build.SourcesDirectory)/artifacts/workloadPackages
-            Contents: '*.wixpdb'
-        # Upload artifacts to be used for generating VS components
-        - task: PublishPipelineArtifact@1
-          displayName: Publish workload artifacts
-          inputs:
-            targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
-            artifactName: 'Workloads'
-          continueOnError: true
         - powershell: $(CheckNuGetSizesScript)
           displayName: Check NuGet sizes

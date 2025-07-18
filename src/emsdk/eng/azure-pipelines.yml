@@ -51,7 +51,6 @@ extends:
           enablePublishBuildArtifacts: true
           enablePublishBuildAssets: true
           enablePublishUsingPipelines: true
-          enableMicrobuild: true
 
           jobs:
           ############ macOS BUILD ############
@@ -68,16 +67,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=x64
                 /p:TargetRid=osx-x64
                 /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_macOS_x64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -97,16 +92,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=osx-arm64
                 /p:AssetManifestOS=osx
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_macOS_arm64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -127,16 +118,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=x64
                 /p:TargetRid=linux-x64
                 /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_linux_x64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -156,16 +143,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=linux-arm64
                 /p:AssetManifestOS=linux
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_linux_arm64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -185,16 +168,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=x64
                 /p:TargetRid=linux-musl-x64
                 /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_linux_musl_x64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -214,16 +193,12 @@ extends:
                 --prepareMachine
                 --configuration $(_BuildConfig)
                 --pack
+                --publish
                 /p:TargetArchitecture=arm64
                 /p:TargetRid=linux-musl-arm64
                 /p:AssetManifestOS=linux-musl
                 $(_InternalBuildArgs)
-                $(_NonWindowsInternalPublishArg)
-              displayName: Build
-            - task: 1ES.PublishPipelineArtifact@1
-              inputs:
-                path: $(System.DefaultWorkingDirectory)/artifacts/packages
-                artifact: Packages_linux_musl_arm64
+              displayName: Build and Publish
             - bash: |
                 rm -rf binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
@@ -244,34 +219,17 @@ extends:
                 -prepareMachine
                 -configuration $(_BuildConfig)
                 -pack
-                -sign
                 -publish
                 /p:TargetArchitecture=x64
-                /p:SkipWorkloads=true
                 /p:TargetRid=win-x64
                 /p:AssetManifestOS=win
-                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
-              displayName: Build
-            - task: CopyFiles@2
-              displayName: Prepare job-specific intermediate artifacts subdirectory
-              inputs:
-                SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-                Contents: |
-                  Shipping/**/*
-                  NonShipping/**/*
-                TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-                CleanTargetFolder: false
-                Overwrite: true
-            - task: 1ES.PublishPipelineArtifact@1
-              displayName: Publish intermediate artifacts
-              inputs:
-                targetPath: '$(Build.StagingDirectory)/IntermediateArtifacts'
-                artifactName: Packages_win_x64
-                artifactType: container
+              displayName: Build and Publish
             - script: |
                 rmdir /s /q binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
+            - powershell: $(CheckNuGetSizesScript)
+              displayName: Check NuGet sizes
 
           - job: Build_win_arm64
             displayName: Windows_arm64
@@ -286,167 +244,22 @@ extends:
                 -prepareMachine
                 -configuration $(_BuildConfig)
                 -pack
-                -sign
                 -publish
                 /p:TargetArchitecture=arm64
-                /p:SkipWorkloads=true
                 /p:TargetRid=win-arm64
                 /p:AssetManifestOS=win
-                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\$(_BuildConfig)\Shipping
                 $(_InternalBuildArgs)
-              displayName: Build
-            - task: CopyFiles@2
-              displayName: Prepare job-specific intermediate artifacts subdirectory
-              inputs:
-                SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-                Contents: |
-                  Shipping/**/*
-                  NonShipping/**/*
-                TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-                CleanTargetFolder: false
-                Overwrite: true
-            - task: 1ES.PublishPipelineArtifact@1
-              displayName: Publish intermediate artifacts
-              inputs:
-                targetPath: '$(Build.StagingDirectory)/IntermediateArtifacts'
-                artifactName: Packages_win_arm64
-                artifactType: container
+              displayName: Build and Publish
             - script: |
                 rmdir /s /q binaryen node python llvm emscripten
               displayName: Remove temporary artifacts
-
-          # Only run in case of in-build signing
-          - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'), ne(variables['PostBuildSign'], 'true')) }}:
-            ############ Signing BUILD ############
-            - job: Sign_artifacts_win
-              displayName: Sign Artifacts
-              timeoutInMinutes: 120
-              dependsOn:
-              - Build_macOS_x64
-              - Build_macOS_arm64
-              - Build_linux_x64
-              - Build_linux_arm64
-              - Build_linux_musl_x64
-              - Build_linux_musl_arm64
-              pool:
-                name: $(DncEngInternalBuildPool)
-                image: $(WindowsImage)
-                os: windows
-              steps:
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_macOS_x64
-                  path: 'artifacts/packages'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_macOS_arm64
-                  path: 'artifacts/packages'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_linux_x64
-                  path: 'artifacts/packages'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_linux_arm64
-                  path: 'artifacts/packages'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_linux_musl_x64
-                  path: 'artifacts/packages'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: Packages_linux_musl_arm64
-                  path: 'artifacts/packages'
-              - powershell: |
-                  ./eng/common/build.ps1 -ci -configuration $(_BuildConfig) -restore -sign -publish /p:AssetManifestFileName=unix-all.xml $(_InternalBuildArgs)
-
-          ############ Workloads BUILD ############
-          - job: Build_Workloads
-            displayName: Workloads
-            dependsOn:
-            - Build_win_x64
-            - Build_win_arm64
-            - Build_linux_x64
-            - Build_linux_arm64
-            - Build_linux_musl_x64
-            - Build_linux_musl_arm64
-            - Build_macOS_x64
-            - Build_macOS_arm64
-            timeoutInMinutes: 120
-            pool:
-              name: $(DncEngInternalBuildPool)
-              image: $(WindowsImage)
-              os: windows
-            steps:
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifact: Packages_win_x64
-                path: 'artifacts/packages'
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifact: Packages_win_arm64
-                path: 'artifacts/packages'
-            - script: build.cmd
-                -ci
-                -prepareMachine
-                -configuration $(_BuildConfig)
-                -pack
-                -sign
-                -publish
-                /p:TargetArchitecture=x64
-                /p:SkipBuild=true
-                /p:TargetRid=win-x64
-                /p:AssetManifestFileName=win-workloads.xml
-                /p:AssetManifestOS=win
-                /p:workloadPackagesPath=$(Build.SourcesDirectory)\artifacts\packages\windows\Shipping
-                $(_InternalBuildArgs)
-              displayName: Build and Publish
-            - task: CopyFiles@2
-              displayName: Prepare job-specific intermediate artifacts subdirectory
-              inputs:
-                SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/$(_BuildConfig)'
-                Contents: |
-                  Shipping/**/*
-                  NonShipping/**/*
-                TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/windows'
-                CleanTargetFolder: false
-                Overwrite: true
-            - task: 1ES.PublishPipelineArtifact@1
-              displayName: Publish intermediate artifacts
-              inputs:
-                targetPath: '$(Build.StagingDirectory)/IntermediateArtifacts'
-                artifactName: IntermediateArtifacts
-                artifactType: container
-            # Upload packages wrapping msis
-            - task: CopyFiles@2
-              displayName: Prepare job-specific intermediate artifacts subdirectory
-              inputs:
-                SourceFolder: '$(Build.SourcesDirectory)/artifacts/packages/windows'
-                Contents: |
-                  Shipping/**/*
-                  NonShipping/**/*
-                TargetFolder: '$(Build.StagingDirectory)/IntermediateArtifacts/workloads'
-                CleanTargetFolder: true
-            # Delete wixpdb files before they are uploaded to artifacts
-            - task: DeleteFiles@1
-              displayName: Delete wixpdb's
-              inputs:
-                SourceFolder: $(Build.SourcesDirectory)/artifacts/workloadPackages
-                Contents: '*.wixpdb'
-            # Upload artifacts to be used for generating VS components
-            #- task: 1ES.PublishPipelineArtifact@1
-            #  displayName: Publish workload artifacts
-            #  inputs:
-            #    targetPath: $(Build.SourcesDirectory)/artifacts/VSSetup/$(_BuildConfig)/Insertion/
-            #    artifactName: 'Workloads'
-            #  continueOnError: true
             - powershell: $(CheckNuGetSizesScript)
               displayName: Check NuGet sizes
 
-    ############ POST BUILD ARCADE LOGIC ############
-    - template: /eng/common/templates-official/post-build/post-build.yml@self
-      parameters:
-        enableSourceLinkValidation: false
-        enableSigningValidation: true
-        enableSymbolValidation: false
-        enableNugetValidation: true
+    - stage: Publish
+      displayName: Publish
+      dependsOn: []
+      jobs:
+      - template: /eng/common/templates-official/jobs/jobs.yml@self
+        parameters:
+          isAssetlessBuild: true
