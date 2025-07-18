@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "9.0.8-servicing.25365.1",
+      "packageVersion": "9.0.8-servicing.25368.8",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "aa2675a4242e642f144641a8d85325c69c4445c5"
+      "commitSha": "215a587e52efa710de84138b0a3374b860b924d8"
     },
     {
       "packageVersion": "0.11.5-alpha.25329.2",
@@ -46,7 +46,7 @@
       "packageVersion": "9.0.8",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "a050e0039986bf1f4133e4f6dcb05bd0bd077c9f"
+      "commitSha": "3f7d40ec7be104358780955b3f0fea62495264dc"
     },
     {
       "packageVersion": "9.0.8-servicing.25353.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "c7b18dcef39978e063ca671c94d64c46904d2af5"
+      "commitSha": "446d70ffd5a38a032e3eb37bd9b487a552f45d62"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
