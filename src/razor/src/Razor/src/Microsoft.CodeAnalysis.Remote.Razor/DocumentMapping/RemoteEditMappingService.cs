@@ -4,6 +4,8 @@
 using System;
 using System.Composition;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -38,5 +40,22 @@ internal sealed class RemoteEditMappingService(
 
         documentContext = new RemoteDocumentContext(razorDocumentUri, razorDocumentSnapshot);
         return true;
+    }
+
+    protected override async Task<Uri?> GetRazorDocumentUriAsync(IDocumentSnapshot contextDocumentSnapshot, Uri generatedDocumentUri, CancellationToken cancellationToken)
+    {
+        if (contextDocumentSnapshot is not RemoteDocumentSnapshot originSnapshot)
+        {
+            throw new InvalidOperationException("RemoteEditMappingService can only be used with RemoteDocumentSnapshot instances.");
+        }
+
+        var project = originSnapshot.TextDocument.Project;
+        var razorCodeDocument = await _snapshotManager.GetSnapshot(project).TryGetCodeDocumentFromGeneratedDocumentUriAsync(generatedDocumentUri, cancellationToken).ConfigureAwait(false);
+        if (razorCodeDocument is null)
+        {
+            return null;
+        }
+
+        return project.Solution.GetRazorDocumentUri(razorCodeDocument);
     }
 }
