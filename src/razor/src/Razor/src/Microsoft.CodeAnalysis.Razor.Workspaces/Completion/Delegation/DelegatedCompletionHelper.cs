@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
@@ -317,6 +318,14 @@ internal static class DelegatedCompletionHelper
         // rather than the one LSP knows about.
         if (resolvedCompletionItem.Command is { CommandIdentifier: Constants.CompleteComplexEditCommand, Arguments: var args })
         {
+            // In LSP case, command parameters will be JsonElement objects and will need to be deserialized first
+            if (args is [JsonElement textDocumentIdentifierData, JsonElement complexEditData, _, _])
+            {
+                args[0] = textDocumentIdentifierData.Deserialize<TextDocumentIdentifier>() ?? args[0];
+                args[1] = complexEditData.Deserialize<TextEdit>() ?? args[1];
+            }
+
+            // In cohosting case, command parameters will be of the correct types (or deserialized by now in LSP case)
             if (args is [TextDocumentIdentifier, TextEdit complexEdit, _, int nextCursorPosition])
             {
                 var formattedTextEdit = await FormatTextEditsAsync([complexEdit], documentContext, options, formattingService, cancellationToken).ConfigureAwait(false);
