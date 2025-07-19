@@ -241,7 +241,7 @@ internal class RazorFormattingService : IRazorFormattingService
             triggerCharacter: '\0',
             _csharpOnTypeFormattingPass,
             collapseChanges: true,
-            automaticallyAddUsings: false,
+            automaticallyAddUsings: true,
             validate: false,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 

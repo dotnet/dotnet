@@ -174,7 +174,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     publishInstallersAndChecksums,
                     FeedKeys,
                     Array.Empty<ITaskItem>(),
-                    Array.Empty<ITaskItem>(),
                     [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine,
                     symbolVisibility,
@@ -291,7 +290,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     publishInstallersAndChecksums,
                     FeedKeys,
                     Array.Empty<ITaskItem>(),
-                    Array.Empty<ITaskItem>(),
                     latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine: buildEngine,
                     symbolVisibility
@@ -405,7 +403,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Tests
                     commitSha: "c0c0c0c0",
                     publishInstallersAndChecksums,
                     FeedKeys,
-                    Array.Empty<ITaskItem>(),
                     Array.Empty<ITaskItem>(),
                     latestLinkShortUrlPrefixes: [$"{LatestLinkShortUrlPrefix}/{BuildQuality}"],
                     buildEngine: buildEngine,
