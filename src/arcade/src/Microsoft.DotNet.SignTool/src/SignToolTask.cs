@@ -72,6 +72,11 @@ namespace Microsoft.DotNet.SignTool
         public string MicroBuildCorePath { get; set; }
 
         /// <summary>
+        /// Path to the wix3 toolset directory
+        /// </summary>
+        public string Wix3ToolsPath { get; set; }
+
+        /// <summary>
         /// Path to the wix toolset directory
         /// </summary>
         public string WixToolsPath { get; set; }
@@ -226,6 +231,10 @@ namespace Microsoft.DotNet.SignTool
                     Log.LogError($"PkgToolPath ('{PkgToolPath}') does not exist & is required for unpacking, repacking, and notarizing .pkg files and .app bundles on MacOS.");
                 }
             }
+            if(Wix3ToolsPath != null && !Directory.Exists(Wix3ToolsPath))
+            {
+                Log.LogError($"Wix3ToolsPath ('{Wix3ToolsPath}') does not exist.");
+            }
             if(WixToolsPath != null && !Directory.Exists(WixToolsPath))
             {
                 Log.LogError($"WixToolsPath ('{WixToolsPath}') does not exist.");
@@ -244,7 +253,7 @@ namespace Microsoft.DotNet.SignTool
 
             if (Log.HasLoggedErrors) return;
 
-            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
+            var signToolArgs = new SignToolArgs(TempDir, MicroBuildCorePath, TestSign, DotNetPath, MSBuildVerbosity, LogDir, enclosingDir, SNBinaryPath, Wix3ToolsPath, WixToolsPath, TarToolPath, PkgToolPath, DotNetTimeout);
             var signTool = DryRun ? new ValidationOnlySignTool(signToolArgs, Log) : (SignTool)new RealSignTool(signToolArgs, Log);
 
             var itemsToSign = ItemsToSign.Select(i => new ItemToSign(i.ItemSpec, i.GetMetadata(SignToolConstants.CollisionPriorityId))).OrderBy(i => i.CollisionPriorityId).ToList();
