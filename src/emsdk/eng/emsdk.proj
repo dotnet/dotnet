@@ -372,31 +372,6 @@
     <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Python\Microsoft.NET.Runtime.Emscripten.Python.pkgproj" Targets="Build" Condition="'$(UsesPythonFromEmsdk)' == 'true'" />
     <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Sdk\Microsoft.NET.Runtime.Emscripten.Sdk.pkgproj" Targets="Build" />
     <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Cache\Microsoft.NET.Runtime.Emscripten.Cache.pkgproj" Targets="Build" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.Current.Manifest\Microsoft.NET.Workload.Emscripten.Current.Manifest.pkgproj" 
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build" 
-             Properties="PreReleaseVersionLabel=$(PreReleaseVersionLabel);PreReleaseVersionIteration=$(PreReleaseVersionIteration)" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.Current.Manifest\Microsoft.NET.Workload.Emscripten.Current.Manifest.pkgproj" 
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build"
-             Properties="IsUnversionedManifest=true" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.net6.Manifest\Microsoft.NET.Workload.Emscripten.net6.Manifest.pkgproj" 
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build" 
-             Properties="PreReleaseVersionLabel=$(PreReleaseVersionLabel);PreReleaseVersionIteration=$(PreReleaseVersionIteration)" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.net7.Manifest\Microsoft.NET.Workload.Emscripten.net7.Manifest.pkgproj" 
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build" 
-             Properties="PreReleaseVersionLabel=$(PreReleaseVersionLabel);PreReleaseVersionIteration=$(PreReleaseVersionIteration)" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.net8.Manifest\Microsoft.NET.Workload.Emscripten.net8.Manifest.pkgproj"
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build"
-             Properties="PreReleaseVersionLabel=$(PreReleaseVersionLabel);PreReleaseVersionIteration=$(PreReleaseVersionIteration)" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Workload.Emscripten.net9.Manifest\Microsoft.NET.Workload.Emscripten.net9.Manifest.pkgproj"
-             Condition="'$(DotNetBuild)' != 'true' and ('$(AssetManifestOS)' == '' or ('$(AssetManifestOS)' == 'win' and '$(TargetArchitecture)' == 'x64'))"
-             Targets="Build"
-             Properties="PreReleaseVersionLabel=$(PreReleaseVersionLabel);PreReleaseVersionIteration=$(PreReleaseVersionIteration)" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Sdk.Internal\Microsoft.NET.Runtime.Emscripten.Sdk.Internal.pkgproj" Targets="Build" 
-             Condition="'$(OS)' == 'Windows_NT' and '$(TargetArchitecture)' == 'x64'" />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)nuget\Microsoft.NET.Runtime.Emscripten.Sdk.Internal\Microsoft.NET.Runtime.Emscripten.Sdk.Internal.pkgproj" Targets="Build" />
   </Target>
 </Project>
