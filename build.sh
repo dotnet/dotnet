@@ -37,6 +37,7 @@ usage()
   echo "  --source-repository <URL>         Source Link repository URL, required when building from tarball"
   echo "  --source-version <SHA>            Source Link revision, required when building from tarball"
   echo "  --with-packages <DIR>             Use the specified directory of previously-built packages"
+  echo "  --with-shared-components <DIR>    Use the specified shared components artifacts (e.g. from a build of a 1xx branch)"
   echo "  --with-sdk <DIR>                  Use the SDK in the specified directory for bootstrapping"
   echo "  --prep                            Run prep-source-build.sh to download bootstrap binaries before building"
   echo ""
@@ -203,9 +204,18 @@ while [[ $# > 0 ]]; do
     -with-packages)
       CUSTOM_PACKAGES_DIR="$(cd -P "$2" && pwd)"
       if [ ! -d "$CUSTOM_PACKAGES_DIR" ]; then
-          echo "Custom prviously built packages directory '$CUSTOM_PACKAGES_DIR' does not exist"
+          echo "Custom previously built packages directory '$CUSTOM_PACKAGES_DIR' does not exist"
           exit 1
       fi
+      shift
+      ;;
+    -with-shared-components)
+      sharedComponentsDir="$2"
+      if [ ! -d "$sharedComponentsDir" ]; then
+          echo "Shared components directory '$sharedComponentsDir' does not exist"
+          exit 1
+      fi
+      properties+=( "/p:CustomSharedComponentsArtifactsPath=$sharedComponentsDir" )
       shift
       ;;
     -with-sdk)

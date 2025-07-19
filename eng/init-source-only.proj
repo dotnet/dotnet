@@ -33,6 +33,73 @@
           WorkingDirectory="$(PreviouslySourceBuiltPackagesPath)" />
   </Target>
 
+  <ItemGroup>
+    <SharedComponentsPrereqsArchivePathItem Include="$(ExternalTarballsDir)$(SourceBuiltSharedComponentsTarballName).*$(ArchiveExtension)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
+  </PropertyGroup>
+
+  <Target Name="ValidateSharedComponents">
+    <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '$(SharedComponentsPrereqsArchiveFile)' != '')"
+           Text="Shared components cannot be provided as input to a build which produces shared components." />
+
+    <Error Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(SharedComponentsPrereqsArchiveFile)' == ''"
+           Text="Shared components must be provided as input to a build which does not produce shared components." />
+  </Target>
+
+  <Target Name="CopyCustomSharedComponentAssets"
+          Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">
+    
+    <!-- Copy assets from custom shared components artifacts path to artifacts directory -->
+    <ItemGroup>
+      <SharedComponentsAssets Include="$(CustomSharedComponentsArtifactsPath)/assets/**/*" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(SharedComponentsAssets)"
+          DestinationFolder="$(ArtifactsDir)/assets/%(RecursiveDir)"
+          UseSymbolicLinksIfPossible="true"
+          Condition="'@(SharedComponentsAssets)' != ''" />
+  
+  </Target>  
+
+  <Target Name="UnpackSharedComponentsPrereqsArchive"
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''"
+          Inputs="$(SharedComponentsPrereqsArchiveFile)"
+          Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
+
+    <MakeDir Directories="$(SharedComponentsArtifactsPath)" />
+
+    <!-- Extract everything except the assets directory to the shared components packages path -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) --exclude='assets'"
+          WorkingDirectory="$(SharedComponentsArtifactsPath)" />
+
+    <!-- Extract only the assets directory directly to the artifacts directory -->
+    <Exec Command="tar -xzf $(SharedComponentsPrereqsArchiveFile) assets"
+          WorkingDirectory="$(ArtifactsDir)" />
+
+    <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+    <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
+    </Touch>
+  </Target>
+
+  <!--
+    Prepares the source built artifacts produced from the 1xx feature band so that they can be used in the current build.
+    There are two possible sources for these artifacts:
+    1. The directory to the extracted artifacts is specified by the user via the with-shared-components option in the build script.
+       This is what distro maintainers would typically use. This maps to the CustomSharedComponentsArtifactsPath
+       property. This source takes precedence.
+    2. The archive is contained in the prereqs/packages/archive-shared-components directory.
+       This is what the prep script does by default. This provides a seamless experience for devs working in
+       the VMR, not requiring them to pass extra parameters by default when working in a non-1xx branch.
+       This scenario maps to the SharedComponentsPrereqsArchivePath item.
+  -->
+  <Target Name="PrepareSharedComponents"
+          DependsOnTargets="ValidateSharedComponents;
+                            CopyCustomSharedComponentAssets;
+                            UnpackSharedComponentsPrereqsArchive" />
+
   <!-- Check for a prebuilt dependency tarball and extract if exists. If there isn't one, we expect
        the build to be working without prebuilts. -->
   <Target Name="UnpackSourceBuiltPrebuiltsArchive"
@@ -49,7 +116,8 @@
 
   <Target Name="UnpackTarballs"
           DependsOnTargets="UnpackSourceBuiltArtifactsArchive;
-                            UnpackSourceBuiltPrebuiltsArchive" />
+                            UnpackSourceBuiltPrebuiltsArchive;
+                            PrepareSharedComponents" />
 
   <!-- Build the custom msbuild sdk resolver. -->
   <Target Name="BuildMSBuildSdkResolver"
