@@ -25,7 +25,7 @@ This is a MSBuild custom task that provides batch signing and simple verificatio
 | FileSignInfo           | Array    | Used to override the default certificate information for specific files and target frameworks combinations. If not specified default information is used or error occurs. See details below. |
 | FileExtensionSignInfo  | Array    | This is a mapping between extension (in the format ".ext") to default sign information for those kind of files. Overriding of the default sign info is done using the other parameters. |
 | CertificatesSignInfo   | Array    | List of certificate names that can be flagged using the `DualSigningAllowed` attribute as dual certificates. |
-| **MicroBuildCorePath** | Dir Path | Path to MicroBuild.Core package directory.                   |
+| **MicroBuildCorePath** | Dir Path | Path to Microsoft.VisualStudioEng.MicroBuild.Core.props package directory.                   |
 | DotNetPath             | Exe path | Path to the dotnet executable used to run the signing process on MicroBuild. |
 | SNBinaryPath           | Exe path | Path to the sn.exe binary used to strong-name sign / validate signature of managed files. |
 | **TempDir**            | Dir path | Used to store temporary files during the process of calling MicroBuild signing. |
@@ -221,7 +221,7 @@ Click [here](../../src/Microsoft.DotNet.Arcade.Sdk/tools/Sign.proj) to see how t
     TempDir="$(ArtifactsTmpDir)"
     LogDir="$(ArtifactsLogDir)"
     MSBuildPath="$(DesktopMSBuildPath)"
-    MicroBuildCorePath="$(NuGetPackageRoot)microbuild.core\$(MicroBuildCoreVersion)"/>
+    MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"/>
 ...
 ```
 

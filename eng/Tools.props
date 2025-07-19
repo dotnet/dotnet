@@ -8,5 +8,6 @@
     <NuGetAudit Condition="'$(DotNetBuildWithOnlineFeeds)' != 'true'">false</NuGetAudit>
     <!-- Needed to restore packages referenced by Tools.proj from PSB. -->
     <RestoreSources Condition="'$(IsTestRun)' != 'true'">$(PrebuiltPackagesPath);$(PreviouslySourceBuiltPackagesPath)</RestoreSources>
+    <RestoreSources Condition="'$(IsTestRun)' != 'true' and Exists('$(SharedComponentsArtifactsPath)')">$(RestoreSources);$(SharedComponentsArtifactsPath)</RestoreSources>
   </PropertyGroup>
 </Project>

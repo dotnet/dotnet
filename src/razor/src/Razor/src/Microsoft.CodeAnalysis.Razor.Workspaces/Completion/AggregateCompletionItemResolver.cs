@@ -2,9 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.PooledObjects;
@@ -13,26 +12,20 @@ using Microsoft.CodeAnalysis.Razor.Tooltip;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
-internal class AggregateCompletionItemResolver
+internal class AggregateCompletionItemResolver(IEnumerable<CompletionItemResolver> completionItemResolvers, ILoggerFactory loggerFactory)
 {
-    private readonly IReadOnlyList<CompletionItemResolver> _completionItemResolvers;
-    private readonly ILogger _logger;
-
-    public AggregateCompletionItemResolver(IEnumerable<CompletionItemResolver> completionItemResolvers, ILoggerFactory loggerFactory)
-    {
-        _completionItemResolvers = completionItemResolvers.ToArray();
-        _logger = loggerFactory.GetOrCreateLogger<AggregateCompletionItemResolver>();
-    }
+    private readonly ImmutableArray<CompletionItemResolver> _completionItemResolvers = [.. completionItemResolvers];
+    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<AggregateCompletionItemResolver>();
 
     public async Task<VSInternalCompletionItem?> ResolveAsync(
         VSInternalCompletionItem item,
         VSInternalCompletionList containingCompletionList,
         ICompletionResolveContext originalRequestContext,
-        VSInternalClientCapabilities? clientCapabilities,
+        VSInternalClientCapabilities clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
     {
-        using var completionItemResolverTasks = new PooledArrayBuilder<Task<VSInternalCompletionItem?>>(_completionItemResolvers.Count);
+        using var completionItemResolverTasks = new PooledArrayBuilder<Task<VSInternalCompletionItem?>>(_completionItemResolvers.Length);
 
         foreach (var completionItemResolver in _completionItemResolvers)
         {

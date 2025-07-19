@@ -9,8 +9,6 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Utilities;
 using Microsoft.VisualStudio.TestPlatform.PlatformAbstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using MSTest.TestFramework.AssertExtensions;
-
 namespace Microsoft.TestPlatform.ObjectModel.UnitTests;
 
 [TestClass]
@@ -172,9 +170,9 @@ public class RunConfigurationTests
                 </RunSettings>";
 
 
-        Assert.That.Throws<SettingsException>(
-                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml))
-            .WithExactMessage("Invalid settings 'RunConfiguration'.  Invalid value 'Foo' specified for 'BatchSize'.");
+        var exception = Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value 'Foo' specified for 'BatchSize'.", exception.Message);
     }
 
     [TestMethod]
@@ -189,9 +187,9 @@ public class RunConfigurationTests
                 </RunSettings>";
 
 
-        Assert.That.Throws<SettingsException>(
-                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml))
-            .WithExactMessage("Invalid settings 'RunConfiguration'.  Invalid value '-1' specified for 'TestSessionTimeout'.");
+        var exception = Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value '-1' specified for 'TestSessionTimeout'.", exception.Message);
     }
 
     [TestMethod]
@@ -221,9 +219,9 @@ public class RunConfigurationTests
                 </RunSettings>";
 
 
-        Assert.That.Throws<SettingsException>(
-                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml))
-            .WithExactMessage("Invalid settings 'RunConfiguration'.  Invalid value 'RandomValue' specified for 'ExecutionThreadApartmentState'.");
+        var exception = Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value 'RandomValue' specified for 'ExecutionThreadApartmentState'.", exception.Message);
     }
 
     [TestMethod]
@@ -237,9 +235,9 @@ public class RunConfigurationTests
                      </RunConfiguration>
                 </RunSettings>";
 
-        Assert.That.Throws<SettingsException>(
-                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml))
-            .WithExactMessage("Invalid settings 'RunConfiguration'.  Invalid value '-10' specified for 'BatchSize'.");
+        var exception = Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value '-10' specified for 'BatchSize'.", exception.Message);
     }
 
     [DataRow(true)]
@@ -348,8 +346,8 @@ public class RunConfigurationTests
                      </RunConfiguration>
                 </RunSettings>";
 
-        Assert.That.Throws<SettingsException>(
-                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml))
-            .WithExactMessage("Invalid settings 'RunConfiguration'.  Invalid value '' specified for 'ResultsDirectory'.");
+        var exception = Assert.ThrowsExactly<SettingsException>(
+                () => XmlRunSettingsUtilities.GetRunConfigurationNode(settingsXml));
+        Assert.AreEqual("Invalid settings 'RunConfiguration'.  Invalid value '' specified for 'ResultsDirectory'.", exception.Message);
     }
 }

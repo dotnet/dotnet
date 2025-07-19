@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hover;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.CodeAnalysis.Razor.Completion;
@@ -30,12 +31,6 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
         var projectManager = CreateProjectSnapshotManager();
         var componentAvailabilityService = new ComponentAvailabilityService(projectManager);
 
-        _endpoint = new RazorCompletionResolveEndpoint(
-            new AggregateCompletionItemResolver(
-                [new TestCompletionItemResolver()],
-                LoggerFactory),
-            _completionListCache,
-            componentAvailabilityService);
         _clientCapabilities = new VSInternalClientCapabilities()
         {
             TextDocument = new TextDocumentClientCapabilities()
@@ -49,7 +44,15 @@ public class RazorCompletionResolveEndpointTest : LanguageServerTestBase
                 }
             }
         };
-        _endpoint.ApplyCapabilities(new(), _clientCapabilities);
+        var clientCapabilitiesService = new TestClientCapabilitiesService(_clientCapabilities);
+
+        _endpoint = new RazorCompletionResolveEndpoint(
+            new AggregateCompletionItemResolver(
+                [new TestCompletionItemResolver()],
+                LoggerFactory),
+            _completionListCache,
+            componentAvailabilityService,
+            clientCapabilitiesService);
     }
 
     [Fact]
