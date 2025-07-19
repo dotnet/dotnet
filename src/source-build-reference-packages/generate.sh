@@ -80,8 +80,8 @@ while [[ $# > 0 ]]; do
                 echo -e "${RED}ERROR: Destination not found: '$2'${NC}"
                 exit 1
             fi
-            packagesTargetDirectory="$(cd -P "$2" && pwd)"
-            arguments="$arguments /p:PackagesTargetDirectory=\"$packagesTargetDirectory\""
+            packagesSrcDirectory="$(cd -P "$2" && pwd)"
+            arguments="$arguments /p:PackagesSrcDirectory=\"$packagesSrcDirectory\""
             shift 2
             ;;
         -t|-type)

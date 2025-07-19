@@ -42,6 +42,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
         public required string ProjectRoot { get; set; }
 
         /// <summary>
+        /// The root directory that contains the reference package projects.
+        /// </summary>
+        [Required]
+        public required string ReferencePackagesRoot { get; set; }
+
+        /// <summary>
         /// The package's compile items, including target framework metadata.
         /// </summary>
         public ITaskItem[] CompileItems { get; set; } = Array.Empty<ITaskItem>();
@@ -66,6 +72,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
             string referenceIncludes = "";
             StrongNameData strongNameData = default;
             string projectContent = File.ReadAllText(ProjectTemplate);
+            string projectDirectory = Path.GetDirectoryName(TargetPath)!;
 
             // Calculate the target frameworks based on the passed-in items.
             string[] targetFrameworks = CompileItems.Select(compileItem => compileItem.GetMetadata(SharedMetadata.TargetFrameworkMetadataName)).ToArray();
@@ -95,7 +102,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                 foreach (ITaskItem packageDependency in PackageDependencies.Where(packageDependency => packageDependency.GetMetadata(SharedMetadata.TargetFrameworkMetadataName) == targetFramework))
                 {
                     string dependencyVersion = packageDependency.GetMetadata("Version");
-                    string dependencyProjectRelativePath = Path.Combine(packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj");
 
                     // If the dependency is on the package reference allowed list (i.e. for externalPackages like Newtonsoft.Json), emit a package reference. Otherwise, emit a project reference.
                     if (AllowedPackageReference is not null && AllowedPackageReference.Contains(packageDependency.ItemSpec))
@@ -104,8 +110,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                     }
                     else
                     {
+                        string dependencyProjectPath = Path.Combine(ReferencePackagesRoot, packageDependency.ItemSpec.ToLowerInvariant(), dependencyVersion, $"{packageDependency.ItemSpec}.{dependencyVersion}.csproj");
                         // Make sure that the path always uses forward slashes, even on Windows.
-                        projectReferences += $"    <ProjectReference Include=\"../../{dependencyProjectRelativePath.Replace('\\', '/')}\" />{Environment.NewLine}";
+                        string dependencyProjectRelativePath = Path.GetRelativePath(projectDirectory, dependencyProjectPath).Replace('\\', '/');
+
+                        projectReferences += $"    <ProjectReference Include=\"{dependencyProjectRelativePath}\" />{Environment.NewLine}";
                     }
                 }
 
@@ -156,7 +165,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks
                  assemblyNames.Length == 1 ? assemblyNames[0] : PackageId);
 
             // Generate the project file
-            Directory.CreateDirectory(Path.GetDirectoryName(TargetPath)!);
+            Directory.CreateDirectory(projectDirectory);
             File.WriteAllText(TargetPath, projectContent);
 
             return true;

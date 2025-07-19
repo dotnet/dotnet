@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>Microsoft.NETCore.Platforms</id>
@@ -7,7 +7,7 @@
     <authors>Microsoft</authors>
     <owners>microsoft,dotnetframework</owners>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <licenseUrl>http://microsoft.mit-license.org/</licenseUrl>
+    <licenseUrl>https://microsoft.mit-license.org/</licenseUrl>
     <projectUrl>https://dot.net/</projectUrl>
     <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</iconUrl>
     <description>Provides runtime information required to resolve target framework, platform, and runtime specific implementations of .NETCore packages. 

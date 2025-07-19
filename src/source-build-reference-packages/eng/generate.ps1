@@ -59,7 +59,7 @@ foreach ($argument in $PSBoundParameters.Keys)
         }
     }
     "csv"                        { $arguments += " /p:PackageCSV=`"$($PSBoundParameters[$argument])`"" }
-    "destination"                { $arguments += " /p:PackagesTargetDirectory=`"$($PSBoundParameters[$argument])`"" }
+    "destination"                { $arguments += " /p:PackagesSrcDirectory=`"$($PSBoundParameters[$argument])`"" }
     "type"                       { $arguments += " /p:PackageType=$($PSBoundParameters[$argument])" }
     "excludeDependencies"        { $arguments += " /p:ExcludePackageDependencies=true" }
     "feeds"                      { $arguments += " /p:RestoreAdditionalProjectSources=`"$($PSBoundParameters[$argument])`"" }
