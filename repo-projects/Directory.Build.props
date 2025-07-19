@@ -24,6 +24,7 @@
     <PackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <CurrentSourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
+    <PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).SharedComponents.props</PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath>
     <SnapshotPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
     <PackageVersionPropsFlowType>DependenciesOnly</PackageVersionPropsFlowType>
 
@@ -140,6 +141,7 @@
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
+    <CommonArgs Condition="Exists('$(SharedComponentsArtifactsPath)')">$(CommonArgs) /p:AdditionalSourceBuiltNupkgCacheDir="$(SharedComponentsArtifactsPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
   </PropertyGroup>
