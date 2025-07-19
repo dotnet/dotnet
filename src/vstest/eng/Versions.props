@@ -69,7 +69,6 @@
     <SystemComponentModelCompositionVersion>8.0.0</SystemComponentModelCompositionVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
-    <!-- <TestPlatformExternalsVersion>18.0.0-preview-1-10804-064</TestPlatformExternalsVersion> -->
     <TestPlatformExternalsVersion>18.0.0-preview-1-10811-208</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10811-208</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
@@ -87,7 +86,6 @@
     in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
     <MSTestTestFrameworkVersion>3.9.3</MSTestTestFrameworkVersion>
     <MSTestTestAdapterVersion>3.9.3</MSTestTestAdapterVersion>
-    <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>

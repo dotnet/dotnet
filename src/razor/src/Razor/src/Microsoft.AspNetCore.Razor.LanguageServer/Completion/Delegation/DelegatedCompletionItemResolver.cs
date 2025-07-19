@@ -34,7 +34,7 @@ internal class DelegatedCompletionItemResolver(
         VSInternalCompletionItem item,
         VSInternalCompletionList containingCompletionList,
         ICompletionResolveContext originalRequestContext,
-        VSInternalClientCapabilities? clientCapabilities,
+        VSInternalClientCapabilities clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken)
     {
@@ -54,7 +54,7 @@ internal class DelegatedCompletionItemResolver(
 
         if (resolvedCompletionItem is not null)
         {
-            resolvedCompletionItem = await PostProcessCompletionItemAsync(resolutionContext, resolvedCompletionItem, cancellationToken).ConfigureAwait(false);
+            resolvedCompletionItem = await PostProcessCompletionItemAsync(resolutionContext, resolvedCompletionItem, clientCapabilities, cancellationToken).ConfigureAwait(false);
         }
 
         return resolvedCompletionItem;
@@ -63,6 +63,7 @@ internal class DelegatedCompletionItemResolver(
     private async Task<VSInternalCompletionItem> PostProcessCompletionItemAsync(
         DelegatedCompletionResolutionContext context,
         VSInternalCompletionItem resolvedCompletionItem,
+        VSInternalClientCapabilities clientCapabilities,
         CancellationToken cancellationToken)
     {
         if (context.ProjectedKind != RazorLanguageKind.CSharp)
@@ -71,7 +72,7 @@ internal class DelegatedCompletionItemResolver(
             return resolvedCompletionItem;
         }
 
-        if (!resolvedCompletionItem.VsResolveTextEditOnCommit)
+        if (clientCapabilities.SupportsVisualStudioExtensions && !resolvedCompletionItem.VsResolveTextEditOnCommit)
         {
             // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
             return resolvedCompletionItem;
@@ -89,12 +90,15 @@ internal class DelegatedCompletionItemResolver(
             return resolvedCompletionItem;
         }
 
-        var formattingOptions = await _clientConnection
-            .SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(
-                LanguageServerConstants.RazorGetFormattingOptionsEndpointName,
-                documentContext.GetTextDocumentIdentifierAndVersion(),
-                cancellationToken)
-            .ConfigureAwait(false);
+        // In VS we call into the VS layer to get formatting options, as the editor decides based on a multiple sources
+        var formattingOptions = clientCapabilities.SupportsVisualStudioExtensions
+            ? await _clientConnection
+                .SendRequestAsync<TextDocumentIdentifierAndVersion, FormattingOptions?>(
+                    LanguageServerConstants.RazorGetFormattingOptionsEndpointName,
+                    documentContext.GetTextDocumentIdentifierAndVersion(),
+                    cancellationToken)
+                .ConfigureAwait(false)
+            : _optionsMonitor.CurrentValue.ToFormattingOptions();
 
         if (formattingOptions is null)
         {
