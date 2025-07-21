@@ -100,7 +100,7 @@ namespace Microsoft.DotNet.SignTool
         /// <summary>
         /// Repack the zip container with the signed files.
         /// </summary>
-        public void Repack(TaskLoggingHelper log, string tempDir, string wixToolsPath, string tarToolPath, string pkgToolPath)
+        public void Repack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath, string tarToolPath, string pkgToolPath)
         {
 #if NET472
             if (FileSignInfo.IsVsix())
@@ -115,7 +115,7 @@ namespace Microsoft.DotNet.SignTool
             }
             else if (FileSignInfo.IsUnpackableWixContainer())
             {
-                RepackWixPack(log, tempDir, wixToolsPath);
+                RepackWixPack(log, tempDir, wix3ToolsPath, wixToolsPath);
             }
             else if (FileSignInfo.IsPkg() || FileSignInfo.IsAppBundle())
             {
@@ -231,7 +231,7 @@ namespace Microsoft.DotNet.SignTool
             }
         }
 
-        private void RepackWixPack(TaskLoggingHelper log, string tempDir, string wixToolsPath)
+        private void RepackWixPack(TaskLoggingHelper log, string tempDir, string wix3ToolsPath, string wixToolsPath)
         {
             // The wixpacks can have rather long paths when fully extracted.
             // To avoid issues, use the first element of the GUID (up to first -).
@@ -266,7 +266,11 @@ namespace Microsoft.DotNet.SignTool
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, file, true);
                 }
 
-                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, log))
+                string wixPath = File.ReadAllText(createFileName).Contains("light.exe")
+                                 ? wix3ToolsPath
+                                 : wixToolsPath;
+
+                if (!BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixPath, log))
                 {
                     log.LogError($"Packaging of wix file '{FileSignInfo.FullPath}' failed");
                     return;
