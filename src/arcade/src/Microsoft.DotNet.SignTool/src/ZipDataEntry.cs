@@ -35,11 +35,11 @@ namespace Microsoft.DotNet.SignTool
                 // if we can't seek we need to copy the stream into a (seekable) MemoryStream so we can compute the content hash
                 _stream = new MemoryStream((int)contentSize);
                 contentStream.CopyTo(_stream);
+                // Reset position to 0 prior to content hash computation.
+                _stream.Position = 0;
             }
 
             // Compute content hash and reset position back
-            // Reset position to 0 prior to content hash computation.
-            _stream.Position = 0;
             _contentHash = ContentUtil.GetContentHash(_stream);
             _stream.Position = 0;
         }
