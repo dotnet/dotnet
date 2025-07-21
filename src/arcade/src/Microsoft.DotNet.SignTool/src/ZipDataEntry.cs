@@ -37,7 +37,9 @@ namespace Microsoft.DotNet.SignTool
                 contentStream.CopyTo(_stream);
             }
 
-            // compute content hash and reset position back
+            // Compute content hash and reset position back
+            // Reset position to 0 prior to content hash computation.
+            _stream.Position = 0;
             _contentHash = ContentUtil.GetContentHash(_stream);
             _stream.Position = 0;
         }
