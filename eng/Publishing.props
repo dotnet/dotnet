@@ -1,6 +1,7 @@
 <Project InitialTargets="DiscoverArtifacts">
   <Import Project="$(RepositoryEngineeringDir)RuntimeIdentifier.props" />
   <Import Project="$(RepositoryEngineeringDir)VmrLayout.props" />
+  <Import Project="$(RepositoryEngineeringDir)VmrCommon.targets" />
 
   <PropertyGroup>
     <PublishingVersion>4</PublishingVersion>

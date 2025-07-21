@@ -1,6 +1,7 @@
 <Project>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" Condition="'$(SkipArcadeSdkImport)' != 'true'" />
+  <Import Project="$(RepositoryEngineeringDir)VmrCommon.targets" />
 
   <!-- The SkipPrepareSdkArchive switch exists so that outside components like the license scan test pipeline
        can run a subset of tests that don't need the SDK archive without building the VMR.
