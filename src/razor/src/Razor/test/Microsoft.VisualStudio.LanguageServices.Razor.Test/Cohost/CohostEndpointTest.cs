@@ -61,7 +61,8 @@ public class CohostEndpointTest(ITestOutputHelper testOutputHelper) : ToolingTes
             .AddExcludedPartTypes(typeof(ILspEditorFeatureDetector))
             .AddParts(typeof(TestLspEditorFeatureDetector))
             .AddExcludedPartTypes(typeof(IIncompatibleProjectService))
-            .AddParts(typeof(TestIncompatibleProjectService));
+            .AddParts(typeof(TestIncompatibleProjectService))
+            .AddParts(typeof(TestVsServiceProvider));
 
         using var exportProvider = testComposition.ExportProviderFactory.CreateExportProvider();
 
