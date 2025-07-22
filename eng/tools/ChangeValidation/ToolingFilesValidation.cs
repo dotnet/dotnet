@@ -25,11 +25,11 @@ internal class ToolingFilesValidation
     // <summary>
     // Verifies that the PR does not include changes to files managed by Maestro
     // </summary>
-    internal static List<ProcessingMessage> VerifyMaestroFileChanges(List<string> fileNames)
+    internal static List<ProcessingMessage> VerifyMaestroFileChanges(List<string> diffFiles)
     {
         List<ProcessingMessage> messages = new();
 
-        var syncToolingChanges = fileNames
+        var syncToolingChanges = diffFiles
             .Where(f => ToolingFilesRegexes.Any(regex => regex.IsMatch(f)))
             .ToList();
 
@@ -41,9 +41,9 @@ internal class ToolingFilesValidation
             {
                 sb.AppendLine($" - {file}");
             }
-            sb.AppendLine("Toolin validation failed: changes to tooling files are not permitted.");
+            sb.AppendLine("Tooling validation failed: changes to tooling files are not permitted.");
             string warningMessage = sb.ToString();
-            AddProcessingMessage(messages, Warn(warningMessage));
+            AddProcessingMessage(messages, Error(warningMessage));
         }
         else
         {
