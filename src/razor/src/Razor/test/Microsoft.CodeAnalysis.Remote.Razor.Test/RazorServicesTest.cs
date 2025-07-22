@@ -54,7 +54,6 @@ public class RazorServicesTest(ITestOutputHelper testOutputHelper) : ToolingTest
                 {
                     Assert.Fail($"Method {method.Name} in a Json service has a pinned solution info wrapper parameter that isn't Json serializable");
                 }
-
             }
         }
     }
