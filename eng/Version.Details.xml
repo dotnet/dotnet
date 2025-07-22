@@ -15,4 +15,5 @@
       <Sha>396eba49bd539a8791adbe3ef60fcbaa02d60b13</Sha>
     </Dependency>
   </ToolsetDependencies>
+  <test>test</test>
 </Dependencies>

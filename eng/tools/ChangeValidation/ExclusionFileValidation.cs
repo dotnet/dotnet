@@ -52,8 +52,8 @@ internal class ExclusionFileValidation
         if (excludedFilesInPr.Any())
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"This PR adds or modifies {excludedFilesInPr.Count} file(s) that are in the exclusion list:");
-            sb.AppendLine("These files will not be synced from/to the VMR. Consider deleting them if they are not needed.");
+            sb.AppendLine($"This PR modifies or creates {excludedFilesInPr.Count} file(s) that are in the exclusion list.");
+            sb.AppendLine("If these files are not needed in the VMR, please delete them in this PR.");
             foreach (var file in excludedFilesInPr)
             {
                 sb.AppendLine($" - {file}");
@@ -65,8 +65,8 @@ internal class ExclusionFileValidation
         if (filesMatchingNewExclusionRules.Any())
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Warning: This PR modifies exclusion rules in {SourceMappingsPath} and adds {filesMatchingNewExclusionRules.Count} file(s) that match new exclusion rules:");
-            sb.AppendLine("These files will not be synced from/to the VMR. Consider deleting them if they are not needed.");
+            sb.AppendLine($"This PR modifies exclusion rules in {SourceMappingsPath}, leading to {filesMatchingNewExclusionRules.Count} newly excluded file(s) in the VMR.");
+            sb.AppendLine("If these files are not needed in the VMR, please delete them in this PR.");
             foreach (var file in filesMatchingNewExclusionRules)
             {
                 sb.AppendLine($" - {file}");
