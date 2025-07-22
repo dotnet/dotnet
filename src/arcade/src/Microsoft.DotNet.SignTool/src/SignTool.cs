@@ -23,6 +23,7 @@ namespace Microsoft.DotNet.SignTool
         internal string TempDir => _args.TempDir;
         internal string MicroBuildCorePath => _args.MicroBuildCorePath;
 
+        internal string Wix3ToolsPath => _args.Wix3ToolsPath;
         internal string WixToolsPath => _args.WixToolsPath;
         internal string TarToolPath => _args.TarToolPath;
         internal string PkgToolPath => _args.PkgToolPath;
@@ -188,7 +189,7 @@ namespace Microsoft.DotNet.SignTool
             AppendLine(builder, depth: 2, text: $@"<SignType>{signKind}</SignType>");
             AppendLine(builder, depth: 1, text: @"</PropertyGroup>");
 
-            AppendLine(builder, depth: 1, text: $@"<Import Project=""{Path.Combine(MicroBuildCorePath, "build", "MicroBuild.Core.props")}"" />");
+            AppendLine(builder, depth: 1, text: $@"<Import Project=""{Path.Combine(MicroBuildCorePath, "build", "Microsoft.VisualStudioEng.MicroBuild.Core.props")}"" />");
             AppendLine(builder, depth: 1, text: $@"<ItemGroup>");
 
             foreach (var fileToSign in filesToSign)
@@ -217,7 +218,7 @@ namespace Microsoft.DotNet.SignTool
             AppendLine(builder, depth: 2, text: @"<Message Text=""Running signing process."" />");
             AppendLine(builder, depth: 1, text: @"</Target>");
 
-            AppendLine(builder, depth: 1, text: $@"<Import Project=""{Path.Combine(MicroBuildCorePath, "build", "MicroBuild.Core.targets")}"" />");
+            AppendLine(builder, depth: 1, text: $@"<Import Project=""{Path.Combine(MicroBuildCorePath, "build", "Microsoft.VisualStudioEng.MicroBuild.Core.targets")}"" />");
             AppendLine(builder, depth: 0, text: @"</Project>");
 
             return builder.ToString();

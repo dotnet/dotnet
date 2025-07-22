@@ -36,12 +36,14 @@ function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
 
+packagesDir="$REPO_ROOT/prereqs/packages"
+
 # SB prep default arguments
 defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
 defaultDotnetSdk="$REPO_ROOT/.dotnet"
-defaultPackagesDir="$REPO_ROOT/prereqs/packages/previously-source-built"
+defaultPsbDir="$packagesDir/previously-source-built"
 
 # SB prep arguments
 buildBootstrap=true
@@ -56,7 +58,16 @@ runtime_source_feed_key='' # IBM requested these to support s390x scenarios
 
 # Binary Tooling arguments
 dotnetSdk=$defaultDotnetSdk
-packagesDir=$defaultPackagesDir
+psbDir=$defaultPsbDir
+
+artifactsBaseFileName="Private.SourceBuilt.Artifacts"
+artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
+
+sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
+sharedComponentsTarballPattern="$sharedComponentsBaseFileName.*.tar.gz"
+
+prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
+prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
 
 positional_args=()
 while :; do
@@ -105,7 +116,7 @@ while :; do
       shift
       ;;
     --with-packages)
-      packagesDir=$2
+      psbDir=$2
       shift
       ;;
     *)
@@ -131,17 +142,23 @@ then
 fi
 
 # Check if Private.SourceBuilt artifacts archive exists
-artifactsBaseFileName="Private.SourceBuilt.Artifacts"
-packagesArchiveDir="$REPO_ROOT/prereqs/packages/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsBaseFileName}.*.tar.gz ]; then
-  echo "  Private.SourceBuilt.Artifacts.*.tar.gz exists...it will not be downloaded"
-  downloadArtifacts=false
+downloadPsbArtifacts=$downloadArtifacts
+packagesArchiveDir="$packagesDir/archive/"
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPsbArtifacts=false
+fi
+
+# Check if shared components archive exists
+downloadSharedComponentsArtifacts=$downloadArtifacts
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
+  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadSharedComponentsArtifacts=false
 fi
 
 # Check if Private.SourceBuilt prebuilts archive exists
-prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsBaseFileName}.*.tar.gz ]; then
-  echo "  Private.SourceBuilt.Prebuilts.*.tar.gz exists...it will not be downloaded"
+if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
   downloadPrebuilts=false
 fi
 
@@ -151,74 +168,120 @@ if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
   installDotnet=false;
 fi
 
+# Helper to extract a property value from an XML file
+function GetXmlPropertyValue {
+  local propName="$1"
+  local filePath="$2"
+  local value=""
+  local line pattern
+  line=$(grep -m 1 "<$propName>" "$filePath" || :)
+  pattern="<$propName>(.*)</$propName>"
+  if [[ $line =~ $pattern ]]; then
+    value="${BASH_REMATCH[1]}"
+  fi
+  echo "$value"
+}
+
+# Helper to download a file with retries
+function DownloadWithRetries {
+  local url="$1"
+  local targetDir="$2"
+  (
+    cd "$targetDir" &&
+    for i in {1..5}; do
+      if curl -fL --retry 5 -O "$url"; then
+        return 0
+      else
+        case $? in
+          18)
+            sleep 3
+            ;;
+          *)
+            return 1
+            ;;
+        esac
+      fi
+    done
+    return 1
+  )
+}
+
 function DownloadArchive {
-  archiveType="$1"
-  isRequired="$2"
-  artifactsRid="$3"
+  local label="$1"
+  local propertyName="$2"
+  local isRequired="$3"
+  local artifactsRid="$4"
+  local outputDir="$5"
+  local destinationFilenamePrefix="${6:-}"
 
-  packageVersionsPath="$REPO_ROOT/eng/Versions.props"
-  notFoundMessage="No source-built $archiveType found to download..."
+  local packageVersionsPath="$REPO_ROOT/eng/Versions.props"
+  local notFoundMessage="No $label found to download..."
 
-  echo "  Looking for source-built $archiveType to download..."
-  archiveVersionLine=$(grep -m 1 "<PrivateSourceBuilt${archiveType}Version>" "$packageVersionsPath" || :)
-  versionPattern="<PrivateSourceBuilt${archiveType}Version>(.*)</PrivateSourceBuilt${archiveType}Version>"
-  if [[ $archiveVersionLine =~ $versionPattern ]]; then
-    archiveVersion="${BASH_REMATCH[1]}"
-
-    if [ "$archiveType" == "Prebuilts" ]; then
-        archiveRid=$defaultArtifactsRid
+  local archiveVersion
+  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$packageVersionsPath")
+  if [[ -z "$archiveVersion" ]]; then
+    if [ "$isRequired" == true ]; then
+      echo "  ERROR: $notFoundMessage"
+      exit 1
     else
-        archiveRid=$artifactsRid
+      echo "  $notFoundMessage"
+      return
     fi
+  fi
 
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/Private.SourceBuilt.$archiveType.$archiveVersion.$archiveRid.tar.gz"
-
-    echo "  Downloading source-built $archiveType from $archiveUrl..."
-    (
-      cd "$packagesArchiveDir" &&
-      for i in {1..5}; do
-        if curl -f --retry 5 -O "$archiveUrl"; then
-          exit 0
-        else
-          case $? in
-            18)
-              sleep 3
-              ;;
-            *)
-              exit 1
-              ;;
-          esac
-        fi
-      done
-    )
-  elif [ "$isRequired" == true ]; then
-    echo "  ERROR: $notFoundMessage"
-    exit 1
+  local archiveUrl
+  if [[ "$propertyName" == "MicrosoftNETSdkVersion" ]]; then
+    archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
+  elif [[ "$propertyName" == *Prebuilts* ]]; then
+    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
+  elif [[ "$propertyName" == *Artifacts* ]]; then
+    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
   else
-    echo "  $notFoundMessage"
+    echo "  ERROR: Unknown archive property name: $propertyName"
+    exit 1
+  fi
+
+  echo "  Downloading $label from $archiveUrl..."
+  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
+    echo "  ERROR: Failed to download $archiveUrl"
+    exit 1
+  fi
+
+  # Rename the file if a destination filename prefix is provided
+  if [[ -n "$destinationFilenamePrefix" ]]; then
+    local downloadedFilename
+    downloadedFilename=$(basename "$archiveUrl")
+    # Extract the suffix from the downloaded filename
+    local suffix="${downloadedFilename#$artifactsBaseFileName}"
+    local newFilename="$destinationFilenamePrefix$suffix"
+    mv "$outputDir/$downloadedFilename" "$outputDir/$newFilename"
+    echo "  Renamed $downloadedFilename to $newFilename"
   fi
 }
 
 function BootstrapArtifacts {
   DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
+  local tarballDir="$1"
+  local tarball=$(find "$tarballDir" -maxdepth 1 -name "$artifactsTarballPattern" | head -n 1)
 
-  # Create working directory for running bootstrap project
-  workingDir="$REPO_ROOT/artifacts/prep-bootstrap"
-  mkdir -p "$workingDir"
-  echo "  Building bootstrap previously source-built in $workingDir"
+  echo "  Building bootstrap from $tarballDir"
+
+  # Extract PackageVersions.props from the found tarball
+  if [ -f "$tarball" ]; then
+    echo "  Extracting PackageVersions.props from $tarball"
+    workingDir="$REPO_ROOT/artifacts/prep-bootstrap"
+    mkdir -p "$workingDir"
+    tar -xzf "$tarball" -C "$workingDir" PackageVersions.props || true
+  else
+    echo "  ERROR: Tarball $tarball not found in $tarballDir"
+    exit 1
+  fi
 
   # Copy bootstrap project to working dir
   cp "$REPO_ROOT/eng/bootstrap/buildBootstrapPreviouslySB.csproj" "$workingDir"
 
   # Copy NuGet.config from the sdk repo to have the right feeds
   cp "$REPO_ROOT/src/sdk/NuGet.config" "$workingDir"
-
-  # Get PackageVersions.props from existing prev-sb archive
-  echo "  Retrieving PackageVersions.props from existing archive"
-  sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
-  if [ -f "$sourceBuiltArchive" ]; then
-    tar -xzf "$sourceBuiltArchive" -C "$workingDir" PackageVersions.props
-  fi
 
   properties=( "/p:ArchiveDir=$packagesArchiveDir" )
   if [[ -n "$bootstrap_rid" ]]; then
@@ -240,15 +303,25 @@ if [ "$installDotnet" == true ]; then
 fi
 
 # Read the eng/Versions.props to get the archives to download and download them
-if [ "$downloadArtifacts" == true ]; then
-  DownloadArchive Artifacts true $artifactsRid
+if [ "$downloadPsbArtifacts" == true ]; then
+  DownloadArchive "previously source-built artifacts" "PrivateSourceBuiltArtifactsVersion" true "$artifactsRid" "$packagesArchiveDir"
+
   if [ "$buildBootstrap" == true ]; then
-      BootstrapArtifacts
+    BootstrapArtifacts "$packagesArchiveDir"
   fi
 fi
 
+if [ "$downloadSharedComponentsArtifacts" == true ]; then
+  source $REPO_ROOT/eng/common/native/init-os-and-arch.sh
+  source $REPO_ROOT/eng/common/native/init-distro-rid.sh
+  initDistroRidGlobal "$os" "$arch" ""
+
+  DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "$__DistroRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName"
+fi
+
 if [ "$downloadPrebuilts" == true ]; then
-  DownloadArchive Prebuilts false $artifactsRid
+
+  DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
 fi
 
 if [ "$removeBinaries" == true ]; then
@@ -258,33 +331,33 @@ if [ "$removeBinaries" == true ]; then
   workingDir=$(mktemp -d)
 
   # If --with-packages is not passed, unpack PSB artifacts
-  if [[ $packagesDir == $defaultPackagesDir ]]; then
+  if [[ $psbDir == $defaultPsbDir ]]; then
     echo "  Extracting previously source-built to $workingDir"
-    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
+    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name "$artifactsTarballPattern")
 
     if [ ! -f "$sourceBuiltArchive" ]; then
-      echo "  ERROR: Private.SourceBuilt.Artifacts.*.tar.gz does not exist..."\
+      echo "  ERROR: $artifactsTarballPattern does not exist..."\
             "Cannot remove non-SB allowed binaries. Either pass --with-packages or download the artifacts."
       exit 1
     fi
 
-    echo "  Unpacking Private.SourceBuilt.Artifacts.*.tar.gz into $workingDir"
+    echo "  Unpacking $artifactsTarballPattern into $workingDir"
     tar -xzf "$sourceBuiltArchive" -C "$workingDir"
 
-    packagesDir=$workingDir
+    psbDir=$workingDir
   fi
 
   "$dotnetSdk/dotnet" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
     "/p:BinariesMode=Clean" \
     "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \
-    "/p:BinariesPackagesDir=$packagesDir" \
+    "/p:BinariesPackagesDir=$psbDir" \
     "/bl:artifacts/log/prep-remove-binaries.binlog" \
     "/fileLoggerParameters:LogFile=artifacts/log/prep-remove-binaries.log" \
     "${positional_args[@]}"
 
   rm -rf "$workingDir"
 
-  packagesDir=$originalPackagesDir
+  psbDir="$originalPackagesDir"
   unset originalPackagesDir
 fi
