@@ -73,10 +73,10 @@
       "commitSha": "aa3cf977560b3a21111c7691175043249f908215"
     },
     {
-      "barId": 275711,
+      "barId": 275918,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "37a47b7e835dfea15be79b06aaba08a8c017afb9"
+      "commitSha": "a8d4395106dcc0d720dd7d1a838661a0ca7cf939"
     },
     {
       "barId": 273951,
@@ -85,10 +85,10 @@
       "commitSha": "714a51c57430dab50b67e5b468016288f5f7b0bd"
     },
     {
-      "barId": 275720,
+      "barId": 276023,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "98b587ce895026e3cebec9510e8d4e6eaa403151"
+      "commitSha": "69eea4da555abc7ba68cb1f6ae86bfdf888dcc6e"
     },
     {
       "barId": 273704,
@@ -103,10 +103,10 @@
       "commitSha": "b64c645566412038bd42f080f27525f07d88ba8b"
     },
     {
-      "barId": 275454,
+      "barId": 275793,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "e66cb9556591cff76527ba15386357bc2f463c7c"
+      "commitSha": "642f9742222bc4d58ad05fac70f0103733dfe5fd"
     },
     {
       "barId": 274866,
