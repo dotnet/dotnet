@@ -36,17 +36,18 @@ internal class ToolingFilesValidation
         if (syncToolingChanges.Any())
         {
             StringBuilder sb = new();
-            sb.AppendLine("Changes to sync tooling files are not permitted");
+            sb.AppendLine("The following tooling file(s) were modified:");
             foreach (var file in syncToolingChanges)
             {
                 sb.AppendLine($" - {file}");
             }
+            sb.AppendLine("Toolin validation failed: changes to tooling files are not permitted.");
             string warningMessage = sb.ToString();
             AddProcessingMessage(messages, Warn(warningMessage));
         }
         else
         {
-            AddProcessingMessage(messages, Sucecss("Tooling files validation success: no changed detected in tooling files."));
+            AddProcessingMessage(messages, Success("Tooling files validation succeeded."));
         }
         return messages;
     }

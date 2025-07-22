@@ -9,7 +9,7 @@ namespace ValidateVmrChanges;
 
 internal static class Validate
 {
-    internal static ProcessingMessage Sucecss(string message) => new ProcessingMessage(message, WarningLevel.Success);
+    internal static ProcessingMessage Success(string message) => new ProcessingMessage(message, WarningLevel.Success);
     internal static ProcessingMessage Info(string message) => new ProcessingMessage(message, WarningLevel.None);
     internal static ProcessingMessage Warn(string message) => new ProcessingMessage(message, WarningLevel.Warning);
     internal static ProcessingMessage Error(string message) => new ProcessingMessage(message, WarningLevel.Error);
@@ -36,7 +36,7 @@ internal static class Validate
                 .Select(f => f.Replace('\\', '/').Trim())
                 .ToList();
 
-            // Tooling Files Validation
+            // Run Tooling Files Validation
             Console.WriteLine("Starting Tooling Files Validation...");
             List<ProcessingMessage> toolingMessages;
             try
@@ -50,7 +50,7 @@ internal static class Validate
             }
             processingMessages.AddRange(toolingMessages);
 
-            // Submodule Validation
+            // Run Submodule Validation
             Console.WriteLine("Starting Submodule Validation...");
             List<ProcessingMessage> submoduleMessages;
             try
@@ -64,7 +64,7 @@ internal static class Validate
             }
             processingMessages.AddRange(submoduleMessages);
 
-            // Exclusion File Validation
+            // Run Exclusion File Validation
             Console.WriteLine("Starting Exclusion File Validation...");
             List<ProcessingMessage> exclusionMessages;
             try

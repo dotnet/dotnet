@@ -23,16 +23,17 @@ internal class SubmoduleValidation
         if (submoduleChanges.Any())
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Changes to submodule files are not permitted. The following changed files were detected:");
+            sb.AppendLine("The following submodule file(s) were modified:");
             foreach (var file in submoduleChanges)
             {
                 sb.AppendLine($" - {file}");
             }
+            sb.AppendLine("Submodule validation failed: changes to submodule files are not permitted.");
             AddProcessingMessage(messages, Error(sb.ToString()));
         }
         else
         {
-            AddProcessingMessage(messages, Sucecss("Submodule validation success: no changes detected in submodules."));
+            AddProcessingMessage(messages, Success("Submodule validation succeeded."));
         }
 
         return messages;
