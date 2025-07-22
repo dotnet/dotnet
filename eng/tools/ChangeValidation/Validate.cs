@@ -37,7 +37,9 @@ internal static class Validate
                 .ToList();
 
             // Run Tooling Files Validation
-            Console.WriteLine("Starting Tooling Files Validation...");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("1. Starting Tooling Files Validation...");
             List<ProcessingMessage> toolingMessages;
             try
             {
@@ -51,7 +53,9 @@ internal static class Validate
             processingMessages.AddRange(toolingMessages);
 
             // Run Submodule Validation
-            Console.WriteLine("Starting Submodule Validation...");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("2. Starting Submodule Validation...");
             List<ProcessingMessage> submoduleMessages;
             try
             {
@@ -65,7 +69,9 @@ internal static class Validate
             processingMessages.AddRange(submoduleMessages);
 
             // Run Exclusion File Validation
-            Console.WriteLine("Starting Exclusion File Validation...");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("3. Starting Exclusion File Validation...");
             List<ProcessingMessage> exclusionMessages;
             try
             {

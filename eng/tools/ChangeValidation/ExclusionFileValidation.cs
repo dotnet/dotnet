@@ -59,7 +59,7 @@ internal class ExclusionFileValidation
                 sb.AppendLine($" - {file}");
             }
             string warningMessage = sb.ToString();
-            AddProcessingMessage(messages, Warn(warningMessage));
+            AddProcessingMessage(messages, Error(warningMessage));
         }
 
         if (filesMatchingNewExclusionRules.Any())
@@ -72,7 +72,7 @@ internal class ExclusionFileValidation
                 sb.AppendLine($" - {file}");
             }
             string warningMessage = sb.ToString();
-            AddProcessingMessage(messages, Warn(warningMessage));
+            AddProcessingMessage(messages, Error(warningMessage));
         }
 
         if (!excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any())
@@ -80,7 +80,7 @@ internal class ExclusionFileValidation
             AddProcessingMessage(messages, Success($"Exclusion file validation succeeded."));
         } else
         {
-            AddProcessingMessage(messages, Warn($"Exclusion file validation failed."));
+            AddProcessingMessage(messages, Error($"Exclusion file validation failed."));
         }
         return messages;
     }
