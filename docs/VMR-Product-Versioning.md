@@ -67,7 +67,8 @@ flowchart TD
         P4 -->|Rebrand to 'preview 5'| P5["Preview 5"]
         P5 -->|Rebrand to 'preview 6'| P6["Preview 6"]
         P6 -->|Rebrand to 'preview 7'| P7["Preview 7"]
-        P7 -->|"Rebrand to vNext 'alpha 1'"| AlphaNext["Alpha 1 (Next Major Version)"]
+        P7 -->|Rebrand to 'rc1'| RC1["RC 1"]
+        RC1 -->|"Rebrand to vNext 'alpha 1'"| AlphaNext["Alpha 1 (Next Major Version)"]
         AlphaNext --> DotDotDot[...]
     end
 
@@ -116,7 +117,7 @@ flowchart TD
         RC2Stable --> RC2Release["Release (RC 2)"]
     end
 
-    subgraph ServicingBranch[".NET N.0.0 Servicing Branch"]
+    subgraph ServicingBranch[".NET N.0.x Servicing Branch"]
         RC1Development[RC 1 development]
         RC1Development -->|Rebrand to RC 2| RC2Development["RC 2 Development"]
         RC2Development -->|Rebrand to GA| GADevelopment["GA Development"]
@@ -136,7 +137,7 @@ flowchart TD
     P5 -->|Branch for P5| PreviewBranchP5
     P6 -->|Branch for P6| PreviewBranchP6
     P7 -->|Branch for P7| PreviewBranchP7
-    P7 -->|Branch and rebrand to RC 1| ServicingBranch
+    RC1 -->|Branch for RC 1| ServicingBranch
     RC1Development -->|Branch for RC 1| RCBranchRC1
     RC2Development -->|Branch for RC 2| RCBranchRC2
 ```
