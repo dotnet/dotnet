@@ -142,14 +142,14 @@ internal static class Validate
         {
             foreach (var line in lines)
             {
-                Console.WriteLine($"##vso[task.logissue type=error]{line}");
+                Console.WriteLine($"##vso[task.logissue type=error] {line}");
             }
         }
         else if (processingMessage.WarningLevel == WarningLevel.Warning)
         {
             foreach (var line in lines)
             {
-                Console.WriteLine($"##vso[task.logissue type=warning]{line}");
+                Console.WriteLine($"##vso[task.logissue type=warning] {line}");
             }
         }
         else if (processingMessage.WarningLevel == WarningLevel.Success)
