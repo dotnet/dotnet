@@ -22,24 +22,24 @@ internal class ExclusionFileValidation
         List<ProcessingMessage> messages = [];
 
         string remoteTargetBranch = "origin/" + targetBranch;
-        var originalFileExclusionRules = GetExclusionPatternsFromBranch(remoteTargetBranch);
+        var originalExclusionRules = GetExclusionPatternsFromBranch(remoteTargetBranch);
 
-        if (originalFileExclusionRules == null || !originalFileExclusionRules.Any())
+        if (originalExclusionRules == null || !originalExclusionRules.Any())
         {
             AddProcessingMessage(messages, Error($"No exclusion rules found in `{SourceMappingsPath}` on the target branch, or the file does not exist."));
             return messages;
         }
 
-        var newFileExclusionRules = GetExclusionPatternsFromBranch("HEAD");
+        var newExclusionRules = GetExclusionPatternsFromBranch("HEAD");
 
-        if (newFileExclusionRules == null || !newFileExclusionRules.Any())
+        if (newExclusionRules == null || !newExclusionRules.Any())
         {
             AddProcessingMessage(messages, Error($"No exclusion rules found in `{SourceMappingsPath}` on the PR branch, or the file does not exist."));
             return messages;
         }
 
-        var originalExcludedFiles = FilesMatchingGlobs(originalFileExclusionRules);
-        var newExcludedFiles = FilesMatchingGlobs(newFileExclusionRules);
+        var originalExcludedFiles = VmrFileMatches(originalExclusionRules);
+        var newExcludedFiles = VmrFileMatches(newExclusionRules);
 
         var excludedFilesInPr = diffFiles
             .Where(file => newExcludedFiles.Contains(NormalizePath(file)))
@@ -77,10 +77,10 @@ internal class ExclusionFileValidation
 
         if (!excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any())
         {
-            AddProcessingMessage(messages, Sucecss($"Exclusion file validation succeeded."));
+            AddProcessingMessage(messages, Success($"Exclusion file validation succeeded."));
         } else
         {
-            AddProcessingMessage(messages, Warn($"Exclusion file validation finished with warning(s)."));
+            AddProcessingMessage(messages, Warn($"Exclusion file validation failed."));
         }
         return messages;
     }
@@ -136,17 +136,12 @@ internal class ExclusionFileValidation
             }
         }
 
-        foreach (string exclude in allExcludes)
-        {
-            Console.WriteLine($"Found exclusion rule: {exclude}");
-        }
-
         return allExcludes;
     }
     
-    private static HashSet<string> FilesMatchingGlobs(List<string> globPatterns)
+    private static HashSet<string> VmrFileMatches(List<string> globPatterns)
     {
-        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+        var repoRoot = FindGitRepoRoot(AppContext.BaseDirectory);
 
         var matcher = new Matcher();
         foreach (var pattern in globPatterns)
@@ -166,5 +161,20 @@ internal class ExclusionFileValidation
     internal static string NormalizePath(string path)
     {
         return path.Replace('\\', '/');
+    }
+
+    private static string FindGitRepoRoot(string startDirectory)
+    {
+        var dir = new DirectoryInfo(startDirectory);
+        while (dir != null)
+        {
+            var gitPath = Path.Combine(dir.FullName, ".git");
+            if (Directory.Exists(gitPath) || File.Exists(gitPath))
+            {
+                return dir.FullName;
+            }
+            dir = dir.Parent;
+        }
+        throw new InvalidOperationException("Could not find the Git repository root.");
     }
 }
