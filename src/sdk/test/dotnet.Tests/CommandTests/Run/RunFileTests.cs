@@ -939,8 +939,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         new FileInfo(binaryLogPath).Should().Exist();
 
         var records = BinaryLog.ReadRecords(binaryLogPath).ToList();
-        records.Any(static r => r.Args is ProjectEvaluationStartedEventArgs).Should().BeTrue();
-        records.Any(static r => r.Args is ProjectEvaluationFinishedEventArgs).Should().BeTrue();
+        records.Count(static r => r.Args is ProjectEvaluationStartedEventArgs).Should().Be(2);
+        records.Count(static r => r.Args is ProjectEvaluationFinishedEventArgs).Should().Be(2);
     }
 
     /// <summary>
@@ -1555,6 +1555,21 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .Should().Pass();
     }
 
+    [Fact] // https://github.com/dotnet/sdk/issues/49797
+    public void SdkReference_VersionedSdkFirst()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:sdk Microsoft.NET.Sdk@9.0.0
+            Console.WriteLine();
+            """);
+
+        new DotnetCommand(Log, "build", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+    }
+
     [Theory]
     [InlineData("../Lib/Lib.csproj")]
     [InlineData("../Lib")]
@@ -1858,22 +1873,12 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
                       <PropertyGroup>
                         <OutputType>Exe</OutputType>
-                        <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
                         <ImplicitUsings>enable</ImplicitUsings>
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <TargetFramework>net11.0</TargetFramework>
                         <LangVersion>preview</LangVersion>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <Features>$(Features);FileBasedProgram</Features>
                       </PropertyGroup>
 
@@ -1940,13 +1945,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <ImplicitUsings>enable</ImplicitUsings>
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <Features>$(Features);FileBasedProgram</Features>
                       </PropertyGroup>
 
@@ -2012,13 +2011,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <ImplicitUsings>enable</ImplicitUsings>
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-                      </PropertyGroup>
-
-                      <PropertyGroup>
                         <Features>$(Features);FileBasedProgram</Features>
                       </PropertyGroup>
 
