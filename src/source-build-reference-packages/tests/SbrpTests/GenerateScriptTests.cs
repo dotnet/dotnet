@@ -13,15 +13,10 @@ namespace SbrpTests;
 
 public class GenerateScriptTests
 {
-    public enum PackageType
-    {
-        Reference,
-        Text
-    }
-
     public static IEnumerable<object[]> Data => new List<object[]>
     {
         new object[] { "Microsoft.Build.NoTargets", "3.7.0", PackageType.Text }, // Text only package
+        new object[] { "Microsoft.CodeAnalysis.PooledObjects", "5.0.0-1.25277.114", PackageType.Text }, // Text only package w/reference package dependencies
         new object[] { "Microsoft.Extensions.Logging.Abstractions", "6.0.4", PackageType.Reference }, // Simple reference package w/o customizations
         new object[] { "System.Threading.Channels", "7.0.0", PackageType.Reference }, // Reference package w/numerous TFMs
         new object[] { "NuGet.Packaging", "6.13.2", PackageType.Reference }, // Package w/Customizations.props
@@ -43,22 +38,11 @@ public class GenerateScriptTests
     public void VerifyGenerateScript(string package, string version, PackageType type)
     {
         string command = Path.Combine(PathUtilities.GetRepoRoot(), RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "generate.cmd" : "generate.sh");
-        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}";
-        string pkgSrcDirectory;
-        string pkgSandboxDirectory = Path.Combine(SandboxDirectory, package.ToLower(), version);
-
-        switch (type)
-        {
-            case PackageType.Reference:
-                pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", "referencePackages", "src", package.ToLower(), version);
-                break;
-            case PackageType.Text:
-                arguments += " -t text";
-                pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", "textOnlyPackages", "src", package.ToLower(), version);
-                break;
-            default:
-                throw new ArgumentException($"Unknown package type '{type}'");
-        }
+        string arguments = $"-p {package},{version} -x -d {SandboxDirectory}"
+            + (type == PackageType.Text ? " -t text" : string.Empty);
+        string pkgDirectory = Path.Combine(PathUtilities.GetPackageTypeDir(type), "src", package.ToLower(), version);
+        string pkgSrcDirectory = Path.Combine(PathUtilities.GetRepoRoot(), "src", pkgDirectory);
+        string pkgSandboxDirectory = Path.Combine(SandboxDirectory, pkgDirectory);
 
         Assert.True(Directory.Exists(pkgSrcDirectory), $"Source directory '{pkgSrcDirectory}' does not exist.");
 
