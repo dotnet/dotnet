@@ -25,7 +25,7 @@ Param(
   [switch]$pgoinstrument,
   [string[]]$fsanitize,
   [switch]$bootstrap,
-  [switch]$useBoostrap
+  [switch]$useBoostrap,
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
 
