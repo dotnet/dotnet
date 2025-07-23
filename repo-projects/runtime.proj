@@ -32,8 +32,12 @@
     <TargetsMobile Condition="'$(TargetOS)' == 'ios' or '$(TargetOS)' == 'iossimulator' or '$(TargetOS)' == 'maccatalyst' or '$(TargetOS)' == 'tvos' or '$(TargetOS)' == 'tvossimulator' or '$(TargetOS)' == 'android' or '$(TargetOS)' == 'browser' or '$(TargetOS)' == 'wasi'">true</TargetsMobile>
     <BuildArgs Condition="'$(CrossBuild)' == 'true' or ('$(TargetOS)-$(TargetArchitecture)' != '$(TargetOS)-$(BuildArchitecture)' and '$(TargetsMobile)' != 'true' and '$(TargetOS)' != 'windows' and '$(TargetOS)' != 'linux-bionic')">$(BuildArgs) $(FlagParameterPrefix)cross</BuildArgs>
 
-    <!-- Always bootstrap our build so we are building the shipping product from a cohesive commit (no LKG usage). -->
-    <BuildArgs>$(BuildArgs) --bootstrap</BuildArgs>
+    <!--
+      Always bootstrap our build so we are building the shipping product from a cohesive commit (no LKG usage).
+      Some targets don't build any assets that use the LKG bits at from a dev build at runtime. Those platforms
+      can skip the bootstrapping build.
+    -->
+    <BuildArgs Condition="'$(TargetOS)' != 'browser' and '$(TargetOS)' != 'wasi' and '$(TargetsMobile)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
     <BuildArgs Condition="'$(PgoInstrument)' != 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
