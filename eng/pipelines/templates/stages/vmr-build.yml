@@ -18,7 +18,9 @@ parameters:
 - name: scope
   type: string
   values:
-  # run several legs e.g. win/linux/mac for basic testing
+  # run only windows jobs
+  - scout
+  # run several legs e.g. stage1/stage2 for basic testing
   - lite
   # run everything
   - full

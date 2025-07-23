@@ -18,7 +18,9 @@ parameters:
 - name: scope
   type: string
   values:
-  # run several legs e.g. win/linux/mac for basic testing
+  # run only windows jobs
+  - scout
+  # run several legs e.g. stage1/stage2 for basic testing
   - lite
   # run everything
   - full
@@ -677,3 +679,49 @@ stages:
           - Windows_x64
           - Windows_x86
           - Windows_arm64
+
+#### VERTICAL BUILD (Scouting) ####
+- ${{ if in(parameters.scope, 'scout') }}:
+  - stage: VMR_Vertical_Build
+    displayName: VMR Vertical Build
+    dependsOn: []
+    variables:
+    - template: ../variables/vmr-build.yml
+      parameters:
+        desiredSigning: ${{ parameters.desiredSigning }}
+        desiredIBC: ${{ parameters.desiredIBC }}
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+        isScoutingJob: true
+    jobs:
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        sign: ${{ variables.signEnabled }}
+        signDac: ${{ variables.signDacEnabled }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x64
+        enableIBCOptimization: ${{ variables.ibcEnabled }}
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        sign: ${{ variables.signEnabled }}
+        signDac: ${{ variables.signDacEnabled }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x86
+
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        sign: ${{ variables.signEnabled }}
+        signDac: ${{ variables.signDacEnabled }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: arm64
+        enableIBCOptimization: ${{ variables.ibcEnabled }}

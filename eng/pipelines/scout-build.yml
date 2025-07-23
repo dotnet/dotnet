@@ -1,0 +1,28 @@
+# This yml is used by these pipelines:
+# - dotnet-unified-build-scout (public)
+
+# Only run daily on schedule to save resources
+trigger: none
+
+schedules:
+  - cron: "0 13 * * *" # run at 013:00 (UTC)
+    branches:
+      include:
+      - main
+      - release/*
+    always: false # run only if there were changes since the last successful scheduled run.
+
+variables:
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: skipComponentGovernanceDetection  # we run CG on internal builds only
+    value: true
+
+  - name: Codeql.Enabled  # we run CodeQL on internal builds only
+    value: false
+
+- template: /eng/common/templates/variables/pool-providers.yml@self
+
+stages:
+- template: /eng/pipelines/templates/stages/vmr-build.yml
+  parameters:
+    scope: scout
