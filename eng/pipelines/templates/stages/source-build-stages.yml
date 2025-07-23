@@ -10,8 +10,6 @@ parameters:
 - name: scope
   type: string
   values:
-  # run only windows jobs
-  - scout
   # run several legs e.g. stage1/stage2 for basic testing
   - lite
   # run everything
