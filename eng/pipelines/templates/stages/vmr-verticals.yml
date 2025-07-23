@@ -725,3 +725,20 @@ stages:
         targetOS: windows
         targetArchitecture: arm64
         enableIBCOptimization: ${{ variables.ibcEnabled }}
+
+    ## Build Pass 2 verticals
+
+    # build the ASP.NET Core hosting bundle and VS components
+    - template: ../jobs/vmr-build.yml
+      parameters:
+        buildName: Windows
+        isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+        sign: ${{ variables.signEnabled }}
+        pool: ${{ parameters.pool_Windows }}
+        targetOS: windows
+        targetArchitecture: x64
+        buildPass: 2
+        reuseBuildArtifactsFrom:
+        - Windows_x64
+        - Windows_x86
+        - Windows_arm64
