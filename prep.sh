@@ -117,7 +117,23 @@ function DownloadArchive {
   if [[ $archiveVersionLine =~ $versionPattern ]]; then
       archiveUrl="${BASH_REMATCH[1]}"
       echo "  Downloading source-built $archiveType from $archiveUrl..."
-      (cd "$packagesArchiveDir" && curl --retry 5 -O "$archiveUrl")
+      (
+        cd "$packagesArchiveDir" &&
+        for i in {1..5}; do
+          if curl --retry 5 -O "$archiveUrl"; then
+            exit 0
+          else
+            case $? in
+              18)
+                sleep 3
+                ;;
+              *)
+                exit 1
+                ;;
+            esac
+          fi
+        done
+      )
   elif [ "$isRequired" == true ]; then
     echo "  ERROR: $notFoundMessage"
     exit 1
