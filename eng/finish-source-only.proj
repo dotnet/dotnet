@@ -193,8 +193,8 @@
           AfterTargets="Build"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
     <PropertyGroup>
-      <UnifiedSymbolsTarball>$(ArtifactsAssetsDir)dotnet-symbols-all-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</UnifiedSymbolsTarball>
-      <SdkSymbolsTarball>$(ArtifactsAssetsDir)dotnet-symbols-sdk-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkSymbolsTarball>
+      <UnifiedSymbolsTarball>$(ArtifactsAssetsDir)$(SourceBuiltSymbolsAllTarballName)-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</UnifiedSymbolsTarball>
+      <SdkSymbolsTarball>$(ArtifactsAssetsDir)$(SourceBuiltSymbolsSdkTarballName)-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkSymbolsTarball>
     </PropertyGroup>
     <ItemGroup>
       <IntermediateSymbol Include="$(IntermediateSymbolsRootDir)**/*" />
