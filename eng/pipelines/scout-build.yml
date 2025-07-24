@@ -5,12 +5,16 @@
 trigger: none
 
 schedules:
-  - cron: "0 13 * * *" # run at 013:00 (UTC)
+  - cron: "0 11 * * *" # run at 11:00 (UTC)
     branches:
       include:
       - main
-      - release/*
     always: true # run even if there are no new commits, in case the build images changed.
+  - cron: "0 9 * * *" # run at 09:00 (UTC)
+    branches:
+      include:
+      - release/*
+    always: false # only run on new commits for release/* branches, so as not to build stale branches.
 
 variables:
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
