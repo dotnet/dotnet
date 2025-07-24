@@ -248,7 +248,10 @@
                             Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
 
     <ItemGroup>
-      <_BuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)"
+      <_BuildSources Include="$(PrebuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
+                              $(ReferencePackagesNuGetSourceName)"
                      Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
       <_BuildSources Include="@(_CommonBuildSources)" />
       <_BuildSources Include="$(NetSdkSupportingFeedName)"
@@ -263,6 +266,7 @@
       SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
+      SharedComponentsSourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
       PrebuiltSourceName="$(PrebuiltNuGetSourceName)"
       SourceBuiltSourceNamePrefix="$(SourceBuiltSourceNamePrefix)"
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
