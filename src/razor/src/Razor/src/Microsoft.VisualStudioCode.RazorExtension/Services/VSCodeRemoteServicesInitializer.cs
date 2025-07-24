@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Composition;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
@@ -9,6 +10,7 @@ using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
@@ -40,6 +42,9 @@ internal class VSCodeRemoteServicesInitializer(
         // Normal remote service invoker logic requires a solution, but we don't have one here. Fortunately we don't need one, and since
         // we know this is VS Code specific, its all just smoke and mirrors anyway. We can avoid the smoke :)
         var serviceInterceptor = new VSCodeBrokeredServiceInterceptor();
+
+        // First things first, set the cache directory for the MEF composition.
+        RemoteMefComposition.CacheDirectory = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location)!, "cache");
 
         var logger = _loggerFactory.GetOrCreateLogger<VSCodeRemoteServicesInitializer>();
         logger.LogDebug("Initializing remote services.");
