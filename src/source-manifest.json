@@ -79,10 +79,10 @@
       "commitSha": "63bb7cbcfa600a66f9d24a3f94024bb96923df90"
     },
     {
-      "barId": 273951,
+      "barId": 276386,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "714a51c57430dab50b67e5b468016288f5f7b0bd"
+      "commitSha": "06f47ea69c931a5111d32b1c443d4546db5888f2"
     },
     {
       "barId": 276023,
