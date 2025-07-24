@@ -146,22 +146,114 @@ internal static partial class ImmutableArrayExtensions
 
     public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> source, Func<T, bool> predicate)
     {
-        if (source is [])
-        {
-            return [];
-        }
-
         using var builder = new PooledArrayBuilder<T>();
+        var none = true;
+        var all = true;
 
-        foreach (var item in source)
+        var n = source.Length;
+        for (var i = 0; i < n; i++)
         {
-            if (predicate(item))
+            var a = source[i];
+
+            if (predicate(a))
             {
-                builder.Add(item);
+                none = false;
+                if (all)
+                {
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+                builder.Add(a);
+            }
+            else
+            {
+                if (none)
+                {
+                    all = false;
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+                if (all)
+                {
+                    all = false;
+                    for (var j = 0; j < i; j++)
+                    {
+                        builder.Add(source[j]);
+                    }
+                }
             }
         }
 
-        return builder.ToImmutableAndClear();
+        if (all)
+        {
+            return source;
+        }
+        else if (none)
+        {
+            return ImmutableArray<T>.Empty;
+        }
+        else
+        {
+            return builder.ToImmutableAndClear();
+        }
+    }
+
+    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T>.Builder source, Func<T, bool> predicate)
+    {
+        using var builder = new PooledArrayBuilder<T>();
+        var none = true;
+        var all = true;
+
+        var n = source.Count;
+        for (var i = 0; i < n; i++)
+        {
+            var a = source[i];
+
+            if (predicate(a))
+            {
+                none = false;
+                if (all)
+                {
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+                builder.Add(a);
+            }
+            else
+            {
+                if (none)
+                {
+                    all = false;
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+                if (all)
+                {
+                    all = false;
+                    for (var j = 0; j < i; j++)
+                    {
+                        builder.Add(source[j]);
+                    }
+                }
+            }
+        }
+
+        if (all)
+        {
+            return source.ToImmutable();
+        }
+        else if (none)
+        {
+            return ImmutableArray<T>.Empty;
+        }
+        else
+        {
+            return builder.ToImmutableAndClear();
+        }
     }
 
     /// <summary>
