@@ -10,6 +10,7 @@ schedules:
       include:
       - main
       - release/*
+    always: true # run even if there are no new commits, in case the build images changed.
 
 variables:
 - ${{ if eq(variables['System.TeamProject'], 'public') }}:
