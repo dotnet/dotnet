@@ -102,7 +102,7 @@ public class RunTestsWithDifferentConfigurationTests : AcceptanceTestBase
     [TestMethod]
     [TestCategory("Windows-Review")]
     [NetFullTargetFrameworkDataSource()]
-    public void RunTestsWithTestSettings(RunnerInfo runnerInfo)
+    public void RunTestsWithTestSettingsInTpv2(RunnerInfo runnerInfo)
     {
         SetTestEnvironment(_testEnvironment, runnerInfo);
         ExecuteNotSupportedRunnerFrameworkTests(runnerInfo.RunnerFramework, NetFramework, Message);
@@ -128,6 +128,72 @@ public class RunTestsWithDifferentConfigurationTests : AcceptanceTestBase
         Assert.AreEqual(2, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Passed));
         Assert.AreEqual(2, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Failed));
         Assert.AreEqual(1, _runEventHandler.TestResults.Count(t => t.Outcome == TestOutcome.Skipped));
+    }
+
+    [TestMethod]
+    [TestCategory("Windows-Review")]
+    [NetFullTargetFrameworkDataSource()]
+    public void RunTestsWithTestSettingsInTpv0(RunnerInfo runnerInfo)
+    {
+        SetTestEnvironment(_testEnvironment, runnerInfo);
+        ExecuteNotSupportedRunnerFrameworkTests(runnerInfo.RunnerFramework, NetFramework, Message);
+        Setup();
+
+        var testSettingsXml = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <TestSettings name="VS19 repro." id="9b2f344b-e089-447e-8ed6-5e333b0a0361" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+              <Description>This is a default test run configuration for a local test run.</Description>
+              <Deployment>
+                <DeploymentItem filename="UnitTest1.cs" />
+              </Deployment>
+              <Execution hostProcessPlatform="MSIL">
+                <Hosts skipUnhostableTests="false">
+                  <AspNet name="ASP.NET" executionType="WebDev" />
+                  <VSSDKTestHostRunConfig name="VS IDE" HiveKind="DevEnv" HiveName="10.0" xmlns="http://microsoft.com/schemas/VisualStudio/SDK/Tools/IdeHostAdapter/2006/06" />
+                </Hosts>
+                <Timeouts runTimeout="3540000" testTimeout="2400000" />
+                <TestTypeSpecific>
+                  <WebTestRunConfiguration testTypeId="4e7599fa-5ecb-43e9-a887-cd63cf72d207">
+                    <Browser name="Internet Explorer 6.0">
+                      <Headers>
+                        <Header name="User-Agent" value="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)" />
+                        <Header name="Accept" value="*/*" />
+                        <Header name="Accept-Language" value="{{$IEAcceptLanguage}}" />
+                        <Header name="Accept-Encoding" value="GZIP" />
+                      </Headers>
+                    </Browser>
+                  </WebTestRunConfiguration>
+                  <UnitTestRunConfig testTypeId="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b">
+                    <AssemblyResolution>
+                      <TestDirectory useLoadContext="true" />
+                      <RuntimeResolution>
+                        <Directory path="%HOMEDRIVE%\t\UnitTestProject5\UnitTestProject5\bin\Debug" includeSubDirectories="true" />
+                      </RuntimeResolution>
+                    </AssemblyResolution>
+                  </UnitTestRunConfig>
+                </TestTypeSpecific>
+                <AgentRule name="LocalMachineDefaultRole">
+                </AgentRule>
+              </Execution>
+              <Properties />
+            </TestSettings>
+            """;
+
+        var testsettingsFile = Path.Combine(TempDirectory.Path, "tempsettings.testsettings");
+
+        File.WriteAllText(testsettingsFile, testSettingsXml, Encoding.UTF8);
+
+        var source = GetAssetFullPath("MstestV1UnitTestProject.dll");
+
+        InvokeVsTestForExecution(source, null, runnerInfo.TargetFramework, runSettings: testsettingsFile, null);
+
+        // Assert
+        // Ensure that we are actually running via TPv0 provider.
+        StringAssert.Contains(StdOutWithWhiteSpace, "The test execution was delegated to legacy TestPlatform runner");
+
+        ValidateSummaryStatus(2, 2, 1);
+        ExitCodeEquals(1); // failing tests
+        StdErrHasTestRunFailedMessageButNoOtherError();
     }
 
     [TestMethod]

@@ -65,7 +65,6 @@
     <Compile Remove="src\AzureDevOpsFeedPermission.cs" />
     <Compile Remove="src\AzureDevOpsNugetFeedAssetPublisher.cs" />
     <Compile Remove="src\AzureStorageAssetPublisher.cs" />
-    <Compile Remove="src\AzureStorageContainerAssetSasCredentialPublisher.cs" />
     <Compile Remove="src\AzureStorageContainerAssetTokenCredentialPublisher.cs" />
     <Compile Remove="src\AzureStorageExtensions.cs" />
     <Compile Remove="src\BlobFeedAction.cs" />

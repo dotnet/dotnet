@@ -23,8 +23,8 @@
     <!-- arcade -->
     <MicrosoftDotNetSwaggerGeneratorMSBuildVersion>9.0.0-beta.24223.1</MicrosoftDotNetSwaggerGeneratorMSBuildVersion>
     <!-- arcade-services -->
-    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25351.1</MicrosoftDotNetProductConstructionServiceClientVersion>
-    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25351.1</MicrosoftDotNetDarcLibVersion>
+    <MicrosoftDotNetProductConstructionServiceClientVersion>1.1.0-beta.25366.3</MicrosoftDotNetProductConstructionServiceClientVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25366.3</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api -->
     <SystemCommandLineVersion>2.0.0-beta5.25210.1</SystemCommandLineVersion>
     <!-- corefx -->
@@ -85,7 +85,7 @@
     <SystemFormatsAsn1Version>9.0.0-rc.2.24473.5</SystemFormatsAsn1Version>
     <!-- sdk -->
     <MicrosoftNETSdkWorkloadManifestReaderVersion>9.0.100-preview.6.24328.19</MicrosoftNETSdkWorkloadManifestReaderVersion>
-    <!-- source-build-reference-packages -->
+    <!-- source-build-externals -->
     <!-- The version is overridden by the VMR to use the version from the previous (n-1) build of Arcade. -->
     <MicrosoftApplicationInsightsVersion>2.23.0</MicrosoftApplicationInsightsVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
@@ -99,6 +99,6 @@
     <!-- vstest -->
     <MicrosoftNetTestSdkVersion>17.5.0</MicrosoftNetTestSdkVersion>
     <!-- xharness -->
-    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25318.1</MicrosoftDotNetXHarnessCLIVersion>
+    <MicrosoftDotNetXHarnessCLIVersion>10.0.0-prerelease.25361.1</MicrosoftDotNetXHarnessCLIVersion>
   </PropertyGroup>
 </Project>

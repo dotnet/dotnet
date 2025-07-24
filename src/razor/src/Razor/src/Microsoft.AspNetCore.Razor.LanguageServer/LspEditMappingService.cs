@@ -15,11 +15,12 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer;
 
-internal class LspEditMappingService(
+internal sealed class LspEditMappingService(
     IDocumentMappingService documentMappingService,
     IFilePathService filePathService,
     IDocumentContextFactory documentContextFactory) : AbstractEditMappingService(documentMappingService, filePathService)
 {
+    private readonly IFilePathService _filePathService = filePathService;
     private readonly IDocumentContextFactory _documentContextFactory = documentContextFactory;
 
     protected override bool TryGetDocumentContext(IDocumentSnapshot contextDocumentSnapshot, Uri razorDocumentUri, VSProjectContext? projectContext, [NotNullWhen(true)] out DocumentContext? documentContext)
@@ -30,5 +31,10 @@ internal class LspEditMappingService(
         }
 
         return true;
+    }
+
+    protected override Task<Uri?> GetRazorDocumentUriAsync(IDocumentSnapshot contextDocumentSnapshot, Uri uri, CancellationToken cancellationToken)
+    {
+        return Task.FromResult<Uri?>(_filePathService.GetRazorDocumentUri(uri));
     }
 }

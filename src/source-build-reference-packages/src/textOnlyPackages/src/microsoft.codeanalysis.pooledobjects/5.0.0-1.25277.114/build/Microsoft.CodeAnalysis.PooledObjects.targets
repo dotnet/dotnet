@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="_AddSourcePackageSourceRoot_3905D60100723146159A799DDBB3C55754AB1090" BeforeTargets="InitializeSourceControlInformation">
+    <ItemGroup>
+      <_PackageCompileItems Remove="@(_PackageCompileItems)"/>
+      <_PackageCompileItems Include="%(Compile.RootDir)%(Compile.Directory)" Condition="'%(Compile.NuGetPackageId)' == 'Microsoft.CodeAnalysis.PooledObjects'" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_PackageCompileItem>@(_PackageCompileItems)</_PackageCompileItem>
+      <_PackageCompileItem Condition="'$(_PackageCompileItem)' != ''">$(_PackageCompileItem.Split(';')[0])</_PackageCompileItem>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <SourceRoot Include="$([System.Text.RegularExpressions.Regex]::Match($(_PackageCompileItem), '^$([System.Text.RegularExpressions.Regex]::Escape($([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../contentFiles/'))))([^\\/]+[\\/][^\\/]+[\\/])'))" 
+                  SourceLinkUrl="https://raw.githubusercontent.com/dotnet/dotnet/ddf39a1b4690fbe23aea79c78da67004a5c31094/src/roslyn/src/Dependencies/PooledObjects/*"/>
+    </ItemGroup>
+  </Target>
+</Project>

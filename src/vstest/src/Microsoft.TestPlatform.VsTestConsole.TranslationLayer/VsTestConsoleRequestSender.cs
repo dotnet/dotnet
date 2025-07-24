@@ -1197,7 +1197,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
             EqtTrace.Error("Aborting Test Run Operation: {0}", exception);
             eventHandler.HandleLogMessage(
                 TestMessageLevel.Error,
-                TranslationLayerResources.AbortedTestsRun);
+                TranslationLayerResources.AbortedTestsRun + " " + exception.ToString());
             var completeArgs = new TestRunCompleteEventArgs(
                 null, false, true, exception, null, null, TimeSpan.Zero);
             eventHandler.HandleTestRunComplete(completeArgs, null, null, null);
@@ -1282,7 +1282,7 @@ internal class VsTestConsoleRequestSender : ITranslationLayerRequestSender
             EqtTrace.Error("Aborting Test Run Operation: {0}", exception);
             eventHandler.HandleLogMessage(
                 TestMessageLevel.Error,
-                TranslationLayerResources.AbortedTestsRun);
+                TranslationLayerResources.AbortedTestsRun + " " + exception.ToString());
             var completeArgs = new TestRunCompleteEventArgs(
                 null, false, true, exception, null, null, TimeSpan.Zero);
             eventHandler.HandleTestRunComplete(completeArgs, null, null, null);

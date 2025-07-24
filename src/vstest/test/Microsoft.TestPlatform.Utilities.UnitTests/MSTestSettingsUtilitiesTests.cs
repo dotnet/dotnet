@@ -7,8 +7,6 @@ using System.Xml;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using MSTest.TestFramework.AssertExtensions;
-
 namespace Microsoft.TestPlatform.Utilities.Tests;
 
 [TestClass]
@@ -50,7 +48,8 @@ public class MsTestSettingsUtilitiesTests
                 MSTestSettingsUtilities.Import(
                     "C:\\temp\\r.runsettings",
                     xmlDocument);
-        Assert.That.Throws<XmlException>(action).WithMessage("Unexpected settings file specified.");
+        var exception = Assert.ThrowsExactly<XmlException>(action);
+        Assert.AreEqual("Unexpected settings file specified.", exception.Message);
     }
 
     [TestMethod]
@@ -65,7 +64,8 @@ public class MsTestSettingsUtilitiesTests
                 MSTestSettingsUtilities.Import(
                     "C:\\temp\\r.testsettings",
                     xmlDocument);
-        Assert.That.Throws<XmlException>(action).WithMessage("Could not find 'RunSettings' node.");
+        var exception = Assert.ThrowsExactly<XmlException>(action);
+        Assert.AreEqual("Could not find 'RunSettings' node.", exception.Message);
     }
 
     [TestMethod]

@@ -9,7 +9,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <OutputType Condition=" $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', '$(NetCoreAppMinimum)')) ">Exe</OutputType>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>

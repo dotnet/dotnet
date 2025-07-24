@@ -21,15 +21,15 @@
     <!-- External package dependencies -->
     <HumanizerCoreVersion>$(HumanizerReleaseVersion)</HumanizerCoreVersion>
     <!-- MSBuild dependencies -->
-    <MicrosoftBuildVersion>17.15.0-preview-25358-102</MicrosoftBuildVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>17.15.0-preview-25358-102</MicrosoftBuildUtilitiesCoreVersion>
+    <MicrosoftBuildVersion>17.15.0-preview-25367-101</MicrosoftBuildVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>17.15.0-preview-25367-101</MicrosoftBuildUtilitiesCoreVersion>
     <!-- NuGet dependencies -->
     <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
     <!-- Runtime dependencies -->
-    <MicrosoftNETCoreILAsmVersion>10.0.0-preview.7.25358.102</MicrosoftNETCoreILAsmVersion>
-    <MicrosoftNETCoreILDAsmVersion>10.0.0-preview.7.25358.102</MicrosoftNETCoreILDAsmVersion>
+    <MicrosoftNETCoreILAsmVersion>10.0.0-preview.7.25367.101</MicrosoftNETCoreILAsmVersion>
+    <MicrosoftNETCoreILDAsmVersion>10.0.0-preview.7.25367.101</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25358.102</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25367.101</MicrosoftDotNetGenAPITaskPackageVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>
