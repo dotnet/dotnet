@@ -122,7 +122,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public bool AllowFeedOverrides { get; set; }
 
         public ITaskItem[] FeedKeys { get; set; }
-        public ITaskItem[] FeedSasUris { get; set; }
 
         public ITaskItem[] FeedOverrides { get; set; }
 
@@ -353,7 +352,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ManagedIdentityClientId = this.ManagedIdentityClientId,
                 PublishInstallersAndChecksums = this.PublishInstallersAndChecksums,
                 FeedKeys = this.FeedKeys,
-                FeedSasUris = this.FeedSasUris,
                 FeedOverrides = this.FeedOverrides,
                 AllowFeedOverrides = this.AllowFeedOverrides,
                 PdbArtifactsBasePath = this.PdbArtifactsBasePath,
@@ -402,7 +400,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 ManagedIdentityClientId = this.ManagedIdentityClientId,
                 PublishInstallersAndChecksums = this.PublishInstallersAndChecksums,
                 FeedKeys = this.FeedKeys,
-                FeedSasUris = this.FeedSasUris,
                 FeedOverrides = this.FeedOverrides,
                 AllowFeedOverrides = this.AllowFeedOverrides,
                 PdbArtifactsBasePath = this.PdbArtifactsBasePath,

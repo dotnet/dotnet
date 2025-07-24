@@ -16,6 +16,9 @@ using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
+using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Settings;
 
 namespace Microsoft.VisualStudio.Razor.Remote;
 
@@ -26,12 +29,14 @@ internal sealed class RemoteServiceInvoker(
     LanguageServerFeatureOptions languageServerFeatureOptions,
     IClientCapabilitiesService clientCapabilitiesService,
     ISemanticTokensLegendService semanticTokensLegendService,
+    SVsServiceProvider serviceProvider,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory) : IRemoteServiceInvoker, IDisposable
 {
     private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RemoteServiceInvoker>();
 
@@ -163,8 +168,15 @@ internal sealed class RemoteServiceInvoker(
                 await _initializeLspTask.ConfigureAwait(false);
             }
 
-            Task InitializeOOPAsync(RazorRemoteHostClient remoteClient)
+            async Task InitializeOOPAsync(RazorRemoteHostClient remoteClient)
             {
+                // The first call to OOP must be to initialize the MEF services, because everything after that relies on MEF.
+                var localSettingsDirectory = new ShellSettingsManager(_serviceProvider).GetApplicationDataFolder(ApplicationDataFolder.LocalSettings);
+                var cacheDirectory = Path.Combine(localSettingsDirectory, "Razor", "RemoteMEFCache");
+                await remoteClient.TryInvokeAsync<IRemoteMEFInitializationService>(
+                    (s, ct) => s.InitializeAsync(cacheDirectory, ct),
+                    _disposeTokenSource.Token).ConfigureAwait(false);
+
                 var initParams = new RemoteClientInitializationOptions
                 {
                     UseRazorCohostServer = _languageServerFeatureOptions.UseRazorCohostServer,
@@ -179,11 +191,10 @@ internal sealed class RemoteServiceInvoker(
 
                 _logger.LogDebug($"First OOP call, so initializing OOP service.");
 
-                return remoteClient
+                await remoteClient
                     .TryInvokeAsync<IRemoteClientInitializationService>(
                         (s, ct) => s.InitializeAsync(initParams, ct),
-                        _disposeTokenSource.Token)
-                    .AsTask();
+                        _disposeTokenSource.Token).ConfigureAwait(false);
             }
 
             Task InitializeLspAsync(RazorRemoteHostClient remoteClient)

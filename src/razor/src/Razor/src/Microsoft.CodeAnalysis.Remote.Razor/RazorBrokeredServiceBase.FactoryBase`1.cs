@@ -60,7 +60,7 @@ internal abstract partial class RazorBrokeredServiceBase
 #endif
         }
 
-        protected async Task<object> CreateInternalAsync(
+        protected virtual async Task<object> CreateInternalAsync(
             Stream? stream,
             IServiceProvider hostProvidedServices,
             IServiceBroker? serviceBroker)
@@ -103,21 +103,31 @@ internal abstract partial class RazorBrokeredServiceBase
                 return CreateService(in inProcArgs);
             }
 
+            var serverConnection = CreateServerConnection(stream, traceSource);
+
+            var args = new ServiceArgs(serviceBroker.AssumeNotNull(), exportProvider, targetLoggerFactory, workspaceProvider, serverConnection, brokeredServiceData?.Interceptor);
+            var service = CreateService(in args);
+
+            ConnectService(serverConnection, service);
+
+            return service;
+        }
+
+        protected static ServiceRpcDescriptor.RpcConnection CreateServerConnection(Stream stream, TraceSource? traceSource)
+        {
             var pipe = stream.UsePipe();
 
             var descriptor = typeof(IRemoteJsonService).IsAssignableFrom(typeof(TService))
                 ? RazorServices.JsonDescriptors.GetDescriptorForServiceFactory(typeof(TService))
                 : RazorServices.Descriptors.GetDescriptorForServiceFactory(typeof(TService));
             var serverConnection = descriptor.WithTraceSource(traceSource).ConstructRpcConnection(pipe);
+            return serverConnection;
+        }
 
-            var args = new ServiceArgs(serviceBroker.AssumeNotNull(), exportProvider, targetLoggerFactory, workspaceProvider, serverConnection, brokeredServiceData?.Interceptor);
-
-            var service = CreateService(in args);
-
+        protected static void ConnectService(ServiceRpcDescriptor.RpcConnection serverConnection, TService service)
+        {
             serverConnection.AddLocalRpcTarget(service);
             serverConnection.StartListening();
-
-            return service;
         }
     }
 }

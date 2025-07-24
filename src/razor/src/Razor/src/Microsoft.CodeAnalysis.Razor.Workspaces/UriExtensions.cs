@@ -37,25 +37,36 @@ internal static class UriExtensions
         // Absolute paths are usually encoded.
         var absolutePath = uri.AbsolutePath.Contains("%") ? WebUtility.UrlDecode(uri.AbsolutePath) : uri.AbsolutePath;
 
-        if (string.Equals(uri.Scheme, "git", StringComparison.OrdinalIgnoreCase))
-        {
-            // return a normalized path when we want to add to a fake git directory path (hacky fix for https://github.com/dotnet/razor/issues/9365)
-            return AddToFakeGitDirectoryAtRoot(absolutePath);
-        }
-
-        return absolutePath;
+        return EnsureUniquePathForScheme(uri.Scheme, absolutePath);
     }
 
-    private static string AddToFakeGitDirectoryAtRoot(string decodedAbsolutePath)
+    private static string EnsureUniquePathForScheme(string scheme, string decodedAbsolutePath)
     {
+        // File Uris we leave untouched, as they represent the actual files on disk
+        if (scheme == Uri.UriSchemeFile)
+        {
+            return decodedAbsolutePath;
+        }
+
         var normalizedPath = FilePathNormalizer.Normalize(decodedAbsolutePath);
         var firstSeparatorIndex = normalizedPath.IndexOf('/');
         if (firstSeparatorIndex < 0)
         {
-            // no-op
+            // A path without a separator is unlikely, but we can't add our unique-ness marker anyway, so just return as is
+            // and hope for the best.
             return decodedAbsolutePath;
         }
 
-        return normalizedPath.Insert(firstSeparatorIndex + 1, "_git_/");
+        // For any non-file Uri, we add a marker to the path to ensure things won't conflict with the real file on disk.
+        // This is a somewhat hacky fix to ensure things like a git diff view will work, where the left hand side is a
+        // Uri like "git://path/to/file.razor" and the right hand side is "file://path/to/file.razor". If we mapped both
+        // of those to the same file path, then one side would be sending line and character positions that don't match
+        // our understanding of the document.
+        // A true fix would be to move away from using file paths in the first place, but instead use the Uris as provided
+        // by the LSP client as the source of truth.
+        // See https://github.com/dotnet/razor/issues/9365 and https://github.com/microsoft/vscode-dotnettools/issues/2151
+        // for examples.
+
+        return normalizedPath.Insert(firstSeparatorIndex + 1, $"_{scheme}_/");
     }
 }
