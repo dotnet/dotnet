@@ -4,6 +4,6 @@
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup>
-    <SystemCommandLineVersion>2.0.0-beta6.25330.103</SystemCommandLineVersion>
+    <SystemCommandLineVersion>2.0.0-beta7.25363.103</SystemCommandLineVersion>
   </PropertyGroup>
 </Project>
