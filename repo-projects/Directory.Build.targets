@@ -248,17 +248,11 @@
                             Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
 
     <ItemGroup>
-      <_BuildSources Include="$(PrebuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltNuGetSourceName);
-                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
-                              $(ReferencePackagesNuGetSourceName)"
+      <_BuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)"
                      Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
       <_BuildSources Include="@(_CommonBuildSources)" />
       <_BuildSources Include="$(NetSdkSupportingFeedName)"
                      Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
-      <_FallbackSources Include="$(PrebuiltNuGetSourceName);
-                                 $(PreviouslySourceBuiltNuGetSourceName);
-                                 $(PreviouslySourceBuiltSharedComponentsNuGetSourceName)" />
     </ItemGroup>
 
     <UpdateNuGetConfigPackageSourcesMappings
@@ -268,7 +262,8 @@
       SbrpRepoSrcPath="$(SbrpRepoSrcDir)"
       SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
-      FallbackSourceNames="@(_FallbackSources)"
+      PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
+      PrebuiltSourceName="$(PrebuiltNuGetSourceName)"
       SourceBuiltSourceNamePrefix="$(SourceBuiltSourceNamePrefix)"
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
       CustomSources="$(NetSdkSupportingFeedName)"

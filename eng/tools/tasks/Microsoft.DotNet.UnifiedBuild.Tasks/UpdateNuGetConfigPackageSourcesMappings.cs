@@ -21,9 +21,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /*
      * This task updates the package source mappings in the NuGet.Config using the following logic:
      * Add all packages from current source-build sources, i.e. source-built-*, reference-packages.
-     * For fallback sources (e.g. prebuilts, previously source built), add only the packages that
-     * do not exist in any of the current source-built sources.
-     * Also add fallback packages if that package version does not exist in current package sources.
+     * For previously source-built sources (PSB), add only the packages that do not exist in any of the current source-built sources.
+     * Also add PSB packages if that package version does not exist in current package sources.
      * In offline build, remove all existing package source mappings for online sources.
      * In online build, add online source mappings for all discovered packages from local sources.
      * In online build, if NuGet.config didn't originally have any mappings, additionally,
@@ -57,7 +56,9 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public string ReferencePackagesSourceName { get; set; }
 
-        public string[] FallbackSourceNames { get; set; }
+        public string PreviouslySourceBuiltSourceName { get; set; }
+
+        public string PrebuiltSourceName { get; set; }
 
         public string[] CustomSources { get; set; }
 
@@ -71,7 +72,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         // All other dictionaries are: 'package id', 'list of package versions'
         private Dictionary<string, List<string>> currentPackages = [];
         private Dictionary<string, List<string>> referencePackages = [];
-        private Dictionary<string, List<string>> fallbackPackages = [];
+        private Dictionary<string, List<string>> previouslySourceBuiltPackages = [];
+        private Dictionary<string, List<string>> prebuiltPackages = [];
 
         public override bool Execute()
         {
@@ -259,21 +261,23 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 packageSource.Equals(SbrpCacheSourceName) ||
                 packageSource.Equals(ReferencePackagesSourceName);
 
-            bool isFallbackSource = FallbackSourceNames?.Contains(packageSource) == true;
-
             XElement pkgSrc = new XElement("packageSource", new XAttribute("key", packageSource));
             foreach (string packagePattern in allSourcesPackages[packageSource])
             {
                 // Add all packages from current source-built sources.
-                // For fallback sources add only packages
+                // For previously source-built and prebuilt sources add only packages
                 // where version does not exist in current source-built sources.
                 if (isCurrentSourceBuiltSource || !currentPackages.ContainsKey(packagePattern))
                 {
                     pkgSrc.Add(new XElement("package", new XAttribute("pattern", packagePattern)));
                 }
-                else if (isFallbackSource)
+                else if (packageSource.Equals(PreviouslySourceBuiltSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(pkgSrc, packagePattern, fallbackPackages);
+                    AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(pkgSrc, packagePattern, previouslySourceBuiltPackages);
+                }
+                else if (packageSource.Equals(PrebuiltSourceName))
+                {
+                    AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(pkgSrc, packagePattern, prebuiltPackages);
                 }
                 else // unknown/unexpected source
                 {
@@ -314,13 +318,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     continue;
                 }
 
-                // fallback sources may contain SBRP packages in a subfolder.
+                // previously-source-built source contains SBRP packages in a subfolder.
                 // We do not want to enumerate those packages as they already exist in reference packages source.
-                SearchOption searchOption = SearchOption.AllDirectories;
-                if (FallbackSourceNames?.Contains(packageSource) == true)
-                {
-                    searchOption = SearchOption.TopDirectoryOnly;
-                }
+                // SBRP folder will be removed with https://github.com/dotnet/source-build/issues/4930
+                SearchOption searchOption =
+                    packageSource.Equals(PreviouslySourceBuiltSourceName)
+                    ? SearchOption.TopDirectoryOnly
+                    : SearchOption.AllDirectories;
 
                 string[] packages = Directory.GetFiles(path, "*.nupkg", searchOption);
                 Array.Sort(packages);
@@ -343,9 +347,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     {
                         AddToDictionary(referencePackages, id, version);
                     }
-                    else if (FallbackSourceNames?.Contains(packageSource) == true)
+                    else if (packageSource.Equals(PreviouslySourceBuiltSourceName))
                     {
-                        AddToDictionary(fallbackPackages, id, version);
+                        AddToDictionary(previouslySourceBuiltPackages, id, version);
+                    }
+                    else if (packageSource.Equals(PrebuiltSourceName))
+                    {
+                        AddToDictionary(prebuiltPackages, id, version);
                     }
                     else // unknown/unexpected source
                     {
@@ -403,7 +411,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     string pattern = package.Attribute("pattern").Value.ToLower();
                     if (!currentPackages.ContainsKey(pattern) &&
                         !referencePackages.ContainsKey(pattern) &&
-                        !fallbackPackages.ContainsKey(pattern))
+                        !previouslySourceBuiltPackages.ContainsKey(pattern) &&
+                        !prebuiltPackages.ContainsKey(pattern))
                     {
                         filteredPatterns.Add(pattern);
                         if (!allOldSourceMappingPatterns.Contains(pattern))
