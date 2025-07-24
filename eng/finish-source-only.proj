@@ -43,6 +43,7 @@
 
       <SourceBuiltPackageFile Include="$(ArtifactsPackagesDir)**/*.nupkg" />
       <SourceBuiltPackageFile Include="$(PreviouslySourceBuiltPackagesPath)*.nupkg" />
+      <SourceBuiltPackageFile Include="$(SharedComponentsArtifactsPath)*.nupkg" />
       <ReferencePackageFile Include="$(ReferencePackagesDir)**/*.nupkg" />
 
       <!-- Check all RIDs from all restored Microsoft.NETCore.Platforms packages. -->
@@ -192,8 +193,8 @@
           AfterTargets="Build"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
     <PropertyGroup>
-      <UnifiedSymbolsTarball>$(ArtifactsAssetsDir)dotnet-symbols-all-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</UnifiedSymbolsTarball>
-      <SdkSymbolsTarball>$(ArtifactsAssetsDir)dotnet-symbols-sdk-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkSymbolsTarball>
+      <UnifiedSymbolsTarball>$(ArtifactsAssetsDir)$(SourceBuiltSymbolsAllTarballName)-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</UnifiedSymbolsTarball>
+      <SdkSymbolsTarball>$(ArtifactsAssetsDir)$(SourceBuiltSymbolsSdkTarballName)-$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkSymbolsTarball>
     </PropertyGroup>
     <ItemGroup>
       <IntermediateSymbol Include="$(IntermediateSymbolsRootDir)**/*" />
