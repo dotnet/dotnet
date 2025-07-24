@@ -175,6 +175,7 @@
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
+    <EnvironmentVariables Include="Deterministic=true" />
     <EnvironmentVariables Include="DeterministicSourcePaths=true" />
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
