@@ -24,7 +24,7 @@ public class SourceBuiltArtifactsTests : SdkTests
     {
         Assert.NotNull(Config.SourceBuiltArtifactsPath);
 
-        string outputDir = Path.Combine(Directory.GetCurrentDirectory(), "sourcebuilt-artifacts");
+        string outputDir = Path.Combine(Directory.GetCurrentDirectory(), Path.GetRandomFileName());
         Directory.CreateDirectory(outputDir);
         try
         {
@@ -61,6 +61,36 @@ public class SourceBuiltArtifactsTests : SdkTests
             string expectedSdkVersion = sdkVersionLines[3];  // Get the unique, non-stable, SDK version
 
             Assert.Equal(expectedSdkVersion, sdkVersion);
+        }
+        finally
+        {
+            Directory.Delete(outputDir, recursive: true);
+        }
+    }
+
+    [ConditionalFact(typeof(SourceBuiltArtifactsTests), nameof(IncludeSourceBuiltArtifactsTests))]
+    public void EnsureNoSymbolsNupkgs()
+    {
+        Assert.NotNull(Config.SourceBuiltArtifactsPath);
+
+        string outputDir = Path.Combine(Directory.GetCurrentDirectory(), Path.GetRandomFileName());
+        Directory.CreateDirectory(outputDir);
+        try
+        {
+            // Extract the .version file
+            Utilities.ExtractTarball(Config.SourceBuiltArtifactsPath, outputDir, OutputHelper);
+
+            string[] symbolsNupkgs = Directory.GetFiles(outputDir, "*.nupkg", SearchOption.AllDirectories)
+                .Where(file => file.ToLowerInvariant().Contains(".symbols."))
+                .ToArray();
+
+            if (symbolsNupkgs.Length > 0)
+            {
+                string message = $"Found symbols nupkgs in the source built artifacts: {Environment.NewLine}{string.Join(Environment.NewLine, symbolsNupkgs)}";
+                OutputHelper.WriteLine(message);
+            }
+
+            Assert.Empty(symbolsNupkgs);
         }
         finally
         {

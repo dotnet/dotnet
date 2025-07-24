@@ -157,6 +157,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 The end.
                 """,
             expected: """
+                @using System.Threading.Tasks
                 This is a Razor document.
             
                 <div></div>
@@ -197,6 +198,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 The end.
                 """,
             expected: """
+                @using System.Threading.Tasks
                 This is a Razor document.
             
                 <div></div>
