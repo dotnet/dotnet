@@ -15,7 +15,7 @@ internal class CompletionTriggerAndCommitCharacters
     private const char TransitionCharacter = '@';
 
     private static readonly char[] s_vsHtmlTriggerCharacters = [':', '#', '.', '!', '*', ',', '(', '[', '-', '<', '&', '\\', '/', '\'', '"', '=', ':', ' ', '`'];
-    private static readonly char[] s_vsCodeHtmlTriggerCharacters = ['#', '.', '!', ',', '-', '<'];
+    private static readonly char[] s_vsCodeHtmlTriggerCharacters = ['#', '.', '!', ',', '<'];
     private static readonly char[] s_razorTriggerCharacters = ['<', ':', ' '];
     private static readonly char[] s_csharpTriggerCharacters = [' ', '(', '=', '#', '.', '<', '[', '{', '"', '/', ':', '~'];
     private static readonly ImmutableArray<string> s_commitCharacters = [" ", ">", ";", "="];

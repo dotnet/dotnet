@@ -16,4 +16,11 @@ internal static class PathUtilities
     public static string GetArtifactsReferenceOnlyPackagesDir() =>
         (string)AppContext.GetData("SbrpTests.ArtifactsReferenceOnlyPackagesDir")!;
 
+    public static string GetPackageTypeDir(PackageType type)
+        => type switch
+        {
+            PackageType.Reference => "referencePackages",
+            PackageType.Text      => "textOnlyPackages",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, $"Unknown package type '{type}'")
+        };
 }

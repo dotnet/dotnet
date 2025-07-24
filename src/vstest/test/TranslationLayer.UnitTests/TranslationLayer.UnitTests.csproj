@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net48</TargetFrameworks>
-    <OutputType Condition=" '$(TargetFramework)' != 'net48' ">Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <AssemblyName>TranslationLayer.UnitTests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@
       from appending +<commitId>, which breaks DTAAgent.
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <VersionPrefix>17.15.0</VersionPrefix>
+    <VersionPrefix>18.0.0</VersionPrefix>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
@@ -51,13 +51,13 @@
     <MicrosoftDiagnosticsNETCoreClientVersion>0.2.631904</MicrosoftDiagnosticsNETCoreClientVersion>
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
     <MicrosoftExtensionsFileSystemGlobbingVersion>6.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
-    <MicrosoftFakesVersion>17.12.0</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.14.3-preview.25164.1</MicrosoftInternalCodeCoverageVersion>
+    <MicrosoftFakesVersion>18.0.0-beta.25364.2</MicrosoftFakesVersion>
+    <MicrosoftInternalCodeCoverageVersion>17.15.0-preview.25354.5</MicrosoftInternalCodeCoverageVersion>
     <!--
       Make sure you are taking a version from a release branch (rel/d*) in VS. Otherwise there won't be symbols for the dlls in package,
       a and it will create a symcheck bug on re-insertion into VS.
     -->
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>17.13.35723.115</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>18.0.0-preview-1-10811-208</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
@@ -69,8 +69,8 @@
     <SystemComponentModelCompositionVersion>8.0.0</SystemComponentModelCompositionVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
-    <TestPlatformExternalsVersion>17.10.0-preview-2-34602-162</TestPlatformExternalsVersion>
-    <MicrosoftInternalTestPlatformExtensions>17.10.0-preview-2-34602-162</MicrosoftInternalTestPlatformExtensions>
+    <TestPlatformExternalsVersion>18.0.0-preview-1-10811-208</TestPlatformExternalsVersion>
+    <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10811-208</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
@@ -78,14 +78,14 @@
   <PropertyGroup Label="VSTest test settings">
     <!-- Name of the elements must be in sync with test\Microsoft.TestPlatform.TestUtilities\IntegrationTestBase.cs -->
     <AwesomeAssertionsVersion>8.1.0</AwesomeAssertionsVersion>
+    <MicrosoftTestingPlatformVersion>1.7.2</MicrosoftTestingPlatformVersion>
     <MoqVersion>4.16.1</MoqVersion>
     <!-- For coverage use our own package on latest stable -->
     <MicrosoftCodeCoverageVersion>17.9.0</MicrosoftCodeCoverageVersion>
     <!-- These versions are used for running unit tests, and running acceptance tests. They are also used as the default version for projects
     in TestAssets.sln to allow running and debugging tests in that solution directly in VS without having to run them via AcceptanceTests. -->
-    <MSTestTestFrameworkVersion>3.4.3</MSTestTestFrameworkVersion>
-    <MSTestTestAdapterVersion>3.4.3</MSTestTestAdapterVersion>
-    <MSTestAssertExtensionVersion>1.0.3-preview</MSTestAssertExtensionVersion>
+    <MSTestTestFrameworkVersion>3.9.3</MSTestTestFrameworkVersion>
+    <MSTestTestAdapterVersion>3.9.3</MSTestTestAdapterVersion>
     <XUnitFrameworkVersion>2.4.2</XUnitFrameworkVersion>
     <XUnitAdapterVersion>2.4.5</XUnitAdapterVersion>
     <XUnitConsoleRunnerVersion>2.4.2</XUnitConsoleRunnerVersion>
@@ -98,8 +98,8 @@
       These versions need to be "statically" readable because we read this file as xml in our build and tests.
     -->
     <!-- <MSTestFrameworkLatestVersion></MSTestFrameworkLatestVersion> is not here, because we don't build MSTest locally, so we don't have access to the latest version. -->
-    <MSTestFrameworkLatestPreviewVersion>[3.4.3]</MSTestFrameworkLatestPreviewVersion>
-    <MSTestFrameworkLatestStableVersion>[3.4.3]</MSTestFrameworkLatestStableVersion>
+    <MSTestFrameworkLatestPreviewVersion>[3.9.3]</MSTestFrameworkLatestPreviewVersion>
+    <MSTestFrameworkLatestStableVersion>[3.9.3]</MSTestFrameworkLatestStableVersion>
     <MSTestFrameworkRecentStableVersion>[3.3.1]</MSTestFrameworkRecentStableVersion>
     <MSTestFrameworkMostDownloadedVersion>[2.2.10]</MSTestFrameworkMostDownloadedVersion>
     <MSTestFrameworkPreviousStableVersion>[2.2.10]</MSTestFrameworkPreviousStableVersion>

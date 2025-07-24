@@ -36,13 +36,18 @@
     <PreviouslySourceBuiltPackagesPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'previously-source-built'))</PreviouslySourceBuiltPackagesPath>
     <PreviouslySourceBuiltPackagesPath Condition="'$(CustomPreviouslySourceBuiltPackagesPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomPreviouslySourceBuiltPackagesPath)'))</PreviouslySourceBuiltPackagesPath>
     <PreviouslySourceBuiltPackageVersionsPropsFile>$(PreviouslySourceBuiltPackagesPath)PackageVersions.props</PreviouslySourceBuiltPackageVersionsPropsFile>
+    <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'shared-components'))</SharedComponentsArtifactsPath>
+    <SharedComponentsArtifactsPath Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomSharedComponentsArtifactsPath)'))</SharedComponentsArtifactsPath>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
     <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
     <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
+    <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
+    <SourceBuiltSymbolsAllTarballName>dotnet-symbols-all</SourceBuiltSymbolsAllTarballName>
+    <SourceBuiltSymbolsSdkTarballName>dotnet-symbols-sdk</SourceBuiltSymbolsSdkTarballName>
 
     <BaselineDataFile>$(ToolsDir)prebuilt-baseline.xml</BaselineDataFile>
     <PackageVersionsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'PackageVersions'))</PackageVersionsDir>
