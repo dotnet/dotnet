@@ -98,8 +98,7 @@ namespace Microsoft.DotNet.Tests
             if (sourceBuild)
             {
                 task.ReferencePackagesSourceName = ReferencePackagesSourceName;
-                task.PreviouslySourceBuiltSourceName = PreviouslySourceBuiltSourceName;
-                task.PrebuiltSourceName = PrebuiltSourceName;
+                task.FallbackSourceNames = [ PreviouslySourceBuiltSourceName, PrebuiltSourceName ];
             }
 
             task.Execute();
