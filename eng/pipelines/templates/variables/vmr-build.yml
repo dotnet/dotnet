@@ -19,7 +19,6 @@ parameters:
   default: ''
 
 - name: isScoutingJob
-  displayName: Scope
   type: boolean
   default: false
 
