@@ -53,6 +53,12 @@ parameters:
   type: boolean
   default: false
 
+  # Remove with https://github.com/dotnet/source-build/issues/5288
+- name: enableCoreDumpGeneration
+  displayName: True when core dump generation should be enabled
+  type: boolean
+  default: false
+
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -561,6 +567,12 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
+          fi
+
+          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
+          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
+            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
+            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
