@@ -5,12 +5,12 @@
 trigger: none
 
 schedules:
-  - cron: "0 11 * * *" # run at 11:00 (UTC)
+  - cron: "0 9 * * 0,2,4" # run 3 days a week at 9:00 (UTC)
     branches:
       include:
       - main
     always: true # run even if there are no new commits, in case the build images changed.
-  - cron: "0 9 * * *" # run at 09:00 (UTC)
+  - cron: "0 9 * * 1,3,5" # run 3 days a week at 9:00 (UTC)
     branches:
       include:
       - release/*
