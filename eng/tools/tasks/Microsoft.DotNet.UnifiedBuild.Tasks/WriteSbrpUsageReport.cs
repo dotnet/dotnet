@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -24,11 +25,21 @@ public class WriteSbrpUsageReport : Task
 
     private readonly Dictionary<string, PackageInfo> _sbrpPackages = [];
 
+    private readonly Regex _packageNameVersionRegex = new Regex(
+        @"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$",
+        RegexOptions.Compiled);
+
     /// <summary>
     /// Path to the SBRP src directory.
     /// </summary>
     [Required]
     public required string SbrpRepoSrcPath { get; set; }
+
+    /// <summary>
+    /// Directory path containing the built SBRP packages.
+    /// </summary>
+    [Required]
+    public required string SbrpPackagesPath { get; set; }
 
     /// <summary>
     /// Paths to the project.assets.json files produced by the build.
@@ -51,6 +62,7 @@ public class WriteSbrpUsageReport : Task
         ReadSbrpPackages(Path.Combine("referencePackages", "src"), trackTfms: true);
         ReadSbrpPackages(Path.Combine("targetPacks", "ILsrc"), trackTfms: false);
         ReadSbrpPackages(Path.Combine("textOnlyPackages", "src"), trackTfms: false);
+        ReadExternalPackages(Path.Combine("externalPackages", "src"));
 
         ScanProjectReferences();
 
@@ -111,6 +123,37 @@ public class WriteSbrpUsageReport : Task
     private IEnumerable<PackageInfo> GetUnreferencedSbrps() =>
         _sbrpPackages.Values.Where(pkg => pkg.References.Count == 0);
 
+    /// <summary>
+    /// External packages cannot be discovered in the same way as the other packages, scanning the src for csprojs.
+    /// Externals don't follow any convention and not all of the external src is even built.
+    /// To discover external packages, the package output is scanned and every package that isn't another package
+    /// type is assumed to be an external package.
+    /// </summary>
+    private void ReadExternalPackages(string packageSrcRelativePath)
+    {
+        string packageSrcPath = Path.Combine(SbrpRepoSrcPath, packageSrcRelativePath);
+
+        foreach (string nupkgFile in Directory.GetFiles(SbrpPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
+        {
+            var match = _packageNameVersionRegex.Match(Path.GetFileName(nupkgFile));
+            if (!match.Success)
+            {
+                Log.LogError($"Could not parse package name and version from `{nupkgFile}`.");
+                continue;
+            }
+
+            string packageName = match.Groups["name"].Value;
+            string version = match.Groups["version"].Value;
+
+            if (!_sbrpPackages.TryGetValue(PackageInfo.GetId(packageName, version), out PackageInfo? info))
+            {
+                // The exact source file path is not readily available so '**' is used to convey the approximate location.
+                info = new(packageName, version, Path.Combine(packageSrcPath, "**", packageName, version));
+                TrackSbrpPackage(info);
+            }
+        }
+    }
+
     private void ReadSbrpPackages(string packageSrcRelativePath, bool trackTfms)
     {
         string packageSrcPath = Path.Combine(SbrpRepoSrcPath, packageSrcRelativePath);
@@ -144,9 +187,7 @@ public class WriteSbrpUsageReport : Task
                 version,
                 directory.FullName,
                 tfms);
-
-            _sbrpPackages.Add(info.Id, info);
-            Log.LogMessage($"Detected package: {info.Id}");
+            TrackSbrpPackage(info);
         }
     }
 
@@ -219,6 +260,12 @@ public class WriteSbrpUsageReport : Task
         {
             referencedTfms!.Add(tfm);
         }
+    }
+
+    private void TrackSbrpPackage(PackageInfo info)
+    {
+        _sbrpPackages.Add(info.Id, info);
+        Log.LogMessage($"Detected package: {info.Id}");
     }
 
     private record PackageInfo(string Name, string Version, string Path, HashSet<string>? Tfms = default)
