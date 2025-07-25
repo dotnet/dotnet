@@ -275,15 +275,15 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 }
                 else if (packageSource.Equals(PreviouslySourceBuiltSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, previouslySourceBuiltPackages, checkSharedComponents: true);
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, previouslySourceBuiltPackages, packageSource);
                 }
                 else if (packageSource.Equals(PrebuiltSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, prebuiltPackages, checkSharedComponents: true);
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, prebuiltPackages, packageSource);
                 }
                 else if (packageSource.Equals(SharedComponentsSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, sharedComponentsPackages, checkSharedComponents: false);
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, sharedComponentsPackages, packageSource);
                 }
                 else // unknown/unexpected source
                 {
@@ -294,7 +294,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             return pkgSrc;
         }
 
-        private void AddPackageSourceMappingIfPackageVersionsNotInSources(XElement pkgSrc, string packagePattern, Dictionary<string, List<string>> packages, bool checkSharedComponents)
+        private void AddPackageSourceMappingIfPackageVersionsNotInSources(XElement pkgSrc, string packagePattern, Dictionary<string, List<string>> packages, string sourceName)
         {
             foreach (string version in packages[packagePattern])
             {
@@ -303,9 +303,13 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 {
                     return;
                 }
+
+                bool checkSharedComponents = !sourceName.Equals(SharedComponentsSourceName);
                 
                 // If checking shared components and any package version is in shared components packages, skip this package pattern
-                if (checkSharedComponents && sharedComponentsPackages.ContainsKey(packagePattern) && sharedComponentsPackages[packagePattern].Contains(version))
+                if (checkSharedComponents &&
+                    sharedComponentsPackages.ContainsKey(packagePattern) &&
+                    sharedComponentsPackages[packagePattern].Contains(version))
                 {
                     return;
                 }
