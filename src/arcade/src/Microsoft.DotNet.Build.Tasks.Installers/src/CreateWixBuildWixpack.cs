@@ -1,15 +1,16 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
@@ -58,6 +59,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         public string WixpackWorkingDir { get; set; }
 
         private Dictionary<string, string> _defineConstantsDictionary;
+        private Dictionary<string, string> _defineVariablesDictionary;
         private string _wixprojDir;
         private string _installerFilename;
 
@@ -99,9 +101,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     throw new InvalidOperationException("ProjectPath not defined in DefineConstants. Task cannot proceed.");
                 }
 
+                CopyIncludeSearchPathsContents();
+                ProcessIncludeFiles();
                 CopySourceFilesAndContent();
                 CopyExtensions();
-                CopyIncludeSearchPathsContents();
                 UpdatePaths();
                 GenerateWixBuildCommandLineFile();
                 CreateWixpackPackage();
@@ -152,6 +155,42 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 IncludeSearchPaths[i] = randomDirName;
 
                 CopyDirectoryRecursive(fullSourceDir, Path.Combine(WixpackWorkingDir, randomDirName));
+            }
+        }
+
+        private void ProcessIncludeFiles()
+        {
+            _defineVariablesDictionary = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+            foreach (var includeFile in Directory.GetFiles(WixpackWorkingDir, "*.wxi", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    // We're processing a Wix include file, which contains preprocessor elements
+                    // in the format <?define KEY="value"?>
+                    // It can also contain XML comments that we need to remove, so we don't ingest
+                    // variables from elements that are commented out.
+
+                    XDocument xmlDocument = XDocument.Load(includeFile);
+                    xmlDocument.DescendantNodes()
+                               .OfType<XComment>()
+                               .ToList()
+                               .ForEach(comment => comment.Remove());
+
+                    // We use regular expressions to process wix preprocessor defines
+                    var regex = new Regex(@"<\?define\s+(\w+)\s*=\s*""([^""]*)""\s*\?>");
+
+                    foreach (Match match in regex.Matches(xmlDocument.ToString()))
+                    {
+                        if (match.Groups.Count == 3)
+                        {
+                            _defineVariablesDictionary[match.Groups[1].Value] = match.Groups[2].Value;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError($"Error processing include file {includeFile}: {ex.Message}");
+                }
             }
         }
 
@@ -475,8 +514,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
 
                 var varName = path.Substring(startIdx + 2, endIdx - (startIdx + 2));
-                if (_defineConstantsDictionary.TryGetValue(varName, out var varValue))
+                if (_defineConstantsDictionary.TryGetValue(varName, out var varValue) ||
+                    _defineVariablesDictionary.TryGetValue(varName, out varValue))
                 {
+
                     path = path.Substring(0, startIdx) + varValue + path.Substring(endIdx + 1);
                 }
                 else

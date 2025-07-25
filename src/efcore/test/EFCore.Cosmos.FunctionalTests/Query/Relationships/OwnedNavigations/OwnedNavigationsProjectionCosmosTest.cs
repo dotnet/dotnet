@@ -14,12 +14,88 @@ public class OwnedNavigationsProjectionCosmosTest : OwnedNavigationsProjectionTe
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
 
-    public override async Task Select_root(bool async, QueryTrackingBehavior queryTrackingBehavior)
+    public override async Task Select_root(QueryTrackingBehavior queryTrackingBehavior)
     {
-        if (async)
-        {
-            await base.Select_root(async, queryTrackingBehavior);
+        await base.Select_root(queryTrackingBehavior);
 
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+""");
+    }
+
+    #region Simple properties
+
+    public override async Task Select_property_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_property_on_required_related(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT VALUE c["RequiredRelated"]["String"]
+FROM root c
+""");
+    }
+
+    public override async Task Select_property_on_optional_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        // When OptionalRelated is null, the property access on it evaluates to undefined in Cosmos, causing the
+        // result to be filtered out entirely.
+        await AssertQuery(
+            ss => ss.Set<RootEntity>().Select(x => x.OptionalRelated!.String),
+            ss => ss.Set<RootEntity>().Where(x => x.OptionalRelated != null).Select(x => x.OptionalRelated!.String),
+            queryTrackingBehavior: queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT VALUE c["OptionalRelated"]["String"]
+FROM root c
+""");
+    }
+
+    public override async Task Select_value_type_property_on_null_related_throws(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        // When OptionalRelated is null, the property access on it evaluates to undefined in Cosmos, causing the
+        // result to be filtered out entirely.
+        await AssertQuery(
+            ss => ss.Set<RootEntity>().Select(x => x.OptionalRelated!.Int),
+            ss => ss.Set<RootEntity>().Where(x => x.OptionalRelated != null).Select(x => x.OptionalRelated!.Int),
+            queryTrackingBehavior: queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT VALUE c["OptionalRelated"]["Int"]
+FROM root c
+""");
+    }
+
+    public override async Task Select_nullable_value_type_property_on_null_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        // When OptionalRelated is null, the property access on it evaluates to undefined in Cosmos, causing the
+        // result to be filtered out entirely.
+        await AssertQuery(
+            ss => ss.Set<RootEntity>().Select(x => (int?)x.OptionalRelated!.Int),
+            ss => ss.Set<RootEntity>().Where(x => x.OptionalRelated != null).Select(x => (int?)x.OptionalRelated!.Int),
+            queryTrackingBehavior: queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT VALUE c["OptionalRelated"]["Int"]
+FROM root c
+""");
+    }
+
+    #endregion Simple properties
+
+    #region Non-collection
+
+    public override async Task Select_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_related(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
             AssertSql(
                 """
 SELECT VALUE c
@@ -28,293 +104,12 @@ FROM root c
         }
     }
 
-    public override async Task Select_trunk_optional(bool async, QueryTrackingBehavior queryTrackingBehavior)
+    public override async Task Select_optional_related(QueryTrackingBehavior queryTrackingBehavior)
     {
-        if (async)
+        await base.Select_optional_related(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            await base.Select_trunk_optional(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_trunk_required(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            await base.Select_trunk_required(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_trunk_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                await base.Select_trunk_collection(async, queryTrackingBehavior);
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_required_required(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            await base.Select_branch_required_required(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_required_optional(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            await base.Select_branch_required_optional(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_optional_required(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            await base.Select_branch_optional_required(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_optional_optional(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            await base.Select_branch_optional_optional(async, queryTrackingBehavior);
-
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                AssertSql();
-            }
-            else
-            {
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_required_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-
-                AssertSql();
-            }
-            else
-            {
-                //issue #31696
-                await Assert.ThrowsAsync<NullReferenceException>(
-                    () => base.Select_branch_required_collection(async, queryTrackingBehavior));
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_branch_optional_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-
-                AssertSql();
-            }
-            else
-            {
-                //issue #31696
-                await Assert.ThrowsAsync<NullReferenceException>(
-                    () => base.Select_branch_optional_collection(async, queryTrackingBehavior));
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    #region Multiple
-
-    public override Task Select_root_duplicated(bool async, QueryTrackingBehavior queryTrackingBehavior)
-        => Fixture.NoSyncTest(
-            async, async a =>
-            {
-                await base.Select_root_duplicated(a, queryTrackingBehavior);
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-""");
-            });
-
-    public override async Task Select_trunk_and_branch_duplicated(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-
-                AssertSql();
-            }
-            else
-            {
-                //issue #31696
-                await Assert.ThrowsAsync<NullReferenceException>(
-                    () => base.Select_trunk_and_branch_duplicated(async, queryTrackingBehavior));
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_trunk_and_trunk_duplicated(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-
-                AssertSql();
-            }
-            else
-            {
-                //issue #31696
-                await Assert.ThrowsAsync<NullReferenceException>(
-                    () => base.Select_trunk_and_trunk_duplicated(async, queryTrackingBehavior));
-
-                AssertSql(
-                    """
-SELECT VALUE c
-FROM root c
-ORDER BY c["Id"]
-""");
-            }
-        }
-    }
-
-    public override async Task Select_leaf_trunk_root(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                // This particular scenario does not throw an exception in TrackAll mode as it's supposed to
-                await Assert.ThrowsAsync<ThrowsException>(() => base.Select_leaf_trunk_root(async, queryTrackingBehavior));
-            }
-            else
-            {
-                await base.Select_leaf_trunk_root(async, queryTrackingBehavior);
-            }
-
             AssertSql(
                 """
 SELECT VALUE c
@@ -323,151 +118,198 @@ FROM root c
         }
     }
 
-    public override async Task Select_multiple_branch_leaf(bool async, QueryTrackingBehavior queryTrackingBehavior)
+    public override async Task Select_required_nested_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
     {
-        if (async)
+        await base.Select_required_nested_on_required_related(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
+            AssertSql(
+                """
+SELECT VALUE c
+FROM root c
+""");
+        }
+    }
+
+    public override async Task Select_optional_nested_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_optional_nested_on_required_related(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            AssertSql(
+                """
+SELECT VALUE c
+FROM root c
+""");
+        }
+    }
+
+    public override async Task Select_required_nested_on_optional_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            // When OptionalRelated is null, the property access on it evaluates to undefined in Cosmos, causing the
+            // result to be filtered out entirely.
+            await Assert.ThrowsAsync<NullReferenceException>(() => // #36403
+                AssertQuery(
+                    ss => ss.Set<RootEntity>().Select(x => x.OptionalRelated!.OptionalNested),
+                    ss => ss.Set<RootEntity>().Where(x => x.OptionalRelated != null).Select(x => x.OptionalRelated!.OptionalNested),
+                    queryTrackingBehavior: queryTrackingBehavior));
+
+            if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
             {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
+                AssertSql(
+                    """
+SELECT VALUE c
+FROM root c
+""");
             }
-            else
+        }
+    }
+
+    public override async Task Select_optional_nested_on_optional_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            // When OptionalRelated is null, the property access on it evaluates to undefined in Cosmos, causing the
+            // result to be filtered out entirely.
+            await Assert.ThrowsAsync<NullReferenceException>(() => // #36403
+                AssertQuery(
+                    ss => ss.Set<RootEntity>().Select(x => x.OptionalRelated!.RequiredNested),
+                    ss => ss.Set<RootEntity>().Where(x => x.OptionalRelated != null).Select(x => x.OptionalRelated!.RequiredNested),
+                    queryTrackingBehavior: queryTrackingBehavior));
+
+            if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
             {
-                //issue #35702
-                await Assert.ThrowsAsync<ArgumentException>(
-                    () => base.Select_multiple_branch_leaf(async, queryTrackingBehavior));
+                AssertSql(
+                    """
+SELECT VALUE c
+FROM root c
+""");
             }
+        }
+    }
+
+    #endregion Non-collection
+
+    #region Collection
+
+    public override async Task Select_related_collection(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_related_collection(queryTrackingBehavior);
+
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            AssertSql(
+                """
+SELECT VALUE c
+FROM root c
+ORDER BY c["Id"]
+""");
+        }
+    }
+
+    public override async Task Select_nested_collection_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            await Assert.ThrowsAsync<NullReferenceException>(() => base.Select_nested_collection_on_required_related(queryTrackingBehavior));
+
+            AssertSql(
+                """
+SELECT VALUE c
+FROM root c
+ORDER BY c["Id"]
+""");
+        }
+    }
+
+    public override async Task Select_nested_collection_on_optional_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            await Assert.ThrowsAsync<NullReferenceException>(() => base.Select_nested_collection_on_optional_related(queryTrackingBehavior));
+
+            AssertSql(
+                """
+SELECT VALUE c
+FROM root c
+ORDER BY c["Id"]
+""");
+        }
+    }
+
+    public override async Task SelectMany_related_collection(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            // The given key 'n' was not present in the dictionary
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => base.SelectMany_related_collection(queryTrackingBehavior));
 
             AssertSql();
         }
+    }
+
+    public override async Task SelectMany_nested_collection_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            // The given key 'n' was not present in the dictionary
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => base.SelectMany_nested_collection_on_required_related(queryTrackingBehavior));
+
+            AssertSql();
+        }
+    }
+
+    public override async Task SelectMany_nested_collection_on_optional_related(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            // The given key 'n' was not present in the dictionary
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => base.SelectMany_nested_collection_on_optional_related(queryTrackingBehavior));
+
+            AssertSql();
+        }
+    }
+
+    #endregion Collection
+
+    #region Multiple
+
+    public override async Task Select_root_duplicated(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_root_duplicated(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT VALUE c
+FROM root c
+""");
     }
 
     #endregion Multiple
 
     #region Subquery
 
-    public override async Task Select_subquery_root_set_required_trunk_FirstOrDefault_branch(bool async, QueryTrackingBehavior queryTrackingBehavior)
+    public override async Task Select_subquery_required_related_FirstOrDefault(QueryTrackingBehavior queryTrackingBehavior)
     {
-        // For TrackAll, the base implementation expects a different exception to be thrown
         if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            await AssertTranslationFailed(
-                () => base.Select_subquery_root_set_required_trunk_FirstOrDefault_branch(async, queryTrackingBehavior));
-
-            AssertSql();
+            await AssertTranslationFailed(() => base.Select_subquery_required_related_FirstOrDefault(queryTrackingBehavior));
         }
     }
 
-    public override async Task Select_subquery_root_set_optional_trunk_FirstOrDefault_branch(bool async, QueryTrackingBehavior queryTrackingBehavior)
+    public override async Task Select_subquery_optional_related_FirstOrDefault(QueryTrackingBehavior queryTrackingBehavior)
     {
-        // For TrackAll, the base implementation expects a different exception to be thrown
         if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            await AssertTranslationFailed(
-                () => base.Select_subquery_root_set_optional_trunk_FirstOrDefault_branch(async, queryTrackingBehavior));
-
-            AssertSql();
-        }
-    }
-
-    public override async Task Select_subquery_root_set_trunk_FirstOrDefault_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        // For TrackAll, the base implementation expects a different exception to be thrown
-        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
-        {
-            await AssertTranslationFailed(
-                () => base.Select_subquery_root_set_trunk_FirstOrDefault_collection(async, queryTrackingBehavior));
-
-            AssertSql();
-        }
-    }
-
-    public override async Task Select_subquery_root_set_complex_projection_including_references_to_outer_FirstOrDefault(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        // For TrackAll, the base implementation expects a different exception to be thrown
-        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
-        {
-            await AssertTranslationFailed(
-                () => base.Select_subquery_root_set_complex_projection_including_references_to_outer_FirstOrDefault(async, queryTrackingBehavior));
-
-            AssertSql();
-        }
-    }
-
-    public override async Task Select_subquery_root_set_complex_projection_FirstOrDefault_project_reference_to_outer(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        // For TrackAll, the base implementation expects a different exception to be thrown
-        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
-        {
-            await AssertTranslationFailed(
-                () => base.Select_subquery_root_set_complex_projection_FirstOrDefault_project_reference_to_outer(async, queryTrackingBehavior));
-
-            AssertSql();
+            await AssertTranslationFailed(() => base.Select_subquery_required_related_FirstOrDefault(queryTrackingBehavior));
         }
     }
 
     #endregion Subquery
-
-    #region SelectMany
-
-    public override async Task SelectMany_trunk_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-            }
-            else
-            {
-                //issue #34349
-                await Assert.ThrowsAsync<KeyNotFoundException>(
-                    () => base.SelectMany_trunk_collection(async, queryTrackingBehavior));
-            }
-
-            AssertSql();
-        }
-    }
-
-    public override async Task SelectMany_required_trunk_reference_branch_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-            }
-            else
-            {
-                //issue #34349
-                await Assert.ThrowsAsync<KeyNotFoundException>(
-                    () => base.SelectMany_required_trunk_reference_branch_collection(async, queryTrackingBehavior));
-            }
-
-            AssertSql();
-        }
-    }
-
-    public override async Task SelectMany_optional_trunk_reference_branch_collection(bool async, QueryTrackingBehavior queryTrackingBehavior)
-    {
-        if (async)
-        {
-            if (queryTrackingBehavior is QueryTrackingBehavior.TrackAll)
-            {
-                await base.Select_branch_required_collection(async, queryTrackingBehavior);
-            }
-            else
-            {
-                //issue #34349
-                await Assert.ThrowsAsync<KeyNotFoundException>(
-                    () => base.SelectMany_optional_trunk_reference_branch_collection(async, queryTrackingBehavior));
-            }
-
-            AssertSql();
-        }
-    }
-
-    #endregion SelectMany
 
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()
