@@ -53,7 +53,7 @@ This approach publishes what amounts to “public surface area” for the shared
 - If a tool provides functionality which is meant to be used by most repositories in .NET, then we should add it to the SDK. 
 - If the provided functionality will only work for a couple of repos then these won't be part of the SDK and will have to be manually referenced in a project.
 - The SDK comes with props and targets files that are imported to any repository using the SDK, or invoked by common build infrastructure.
-- These files automatically import required packages via `PackageReference` (e.g. Microsoft.DotNet.SignTool, MicroBuild.Core, etc.)
+- These files automatically import required packages via `PackageReference` (e.g. Microsoft.DotNet.SignTool, Microsoft.VisualStudioEng.MicroBuild.Core.props, etc.)
 - The SDK allows the repository to opt-into additional packages as needed (VSIX authoring, XUnit testing etc)
 
 ### Arcade building repos Requirements

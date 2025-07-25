@@ -6,6 +6,7 @@ using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Security;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -21,6 +22,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.DotNet.Cli.Commands.Clean.FileBasedAppArtifacts;
 using Microsoft.DotNet.Cli.Commands.Restore;
 using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.Cli.Utils.Extensions;
@@ -125,14 +127,22 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
     public MSBuildArgs MSBuildArgs { get; }
     public string? CustomArtifactsPath { get; init; }
     public bool NoRestore { get; init; }
+
+    /// <summary>
+    /// If <see langword="true"/>, build markers are not checked and hence MSBuild is always run.
+    /// This property does not control whether the build markers are written, use <see cref="NoWriteBuildMarkers"/> for that.
+    /// </summary>
     public bool NoCache { get; init; }
+
     public bool NoBuild { get; init; }
 
     /// <summary>
     /// If <see langword="true"/>, no build markers are written
     /// (like <see cref="BuildStartCacheFileName"/> and <see cref="BuildSuccessCacheFileName"/>).
+    /// Also skips automatic cleanup.
+    /// This property does not control whether the markers are checked, use <see cref="NoCache"/> for that.
     /// </summary>
-    public bool NoBuildMarkers { get; init; }
+    public bool NoWriteBuildMarkers { get; init; }
 
     public ImmutableArray<CSharpDirective> Directives
     {
@@ -154,7 +164,8 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
     public override int Execute()
     {
         Debug.Assert(!(NoRestore && NoBuild));
-        var consoleLogger = TerminalLogger.CreateTerminalOrConsoleLogger(MSBuildArgs.OtherMSBuildArgs.ToArray());
+        var verbosity = MSBuildArgs.Verbosity ?? VerbosityOptions.quiet;
+        var consoleLogger = TerminalLogger.CreateTerminalOrConsoleLogger([$"--verbosity:{verbosity}", .. MSBuildArgs.OtherMSBuildArgs]);
         var binaryLogger = GetBinaryLogger(MSBuildArgs.OtherMSBuildArgs);
 
         RunFileBuildCacheEntry? cacheEntry = null;
@@ -172,14 +183,24 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                     Reporter.Output.WriteLine(CliCommandStrings.NoBinaryLogBecauseUpToDate.Yellow());
                 }
 
+                MarkArtifactsFolderUsed();
                 return 0;
             }
 
             MarkBuildStart();
         }
+        else if (!NoWriteBuildMarkers)
+        {
+            CreateTempSubdirectory(GetArtifactsPath());
+            MarkArtifactsFolderUsed();
+        }
+
+        if (!NoWriteBuildMarkers)
+        {
+            CleanFileBasedAppArtifactsCommand.StartAutomaticCleanupIfNeeded();
+        }
 
         Dictionary<string, string?> savedEnvironmentVariables = [];
-        ProjectCollection? projectCollection = null;
         try
         {
             // Set environment variables.
@@ -190,16 +211,19 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
             }
 
             // Set up MSBuild.
-            ReadOnlySpan<ILogger> binaryLoggers = binaryLogger is null ? [] : [binaryLogger];
-            projectCollection = new ProjectCollection(
+            ReadOnlySpan<ILogger> binaryLoggers = binaryLogger is null ? [] : [binaryLogger.Value];
+            IEnumerable<ILogger> loggers = [.. binaryLoggers, consoleLogger];
+            var projectCollection = new ProjectCollection(
                 MSBuildArgs.GlobalProperties,
-                [.. binaryLoggers, consoleLogger],
+                loggers,
                 ToolsetDefinitionLocations.Default);
             var parameters = new BuildParameters(projectCollection)
             {
-                Loggers = projectCollection.Loggers,
+                Loggers = loggers,
                 LogTaskInputs = binaryLoggers.Length != 0,
             };
+
+            BuildManager.DefaultBuildManager.BeginBuild(parameters);
 
             // Do a restore first (equivalent to MSBuild's "implicit restore", i.e., `/restore`).
             // See https://github.com/dotnet/msbuild/blob/a1c2e7402ef0abe36bf493e395b04dd2cb1b3540/src/MSBuild/XMake.cs#L1838
@@ -211,8 +235,6 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                     targetsToBuild: ["Restore"],
                     hostServices: null,
                     BuildRequestDataFlags.ClearCachesAfterBuild | BuildRequestDataFlags.SkipNonexistentTargets | BuildRequestDataFlags.IgnoreMissingEmptyAndInvalidImports | BuildRequestDataFlags.FailOnUnresolvedSdk);
-
-                BuildManager.DefaultBuildManager.BeginBuild(parameters);
 
                 var restoreResult = BuildManager.DefaultBuildManager.BuildRequest(restoreRequest);
                 if (restoreResult.OverallResult != BuildResultCode.Success)
@@ -227,12 +249,6 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                 var buildRequest = new BuildRequestData(
                     CreateProjectInstance(projectCollection),
                     targetsToBuild: MSBuildArgs.RequestedTargets ?? ["Build"]);
-
-                // For some reason we need to BeginBuild after creating BuildRequestData otherwise the binlog doesn't contain Evaluation.
-                if (NoRestore)
-                {
-                    BuildManager.DefaultBuildManager.BeginBuild(parameters);
-                }
 
                 var buildResult = BuildManager.DefaultBuildManager.BuildRequest(buildRequest);
                 if (buildResult.OverallResult != BuildResultCode.Success)
@@ -260,7 +276,7 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                 Environment.SetEnvironmentVariable(key, value);
             }
 
-            binaryLogger?.Shutdown();
+            binaryLogger?.Value.ReallyShutdown();
             consoleLogger.Shutdown();
         }
 
@@ -288,7 +304,7 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
             };
         }
 
-        static ILogger? GetBinaryLogger(IReadOnlyList<string>? args)
+        static Lazy<FacadeLogger>? GetBinaryLogger(IReadOnlyList<string>? args)
         {
             if (args is null) return null;
             // Like in MSBuild, only the last binary logger is used.
@@ -297,12 +313,17 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
                 var arg = args[i];
                 if (LoggerUtility.IsBinLogArgument(arg))
                 {
-                    return new BinaryLogger
+                    // We don't want to create the binlog file until actually needed, hence we wrap this in a Lazy.
+                    return new(() =>
                     {
-                        Parameters = arg.IndexOf(':') is >= 0 and var index
-                            ? arg[(index + 1)..]
-                            : "msbuild.binlog",
-                    };
+                        var logger = new BinaryLogger
+                        {
+                            Parameters = arg.IndexOf(':') is >= 0 and var index
+                                ? arg[(index + 1)..]
+                                : "msbuild.binlog",
+                        };
+                        return LoggerUtility.CreateFacadeLogger([logger]);
+                    });
                 }
             }
 
@@ -447,9 +468,31 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
         }
     }
 
+    /// <summary>
+    /// Touching the artifacts folder ensures it's considered as recently used and not cleaned up by <see cref="CleanFileBasedAppArtifactsCommand"/>.
+    /// </summary>
+    public void MarkArtifactsFolderUsed()
+    {
+        if (NoWriteBuildMarkers)
+        {
+            return;
+        }
+
+        string directory = GetArtifactsPath();
+
+        try
+        {
+            Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+        }
+        catch (Exception ex)
+        {
+            Reporter.Verbose.WriteLine($"Cannot touch folder '{directory}': {ex}");
+        }
+    }
+
     private void MarkBuildStart()
     {
-        if (NoBuildMarkers)
+        if (NoWriteBuildMarkers)
         {
             return;
         }
@@ -458,12 +501,14 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
 
         CreateTempSubdirectory(directory);
 
+        MarkArtifactsFolderUsed();
+
         File.WriteAllText(Path.Join(directory, BuildStartCacheFileName), EntryPointFileFullPath);
     }
 
     private void MarkBuildSuccess(RunFileBuildCacheEntry cacheEntry)
     {
-        if (NoBuildMarkers)
+        if (NoWriteBuildMarkers)
         {
             return;
         }
@@ -527,25 +572,33 @@ internal sealed class VirtualProjectBuildingCommand : CommandBase
         string hash = Sha256Hasher.HashWithNormalizedCasing(entryPointFileFullPath);
         string directoryName = $"{fileName}-{hash}";
 
-        return GetTempSubdirectory(directoryName);
+        return GetTempSubpath(directoryName);
     }
 
     /// <summary>
-    /// Obtains a temporary subdirectory for file-based apps.
+    /// Obtains a temporary subdirectory for file-based app artifacts, e.g., <c>/tmp/dotnet/runfile/</c>.
     /// </summary>
-    public static string GetTempSubdirectory(string name)
+    public static string GetTempSubdirectory()
     {
         // We want a location where permissions are expected to be restricted to the current user.
         string directory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? Path.GetTempPath()
             : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-        return Path.Join(directory, "dotnet", "runfile", name);
+        return Path.Join(directory, "dotnet", "runfile");
+    }
+
+    /// <summary>
+    /// Obtains a specific temporary path in a subdirectory for file-based app artifacts, e.g., <c>/tmp/dotnet/runfile/{name}</c>.
+    /// </summary>
+    public static string GetTempSubpath(string name)
+    {
+        return Path.Join(GetTempSubdirectory(), name);
     }
 
     /// <summary>
     /// Creates a temporary subdirectory for file-based apps.
-    /// Use <see cref="GetTempSubdirectory"/> to obtain the path.
+    /// Use <see cref="GetTempSubpath"/> to obtain the path.
     /// </summary>
     public static void CreateTempSubdirectory(string path)
     {
@@ -1328,4 +1381,5 @@ internal sealed class RunFileBuildCacheEntry
 }
 
 [JsonSerializable(typeof(RunFileBuildCacheEntry))]
+[JsonSerializable(typeof(RunFileArtifactsMetadata))]
 internal partial class RunFileJsonSerializerContext : JsonSerializerContext;

@@ -21,7 +21,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     private readonly IRelationalTypeMappingSource _typeMappingSource;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
     private readonly bool _subquery;
-    private readonly ParameterizedCollectionMode _parameterizedCollectionMode;
+    private readonly ParameterTranslationMode _collectionParameterTranslationMode;
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -64,7 +64,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         _typeMappingSource = relationalDependencies.TypeMappingSource;
         _sqlExpressionFactory = sqlExpressionFactory;
         _subquery = false;
-        _parameterizedCollectionMode = RelationalOptionsExtension.Extract(queryCompilationContext.ContextOptions).ParameterizedCollectionMode;
+        _collectionParameterTranslationMode = RelationalOptionsExtension.Extract(queryCompilationContext.ContextOptions).ParameterizedCollectionMode;
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         _typeMappingSource = parentVisitor._typeMappingSource;
         _sqlExpressionFactory = parentVisitor._sqlExpressionFactory;
         _subquery = true;
-        _parameterizedCollectionMode = RelationalOptionsExtension.Extract(parentVisitor._queryCompilationContext.ContextOptions).ParameterizedCollectionMode;
+        _collectionParameterTranslationMode = RelationalOptionsExtension.Extract(parentVisitor._queryCompilationContext.ContextOptions).ParameterizedCollectionMode;
     }
 
     /// <inheritdoc />
@@ -244,7 +244,8 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             && methodCallExpression.Arguments[0] is ParameterQueryRootExpression parameterSource
             && TranslateExpression(methodCallExpression.Arguments[1]) is SqlExpression item
             && _sqlTranslator.Visit(parameterSource.QueryParameterExpression) is SqlParameterExpression sqlParameterExpression
-            && !parameterSource.QueryParameterExpression.ShouldNotBeConstantized)
+            && (parameterSource.QueryParameterExpression.TranslationMode is ParameterTranslationMode.Constant
+                or null))
         {
             var inExpression = _sqlExpressionFactory.In(item, sqlParameterExpression);
             var selectExpression = new SelectExpression(inExpression, _sqlAliasManager);
@@ -261,15 +262,31 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
     /// <inheritdoc />
     protected override ShapedQueryExpression? TranslateMemberAccess(Expression source, MemberIdentity member)
     {
-        // Attempt to translate access into a primitive collection property (i.e. array column)
-        if (_sqlTranslator.TryBindMember(_sqlTranslator.Visit(source), member, out var translatedExpression, out var property)
-            && property is IProperty { IsPrimitiveCollection: true } regularProperty
-            && translatedExpression is SqlExpression sqlExpression
-            && TranslatePrimitiveCollection(
-                    sqlExpression, regularProperty, _sqlAliasManager.GenerateTableAlias(GenerateTableAlias(sqlExpression))) is
-                { } primitiveCollectionTranslation)
+        // Attempt to translate access into a primitive or complex collection property (i.e. array column)
+        if (_sqlTranslator.TryBindMember(_sqlTranslator.Visit(source), member, out var translatedExpression, out var property))
         {
-            return primitiveCollectionTranslation;
+            switch (property)
+            {
+                case IProperty { IsPrimitiveCollection: true } scalarProperty
+                    when translatedExpression is SqlExpression sqlExpression
+                        && TranslatePrimitiveCollection(
+                            sqlExpression,
+                            scalarProperty,
+                            _sqlAliasManager.GenerateTableAlias(GenerateTableAlias(sqlExpression))) is { } primitiveCollectionTranslation:
+                {
+                    return primitiveCollectionTranslation;
+                }
+
+                case IComplexProperty { IsCollection: true, ComplexType: var complexType } complexProperty:
+                    Check.DebugAssert(complexType.IsMappedToJson());
+
+                    if (translatedExpression is not CollectionResultExpression { QueryExpression: JsonQueryExpression jsonQuery })
+                    {
+                        throw new UnreachableException();
+                    }
+
+                    return TransformJsonQueryToTable(jsonQuery);
+            }
         }
 
         return null;
@@ -298,26 +315,24 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
         var tableAlias = _sqlAliasManager.GenerateTableAlias(sqlParameterExpression.Name.TrimStart('_'));
 
-        var constants = queryParameter.ShouldBeConstantized
-                || (_parameterizedCollectionMode is ParameterizedCollectionMode.Constants
-                    && !queryParameter.ShouldNotBeConstantized);
-        var multipleParameters = _parameterizedCollectionMode is ParameterizedCollectionMode.MultipleParameters
-                && !queryParameter.ShouldNotBeConstantized;
-        if (constants || multipleParameters)
+        return (queryParameter.TranslationMode ?? _collectionParameterTranslationMode) switch
         {
-            var valuesExpression = new ValuesExpression(
-                tableAlias,
-                sqlParameterExpression,
-                [ValuesOrderingColumnName, ValuesValueColumnName]);
-            return CreateShapedQueryExpressionForValuesExpression(
-                valuesExpression,
-                tableAlias,
-                parameterQueryRootExpression.ElementType,
-                sqlParameterExpression.TypeMapping,
-                sqlParameterExpression.IsNullable);
-        }
+            ParameterTranslationMode.Constant or ParameterTranslationMode.MultipleParameters
+                => CreateShapedQueryExpressionForValuesExpression(
+                    new ValuesExpression(
+                        tableAlias,
+                        sqlParameterExpression,
+                        [ValuesOrderingColumnName, ValuesValueColumnName]),
+                    tableAlias,
+                    parameterQueryRootExpression.ElementType,
+                    sqlParameterExpression.TypeMapping,
+                    sqlParameterExpression.IsNullable),
 
-        return TranslatePrimitiveCollection(sqlParameterExpression, property: null, tableAlias);
+            ParameterTranslationMode.Parameter
+                => TranslatePrimitiveCollection(sqlParameterExpression, property: null, tableAlias),
+
+            _ => throw new UnreachableException()
+        };
     }
 
     /// <summary>
@@ -1606,7 +1621,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
                     var newJsonQuery = jsonQueryExpression.BindCollectionElement(collectionIndexExpression);
 
                     var entityShaper = new RelationalStructuralTypeShaperExpression(
-                        jsonQueryExpression.EntityType,
+                        jsonQueryExpression.StructuralType,
                         newJsonQuery,
                         nullable: true);
 
@@ -1782,7 +1797,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
                 if (TryGetJsonQueryExpression(shaper, out var jsonQueryExpression))
                 {
-                    var newJsonQueryExpression = jsonQueryExpression.BindNavigation(navigation);
+                    var newJsonQueryExpression = jsonQueryExpression.BindRelationship(navigation);
 
                     Debug.Assert(!navigation.IsOnDependent, "JSON navigations should always be from principal do dependent");
 

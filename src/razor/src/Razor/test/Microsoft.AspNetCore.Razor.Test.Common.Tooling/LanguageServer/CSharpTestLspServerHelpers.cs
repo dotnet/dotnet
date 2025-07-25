@@ -36,6 +36,14 @@ internal static class CSharpTestLspServerHelpers
         SourceText csharpSourceText,
         Uri csharpDocumentUri,
         VSInternalServerCapabilities serverCapabilities,
+        Action<VSInternalClientCapabilities> capabilitiesUpdater,
+        CancellationToken cancellationToken) =>
+        CreateCSharpLspServerAsync(csharpSourceText, csharpDocumentUri, serverCapabilities, new EmptyMappingService(), capabilitiesUpdater, cancellationToken);
+
+    public static Task<CSharpTestLspServer> CreateCSharpLspServerAsync(
+        SourceText csharpSourceText,
+        Uri csharpDocumentUri,
+        VSInternalServerCapabilities serverCapabilities,
         IRazorMappingService razorMappingService,
         Action<VSInternalClientCapabilities> capabilitiesUpdater,
         CancellationToken cancellationToken)
