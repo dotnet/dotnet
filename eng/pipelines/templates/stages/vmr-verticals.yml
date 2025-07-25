@@ -682,7 +682,7 @@ stages:
 
 #### VERTICAL BUILD (Scouting) ####
 - ${{ if in(parameters.scope, 'scout') }}:
-  - stage: VMR_Vertical_Build
+  - stage: VMR_Vertical_Build_Scout
     displayName: VMR Vertical Build
     dependsOn: []
     variables:
