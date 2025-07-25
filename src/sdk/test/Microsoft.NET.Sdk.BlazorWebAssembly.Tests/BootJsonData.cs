@@ -302,7 +302,8 @@ public class AssetsData
     /// Used in .NET < 8
     /// </summary>
     [DataMember(EmitDefaultValue = false)]
-    public List<JsAsset> libraryInitializers { get; set; }
+    //public List<JsAsset> libraryInitializers { get; set; }
+    public ResourceHashesByNameDictionary libraryInitializers { get; set; }
 
     [DataMember(EmitDefaultValue = false)]
     public List<JsAsset> modulesAfterConfigLoaded { get; set; }
@@ -455,7 +456,8 @@ public class BootJsonDataLoader
             pdb = assets.pdb?.ToDictionary(a => a.name, a => a.integrity),
             satelliteResources = ConvertSatelliteResources(assets.satelliteResources),
             lazyAssembly = assets.lazyAssembly?.ToDictionary(a => a.name, a => a.integrity),
-            libraryInitializers = assets.libraryInitializers?.ToDictionary(a => a.name, a => (string)null),
+            //libraryInitializers = assets.libraryInitializers?.ToDictionary(a => a.name, a => (string)null),
+            libraryInitializers = assets.libraryInitializers,
             modulesAfterConfigLoaded = assets.modulesAfterConfigLoaded?.ToDictionary(a => a.name, a => (string)null),
             modulesAfterRuntimeReady = assets.modulesAfterRuntimeReady?.ToDictionary(a => a.name, a => (string)null),
             extensions = assets.extensions,

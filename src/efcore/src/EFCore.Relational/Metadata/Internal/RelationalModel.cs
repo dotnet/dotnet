@@ -542,31 +542,31 @@ public class RelationalModel : Annotatable, IRelationalModel
 
                 CreateColumnMapping(column, property, tableMapping);
             }
+        }
 
-            // TODO: Change this to call GetComplexProperties()
-            // Issue #31248
-            foreach (var complexProperty in mappedType.GetDeclaredComplexProperties())
+        // TODO: Change this to call GetComplexProperties()
+        // Issue #31248
+        foreach (var complexProperty in mappedType.GetDeclaredComplexProperties())
+        {
+            var complexType = complexProperty.ComplexType;
+
+            var complexTableMappings =
+                (List<TableMapping>?)complexType.FindRuntimeAnnotationValue(RelationalAnnotationNames.TableMappings);
+            if (complexTableMappings == null)
             {
-                var complexType = complexProperty.ComplexType;
-
-                var complexTableMappings =
-                    (List<TableMapping>?)complexType.FindRuntimeAnnotationValue(RelationalAnnotationNames.TableMappings);
-                if (complexTableMappings == null)
-                {
-                    complexTableMappings = [];
-                    complexType.AddRuntimeAnnotation(RelationalAnnotationNames.TableMappings, complexTableMappings);
-                }
-
-                CreateTableMapping(
-                    relationalTypeMappingSource,
-                    complexType,
-                    complexType,
-                    mappedTable,
-                    databaseModel,
-                    complexTableMappings,
-                    includesDerivedTypes: true,
-                    isSplitEntityTypePrincipal: isSplitEntityTypePrincipal == true ? false : isSplitEntityTypePrincipal);
+                complexTableMappings = [];
+                complexType.AddRuntimeAnnotation(RelationalAnnotationNames.TableMappings, complexTableMappings);
             }
+
+            CreateTableMapping(
+                relationalTypeMappingSource,
+                complexType,
+                complexType,
+                mappedTable,
+                databaseModel,
+                complexTableMappings,
+                includesDerivedTypes: true,
+                isSplitEntityTypePrincipal: isSplitEntityTypePrincipal == true ? false : isSplitEntityTypePrincipal);
         }
 
         if (((ITableMappingBase)tableMapping).ColumnMappings.Any()
@@ -624,7 +624,7 @@ public class RelationalModel : Annotatable, IRelationalModel
         }
         else
         {
-            complexType = ((IComplexType)mappedType);
+            complexType = (IComplexType)mappedType;
 #pragma warning disable EF1001 // Internal EF Core API usage.
             jsonColumn.IsNullable = complexType.ComplexProperty.IsNullable || complexType.ComplexProperty.GetChainToComplexProperty(fromEntity: true).Any(p => p.IsNullable);
 #pragma warning restore EF1001 // Internal EF Core API usage.

@@ -235,7 +235,6 @@
     <MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreMvcApiAnalyzersPackageVersion>
     <MicrosoftAspNetCoreAnalyzersPackageVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreAnalyzersPackageVersion>
     <MicrosoftAspNetCoreTestHostPackageVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreTestHostPackageVersion>
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>10.0.0-preview.5.25265.101</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
     <MicrosoftAspNetCoreAppRefInternalPackageVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreAppRefInternalPackageVersion>
     <MicrosoftAspNetCoreAuthenticationFacebookVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreAuthenticationFacebookVersion>
     <MicrosoftAspNetCoreAuthenticationGoogleVersion>10.0.0-preview.7.25373.106</MicrosoftAspNetCoreAuthenticationGoogleVersion>
@@ -254,7 +253,6 @@
     <MicrosoftExtensionsFileProvidersEmbeddedVersion>10.0.0-preview.7.25373.106</MicrosoftExtensionsFileProvidersEmbeddedVersion>
     <MicrosoftDotNetWebItemTemplates100PackageVersion>10.0.0-preview.7.25373.106</MicrosoftDotNetWebItemTemplates100PackageVersion>
     <MicrosoftDotNetWebProjectTemplates100PackageVersion>10.0.0-preview.7.25373.106</MicrosoftDotNetWebProjectTemplates100PackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>10.0.0-preview.5.25265.101</VSRedistCommonAspNetCoreSharedFrameworkx64100PackageVersion>
     <dotnetdevcertsPackageVersion>10.0.0-preview.7.25373.106</dotnetdevcertsPackageVersion>
     <dotnetuserjwtsPackageVersion>10.0.0-preview.7.25373.106</dotnetuserjwtsPackageVersion>
     <dotnetusersecretsPackageVersion>10.0.0-preview.7.25373.106</dotnetusersecretsPackageVersion>
@@ -275,10 +273,6 @@
     <EmscriptenVersionNet8>3.1.34</EmscriptenVersionNet8>
     <EmscriptenVersionNet7>3.1.12</EmscriptenVersionNet7>
     <EmscriptenVersionNet6>2.0.23</EmscriptenVersionNet6>
-  </PropertyGroup>
-  <PropertyGroup>
-    <!-- Dependencies from https://github.com/dotnet/wpf -->
-    <MicrosoftNETSdkWindowsDesktopPackageVersion>10.0.0-preview.7.25373.106</MicrosoftNETSdkWindowsDesktopPackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="Infrastructure and test only dependencies">
     <VersionToolsVersion>2.2.0-beta.19072.10</VersionToolsVersion>
