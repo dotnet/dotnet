@@ -4,6 +4,8 @@
 # Only run 3 times a week on schedule to save resources
 trigger: none
 
+pr: none
+
 schedules:
   - cron: "0 9 * * 0,2,4" # run 3 days a week at 9:00 (UTC)
     branches:
