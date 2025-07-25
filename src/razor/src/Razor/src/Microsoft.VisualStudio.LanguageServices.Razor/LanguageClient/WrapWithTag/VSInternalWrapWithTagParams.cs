@@ -11,7 +11,7 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.WrapWithTag;
 /// Matches corresponding class in Web Tools' Html language server
 /// </summary>
 [DataContract]
-internal class VSInternalWrapWithTagParams
+internal class VSInternalWrapWithTagParams : ITextDocumentParams
 {
     public VSInternalWrapWithTagParams(LspRange range,
                                        string tagName,
@@ -23,6 +23,8 @@ internal class VSInternalWrapWithTagParams
         TagName = tagName;
         TextDocument = textDocument;
     }
+
+    TextDocumentIdentifier ITextDocumentParams.TextDocument => TextDocument;
 
     /// <summary>
     /// Gets or sets the identifier for the text document to be operate on.
