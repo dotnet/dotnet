@@ -645,6 +645,44 @@ public sealed class MisplacedUsingDirectivesTests(ITestOutputHelper logger)
             }
             """, OutsideNamespaceOption, placeSystemNamespaceFirst: true);
 
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75961")]
+    public Task WhenOutsidePreferred_AliasToLocalType_FileScopedNamespace()
+    {
+        return TestInRegularAndScriptAsync("""
+            namespace Goo;
+
+            [|using Alias = C;|]
+
+            class C;
+            """, """
+
+            {|Warning:using Alias = Goo.C;|}
+
+            namespace Goo;
+            class C;
+            """, OutsideNamespaceOption, placeSystemNamespaceFirst: true);
+    }
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75961")]
+    public Task WhenOutsidePreferred_AliasToLocalType_BlockNamespace()
+    {
+        return TestInRegularAndScriptAsync("""
+            namespace Goo
+            {
+                [|using Alias = C;|]
+
+                class C;
+            }
+            """, """
+            {|Warning:using Alias = Goo.C;|}
+
+            namespace Goo
+            {
+                class C;
+            }
+            """, OutsideNamespaceOption, placeSystemNamespaceFirst: true);
+    }
+
     #endregion
 
     #region OutsideNamespaceIgnoringAliases
