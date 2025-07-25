@@ -31,7 +31,7 @@
          redistributed in the SDK. -->
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
-             Condition="Exists('$(SharedComponentsArtifactsPath)') and '$(RepositoryName)' != 'source-build-reference-packages' and '$(RepositoryName)' != 'arcade'"
+             Condition="Exists('$(SharedComponentsArtifactsPath)') and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))"
              Properties="IncludeOnlyToolingComponents=true">
       <Output TaskParameter="TargetOutputs" ItemName="_FilteredSharedComponentPackages" />
     </MSBuild>

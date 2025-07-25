@@ -83,13 +83,13 @@
     <ItemGroup Condition="'$(IncludeOnlyToolingComponents)' == 'false'">
       <!-- Default mode: Remove tooling components from the shared packages -->
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
-                      Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or %(RepoOrigin) == 'arcade' or %(RepoOrigin) == 'source-build-reference-packages'" />
+                      Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(IncludeOnlyToolingComponents)' == 'true'">
       <!-- Alternate mode: Keep only tooling components, remove everything else -->
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
-                      Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and %(RepoOrigin) != 'arcade' and %(RepoOrigin) != 'source-build-reference-packages'" />
+                      Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
     <!-- Create a lookup string of items to remove -->

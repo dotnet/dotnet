@@ -345,7 +345,7 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
-             Condition="'$(RepositoryName)' != 'source-build-reference-packages' and '$(RepositoryName)' != 'arcade'">
+             Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>
 

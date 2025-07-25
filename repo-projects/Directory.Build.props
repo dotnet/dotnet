@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+    <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
