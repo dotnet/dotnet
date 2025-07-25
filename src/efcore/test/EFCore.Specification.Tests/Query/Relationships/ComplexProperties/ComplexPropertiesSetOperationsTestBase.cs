@@ -3,8 +3,8 @@
 
 namespace Microsoft.EntityFrameworkCore.Query.Relationships.ComplexProperties;
 
-public abstract class ComplexPropertiesCollectionTestBase<TFixture>(TFixture fixture)
-    : RelationshipsCollectionTestBase<TFixture>(fixture)
+public abstract class ComplexPropertiesSetOperationsTestBase<TFixture>(TFixture fixture)
+    : RelationshipsSetOperationsTestBase<TFixture>(fixture)
     where TFixture : ComplexPropertiesFixtureBase, new()
 {
     // TODO: the following is temporary until change tracking is implemented for complex JSON types (#35962)
