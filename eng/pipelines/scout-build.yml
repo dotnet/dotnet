@@ -1,7 +1,7 @@
 # This yml is used by these pipelines:
 # - dotnet-unified-build-scout (public)
 
-# Only run daily on schedule to save resources
+# Only run 3 times a week on schedule to save resources
 trigger: none
 
 schedules:
