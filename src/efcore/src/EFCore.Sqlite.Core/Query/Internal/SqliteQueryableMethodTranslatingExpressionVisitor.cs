@@ -322,7 +322,7 @@ public class SqliteQueryableMethodTranslatingExpressionVisitor : RelationalQuery
     /// </summary>
     protected override ShapedQueryExpression TransformJsonQueryToTable(JsonQueryExpression jsonQueryExpression)
     {
-        var entityType = jsonQueryExpression.EntityType;
+        var structuralType = jsonQueryExpression.StructuralType;
         var textTypeMapping = _typeMappingSource.FindMapping(typeof(string));
 
         // TODO: Refactor this out
@@ -375,14 +375,11 @@ public class SqliteQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         var jsonColumn = selectExpression.CreateColumnExpression(
             jsonEachExpression, JsonEachValueColumnName, typeof(string), _typeMappingSource.FindMapping(typeof(string))); // TODO: nullable?
 
-        var containerColumnName = entityType.GetContainerColumnName();
-        Check.DebugAssert(containerColumnName is not null, "JsonQueryExpression to entity type without a container column name");
-
         // First step: build a SelectExpression that will execute json_each and project all properties and navigations out, e.g.
         // (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(c."JsonColumn", '$.Something.SomeCollection')
 
-        // We're only interested in properties which actually exist in the JSON, filter out uninteresting shadow keys
-        foreach (var property in entityType.GetPropertiesInHierarchy())
+        // We're only interested in properties which actually exist in the JSON, filter out uninteresting synthetic keys
+        foreach (var property in structuralType.GetPropertiesInHierarchy())
         {
             if (property.GetJsonPropertyName() is string jsonPropertyName)
             {
@@ -393,30 +390,48 @@ public class SqliteQueryableMethodTranslatingExpressionVisitor : RelationalQuery
 
                 propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
                     jsonColumn,
-                    new[] { new PathSegment(property.GetJsonPropertyName()!) },
+                    [new PathSegment(property.GetJsonPropertyName()!)],
                     property.ClrType.UnwrapNullableType(),
                     property.GetRelationalTypeMapping(),
                     property.IsNullable);
             }
         }
 
-        foreach (var navigation in jsonQueryExpression.EntityType.GetNavigationsInHierarchy()
-                     .Where(
-                         n => n.ForeignKey.IsOwnership
-                             && n.TargetEntityType.IsMappedToJson()
-                             && n.ForeignKey.PrincipalToDependent == n))
+        if (structuralType is IEntityType entityType)
         {
-            var jsonNavigationName = navigation.TargetEntityType.GetJsonPropertyName();
-            Check.DebugAssert(jsonNavigationName is not null, "Invalid navigation found on JSON-mapped entity");
+            foreach (var navigation in entityType.GetNavigationsInHierarchy()
+                         .Where(
+                             n => n.ForeignKey.IsOwnership
+                                 && n.TargetEntityType.IsMappedToJson()
+                                 && n.ForeignKey.PrincipalToDependent == n))
+            {
+                var jsonNavigationName = navigation.TargetEntityType.GetJsonPropertyName();
+                Check.DebugAssert(jsonNavigationName is not null, "Invalid navigation found on JSON-mapped entity");
+
+                var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonNavigationName));
+
+                propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
+                    jsonColumn,
+                    [new PathSegment(jsonNavigationName)],
+                    typeof(string),
+                    textTypeMapping,
+                    !navigation.ForeignKey.IsRequiredDependent);
+            }
+        }
+
+        foreach (var complexProperty in structuralType.GetComplexProperties())
+        {
+            var jsonNavigationName = complexProperty.ComplexType.GetJsonPropertyName();
+            Check.DebugAssert(jsonNavigationName is not null, "Invalid complex property found on JSON-mapped structural type");
 
             var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonNavigationName));
 
             propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
                 jsonColumn,
-                new[] { new PathSegment(jsonNavigationName) },
+                [new PathSegment(jsonNavigationName)],
                 typeof(string),
                 textTypeMapping,
-                !navigation.ForeignKey.IsRequiredDependent);
+                jsonQueryExpression.IsNullable || complexProperty.IsNullable);
         }
 
         selectExpression.ReplaceProjection(propertyJsonScalarExpression);
@@ -451,7 +466,7 @@ public class SqliteQueryableMethodTranslatingExpressionVisitor : RelationalQuery
         return new ShapedQueryExpression(
             newOuterSelectExpression,
             new RelationalStructuralTypeShaperExpression(
-                jsonQueryExpression.EntityType,
+                jsonQueryExpression.StructuralType,
                 new ProjectionBindingExpression(
                     newOuterSelectExpression,
                     new ProjectionMember(),

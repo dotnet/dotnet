@@ -13,7 +13,7 @@ internal abstract class CompletionItemResolver
         VSInternalCompletionItem item,
         VSInternalCompletionList containingCompletionList,
         ICompletionResolveContext originalRequestContext,
-        VSInternalClientCapabilities? clientCapabilities,
+        VSInternalClientCapabilities clientCapabilities,
         IComponentAvailabilityService componentAvailabilityService,
         CancellationToken cancellationToken);
 }

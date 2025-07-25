@@ -42,7 +42,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         public bool AllowFeedOverrides { get; set; }
 
         public ITaskItem[] FeedKeys { get; set; }
-        public ITaskItem[] FeedSasUris { get; set; }
 
         public ITaskItem[] FeedOverrides { get; set; }
 
@@ -150,7 +149,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         commitSha: BuildModel.Identity.Commit,
                         publishInstallersAndChecksums: PublishInstallersAndChecksums,
                         feedKeys: FeedKeys,
-                        feedSasUris: FeedSasUris,
                         feedOverrides: AllowFeedOverrides ? FeedOverrides : Array.Empty<ITaskItem>(),
                         latestLinkShortUrlPrefixes: shortLinkUrls.ToImmutableList(),
                         buildEngine: BuildEngine,

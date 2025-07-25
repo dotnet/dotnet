@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.CodeAnalysis.Contracts</id>
+    <version>5.0.0-1.25277.114</version>
+    <authors>Microsoft</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <projectUrl>https://github.com/dotnet/roslyn</projectUrl>
+    <description>Package containing sources of Microsoft .NET Compiler Platform ("Roslyn") contract and polyfill types.
+    
+
+      The source code included in this package is subject to arbitrary changes in future versions. 
+      Updating a reference to this package to a newer version of the package may require changes in the referencing project.
+      No compatibility guarantees are provided.
+    
+      More details at https://aka.ms/roslyn-packages
+      This package was built from the source at https://github.com/dotnet/dotnet/commit/ddf39a1b4690fbe23aea79c78da67004a5c31094.</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Parser Scanner Lexer Emit CodeGeneration Metadata IL Compilation Scripting Syntax Semantics</tags>
+    <serviceable>true</serviceable>
+    <repository type="git" url="https://github.com/dotnet/dotnet" commit="ddf39a1b4690fbe23aea79c78da67004a5c31094" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="System.Collections.Immutable" version="9.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net9.0">
+        <dependency id="System.Collections.Immutable" version="9.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="System.Collections.Immutable" version="9.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Buffers" version="4.5.1" exclude="Build,Analyzers" />
+        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
+        <dependency id="System.Numerics.Vectors" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="cs/net8.0/CollectionBuilderAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/CollectionBuilderAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/CollectionBuilderAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/CompilerFeatureRequiredAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/CompilerFeatureRequiredAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/CompilerFeatureRequiredAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/Contract.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Contract.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Contract.cs" buildAction="Compile" />
+      <files include="cs/net8.0/Contract.InterpolatedStringHandlers.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Contract.InterpolatedStringHandlers.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Contract.InterpolatedStringHandlers.cs" buildAction="Compile" />
+      <files include="cs/net8.0/ExceptionUtilities.cs" buildAction="Compile" />
+      <files include="cs/net9.0/ExceptionUtilities.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/ExceptionUtilities.cs" buildAction="Compile" />
+      <files include="cs/net8.0/ExperimentalAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/ExperimentalAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/ExperimentalAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/Index.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Index.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Index.cs" buildAction="Compile" />
+      <files include="cs/net8.0/InterpolatedStringHandlerArgumentAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/InterpolatedStringHandlerArgumentAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/InterpolatedStringHandlerArgumentAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/InterpolatedStringHandlerAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/InterpolatedStringHandlerAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/InterpolatedStringHandlerAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/IReadOnlySet.cs" buildAction="Compile" />
+      <files include="cs/net9.0/IReadOnlySet.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/IReadOnlySet.cs" buildAction="Compile" />
+      <files include="cs/net8.0/IsExternalInit.cs" buildAction="Compile" />
+      <files include="cs/net9.0/IsExternalInit.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/IsExternalInit.cs" buildAction="Compile" />
+      <files include="cs/net8.0/NonCopyableAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/NonCopyableAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/NonCopyableAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/NonDefaultableAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/NonDefaultableAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/NonDefaultableAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/NullableAttributes.cs" buildAction="Compile" />
+      <files include="cs/net9.0/NullableAttributes.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/NullableAttributes.cs" buildAction="Compile" />
+      <files include="cs/net8.0/Range.cs" buildAction="Compile" />
+      <files include="cs/net9.0/Range.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/Range.cs" buildAction="Compile" />
+      <files include="cs/net8.0/RequiredMemberAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/RequiredMemberAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/RequiredMemberAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/SetsRequiredMembersAttribute.cs" buildAction="Compile" />
+      <files include="cs/net9.0/SetsRequiredMembersAttribute.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/SetsRequiredMembersAttribute.cs" buildAction="Compile" />
+      <files include="cs/net8.0/ErrorReporting/FailFast.cs" buildAction="Compile" />
+      <files include="cs/net9.0/ErrorReporting/FailFast.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/ErrorReporting/FailFast.cs" buildAction="Compile" />
+      <files include="cs/net8.0/ErrorReporting/FatalError.cs" buildAction="Compile" />
+      <files include="cs/net9.0/ErrorReporting/FatalError.cs" buildAction="Compile" />
+      <files include="cs/netstandard2.0/ErrorReporting/FatalError.cs" buildAction="Compile" />
+      <files include="cs/net8.0/.editorconfig" buildAction="None" />
+      <files include="cs/net9.0/.editorconfig" buildAction="None" />
+      <files include="cs/netstandard2.0/.editorconfig" buildAction="None" />
+    </contentFiles>
+  </metadata>
+</package>

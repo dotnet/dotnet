@@ -268,9 +268,14 @@ namespace Microsoft.DotNet.SignTool.Tests
             _output = output;
         }
 
+        private string GetWix3ToolPath()
+        {
+            return Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "wix3");
+        }
+
         private string GetWixToolPath()
         {
-            return Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "wix");
+            return Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "wix", "net472", "x64");
         }
 
         private static string s_snPath = Path.Combine(Path.GetDirectoryName(typeof(SignToolTests).Assembly.Location), "tools", "sn", "sn.exe");
@@ -326,6 +331,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             Dictionary<string, List<SignInfo>> extensionsSignInfo,
             string[] expectedXmlElementsPerSigningRound,
             Dictionary<string, List<AdditionalCertificateInformation>> additionalCertificateInfo = null,
+            string wix3ToolsPath = null,
             string wixToolsPath = null)
         {
             var buildEngine = new FakeBuildEngine();
@@ -335,7 +341,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             // The path to DotNet will always be null in these tests, this will force
             // the signing logic to call our FakeBuildEngine.BuildProjectFile with a path
             // to the XML that store the content of the would be Microbuild sign request.
-            var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wixToolsPath: wixToolsPath, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
+            var signToolArgs = new SignToolArgs(_tmpDir, microBuildCorePath: "MicroBuildCorePath", testSign: true, dotnetPath: null, msbuildVerbosity: "quiet", _tmpDir, enclosingDir: "", "", wix3ToolsPath: wix3ToolsPath, wixToolsPath: wixToolsPath, tarToolPath: s_tarToolPath, pkgToolPath: s_pkgToolPath, dotnetTimeout: -1);
 
             var signTool = new FakeSignTool(signToolArgs, task.Log);
             // Passing null for the 3rd party check skip as this doesn't affect the generated project.
@@ -1054,6 +1060,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "PackageWi
   <Authenticode>NuGet</Authenticode>
 </FilesToSign>"
             },
+            wix3ToolsPath: GetWix3ToolPath(),
             wixToolsPath: GetWixToolPath());
         }
 
@@ -1985,6 +1992,60 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
   <Authenticode>Microsoft400</Authenticode>
 </FilesToSign>"
             },
+            wix3ToolsPath: GetWix3ToolPath(),
+            wixToolsPath: GetWixToolPath());
+
+        }
+
+        [WindowsOnlyFact]
+        [Trait("Category", "SkipWhenLiveUnitTesting")]
+        public void SignBundleDoubleNested()
+        {
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(GetResourcePath("MsiBootstrapper5.exe")),
+                new ItemToSign(GetResourcePath("MsiBootstrapper5.exe.wixpack.zip")),
+                new ItemToSign(GetResourcePath("MsiSetup5.msi.wixpack.zip"))
+            };
+
+            // Default signing information
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>()
+            {
+                { "581d91ccdfc4ea9c", new List<SignInfo>{ new SignInfo(certificate: "ArcadeCertTest", strongName: "ArcadeStrongTest") } }
+            };
+
+            // Overriding information
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>();
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'MsiApplication.exe' TargetFramework='.NETFramework,Version=v4.7.2' Certificate='Microsoft400'",
+                "File 'MsiSetup5.msi' Certificate='Microsoft400'",
+                "File 'MsiBootstrapper5.exe' Certificate='Microsoft400'"
+            }/*,
+            Reenable after https://github.com/dotnet/arcade/issues/10293,
+            expectedWarnings: new[]
+            {
+                $@"SIGN004: Signing 3rd party library '{Path.Combine(_tmpDir, "MsiBootstrapper.exe")}' with Microsoft certificate 'Microsoft400'. The library is considered 3rd party library due to its copyright: 'Copyright (c). All rights reserved.'."
+            }*/);
+
+            ValidateGeneratedProject(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+$@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "0", "ABCDEFG/MsiApplication.exe"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>",
+$@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "ContainerSigning", "0", "ABCDEFG/MsiSetup5.msi"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>",
+ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "engines", "0", "MsiBootstrapper5.exe-engine.exe"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>",
+ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "MsiBootstrapper5.exe"))}"">
+  <Authenticode>Microsoft400</Authenticode>
+</FilesToSign>"
+            },
+            wix3ToolsPath: GetWix3ToolPath(),
             wixToolsPath: GetWixToolPath());
 
         }
@@ -2024,6 +2085,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
   <Authenticode>Microsoft400</Authenticode>
 </FilesToSign>"
             },
+            wix3ToolsPath: GetWix3ToolPath(),
             wixToolsPath: GetWixToolPath());
         }
 
@@ -2048,6 +2110,7 @@ $@"<FilesToSign Include=""{Uri.EscapeDataString(Path.Combine(_tmpDir, "Container
                 DotNetPath = CreateTestResource("dotnet.fake"),
                 DoStrongNameCheck = false,
                 SNBinaryPath = null,
+                Wix3ToolsPath = GetWix3ToolPath(),
                 WixToolsPath = badPath
             };
 
@@ -2972,12 +3035,12 @@ $@"
         [InlineData(true)]
         [InlineData(false)]
         [Trait("Category", "SkipWhenLiveUnitTesting")]
-        public void RunWixToolRunsOrFailsProperly(bool deleteWixobjBeforeRunningTool)
+        public void RunWixToolRunsOrFailsProperly(bool deleteWxsBeforeRunningTool)
         {
             var task = new SignToolTask { BuildEngine = new FakeBuildEngine() };
 
-            const string expectedExe = "MsiBootstrapper.exe";
-            const string wixPack = "MsiBootstrapper.exe.wixpack.zip";
+            const string expectedExe = "MsiBootstrapper5.exe";
+            const string wixPack = "MsiBootstrapper5.exe.wixpack.zip";
             var wixToolsPath = GetWixToolPath();
             var wixpackPath = GetResourcePath(wixPack);
             var tempDir = Path.GetTempPath();
@@ -2992,13 +3055,13 @@ $@"
                 // Unzip the wixpack zip, run the tool, and check the exit code
                 ZipFile.ExtractToDirectory(wixpackPath, workingDir);
 
-                if (deleteWixobjBeforeRunningTool)
+                if (deleteWxsBeforeRunningTool)
                 {
-                    File.Delete(Path.Combine(workingDir, "Bundle.wixobj"));
+                    File.Delete(Path.Combine(workingDir, "bundle.wxs"));
                 }
 
-                BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, task.Log).Should().Be(!deleteWixobjBeforeRunningTool);
-                File.Exists(outputFileName).Should().Be(!deleteWixobjBeforeRunningTool);
+                BatchSignUtil.RunWixTool(createFileName, outputDir, workingDir, wixToolsPath, task.Log).Should().Be(!deleteWxsBeforeRunningTool);
+                File.Exists(outputFileName).Should().Be(!deleteWxsBeforeRunningTool);
             }
             finally
             {
