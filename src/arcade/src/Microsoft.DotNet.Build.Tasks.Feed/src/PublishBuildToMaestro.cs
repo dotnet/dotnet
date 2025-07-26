@@ -546,8 +546,32 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 client.BaseAddress = new Uri($"https://api.{gitHubHost}");
                 client.DefaultRequestHeaders.Add("User-Agent", "PushToBarTask");
 
-                HttpResponseMessage response =
-                    client.GetAsync($"/repos/{repoIdentity}/commits/{buildIdentity.Commit}").Result;
+                string url = $"/repos/{repoIdentity}/commits/{buildIdentity.Commit}";
+                HttpResponseMessage response = client.GetAsync(url).Result;
+
+                const int MaxRetries = 5;
+                for (int retry = 1; retry <= MaxRetries && response.StatusCode == System.Net.HttpStatusCode.TooManyRequests; retry++)
+                {
+                    TimeSpan timeSpan;
+                    if (response.Headers.RetryAfter?.Delta != null)
+                    {
+                        timeSpan = response.Headers.RetryAfter.Delta.Value;
+                    }
+                    else if (response.Headers.RetryAfter?.Date != null)
+                    {
+                        timeSpan = response.Headers.RetryAfter.Date.Value - DateTimeOffset.UtcNow;
+                    }
+                    else
+                    {
+                        const int defaultRetryAfterSeconds = 10;
+                        timeSpan = TimeSpan.FromSeconds(defaultRetryAfterSeconds);
+                    }
+
+                    Log.LogMessage(MessageImportance.High,
+                        $"API rate limit exceeded, retrying in {timeSpan.TotalSeconds} seconds. Retry attempt: {retry}");
+                    Thread.Sleep(timeSpan);
+                    response = client.GetAsync(url).Result;
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
