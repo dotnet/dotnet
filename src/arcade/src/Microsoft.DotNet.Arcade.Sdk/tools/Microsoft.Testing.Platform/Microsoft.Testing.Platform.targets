@@ -6,13 +6,15 @@
       <_TestEnvironment>%(TestToRun.EnvironmentDisplay)</_TestEnvironment>
       <_TestAssembly>%(TestToRun.Identity)</_TestAssembly>
       <_TestRunner>%(TestToRun.RunCommand)</_TestRunner>
+      <_RunArguments>%(TestToRun.RunArguments)</_RunArguments>
       <_TestRuntime>%(TestToRun.TestRuntime)</_TestRuntime>
       <_TestTimeout>%(TestToRun.TestTimeout)</_TestTimeout>
-      <_TestRunnerAdditionalArguments>$(TestToRun.RunArguments) %(TestToRun.TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
+      <_TestRunnerAdditionalArguments>%(TestToRun.TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
+      <_TestRunnerAdditionalArguments>$(_RunArguments) $(_TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
 
       <_TestResultDirectory>$([System.IO.Path]::GetDirectoryName('%(TestToRun.ResultsTrxPath)'))</_TestResultDirectory>
       <_TestResultTrxFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsTrxPath)'))</_TestResultTrxFileName>
-      <_TestRunnerArgs>"$(_TestRunner)" $(_TestRunnerAdditionalArguments) --no-progress --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)"</_TestRunnerArgs>
+      <_TestRunnerArgs>$(_TestRunnerAdditionalArguments) --no-progress --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)"</_TestRunnerArgs>
     </PropertyGroup>
 
     <!-- Validate that non-Core workloads use executable files, not DLL files -->
