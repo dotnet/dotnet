@@ -33,14 +33,12 @@ steps:
   continueOnError: ${{ parameters.continueOnError }}
   enabled: true
   inputs:
-    patterns: '**_Artifacts/**'
+    patterns: |
+      **ShortStack*_Artifacts/**
+      **AzureLinux*_Artifacts/**
+      **OSX_*_Artifacts/**
+      **Windows_*_Artifacts/**
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
-
-# SourceBuild jobs may have succeeded already, so remove those artifacts in case we downloaded them.
-- powershell: |
-    Remove-Item -Path "$(Build.ArtifactStagingDirectory)/vmr-assets/*Sdk_*_Artifacts" -Recurse -Force -ErrorAction SilentlyContinue
-  displayName: Remove Source-Build Artifacts
-  continueOnError: ${{ parameters.continueOnError }}
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed
 # Since sdk-task.ps1 tries to restore packages we need to do this authentication here
