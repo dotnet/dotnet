@@ -244,6 +244,19 @@ namespace System.Text.RegularExpressions.Tests
         // Large loop patterns
         [InlineData("a*a*a*a*a*a*a*b*b*?a+a*", "a*b*b*?a+")]
         [InlineData("a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "a{0,30}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+        // Nop loops
+        [InlineData("(?:)*", "")]
+        [InlineData("a(?=abc)*b", "ab")]
+        [InlineData("a(?<=abc)*b", "ab")]
+        [InlineData("a(?<!abc)*b", "ab")]
+        [InlineData("a$*b", "ab")]
+        [InlineData("a^?b", "ab")]
+        [InlineData(@"a\b*b", "ab")]
+        [InlineData(@"a\B*b", "ab")]
+        [InlineData(@"a\z?b", "ab")]
+        [InlineData(@"a\Z?b", "ab")]
+        [InlineData(@"a\A?b", "ab")]
+        [InlineData(@"a\G?b", "ab")]
         // Group elimination
         [InlineData("(?:(?:(?:(?:(?:(?:a*))))))", "a*")]
         // Nested loops
@@ -376,6 +389,16 @@ namespace System.Text.RegularExpressions.Tests
         [InlineData("(abc?)*?d", "(ab(?>c?))*?d")]
         [InlineData("(ab*c)*d", "(?>(a(?>b*)c)*)d")]
         [InlineData("(aba)?d", "(?>(aba)?)d")]
+        // Anchors
+        [InlineData(@"\b\b", @"\b")]
+        [InlineData(@"\b\b\b\b\b", @"\b")]
+        [InlineData(@"\B\B", @"\B")]
+        [InlineData(@"^^", @"^")]
+        [InlineData(@"$", @"$")]
+        [InlineData(@"\Z\Z", @"\Z")]
+        [InlineData(@"\z\z", @"\z")]
+        [InlineData(@"\G\G", @"\G")]
+        [InlineData(@"\A\A", @"\A")]
         // Nothing handling
         [InlineData(@"\wabc(?!)def", "(?!)")]
         [InlineData(@"\wabc(?!)def|ghi(?!)", "(?!)")]
@@ -532,6 +555,15 @@ namespace System.Text.RegularExpressions.Tests
         [InlineData("a*(?(xyz)bcd)", "(?>a*)(?(xyz)bcd)")]
         // Different prefixes on alternation branches
         [InlineData("^abcd|$abce", "^abcd|^abce")]
+        // Zero-width assertions in non-removable loops
+        [InlineData("a(?=abc)+b", "ab")]
+        [InlineData("a(?<=abc)+b", "ab")]
+        [InlineData("a(?<!abc){1,2}b", "ab")]
+        [InlineData("a${3,}b", "ab")]
+        // Anchors
+        [InlineData(@"\b\B", "\b")]
+        [InlineData(@"^$", "^")]
+        [InlineData(@"^$", "$")]
         public void PatternsReduceDifferently(string actual, string expected)
         {
             // NOTE: RegexNode.ToString is only compiled into debug builds, so DEBUG is currently set on the unit tests project.

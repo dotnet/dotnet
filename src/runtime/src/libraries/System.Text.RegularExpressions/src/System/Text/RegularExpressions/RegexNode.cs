@@ -894,7 +894,9 @@ namespace System.Text.RegularExpressions
             // If the Loop or Lazyloop now only has one child node and its a Set, One, or Notone,
             // reduce to just Setloop/lazy, Oneloop/lazy, or Notoneloop/lazy.  The parser will
             // generally have only produced the latter, but other reductions could have exposed
-            // this.
+            // this. We can also reduce or eliminate certain loops that are nops, e.g.
+            // a loop with a minimum of 0 that wraps a zero-width assertion is either asserting something
+            // or not, and is thus useless.
             if (u.ChildCount() == 1)
             {
                 RegexNode child = u.Child(0);
@@ -905,6 +907,17 @@ namespace System.Text.RegularExpressions
                     case RegexNodeKind.Set:
                         child.MakeRep(u.Kind == RegexNodeKind.Lazyloop ? RegexNodeKind.Onelazy : RegexNodeKind.Oneloop, u.M, u.N);
                         u = child;
+                        break;
+
+                    case RegexNodeKind.Empty:
+                    case RegexNodeKind.PositiveLookaround or RegexNodeKind.NegativeLookaround or
+                         RegexNodeKind.Beginning or RegexNodeKind.Start or
+                         RegexNodeKind.Bol or RegexNodeKind.Eol or
+                         RegexNodeKind.End or RegexNodeKind.EndZ or
+                         RegexNodeKind.Boundary or RegexNodeKind.ECMABoundary or
+                         RegexNodeKind.NonBoundary or RegexNodeKind.NonECMABoundary
+                         when u.M == 0:
+                        u = new RegexNode(RegexNodeKind.Empty, Options);
                         break;
                 }
             }
@@ -1830,6 +1843,16 @@ namespace System.Text.RegularExpressions
                         case RegexNodeKind.Notone when nextNode.Kind == currentNode.Kind && currentNode.Ch == nextNode.Ch:
                         case RegexNodeKind.Set when nextNode.Kind == RegexNodeKind.Set && currentNode.Str == nextNode.Str:
                             currentNode.MakeRep(RegexNodeKind.Oneloop, 2, 2);
+                            next++;
+                            continue;
+
+                        // Coalescing identical anchors (e.g. \b\b). These don't need to become loops, as they collapse to a single anchor.
+                        case RegexNodeKind.Beginning or RegexNodeKind.Start or
+                             RegexNodeKind.End or RegexNodeKind.EndZ or
+                             RegexNodeKind.Bol or RegexNodeKind.Eol or
+                             RegexNodeKind.Boundary or RegexNodeKind.NonBoundary or
+                             RegexNodeKind.ECMABoundary or RegexNodeKind.NonECMABoundary
+                             when nextNode.Kind == currentNode.Kind:
                             next++;
                             continue;
                     }
