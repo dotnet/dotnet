@@ -19,15 +19,12 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 /// 1. SBRP references
 /// 2. Unreferenced packages
 /// </summary>
-public class WriteSbrpUsageReport : Task
+public partial class WriteSbrpUsageReport : Task
 {
     private const string SbrpRepoName = "source-build-reference-packages";
 
     private readonly Dictionary<string, PackageInfo> _sbrpPackages = [];
 
-    private readonly Regex _packageNameVersionRegex = new Regex(
-        @"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$",
-        RegexOptions.Compiled);
 
     /// <summary>
     /// Path to the SBRP src directory.
@@ -123,6 +120,9 @@ public class WriteSbrpUsageReport : Task
     private IEnumerable<PackageInfo> GetUnreferencedSbrps() =>
         _sbrpPackages.Values.Where(pkg => pkg.References.Count == 0);
 
+    [GeneratedRegex(@"^(?<name>.*?)\.(?<version>(?:\.?[0-9]+){3,}(?:[-A-Za-z0-9][A-Za-z0-9\.-]*)?)\.nupkg$")]
+    private static partial Regex GetPackageNameVersionRegex();
+
     /// <summary>
     /// External packages cannot be discovered in the same way as the other packages, scanning the src for csprojs.
     /// Externals don't follow any convention and not all of the external src is even built.
@@ -135,7 +135,7 @@ public class WriteSbrpUsageReport : Task
 
         foreach (string nupkgFile in Directory.GetFiles(SbrpPackagesPath, "*.nupkg", SearchOption.TopDirectoryOnly))
         {
-            var match = _packageNameVersionRegex.Match(Path.GetFileName(nupkgFile));
+            var match = GetPackageNameVersionRegex().Match(Path.GetFileName(nupkgFile));
             if (!match.Success)
             {
                 Log.LogError($"Could not parse package name and version from `{nupkgFile}`.");
