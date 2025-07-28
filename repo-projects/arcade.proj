@@ -1,10 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
-  <PropertyGroup>
-    <!-- Use a prebuilt Arcade to build Arcade -->
-    <UseBootstrapArcade>true</UseBootstrapArcade>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(TargetOS)' == 'linux' and '$(TargetArchitecture)' == 'x64' and '$(EnableDefaultRidSpecificArtifacts)' == 'true'">
     <!--
       We have a BuildPass2 leg that has no dependencies on Windows artifacts except for Arcade.
