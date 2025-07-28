@@ -25,7 +25,6 @@ public partial class WriteSbrpUsageReport : Task
 
     private readonly Dictionary<string, PackageInfo> _sbrpPackages = [];
 
-
     /// <summary>
     /// Path to the SBRP src directory.
     /// </summary>
