@@ -14,6 +14,7 @@ using System.Globalization;
 using Microsoft.CodeAnalysis.CommandLine;
 using Microsoft.CodeAnalysis.Symbols;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Net.BuildServerUtils;
 namespace Microsoft.CodeAnalysis.CompilerServer
 {
     /// <summary>
@@ -87,6 +88,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
             try
             {
                 _clientConnectionHost.BeginListening();
+                _connectionList.Add(WaitForShutdownAsync(cancellationToken));
                 ListenAndDispatchConnectionsCore(cancellationToken);
             }
             finally
@@ -138,6 +140,26 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                 WaitForAnyCompletion(cancellationToken);
                 CheckCompletedTasks(cancellationToken);
             } while (_connectionList.Count > 0 || _state == State.Running);
+        }
+
+        private async Task<CompletionData> WaitForShutdownAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await BuildServerUtility.WaitForShutdownAsync(
+                    label: nameof(VBCSCompiler),
+                    onStart: (pipePath) =>
+                    {
+                        _logger.Log($"Listening for unified shutdown on pipe: {pipePath}");
+                    },
+                    cancellationToken).ConfigureAwait(false);
+                return new CompletionData(CompletionReason.RequestCompleted, shutdownRequested: nameof(BuildServerUtility));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogException(ex, "Error listening for shutdown.");
+                return new CompletionData(CompletionReason.RequestCompleted);
+            }
         }
 
         private void CheckCompletedTasks(CancellationToken cancellationToken)
@@ -293,9 +315,9 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                             ChangeKeepAlive(keepAlive);
                         }
 
-                        if (completionData.ShutdownRequest)
+                        if (completionData.ShutdownRequest is { } shutdownRequest)
                         {
-                            _logger.Log("Client requested shutdown");
+                            _logger.Log($"Client requested shutdown: {shutdownRequest}");
                             shutdown = true;
                         }
 
