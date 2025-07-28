@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/Microsoft.TestPlatform.ObjectModel/Nuget.Frameworks/.editorconfig",
+      "detected_license_expression": "apache-2.0 AND unknown-license-reference"
+    }
+  ]
+}

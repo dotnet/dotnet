@@ -2,7 +2,19 @@
   "files": [
     {
       "path": "src/repos/src/application-insights/LOGGING/ThirdPartyNotices.txt",
-      "detected_license_expression": "unknown AND apache-2.0 AND mit AND bsd-new"
+      "detected_license_expression": "(unknown-license-reference AND apache-2.0) AND mit AND bsd-new"
+    },
+    {
+      "path": "src/repos/src/application-insights/NETCORE/ThirdPartyNotices.txt",
+      "detected_license_expression": "unknown-license-reference AND apache-2.0"
+    },
+    {
+      "path": "src/repos/src/application-insights/WEB/ThirdPartyNotices.txt",
+      "detected_license_expression": "(unknown-license-reference AND bsd-new) AND mit AND ms-pl AND apache-2.0 AND (cc-by-3.0-us AND cc-by-3.0 AND mit) AND ms-rl"
+    },
+    {
+      "path": "src/repos/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs",
+      "detected_license_expression": "(lgpl-2.1 OR cpl-1.0) AND mit"
     }
   ]
 }
