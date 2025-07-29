@@ -58,4 +58,8 @@
     <KeepFeedPrefixes Include="darc-int-dotnet-aspnetcore-" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <ExtraPackageVersionPropsPackageInfo Include="EmscriptenWorkloadsVersion" Version="%24(SystemTextJsonVersion)" />
+  </ItemGroup>
+
 </Project>
