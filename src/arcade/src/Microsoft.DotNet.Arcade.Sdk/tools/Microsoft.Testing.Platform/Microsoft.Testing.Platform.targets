@@ -5,36 +5,21 @@
     <PropertyGroup>
       <_TestEnvironment>%(TestToRun.EnvironmentDisplay)</_TestEnvironment>
       <_TestAssembly>%(TestToRun.Identity)</_TestAssembly>
+      <_TestRunner>%(TestToRun.RunCommand)</_TestRunner>
+      <_RunArguments>%(TestToRun.RunArguments)</_RunArguments>
       <_TestRuntime>%(TestToRun.TestRuntime)</_TestRuntime>
       <_TestTimeout>%(TestToRun.TestTimeout)</_TestTimeout>
       <_TestRunnerAdditionalArguments>%(TestToRun.TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
-    </PropertyGroup>
+      <_TestRunnerAdditionalArguments>$(_RunArguments) $(_TestRunnerAdditionalArguments)</_TestRunnerAdditionalArguments>
 
-    <PropertyGroup>
       <_TestResultDirectory>$([System.IO.Path]::GetDirectoryName('%(TestToRun.ResultsTrxPath)'))</_TestResultDirectory>
       <_TestResultTrxFileName>$([System.IO.Path]::GetFileName('%(TestToRun.ResultsTrxPath)'))</_TestResultTrxFileName>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(_TestRuntime)' == 'Core'">
-      <_TargetFileNameNoExt>$([System.IO.Path]::GetFileNameWithoutExtension('$(_TestAssembly)'))</_TargetFileNameNoExt>
-      <_TargetDir>$([System.IO.Path]::GetDirectoryName('$(_TestAssembly)'))\</_TargetDir>
-      <_CoreRuntimeConfigPath>$(_TargetDir)$(_TargetFileNameNoExt).runtimeconfig.json</_CoreRuntimeConfigPath>
-      <_CoreDepsPath>$(_TargetDir)$(_TargetFileNameNoExt).deps.json</_CoreDepsPath>
-
-      <_TestRunner Condition="'%(TestToRun.Architecture)'=='x86' And Exists('$(DotNetRoot)x86\dotnet.exe')">$(DotNetRoot)x86\dotnet.exe</_TestRunner>
-      <_TestRunner Condition="'$(_TestRunner)'==''">$(DotNetTool)</_TestRunner>
-
-      <_TestRunnerArgs>exec --depsfile "$(_CoreDepsPath)" --runtimeconfig "$(_CoreRuntimeConfigPath)" $(TestRuntimeAdditionalArguments) "$(_TestAssembly)" --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)" $(_TestRunnerAdditionalArguments)</_TestRunnerArgs>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(_TestRuntime)' != 'Core'">
-      <_TestRunner Condition="'$(_TestRunner)'==''">$(_TestAssembly)</_TestRunner>
-      <_TestRunnerArgs>--results-directory "$(_TestResultDirectory)" $(_TestRunnerAdditionalArguments)</_TestRunnerArgs>
+      <_TestRunnerArgs>$(_TestRunnerAdditionalArguments) --no-progress --report-trx --report-trx-filename "$(_TestResultTrxFileName)" --results-directory "$(_TestResultDirectory)"</_TestRunnerArgs>
     </PropertyGroup>
 
     <!-- Validate that non-Core workloads use executable files, not DLL files -->
-    <Error Condition="'$(_TestRuntime)' != 'Core' and !$(_TestAssembly.EndsWith('.exe', StringComparison.OrdinalIgnoreCase))" 
-           Text="Microsoft.Testing.Platform runner requires an executable (.exe) file (for non-.NET workloads), but was given: '$(_TestAssembly)'. Please set &lt;OutputType&gt;Exe&lt;/OutputType&gt; in your project file." />
+    <Error Condition="'$(_TestRuntime)' != 'Core' and !$(_TestRunner.EndsWith('.exe', StringComparison.OrdinalIgnoreCase))" 
+           Text="Microsoft.Testing.Platform runner requires an executable (.exe) file (for non-.NET workloads), but was given: '$(_TestRunner)'. Please set &lt;OutputType&gt;Exe&lt;/OutputType&gt; in your project file." />
 
     <PropertyGroup>
       <_TestRunnerCommand>"$(_TestRunner)" $(_TestRunnerArgs)</_TestRunnerCommand>
