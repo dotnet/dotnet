@@ -440,7 +440,7 @@ if [[ "$sourceOnly" == "true" ]]; then
       fi
 
       # If branding was not provided, extract it from the release manifest
-      if [[ "$branding" == "" ]]; then
+      if [[ -z "$branding" ]]; then
         branding=$(get_property "$releaseManifest" branding) || true
         if [[ -n "$branding" ]]; then
           SetBranding "$branding"
