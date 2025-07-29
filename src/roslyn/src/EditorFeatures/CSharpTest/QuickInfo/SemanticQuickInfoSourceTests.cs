@@ -6997,6 +6997,40 @@ Documentation("This example shows how to specify the GenericClass<T> cref.",
             MainDescription($"({FeaturesResources.parameter}) string? s"),
             NullabilityAnalysis(string.Format(FeaturesResources._0_may_be_null_here, "s")));
 
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/42543")]
+    public Task NullableParameterThatIsMaybeNull_Suppressed1()
+        => TestWithOptionsAsync(TestOptions.Regular8,
+            """
+            #nullable enable
+
+            class X
+            {
+                void N(string? s)
+                {
+                    string s2 = $$s!;
+                }
+            }
+            """,
+            MainDescription($"({FeaturesResources.parameter}) string? s"),
+            NullabilityAnalysis(string.Format(FeaturesResources._0_may_be_null_here, "s")));
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/42543")]
+    public Task NullableParameterThatIsMaybeNull_Suppressed2()
+        => TestWithOptionsAsync(TestOptions.Regular8,
+            """
+            #nullable enable
+
+            class X
+            {
+                void N(string? s)
+                {
+                    string s2 = $$s!!;
+                }
+            }
+            """,
+            MainDescription($"({FeaturesResources.parameter}) string? s"),
+            NullabilityAnalysis(string.Format(FeaturesResources._0_may_be_null_here, "s")));
+
     [Fact]
     public Task NullableParameterThatIsNotNull()
         => TestWithOptionsAsync(TestOptions.Regular8,
@@ -8269,6 +8303,56 @@ Documentation("This example shows how to specify the GenericClass<T> cref.",
                 summary for interface IGoo
 
                 List<string> y = null;
+                """));
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/53384")]
+    public Task TestDocumentationCData2()
+        => TestAsync("""
+            using I$$ = IGoo;
+            /// <summary>
+            /// summary for interface IGoo
+            /// <code><![CDATA[
+            /// void M()
+            /// {
+            ///     Console.WriteLine();
+            /// }
+            /// ]]></code>
+            /// </summary>
+            interface IGoo {  }
+            """,
+            MainDescription("interface IGoo"),
+            Documentation("""
+                summary for interface IGoo
+
+                void M()
+                {
+                    Console.WriteLine();
+                }
+                """));
+
+    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/53384")]
+    public Task TestDocumentationCData3()
+        => TestAsync("""
+            using I$$ = IGoo;
+            /// <summary>
+            /// summary for interface IGoo
+            /// <![CDATA[
+            /// void M()
+            /// {
+            ///     Console.WriteLine();
+            /// }
+            /// ]]>
+            /// </summary>
+            interface IGoo {  }
+            """,
+            MainDescription("interface IGoo"),
+            Documentation("""
+                summary for interface IGoo
+
+                void M()
+                {
+                    Console.WriteLine();
+                }
                 """));
 
     [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/37503")]
