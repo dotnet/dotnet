@@ -433,7 +433,7 @@ if [[ "$sourceOnly" == "true" ]]; then
     # If the release manifest is provided
     if [ -n "$releaseManifest" ] ; then
       # If OfficialBuildId was not provided, extract it from the release manifest
-      if [ "$officialBuildId" == "" ]; then
+      if [ -z "$officialBuildId"]; then
         officialBuildId=$(get_property "$releaseManifest" officialBuildId) \
             || (echo "ERROR: Failed to find officialBuildId in $releaseManifest" && exit 1)
         SetOfficialBuildId "$officialBuildId"
