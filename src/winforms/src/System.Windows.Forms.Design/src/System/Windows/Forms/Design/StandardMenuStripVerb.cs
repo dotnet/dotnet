@@ -232,7 +232,6 @@ internal class StandardMenuStripVerb
         {
             ToolStripDesigner.s_autoAddNewItems = true;
             createMenu?.Commit();
-            createMenu = null;
 
             tool.ResumeLayout();
             // Select the Main Menu...
@@ -370,7 +369,6 @@ internal class StandardMenuStripVerb
             // Reset the AutoAdd state
             ToolStripDesigner.s_autoAddNewItems = true;
             createMenu?.Commit();
-            createMenu = null;
 
             tool.ResumeLayout();
             // Select the Main Menu...
