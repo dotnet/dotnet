@@ -21,8 +21,9 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
     /*
      * This task updates the package source mappings in the NuGet.Config using the following logic:
      * Add all packages from current source-build sources, i.e. source-built-*, reference-packages.
-     * For previously source-built sources (PSB), add only the packages that do not exist in any of the current source-built sources.
-     * Also add PSB packages if that package version does not exist in current package sources.
+     * For previously source-built sources (PSB) and prebuilt sources, add only the packages that do not exist in any of the current source-built sources or shared components.
+     * Also add PSB and prebuilt packages if that package version does not exist in current package sources or shared components.
+     * For shared components, add only the packages that do not exist in any of the current source-built sources.
      * In offline build, remove all existing package source mappings for online sources.
      * In online build, add online source mappings for all discovered packages from local sources.
      * In online build, if NuGet.config didn't originally have any mappings, additionally,
@@ -60,6 +61,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
 
         public string PrebuiltSourceName { get; set; }
 
+        public string SharedComponentsSourceName { get; set; }
+
         public string[] CustomSources { get; set; }
 
         // allSourcesPackages and oldSourceMappingPatterns contain 'package source', 'list of packages' mappings
@@ -74,6 +77,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
         private Dictionary<string, List<string>> referencePackages = [];
         private Dictionary<string, List<string>> previouslySourceBuiltPackages = [];
         private Dictionary<string, List<string>> prebuiltPackages = [];
+        private Dictionary<string, List<string>> sharedComponentsPackages = [];
 
         public override bool Execute()
         {
@@ -265,19 +269,21 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             foreach (string packagePattern in allSourcesPackages[packageSource])
             {
                 // Add all packages from current source-built sources.
-                // For previously source-built and prebuilt sources add only packages
-                // where version does not exist in current source-built sources.
-                if (isCurrentSourceBuiltSource || !currentPackages.ContainsKey(packagePattern))
+                if (isCurrentSourceBuiltSource)
                 {
                     pkgSrc.Add(new XElement("package", new XAttribute("pattern", packagePattern)));
                 }
                 else if (packageSource.Equals(PreviouslySourceBuiltSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(pkgSrc, packagePattern, previouslySourceBuiltPackages);
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, previouslySourceBuiltPackages, packageSource);
                 }
                 else if (packageSource.Equals(PrebuiltSourceName))
                 {
-                    AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(pkgSrc, packagePattern, prebuiltPackages);
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, prebuiltPackages, packageSource);
+                }
+                else if (packageSource.Equals(SharedComponentsSourceName))
+                {
+                    AddPackageSourceMappingIfPackageVersionsNotInSources(pkgSrc, packagePattern, sharedComponentsPackages, packageSource);
                 }
                 else // unknown/unexpected source
                 {
@@ -288,12 +294,22 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             return pkgSrc;
         }
 
-        private void AddPackageSourceMappingIfPackageVersionsNotInCurrentPackages(XElement pkgSrc, string packagePattern, Dictionary<string, List<string>> packages)
+        private void AddPackageSourceMappingIfPackageVersionsNotInSources(XElement pkgSrc, string packagePattern, Dictionary<string, List<string>> packages, string sourceName)
         {
             foreach (string version in packages[packagePattern])
             {
                 // If any package version is in current packages, skip this package pattern
-                if (currentPackages[packagePattern].Contains(version))
+                if (currentPackages.ContainsKey(packagePattern) && currentPackages[packagePattern].Contains(version))
+                {
+                    return;
+                }
+
+                bool checkSharedComponents = !sourceName.Equals(SharedComponentsSourceName);
+                
+                // If checking shared components and any package version is in shared components packages, skip this package pattern
+                if (checkSharedComponents &&
+                    sharedComponentsPackages.ContainsKey(packagePattern) &&
+                    sharedComponentsPackages[packagePattern].Contains(version))
                 {
                     return;
                 }
@@ -355,6 +371,10 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     {
                         AddToDictionary(prebuiltPackages, id, version);
                     }
+                    else if (packageSource.Equals(SharedComponentsSourceName))
+                    {
+                        AddToDictionary(sharedComponentsPackages, id, version);
+                    }
                     else // unknown/unexpected source
                     {
                         throw new UnreachableException($"Unexpected package source name: {packageSource}");
@@ -412,7 +432,8 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                     if (!currentPackages.ContainsKey(pattern) &&
                         !referencePackages.ContainsKey(pattern) &&
                         !previouslySourceBuiltPackages.ContainsKey(pattern) &&
-                        !prebuiltPackages.ContainsKey(pattern))
+                        !prebuiltPackages.ContainsKey(pattern) &&
+                        !sharedComponentsPackages.ContainsKey(pattern))
                     {
                         filteredPatterns.Add(pattern);
                         if (!allOldSourceMappingPatterns.Contains(pattern))
