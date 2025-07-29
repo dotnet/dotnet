@@ -6,12 +6,9 @@
   - [High-level code flow](#high-level-code-flow)
     - [Forward flow](#forward-flow)
     - [Backflow](#backflow)
-  - [Implementation plan](#implementation-plan)
-    - [Backflow service](#backflow-service)
-    - [Why new service?](#why-new-service)
-    - [Composition of DarcLib commands](#composition-of-darclib-commands)
   - [The code flow algorithm](#the-code-flow-algorithm)
-    - [Algorithm visualization](#algorithm-visualization)
+      - [Legend](#legend)
+      - [Diagram events explained](#diagram-events-explained)
     - [Pseudo-code](#pseudo-code)
     - [Previous flow direction detection](#previous-flow-direction-detection)
       - [Detecting incoming flow](#detecting-incoming-flow)
@@ -34,14 +31,13 @@ This document describes the architecture of the full code flow between product r
 This section presents more precise definitions of common terms used in this document that may be prone to confusion. Also see the [Unified Build terminology](./Terminology.md) for more.
 
 - **Individual/Source/Product repository** – One of the current development repositories, e.g., `dotnet/runtime`. An "individual product repository" is then one that contains code for part of the product (but no individual repository contains code to build the whole .NET Core product).
-- **VMR (Virtual Monolithic Repository)** – A repository containing code layout that produces the official build product of .NET Core. The repository contains individual product repositories plus tooling to enable a full build of the product.
-- **Source-Build** – A set of sources and a process which allows to build the entire product end to end including all its dependencies in offline mode, excluding native dependencies from the source.
-- **Microsoft build** – The current build methodology used to assemble the final product that Microsoft ships binaries from.
-- **Build output packages** – Packaged build products of each of the individual repositories either built in their individual repo source-build or during the build of each individual repository component within the full VMR build. These are used during package flow between the VMR and the individual repositories, and in the VMR build itself.
+- **VMR (Virtual Monolithic Repository)** – A repository containing code layout that produces the official build product of .NET. The repository contains individual product repositories plus tooling to enable a full build of the product.
+- **Maestro** - A service used by the .NET team to manage dependency flow between repositories. For more information about channels, subscriptions and other Maestro concepts, see the [Maestro documentation](https://github.com/dotnet/arcade/blob/main/Documentation/BranchesChannelsAndSubscriptions.md).
 - **BAR / Build Asset Registry** - A database of build assets (e.g. packages) and their associated metadata (e.g. commit, build number, etc.). For more information about BAR, see the [BAR documentation](https://github.com/dotnet/arcade/blob/main/Documentation/Maestro/BuildAssetRegistry.md).
-- **Maestro** - A service used by the .NET team to manage dependency flow between repositories. For more information about channels, subscriptions and other Maestro concepts, see the [Maestro documentation](https://github.com/dotnet/arcade/blob/main/Documentation/BranchesChannelsAndSubscriptions.md). 
 - **Forward flow** – The process of moving changes from an individual repository to the VMR.
 - **Backflow** - The process of moving changes from the VMR to an individual repository.
+- **Codeflow** - The process of moving changes between the VMR and individual repositories. This is a generic term that can refer to both forward flow and backflow.
+- **Codeflow PR** - A pull request carrying the code changes that is opened as part of the codeflow process. This can be a forward flow PR or a backflow PR.
 
 ## High-level code flow
 
@@ -49,133 +45,30 @@ This section presents more precise definitions of common terms used in this docu
 
 The high-level flow of changes from an individual repository (e.g. `dotnet/runtime`) to the VMR is as follows:
 
-```mermaid
-flowchart TD
-    runtime[dotnet/runtime]
-    runtimeCI[dotnet-runtime-official-ci]
-    maestro[Maestro service]
-    backflow[Backflow service]
-    vmr[dotnet/dotnet]
-
-    runtime--1. A change is merged into dotnet/runtime,\nmirrored to AzDO and the official build starts-->runtimeCI
-    runtimeCI--2. Build is added to the .NET 9 channel,\nsubscription from runtime to dotnet/dotnet triggered-->maestro
-    maestro--3. Maestro notices a VMR subscription\ntriggered, calls the backflow service-->backflow
-    backflow--4. A branch with the appropriate code\nchanges in dotnet/dotnet is created-->maestro
-    maestro--5. A PR in the VMR is\nopened and merged-->vmr
-```
-
-The numbered steps are described in more detail below:
-
-1. This is the current normal process for making a change to an individual repository. Nothing changes.
-2. Currently, each official build of each repo publishes itself via darc which registers the commit and the set of built packages into the BAR and is assigned to zero or more channels. There is a lot of configuration effort in which repositories publish from which branches to which channels. We intend to keep this existing setup in place and piggy back on this. The only change to the current state is that we will subscribe to channels from the VMR. Possibly, these subscription will get a special flag to indicate that they are VMR subscriptions, e.g. `CodeFlow=true`.
-3. Maestro already listens to BAR events (to builds being added to channels) and triggers the appropriate subscriptions. For VMR subscriptions, it will call the backflow service which will process the request on its own time (e.g. stores requests in a queue and works through them). The initial call from Maestro should be just a quick ping that will enqueue the request.
-4. The backflow service will process the request by looking at the commit of the source repo that was synchronized to the VMR last by looking at the [`source-manifest.json` file](https://github.com/dotnet/dotnet/blob/main/src/source-manifest.json). It will then apply the diff between that commit and the one that is associated with the build information in BAR.
-
-From this, it is obvious that the changes needed in the Maestro changes and the BAR database are minimal. The new backflow service will be the main new component. It will, however, re-use a lot of already existing code from Maestro (namely [`DarcLib`](https://github.com/dotnet/arcade-services/tree/main/src/Microsoft.DotNet.Darc/DarcLib)).
+1. A change is merged into the individual repository (e.g. `dotnet/runtime`).
+2. The change is mirrored to Azure DevOps (AzDO) and the internal build of the individual repository starts.
+3. The build is registered in the Build Asset Registry (BAR) and assigned to one or more channels.
+4. The Maestro service listens to BAR events and triggers the appropriate subscriptions.
+5. A subscription in the VMR is triggered, which opens a pull request in the VMR (or an existing one is updated if possible).
 
 ### Backflow
 
 For backflow, the situation is quite similar:
 
-```mermaid
-flowchart TD
-    runtime[dotnet/runtime]
-    vmrCI[dotnet-dotnet-official-ci]
-    maestro[Maestro service]
-    backflow[Backflow service]
-    vmr[dotnet/dotnet]
+1. A change is made to the VMR (a PR is merged).
+2. The change is mirrored to AzDO and the official VMR build starts.
+3. The VMR is built, output packages are produced and the build is published to BAR.
+4. The Maestro service notices a VMR subscription triggered and opens a PR in every individual repository that is subscribed to the VMR.
+  - The subscriptions which are source-enabled will also carry the code changes of the individual repository (if any happened in the VMR).
+  - Non-source-enabled (codeflow) subscriptions will only update the version files and bump packages in any repository relying on packages built in the VMR.
 
-    vmr--1. A change is made to dotnet/dotnet\nmirrored to AzDO and the official build starts-->vmrCI
-    vmrCI--2. VMR is built, output packages produced\nand build is published to BAR-->maestro
-    maestro--3. Maestro notices a VMR subscription\ntriggered, calls the backflow service-->backflow
-    backflow--4. A branch with the appropriate code\nchanges in dotnet/runtime is created-->maestro
-    maestro--5. A PR in dotnet/runtime is\nopened and merged-->runtime
-```
-
-The only difference from the forward flow is that the VMR creates and publishes build output packages which are then flown back to the original repositories.
-
-## Implementation plan
-
-### Backflow service
-
-For the purpose of flowing the code from/to the VMR, we will create a new service. This service will be called by Maestro when a VMR subscription is triggered. It will then perform the actual work of creating the PRs in the individual repositories or in the VMR.
-
-The following diagram roughly shows how these services will be composed (new components are in green):
-
-```mermaid
-flowchart
-  SubscriptionTrigger[1. External subscription trigger]
-  EngCommon[Copy eng/common, update global.json..]
-  VersionFiles[Update Versions.props, Version.Details.xml]
-
-  SubscriptionTrigger--\nE.g. PR check finished, PR approved,\nuser calls trigger-subscription,\nbuild is added to a channel,\nweekly subscription is triggered... -->Maestro
-
-  CallBackflowService[3. Call backflow service]
-  GitHubPR[GitHub PR is opened/merged/updated/..]
-
-  subgraph Maestro service
-    Maestro{2. Maestro service processes the impuls}
-
-    EngCommon-->VersionFiles
-    Maestro--a. If source or target repo is VMR-->CallBackflowService
-    Maestro--b. If source repo is arcade-->EngCommon
-    Maestro--c. Else-->VersionFiles
-  end
-
-  subgraph Backflow service
-    Backflow{4. Backflow service prepares\nthe content in a branch\nof the target repository}
-    Backflow--Maestro service is pinged back-->Maestro
-  end
-
-  CallBackflowService-->Backflow
-
-  VersionFiles-->GitHubPR
-  Maestro--5. If is a ping from the Backflow service-->GitHubPR
-
-  classDef New fill:#00DD00,stroke:#006600,stroke-width:1px,color:#006600
-  class CallBackflowService,Backflow,VmrChangesPushed New
-  linkStyle 2,5,6,8 stroke-width:2px,fill:none,stroke:#00DD00,color:#00DD00
-```
-
-On the diagram we can see:
-1. An external trigger starts a process in Maestro which means a subscription needs to be handled.
-2. The logic for handling the trigger is mostly the same as today. Maestro checks the source and target repository and prepares the update:
-   - For the VMR, it will newly call a new service.
-   - Otherwise, it opens a regular dependency PR where for subscriptions originating in Arcade it also copies the `eng/common` folder and updates the `global.json` file.
-3. The call to the backflow service only pings it to start processing the request. The backflow service will then process the request on its own time. Meanwhile, Maestro will note down that it's waiting for the backflow service to finish.
-4. The backflow service will synchronize the new content and push it into a branch.
-   - If this is a branch of an already existing PR, the PR will be updated.
-   - If this is a branch for a new PR, the PR will be created by Maestro later.
-5. Maestro will process the ping and check what stage the PR is in or create a new one.
-   - The ping must also contain information about whether any new changes are even available.
-   - It's possible the PR got already merged or closed so Maestro will need to work with these cases.
-
-### Why new service?
-
-We have decided to not put the backflow functionality directly into Maestro for the following reasons:
-- The backflow service will need to clone the VMR and individual repositories. This will require a lot of disk space and we are not sure if Service Fabric can handle this.
-- The backflow service will be long living and persisting the cloned repositories to speed up the synchronization process. This is again something that might be difficult to achieve using Service Fabric actors.
-- The Maestro service is very stable and not receiving many changes so we will implement this new functionality in a separate service to avoid introducing new bugs into Maestro.
-- The local development workflow will be much easier if we can run the backflow service locally without having to run the whole Maestro service fabric cluster.
-- We plan to use a more modern technology such as Azure Container Apps. Once we have stabilized the Backflow service, whichever of these two technologies proves to be better, we will merge those. This should be fairly simple as both will use `DarcLib` to perform the actual work.
-- We expect that moving to ACA will be easier as Maestro itself doesn't have many complex requirements and once we have both, moving existing Maestro controllers and background services to ACA should be fairly simple. The other way might be harder because of the disk space limitations.
-
-### Composition of DarcLib commands
-
-Presently, the `DarcLib` library contains a set of simple commands which are used by the Maestro service to perform its tasks. Number of them can also be executed locally via the Darc CLI.  
-As an example, there is the `update-dependencies` command which locally updates the versions of dependencies of a repository. The same command is run within Maestro to create the dependency flow PR.
-
-The Darc CLI currently contains a subset of VMR commands and is used to synchronize the present VMR-lite. The new backflow service should use a similar pattern and follow the existing non-VMR counterparts. For instance, a `darc vmr update-dependencies` command will be added.
-
-Once we have the set of commands that can forward/backflow the code locally, we can compose the service out of these.
+The only difference from the forward flow is that the for source-enabled (codeflow) subscriptions, the backflow PRs contain the code changes as well as package updates built in the latest VMR build.
 
 ## The code flow algorithm
 
-This section describes the details of moving the code between product repositories and the VMR. The algorithm will work differently in each direction to achieve maximum fluency and minimize the amount of conflicts developers need to tend to but also ensure that conflicting changes manifest as conflicts and changes are not overridden without a trace.
+This section describes the details of moving the code between product repositories and the VMR. The algorithm will try to achieve maximum fluency and minimize the amount of conflicts developers need to tend to. However, it will ensure that conflicting changes manifest as conflicts that developers need to resolve manually and changes are not overridden silently.
 
-The algorithm will always consider the delta between the VMR and the repository and we will flow this delta via a pull request that will open in the counterpart repository. It is expected that there will be a forward flow and a backflow PR open at most times and the order in which the repositories will synchronize in can be random. As an example, a backflow might be blocked for an extended period of time because repo's validation, which will be more extensive than VMR's, might uncover some problematic changes done in the VMR that need fixing. While this is going, the forward flow can continue and the VMR can be updated with the latest changes from the repository. For this reason, we need to have a look at the algorithm with respect to its context - e.g. the direction of the last synchronization.
-
-This means that we need to look at the following flow combinations:
+The algorithm will always consider the delta between the VMR and the repository and we will flow this delta via a pull request that will be opened in the counterpart side. It is expected that there will be an ongoing forward/backflow PR open at most times and the order in which the repositories will synchronize in can be random. As an example, a backflow might be blocked for an extended period of time because of failures in the PR gates. While this is happening, the forward flow can continue and the VMR can be updated with the latest changes from the repository. For this reason, we need to have a look at the algorithm with respect to its context - e.g. the direction of the current and the last synchronization. This means that we need to look at the following flow combinations:
 - Forward flow after backflow
 - Backflow after forward flow
 - Two flows in the same direction
@@ -187,15 +80,15 @@ The diagrams for these four situations can be seen here:
 | Backward first               | ![Two backflows in a row](images/backward-backward-flow.png) | ![Forward flow after backflow](images/backward-forward-flow.png) |
 | Forward first                | ![Backflow after forward flow](images/forward-backward-flow.png) | ![Two forward flows in a row](images/forward-forward-flow.png) |
 
-### Algorithm visualization
+#### Legend
 
-The diagrams below visualize the algorithm and show which diffs are used to create the PRs. The diagrams use the following common notation:
-- 🟠 The repository contains an example file (say `A.txt`). This file contains a single line of text. The content of the file transformations are denoted in orange. The file starts with the text `one` and ends with the text `five`.
-- 🟢 Green arrows denote the previous successful flow.
-- 🔵 Blue arrows denote the flow we're interested in in the current diagram.
+The diagrams above visualizes the algorithm and shows which diffs are used to create the PRs. The diagrams use the following common notation:
+- 🟠 The repository contains an example file (say `A.txt`). This file contains a single line of text. The content of the file transformations are denoted in orange. The file starts with the text `one` and ends with the text `five`. The label `two -> three` then denotes a commit that changed the content from `two` to `three`.
+- 🟢 Green arrows denote the previous successful flow. Green commits and branches then show where the PR branches are originating and which commits belong to them.
+- 🔵 Blue arrows denote the flow we're interested in in the current diagram. Blue commits and branches then show where the PR branches are originating and which commits belong to them.
 - 🟣 In purple, we visualize the actual diff that we need to carry over to the counterpart repository.
 - ⚫ Greyed out commits denote commits that do not affect the `A.txt` file but contain an unrelated change done in the given repository.
-- We usually assume that some previous synchronization happened (points `1` <-> `2`) and the 🟢 green previous synchronization was done based on its previous synchronization.
+- We usually assume that some previous synchronization happened (points `1` <-> `2`) and the 🟢 previous synchronization was done based on the same algorithm.
 - The commits are numbered and happen in the order of the numbers. The numbers are used to refer to the commits in the text.
 - Editable source version of diagrams is [here](https://excalidraw.com/#json=2QlCyifI87WwEdysg_Ybg,ZPCAufuEmT1SybVB1ooSWA).
 
@@ -205,9 +98,9 @@ The diagrams below visualize the algorithm and show which diffs are used to crea
   🖼️ Image #1 - Backflow after forward flow
 </p>
 
-On this diagram we see:
+#### Diagram events explained
 
-The flow of changes in the diagram is as follows:  
+**The flow of changes in the diagram is as follows:**  
 `1` and `2` denote some previous synchronization point.
 `3` Commit in the repository changes the contents of `A.txt` to `two`.  
 `4` Commit in the repository changes the contents of `A.txt` to `three`. Forward flow also starts at that point (this is arbitrary).  
@@ -221,7 +114,7 @@ The flow of changes in the diagram is as follows:
 `12` A commit is made to the main branch of the repository, content is unrelated.  
 `13` The PR is merged, effectively updating `A.txt` from `three` to `five`.
 
-You can notice several features:
+**You can notice several features:**
 - No (git) conflicts appear. This is because this concrete example considers a single file that is chronologically changed from `one` to `five` in gradual steps. In such case, we should not expect any conflicts and this is by design. In cases where most of the changes happen in the individual repository, we expect the code to flow fluently.
 - The whole flow is comparable to a dev working in a dev branch within a single repository - the dev branch being the VMR where the dev merges the main branch in between the work (this is the forward flow). The dev then opens a PR against the main branch (the repository in this case). Wherever there would be conflicts in a single repository case, we would get conflicts here too and this is by design.
 
@@ -259,9 +152,10 @@ When we are forming the backflow commit (`13`), we know that the only things tha
 ### Pseudo-code
 
 For simplicity, let's consider the following:
-- There is only one target individual repository and it is known in advance. In reality, we would need to figure out all target repositories for which the files in the VMR changed but this is trivial and unimportant for what we want to show - the way we will create the diffs and patches for the changes within a single repository.
-- There was a previous successful code flow in the past. The repositories will be synchronized in the already existing VMR-lite and the first code flow will be manually triggered. The algorithm describes how the code will flow after that.
-- The last SHA of the counterpart repository that we have synchronized from is stored in the VMR/individual repository. In the present VMR, this information is already in the `source-manifest.json` file. For backflow, we will store the source VMR SHA in the `Version.Details.xml` file.
+- There was a previous successful code flow in the past. The repositories will be synchronized in the already existing VMR and the first code flow will be manually triggered. The algorithm describes how the code will flow after that.
+- The last SHA of the counterpart repository that we have synchronized from is stored in the VMR/individual repository:
+  - In the VMR, this information is in the `source-manifest.json` file.
+  - In individual repositories, the source VMR SHA is in the `Version.Details.xml` file.
 - The algorithm works symmetrically in both directions with the exception of some of the files being cloaked on the way to the VMR. The cloaking mechanism is described [here](./VMR-Design-And-Operation.md#repository-source-mappings).
 - The algorithm won't contain steps for opening a pull request but rather focuses on preparing the commits/PR branches locally.
 - The code doesn't take into account the case that a PR might already exists and we are updating it. This situation is described in the [Updating PRs](#updating-prs) section.
@@ -414,9 +308,13 @@ We will then use the `shaB`-`shaC` diff (in pink) as the diff for the PR while b
 
 #### Cases when SHA is not in the graph
 
-It can happen that the SHA we find in the `Version.Details.xml` or `source-manifest.json` is not in the history of the current repository's branch tip. This can happen when we synchronize an off-branch commit or when the commit comes from a different repository entirely (e.g. internal fork).
+It can happen that the SHA we find in the `Version.Details.xml` or `source-manifest.json` is not in the history of the current repository's branch tip. This can happen when we synchronize an off-branch commit or when the commit comes from a different repository entirely (e.g. internal fork). This could also happen when we fork a release branch earlier in the repo than the VMR and the VMR release branch receives a commit from the main branch that we don't have in the release branch in the repository.
 
-> ⚠️⚠️⚠️ TODO - document how it can happen and what to do about it? E.g. force overwriting or finding last common ancestor etc.
+Example of such a situation is shown here:
+
+![SHA not in the graph](images/divergent-preview-branch.png)
+
+In such cases, the algorithm detects that the currently synchronized commit is not an ancestor of the previously synchronized one and errors out. A human intervention is then required to resolve the situation - specifically resetting the VMR's release branch to match the repository.
 
 ### Conflicts
 
