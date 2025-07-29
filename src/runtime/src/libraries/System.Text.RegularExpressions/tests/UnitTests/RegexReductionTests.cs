@@ -9,6 +9,12 @@ namespace System.Text.RegularExpressions.Tests
     public class RegexReductionTests
     {
         [Theory]
+        // Well-known sets
+        [InlineData(@"[^\d]", @"\D")]
+        [InlineData(@"[^\w]", @"\W")]
+        [InlineData(@"[^\s]", @"\S")]
+        [InlineData(@"[\s\S]", @"[\d\D]")]
+        [InlineData(@"[\s\S]", @"[\w\W]")]
         // Two greedy one loops
         [InlineData("a*a*", "a*")]
         [InlineData("(a*a*)", "(a*)")]
@@ -273,10 +279,23 @@ namespace System.Text.RegularExpressions.Tests
         [InlineData("(?!(abc))", "(?!abc)")]
         [InlineData("(?!a(b*)c)", "(?!ab*c)")]
         [InlineData("(?!a((((b))))c)", "(?!abc)")]
+        [InlineData(@"(?=(?=(?=abc)))", @"(?=abc)")]
+        [InlineData(@"(?=(?<=(?=abc)))", @"(?<=(?=abc))")]
+        [InlineData(@"(?=\G)abc", @"\Gabc")]
+        [InlineData(@"(?=^)abc", @"^abc")]
+        [InlineData(@"(?=\b)abc", @"\babc")]
+        [InlineData(@"abc(?=\z)", @"abc\z")]
+        [InlineData(@"abc(?=\Z)", @"abc\Z")]
+        [InlineData(@"abc(?=\A)", @"abc\A")]
+        [InlineData(@"abc(?=$)", @"abc$")]
         // Alternation reduction
         [InlineData("a|b", "[ab]")]
         [InlineData("a|b|c|d|e|g|h|z", "[a-eghz]")]
         [InlineData("a|b|c|def|g|h", "(?>[a-c]|def|[gh])")]
+        [InlineData("a|[^a]", @"[\s\S]")]
+        [InlineData(".|\n", @"[\s\S]")]
+        [InlineData(".|\n|a", @"[\s\S]")]
+        [InlineData("abc|.|\n|def", @"abc|[\s\S]|def")]
         [InlineData("this|that|there|then|those", "th(?>is|at|ere|en|ose)")]
         [InlineData("^this|^that|^there|^then|^those", "^th(?>is|at|ere|en|ose)")]
         [InlineData("\bthis|\bthat|\bthere|\bthen|\bthose", "\bth(?>is|at|ere|en|ose)")]
@@ -403,16 +422,6 @@ namespace System.Text.RegularExpressions.Tests
         [InlineData(@"\z\z", @"\z")]
         [InlineData(@"\G\G", @"\G")]
         [InlineData(@"\A\A", @"\A")]
-        // Lookarounds
-        [InlineData(@"(?=^)abc", @"^abc")]
-        [InlineData(@"(?=\G)abc", @"\Gabc")]
-        [InlineData(@"abc(?=$)", @"abc$")]
-        [InlineData(@"(?=\b)abc", @"\babc")]
-        [InlineData(@"abc(?=\z)", @"abc\z")]
-        [InlineData(@"abc(?=\Z)", @"abc\Z")]
-        [InlineData(@"abc(?=\A)", @"abc\A")]
-        [InlineData(@"(?=(?=(?=abc)))", @"(?=abc)")]
-        [InlineData(@"(?=(?<=(?=abc)))", @"(?<=(?=abc))")]
         // Nothing handling
         [InlineData(@"\wabc(?!)def", "(?!)")]
         [InlineData(@"\wabc(?!)def|ghi(?!)", "(?!)")]
