@@ -225,20 +225,14 @@ internal class StandardMenuStripVerb
                 uiService.ShowError(e.Message);
             }
 
-            if (createMenu is not null)
-            {
-                createMenu.Cancel();
-                createMenu = null;
-            }
+            createMenu?.Cancel();
+            createMenu = null;
         }
         finally
         {
             ToolStripDesigner.s_autoAddNewItems = true;
-            if (createMenu is not null)
-            {
-                createMenu.Commit();
-                createMenu = null;
-            }
+            createMenu?.Commit();
+            createMenu = null;
 
             tool.ResumeLayout();
             // Select the Main Menu...
@@ -368,21 +362,15 @@ internal class StandardMenuStripVerb
                 uiService.ShowError(e.Message);
             }
 
-            if (createMenu is not null)
-            {
-                createMenu.Cancel();
-                createMenu = null;
-            }
+            createMenu?.Cancel();
+            createMenu = null;
         }
         finally
         {
             // Reset the AutoAdd state
             ToolStripDesigner.s_autoAddNewItems = true;
-            if (createMenu is not null)
-            {
-                createMenu.Commit();
-                createMenu = null;
-            }
+            createMenu?.Commit();
+            createMenu = null;
 
             tool.ResumeLayout();
             // Select the Main Menu...

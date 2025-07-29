@@ -1841,11 +1841,8 @@ public partial class ComboBox : ListControl
                 _autoCompleteCustomSource.CollectionChanged -= OnAutoCompleteCustomSourceChanged;
             }
 
-            if (_stringSource is not null)
-            {
-                _stringSource.ReleaseAutoComplete();
-                _stringSource = null;
-            }
+            _stringSource?.ReleaseAutoComplete();
+            _stringSource = null;
         }
 
         base.Dispose(disposing);
@@ -2384,11 +2381,8 @@ public partial class ComboBox : ListControl
             _selectedIndex = SelectedIndex;
         }
 
-        if (_stringSource is not null)
-        {
-            _stringSource.ReleaseAutoComplete();
-            _stringSource = null;
-        }
+        _stringSource?.ReleaseAutoComplete();
+        _stringSource = null;
 
         base.OnHandleDestroyed(e);
     }
@@ -3042,23 +3036,12 @@ public partial class ComboBox : ListControl
     /// </summary>
     private void ReleaseChildWindow()
     {
-        if (_childEdit is not null)
-        {
-            _childEdit.ReleaseHandle();
-            _childEdit = null;
-        }
-
-        if (_childListBox is not null)
-        {
-            _childListBox.ReleaseHandle();
-            _childListBox = null;
-        }
-
-        if (_childDropDown is not null)
-        {
-            _childDropDown.ReleaseHandle();
-            _childDropDown = null;
-        }
+        _childEdit?.ReleaseHandle();
+        _childEdit = null;
+        _childListBox?.ReleaseHandle();
+        _childListBox = null;
+        _childDropDown?.ReleaseHandle();
+        _childDropDown = null;
     }
 
     internal override void ReleaseUiaProvider(HWND handle)
