@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 276631,
+      "barId": 276668,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "0fbc9e8711fa91e68c2bf3db376fb83b46f4ac35"
+      "commitSha": "e2fed65f9c524d12c64876194ae4ce177b935bb3"
     },
     {
       "barId": 276997,
@@ -31,16 +31,16 @@
       "commitSha": "0fe2f4d151b9412a87be13caac8ba1bfaba0d148"
     },
     {
-      "barId": 276672,
+      "barId": 276803,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "d7d850097b755b343851f9c5b93325aacb8323aa"
+      "commitSha": "24de8bfbfd5795acd1dde863ed8172d538a9f585"
     },
     {
-      "barId": 276679,
+      "barId": 276805,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "cb3e343b2ca25dbf34f9b6d9f2544cdae73f7481"
+      "commitSha": "bd1e5327a789f2bf4eea251006f3e59467c573cc"
     },
     {
       "barId": 276379,
@@ -79,10 +79,10 @@
       "commitSha": "fadd60c39d63743cdaeacd2c3f8aa003f5bb7f58"
     },
     {
-      "barId": 276386,
+      "barId": 276855,
       "path": "roslyn-analyzers",
       "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "06f47ea69c931a5111d32b1c443d4546db5888f2"
+      "commitSha": "5261191c4ec2e273dc4400328a6e81ba7f677b82"
     },
     {
       "barId": 276023,
@@ -145,10 +145,10 @@
       "commitSha": "cd22d8061ea3461925cb5aacb4b0e2c16c132063"
     },
     {
-      "barId": 275831,
+      "barId": 276740,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "390c57065309a5b4ec1075894f5fcecab472aa62"
+      "commitSha": "3e7d1160037e5e328558210c328cc6af7f9b6b0d"
     },
     {
       "barId": 276515,
