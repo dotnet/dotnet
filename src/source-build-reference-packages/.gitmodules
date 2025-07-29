@@ -19,9 +19,6 @@
 [submodule "docker-creds-provider"]
 	path = src/externalPackages/src/docker-creds-provider
 	url = https://github.com/mthalman/docker-creds-provider
-[submodule "abstractions-xunit"]
-	path = src/externalPackages/src/abstractions-xunit
-	url = https://github.com/xunit/abstractions.xunit
 [submodule "vs-solutionpersistence"]
 	path = src/externalPackages/src/vs-solutionpersistence
 	url = https://github.com/microsoft/vs-solutionpersistence.git

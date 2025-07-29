@@ -5,66 +5,56 @@ stages:
 - stage: build
   displayName: Build
   jobs:
-  - job: Linux
-    pool:
-      ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        name: $(DncEngPublicBuildPool)
-        demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        name: $(DncEngInternalBuildPool)
-        image: 1es-ubuntu-2204
-        os: linux
-    container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-build-amd64
-    steps:
-    - checkout: self
-      clean: true
-      submodules: recursive
+  - template: ${{ parameters.engCommonTemplatesDir }}/jobs/jobs.yml
+    parameters:
+      artifacts:
+        publish:
+          artifacts: true
+          logs: true
+      enablePublishTestResults: true
+      enableTelemetry: true
+      isAssetlessBuild: true
+      publishAssetsImmediately: true
 
-    - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
+      jobs:
+      - job: linux
+        displayName: Linux
+        pool:
+          ${{ if eq(variables['System.TeamProject'], 'public') }}:
+            name: $(DncEngPublicBuildPool)
+            demands: ImageOverride -equals Build.Ubuntu.2204.Amd64.Open
+          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+            name: $(DncEngInternalBuildPool)
+            image: 1es-ubuntu-2204
+            os: linux
+        container: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-build-amd64
+        variables:
+        - _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+          submodules: recursive
+        - script: ./build.sh --ci && ./test.sh
+          displayName: Build and Test
 
-    - script: $(Build.SourcesDirectory)/test.sh
-      displayName: Run Tests
+      - job: windows
+        displayName: Windows
+        pool:
+          ${{ if eq(variables['System.TeamProject'], 'public') }}:
+            name: $(DncEngPublicBuildPool)
+            demands: ImageOverride -equals 1es-windows-2022-open
+          ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+            name: $(DncEngInternalBuildPool)
+            image: 1es-windows-2022
+            os: windows
+        variables:
+        - _BuildConfig: Release
+        steps:
+        - checkout: self
+          clean: true
+          submodules: recursive
 
-    - task: PublishTestResults@2
-      displayName: Publish Test Results
-      inputs:
-        testResultsFormat: 'xUnit'
-        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
-        testRunTitle: 'Linux_SBRP_tests'
-      condition: always()
-
-  ## The job below is a temporary workaround for running the tests on Windows.
-  ## Currently, the source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
-  ## This job should be modified once the source-build-reference-packages repository supports building on Windows by transitioning to the template above.
-  - job: Windows
-    pool:
-      ${{ if eq(variables['System.TeamProject'], 'public') }}:
-        name: $(DncEngPublicBuildPool)
-        demands: ImageOverride -equals 1es-windows-2022-open
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        name: $(DncEngInternalBuildPool)
-        image: 1es-windows-2022
-        os: windows
-    steps:
-    - checkout: self
-      clean: true
-      submodules: recursive
-
-    - script: $(Build.SourcesDirectory)/test.cmd
-      displayName: Run Tests
-
-    - task: PublishTestResults@2
-      displayName: Publish Test Results
-      inputs:
-        testResultsFormat: 'xUnit'
-        testResultsFiles: '**/artifacts/TestResults/Release/*.xml'
-        testRunTitle: 'Windows_SBRP_tests'
-      condition: always()
-  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - template: /eng/common/templates-official/job/publish-build-assets.yml@self
-      parameters:
-        dependsOn:
-        - Linux
-        - Windows
-        publishAssetsImmediately: true
-        isAssetlessBuild: true
+        ## The source-build-reference-packages repository does not support building on Windows, but it is capable of running the generate tooling tests on Windows.
+        ## The creation of an empty file in artifacts\packages is to workaround an arcade limitation with enabling artifact publishing.
+        - script: test.cmd && mkdir artifacts\packages\ && echo . > artifacts\packages\_
+          displayName: Run Tests

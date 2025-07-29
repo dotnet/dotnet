@@ -4,12 +4,20 @@ trigger:
     include:
     - main
     - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
 
 pr:
   branches:
     include:
     - main
     - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
 
 variables:
 - template: /azure-pipelines/templates/variables/common.yml

@@ -146,6 +146,8 @@ The tooling does not handle all situations and sometimes the generated code will
 it to compile. If this occurs when generating a newer version of an existing package, it can be helpful to
 regenerate the older version to see what customizations to the generated code were made.
 
+> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-reference-packages/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-reference-packages/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-reference-packages/pull/1325)).
+
 #### Workflow
 
 1. Generate reference package and its depencencies running the `./generate.sh --package <package>,<version>` script.
@@ -211,6 +213,8 @@ Run `generate.sh --help` for usage details.
 ./generate.sh --type text --package microsoft.build.traversal,3.1.6
 ```
 
+> **Suggestion:** Open an [issue](https://github.com/dotnet/source-build-reference-packages/issues/new) that describes the packages to add and assign it to Copilot to do the work (example [issue](https://github.com/dotnet/source-build-reference-packages/issues/1324) and [resulting PR](https://github.com/dotnet/source-build-reference-packages/pull/1325)).
+
 ## Vulnerable Packages
 
 CVEs may exist for reference packages included in this repo. Because the packages do not contain any
@@ -219,8 +223,9 @@ packages. If product repos migrate off these vulnerable packages, they can be [r
 
 ## Filing Issues
 
-This repo does not accept issues. Please file issues in
-[dotnet/source-build](https://github.com/dotnet/source-build/issues/new/choose).
+This repo should contain [issues](https://github.com/dotnet/source-build-reference-packages/issues) that are tied to reference, text-only, external, and target packages used by source build.
+
+Other source build related issues should be opened in [dotnet/source-build](https://github.com/dotnet/source-build/issues/new/choose)
 
 ## Cleanup
 

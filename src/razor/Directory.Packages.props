@@ -78,7 +78,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices.CSharp.Symbols" Version="$(_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LanguageServices.Implementation.Symbols" Version="$(_MicrosoftVisualStudioLanguageServicesPackageVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.LiveShare" Version="0.3.1074" />
-    <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.SDK" Version="17.7.294-pre" />
+    <PackageVersion Include="Microsoft.VisualStudio.ProjectSystem.SDK" Version="17.14.143" />
     <PackageVersion Include="Microsoft.VisualStudio.RpcContracts" Version="17.15.25-pre" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.Framework" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="$(_MicrosoftVisualStudioShellPackagesVersion)" />

@@ -1,18 +1,31 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    /*
+     * This task creates a Wixpack package from the provided source files and configuration.
+     * It processes the source files, copies necessary content files to a working directory,
+     * updates paths and variables in source-files, and generates a command line file
+     * for building the Wixpack. Content files get copied to a subfolder named after the File@Id
+     * or similar unique value, based on the content element type.
+     * We are including extensions in wixpack, which allows us to skip restoring these packages
+     * and discover extension binaries during signing/repacking.
+     * Finally, this task creates a zip package containing all the necessary files.
+     * The task supports various configurations such as cultures, define constants, extensions,
+     * include search paths, installer platform, output folder, and more.
+     */
     public class CreateWixBuildWixpack : Task
     {
         public ITaskItem BindTrackingFile { get; set; }
@@ -58,6 +71,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         public string WixpackWorkingDir { get; set; }
 
         private Dictionary<string, string> _defineConstantsDictionary;
+        private Dictionary<string, string> _defineVariablesDictionary;
         private string _wixprojDir;
         private string _installerFilename;
 
@@ -99,9 +113,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     throw new InvalidOperationException("ProjectPath not defined in DefineConstants. Task cannot proceed.");
                 }
 
+                CopyIncludeSearchPathsContents();
+                ProcessIncludeFiles();
                 CopySourceFilesAndContent();
                 CopyExtensions();
-                CopyIncludeSearchPathsContents();
                 UpdatePaths();
                 GenerateWixBuildCommandLineFile();
                 CreateWixpackPackage();
@@ -155,6 +170,42 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
         }
 
+        private void ProcessIncludeFiles()
+        {
+            _defineVariablesDictionary = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+            foreach (var includeFile in Directory.GetFiles(WixpackWorkingDir, "*.wxi", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    // We're processing a Wix include file, which contains preprocessor elements
+                    // in the format <?define KEY="value"?>
+                    // It can also contain XML comments that we need to remove, so we don't ingest
+                    // variables from elements that are commented out.
+
+                    XDocument xmlDocument = XDocument.Load(includeFile);
+                    xmlDocument.DescendantNodes()
+                               .OfType<XComment>()
+                               .ToList()
+                               .ForEach(comment => comment.Remove());
+
+                    // We use regular expressions to process wix preprocessor defines
+                    var regex = new Regex(@"<\?define\s+(\w+)\s*=\s*""([^""]*)""\s*\?>");
+
+                    foreach (Match match in regex.Matches(xmlDocument.ToString()))
+                    {
+                        if (match.Groups.Count == 3)
+                        {
+                            _defineVariablesDictionary[match.Groups[1].Value] = match.Groups[2].Value;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError($"Error processing include file {includeFile}: {ex.Message}");
+                }
+            }
+        }
+
         private void UpdatePaths()
         {
             // Update ProjectDir to just '.'
@@ -164,9 +215,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             // Update ProjectPath to just the project file name
-            if (_defineConstantsDictionary.ContainsKey("ProjectPath"))
+            if (_defineConstantsDictionary.TryGetValue("ProjectPath", out var projectPath))
             {
-                _defineConstantsDictionary["ProjectPath"] = Path.GetFileName(_defineConstantsDictionary["ProjectPath"]);
+                _defineConstantsDictionary["ProjectPath"] = Path.GetFileName(projectPath);
             }
 
             // Update OutDir to just '.''
@@ -182,9 +233,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             // Update TargetPath to %outputfolder%\<target file name>
-            if (_defineConstantsDictionary.ContainsKey("TargetPath"))
+            if (_defineConstantsDictionary.TryGetValue("TargetPath", out var targetPath))
             {
-                _defineConstantsDictionary["TargetPath"] = Path.Combine("%outputfolder%", Path.GetFileName(_defineConstantsDictionary["TargetPath"]));
+                _defineConstantsDictionary["TargetPath"] = Path.Combine("%outputfolder%", Path.GetFileName(targetPath));
             }
 
             // Update InstallerFile to %outputfolder%\<installer filename>
@@ -475,8 +526,10 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
 
                 var varName = path.Substring(startIdx + 2, endIdx - (startIdx + 2));
-                if (_defineConstantsDictionary.TryGetValue(varName, out var varValue))
+                if (_defineConstantsDictionary.TryGetValue(varName, out var varValue) ||
+                    _defineVariablesDictionary.TryGetValue(varName, out varValue))
                 {
+
                     path = path.Substring(0, startIdx) + varValue + path.Substring(endIdx + 1);
                 }
                 else

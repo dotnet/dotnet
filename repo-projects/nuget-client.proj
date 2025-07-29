@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <NuGetKeyFilePath>$(KeysDir)NuGet.Client.snk</NuGetKeyFilePath>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
 
     <!-- Don't pass any build actions because the repo doesn't support them. -->
     <BuildActions></BuildActions>

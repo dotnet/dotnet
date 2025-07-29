@@ -78,12 +78,6 @@ internal class DelegatedCompletionItemResolver(
             return resolvedCompletionItem;
         }
 
-        if (resolvedCompletionItem.TextEdit is null && resolvedCompletionItem.AdditionalTextEdits is null)
-        {
-            // Only post-processing work we have to do is formatting text edits on resolution.
-            return resolvedCompletionItem;
-        }
-
         var identifier = context.Identifier.TextDocumentIdentifier;
         if (!_documentContextFactory.TryCreate(identifier, out var documentContext))
         {

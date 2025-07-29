@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
-  <PropertyGroup>
-    <DeterministicBuildOptOut>true</DeterministicBuildOptOut>
-  </PropertyGroup>
-
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="diagnostics" />

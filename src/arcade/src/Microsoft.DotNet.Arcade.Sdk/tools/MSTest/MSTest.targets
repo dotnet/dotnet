@@ -4,7 +4,7 @@
   <PropertyGroup>
     <UseMSTestMetaPackage Condition=" '$(UseMSTestMetaPackage)' == '' ">false</UseMSTestMetaPackage>
     <UseMSTestSdk Condition=" '$(UseMSTestSdk)' == '' ">false</UseMSTestSdk>
-    <UseMSTestRunner Condition=" '$(UseMSTestRunner)' == '' ">false</UseMSTestRunner>
+    <EnableMSTestRunner Condition=" '$(EnableMSTestRunner)' == '' ">false</EnableMSTestRunner>
   </PropertyGroup>
 
   <Target Name="_MSTestValidatePackageDeps" BeforeTargets="Build">
@@ -26,7 +26,7 @@
     <PackageReference Include="MSTest" Version="$(MSTestVersion)" IsImplicitlyDefined="true" PrivateAssets="all" Publish="true" />
   </ItemGroup>  
 
-  <Import Project="..\VSTest.targets" Condition=" '$(UseMSTestRunner)' == 'false' " />
-  <Import Project="..\Microsoft.Testing.Platform.targets" Condition=" '$(UseMSTestRunner)' == 'true' " />
+  <Import Project="..\VSTest.targets" Condition=" '$(EnableMSTestRunner)' == 'false' " />
+  <Import Project="..\Microsoft.Testing.Platform\Microsoft.Testing.Platform.targets" Condition=" '$(EnableMSTestRunner)' == 'true' " />
 
 </Project>
