@@ -58,7 +58,8 @@
     <KeepFeedPrefixes Include="darc-int-dotnet-aspnetcore-" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+  <ItemGroup>
+    <!-- Temporary. https://github.com/dotnet/dotnet/pull/1686 has the real fix-->
     <ExtraPackageVersionPropsPackageInfo Include="EmscriptenWorkloadsVersion" Version="%24(SystemTextJsonVersion)" />
   </ItemGroup>
 
