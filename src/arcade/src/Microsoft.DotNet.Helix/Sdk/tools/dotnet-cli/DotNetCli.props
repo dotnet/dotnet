@@ -8,7 +8,6 @@
     <AspNetCoreRuntimeVersion>$(BundledNETCoreAppPackageVersion)</AspNetCoreRuntimeVersion>
     <DotNetCliPackageType Condition=" '$(DotNetCliPackageType)' == '' ">runtime</DotNetCliPackageType>
     <DotNetCliVersion Condition=" '$(DotNetCliVersion)' == '' AND '$(DotNetCliPackageType)' == 'runtime' ">$(BundledNETCoreAppPackageVersion)</DotNetCliVersion>
-    <!-- TODO (https://github.com/dotnet/arcade/issues/7022): We are hardcoding this version to use the one tied to the SDK version from global.json -->
     <DotNetCliVersion Condition=" '$(DotNetCliVersion)' == '' AND '$(DotNetCliPackageType)' == 'aspnetcore-runtime' ">$(AspNetCoreRuntimeVersion)</DotNetCliVersion>
     <DotNetCliVersion Condition=" '$(DotNetCliVersion)' == '' AND '$(DotNetCliPackageType)' == 'sdk' ">$(NETCoreSdkVersion)</DotNetCliVersion>
     <DotNetCliChannel Condition=" '$(DotNetCliChannel)' == '' ">Current</DotNetCliChannel>
