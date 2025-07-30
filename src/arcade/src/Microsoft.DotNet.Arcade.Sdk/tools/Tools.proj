@@ -50,7 +50,7 @@
     <PackageReference Include="MicroBuild.Core.Sentinel" Version="1.0.0" IsImplicitlyDefined="true" />
     <PackageReference Include="vswhere" Version="$(VSWhereVersion)" IsImplicitlyDefined="true" />
     <PackageReference Include="Microsoft.Signed.Wix" Version="$(MicrosoftSignedWixVersion)" IsImplicitlyDefined="true" />
-    <PackageReference Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetVersion)" IsImplicitlyDefined="true" />
+    <PackageReference Include="Microsoft.WixToolset.Sdk" Version="$(MicrosoftWixToolsetSdkVersion)" IsImplicitlyDefined="true" />
     <PackageReference Include="Microsoft.DotNet.SignTool" Version="$(MicrosoftDotNetSignToolVersion)" IsImplicitlyDefined="true" />
     <PackageReference Include="Microsoft.DotNet.Tar" Version="$(MicrosoftDotNetTarVersion)" IsImplicitlyDefined="true" />
     <PackageReference Include="Microsoft.DotNet.MacOsPkg.Cli" Version="$(MicrosoftDotNetMacOsPkgVersion)" IsImplicitlyDefined="true" />
