@@ -226,14 +226,15 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    ${{ if eq(parameters.targetOS, 'windows') }}:
-      # Don't clean while building on Windows as the pool's disk space is sufficient.
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        value: ''
-      ${{ else }}:
-        value: $(commandPrefix)cleanWhileBuilding
+    # Don't clean-while-building on OSs that have enough disk space to keep
+    # intermediates for compliance scanners.
+    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+      value: ''
     ${{ else }}:
-      value: $(commandPrefix)clean-while-building
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)cleanWhileBuilding
+      ${{ else }}:
+        value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
