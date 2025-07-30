@@ -37,7 +37,7 @@
       Some targets don't build any assets that use the LKG bits at from a dev build at runtime. Those platforms
       can skip the bootstrapping build.
     -->
-    <BuildArgs Condition="'$(TargetOS)' != 'browser' and '$(TargetOS)' != 'wasi' and '$(TargetsMobile)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
+    <BuildArgs Condition="'$(TargetOS)' != 'browser' and '$(TargetOS)' != 'wasi' and '$(TargetsMobile)' != 'true'">$(BuildArgs) $(FlagParameterPrefix)bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
     <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
