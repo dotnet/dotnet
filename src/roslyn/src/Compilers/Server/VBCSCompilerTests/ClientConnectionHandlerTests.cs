@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer.UnitTests
                 allowCompilationRequests: allowCompilationRequests);
 
             Assert.False(hitCompilation);
-            Assert.Equal(new CompletionData(CompletionReason.RequestCompleted, shutdownRequested: true), completionData);
+            Assert.Equal(new CompletionData(CompletionReason.RequestCompleted, shutdownRequested: nameof(BuildRequest)), completionData);
             Assert.True(response is ShutdownBuildResponse);
         }
 
