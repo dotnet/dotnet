@@ -200,14 +200,6 @@
       <NetSdkSupportingFeed>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json</NetSdkSupportingFeed>
     </PropertyGroup>
 
-    <ItemGroup>
-      <_BuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)"
-                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
-      <_BuildSources Include="@(_CommonBuildSources)" />
-      <_BuildSources Include="$(NetSdkSupportingFeedName)"
-                     Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
-    </ItemGroup>
-
     <RemoveInternetSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
@@ -255,6 +247,17 @@
                             SourcePath="$(NetSdkSupportingFeed)"
                             Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
 
+    <ItemGroup>
+      <_BuildSources Include="$(PrebuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
+                              $(ReferencePackagesNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
+      <_BuildSources Include="@(_CommonBuildSources)" />
+      <_BuildSources Include="$(NetSdkSupportingFeedName)"
+                     Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
+    </ItemGroup>
+
     <UpdateNuGetConfigPackageSourcesMappings
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
@@ -263,6 +266,7 @@
       SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
+      SharedComponentsSourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
       PrebuiltSourceName="$(PrebuiltNuGetSourceName)"
       SourceBuiltSourceNamePrefix="$(SourceBuiltSourceNamePrefix)"
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
@@ -333,32 +337,17 @@
     <!-- Get the previously-built-source-built package information from the manifest from that build. -->
     <ItemGroup>
       <_PreviouslySourceBuiltAssetManifests Include="$(PreviouslySourceBuiltPackagesPath)VerticalManifest.xml" />
-      <_PreviouslySourceBuiltSharedComponentAssetManifests Include="$(SharedComponentsArtifactsPath)VerticalManifest.xml" />
     </ItemGroup>
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="@(_PreviouslySourceBuiltAssetManifests)" Condition="Exists(@(_PreviouslySourceBuiltAssetManifests))">
       <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
-    <GetKnownArtifactsFromAssetManifests
-        AssetManifests="@(_PreviouslySourceBuiltSharedComponentAssetManifests)"
-        Condition="
-          Exists(@(_PreviouslySourceBuiltSharedComponentAssetManifests))
-          and '$(RepositoryName)' != 'source-build-reference-packages'
-          and '$(RepositoryName)' != 'arcade'">
-      <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
-    </GetKnownArtifactsFromAssetManifests>
-
-    <PropertyGroup>
-      <SharedRepositoryReferenceString>;@(SharedRepositoryReference, ';');</SharedRepositoryReferenceString>
-    </PropertyGroup>
-
-    <!-- Remove tooling components from the shared packages -->
-    <ItemGroup>
-      <_ToolingComponents Include="@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)"
-                          Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or %(RepoOrigin) == 'arcade' or %(RepoOrigin) == 'source-build-reference-packages'" />
-      <_PreviouslyBuiltSourceBuiltSharedComponentPackages Remove="@(_ToolingComponents)" MatchOnMetadata="Version" />
-    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetFilteredSharedComponentPackages"
+             Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
+      <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
+    </MSBuild>
 
     <PropertyGroup>
       <_UsePackageVersionPropsAggregation>true</_UsePackageVersionPropsAggregation>

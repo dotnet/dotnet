@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Razor.Utilities.Shared.Test;
@@ -231,5 +232,69 @@ public class ImmutableArrayExtensionsTests
         // Assert
         Assert.Equal(4, builder.Count);
         Assert.Equal(["apple", "cherry", "date", "banana"], builder.ToArray());
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [2, 4, 6, 8, 10];
+
+        var actual = data.WhereAsArray(static x => x % 2 == 0);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_None()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [];
+
+        var actual = data.WhereAsArray(static x => false);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_All()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        var expected = data;
+
+        var actual = data.WhereAsArray(static x => true);
+        Assert.Equal<int>(expected, actual);
+        Assert.Same(ImmutableCollectionsMarshal.AsArray(expected), ImmutableCollectionsMarshal.AsArray(actual));
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArrayBuilder()
+    {
+        var data = ImmutableArray.CreateBuilder<int>();
+        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+        ImmutableArray<int> expected = [2, 4, 6, 8, 10];
+
+        var actual = data.WhereAsArray(static x => x % 2 == 0);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArrayBuilder_None()
+    {
+        var data = ImmutableArray.CreateBuilder<int>();
+        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+        ImmutableArray<int> expected = [];
+
+        var actual = data.WhereAsArray(static x => false);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArrayBuilder_All()
+    {
+        var data = ImmutableArray.CreateBuilder<int>();
+        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+        var expected = data;
+
+        var actual = data.WhereAsArray(static x => true);
+        Assert.Equal<int>(expected, actual);
     }
 }

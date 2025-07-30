@@ -95,6 +95,20 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     }
 
     /// <summary>
+    ///     Configures whether this property must have a value assigned or <see langword="null" /> is a valid value.
+    ///     A property can only be configured as non-required if it is based on a CLR type that can be
+    ///     assigned <see langword="null" />.
+    /// </summary>
+    /// <param name="required">A value indicating whether the property is required.</param>
+    /// <returns>The same builder instance so that multiple configuration calls can be chained.</returns>
+    public virtual ComplexCollectionBuilder IsRequired(bool required = true)
+    {
+        PropertyBuilder.IsRequired(required, ConfigurationSource.Explicit);
+
+        return this;
+    }
+
+    /// <summary>
     ///     Returns an object that can be used to configure a property of the complex type.
     ///     If no property with the given name exists, then a new property will be added.
     /// </summary>
@@ -105,7 +119,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// </remarks>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <returns>An object that can be used to configure the property.</returns>
-    public virtual ComplexTypePropertyBuilder Property(string propertyName)
+    public virtual ComplexCollectionTypePropertyBuilder Property(string propertyName)
         => new(
             TypeBuilder.Property(
                 Check.NotEmpty(propertyName),
@@ -125,7 +139,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// <typeparam name="TProperty">The type of the property to be configured.</typeparam>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <returns>An object that can be used to configure the property.</returns>
-    public virtual ComplexTypePropertyBuilder<TProperty> Property<TProperty>(string propertyName)
+    public virtual ComplexCollectionTypePropertyBuilder<TProperty> Property<TProperty>(string propertyName)
         => new(
             TypeBuilder.Property(
                 typeof(TProperty),
@@ -145,7 +159,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// <param name="propertyType">The type of the property to be configured.</param>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <returns>An object that can be used to configure the property.</returns>
-    public virtual ComplexTypePropertyBuilder Property(Type propertyType, string propertyName)
+    public virtual ComplexCollectionTypePropertyBuilder Property(Type propertyType, string propertyName)
         => new(
             TypeBuilder.Property(
                 Check.NotNull(propertyType),
@@ -223,7 +237,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// <typeparam name="TProperty">The type of the property to be configured.</typeparam>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <returns>An object that can be used to configure the property.</returns>
-    public virtual ComplexTypePropertyBuilder<TProperty> IndexerProperty
+    public virtual ComplexCollectionTypePropertyBuilder<TProperty> IndexerProperty
         <[DynamicallyAccessedMembers(IProperty.DynamicallyAccessedMemberTypes)] TProperty>(string propertyName)
         => new(
             TypeBuilder.IndexerProperty(
@@ -242,7 +256,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// <param name="propertyType">The type of the property to be configured.</param>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <returns>An object that can be used to configure the property.</returns>
-    public virtual ComplexTypePropertyBuilder IndexerProperty(
+    public virtual ComplexCollectionTypePropertyBuilder IndexerProperty(
         [DynamicallyAccessedMembers(IProperty.DynamicallyAccessedMemberTypes)] Type propertyType,
         string propertyName)
     {
@@ -572,7 +586,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
             TypeBuilder.ComplexProperty(
                 typeof(TProperty),
                 Check.NotEmpty(propertyName),
-                complexTypeName,
+                Check.NotEmpty(complexTypeName),
                 collection: true,
                 ConfigurationSource.Explicit)!.Metadata);
 
@@ -634,7 +648,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// </remarks>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <param name="buildAction">An action that performs configuration of the property.</param>
-    /// <returns>An object that can be used to configure the property.</returns>
+    /// <returns>The same builder instance so that multiple configuration calls can be chained.</returns>
     public virtual ComplexCollectionBuilder ComplexCollection(string propertyName, Action<ComplexCollectionBuilder> buildAction)
     {
         Check.NotNull(buildAction);
@@ -714,7 +728,7 @@ public class ComplexCollectionBuilder : IInfrastructure<IConventionComplexProper
     /// <param name="propertyType">The type of the property to be configured.</param>
     /// <param name="propertyName">The name of the property to be configured.</param>
     /// <param name="buildAction">An action that performs configuration of the property.</param>
-    /// <returns>An object that can be used to configure the property.</returns>
+    /// <returns>The same builder instance so that multiple configuration calls can be chained.</returns>
     public virtual ComplexCollectionBuilder ComplexCollection(Type propertyType, string propertyName, Action<ComplexCollectionBuilder> buildAction)
     {
         Check.NotNull(buildAction);
