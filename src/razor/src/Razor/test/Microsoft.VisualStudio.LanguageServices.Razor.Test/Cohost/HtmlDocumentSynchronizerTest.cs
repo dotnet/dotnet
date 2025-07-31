@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -348,19 +347,6 @@ public class HtmlDocumentSynchronizerTest(ITestOutputHelper testOutput) : Visual
             }
 
             return (TResult)(object)(await solution.GetAdditionalDocument(_documentId).AssumeNotNull().GetTextAsync(cancellationToken)).ToString();
-        }
-    }
-
-    private class TestHtmlDocumentPublisher : IHtmlDocumentPublisher
-    {
-        private readonly List<(TextDocument, string, ChecksumWrapper)> _publishes = [];
-
-        public List<(TextDocument Document, string Text, ChecksumWrapper Checksum)> Publishes => _publishes;
-
-        public Task PublishAsync(TextDocument document, SynchronizationResult synchronizationResult, string htmlText, CancellationToken cancellationToken)
-        {
-            _publishes.Add((document, htmlText, synchronizationResult.Checksum));
-            return Task.CompletedTask;
         }
     }
 }

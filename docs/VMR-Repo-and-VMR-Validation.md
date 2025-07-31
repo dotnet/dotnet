@@ -26,12 +26,14 @@ Broadly, the following validation currently takes place:
 
 ## Proposed Validation
 
-### Source-build legs are replaced by optional full-VMR validation
+### Repo level source build validation
 
-- We will introduce the ability to run optional test VMR insertions on each PR for repos that participate in a VMR. This means that the code changes in the PR will be built in context of a full product build. Note: Because the validation may reveal issues that require downstream reaction and are not actionable before merge, these legs must be optional. They are informational and can't be used as a gate
-- The existing repo source-build legs will be removed. The short hop between repository and VMR insertion means that detecting source-only build issues as early as possible is not as critical as before. This has the following knock-on effects:
-  - Existing offical build source-build legs will be removed.
-  - The source build intermediate architecuture can be removed.
+- We will introduce the ability to run optional test VMR insertions on each PR for repos that participate in a VMR. This means that the code changes in the PR will be built in context of a full product build. Note: Because the validation may reveal issues that require downstream reaction and are not actionable before merge, these legs must be optional. They are informational and can't be used as a gate.
+  - Status: Completed - see [documentation](https://github.com/dotnet/arcade/blob/main/Documentation/VmrValidation.md)
+- The existing repo source-build legs:
+  - Will no longer include prebuilt detection. Prebuilt detection at the repo level is difficult at best. Prebuilts are best detected within the context of a full product source build.
+  - Will no longer produce/publish the source build intermediate packages.
+  - Will be optional. If a repo has conditional logic based on `DotNetBuildSourceOnly` or`TargetFrameworks` it may make sense to continue running the source-build legs. It is an ROI decision for repo owners to make. The short hop between repository and VMR insertion means that detecting source-only build issues as early as possible is not as critical as before.
 
 **Scheduling: Can be implemented now.**
  

@@ -90,7 +90,7 @@
         SNBinaryPath="$(SNBinaryPath)"
         MicroBuildCorePath="$(NuGetPackageRoot)microsoft.visualstudioeng.microbuild.core\$(MicrosoftVisualStudioEngMicroBuildCoreVersion)"
         Wix3ToolsPath="$(WixInstallPath)"
-        WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetVersion)\tools\net472\x64"
+        WixToolsPath="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\net472\x64"
         TarToolPath="$(NuGetPackageRoot)microsoft.dotnet.tar\$(MicrosoftDotNetTarVersion)\tools\$(NetToolCurrent)\any\Microsoft.Dotnet.Tar.dll"
         PkgToolPath="$(PkgToolPath)"
         RepackParallelism="$(SignToolRepackParallelism)"

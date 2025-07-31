@@ -3,6 +3,7 @@
 
 using System.Runtime.Serialization;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
@@ -15,6 +16,8 @@ internal readonly record struct RazorFormattingOptions
     public int TabSize { get; init; } = 4;
     [DataMember(Order = 2)]
     public bool CodeBlockBraceOnNextLine { get; init; } = false;
+    [DataMember(Order = 3)]
+    public RazorCSharpSyntaxFormattingOptions? CSharpSyntaxFormattingOptions { get; init; }
 
     public RazorFormattingOptions()
     {
@@ -26,6 +29,15 @@ internal readonly record struct RazorFormattingOptions
             InsertSpaces = options.InsertSpaces,
             TabSize = options.TabSize,
             CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine
+        };
+
+    public static RazorFormattingOptions From(FormattingOptions options, bool codeBlockBraceOnNextLine, RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
+        => new()
+        {
+            InsertSpaces = options.InsertSpaces,
+            TabSize = options.TabSize,
+            CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine,
+            CSharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions
         };
 
     public RazorIndentationOptions ToIndentationOptions()
