@@ -22,6 +22,11 @@ parameters:
   type: boolean
   default: false
 
+# This is the official production build
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
 variables:
 - name: _TeamName
   value: DotNetCore
@@ -29,10 +34,6 @@ variables:
 - name: defaultContainerOptions
   value: --privileged
 
-- name: isOfficialBuild
-  value: ${{ and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}
-
-## Note: The use of if expressons underneath the variable is necessary to get the updated isOfficialBuild value
 - ${{ if eq(parameters.desiredIBC, 'Enabled') }}:
   - name: ibcEnabled
     value: true
@@ -41,7 +42,7 @@ variables:
     value: false
 - ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
   # Enable IBC on the internal project if the, branch is a release branch
-  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - ${{ if and(eq(parameters.isOfficialBuild, or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: ibcEnabled
       value: true
   # No IBC otherwise.
@@ -52,7 +53,6 @@ variables:
   - name: ibcEnabled
     value: false
 
-## Note: The use of if expressons underneath the variable is necessary to get the updated isOfficialBuild value
 - ${{ if eq(parameters.desiredFinalVersionKind, 'Default (repo specifies)') }}:
   - name: brandingType
     value: 'default'
@@ -68,57 +68,69 @@ variables:
 
 ## Do not set this when building source only to avoid including telemetry in the bootstrap artifacts
 ## handed off to distro partners.
-- ${{ if ne(parameters.buildSourceOnly, true) }}:
-  - name: officialBuilderProperty
+- ${{ if and(ne(parameters.buildSourceOnly, true), eq(parameters.isOfficialBuild, true)) }}:
+  - name: officialBuildProperties
     value: '/p:OfficialBuilder=Microsoft'
 - ${{ else }}:
-  - name: officialBuilderProperty
-    value: ''
-
-- ${{ if eq(variables['isOfficialBuild'], true) }}:
-  - name: officialBuildProperties
-    value: '$(officialBuilderProperty)'
-- ${{ else }}:
   - name: officialBuildProperties
     value: ''
 
-- ${{ if eq(parameters.desiredSigning, 'Signed') }}:
+- ${{ if eq(parameters.buildSourceOnly, true) }}:
+  - name: signEnabled
+    value: false
+- ${{ elseif eq(parameters.desiredSigning, 'Signed (Real)') }}:
   - name: signEnabled
     value: true
+  - name: signType
+    value: Real
+  - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+    - name: signDacEnabled
+      value: true
+- ${{ elseif eq(parameters.desiredSigning, 'Signed (Test)') }}:
+  - name: signEnabled
+    value: true
+  - name: signType
+    value: Test
+  - name: signDacEnabled
+    value: false
+- ${{ elseif eq(parameters.desiredSigning, 'Signed (Dry Run)') }}:
+  - name: signEnabled
+    value: true
+  - name: signType
+    value: DryRun
+  - name: signDacEnabled
+    value: false
 - ${{ elseif eq(parameters.desiredSigning, 'Unsigned') }}:
   - name: signEnabled
     value: false
+  - name: signDacEnabled
+    value: false
 - ${{ elseif or(startsWith(parameters.desiredSigning, 'Default'), eq(parameters.desiredSigning, '')) }}:
-  # Always sign on the public project (will be dry-run signing)
-  - ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  # Always dry-run sign on the public project or pull requests (will be dry-run signing).
+  - ${{ if or(eq(variables['System.TeamProject'], 'public'), eq(variables['Build.Reason'], 'PullRequest')) }}:
     - name: signEnabled
       value: true
-  # Always sign in pull requests (dry run)
-  - ${{ elseif eq(variables['Build.Reason'], 'PullRequest') }}:
+    - name: signType
+      value: DryRun
+    - name: signDacEnabled
+      value: false
+  # Sign on official builds of release branches.
+  - ${{ elseif and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: signEnabled
       value: true
-  # Pass sign on the internal project if the, branch is a release branch
-  - ${{ elseif and(eq(variables['System.TeamProject'], 'internal'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-    - name: signEnabled
+    - name: signType
+      value: real
+    - name: signDacEnabled
       value: true
   # Do not sign otherwise.
   - ${{ else }}:
     - name: signEnabled
       value: false
+    - name: signDacEnabled
+      value: false
 - ${{ else }}:
   - name: signEnabled
     value: false
-
-# If signing is disabled, don't sign the DAC.
-- ${{ if eq(parameters.desiredSigning, 'Unsigned') }}:
-  - name: signDacEnabled
-    value: false
-# Otherwise, sign if the branch is a release branch.
-# We can't sign the DAC in main because the certificates are locked down.
-- ${{ elseif and(eq(variables['System.TeamProject'], 'internal'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
-  - name: signDacEnabled
-    value: true
-- ${{ else }}:
   - name: signDacEnabled
     value: false
 
