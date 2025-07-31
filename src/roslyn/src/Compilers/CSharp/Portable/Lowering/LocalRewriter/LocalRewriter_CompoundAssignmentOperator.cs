@@ -819,7 +819,6 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         if (eventAccess.EventSymbol.IsWindowsRuntimeEvent)
                         {
-                            Debug.Assert(!isRegularCompoundAssignment);
                             // This is a temporary object that will be rewritten away before the lowering completes.
                             return eventAccess.Update(TransformPropertyOrEventReceiver(eventAccess.EventSymbol, eventAccess.ReceiverOpt,
                                                                                        stores, temps),

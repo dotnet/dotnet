@@ -83,6 +83,7 @@ jobs:
   - template: /eng/common/core-templates/jobs/source-build.yml
     parameters:
       is1ESPipeline: ${{ parameters.is1ESPipeline }}
+      allCompletedJobId: Source_Build_Complete
       ${{ each parameter in parameters.sourceBuildParameters }}:
         ${{ parameter.key }}: ${{ parameter.value }}
 
@@ -107,6 +108,8 @@ jobs:
         - ${{ if eq(parameters.publishBuildAssetsDependsOn, '') }}:
           - ${{ each job in parameters.jobs }}:
             - ${{ job.job }}
+        - ${{ if eq(parameters.enableSourceBuild, true) }}:
+          - Source_Build_Complete
 
         runAsPublic: ${{ parameters.runAsPublic }}
         publishAssetsImmediately: ${{ or(parameters.publishAssetsImmediately, parameters.isAssetlessBuild) }}

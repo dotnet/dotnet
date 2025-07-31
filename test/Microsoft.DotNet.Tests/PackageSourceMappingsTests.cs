@@ -23,7 +23,6 @@ namespace Microsoft.DotNet.Tests
         private const string PrebuiltSourceName = "prebuilt";
         private const string PreviouslySourceBuiltSourceName = "previously-source-built";
         private const string ReferencePackagesSourceName = "reference-packages";
-        private const string SharedComponentsSourceName = "shared-components";
 
         private ITestOutputHelper OutputHelper { get; }
 
@@ -59,7 +58,7 @@ namespace Microsoft.DotNet.Tests
         public void SourceBuildTests(string nugetConfigFilename, bool useOnlineFeeds)
         {
             string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, ReferencePackagesSourceName,
-                                SharedComponentsSourceName, ArcadeSourceName, RuntimeSourceName];
+                                ArcadeSourceName, RuntimeSourceName];
             RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
         }
 
@@ -69,18 +68,7 @@ namespace Microsoft.DotNet.Tests
         [InlineData("sb-sbrp-offline.config", false)]
         public void SourceBuildSbrpRepoTests(string nugetConfigFilename, bool useOnlineFeeds)
         {
-            string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, SharedComponentsSourceName, ReferencePackagesSourceName];
-            RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
-        }
-
-        // Source build tests with shared components - test precedence behavior
-        [Theory]
-        [InlineData("sb-sharedcomponents-online.config", true)]
-        [InlineData("sb-sharedcomponents-offline.config", false)]
-        public void SourceBuildSharedComponentsTests(string nugetConfigFilename, bool useOnlineFeeds)
-        {
-            string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, SharedComponentsSourceName, 
-                                ReferencePackagesSourceName];
+            string[] sources = [PrebuiltSourceName, PreviouslySourceBuiltSourceName, ReferencePackagesSourceName];
             RunTest(nugetConfigFilename, useOnlineFeeds, sources, sourceBuild: true);
         }
 
@@ -112,7 +100,6 @@ namespace Microsoft.DotNet.Tests
                 task.ReferencePackagesSourceName = ReferencePackagesSourceName;
                 task.PreviouslySourceBuiltSourceName = PreviouslySourceBuiltSourceName;
                 task.PrebuiltSourceName = PrebuiltSourceName;
-                task.SharedComponentsSourceName = SharedComponentsSourceName;
             }
 
             task.Execute();
@@ -164,7 +151,6 @@ namespace Microsoft.DotNet.Tests
             private readonly string PreviouslySourceBuiltSource = Path.Combine(PackageSourceMappingsRoot, "previously-source-built");
             private readonly string ReferencePackagesSource = Path.Combine(PackageSourceMappingsRoot, "reference-packages");
             private readonly string PrebuiltSource = Path.Combine(PackageSourceMappingsRoot, "prebuilt");
-            private readonly string SharedComponentsSource = Path.Combine(PackageSourceMappingsRoot, "shared-components");
             private readonly string SourceBuildReferencePackagesSource = Path.Combine(PackageSourceMappingsRoot, "source-build-reference-package-cache");
 
             public readonly string SourceBuildReferencePackagesRepo = Path.Combine(PackageSourceMappingsRoot, "sbrp");
@@ -180,7 +166,6 @@ namespace Microsoft.DotNet.Tests
                             ["%previously-source-built%"] = PreviouslySourceBuiltSource,
                             ["%reference-packages%"] = ReferencePackagesSource,
                             ["%prebuilt%"] = PrebuiltSource,
-                            ["%shared-components%"] = SharedComponentsSource,
                             ["%source-build-reference-package-cache%"] = SourceBuildReferencePackagesSource
                         };
 
@@ -230,15 +215,6 @@ namespace Microsoft.DotNet.Tests
 
                 // Generate prebuilt packages
                 GenerateNuGetPackage(PrebuiltSource, "Prebuilt.Package", "1.0.0");
-
-                // Generate shared components packages
-                // Create some packages that will conflict with prebuilt and previously source-built
-                GenerateNuGetPackage(SharedComponentsSource, "SharedComponent.Package1", "1.0.0");
-                GenerateNuGetPackage(SharedComponentsSource, "SharedComponent.Package2", "1.0.0");
-                // Create a package that exists in prebuilt to test precedence
-                GenerateNuGetPackage(SharedComponentsSource, "Prebuilt.Package", "1.0.0");
-                // Create a package that exists in previously source-built to test precedence
-                GenerateNuGetPackage(SharedComponentsSource, "PSB.Package1", "1.0.0");
 
                 // Generate SBRP repo files - nuspecs
                 GenerateNuspecFile(SourceBuildReferencePackagesRepo, "SBRP.Repo.Package1", "1.0.0");

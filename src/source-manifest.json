@@ -1,16 +1,16 @@
 {
   "repositories": [
     {
-      "barId": 276668,
+      "barId": 276631,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "e2fed65f9c524d12c64876194ae4ce177b935bb3"
+      "commitSha": "0fbc9e8711fa91e68c2bf3db376fb83b46f4ac35"
     },
     {
-      "barId": 276997,
+      "barId": 276850,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "eff021a08d53b8feaa934856fe89cb9858d2db14"
+      "commitSha": "c40d32ed99f3fae965ac81a257e3cf3889601754"
     },
     {
       "barId": 276375,
@@ -19,10 +19,10 @@
       "commitSha": "2478ada175a4089ab1310960d2590810e9adc4f9"
     },
     {
-      "barId": 276999,
+      "barId": 276722,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "0a63bad40daacd4999d273d95dac663496f628df"
+      "commitSha": "3a3e014313d2c1bddc01b4333886783a7492c652"
     },
     {
       "barId": 276378,
@@ -37,10 +37,10 @@
       "commitSha": "24de8bfbfd5795acd1dde863ed8172d538a9f585"
     },
     {
-      "barId": 277003,
+      "barId": 276679,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "0b27eb03faf88f2ec37f87f8922d614586112bdf"
+      "commitSha": "cb3e343b2ca25dbf34f9b6d9f2544cdae73f7481"
     },
     {
       "barId": 276379,
@@ -55,10 +55,10 @@
       "commitSha": "53929f2e01281a614a15033dfaae6fb6d00bb543"
     },
     {
-      "barId": 276926,
+      "barId": 276630,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "9d8a09586df962e9272ddd637880c84cb6cc92be"
+      "commitSha": "1f60126fb517e342dd563e50bb3cb52f8109f837"
     },
     {
       "barId": 271771,
@@ -67,10 +67,10 @@
       "commitSha": "772ee13d2bafaa1414d90dbfbd77e0941115ef19"
     },
     {
-      "barId": 277035,
+      "barId": 276452,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "617e1fa2446816b6046c72b6292f6adcde93cb58"
+      "commitSha": "2c9fd5dcffadd0271ffe9e6f14caa09c8a2f2d6a"
     },
     {
       "barId": 276436,
@@ -103,10 +103,10 @@
       "commitSha": "049672a7df90f87cfead427665edc37c37c22ed1"
     },
     {
-      "barId": 277005,
+      "barId": 276385,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "f0179167545c667731716b3af76f38b1f474c7b5"
+      "commitSha": "858616f3ac5075ff97c49b7f3e676c886f160652"
     },
     {
       "barId": 274866,
@@ -139,16 +139,16 @@
       "commitSha": "41346681fafc7b7ab31239a77aba00d7c3e71be5"
     },
     {
-      "barId": 277047,
+      "barId": 276848,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "f577533576382c1cdb5c2e79ca9f19b57649185e"
+      "commitSha": "cd22d8061ea3461925cb5aacb4b0e2c16c132063"
     },
     {
-      "barId": 276740,
+      "barId": 275831,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "3e7d1160037e5e328558210c328cc6af7f9b6b0d"
+      "commitSha": "390c57065309a5b4ec1075894f5fcecab472aa62"
     },
     {
       "barId": 276515,

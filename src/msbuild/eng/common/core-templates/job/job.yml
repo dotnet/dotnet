@@ -20,7 +20,6 @@ parameters:
   artifacts: ''
   enableMicrobuild: false
   enableMicrobuildForMacAndLinux: false
-  microbuildUseESRP: true
   enablePublishBuildArtifacts: false
   enablePublishBuildAssets: false
   enablePublishTestResults: false
@@ -129,7 +128,6 @@ jobs:
       parameters:
         enableMicrobuild: ${{ parameters.enableMicrobuild }}
         enableMicrobuildForMacAndLinux: ${{ parameters.enableMicrobuildForMacAndLinux }}
-        microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
         continueOnError: ${{ parameters.continueOnError }}
 
   - ${{ if and(eq(parameters.runAsPublic, 'false'), eq(variables['System.TeamProject'], 'internal')) }}:

@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <PackagesOutput>$(ProjectDirectory)src/xunit.abstractions/bin/$(Configuration)/</PackagesOutput>
+    <XunitAbstractionsKeyFilePath>$(KeysDir)xunit.abstractions.snk</XunitAbstractionsKeyFilePath>
+    <GlobalJsonFile>$(ProjectDirectory)global.json</GlobalJsonFile>
+    <CustomRepoBuild>true</CustomRepoBuild>
+  </PropertyGroup>
+
+  <Target Name="CustomRepoBuild">
+    <PropertyGroup>
+      <BuildCommandArgs>$(ProjectDirectory)xunit.abstractions.sln</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:Configuration=$(Configuration)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PackageVersion=$(AbstractionsXunitReleaseVersion)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:AssemblyOriginatorKeyFile=$(XunitAbstractionsKeyFilePath)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:DelaySign=$(DelaySign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:SignAssembly=true</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /p:PublicSign=$(PublicSign)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) /v:$(LogVerbosity)</BuildCommandArgs>
+      <BuildCommandArgs>$(BuildCommandArgs) $(RedirectRepoOutputToLog)</BuildCommandArgs>
+    </PropertyGroup>
+
+    <Exec Command="$(DotNetTool) restore /bl:$(ArtifactsLogRepoDir)restore.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) build /bl:$(ArtifactsLogRepoDir)build.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+
+    <Exec Command="$(DotNetTool) pack /bl:$(ArtifactsLogRepoDir)pack.binlog $(BuildCommandArgs)"
+          EnvironmentVariables="@(EnvironmentVariables)"
+          WorkingDirectory="$(ProjectDirectory)"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+</Project>

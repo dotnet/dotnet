@@ -59,7 +59,7 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             {
                 Diagnostics =
                 [
-                    new LspDiagnostic
+                    new Diagnostic
                     {
                         Code = "HTM1337",
                         Range = SourceText.From(input.Text).GetRange(input.NamedSpans.First().Value.First())
@@ -95,53 +95,15 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             {
                 Diagnostics =
                 [
-                    new LspDiagnostic
+                    new Diagnostic
                     {
                         Code = CSSErrorCodes.UnrecognizedBlockType,
                         Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@@") + 1, 1))
                     },
-                    new LspDiagnostic
+                    new Diagnostic
                     {
                         Code = CSSErrorCodes.UnrecognizedBlockType,
                         Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("f"), 1))
-                    }
-                ]
-            }]);
-    }
-
-    [Fact]
-    public Task FilterCSharpFromCss()
-    {
-        TestCode input = """
-            <div>
-
-            <style>
-                @{ insertSomeBigBlobOfCSharp(); }
-
-                {|CSS031:~|}~~~~
-            </style>
-
-            </div>
-
-            @code {
-                string insertSomeBigBlobOfCSharp() => "body { font-weight: bold; }";
-            }
-            """;
-
-        return VerifyDiagnosticsAsync(input,
-            htmlResponse: [new VSInternalDiagnosticReport
-            {
-                Diagnostics =
-                [
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@{"), 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("~~"), 1))
                     }
                 ]
             }]);
@@ -155,8 +117,6 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
 
             <style>
                 @* This is a Razor comment *@
-
-                {|CSS031:~|}~~~~
             </style>
 
             </div>
@@ -167,15 +127,10 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             {
                 Diagnostics =
                 [
-                    new LspDiagnostic
+                    new Diagnostic
                     {
                         Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
                         Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@*"), 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("~~"), 1))
                     }
                 ]
             }]);
@@ -189,8 +144,6 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
 
             <style>
                 @* This is a Razor comment *@
-
-                {|CSS031:~|}~~~~
             </style>
 
             </div>
@@ -201,145 +154,11 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             {
                 Diagnostics =
                 [
-                    new LspDiagnostic
+                    new Diagnostic
                     {
                         Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
                         Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("Ra"), 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingSelectorBeforeCombinatorCode,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("~~"), 1))
                     }
-                ]
-            }]);
-    }
-
-    [Fact]
-    public Task FilterMissingClassNameInCss()
-    {
-        TestCode input = """
-            <div>
-
-            <style>
-              .@(className)
-                background-color: lightblue;
-              }
-
-              .{|CSS008:{|}
-                bar: baz;
-              }
-            </style>
-
-            </div>
-
-            @code
-            {
-                private string className = "foo";
-            }
-            """;
-
-        return VerifyDiagnosticsAsync(input,
-            htmlResponse: [new VSInternalDiagnosticReport
-            {
-                Diagnostics =
-                [
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingClassNameAfterDot,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(".@") + 1, 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingClassNameAfterDot,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(".{") + 1, 1))
-                    },
-                ]
-            }]);
-    }
-
-    [Fact]
-    public Task FilterMissingClassNameInCss_WithSpace()
-    {
-        TestCode input = """
-            <div>
-
-            <style>
-              . @(className)
-                background-color: lightblue;
-              }
-
-              .{|CSS008: |}{
-                bar: baz;
-              }
-            </style>
-
-            </div>
-
-            @code
-            {
-                private string className = "foo";
-            }
-            """;
-
-        return VerifyDiagnosticsAsync(input,
-            htmlResponse: [new VSInternalDiagnosticReport
-            {
-                Diagnostics =
-                [
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingClassNameAfterDot,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(". @") + 1, 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingClassNameAfterDot,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(". {") + 1, 1))
-                    },
-                ]
-            }]);
-    }
-
-    [Fact]
-    public Task FilterPropertyValueInCss()
-    {
-        TestCode input = """
-            <div>
-
-            <style>
-              .goo {
-                background-color: @(color);
-              }
-
-              .foo {
-                background-color:{|CSS025: |}/* no value here */;
-              }
-            </style>
-
-            </div>
-
-            @code
-            {
-                private string color = "red";
-            }
-            """;
-
-        return VerifyDiagnosticsAsync(input,
-            htmlResponse: [new VSInternalDiagnosticReport
-            {
-                Diagnostics =
-                [
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingPropertyValue,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(": @") + 1, 1))
-                    },
-                    new LspDiagnostic
-                    {
-                        Code = CSSErrorCodes.MissingPropertyValue,
-                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf(": /") + 1, 1))
-                    },
                 ]
             }]);
     }

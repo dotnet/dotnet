@@ -21,8 +21,8 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
 using RazorDiagnosticFactory = AspNetCore.Razor.Language.RazorDiagnosticFactory;
-using RazorSyntaxNodeOrToken = AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
+using RazorSyntaxNodeOrToken = AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 
 /// <summary>
 /// Contains several methods for mapping and filtering Razor and C# diagnostics. It allows for
@@ -240,11 +240,9 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return str switch
         {
             CSSErrorCodes.UnrecognizedBlockType => IsEscapedAtSign(diagnostic, sourceText),
-            CSSErrorCodes.MissingOpeningBrace or
-            CSSErrorCodes.MissingClassNameAfterDot or
-            CSSErrorCodes.MissingSelectorAfterCombinator or
-            CSSErrorCodes.MissingPropertyValue or
-            CSSErrorCodes.MissingSelectorBeforeCombinatorCode => IsAtCSharpTransitionInStyleBlock(diagnostic, sourceText, syntaxTree),
+            CSSErrorCodes.MissingOpeningBrace => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
+            CSSErrorCodes.MissingSelectorAfterCombinator => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
+            CSSErrorCodes.MissingSelectorBeforeCombinatorCode => IsCSharpInStyleBlock(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.UnexpectedEndTagErrorCode => IsHtmlWithBangAndMatchingTags(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.InvalidNestingErrorCode => IsAnyFilteredInvalidNestingError(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.MissingEndTagErrorCode => syntaxTree.Options.FileKind.IsComponent(), // Redundant with RZ9980 in Components
@@ -280,32 +278,20 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
                 sourceText[absoluteIndex - 1] == '@';
         }
 
-        static bool IsAtCSharpTransitionInStyleBlock(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
+        static bool IsCSharpInStyleBlock(LspDiagnostic diagnostic, SourceText sourceText, RazorSyntaxTree syntaxTree)
         {
-            if (!sourceText.TryGetAbsoluteIndex(diagnostic.Range.Start, out var absoluteIndex))
+            // C# in a style block causes diagnostics because the HTML background document replaces C# with "~"
+            var owner = syntaxTree.FindInnermostNode(sourceText, diagnostic.Range.Start);
+            if (owner is null)
             {
                 return false;
             }
 
-            // Skip past non-newline whitespace to find the first interesting node
-            while (sourceText[absoluteIndex] is ' ' or '\t')
-            {
-                absoluteIndex++;
-                if (absoluteIndex == sourceText.Length)
-                {
-                    return false;
-                }
-            }
+            var element = owner.FirstAncestorOrSelf<MarkupElementSyntax>(static n => n.StartTag?.Name.Content == "style");
+            var csharp = owner.FirstAncestorOrSelf<CSharpCodeBlockSyntax>();
 
-            var owner = syntaxTree.Root.FindInnermostNode(absoluteIndex);
-
-            // If we're not at an @ to transition to C#, then we don't want to filter this diagnostic
-            if (owner is not CSharpTransitionSyntax)
-            {
-                return false;
-            }
-
-            return owner.FirstAncestorOrSelf<MarkupElementSyntax>(static n => n.StartTag?.Name.Content == "style") is not null;
+            return csharp is not null ||
+                (element?.Body.Any(static c => c is CSharpCodeBlockSyntax) ?? false);
         }
 
         // Ideally this would be solved instead by not emitting the "!" at the HTML backing file,
