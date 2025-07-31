@@ -68,6 +68,11 @@
     <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
 
+  <!-- Artifacts layout. Keep these values consistent with items defined in eng/Signing.props. -->
+  <PropertyGroup>
+    <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="$(LicenseFile)"
              Pack="true"

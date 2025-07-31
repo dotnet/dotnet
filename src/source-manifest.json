@@ -25,10 +25,10 @@
       "commitSha": "0a63bad40daacd4999d273d95dac663496f628df"
     },
     {
-      "barId": 276378,
+      "barId": 277325,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "0fe2f4d151b9412a87be13caac8ba1bfaba0d148"
+      "commitSha": "e14aee339ef2bdf7dd1fe7f7aeead32a534f4746"
     },
     {
       "barId": 277241,
