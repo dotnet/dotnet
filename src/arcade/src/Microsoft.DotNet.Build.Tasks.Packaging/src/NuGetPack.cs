@@ -132,6 +132,12 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             set;
         }
 
+        public bool Deterministic
+        {
+            get;
+            set;
+        }
+
         public override bool Execute()
         {
             if (Nuspecs == null || Nuspecs.Length == 0)
@@ -254,7 +260,7 @@ namespace Microsoft.DotNet.Build.Tasks.Packaging
             bool creatingSymbolsPackage = packSymbols && (Path.GetExtension(nupkgPath) == _symbolsPackageExtension);
             try
             {
-                PackageBuilder builder = new PackageBuilder();
+                PackageBuilder builder = new PackageBuilder(deterministic: Deterministic);
 
                 string baseDirectoryPath = (string.IsNullOrEmpty(BaseDirectory)) ? Path.GetDirectoryName(nuspecPath) : BaseDirectory;
                 builder.Populate(manifest.Metadata);
