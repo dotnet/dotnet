@@ -177,6 +177,13 @@
   <Target Name="WriteSourceBuiltSdkVersionFile"
           AfterTargets="Build"
           DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
+    <!-- Get the current commit SHA locally -->
+    <Exec
+      Command="git rev-parse HEAD 2>&amp;1"
+      Condition="'$(BUILD_SOURCEVERSION)' == ''"
+      StandardOutputImportance="Low" IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RepositoryCommit" />
+    </Exec>
     <!-- Content of the .version file to include in the tarball -->
     <ItemGroup>
       <VersionFileContent Include="$(RepositoryCommit);$(SourceBuiltSdkNonStableVersion)" />
