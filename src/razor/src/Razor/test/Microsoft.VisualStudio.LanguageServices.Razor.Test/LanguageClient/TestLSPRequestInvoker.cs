@@ -18,6 +18,8 @@ internal sealed class TestLSPRequestInvoker(params IEnumerable<(string method, o
 {
     private readonly Dictionary<string, object?> _responses = responses.ToDictionary(kvp => kvp.method, kvp => kvp.response);
 
+    public Action<object>? RequestAction { get; set; }
+
     [Obsolete]
     public override Task<IEnumerable<ReinvokeResponse<TOut>>> ReinvokeRequestOnMultipleServersAsync<TIn, TOut>(
         string method,
@@ -86,6 +88,8 @@ internal sealed class TestLSPRequestInvoker(params IEnumerable<(string method, o
         TIn parameters,
         CancellationToken cancellationToken)
     {
+        RequestAction?.Invoke(parameters);
+
         Assert.True(_responses.TryGetValue(method, out var response), $"'{method}' was not defined with a response.");
 
         return Task.FromResult(new ReinvocationResponse<TOut>(languageClientName: "html", (TOut?)response)).AsNullable();

@@ -14,6 +14,18 @@ using System.Xml.Linq;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
+    /*
+     * This task creates a Wixpack package from the provided source files and configuration.
+     * It processes the source files, copies necessary content files to a working directory,
+     * updates paths and variables in source-files, and generates a command line file
+     * for building the Wixpack. Content files get copied to a subfolder named after the File@Id
+     * or similar unique value, based on the content element type.
+     * We are including extensions in wixpack, which allows us to skip restoring these packages
+     * and discover extension binaries during signing/repacking.
+     * Finally, this task creates a zip package containing all the necessary files.
+     * The task supports various configurations such as cultures, define constants, extensions,
+     * include search paths, installer platform, output folder, and more.
+     */
     public class CreateWixBuildWixpack : Task
     {
         public ITaskItem BindTrackingFile { get; set; }
@@ -203,9 +215,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             // Update ProjectPath to just the project file name
-            if (_defineConstantsDictionary.ContainsKey("ProjectPath"))
+            if (_defineConstantsDictionary.TryGetValue("ProjectPath", out var projectPath))
             {
-                _defineConstantsDictionary["ProjectPath"] = Path.GetFileName(_defineConstantsDictionary["ProjectPath"]);
+                _defineConstantsDictionary["ProjectPath"] = Path.GetFileName(projectPath);
             }
 
             // Update OutDir to just '.''
@@ -221,9 +233,9 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
 
             // Update TargetPath to %outputfolder%\<target file name>
-            if (_defineConstantsDictionary.ContainsKey("TargetPath"))
+            if (_defineConstantsDictionary.TryGetValue("TargetPath", out var targetPath))
             {
-                _defineConstantsDictionary["TargetPath"] = Path.Combine("%outputfolder%", Path.GetFileName(_defineConstantsDictionary["TargetPath"]));
+                _defineConstantsDictionary["TargetPath"] = Path.Combine("%outputfolder%", Path.GetFileName(targetPath));
             }
 
             // Update InstallerFile to %outputfolder%\<installer filename>
