@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <!-- Include shared files for test netcore projects -->
-  <ItemGroup Condition=" '$(IsNetCoreProject)' == 'true' AND '$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
+  <ItemGroup Condition="'$(SkipShared)' != 'true' AND '$(TestProject)' == 'true' ">
     <Compile Include="$(BuildCommonDirectory)TestShared\*.cs" />
   </ItemGroup>
 

@@ -1194,7 +1194,6 @@ namespace NuGet.PackageManagement
                     // BUG #1181 VS2015 : Updating from one feed fails for packages from different feed.
 
                     var packagesFolderResource = await PackagesFolderSourceRepository.GetResourceAsync<DependencyInfoResource>(token);
-                    var packages = new List<SourcePackageDependencyInfo>();
                     foreach (var installedPackage in projectInstalledPackageReferences)
                     {
                         var packageInfo = await packagesFolderResource.ResolvePackage(installedPackage.PackageIdentity, targetFramework, resolutionContext.SourceCacheContext, log, token);
@@ -2381,7 +2380,6 @@ namespace NuGet.PackageManagement
             nuGetProjectContext.Log(NuGet.ProjectManagement.MessageLevel.Info, Environment.NewLine);
             nuGetProjectContext.Log(ProjectManagement.MessageLevel.Info, Strings.AttemptingToGatherDependencyInfo, packageIdentity, projectName, packageReferenceTargetFramework);
 
-            var log = new LoggerAdapter(nuGetProjectContext);
             var installedPackageIdentities = (await nuGetProject.GetInstalledPackagesAsync(token)).Select(pr => pr.PackageIdentity);
             var dependencyInfoFromPackagesFolder = await GetDependencyInfoFromPackagesFolderAsync(installedPackageIdentities,
                 packageReferenceTargetFramework,
@@ -3076,12 +3074,6 @@ namespace NuGet.PackageManagement
                 var originalPackageSpec = originalNugetPackageSpecLookup[buildIntegratedProject.MSBuildProjectPath];
                 var originalLockFile = lockFileLookup[buildIntegratedProject.MSBuildProjectPath];
                 var sources = nuGetProjectSourceLookup[buildIntegratedProject.MSBuildProjectPath];
-
-                var allFrameworks = updatedPackageSpec
-                    .TargetFrameworks
-                    .Select(t => t.FrameworkName)
-                    .Distinct()
-                    .ToList();
 
                 var restoreResult = restoreResults.Single(r =>
                     string.Equals(
@@ -3828,8 +3820,6 @@ namespace NuGet.PackageManagement
             Common.ILogger log,
             CancellationToken token)
         {
-            var tasks = new List<Task<NuGetVersion>>();
-
             NuGetFramework framework;
             if (!project.TryGetMetadata<NuGetFramework>(NuGetProjectMetadataKeys.TargetFramework, out framework))
             {

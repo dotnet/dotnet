@@ -7,6 +7,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
+using NuGet.PackageManagement.VisualStudio.Options;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Telemetry;
 using Task = System.Threading.Tasks.Task;
@@ -16,17 +17,30 @@ namespace NuGet.PackageManagement.VisualStudio
     [Export(typeof(IOptionsPageActivator))]
     public class OptionsPageActivator : IOptionsPageActivator
     {
-        // GUID of the Package Sources page, defined in PackageSourcesOptionsPage.cs
-        private const string _packageSourcesGUID = "2819C3B6-FC75-4CD5-8C77-877903DE864C";
+        /// <summary>
+        /// GUID of the General page, declared by the `legacyOptionPageId` in registration.json
+        /// with the Unified Settings `serviceId` implemented by <see cref="GeneralPage"/>.
+        /// </summary>
+        private const string GeneralGUID = "0F052CF7-BF62-4743-B190-87FA4D49421E";
 
-        // GUID of the General page, defined in GeneralOptionsPage.cs
-        private const string _generalGUID = "0F052CF7-BF62-4743-B190-87FA4D49421E";
+        /// <summary>
+        /// GUID of the Configuration Files page, declared by the `legacyOptionPageId` in registration.json
+        /// with the Unified Settings `serviceId` implemented by <see cref="ConfigurationFilesPage"/>.
+        /// </summary>
+        private const string ConfigurationFilesGUID = "C17B308A-00BB-446E-9212-2D14E1005985";
 
-        // GUID of the Package Source Mapping page, defined in PackageSourceMappingOptionsPage.cs
-        private const string _packageSourceMappingGUID = "F175964E-89F5-4521-8FE2-C10C07BB968C";
+        /// <summary>
+        /// GUID of the Package Sources page, declared by the `legacyOptionPageId` in registration.json
+        /// with the Unified Settings `serviceId` implemented by <see cref="PackageSourcesPage"/>.
+        /// </summary>
+        private const string PackageSourcesGUID = "2819C3B6-FC75-4CD5-8C77-877903DE864C";
 
-        // GUID of the Configuration Files page, defined in ConfigurationFilesOptionsPage.cs
-        private const string _configurationFilesGUID = "C17B308A-00BB-446E-9212-2D14E1005985";
+        /// <summary>
+        /// GUID of the Package Source Mapping page, declared by the `legacyOptionPageId` in registration.json
+        /// with the Unified Settings `serviceId` implemented by <see cref="PackageSourceMappingPage"/>.
+        /// </summary>
+        private const string PackageSourceMappingGUID = "F175964E-89F5-4521-8FE2-C10C07BB968C";
+
 
         private Action _closeCallback;
         private readonly AsyncLazy<IVsUIShell> _vsUIShell;
@@ -61,28 +75,28 @@ namespace NuGet.PackageManagement.VisualStudio
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                 {
-                    await ShowOptionsPageAsync(_generalGUID);
+                    await ShowOptionsPageAsync(GeneralGUID);
                 }).PostOnFailure(nameof(OptionsPageActivator), nameof(ActivatePage));
             }
             else if (page == OptionsPage.PackageSources)
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                 {
-                    await ShowOptionsPageAsync(_packageSourcesGUID);
+                    await ShowOptionsPageAsync(PackageSourcesGUID);
                 }).PostOnFailure(nameof(OptionsPageActivator), nameof(ActivatePage));
             }
             else if (page == OptionsPage.PackageSourceMapping)
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                 {
-                    await ShowOptionsPageAsync(_packageSourceMappingGUID);
+                    await ShowOptionsPageAsync(PackageSourceMappingGUID);
                 }).PostOnFailure(nameof(OptionsPageActivator), nameof(ActivatePage));
             }
             else if (page == OptionsPage.ConfigurationFiles)
             {
                 NuGetUIThreadHelper.JoinableTaskFactory.RunAsync(async delegate
                 {
-                    await ShowOptionsPageAsync(_configurationFilesGUID);
+                    await ShowOptionsPageAsync(ConfigurationFilesGUID);
                 }).PostOnFailure(nameof(OptionsPageActivator), nameof(ActivatePage));
             }
             else
