@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
@@ -60,13 +59,7 @@ internal sealed class HtmlRequestInvoker(
 
         // If the request is for a text document, we need to update the Uri to point to the Html document,
         // and most importantly set it back again before leaving the method in case a caller uses it.
-        DocumentUri? originalUri = null;
-        var textDocumentRequest = request as ITextDocumentParams;
-        if (textDocumentRequest is not null)
-        {
-            originalUri = textDocumentRequest.TextDocument.DocumentUri;
-            textDocumentRequest.TextDocument.DocumentUri = new(htmlDocument.Uri);
-        }
+        UpdateTextDocumentUri(request, new(htmlDocument.Uri), out var originalUri);
 
         try
         {
@@ -91,15 +84,27 @@ internal sealed class HtmlRequestInvoker(
         }
         finally
         {
-            Debug.Assert(
-                (textDocumentRequest is null && originalUri is null) ||
-                (textDocumentRequest is not null && originalUri is not null), "textDocumentRequest and originalUri should either both be null or both be non-null");
-
-            // Reset the Uri if we changed it.
-            if (textDocumentRequest is not null && originalUri is not null)
+            if (originalUri is not null)
             {
-                textDocumentRequest.TextDocument.DocumentUri = originalUri;
+                UpdateTextDocumentUri(request, originalUri, out _);
             }
         }
+    }
+
+    private void UpdateTextDocumentUri<TRequest>(TRequest request, DocumentUri uri, out DocumentUri? originalUri) where TRequest : notnull
+    {
+        var textDocument = request switch
+        {
+            ITextDocumentParams textDocumentParams => textDocumentParams.TextDocument,
+            // VSInternalDiagnosticParams doesn't implement the interface because the TextDocument property is nullable
+            VSInternalDiagnosticParams vsInternalDiagnosticParams => vsInternalDiagnosticParams.TextDocument,
+            // We don't implement the endpoint that uses this, but it's the only other thing, at time of writing, in the LSP
+            // protocol library that isn't handled by the above two cases.
+            VSInternalRelatedDocumentParams vsInternalRelatedDocumentParams => vsInternalRelatedDocumentParams.TextDocument,
+            _ => null
+        };
+
+        originalUri = textDocument?.DocumentUri;
+        textDocument?.DocumentUri = uri;
     }
 }
