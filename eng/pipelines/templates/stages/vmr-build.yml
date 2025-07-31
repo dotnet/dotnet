@@ -100,6 +100,8 @@ stages:
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
+    ${{ if and(ne(variables['Build.SourceBranch'], 'refs/head/main'), not(contains(variables['Build.SourceBranch'], '.1xx'))) }}:
+      excludeRuntimeDependentJobs: true
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets
