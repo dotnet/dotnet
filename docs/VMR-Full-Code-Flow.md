@@ -316,14 +316,16 @@ Example of such a situation is shown here:
 
 In such cases, the algorithm detects that the currently synchronized commit is not an ancestor of the previously synchronized one and errors out. A human intervention is then required to resolve the situation - specifically resetting the VMR's release branch to match the repository.
 
-### Conflicts
+## Handling conflicts
 
 Conflicts will happen and the goal of the process is to:
 1. Make the conflicts visible in the flow PR so that developers need to resolve them.
 2. If a conflict occurs and gets resolved in one side, the next flow from that side should bring the resolution to the other side.
 3. The PR description / comments made by the system should point to the points of friction (e.g. conflicting commits) so that developers have an easier time resolving them.
 
-An example of a conflict that is quite problematic is shown here:
+### Conflict example
+
+Outside of the very obvious conflicts where a particular file is changed in both repositories, there are some more interesting cases that can happen. For instance, in the following example, a conflict is introduced by a commit that was made in the forward flow PR but not in the repository. This is a common situation when the forward flow PR contains some additional changes that are not present in the repository.
 
 ![Conflicting changes](images/forward-forward-flow-with-conflict.png)
 <p align="center">
@@ -339,9 +341,15 @@ The downside is that before the target branch is merged into the PR branch, user
 
 There are countless other examples of conflicts that can occur but these will usually manifest as conflicts in the PR. The example above is more interesting because the forward flow is unable to even create the PR branch. This is due to the fact that `8` (the previous forward flow commit) contains `6` which is something extra.
 
-### Parallel flows
+### Conflicts during PR updates
 
-Another usual situation is when we have PRs open for both flows at the same time and one of them merging while the other is still opened. We need to then make sure that the other flows is properly updated.
+Once a code flow PR is opened, if a new build from the source repository is produced, we need to update the PR with the new changes.
+The code flow algorithm will again try to handle this situation seamlessly as it will detect the previous flow, which it made to create the PR, and apply the new changes on top of it.  
+However, it could happen that developers pushed additional commits into the PR branch to fix some issues. These can get in conflict with the new updates. In such a case, the flow will stop, PR will receive a comment mentioning the conflict and developers will have to merge the PR before the flow can continue. After the PR is merged, a new PR will appear, based on an older commit and conflicting with the merged commit so that developers can resolve the conflict properly.
+
+## Parallel flows
+
+We can expect that at any given time it is likely that we will have PRs open in both ways at the same time. Either of them can merge first while the other is still opened. We need to then make sure that the flows account for this.
 
 A sample situation can be seen here (again events happening in the order of the numbers):
 
@@ -351,40 +359,38 @@ What we can see is that while the red forward flow PR was still open, the green 
 The resulting PR branch will be in conflict with repository's target branch because `5` will clash with `7` but a simple merge would resolve this transparently just as we've seen with the conflict scenario mentioned above.
 Outside of this, the purple diff contains all it needs (`8` and `10`) to bring the repository up to date. If additional changes were made in the forward flow PR (between `4` and `9`), those would be accounted for too - same as in the previous scenarios.
 
-### Updating PRs
+### Conflicts caused by parallel flows
 
-Once a code flow PR is opened, if a new build from the source repository is produced, we need to update the PR with the new changes.
-The code flow algorithm should handle this situation seamlessly as it will detect the previous flow, which it made to create the PR, and apply the new changes on top of it.
+The fact that we will have parallel flows together with the fact that conflicts can be introduced in any of the codeflow PRs means that the the algorithm might end up producing conflicts which should not be there. Consider the following example:
 
-It could happen that developers pushed additional commits into the PR branch to fix some issues. These can get in conflict with the new updates. In such a case, the algorithm should not invoke the recursive flow like discussed in the [Conflicts section](#conflicts) but rather just post a comment on the PR that the flow in this direction is paused until the PR is merged.
+![Parallel flows with conflict](images/continuity-conflict.png)
 
-## Synchronization configuration
+In the diagram above,  there is a file whose content is gradually being changed: `AAA` -> `BBB` -> `CCC`. Technically, these changes come serially and from the point of view of the file, there are not conflicts. However, a conflict arises from the fact that the PR branch created in step `11.` clashes with changes from step `9.`
+This happens because the forward flow branch created in step `11.` will be based on commit `1.` (last flow source commit), and the PR branch changing the file from `AAA` -> `CCC` while the target branch has `BBB` (step `9.`).
+The patch `AAA` -> `CCC` doesn't apply cleanly on top of `BBB` and the algorithm will create a conflict in the PR branch. The user will then have to resolve the conflict by merging the target branch into the PR branch and resolving the conflict.
 
-Presently, in the VMR-lite, the rules affecting the code synchronization live in the `source-mappings.json` file. This file is located in the `dotnet/installer` repository and mapped into the `src/` directory of the VMR. That `dotnet/installer` repository is the only point from which we synchronize the code into the VMR.
-
-Since we will now also have to store information in the repo about the last time the code has flown there from the VMR, we will utilize the `Version.Details.xml` file and support a new tag:
-
-```xml
-<Source Uri="https://github.com/dotnet/dotnet" Sha="86ba5fba7c39323011c2bfc6b713142affc76171" />
-```
-
-The tag will store the last SHA that was flown from the VMR into the repository. This information will be used to detect the direction of the last flow.
+When creating the last forward flow branch (in red), we can leverage the fact that it is known to us that another flow (blue) happened since. We know that the blue flow changed the file from `AAA` to `BBB` and since then, our repo contains `BBB` to `CCC` change.
+We can compare the file we're flowing with the version in the target branch by merging the target branch into our PR branch (`9.` to `11.`) which will create the conflict. We can try to take the file as it is in the target branch and apply the diff from the repo since the blue flow (`BBB` to `CCC`) on top of it. This will result in the file being changed from `BBB` to `CCC` and the conflict will be correctly resolved.
+This ensures continuity of the file content and prevent most of the non-conflicts from manifesting.
 
 ### Arcade
 
 #### Updating `eng/common`
 
 The `eng/common` folder is currently hosted in the `dotnet/arcade` repository and copied to other repositories when they receive dependency updates from `dotnet/arcade`.
-Since repositories will only accept dependency updates from the VMR, we will need to distribute this folder from there too.
+Since repositories will also accept dependency updates from the VMR, we will need to distribute this folder from there too.
 
 The rules for managing `eng/common`:
 
 - `dotnet/arcade` stays the home for this folder as the contents are tied to the Arcade version often.
 - When code is flowing from arcade to the VMR, we treat it as any other code flow subscription, and just update `src/arcade`.
-- Changes of `eng/common` in the VMR`s root will be overwritten like in any other repo.
-- Any subscription from the VMR (code-enabled or normal) will contain `Microsoft.DotNet.Arcade.Sdk`. So any arcadified repo will receive the Arcade update from there. The `src/arcade` folder will be used as the source of truth for version file updates (`eng/common`, `global.json`, ...).
+- The root `eng/common` folder in the VMR will be tied to the version of Arcade in the root `eng/Version.Details.xml`.
+  Arcade will flow to VMR via a non-source-enabled subscription like it would be any other repository and thus update the root `eng/common` folder in the VMR.
+- Any subscription from the VMR (code-enabled or normal) will contain `Microsoft.DotNet.Arcade.Sdk` as it is built as part of the VMR. During this:
+  - The `src/arcade` folder will be used as the source of truth for version file updates (`eng/common`, `global.json`, ...).
+  - The .NET SDK version updated in `global.json` will be updated based on VMR's root `global.json` instead of `src/arcade/global.json` as that is the real SDK that was used during the VMR's build.
+    Repositories can opt out of this by setting the `pinned: true` property in their `global.json`.
 - Repositories can opt-out from getting Arcade updates from the VMR by ignoring the `Microsoft.DotNet.Arcade.Sdk` package in their code flow subscription.
-- Like in any other repo, VMR's root `eng/common` will only get updated during regular (non-source-enabled) VMR -> VMR subscriptions.
 
 A diagram of how the code flow including the `eng/common` folder looks like:
 
@@ -420,9 +426,3 @@ sequenceDiagram
     VMR->>runtime: Backflow<br>includes src/arcade/eng/common
     end
 ```
-
-#### Updating `global.json`
-
-Similar to `eng/common`, individual repos will follow the `global.json` settings from the VMR with the option to opt-out. This is mainly because bumping the .NET SDK in repositories can take time or is not desirable.
-
-Repositories can opt-out from getting Arcade updates from the VMR by ignoring the `Microsoft.DotNet.Arcade.Sdk` package in their codeflow setting.
