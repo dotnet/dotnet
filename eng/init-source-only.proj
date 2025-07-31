@@ -79,6 +79,37 @@
           WorkingDirectory="$(ArtifactsDir)" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
+
+    <ItemGroup>
+      <_SourceBuiltSymbolsAllTarball Include="$(ArtifactsAssetsDir)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <!-- The extraction of the assets directory from the artifacts tarball included the symbols tarball.
+         Move that to the obj directory so it doesn't get confused as the symbols output of the current repo.-->
+    <Move SourceFiles="@(_SourceBuiltSymbolsAllTarball)"
+          DestinationFolder="$(BaseIntermediateOutputPath)" />
+
+    <PropertyGroup>
+      <_SharedComponentsSymbolsDir>$(IntermediateSymbolsRootDir)shared-components</_SharedComponentsSymbolsDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_SharedComponentsSymbolsDir)" />
+
+    <!-- Extract all symbols from the symbols tarball to the intermediate symbols root directory -->
+    <Exec Command="tar -xzf $(BaseIntermediateOutputPath)/$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)"
+          WorkingDirectory="$(_SharedComponentsSymbolsDir)" />
+
+    <!-- Remove all directories except those from shared components. We also want to keep those from the Arcade bootstrap
+         repos, specifically SBRP, because SBRP is built in each feature band branch and so there may be differences between 
+         the packages between those branches. Each SBRP assembly would have its own PDB so these are kept separated. -->
+    <ItemGroup>
+      <_AllSymbolDirs Include="$([System.IO.Directory]::GetDirectories($(_SharedComponentsSymbolsDir)))" />
+      <_RepoSymbolsToKeep Include="@(SharedRepositoryReference);$(BootstrapArcadeRepos)" />
+      <_SymbolDirsToDelete Include="@(_AllSymbolDirs)" Exclude="@(_RepoSymbolsToKeep->'$(_SharedComponentsSymbolsDir)/%(Identity)')" />
+    </ItemGroup>
+
+    <RemoveDir Directories="@(_SymbolDirsToDelete)" Condition="'@(_SymbolDirsToDelete)' != ''" />
+    
     <Touch Files="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="FileWrites" />
     </Touch>
