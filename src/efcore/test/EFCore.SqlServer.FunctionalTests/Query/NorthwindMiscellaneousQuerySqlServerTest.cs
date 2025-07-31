@@ -5844,18 +5844,19 @@ ORDER BY [c].[CustomerID]
                 () =>
                 {
                     using var context = CreateContext();
-                    using ((from c in context.Customers
-                            where c.City == "London"
-                            orderby c.CustomerID
-                            select (from o1 in context.Orders
-                                    where o1.CustomerID == c.CustomerID
-                                        && o1.OrderDate.Value.Year == 1997
-                                    orderby o1.OrderID
-                                    select (from o2 in context.Orders
-                                            where o1.CustomerID == c.CustomerID
-                                            orderby o2.OrderID
-                                            select o1.OrderID).ToList()).ToList())
-                           .GetEnumerator())
+                    using (context.Customers
+                        .Where(c => c.City == "London")
+                        .OrderBy(c => c.CustomerID)
+                        .Select(c => context.Orders
+                                .Where(o1 => o1.CustomerID == c.CustomerID && o1.OrderDate.Value.Year == 1997)
+                                .OrderBy(o1 => o1.OrderID)
+                                .Select(o1 => context.Orders
+                                    .Where(o2 => o1.CustomerID == c.CustomerID)
+                                    .OrderBy(o2 => o2.OrderID)
+                                    .Select(o2 => o1.OrderID)
+                                    .ToList())
+                                .ToList())
+                        .GetEnumerator())
                     {
                     }
                 });
@@ -6078,11 +6079,15 @@ WHERE [c].[CustomerID] = N'ALFKI'
 @orderIds4='10835'
 @orderIds5='10952'
 @orderIds6='11011'
+@orderIds7='11011'
+@orderIds8='11011'
+@orderIds9='11011'
+@orderIds10='11011'
 
 SELECT [c].[CustomerID], [c].[Address], [c].[City], [c].[CompanyName], [c].[ContactName], [c].[ContactTitle], [c].[Country], [c].[Fax], [c].[Phone], [c].[PostalCode], [c].[Region]
 FROM [Orders] AS [o]
 LEFT JOIN [Customers] AS [c] ON [o].[CustomerID] = [c].[CustomerID]
-WHERE [o].[OrderID] IN (@orderIds1, @orderIds2, @orderIds3, @orderIds4, @orderIds5, @orderIds6)
+WHERE [o].[OrderID] IN (@orderIds1, @orderIds2, @orderIds3, @orderIds4, @orderIds5, @orderIds6, @orderIds7, @orderIds8, @orderIds9, @orderIds10)
 """);
     }
 
