@@ -16,6 +16,8 @@
     <EnableDefaultArtifacts Condition="'$(DotNetBuild)' != 'true' and
                                        '$(TargetArchitecture)' != 'x64' and
                                        '$(TargetArchitecture)' != ''">false</EnableDefaultArtifacts>
+
+    <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +31,14 @@
                        $(ArtifactsPackagesDir)**\VS.Redist.Common.NETCoreCheck.*.nupkg"
               IsShipping="$([System.String]::Copy('%(RecursiveDir)').StartsWith('Shipping'))"
               PublishFlatContainer="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Include DotNetRuntimeValidation .zip's explicitly -->
+    <Artifact Include="$(ArtifactsAssetsDir)\**\DotNetRuntimeValidation*.zip" Kind="Blob">
+      <IsShipping>false</IsShipping>
+      <RelativeBlobPath>assets/$(TargetArchitecture)/%(Filename)%(Extension)</RelativeBlobPath>
+    </Artifact>
   </ItemGroup>
 
 </Project>
