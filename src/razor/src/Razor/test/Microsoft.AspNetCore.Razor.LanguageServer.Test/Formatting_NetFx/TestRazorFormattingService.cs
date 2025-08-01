@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.AspNetCore.Razor.Test.Common.LanguageServer;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
@@ -23,8 +22,7 @@ internal static class TestRazorFormattingService
         RazorCodeDocument? codeDocument = null,
         RazorLSPOptions? razorLSPOptions = null,
         LanguageServerFeatureOptions? languageServerFeatureOptions = null,
-        bool debugAssertsEnabled = false,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
+        bool debugAssertsEnabled = false)
     {
         codeDocument ??= TestRazorCodeDocument.CreateEmpty();
 
@@ -50,7 +48,6 @@ internal static class TestRazorFormattingService
         var service = new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
         var accessor = service.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
-        accessor.SetCSharpSyntaxFormattingOptionsOverride(formattingOptionsOverride);
 
         return service;
     }
