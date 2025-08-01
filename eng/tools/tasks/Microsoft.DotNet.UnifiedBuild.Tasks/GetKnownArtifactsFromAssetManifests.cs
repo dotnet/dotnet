@@ -38,9 +38,9 @@ public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task
     public required ITaskItem[] AssetManifests { get; set; }
 
     /// <summary>
-    /// If provided, only artifacts from that repository will be returned.
+    /// If provided, only artifacts from these repositories will be returned.
     /// </summary>
-    public string? RepoOrigin { get; set; }
+    public ITaskItem[]? RepoOrigins { get; set; }
 
     /// <summary>
     /// The list of known packages including their versions as metadata.
@@ -92,7 +92,7 @@ public sealed class GetKnownArtifactsFromAssetManifests : Build.Utilities.Task
         return true;
     }
 
-    private bool ShouldIncludeElement(XElement element) => string.IsNullOrEmpty(RepoOrigin) || element.Attribute(RepoOriginAttributeName)?.Value == RepoOrigin;
+    private bool ShouldIncludeElement(XElement element) => RepoOrigins is null || RepoOrigins.Any(origin => element.Attribute(RepoOriginAttributeName)?.Value == origin.ItemSpec);
 
     sealed class TaskItemManifestEqualityComparer : IEqualityComparer<TaskItem>
     {

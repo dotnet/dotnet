@@ -19,6 +19,7 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.SemanticTokens" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSemanticTokensService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.HtmlDocument" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteHtmlDocumentService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.TagHelperProvider" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteTagHelperProviderService+Factory"/>
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.MEFInitialization" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteMEFInitializationService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.ClientInitialization" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteClientInitializationService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.UriPresentation" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteUriPresentationService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.FoldingRange" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteFoldingRangeService+Factory" />

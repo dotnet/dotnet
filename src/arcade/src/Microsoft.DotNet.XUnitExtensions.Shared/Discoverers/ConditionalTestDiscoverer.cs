@@ -124,7 +124,7 @@ namespace Microsoft.DotNet.XUnitExtensions
             {
 #if USES_XUNIT_3
                 var details = TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, new Xunit.FactAttribute());
-                errorTestCase = new ExecutionErrorTestCase(testMethod, details.TestCaseDisplayName, details.UniqueID, e.Message);
+                errorTestCase = new ExecutionErrorTestCase(testMethod, details.TestCaseDisplayName, details.UniqueID, details.SourceFilePath, details.SourceLineNumber, e.Message);
 #else
                 errorTestCase = new ExecutionErrorTestCase(
                     diagnosticMessageSink,

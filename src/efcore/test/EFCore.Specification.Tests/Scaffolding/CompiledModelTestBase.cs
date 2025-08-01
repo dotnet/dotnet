@@ -1166,14 +1166,25 @@ namespace TestNamespace
             AssertComplexTypes,
             async c =>
             {
-                c.Set<PrincipalDerived<DependentBase<byte?>>>().Add(
-                    new PrincipalDerived<DependentBase<byte?>>
+                c.Set<PrincipalBase>().Add(
+                    new PrincipalBase
                     {
                         Id = 1,
                         AlternateId = new Guid(),
-                        Dependent = new DependentBase<byte?>(1),
-                        Owned = new OwnedType(c) { Principal = new PrincipalBase() }
+                        Owned = new OwnedType(c) { Details = "details" }
                     });
+
+                if (c.Model.FindEntityType(typeof(PrincipalDerived<DependentBase<byte?>>)) != null)
+                {
+                    c.Set<PrincipalDerived<DependentBase<byte?>>>().Add(
+                        new PrincipalDerived<DependentBase<byte?>>
+                        {
+                            Id = 2,
+                            AlternateId = new Guid(),
+                            Dependent = new DependentBase<byte?>(1),
+                            Owned = new OwnedType(c)
+                        });
+                }
 
                 await c.SaveChangesAsync();
             },
@@ -1231,8 +1242,6 @@ namespace TestNamespace
                             .HasField("_details")
                             .HasSentinel("")
                             .UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction)
-                            .HasMaxLength(64)
-                            .HasPrecision(3, 2)
                             .HasAnnotation("foo", "bar");
                         eb.Ignore(e => e.Context);
                         eb.ComplexProperty(
@@ -1303,7 +1312,11 @@ namespace TestNamespace
 
         Assert.Equal(ExpectedComplexTypeProperties, nestedComplexType.GetProperties().Count());
 
-        var principalDerived = model.FindEntityType(typeof(PrincipalDerived<DependentBase<byte?>>))!;
+        var principalDerived = model.FindEntityType(typeof(PrincipalDerived<DependentBase<byte?>>));
+        if (principalDerived == null)
+        {
+            return;
+        }
         Assert.Equal(principalBase, principalDerived.BaseType);
 
         var complexCollection = principalDerived.GetDeclaredComplexProperties().Single();
@@ -1342,9 +1355,6 @@ namespace TestNamespace
         Assert.Equal("_details", collectionDetails.FieldInfo.Name);
         Assert.True(collectionDetails.IsNullable);
         Assert.False(collectionDetails.IsUnicode());
-        Assert.Equal(64, collectionDetails.GetMaxLength());
-        Assert.Equal(3, collectionDetails.GetPrecision());
-        Assert.Equal(2, collectionDetails.GetScale());
         Assert.Equal("", collectionDetails.Sentinel);
         Assert.Equal(PropertyAccessMode.FieldDuringConstruction, collectionDetails.GetPropertyAccessMode());
         Assert.Null(collectionDetails.GetValueConverter());
@@ -1833,7 +1843,7 @@ namespace TestNamespace
         where TDependent : class
     {
         public TDependent? Dependent { get; set; }
-        protected IList<OwnedType> ManyOwned = null!;
+        protected IList<OwnedType> ManyOwned = [];
         public ICollection<PrincipalBase> Principals { get; set; } = null!;
     }
 

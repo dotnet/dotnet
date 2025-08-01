@@ -164,7 +164,7 @@ public abstract class SnapshotFactoryFactory
                     {
                         Expression.Assign(
                             structuralTypeVariable,
-                            propertyBases[0]!.DeclaringType switch
+                            (IRuntimeTypeBase)propertyBases[0]!.DeclaringType switch
                             {
                                 IComplexType declaringComplexType when declaringComplexType.ComplexProperty.IsCollection
                                     => PropertyAccessorsFactory.CreateComplexCollectionElementAccess(
@@ -175,7 +175,7 @@ public abstract class SnapshotFactoryFactory
                                         indicesExpression,
                                         fromDeclaringType: false,
                                         fromEntity: true),
-                                { ContainingType: IComplexType collectionComplexType }
+                                { ContainingEntryType: IComplexType collectionComplexType }
                                     => PropertyAccessorsFactory.CreateComplexCollectionElementAccess(
                                         collectionComplexType.ComplexProperty,
                                         Expression.Convert(
@@ -366,6 +366,7 @@ public abstract class SnapshotFactoryFactory
         var snapshot = (IList)complexProperty.GetIndexedCollectionAccessor().Create(list.Count);
         foreach (var item in list)
         {
+            // We need to preserve the original reference, these are only used to find moved items, not modified properties on them
             snapshot.Add(item);
         }
         return snapshot;

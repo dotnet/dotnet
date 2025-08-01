@@ -409,7 +409,7 @@ public class CosmosTestStore : TestStore
 
             // TODO: see issue #35854
             // once Azure.ResourceManager.CosmosDB package supports vectors and FTS, those need to be added here
-            
+
             await database.Value.GetCosmosDBSqlContainers().CreateOrUpdateAsync(
                 WaitUntil.Completed, container.Id, content).ConfigureAwait(false);
         }
@@ -435,6 +435,7 @@ public class CosmosTestStore : TestStore
             mappedTypes.Add(entityType);
         }
 
+        var fullTextDefaultLanguage = model.GetDefaultFullTextSearchLanguage();
         foreach (var (containerName, mappedTypes) in containers)
         {
             IReadOnlyList<string> partitionKeyStoreNames = Array.Empty<string>();
@@ -443,7 +444,6 @@ public class CosmosTestStore : TestStore
             ThroughputProperties? throughput = null;
             var indexes = new List<IIndex>();
             var vectors = new List<(IProperty Property, CosmosVectorType VectorType)>();
-            string? fullTextDefaultLanguage = null;
             var fullTextProperties = new List<(IProperty Property, string? Language)>();
 
             foreach (var entityType in mappedTypes)
@@ -456,7 +456,6 @@ public class CosmosTestStore : TestStore
                 analyticalTtl ??= entityType.GetAnalyticalStoreTimeToLive();
                 defaultTtl ??= entityType.GetDefaultTimeToLive();
                 throughput ??= entityType.GetThroughput();
-                fullTextDefaultLanguage ??= entityType.GetDefaultFullTextSearchLanguage();
 
                 ProcessEntityType(entityType, indexes, vectors, fullTextProperties);
             }
@@ -654,6 +653,7 @@ public class CosmosTestStore : TestStore
 
         public bool IsConceptualNull(IProperty property)
             => throw new NotImplementedException();
+        public bool IsModified(IComplexProperty property) => throw new NotImplementedException();
     }
 
     public class FakeEntityType : Annotatable, IEntityType
@@ -850,10 +850,10 @@ public class CosmosTestStore : TestStore
         public IEnumerable<IServiceProperty> GetServiceProperties()
             => throw new NotImplementedException();
 
-        public Func<MaterializationContext, object> GetOrCreateMaterializer(IEntityMaterializerSource source)
+        public Func<MaterializationContext, object> GetOrCreateMaterializer(IStructuralTypeMaterializerSource source)
             => throw new NotImplementedException();
 
-        public Func<MaterializationContext, object> GetOrCreateEmptyMaterializer(IEntityMaterializerSource source)
+        public Func<MaterializationContext, object> GetOrCreateEmptyMaterializer(IStructuralTypeMaterializerSource source)
             => throw new NotImplementedException();
 
         public IEnumerable<ISkipNavigation> GetSkipNavigations()

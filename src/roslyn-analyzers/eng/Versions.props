@@ -14,7 +14,7 @@
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
     <!-- Don't allow netstandard1.x dependencies when building from source in this repository. -->
-    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildOrchestrator)' == 'true'">true</FlagNetStandard1XDependencies>
+    <FlagNetStandard1XDependencies Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">true</FlagNetStandard1XDependencies>
     <!-- Toolset -->
     <MicrosoftVSSDKBuildToolsVersion>17.0.1056-Dev17PIAs-g9dffd635</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftVSSDKVSDConfigToolVersion>16.0.2032702</MicrosoftVSSDKVSDConfigToolVersion>
@@ -59,11 +59,11 @@
     <!-- Versions for tests and general utility execution. -->
     <!-- This version is for utility and executable assemblies. The version here should not overlap with any of the surface
          area versions. -->
-    <MicrosoftCodeAnalysisVersionForTests>4.9.0-3.final</MicrosoftCodeAnalysisVersionForTests>
+    <MicrosoftCodeAnalysisVersionForTests>5.0.0-2.25374.24</MicrosoftCodeAnalysisVersionForTests>
     <MicrosoftCodeAnalysisVersionForExecution>4.6.0-1.final</MicrosoftCodeAnalysisVersionForExecution>
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>4.6.0</MicrosoftCodeAnalysisVisualBasicCodeStyleVersion>
-    <DogfoodAnalyzersVersion>3.3.4</DogfoodAnalyzersVersion>
+    <DogfoodAnalyzersVersion>$(MicrosoftCodeAnalysisVersionForTests)</DogfoodAnalyzersVersion>
     <DogfoodNetAnalyzersVersion>8.0.0-preview1.22621.6</DogfoodNetAnalyzersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisAnalyzersVersion>$(DogfoodAnalyzersVersion)</MicrosoftCodeAnalysisAnalyzersVersion>
@@ -75,7 +75,7 @@
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.1.2-beta1.24314.1</MicrosoftCodeAnalysisTestingVersion>
     <!-- arcade -->
-    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25351.106</MicrosoftDotNetXliffTasksVersion>
+    <MicrosoftDotNetXliffTasksVersion>10.0.0-beta.25375.119</MicrosoftDotNetXliffTasksVersion>
     <!-- Libs -->
     <BenchmarkDotNetVersion>0.13.0</BenchmarkDotNetVersion>
     <HumanizerVersion>2.14.1</HumanizerVersion>

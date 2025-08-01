@@ -53,6 +53,7 @@ stages:
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.fedoraName) }}
+          enableCoreDumpGeneration: ${{ leg.enableCoreDumpGeneration }}
         # Ubuntu
         ${{ elseif eq(leg.distro, 'ubuntu') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}
@@ -101,6 +102,7 @@ stages:
         buildFromArchive: ${{ leg.buildFromArchive }}
         runOnline: ${{ leg.runOnline }}
         useMonoRuntime: ${{ leg.useMonoRuntime }}
+        useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination

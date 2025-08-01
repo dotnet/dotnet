@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <PackageDownload Include="Microsoft.Signed.Wix" Version="[$(MicrosoftSignedWixVersion)]" />
+    <PackageDownload Include="Microsoft.WixToolset.Sdk" Version="[$(MicrosoftWixToolsetSdkVersion)]" />
     <PackageDownload Include="sn" Version="[$(SNVersion)]" />
   </ItemGroup>
 
@@ -40,6 +41,9 @@
     <Content Include="Resources\**"
              CopyToOutputDirectory="Always" />
     <Content Include="$(NuGetPackageRoot)microsoft.signed.wix\$(MicrosoftSignedWixVersion)\tools\**"
+             CopyToOutputDirectory="Always"
+             Link="tools\wix3\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="$(NuGetPackageRoot)microsoft.wixtoolset.sdk\$(MicrosoftWixToolsetSdkVersion)\tools\**"
              CopyToOutputDirectory="Always"
              Link="tools\wix\%(RecursiveDir)%(Filename)%(Extension)" />
 

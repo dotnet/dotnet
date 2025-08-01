@@ -65,7 +65,6 @@
   <PropertyGroup>
     <DropAppVersion Condition="'$(DropAppVersion)' == ''">19.239.34923-buildid28260713</DropAppVersion>
     <MicroBuildPluginsSwixBuildVersion Condition="'$(MicroBuildPluginsSwixBuildVersion)' == ''">1.0.422</MicroBuildPluginsSwixBuildVersion>
-    <MicroBuildCoreVersion Condition="'$(MicroBuildCoreVersion)' == ''">0.2.0</MicroBuildCoreVersion>
     <MicrosoftDotNetIBCMergeVersion Condition="'$(MicrosoftDotNetIBCMergeVersion)' == ''">5.1.0-beta.21356.1</MicrosoftDotNetIBCMergeVersion>
     <MicrosoftNETTestSdkVersion Condition="'$(MicrosoftNETTestSdkVersion)' == ''">17.12.0</MicrosoftNETTestSdkVersion>
     <MicrosoftVSSDKBuildToolsVersion Condition="'$(MicrosoftVSSDKBuildToolsVersion)' == ''">16.9.1050</MicrosoftVSSDKBuildToolsVersion>
@@ -79,9 +78,9 @@
     <XUnitVersion Condition="'$(XUnitVersion)' == ''">2.9.3</XUnitVersion>
     <XUnitAnalyzersVersion Condition="'$(XUnitAnalyzersVersion)' == ''">1.22.0</XUnitAnalyzersVersion>
     <XUnitRunnerConsoleVersion Condition="'$(XUnitRunnerConsoleVersion)' == ''">$(XUnitVersion)</XUnitRunnerConsoleVersion>
-    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">3.1.1</XUnitRunnerVisualStudioVersion>
+    <XUnitRunnerVisualStudioVersion Condition="'$(XUnitRunnerVisualStudioVersion)' == ''">3.1.3</XUnitRunnerVisualStudioVersion>
 
-    <XUnitV3Version Condition="'$(XUnitV3Version)' == ''">2.0.3</XUnitV3Version>
+    <XUnitV3Version Condition="'$(XUnitV3Version)' == ''">3.0.0</XUnitV3Version>
     <MicrosoftTestingPlatformVersion Condition="'$(MicrosoftTestingPlatformVersion)' == ''">1.7.3</MicrosoftTestingPlatformVersion>
 
     <MSTestVersion Condition="'$(MSTestVersion)' == ''">3.9.3</MSTestVersion>
@@ -99,7 +98,7 @@
     <MicrosoftManifestToolCrossPlatformVersion Condition="'$(MicrosoftManifestToolCrossPlatformVersion)' == ''">2.1.3</MicrosoftManifestToolCrossPlatformVersion>
     <MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion Condition="'$(MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion)' == ''">1.1.286</MicrosoftVisualStudioEngMicroBuildPluginsSwixBuildVersion>
     <MicrosoftSignedWixVersion Condition="'$(MicrosoftSignedWixVersion)' == ''">3.14.1-9323.2545153</MicrosoftSignedWixVersion>
-    <MicrosoftWixToolsetVersion Condition="'$(MicrosoftWixToolsetVersion)' == ''">5.0.2-dotnet.2737382</MicrosoftWixToolsetVersion>
+    <MicrosoftWixToolsetSdkVersion Condition="'$(MicrosoftWixToolsetSdkVersion)' == ''">5.0.2-dotnet.2737382</MicrosoftWixToolsetSdkVersion>
   </PropertyGroup>
 
   <!-- RestoreSources overrides - defines DotNetRestoreSources variable if available -->

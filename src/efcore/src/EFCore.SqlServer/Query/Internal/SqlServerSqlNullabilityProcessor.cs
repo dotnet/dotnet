@@ -16,6 +16,8 @@ namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 /// </summary>
 public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
 {
+    private const int MaxParameterCount = 2100;
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
@@ -187,8 +189,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         switch (node)
         {
             case ValuesExpression { ValuesParameter: SqlParameterExpression valuesParameter } valuesExpression
-                when ParameterizedCollectionMode is ParameterizedCollectionMode.MultipleParameters
-                    && !valuesParameter.ShouldBeConstantized:
+                when (valuesParameter.TranslationMode ?? CollectionParameterTranslationMode) is ParameterTranslationMode.MultipleParameters:
             {
                 Check.DebugAssert(valuesParameter.TypeMapping is not null);
                 Check.DebugAssert(valuesParameter.TypeMapping.ElementTypeMapping is not null);
@@ -234,8 +235,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         switch (inExpression.ValuesParameter)
         {
             case SqlParameterExpression valuesParameter
-                when ParameterizedCollectionMode is ParameterizedCollectionMode.MultipleParameters
-                    && !valuesParameter.ShouldBeConstantized:
+                when (valuesParameter.TranslationMode ?? CollectionParameterTranslationMode) is ParameterTranslationMode.MultipleParameters:
             {
                 Check.DebugAssert(valuesParameter.TypeMapping is not null);
                 Check.DebugAssert(valuesParameter.TypeMapping.ElementTypeMapping is not null);
@@ -282,6 +282,19 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         }
     }
 
+    /// <inheritdoc />
+    protected override int CalculateParameterBucketSize(int count, RelationalTypeMapping elementTypeMapping)
+         => count switch
+         {
+             <= 5 => 1,
+             <= 150 => 10,
+             <= 750 => 50,
+             <= 2000 => 100,
+             <= 2070 => 10, // try not to over-pad as we approach that limit
+             <= MaxParameterCount => 0, // just don't pad between 2070 and 2100, to minimize the crazy
+             _ => 200,
+         };
+
     private bool TryHandleOverLimitParameters(
         SqlParameterExpression valuesParameter,
         RelationalTypeMapping typeMapping,
@@ -296,7 +309,7 @@ public class SqlServerSqlNullabilityProcessor : SqlNullabilityProcessor
         // SQL Server has limit on number of parameters in a query.
         // If we're over that limit, we switch to using single parameter
         // and processing it through JSON functions.
-        if (values.Count > 2098)
+        if (values.Count > MaxParameterCount)
         {
             if (_sqlServerSingletonOptions.SupportsJsonFunctions)
             {

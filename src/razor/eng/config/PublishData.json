@@ -29,7 +29,7 @@
       ],
       "vsBranch": "main",
       "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[d17.15 P1]"
+      "insertionTitlePrefix": "[dNext]"
     },
     "release/dev17.6": {
       "nugetKind": [
@@ -107,6 +107,15 @@
       "vsBranch": "rel/d17.14",
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.14 P3]"
+    },
+    "release/dev-next": {
+      "nugetKind": [
+        "Shipping",
+        "NonShipping"
+      ],
+      "vsBranch": "main",
+      "insertionCreateDraftPR": true,
+      "insertionTitlePrefix": "[Validation]"
     }
   }
 }

@@ -205,7 +205,7 @@ public sealed class InternalComplexEntry : InternalEntryBase
         if ((oldState is EntityState.Deleted && newState is EntityState.Added)
             || (oldState is EntityState.Added && newState is EntityState.Deleted))
         {
-            throw new InvalidOperationException($"Cannot change the state of an element of the `{ComplexProperty.Name}` complex collection directly from deleted to added or vice versa. First mark it as Unchanged");
+            throw new InvalidOperationException(CoreStrings.ComplexCollectionEntryInvalidStateChange(ComplexProperty.Name));
         }
 
         base.SetEntityState(oldState, newState, acceptChanges, modifyProperties);
@@ -255,7 +255,9 @@ public sealed class InternalComplexEntry : InternalEntryBase
     /// </summary>
     public override void AcceptChanges()
     {
-        if (EntityState == EntityState.Added)
+        if (Ordinal != -1
+            && (EntityState == EntityState.Added
+                || ContainingEntry.GetComplexCollectionOriginalEntry(ComplexProperty, Ordinal) == this))
         {
             OriginalOrdinal = Ordinal;
         }
@@ -271,10 +273,7 @@ public sealed class InternalComplexEntry : InternalEntryBase
     /// </summary>
     public string GetPropertyPath(IReadOnlyProperty property)
     {
-        Check.DebugAssert(property.DeclaringType == StructuralType
-            || property.DeclaringType.ContainingType == StructuralType
-            || StructuralType.ClrType == typeof(object), // For testing
-            "Property " + property.Name + " not contained under " + StructuralType.Name);
+        StructuralType.CheckContains(property);
 
         return GetPropertyPath() + "." + GetShortNameChain(property.DeclaringType) + property.Name;
     }

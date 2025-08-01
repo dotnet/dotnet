@@ -76,7 +76,7 @@ public class CSharpSyntaxFormattingOptionsTest_Generator
                             }
                         }
                         """,
-                    formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+                    csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
                     {
                         NewLines = {RazorNewLinePlacement},
                         WrappingKeepStatementsOnSingleLine = {WrappingKeepStatementsOnSingleLine},

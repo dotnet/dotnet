@@ -28,21 +28,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 case FeedType.AzDoNugetFeed:
                     return new AzureDevOpsNugetFeedAssetPublisher(_log, feedConfig.TargetURL, feedConfig.Token, task);
                 case FeedType.AzureStorageContainer:
-                    // If there is a SAS URI specified, use that. Otherwise use the default azure credential
-                    if (!string.IsNullOrEmpty(feedConfig.Token))
-                    {
-                        return new AzureStorageContainerAssetSasCredentialPublisher(
-                            new Uri(feedConfig.TargetURL),
-                            new AzureSasCredential(new Uri(feedConfig.Token).Query),
-                            _log);
-                    }
-                    else
-                    {
-                        return new AzureStorageContainerAssetTokenCredentialPublisher(
-                            new Uri(feedConfig.TargetURL),
-                            GetAzureTokenCredential(task.ManagedIdentityClientId),
-                            _log);
-                    }
+                    return new AzureStorageContainerAssetTokenCredentialPublisher(
+                        new Uri(feedConfig.TargetURL),
+                        GetAzureTokenCredential(task.ManagedIdentityClientId),
+                        _log);
                 default:
                     throw new NotImplementedException();
             }

@@ -59,7 +59,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         // Note that this uses a cached catalog and configuration for performance.
         try
         {
-            _exportProvider = await RemoteMefComposition.CreateExportProviderAsync(DisposalToken);
+            _exportProvider = await RemoteMefComposition.CreateExportProviderAsync(cacheDirectory: null, DisposalToken);
         }
         catch (CompositionFailedException ex) when (ex.Errors is not null)
         {

@@ -53,6 +53,12 @@ parameters:
   type: boolean
   default: false
 
+  # Remove with https://github.com/dotnet/source-build/issues/5288
+- name: enableCoreDumpGeneration
+  displayName: True when core dump generation should be enabled
+  type: boolean
+  default: false
+
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -68,6 +74,11 @@ parameters:
 - name: reuseBuildArtifactsFrom
   type: object
   default: ''
+
+# Enables usage of the system libraries when building.
+- name: useSystemLibraries
+  type: boolean
+  default: false
 
 #### SOURCE-ONLY parameters ####
 
@@ -215,20 +226,37 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    ${{ if eq(parameters.targetOS, 'windows') }}:
-      # Don't clean while building on Windows as the pool's disk space is sufficient.
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        value: ''
-      ${{ else }}:
-        value: $(commandPrefix)cleanWhileBuilding
+    # Don't clean-while-building on OSs that have enough disk space to keep
+    # intermediates for compliance scanners.
+    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+      value: ''
     ${{ else }}:
-      value: $(commandPrefix)clean-while-building
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)cleanWhileBuilding
+      ${{ else }}:
+        value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
 
+  - ${{ if and(eq(variables['System.TeamProject'], 'internal'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: officialBuildArgument
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)officialBuildId $(Build.BuildNumber)
+      ${{ else }}:
+        value: $(commandPrefix)official-build-id $(Build.BuildNumber)
+  - ${{ else }}:
+    - name: officialBuildArgument
+      value: ''
+
+  - name: useSystemLibrariesArgument
+    ${{ if eq(parameters.useSystemLibraries, 'true') }}:
+      value: $(commandPrefix)with-system-libs all
+    ${{ else }}:
+      value: ''
+
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument)
+    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -540,6 +568,12 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
+          fi
+
+          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
+          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
+            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
+            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"

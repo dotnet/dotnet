@@ -2379,6 +2379,53 @@ class [|C|]
                 Await session.CommitAsync(previewChanges:=False, editorOperationContext:=Nothing)
 
                 Await VerifyTagsAreCorrect(workspace)
+
+                Await VerifyChangedSourceGeneratedDocumentFilenames(workspace)
+            End Using
+        End Function
+
+        <WpfTheory>
+        <CombinatorialData, Trait(Traits.Feature, Traits.Features.Rename)>
+        Public Async Function RenameWithRazorGeneratedFile(host As RenameTestHost) As Task
+            Dim generatedCode = "
+public class GeneratedClass
+{
+    public void M(MyClass c) { }
+}
+"
+            Dim razorGenerator = New Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator(Sub(c) c.AddSource("generated_file.cs", generatedCode))
+
+            Using workspace = CreateWorkspaceWithWaiter(
+                    <Workspace>
+                        <Project Language="C#" CommonReferences="true" LanguageVersion="preview">
+                            <Document>
+                                partial class [|$$MyClass|]
+                                {
+                                    public void M1()
+                                    {
+                                    }
+                                }
+                            </Document>
+                        </Project>
+                    </Workspace>, host)
+
+                Dim project = workspace.CurrentSolution.Projects.First().AddAnalyzerReference(New TestGeneratorReference(razorGenerator))
+                workspace.TryApplyChanges(project.Solution)
+
+                Dim session = StartSession(workspace)
+
+                ' Type a bit in the file
+                Dim cursorDocument = workspace.Documents.Single(Function(d) d.CursorPosition.HasValue)
+                Dim caretPosition = cursorDocument.CursorPosition.Value
+                Dim textBuffer = cursorDocument.GetTextBuffer()
+
+                textBuffer.Insert(caretPosition, "Example")
+
+                Await session.CommitAsync(previewChanges:=False, editorOperationContext:=Nothing)
+
+                Await VerifyTagsAreCorrect(workspace)
+
+                Await VerifyChangedSourceGeneratedDocumentFilenames(workspace, "generated_file.cs")
             End Using
         End Function
 
@@ -2473,5 +2520,59 @@ class [|C|]
                     </Workspace>, host:=host, renameTo:="MyNewProperty")
             End Using
         End Sub
+
+        <WpfTheory>
+        <CombinatorialData, Trait(Traits.Feature, Traits.Features.Rename)>
+        Public Sub RenameClassWithAttributeName(host As RenameTestHost)
+            Using result = RenameEngineResult.Create(_outputHelper,
+                    <Workspace>
+                        <Project Language="C#" CommonReferences="true">
+                            <Document>
+                                <![CDATA[
+                                public class [|$$MyClassAttribute|] : System.Attribute
+                                {
+                                    public [|MyClassAttribute|]()
+                                    {
+            
+                                    }
+                                }
+                            ']]>
+                            </Document>
+                        </Project>
+                    </Workspace>, host:=host, renameTo:="MyClassAttribute2")
+            End Using
+        End Sub
+
+        <WpfTheory>
+        <CombinatorialData, Trait(Traits.Feature, Traits.Features.Rename)>
+        Public Async Function RenameClassWithAttributeName2(host As RenameTestHost) As Task
+            Using workspace = CreateWorkspaceWithWaiter(
+                    <Workspace>
+                        <Project Language="C#" CommonReferences="true" LanguageVersion="preview">
+                            <Document>
+                                public class [|MyClass$$Attribute|] : System.Attribute
+                                {
+                                    public [|MyClassAttribute|]()
+                                    {
+            
+                                    }
+                                }
+                            </Document>
+                        </Project>
+                    </Workspace>, host)
+
+                Dim session = StartSession(workspace)
+
+                ' Type a bit in the file
+                Dim caretPosition = workspace.Documents.Single(Function(d) d.CursorPosition.HasValue).CursorPosition.Value
+                Dim textBuffer = workspace.Documents.Single().GetTextBuffer()
+
+                textBuffer.Insert(caretPosition, "2")
+
+                Await session.CommitAsync(previewChanges:=False, editorOperationContext:=Nothing)
+
+                Await VerifyTagsAreCorrect(workspace)
+            End Using
+        End Function
     End Class
 End Namespace

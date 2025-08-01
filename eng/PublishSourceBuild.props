@@ -29,6 +29,8 @@
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(PoisonFileToCheck) for poisoned files." />
 
+    <!-- There's an issue where not all of the markers and catalogs are being fed into this check.
+         See https://github.com/dotnet/source-build/issues/5297 -->
     <CheckForPoison FilesToCheck="@(PoisonFileToCheck)"
                     ProjectDirPath="$(RepoRoot)"
                     HashCatalogFilePath="$(PoisonReportDataFile)"
@@ -100,6 +102,18 @@
     <!-- Copy the merged asset manifest into the tarball -->
     <Copy SourceFiles="$(AssetManifestFilePath)"
           DestinationFolder="$(SourceBuiltLayoutDir)"
+          UseSymbolicLinksIfPossible="true" />
+
+    <ItemGroup>
+      <_AdditionalAssets Include="$(ArtifactsAssetsDir)Runtime/**/dotnet-runtime-*$(ArchiveExtension)" />
+      <_AdditionalAssets Include="$(ArtifactsAssetsDir)aspnetcore/Runtime/**/aspnetcore-runtime-*$(ArchiveExtension)"
+                         Exclude="$(ArtifactsAssetsDir)aspnetcore/Runtime/**/aspnetcore-runtime-composite-*$(ArchiveExtension)" />
+      <_AdditionalAssets Include="$(ArtifactsAssetsDir)$(SourceBuiltSymbolsAllTarballName)-*$(ArchiveExtension)" />
+    </ItemGroup>
+
+    <!-- Copy runtime tarballs into the tarball preserving directory structure -->
+    <Copy SourceFiles="@(_AdditionalAssets)"
+          DestinationFiles="@(_AdditionalAssets->'$(SourceBuiltLayoutDir)$([MSBuild]::MakeRelative('$(ArtifactsAssetsDir)../../', '%(FullPath)'))')"
           UseSymbolicLinksIfPossible="true" />
 
     <!-- Create a PackageVersions.props file that includes entries for all packages. -->

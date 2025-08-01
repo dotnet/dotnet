@@ -57,11 +57,4 @@
     <FileSignInfo Include="wasm2js" CertificateName="MacDeveloper" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ItemsToSign Include="$(VisualStudioSetupInsertionPath)\**\*.msi" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSign Include="$(ArtifactsPackagesDir)**\*.wixpack.zip" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="$(VisualStudioSetupInsertionPath)\**\*.msi" Condition="'$(PostBuildSign)' == 'true'" />
-    <ItemsToSign Include="$(VisualStudioSetupInsertionPath)\**\*.zip" Condition="'$(PostBuildSign)' != 'true'" />
-    <ItemsToSignPostBuild Include="$(VisualStudioSetupInsertionPath)\**\*.zip" Condition="'$(PostBuildSign)' == 'true'" />
-  </ItemGroup>
 </Project>

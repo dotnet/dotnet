@@ -172,6 +172,7 @@
     <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
       <PrebuiltNuGetSourceName>prebuilt</PrebuiltNuGetSourceName>
       <PreviouslySourceBuiltNuGetSourceName>previously-source-built</PreviouslySourceBuiltNuGetSourceName>
+      <PreviouslySourceBuiltSharedComponentsNuGetSourceName>shared-components</PreviouslySourceBuiltSharedComponentsNuGetSourceName>
       <ReferencePackagesNuGetSourceName>reference-packages</ReferencePackagesNuGetSourceName>
       
       <AddPrebuiltFeeds>true</AddPrebuiltFeeds>
@@ -199,14 +200,6 @@
       <NetSdkSupportingFeed>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json</NetSdkSupportingFeed>
     </PropertyGroup>
 
-    <ItemGroup>
-      <_BuildSources Include="$(PrebuiltNuGetSourceName);$(PreviouslySourceBuiltNuGetSourceName);$(ReferencePackagesNuGetSourceName)"
-                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
-      <_BuildSources Include="@(_CommonBuildSources)" />
-      <_BuildSources Include="$(NetSdkSupportingFeedName)"
-                     Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
-    </ItemGroup>
-
     <RemoveInternetSourcesFromNuGetConfig
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
@@ -222,6 +215,11 @@
                             SourceName="$(PreviouslySourceBuiltNuGetSourceName)"
                             SourcePath="$(PreviouslySourceBuiltPackagesPath)"
                             Condition="'$(AddPrebuiltFeeds)' == 'true'" />
+
+    <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
+                            SourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
+                            SourcePath="$(SharedComponentsArtifactsPath)"
+                            Condition="'$(AddPrebuiltFeeds)' == 'true' and Exists('$(SharedComponentsArtifactsPath)')" />
 
     <AddSourceToNuGetConfig NuGetConfigFile="$(NuGetConfigFile)"
                             SourceName="$(ReferencePackagesNuGetSourceName)"
@@ -249,6 +247,17 @@
                             SourcePath="$(NetSdkSupportingFeed)"
                             Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
 
+    <ItemGroup>
+      <_BuildSources Include="$(PrebuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltNuGetSourceName);
+                              $(PreviouslySourceBuiltSharedComponentsNuGetSourceName);
+                              $(ReferencePackagesNuGetSourceName)"
+                     Condition="'$(AddPrebuiltFeeds)' == 'true'"/>
+      <_BuildSources Include="@(_CommonBuildSources)" />
+      <_BuildSources Include="$(NetSdkSupportingFeedName)"
+                     Condition="'$(AddNetSdkSupportingFeed)' == 'true'" />
+    </ItemGroup>
+
     <UpdateNuGetConfigPackageSourcesMappings
       NuGetConfigFile="$(NuGetConfigFile)"
       BuildWithOnlineFeeds="$(DotNetBuildWithOnlineFeeds)"
@@ -257,6 +266,7 @@
       SbrpCacheSourceName="$(SbrpCacheNuGetSourceName)"
       ReferencePackagesSourceName="$(ReferencePackagesNuGetSourceName)"
       PreviouslySourceBuiltSourceName="$(PreviouslySourceBuiltNuGetSourceName)"
+      SharedComponentsSourceName="$(PreviouslySourceBuiltSharedComponentsNuGetSourceName)"
       PrebuiltSourceName="$(PrebuiltNuGetSourceName)"
       SourceBuiltSourceNamePrefix="$(SourceBuiltSourceNamePrefix)"
       PreviousBuildPassSourceNamePrefix="$(PreviousBuildPassSourceNamePrefix)"
@@ -333,14 +343,43 @@
       <Output TaskParameter="KnownPackages" ItemName="_PreviouslyBuiltSourceBuiltPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetFilteredSharedComponentPackages"
+             Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
+      <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <_UsePackageVersionPropsAggregation>true</_UsePackageVersionPropsAggregation>
+      <_UsePackageVersionPropsAggregation Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">false</_UsePackageVersionPropsAggregation>
+      <_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>;@(_PreviouslyBuiltSourceBuiltSharedComponentPackages, ';');</_PreviouslyBuiltSourceBuiltSharedComponentPackagesString>
+    </PropertyGroup>
+
+    <!-- Validate that the shared component package versions don't override with the versions from the current properties, except
+       for reference packages. -->
+    <ItemGroup Condition="'$(_UsePackageVersionPropsAggregation)' == 'true' and '@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)' != '' and '@(_DependencyProducedPackage)' != ''">
+      <_CurrentNonSbrpPackages Include="@(_DependencyProducedPackage)" />
+      <_CurrentNonSbrpPackages Remove="@(_DependencyProducedPackage->WithMetadataValue('RepoOrigin', 'source-build-reference-packages'))" />
+      <_ConflictingSharedComponentPackages Include="@(_CurrentNonSbrpPackages)" Condition="$(_PreviouslyBuiltSourceBuiltSharedComponentPackagesString.Contains(';%(Identity);'))" />
+    </ItemGroup>
+
+    <Error Condition="'@(_ConflictingSharedComponentPackages)' != ''"
+      Text="Conflicts detected between shared component packages and current packages. The following packages from shared components are incorrectly overriding packages from the current build: @(_ConflictingSharedComponentPackages)" />
+
     <Error Condition="'$(PackageVersionPropsFlowType)' != 'AllPackages' and '$(PackageVersionPropsFlowType)' != 'DependenciesOnly'"
       Text="Invalid PackageVersionPropsFlowType '$(PackageVersionPropsFlowType)'. Must be 'AllPackages' or 'DependenciesOnly'." />
 
     <PropertyGroup>
       <_VersionDetailsXml Condition="'$(PackageVersionPropsFlowType)' == 'DependenciesOnly'">$(ProjectDirectory)eng/Version.Details.xml</_VersionDetailsXml>
-      <_ImportPreviousAndCurrentVersionProps>true</_ImportPreviousAndCurrentVersionProps>
-      <_ImportPreviousAndCurrentVersionProps Condition="'$(DotNetSourceOnlyTestOnly)' == 'true'">false</_ImportPreviousAndCurrentVersionProps>
     </PropertyGroup>
+
+    <!-- Create previously source-built inputs info -->
+    <WritePackageVersionsProps KnownPackages="@(_PreviouslyBuiltSourceBuiltPackages)"
+                               VersionPropsFlowType="$(PackageVersionPropsFlowType)"
+                               VersionDetails="$(_VersionDetailsXml)"
+                               OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
+                               PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
+                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
 
     <!-- Write the build input properties, then save off a copy that will be used for generating usage reports later -->
     <WritePackageVersionsProps KnownPackages="@(_DependencyProducedPackage)"
@@ -349,15 +388,15 @@
                                VersionDetails="$(_VersionDetailsXml)"
                                OutputPath="$(CurrentSourceBuiltPackageVersionPropsPath)"
                                PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)"
-                               Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
+                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
 
-    <!-- Create previously source-built inputs info -->
-    <WritePackageVersionsProps KnownPackages="@(_PreviouslyBuiltSourceBuiltPackages)"
+    <!-- Create previously source-built inputs from shared components of a 1xx build -->
+    <WritePackageVersionsProps KnownPackages="@(_PreviouslyBuiltSourceBuiltSharedComponentPackages)"
                                VersionPropsFlowType="$(PackageVersionPropsFlowType)"
                                VersionDetails="$(_VersionDetailsXml)"
-                               OutputPath="$(PreviouslySourceBuiltPackageVersionPropsPath)"
+                               OutputPath="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
                                PropertySuffixes="@(PreviousPackageVersionPropertySuffixes)"
-                               Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
+                               Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
 
     <!-- Write a full package version props (unfiltered) that will be used to track which repo creates a package.
          Because not all repos implement the repo API (e.g. some are external), it's difficult to consistently gather
@@ -375,15 +414,16 @@
 
     <!-- Write a single file that contains imports for both the current and previously built packages -->
     <PropertyGroup>
-      <PackageVersionsPropsContents Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'">
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'">
         <![CDATA[
 <Project>
   <Import Project="$(PreviouslySourceBuiltPackageVersionPropsPath)" />
   <Import Project="$(CurrentSourceBuiltPackageVersionPropsPath)" />
+  <Import Project="$(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)" />
 </Project>
 ]]>
       </PackageVersionsPropsContents>
-      <PackageVersionsPropsContents Condition="'$(_ImportPreviousAndCurrentVersionProps)' != 'true'">
+      <PackageVersionsPropsContents Condition="'$(_UsePackageVersionPropsAggregation)' != 'true'">
         <![CDATA[
 <Project>
 </Project>
@@ -395,8 +435,8 @@
                       Lines="$(PackageVersionsPropsContents)"
                       Overwrite="true" />
 
-    <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath) and $(PreviouslySourceBuiltPackageVersionPropsPath)"
-             Condition="'$(_ImportPreviousAndCurrentVersionProps)' == 'true'" />
+    <Message Text="$(RepositoryName) using package version properties saved at $(CurrentSourceBuiltPackageVersionPropsPath), $(PreviouslySourceBuiltPackageVersionPropsPath), and $(PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath)"
+             Condition="'$(_UsePackageVersionPropsAggregation)' == 'true'" />
 
     <MakeDir Directories="$(BaseIntermediateOutputPath)" />
     <Touch Files="$(BaseIntermediateOutputPath)CreateBuildInputProps.complete" AlwaysCreate="true">
@@ -595,7 +635,7 @@
       <RepoAssetManifestFromDependentVertical Include="$(ArtifactsAssetManifestsDir)*.xml" Exclude="$(MergedAssetManifestOutputPath)" />
     </ItemGroup>
 
-    <GetKnownArtifactsFromAssetManifests AssetManifests="@(RepoAssetManifestFromDependentVertical)" RepoOrigin="$(RepositoryName)">
+    <GetKnownArtifactsFromAssetManifests AssetManifests="@(RepoAssetManifestFromDependentVertical)" RepoOrigins="$(RepositoryName)">
       <Output TaskParameter="KnownPackages" ItemName="ProducedPackageFromDependentVertical" />
       <Output TaskParameter="KnownBlobs" ItemName="ProducedAssetFromDependentVertical" />
     </GetKnownArtifactsFromAssetManifests>

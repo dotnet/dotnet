@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <RepositoryName>$(MSBuildProjectName)</RepositoryName>
+    <UseBootstrapArcade Condition="$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">true</UseBootstrapArcade>
 
     <BuildInParallel Condition="'$(BuildInParallel)' == ''">true</BuildInParallel>
     <RunEachTargetSeparately>false</RunEachTargetSeparately>
@@ -24,6 +25,7 @@
     <PackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).props</PackageVersionPropsPath>
     <CurrentSourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Current.props</CurrentSourceBuiltPackageVersionPropsPath>
     <PreviouslySourceBuiltPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Previous.props</PreviouslySourceBuiltPackageVersionPropsPath>
+    <PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).SharedComponents.props</PreviouslySourceBuiltSharedComponentsPackageVersionPropsPath>
     <SnapshotPackageVersionPropsPath>$(PackageVersionsDir)PackageVersions.$(RepositoryName).Snapshot.props</SnapshotPackageVersionPropsPath>
     <PackageVersionPropsFlowType>DependenciesOnly</PackageVersionPropsFlowType>
 
@@ -140,6 +142,7 @@
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <CommonArgs>$(CommonArgs) /p:PreviouslySourceBuiltNupkgCacheDir="$(PreviouslySourceBuiltPackagesPath)"</CommonArgs>
+    <CommonArgs Condition="Exists('$(SharedComponentsArtifactsPath)')">$(CommonArgs) /p:AdditionalSourceBuiltNupkgCacheDir="$(SharedComponentsArtifactsPath)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:ReferencePackageNupkgCacheDir="$(ReferencePackagesDir)"</CommonArgs>
     <CommonArgs>$(CommonArgs) /p:TrackPrebuiltUsageReportDir="$(ArtifactsLogRepoDir)"</CommonArgs>
   </PropertyGroup>
@@ -173,8 +176,7 @@
     <EnvironmentVariables Include="_InitializeToolset=$(SourceBuiltSdksDir)Microsoft.DotNet.Arcade.Sdk/tools/Build.proj"
                           Condition="'$(UseBootstrapArcade)' != 'true'" />
 
-    <EnvironmentVariables Include="DeterministicSourcePaths=true" Condition="'$(DeterministicBuildOptOut)' != 'true'" />
-    <EnvironmentVariables Include="DeterministicSourcePaths=false" Condition="'$(DeterministicBuildOptOut)' == 'true'" />
+    <EnvironmentVariables Include="DeterministicSourcePaths=true" />
 
     <EnvironmentVariables Include="SourceRoot=$(ProjectDirectory)" />
 
@@ -225,24 +227,6 @@
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
     <!-- Skip the sdk resolver in source-only mode as it already got built in the previous msbuild node execution triggered in build.sh. -->
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver\Microsoft.DotNet.UnifiedBuild.MSBuildSdkResolver.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(DotNetBuildSourceOnly)' != 'true'" />
-  </ItemGroup>
-
-  <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
-  <ItemGroup>
-    <SharedRepositoryReference Include="aspnetcore" />
-    <SharedRepositoryReference Include="cecil" />
-    <SharedRepositoryReference Include="command-line-api" />
-    <SharedRepositoryReference Include="deployment-tools" />
-    <SharedRepositoryReference Include="diagnostics" />
-    <SharedRepositoryReference Include="efcore" />
-    <SharedRepositoryReference Include="emsdk" />
-    <SharedRepositoryReference Include="runtime" />
-    <SharedRepositoryReference Include="sourcelink" />
-    <SharedRepositoryReference Include="symreader" />
-    <SharedRepositoryReference Include="windowsdesktop" />
-    <SharedRepositoryReference Include="winforms" />
-    <SharedRepositoryReference Include="wpf" />
-    <SharedRepositoryReference Include="xdt" />
   </ItemGroup>
 
 </Project>

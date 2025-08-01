@@ -83,6 +83,14 @@ public class CosmosModelValidator : ModelValidator
 
             foreach (var complexProperty in typeBase.GetDeclaredComplexProperties())
             {
+                if (complexProperty.IsCollection)
+                {
+                    throw new InvalidOperationException(
+                        CosmosStrings.ComplexTypeCollectionsNotSupported(
+                            complexProperty.ComplexType.ShortName(),
+                            complexProperty.Name));
+                }
+
                 ValidateType(complexProperty.ComplexType, logger);
             }
         }
@@ -161,11 +169,10 @@ public class CosmosModelValidator : ModelValidator
         IDiagnosticsLogger<DbLoggerCategory.Model.Validation> logger)
     {
         var discriminatorValues = new Dictionary<object, IEntityType>();
-        List<string?> partitionKeyStoreNames = new();
+        List<string?> partitionKeyStoreNames = [];
         int? analyticalTtl = null;
         int? defaultTtl = null;
         ThroughputProperties? throughput = null;
-        string? defaultFullTextSearchLanguage = null;
         IEntityType? firstEntityType = null;
         bool? isDiscriminatorMappingComplete = null;
 
@@ -328,27 +335,6 @@ public class CosmosModelValidator : ModelValidator
 
                     throw new InvalidOperationException(
                         CosmosStrings.ThroughputTypeMismatch(manualType.DisplayName(), autoscaleType.DisplayName(), container));
-                }
-            }
-
-            var currentFullTextSearchDefaultLanguage = entityType.GetDefaultFullTextSearchLanguage();
-            if (currentFullTextSearchDefaultLanguage != null)
-            {
-                if (defaultFullTextSearchLanguage == null)
-                {
-                    defaultFullTextSearchLanguage = currentFullTextSearchDefaultLanguage;
-                }
-                else if (defaultFullTextSearchLanguage != currentFullTextSearchDefaultLanguage)
-                {
-                    var conflictingEntityType = mappedTypes.First(et => et.GetDefaultFullTextSearchLanguage() != null);
-
-                    throw new InvalidOperationException(
-                        CosmosStrings.FullTextSearchDefaultLanguageMismatch(
-                            defaultFullTextSearchLanguage,
-                            conflictingEntityType.DisplayName(),
-                            entityType.DisplayName(),
-                            currentFullTextSearchDefaultLanguage,
-                            container));
                 }
             }
         }

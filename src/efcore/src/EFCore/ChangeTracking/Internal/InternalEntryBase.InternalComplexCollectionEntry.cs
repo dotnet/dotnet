@@ -117,10 +117,6 @@ public partial class InternalEntryBase
                 {
                     for (var i = _originalEntries.Count - 1; i >= capacity; i--)
                     {
-                        var entry = _originalEntries[i];
-                        Check.DebugAssert(entry == null || _containingEntry.EntityState == EntityState.Added,
-                            $"Complex entry at original ordinal {i} is not null for property {_complexCollection.Name}.");
-
                         _originalEntries.RemoveAt(i);
                     }
                 }
@@ -139,15 +135,87 @@ public partial class InternalEntryBase
                 {
                     for (var i = _entries.Count - 1; i >= capacity; i--)
                     {
-                        var entry = _entries[i];
-                        Check.DebugAssert(entry == null || _containingEntry.EntityState == EntityState.Deleted,
-                            $"Complex entry at original ordinal {i} is not null for property {_complexCollection.Name}.");
-
                         _entries.RemoveAt(i);
                     }
                 }
 
                 return _entries;
+            }
+        }
+
+        public void AcceptChanges()
+        {
+            _isModified = false;
+
+            if (_originalEntries != null)
+            {
+                for (var i = 0; i < _originalEntries.Count; i++)
+                {
+                    var entry = _originalEntries[i];
+                    if (entry == null
+                        || entry.EntityState != EntityState.Deleted)
+                    {
+                        continue;
+                    }
+                    entry.AcceptChanges();
+                    // The entry was deleted, so AcceptChanges removed it from the list
+                    i--;
+                }
+            }
+
+            if (_entries != null)
+            {
+                _originalEntries ??= new List<InternalComplexEntry?>(_entries.Count);
+                _originalEntries.Clear();
+                for (var i = 0; i < _entries.Count; i++)
+                {
+                    _originalEntries.Add(_entries[i]);
+                }
+                for (var i = 0; i < _originalEntries.Count; i++)
+                {
+                    _originalEntries[i]?.AcceptChanges();
+                }
+            }
+            else
+            {
+                _originalEntries = null;
+            }
+        }
+
+        public void RejectChanges()
+        {
+            _isModified = false;
+
+            if (_entries != null)
+            {
+                foreach (var entry in _entries)
+                {
+                    if (entry == null
+                        || entry.EntityState != EntityState.Added)
+                    {
+                        continue;
+                    }
+
+                    entry.SetEntityState(EntityState.Detached, acceptChanges: false, modifyProperties: false);
+                }
+            }
+
+            if (_originalEntries != null)
+            {
+                _entries ??= new List<InternalComplexEntry?>(_originalEntries.Count);
+                _entries.Clear();
+                for (var i = 0; i < _originalEntries.Count; i++)
+                {
+                    _entries.Add(_originalEntries[i]);
+                }
+                foreach (var entry in _entries)
+                {
+                    entry?.Ordinal = entry.OriginalOrdinal;
+                }
+            }
+            else
+            {
+                _entries = null;
             }
         }
 
@@ -198,7 +266,7 @@ public partial class InternalEntryBase
                 return complexEntry;
             }
 
-            // The entry is created in Detached state, so it's not added to the entries list yet.
+            // The currentEntry is created in Detached state, so it's not added to the entries list yet.
             // HandleStateChange will add it when the state changes.
             return new InternalComplexEntry((IRuntimeComplexType)_complexCollection.ComplexType, _containingEntry, ordinal);
         }
@@ -283,9 +351,9 @@ public partial class InternalEntryBase
             }
 
             EnsureCapacity(((IList?)_containingEntry.GetOriginalValue(_complexCollection))?.Count ?? 0,
-                original: true);
+                original: true, trim: false);
             EnsureCapacity(((IList?)_containingEntry[_complexCollection])?.Count ?? 0,
-                original: false);
+                original: false, trim: false);
 
             var defaultState = newState == EntityState.Modified && !modifyProperties
                 ? EntityState.Unchanged
@@ -296,20 +364,26 @@ public partial class InternalEntryBase
             {
                 foreach (var originalEntry in originalEntries)
                 {
+                    if (originalEntry?.EntityState is EntityState.Deleted && newState is EntityState.Unchanged or EntityState.Modified)
+                    {
+                        continue;
+                    }
+
                     originalEntry?.SetEntityState(newState, acceptChanges, modifyProperties);
                 }
             }
 
             if (setCurrentState)
             {
-                foreach (var entry in currentEntries)
+                foreach (var currentEntry in currentEntries)
                 {
-                    if (entry?.EntityState == EntityState.Unchanged && newState == EntityState.Modified && !modifyProperties)
+                    if ((currentEntry?.EntityState is EntityState.Unchanged && newState is EntityState.Modified && !modifyProperties)
+                        || (currentEntry?.EntityState is EntityState.Added && newState is EntityState.Unchanged or EntityState.Modified))
                     {
                         continue;
                     }
 
-                    entry?.SetEntityState(newState, acceptChanges, modifyProperties);
+                    currentEntry?.SetEntityState(newState, acceptChanges, modifyProperties);
                 }
             }
         }
@@ -358,7 +432,7 @@ public partial class InternalEntryBase
                     InsertEntry(entry, original: false);
                 }
 
-                // When going from Deleted to Unchanged, restore the entry to the original collection
+                // When going from Deleted to Unchanged, restore the currentEntry to the original collection
                 if (newState == EntityState.Unchanged)
                 {
                     InsertEntry(entry, original: true);

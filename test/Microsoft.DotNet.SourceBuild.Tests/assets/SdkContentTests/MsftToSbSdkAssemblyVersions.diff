@@ -1,0 +1,48 @@
+diff --git a/msft_assemblyversions.txt b/sb_assemblyversions.txt
+index ------------
+--- a/msft_assemblyversions.txt
++++ b/sb_assemblyversions.txt
+@@ ------------ @@ sdk/x.y.z/Microsoft.ApplicationInsights.dll - 2.23.0
+ sdk/x.y.z/Microsoft.AspNetCore.DeveloperCertificates.XPlat.dll - 10.0.0
+ sdk/x.y.z/Microsoft.Build.dll - 15.1.0
+ sdk/x.y.z/Microsoft.Build.Framework.dll - 15.1.0
+-sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll - 7.0.0
++sdk/x.y.z/Microsoft.Build.NuGetSdkResolver.dll - 6.15.0
+ sdk/x.y.z/Microsoft.Build.Tasks.Core.dll - 15.1.0
+ sdk/x.y.z/Microsoft.Build.Utilities.Core.dll - 15.1.0
+ sdk/x.y.z/Microsoft.CodeAnalysis.CSharp.dll - 5.0.0
+@@ ------------ @@ sdk/x.y.z/Microsoft/Microsoft.NET.Build.Extensions/tools/netx.y/zh-Hans/Microsof
+ sdk/x.y.z/Microsoft/Microsoft.NET.Build.Extensions/tools/netx.y/zh-Hant/Microsoft.NET.Build.Extensions.Tasks.resources.dll - 10.0.12
+ sdk/x.y.z/MSBuild.dll - 15.1.0
+ sdk/x.y.z/Newtonsoft.Json.dll - 13.0.0
+-sdk/x.y.z/NuGet.Build.Tasks.Console.dll - 7.0.0
+-sdk/x.y.z/NuGet.Build.Tasks.dll - 7.0.0
+-sdk/x.y.z/NuGet.CommandLine.XPlat.dll - 7.0.0
+-sdk/x.y.z/NuGet.Commands.dll - 7.0.0
+-sdk/x.y.z/NuGet.Common.dll - 7.0.0
+-sdk/x.y.z/NuGet.Configuration.dll - 7.0.0
+-sdk/x.y.z/NuGet.Credentials.dll - 7.0.0
+-sdk/x.y.z/NuGet.DependencyResolver.Core.dll - 7.0.0
+-sdk/x.y.z/NuGet.Frameworks.dll - 7.0.0
+-sdk/x.y.z/NuGet.LibraryModel.dll - 7.0.0
+-sdk/x.y.z/NuGet.Packaging.dll - 7.0.0
+-sdk/x.y.z/NuGet.ProjectModel.dll - 7.0.0
+-sdk/x.y.z/NuGet.Protocol.dll - 7.0.0
+-sdk/x.y.z/NuGet.Versioning.dll - 7.0.0
++sdk/x.y.z/NuGet.Build.Tasks.Console.dll - 6.15.0
++sdk/x.y.z/NuGet.Build.Tasks.dll - 6.15.0
++sdk/x.y.z/NuGet.CommandLine.XPlat.dll - 6.15.0
++sdk/x.y.z/NuGet.Commands.dll - 6.15.0
++sdk/x.y.z/NuGet.Common.dll - 6.15.0
++sdk/x.y.z/NuGet.Configuration.dll - 6.15.0
++sdk/x.y.z/NuGet.Credentials.dll - 6.15.0
++sdk/x.y.z/NuGet.DependencyResolver.Core.dll - 6.15.0
++sdk/x.y.z/NuGet.Frameworks.dll - 6.15.0
++sdk/x.y.z/NuGet.LibraryModel.dll - 6.15.0
++sdk/x.y.z/NuGet.Packaging.dll - 6.15.0
++sdk/x.y.z/NuGet.ProjectModel.dll - 6.15.0
++sdk/x.y.z/NuGet.Protocol.dll - 6.15.0
++sdk/x.y.z/NuGet.Versioning.dll - 6.15.0
+ sdk/x.y.z/pl/dotnet.resources.dll - 10.0.100
+ sdk/x.y.z/pl/Microsoft.Build.resources.dll - 15.1.0
+ sdk/x.y.z/pl/Microsoft.Build.Tasks.Core.resources.dll - 15.1.0
