@@ -46,7 +46,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         int tabSize = 4,
         bool allowDiagnostics = false,
         bool debugAssertsEnabled = true,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
+        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
@@ -63,10 +63,11 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
             //Assert.False(csharpDocument.Diagnostics.Any(), "Error creating document:" + Environment.NewLine + string.Join(Environment.NewLine, csharpDocument.Diagnostics));
         }
 
+        csharpSyntaxFormattingOptions ??= RazorCSharpSyntaxFormattingOptions.Default;
+
         var formattingService = (RazorFormattingService)OOPExportProvider.GetExportedValue<IRazorFormattingService>();
         var accessor = formattingService.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
-        accessor.SetCSharpSyntaxFormattingOptionsOverride(formattingOptionsOverride);
 
         var generatedHtml = await RemoteServiceInvoker.TryInvokeAsync<IRemoteHtmlDocumentService, string?>(document.Project.Solution,
             (service, solutionInfo, ct) => service.GetHtmlDocumentTextAsync(solutionInfo, document.Id, ct),
@@ -84,7 +85,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         var span = input.TryGetNamedSpans(string.Empty, out var spans)
             ? spans.First()
             : default;
-        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager);
+        var edits = await GetFormattingEditsAsync(span, insertSpaces, tabSize, document, requestInvoker, clientSettingsManager, csharpSyntaxFormattingOptions);
 
         if (edits is null)
         {
@@ -177,7 +178,14 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         return (input, expected);
     }
 
-    private async Task<TextEdit[]?> GetFormattingEditsAsync(TextSpan span, bool insertSpaces, int tabSize, TextDocument document, IHtmlRequestInvoker requestInvoker, IClientSettingsManager clientSettingsManager)
+    private async Task<TextEdit[]?> GetFormattingEditsAsync(
+        TextSpan span,
+        bool insertSpaces,
+        int tabSize,
+        TextDocument document,
+        IHtmlRequestInvoker requestInvoker,
+        IClientSettingsManager clientSettingsManager,
+        RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
     {
         if (span.IsEmpty)
         {
@@ -192,7 +200,7 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
                 }
             };
 
-            return await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
+            return await endpoint.GetTestAccessor().HandleRequestAsync(request, document, csharpSyntaxFormattingOptions, DisposalToken);
         }
 
         var inputText = await document.GetTextAsync(DisposalToken);

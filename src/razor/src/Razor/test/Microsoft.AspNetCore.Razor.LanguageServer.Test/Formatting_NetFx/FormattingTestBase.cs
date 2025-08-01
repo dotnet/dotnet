@@ -66,13 +66,15 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         bool codeBlockBraceOnNextLine = false,
         bool inGlobalNamespace = false,
         bool debugAssertsEnabled = true,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride = null)
+        RazorCSharpSyntaxFormattingOptions? csharpSyntaxFormattingOptions = null)
     {
         (input, expected) = ProcessFormattingContext(input, expected);
 
         var razorLSPOptions = RazorLSPOptions.Default with { CodeBlockBraceOnNextLine = codeBlockBraceOnNextLine };
 
-        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, formattingOptionsOverride);
+        csharpSyntaxFormattingOptions ??= RazorCSharpSyntaxFormattingOptions.Default;
+
+        await RunFormattingTestInternalAsync(input, expected, tabSize, insertSpaces, fileKind, tagHelpers, allowDiagnostics, razorLSPOptions, inGlobalNamespace, debugAssertsEnabled, csharpSyntaxFormattingOptions);
     }
 
     private async Task RunFormattingTestInternalAsync(
@@ -86,7 +88,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         RazorLSPOptions? razorLSPOptions,
         bool inGlobalNamespace,
         bool debugAssertsEnabled,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride)
+        RazorCSharpSyntaxFormattingOptions csharpSyntaxFormattingOptions)
     {
         // Arrange
         var fileKindValue = fileKind ?? RazorFileKind.Component;
@@ -109,11 +111,11 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
             TabSize = tabSize,
             InsertSpaces = insertSpaces,
         };
-        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false);
+        var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, csharpSyntaxFormattingOptions);
 
         var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
 
-        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled, formattingOptionsOverride);
+        var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
 
         var client = new FormattingLanguageServerClient(_htmlFormattingService, LoggerFactory);

@@ -39,7 +39,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -71,7 +71,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -103,7 +103,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -135,7 +135,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -167,7 +167,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -199,7 +199,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -231,7 +231,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -263,7 +263,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -295,7 +295,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -327,7 +327,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -359,7 +359,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -391,7 +391,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -423,7 +423,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -455,7 +455,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -487,7 +487,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -519,7 +519,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -551,7 +551,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -583,7 +583,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -615,7 +615,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -647,7 +647,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -679,7 +679,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -711,7 +711,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -743,7 +743,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -775,7 +775,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -807,7 +807,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -839,7 +839,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -871,7 +871,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -903,7 +903,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -935,7 +935,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -967,7 +967,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -999,7 +999,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1031,7 +1031,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1063,7 +1063,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1095,7 +1095,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1127,7 +1127,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1159,7 +1159,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1190,7 +1190,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1221,7 +1221,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1252,7 +1252,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1283,7 +1283,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1315,7 +1315,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1347,7 +1347,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1379,7 +1379,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1411,7 +1411,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1443,7 +1443,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1475,7 +1475,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1507,7 +1507,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1539,7 +1539,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1571,7 +1571,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1603,7 +1603,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1635,7 +1635,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1667,7 +1667,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1699,7 +1699,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1731,7 +1731,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1763,7 +1763,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1795,7 +1795,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BetweenQueryExpressionClauses,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1827,7 +1827,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1859,7 +1859,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks,
                 WrappingKeepStatementsOnSingleLine = true,
@@ -1891,7 +1891,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks,
                 WrappingKeepStatementsOnSingleLine = false,
@@ -1923,7 +1923,7 @@ public class CSharpSyntaxFormattingOptionsTest(FormattingTestContext context, Ht
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeMembersInObjectInitializers | RazorNewLinePlacement.BeforeMembersInAnonymousTypes | RazorNewLinePlacement.BeforeElse | RazorNewLinePlacement.BeforeCatch | RazorNewLinePlacement.BeforeFinally | RazorNewLinePlacement.BeforeOpenBraceInTypes | RazorNewLinePlacement.BeforeOpenBraceInAnonymousTypes | RazorNewLinePlacement.BeforeOpenBraceInObjectCollectionArrayInitializers | RazorNewLinePlacement.BeforeOpenBraceInProperties | RazorNewLinePlacement.BeforeOpenBraceInMethods | RazorNewLinePlacement.BeforeOpenBraceInAccessors | RazorNewLinePlacement.BeforeOpenBraceInAnonymousMethods | RazorNewLinePlacement.BeforeOpenBraceInLambdaExpressionBody | RazorNewLinePlacement.BeforeOpenBraceInControlBlocks,
                 WrappingKeepStatementsOnSingleLine = false,

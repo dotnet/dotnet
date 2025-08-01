@@ -10,6 +10,7 @@
     <!-- No need to track public APIs of this tool. -->
     <AddPublicApiAnalyzers>false</AddPublicApiAnalyzers>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
+    <CheckEolTargetFramework>False</CheckEolTargetFramework>
   </PropertyGroup>
 
 </Project>
