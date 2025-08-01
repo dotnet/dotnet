@@ -59,10 +59,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(_trustedTestCert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 signResult.Success.Should().BeTrue();
@@ -99,10 +101,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(_trustedTestCert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -Timestamper {timestampService.Url.OriginalString} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
+                    $"sign {packagePath} -Timestamper {timestampService.Url.OriginalString} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 signResult.Success.Should().BeTrue();
@@ -137,16 +141,18 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(_trustedTestCert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var firstResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 var secondResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {_trustedTestCert.Source.Cert.Thumbprint} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation} -Overwrite",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {_trustedTestCert.StoreName} -CertificateStoreLocation {_trustedTestCert.StoreLocation} -Overwrite",
                     testOutputHelper: _testOutputHelper);
 
                 firstResult.Success.Should().BeTrue();
@@ -184,10 +190,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(cert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 signResult.Success.Should().BeTrue();
@@ -224,21 +232,21 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(cert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 signResult.Success.Should().BeTrue();
-
-                var certificateFingerprintString = SignatureTestUtility.GetFingerprint(cert.Source.Cert, HashAlgorithmName.SHA256);
 
                 // Act
                 var verifyResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"verify {packagePath} -Signatures -CertificateFingerprint {certificateFingerprintString};abc;def",
+                    $"verify {packagePath} -Signatures -CertificateFingerprint {certSha256Hash};abc;def",
                     testOutputHelper: _testOutputHelper);
 
                 // Assert
@@ -266,10 +274,12 @@ namespace NuGet.CommandLine.FuncTest.Commands
                     zipStream.CopyTo(fileStream);
                 }
 
+                string certSha256Hash = SignatureTestUtility.GetFingerprint(cert.Source.Cert, HashAlgorithmName.SHA256);
+
                 var signResult = CommandRunner.Run(
                     _nugetExePath,
                     dir,
-                    $"sign {packagePath} -CertificateFingerprint {cert.Source.Cert.Thumbprint} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
+                    $"sign {packagePath} -CertificateFingerprint {certSha256Hash} -CertificateStoreName {cert.StoreName} -CertificateStoreLocation {cert.StoreLocation}",
                     testOutputHelper: _testOutputHelper);
 
                 signResult.Success.Should().BeTrue();

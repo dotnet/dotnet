@@ -18,12 +18,6 @@
 
   <Target Name="LocalizeNonProjectFiles">
     <ItemGroup>
-      <NonProjectFilesToMove Include="$(PkgMicrosoft_Web_Xdt)\lib\netstandard2.0\Microsoft.Web.XmlTransform.dll">
-        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\lib\netstandard2.0\</DestinationDir>
-      </NonProjectFilesToMove>
-      <NonProjectFilesToMove Include="$(PkgMicrosoft_Web_Xdt)\lib\net40\Microsoft.Web.XmlTransform.dll">
-        <DestinationDir>$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\</DestinationDir>
-      </NonProjectFilesToMove>
       <NonProjectFilesToMove Include="..\src\NuGet.Clients\NuGet.VisualStudio.Client\extension.vsixlangpack">
         <DestinationDir>$(ArtifactsDirectory)vsixlangpack\</DestinationDir>
       </NonProjectFilesToMove>
