@@ -35,19 +35,27 @@ public class SourceBuiltArtifactsTests : SdkTests
             Assert.Equal(2, versionLines.Length);
 
             // Verify the commit SHA
+            // A valid commit SHA is contains only hexadecimal characters and is exactly 40 characters long.
+
+            // In a dev environment, the commit SHA will likely be either a valid commit SHA or an error message, depending on
+            // the state of the repository and git installation.
+            // Therefore, we only verify the commit SHA is not an error message.
+            // Error messages can be:
+            // | Situation                 | Error Message Example                                                              |
+            // |---------------------------|------------------------------------------------------------------------------------|
+            // | Not a git repo            | fatal: not a git repository (or any of the parent directories): .git               |
+            // | No commits yet            | fatal: Needed a single revision                                                    |
+            // | Corrupt repo/HEAD missing | fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree |
+            // | git not installed         | git: command not found                                                             |
 
             string commitSha = versionLines[0];
             OutputHelper.WriteLine($"Commit SHA: {commitSha}");
-            Assert.Equal(40, commitSha.Length);
-            Assert.True(commitSha.All(c => char.IsLetterOrDigit(c)));
-
-            // When running in CI, we should ensure that the commit SHA is not all zeros, which is the default
-            // value when no commit SHA is available. In a dev environment this will likely be all zeros but it's
-            // possible that it could be a valid commit SHA depending on the environment's configuration, so we
-            // only verify this in CI.
             if (Config.RunningInCI)
             {
-                Assert.False(commitSha.All(c => c == '0'));
+                Assert.Equal(40, commitSha.Length);
+                Assert.True(commitSha.All(c => char.IsLetterOrDigit(c)));
+                Assert.False(commitSha.Contains("fatal:", StringComparison.OrdinalIgnoreCase));
+                Assert.False(commitSha.Contains("git:", StringComparison.OrdinalIgnoreCase));
             }
 
             // Verify the SDK version
