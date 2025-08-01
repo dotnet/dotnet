@@ -25,7 +25,7 @@ public static class DetectBinaries
         TaskLoggingHelper log,
         string targetDirectory,
         string outputReportDirectory,
-        string? allowedBinariesFile)
+        string allowedBinariesFile)
     {
         log.LogMessage(MessageImportance.High, $"Detecting binaries in '{targetDirectory}' not listed in '{allowedBinariesFile}'...");
 
@@ -33,14 +33,19 @@ public static class DetectBinaries
         var usedPatterns = new ConcurrentBag<string>();
         var newBinaries = new ConcurrentBag<string>();
 
-        IEnumerable<(string pattern, Matcher matcher)> patternMatchers = patterns.Select(p =>
+        List<(string pattern, Matcher matcher)> patternMatchers = patterns.Select(p =>
         {
             var m = new Matcher(StringComparison.Ordinal);
             m.AddInclude(p);
             return (pattern: p, matcher: m);
-        });
+        }).ToList();
 
-        await Parallel.ForEachAsync(Directory.EnumerateFiles(targetDirectory, "*", SearchOption.AllDirectories), async (file, _) =>
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount * 2
+        };
+
+        await Parallel.ForEachAsync(Directory.EnumerateFiles(targetDirectory, "*", SearchOption.AllDirectories), parallelOptions, async (file, _) =>
         {
             bool matched = false;
 
@@ -136,7 +141,7 @@ public static class DetectBinaries
         return output;
     }
 
-    private static IEnumerable<string> ParseAllowedBinariesFile(TaskLoggingHelper log, string? file, List<string>? knownFiles = null)
+    private static IEnumerable<string> ParseAllowedBinariesFile(TaskLoggingHelper log, string file, List<string>? knownFiles = null)
     {
         knownFiles ??= new List<string>();
         if (!File.Exists(file))
@@ -175,7 +180,7 @@ public static class DetectBinaries
         }
     }
 
-    private static void UpdateAllowedBinariesFile(TaskLoggingHelper log, string? file, string outputReportDirectory, HashSet<string> unusedPatterns)
+    private static void UpdateAllowedBinariesFile(TaskLoggingHelper log, string file, string outputReportDirectory, HashSet<string> unusedPatterns)
     {
         if (File.Exists(file) && unusedPatterns.Any())
         {
