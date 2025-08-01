@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -66,7 +65,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.None
             });
@@ -106,7 +105,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.None
             });
@@ -134,7 +133,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
             });
@@ -164,7 +163,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
             });
@@ -194,7 +193,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
             });
@@ -228,7 +227,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 </div>
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.BeforeOpenBraceInMethods
             });
@@ -255,7 +254,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                     }
                 }
                 """,
-            formattingOptionsOverride: RazorCSharpSyntaxFormattingOptions.Default with
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
             {
                 NewLines = RazorNewLinePlacement.None
             });

@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -395,24 +394,6 @@ internal class RazorFormattingService : IRazorFormattingService
         {
             var contentValidationPass = service._validationPasses.OfType<FormattingContentValidationPass>().Single();
             contentValidationPass.DebugAssertsEnabled = debugAssertsEnabled;
-        }
-
-        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
-        {
-            if (service._documentFormattingPasses.OfType<CSharpFormattingPass>().SingleOrDefault() is { } pass)
-            {
-                pass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
-            }
-
-            if (service._documentFormattingPasses.OfType<CSharpOnTypeFormattingPass>().SingleOrDefault() is { } onTypePass)
-            {
-                onTypePass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
-            }
-
-            if (service._documentFormattingPasses.OfType<New.CSharpFormattingPass>().SingleOrDefault() is { } newPass)
-            {
-                newPass.GetTestAccessor().SetCSharpSyntaxFormattingOptionsOverride(optionsOverride);
-            }
         }
     }
 }
