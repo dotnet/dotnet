@@ -5,7 +5,7 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
-using static Microsoft.EntityFrameworkCore.Query.QueryHelpers;
+using static Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
 
 namespace Microsoft.EntityFrameworkCore.Cosmos.Query.Internal;
 
@@ -1221,6 +1221,7 @@ public class CosmosSqlTranslatingExpressionVisitor(
         => expression switch
         {
             ConstantExpression => true,
+            UnaryExpression e => CanEvaluate(e.Operand),
             NewExpression e => e.Arguments.All(CanEvaluate),
             NewArrayExpression e => e.Expressions.All(CanEvaluate),
             MemberInitExpression e => CanEvaluate(e.NewExpression)
