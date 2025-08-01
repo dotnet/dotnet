@@ -70,8 +70,7 @@
     <PropertyGroup>
       <_PreviouslySourceBuiltSharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</_PreviouslySourceBuiltSharedComponentAssetManifests>
       <SharedRepositoryReferenceString>;@(SharedRepositoryReference);</SharedRepositoryReferenceString>
-      <!-- Property to control filtering mode: true = include only tooling components, false = exclude tooling components (default) -->
-      <IncludeOnlyToolingComponents Condition="'$(IncludeOnlyToolingComponents)' == ''">false</IncludeOnlyToolingComponents>
+      <SharedComponentFilterMode Condition="'$(SharedComponentFilterMode)' == ''">NonToolingAndBootstrapOnly</SharedComponentFilterMode>
     </PropertyGroup>
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="$(_PreviouslySourceBuiltSharedComponentAssetManifests)"
@@ -79,17 +78,22 @@
       <Output TaskParameter="KnownPackages" ItemName="_SharedComponentFilteredPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
-    <!-- Filter tooling components based on the mode -->
-    <ItemGroup Condition="'$(IncludeOnlyToolingComponents)' == 'false'">
-      <!-- Default mode: Remove tooling components from the shared packages -->
+    <!-- Non-tooling-and-bootstrap mode: Keep non-tooling components and bootstrap arcade repos -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'NonToolingAndBootstrapOnly'">
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
                       Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
-
-    <ItemGroup Condition="'$(IncludeOnlyToolingComponents)' == 'true'">
-      <!-- Alternate mode: Keep only tooling components, remove everything else -->
+    
+    <!-- Tooling-only mode: Keep only tooling components that are not bootstrap arcade repos -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'ToolingOnly'">
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
                       Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
+    </ItemGroup>
+    
+    <!-- Bootstrap-only mode: Keep only packages from bootstrap arcade repos -->
+    <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'BootstrapOnly'">
+      <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
+                      Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
     <!-- Create a lookup string of items to remove -->
