@@ -94,10 +94,7 @@ namespace TestNamespace
                     fieldInfo: typeof(CompiledModelTestBase.OwnedType).GetField("_details", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                     propertyAccessMode: PropertyAccessMode.FieldDuringConstruction,
                     nullable: true,
-                    maxLength: 64,
                     unicode: false,
-                    precision: 3,
-                    scale: 2,
                     sentinel: "");
                 details.SetGetter(
                     string (CompiledModelTestBase.PrincipalDerived<CompiledModelTestBase.DependentBase<byte?>> entity, IReadOnlyList<int> indices) => ((PrincipalDerivedUnsafeAccessors<CompiledModelTestBase.DependentBase<byte?>>.ManyOwned(entity) == null ? throw new InvalidOperationException(CoreStrings.ComplexCollectionNotInitialized("PrincipalDerived", "ManyOwned")) : PrincipalDerivedUnsafeAccessors<CompiledModelTestBase.DependentBase<byte?>>.ManyOwned(entity))[indices[0]] == null ? default(string) : (PrincipalDerivedUnsafeAccessors<CompiledModelTestBase.DependentBase<byte?>>.ManyOwned(entity) == null ? throw new InvalidOperationException(CoreStrings.ComplexCollectionNotInitialized("PrincipalDerived", "ManyOwned")) : PrincipalDerivedUnsafeAccessors<CompiledModelTestBase.DependentBase<byte?>>.ManyOwned(entity))[indices[0]].Details),
@@ -161,10 +158,8 @@ namespace TestNamespace
                         int (string v) => ((object)v).GetHashCode(),
                         string (string v) => v),
                     mappingInfo: new RelationalTypeMappingInfo(
-                        storeTypeName: "varchar(64)",
-                        size: 64,
-                        precision: 3,
-                        scale: 2));
+                        storeTypeName: "varchar(max)"),
+                    storeTypePostfix: StoreTypePostfix.None);
                 details.AddAnnotation("foo", "bar");
                 details.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
@@ -1035,6 +1030,7 @@ namespace TestNamespace
 
                 PrincipalComplexProperty.Create(complexType);
                 complexType.AddAnnotation("go", "brr");
+                complexType.AddAnnotation("Relational:ContainerColumnName", "ManyOwned");
                 complexType.AddAnnotation("Relational:FunctionName", null);
                 complexType.AddAnnotation("Relational:Schema", null);
                 complexType.AddAnnotation("Relational:SqlQuery", "select * from PrincipalBase");

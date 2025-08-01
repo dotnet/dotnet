@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -28,8 +27,6 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
     private readonly bool _isFormatOnType = isFormatOnType;
 
     protected IDocumentMappingService DocumentMappingService { get; } = documentMappingService;
-
-    protected RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -167,7 +164,7 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
         }
 
         // Now, invoke the C# formatter to obtain the CSharpDesiredIndentation for all significant locations.
-        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, _csharpSyntaxFormattingOptionsOverride, cancellationToken).ConfigureAwait(false);
+        var significantLocationIndentation = await CSharpFormatter.GetCSharpIndentationAsync(context, significantLocations, hostWorkspaceServices, cancellationToken).ConfigureAwait(false);
 
         // Build source mapping indentation scopes.
         var sourceMappingIndentations = new SortedDictionary<int, IndentationData>();
@@ -696,16 +693,6 @@ internal abstract partial class CSharpFormattingPassBase(IDocumentMappingService
             }
 
             return _indentation;
-        }
-    }
-
-    internal TestAccessor GetTestAccessor() => new(this);
-
-    internal readonly struct TestAccessor(CSharpFormattingPassBase instance)
-    {
-        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
-        {
-            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
         }
     }
 }
