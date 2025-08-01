@@ -88,6 +88,10 @@ namespace NuGet.CommandLine.XPlat
                 };
 
                 RootCommand rootCommand = new RootCommand();
+                // Commands called directly from the SDK CLI will use the SDK's common interactive option.
+                Option<bool> interactiveOption = new Option<bool>("--interactive");
+                interactiveOption.Description = Strings.AddPkg_InteractiveDescription;
+                interactiveOption.DefaultValueFactory = _ => Console.IsOutputRedirected;
 
                 if (args[0] == "package")
                 {
@@ -95,7 +99,7 @@ namespace NuGet.CommandLine.XPlat
                     rootCommand.Subcommands.Add(packageCommand);
 
                     PackageSearchCommand.Register(packageCommand, getHidePrefixLogger);
-                    PackageUpdateCommand.Register(packageCommand, getHidePrefixLogger);
+                    PackageUpdateCommand.Register(packageCommand, interactiveOption);
                 }
                 else
                 {

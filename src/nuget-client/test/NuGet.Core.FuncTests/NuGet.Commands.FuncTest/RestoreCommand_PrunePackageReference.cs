@@ -189,6 +189,19 @@ namespace NuGet.Commands.FuncTest
             result.LockFile.Targets[0].Libraries[1].Dependencies.Should().HaveCount(0);
             result.LockFile.Targets[0].Libraries[2].Name.Should().Be("C");
             result.LockFile.Targets[0].Libraries[2].Dependencies.Should().HaveCount(0);
+            result.LockFile.Targets[0].Libraries[2].CompileTimeAssemblies.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[2].CompileTimeAssemblies[0].Path.Should().EndWith("_._");
+            result.LockFile.Targets[0].Libraries[2].RuntimeAssemblies.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[2].RuntimeAssemblies[0].Path.Should().EndWith("_._");
+            result.LockFile.Targets[0].Libraries[2].FrameworkAssemblies.Should().BeEmpty();
+            result.LockFile.Targets[0].Libraries[2].FrameworkReferences.Should().BeEmpty();
+            result.LockFile.Targets[0].Libraries[2].NativeLibraries.Should().BeEmpty();
+            result.LockFile.Targets[0].Libraries[2].ResourceAssemblies.Should().BeEmpty();
+            result.LockFile.Targets[0].Libraries[2].RuntimeTargets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[2].RuntimeTargets[0].Path.Should().EndWith("_._");
+            result.LockFile.Targets[0].Libraries[2].ContentFiles.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries[2].ContentFiles[0].Path.Should().EndWith("_._");
+
             if (shouldWarn)
             {
                 result.LockFile.LogMessages.Should().HaveCount(1);
@@ -1270,8 +1283,9 @@ namespace NuGet.Commands.FuncTest
 
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
             var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
 
-            RestoreCommand.AnalyzePruningResults(projectSpec, testLogger);
+            RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
             if (shouldWarn)
             {
@@ -1284,6 +1298,8 @@ namespace NuGet.Commands.FuncTest
             {
                 testLogger.WarningMessages.Should().BeEmpty();
             }
+            testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
+            testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
 
         [Theory]
@@ -1312,8 +1328,9 @@ namespace NuGet.Commands.FuncTest
             projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
             projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
             var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
 
-            RestoreCommand.AnalyzePruningResults(projectSpec, testLogger);
+            RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
             if (shouldWarn)
             {
@@ -1326,6 +1343,8 @@ namespace NuGet.Commands.FuncTest
             {
                 testLogger.WarningMessages.Should().BeEmpty();
             }
+            testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
+            testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
 
         [Theory]
@@ -1373,8 +1392,9 @@ namespace NuGet.Commands.FuncTest
 
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
             var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
 
-            RestoreCommand.AnalyzePruningResults(projectSpec, testLogger);
+            RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
             if (shouldWarn)
             {
@@ -1386,7 +1406,10 @@ namespace NuGet.Commands.FuncTest
             else
             {
                 testLogger.WarningMessages.Should().BeEmpty();
+                testEvent.Count.Should().Be(2);
             }
+            testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
+            testEvent["Pruning.Pruned.Direct.Count"].Should().Be(2);
         }
 
         [Fact]
@@ -1430,14 +1453,17 @@ namespace NuGet.Commands.FuncTest
 
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
             var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
 
-            RestoreCommand.AnalyzePruningResults(projectSpec, testLogger);
+            RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
 
             testLogger.WarningMessages.Should().HaveCount(1);
             var restoreLogMessage = (RestoreLogMessage)testLogger.LogMessages.Single();
             restoreLogMessage.Code.Should().Be(NuGetLogCode.NU1510);
             restoreLogMessage.LibraryId.Should().Be("B");
+            testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
+            testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
 
         // A 1.0.0 -> B 1.0.0
@@ -2319,6 +2345,151 @@ namespace NuGet.Commands.FuncTest
             result.Success.Should().BeFalse(because: testLogger.ShowMessages());
             result.LockFile.LogMessages.Should().HaveCount(1);
             result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1004);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_PrunableDependenciesFromDirectPackageReference_DoNotFlowTransitively()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("packageA", "1.0.0"),
+                new SimpleTestPackageContext("packageB", "1.0.0"));
+
+            var leafProject = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                        ""packageB"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpec("Project1", pathContext.SolutionRoot, "net472");
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, leafProject);
+            projectSpec = projectSpec.WithTestProjectReference(projectSpec2);
+
+            // Act & Assert
+            var restoreResult = await RunRestoreAsync(pathContext, projectSpec, projectSpec2);
+            restoreResult.Success.Should().BeTrue();
+            restoreResult.LockFile.Targets.Should().HaveCount(1);
+            restoreResult.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+            restoreResult.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            restoreResult.LockFile.Targets[0].Libraries[0].Dependencies.Should().BeEmpty();
+            restoreResult.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
+            restoreResult.LockFile.Targets[0].Libraries[1].Dependencies.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public void PopulatePruningEnabledTelemetry_WithVariousFrameworks_PopulatesTelemetryCorrectly()
+        {
+            var rootProject = @"
+                {
+                  ""frameworks"": {
+                    ""net10.0"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        },
+                        ""packagesToPrune"": {
+                            ""a"" : ""(,1.0.0]"" 
+                        }
+                    },
+                    ""net9.0"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        },
+                        ""packagesToPrune"": {
+                            ""a"" : ""(,1.0.0]"" 
+                        }
+                    },
+                    ""net8.0"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        }
+                    },
+                    ""net7.0"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        }
+                    },
+                    ""netstandard2.1"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        },
+                        ""packagesToPrune"": {
+                            ""a"" : ""(,1.0.0]"" 
+                        }
+                    },
+                    ""netstandard1.6"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        }
+                    },
+                    ""net472"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        }
+                    },
+                    ""net46"": {
+                        ""dependencies"": {
+                                ""A"": {
+                                    ""version"": ""[1.0.0,)"",
+                                    ""target"": ""Package"",
+                                },
+                        },
+                        ""packagesToPrune"": {
+                            ""a"" : ""(,1.0.0]"" 
+                        }
+                    },
+                  }
+                }";
+
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
+            var testLogger = new TestLogger();
+            var testEvent = new TelemetryEvent("dummyEvent");
+
+            RestoreCommand.PopulatePruningEnabledTelemetry(projectSpec, testEvent);
+            testEvent["Pruning.FrameworksEnabled.Count"].Should().Be(4);
+            testEvent["Pruning.FrameworksDisabled.Count"].Should().Be(1);
+            testEvent["Pruning.FrameworksUnsupported.Count"].Should().Be(2);
+            testEvent["Pruning.FrameworksDefaultDisabled.Count"].Should().Be(1);
         }
 
         // Add a test where a new package is introduced, but a different package gets pruned, bringing the counter to be the same.

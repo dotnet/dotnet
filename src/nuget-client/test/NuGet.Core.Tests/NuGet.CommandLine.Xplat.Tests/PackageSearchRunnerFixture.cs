@@ -431,6 +431,8 @@ namespace NuGet.CommandLine.Xplat.Tests
             ServerWithMultipleEndpoints.Get.Add($"/search/query?q=json&skip=5&take=10&prerelease=true&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
             ServerWithMultipleEndpoints.Get.Add($"/search/query?q=json&skip=10&take=20&prerelease=false&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
             ServerWithMultipleEndpoints.Get.Add($"/v3/registration5-semver1/newtonsoft.json/index.json", r => ExactMatchMetadataResponse);
+            ServerWithMultipleEndpoints.Get.Add($"/search/query?q=&skip=0&take=20&prerelease=true&semVerLevel=2.0.0", r => SinglePackageQueryResponse);
+
             ServerWithMultipleEndpoints.Start();
         }
 

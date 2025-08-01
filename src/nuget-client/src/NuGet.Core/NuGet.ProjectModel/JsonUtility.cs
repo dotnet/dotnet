@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NuGet.Common;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 
@@ -14,7 +13,6 @@ namespace NuGet.ProjectModel
 {
     internal static class JsonUtility
     {
-        internal static string NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING = nameof(NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING);
         internal static bool? UseNewtonsoftJson = null;
         internal static readonly char[] PathSplitChars = new[] { LockFile.DirectorySeparatorChar };
 
@@ -62,23 +60,6 @@ namespace NuGet.ProjectModel
             return new PackageDependency(
                 property,
                 versionStr == null ? null : VersionRange.Parse(versionStr));
-        }
-
-        internal static bool UseNewtonsoftJsonForParsing(IEnvironmentVariableReader environmentVariableReader, bool bypassCache)
-        {
-            if (!UseNewtonsoftJson.HasValue || bypassCache)
-            {
-                if (bool.TryParse(environmentVariableReader.GetEnvironmentVariable(NUGET_EXPERIMENTAL_USE_NJ_FOR_FILE_PARSING), out var useNj))
-                {
-                    UseNewtonsoftJson = useNj;
-                }
-                else
-                {
-                    UseNewtonsoftJson = false;
-                }
-            }
-
-            return UseNewtonsoftJson.Value;
         }
 
         internal static JProperty WritePackageDependencyWithLegacyString(PackageDependency item)
