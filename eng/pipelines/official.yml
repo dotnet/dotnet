@@ -158,7 +158,4 @@ extends:
         desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isOfficialBuild: true
-        ${{ if eq(variables.isPRTrigger, 'true') }}:
-          scope: lite
-        ${{ else }}:
-          scope: full
+        scope: full
