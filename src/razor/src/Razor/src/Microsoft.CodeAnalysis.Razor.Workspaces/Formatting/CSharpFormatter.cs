@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Text;
@@ -29,7 +28,6 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         Document csharpDocument,
         FormattingContext context,
         LinePositionSpan spanToFormat,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride,
         CancellationToken cancellationToken)
     {
         if (!_documentMappingService.TryMapToCSharpDocumentRange(context.CodeDocument.GetRequiredCSharpDocument(), spanToFormat, out var projectedSpan))
@@ -37,7 +35,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
             return [];
         }
 
-        var edits = await GetFormattingEditsAsync(hostWorkspaceServices, csharpDocument, projectedSpan, context.Options.ToIndentationOptions(), formattingOptionsOverride, cancellationToken).ConfigureAwait(false);
+        var edits = await GetFormattingEditsAsync(hostWorkspaceServices, csharpDocument, projectedSpan, context.Options, cancellationToken).ConfigureAwait(false);
         var mappedEdits = MapEditsToHostDocument(context.CodeDocument, edits);
         return mappedEdits;
     }
@@ -46,14 +44,13 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         FormattingContext context,
         HashSet<int> projectedDocumentLocations,
         HostWorkspaceServices hostWorkspaceServices,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride,
         CancellationToken cancellationToken)
     {
         // Sorting ensures we count the marker offsets correctly.
         // We also want to ensure there are no duplicates to avoid duplicate markers.
         var filteredLocations = projectedDocumentLocations.OrderAsArray();
 
-        var indentations = await GetCSharpIndentationCoreAsync(context, filteredLocations, hostWorkspaceServices, formattingOptionsOverride, cancellationToken).ConfigureAwait(false);
+        var indentations = await GetCSharpIndentationCoreAsync(context, filteredLocations, hostWorkspaceServices, cancellationToken).ConfigureAwait(false);
         return indentations;
     }
 
@@ -68,8 +65,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         HostWorkspaceServices hostWorkspaceServices,
         Document csharpDocument,
         LinePositionSpan projectedSpan,
-        RazorIndentationOptions indentationOptions,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride,
+        RazorFormattingOptions options,
         CancellationToken cancellationToken)
     {
         var root = await csharpDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
@@ -77,7 +73,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         var spanToFormat = csharpSourceText.GetTextSpan(projectedSpan);
         Assumes.NotNull(root);
 
-        var changes = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(hostWorkspaceServices, root, spanToFormat, indentationOptions, formattingOptionsOverride, cancellationToken);
+        var changes = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(hostWorkspaceServices, root, spanToFormat, options.ToIndentationOptions(), options.CSharpSyntaxFormattingOptions, cancellationToken);
         return [.. changes];
     }
 
@@ -85,7 +81,6 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
         FormattingContext context,
         ImmutableArray<int> projectedDocumentLocations,
         HostWorkspaceServices hostWorkspaceServices,
-        RazorCSharpSyntaxFormattingOptions? formattingOptionsOverride,
         CancellationToken cancellationToken)
     {
         // No point calling the C# formatting if we won't be interested in any of its work anyway
@@ -102,7 +97,7 @@ internal sealed class CSharpFormatter(IDocumentMappingService documentMappingSer
 
         // At this point, we have added all the necessary markers and attached annotations.
         // Let's invoke the C# formatter and hope for the best.
-        var formattedRoot = RazorCSharpFormattingInteractionService.Format(hostWorkspaceServices, root, context.Options.ToIndentationOptions(), formattingOptionsOverride, cancellationToken);
+        var formattedRoot = RazorCSharpFormattingInteractionService.Format(hostWorkspaceServices, root, context.Options.ToIndentationOptions(), context.Options.CSharpSyntaxFormattingOptions, cancellationToken);
         var formattedText = formattedRoot.GetText();
 
         var desiredIndentationMap = new Dictionary<int, int>();

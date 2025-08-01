@@ -255,8 +255,9 @@ public sealed class InternalComplexEntry : InternalEntryBase
     /// </summary>
     public override void AcceptChanges()
     {
-        if (EntityState == EntityState.Added
-            || ContainingEntry.GetComplexCollectionEntry(ComplexProperty, Ordinal) == this)
+        if (Ordinal != -1
+            && (EntityState == EntityState.Added
+                || ContainingEntry.GetComplexCollectionOriginalEntry(ComplexProperty, Ordinal) == this))
         {
             OriginalOrdinal = Ordinal;
         }
@@ -272,10 +273,7 @@ public sealed class InternalComplexEntry : InternalEntryBase
     /// </summary>
     public string GetPropertyPath(IReadOnlyProperty property)
     {
-        Check.DebugAssert(property.DeclaringType == StructuralType
-            || property.DeclaringType.ContainingType == StructuralType
-            || StructuralType.ClrType == typeof(object), // For testing
-            "Property " + property.Name + " not contained under " + StructuralType.Name);
+        StructuralType.CheckContains(property);
 
         return GetPropertyPath() + "." + GetShortNameChain(property.DeclaringType) + property.Name;
     }

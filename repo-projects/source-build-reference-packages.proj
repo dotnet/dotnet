@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- SBRP builds before Arcade so it also needs the bootstrap Arcade version -->
-    <UseBootstrapArcade>true</UseBootstrapArcade>
-
     <ToolPackagesRoot>$(RepoArtifactsShippingPackagesDir)</ToolPackagesRoot>
 
     <BuildArgs>$(BuildArgs) /p:MicrosoftNetCoreIlasmPackageRuntimeId=$(NETCoreSdkRuntimeIdentifier)</BuildArgs>

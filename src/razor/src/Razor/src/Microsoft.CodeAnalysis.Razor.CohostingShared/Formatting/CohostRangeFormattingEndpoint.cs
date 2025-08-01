@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
@@ -83,7 +84,11 @@ internal sealed class CohostRangeFormattingEndpoint(
         var sourceText = await razorDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
         var htmlChanges = htmlEdits.SelectAsArray(sourceText.GetTextChange);
 
-        var options = RazorFormattingOptions.From(request.Options, _clientSettingsManager.GetClientSettings().AdvancedSettings.CodeBlockBraceOnNextLine);
+        var csharpSyntaxFormattingOptions = RazorCSharpFormattingInteractionService.GetRazorCSharpSyntaxFormattingOptions(razorDocument.Project.Solution.Services);
+        var options = RazorFormattingOptions.From(
+            request.Options,
+            _clientSettingsManager.GetClientSettings().AdvancedSettings.CodeBlockBraceOnNextLine,
+            csharpSyntaxFormattingOptions);
 
         _logger.LogDebug($"Calling OOP with the {htmlChanges.Length} html edits, so it can fill in the rest");
         var remoteResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteFormattingService, ImmutableArray<TextChange>>(
@@ -135,4 +140,3 @@ internal sealed class CohostRangeFormattingEndpoint(
             => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }
-

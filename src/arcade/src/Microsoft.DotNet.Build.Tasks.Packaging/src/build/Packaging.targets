@@ -1271,7 +1271,7 @@
 
     <Message Condition="'$(_SkipCreatePackage)' == 'true'" Text="Skipping package creation for $(NuSpecPath) because the following files do not exist: @(_missingFiles)" />
 
-    <NugetPack Nuspecs="$(NuSpecPath)"
+    <NuGetPack Nuspecs="$(NuSpecPath)"
                OutputDirectory="$(PackageOutputPath)"
                ExcludeEmptyDirectories="true"
                CreateSymbolPackage="true"
@@ -1282,6 +1282,7 @@
                AdditionalLibPackageExcludes="@(AdditionalLibPackageExcludes)"
                AdditionalSymbolPackageExcludes="@(AdditionalSymbolPackageExcludes)"
                PackedPackageNamePrefix="$(PackedPackageNamePrefix)"
+               Deterministic="$(Deterministic)"
                Condition="'$(_SkipCreatePackage)' != 'true'"/>
 
     <!-- Create a marker that records the path to the generated package -->
