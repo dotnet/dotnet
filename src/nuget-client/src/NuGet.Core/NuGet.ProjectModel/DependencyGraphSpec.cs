@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using Newtonsoft.Json;
 using NuGet.Common;
 using NuGet.Packaging;
@@ -27,6 +29,9 @@ namespace NuGet.ProjectModel
         private const int Version = 1;
 
         private readonly bool _isReadOnly;
+
+        private static readonly byte[] RestorePropertyName = Encoding.UTF8.GetBytes("restore");
+        private static readonly byte[] ProjectsPropertyName = Encoding.UTF8.GetBytes("projects");
 
         public static string GetDGSpecFileName(string projectName)
         {
@@ -238,55 +243,81 @@ namespace NuGet.ProjectModel
         public static DependencyGraphSpec Load(string path)
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var streamReader = new StreamReader(stream);
-            using var jsonReader = new JsonTextReader(streamReader);
+            if (stream.Length == 0)
+            {
+                throw new InvalidDataException();
+            }
 
+            var jsonReader = new Utf8JsonStreamReader(stream);
             var dgspec = new DependencyGraphSpec();
-            bool wasObjectRead;
+            bool wasObjectRead = false;
 
             try
             {
-                wasObjectRead = jsonReader.ReadObject(propertyName =>
+                if (jsonReader.TokenType == JsonTokenType.StartObject)
                 {
-                    switch (propertyName)
+                    wasObjectRead = true;
+                    while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
                     {
-                        case "restore":
-                            jsonReader.ReadObject(restorePropertyName =>
-                            {
-                                if (!string.IsNullOrEmpty(restorePropertyName))
-                                {
-                                    dgspec._restore.Add(restorePropertyName);
-                                }
-                            });
-                            break;
-
-                        case "projects":
-                            jsonReader.ReadObject(projectsPropertyName =>
-                            {
-#pragma warning disable CS0612 // Type or member is obsolete
-                                PackageSpec packageSpec = JsonPackageSpecReader.GetPackageSpec(jsonReader, name: null, path, EnvironmentVariableWrapper.Instance);
-#pragma warning restore CS0612 // Type or member is obsolete
-                                dgspec._projects.Add(projectsPropertyName, packageSpec);
-                            });
-                            break;
-
-                        default:
+                        if (jsonReader.ValueTextEquals(RestorePropertyName))
+                        {
+                            jsonReader.Read();
+                            ParseRestoreSection(dgspec, ref jsonReader);
+                        }
+                        else if (jsonReader.ValueTextEquals(ProjectsPropertyName))
+                        {
+                            jsonReader.Read();
+                            ParseProjectsSection(dgspec, ref jsonReader, path);
+                        }
+                        else
+                        {
                             jsonReader.Skip();
-                            break;
+                        }
                     }
-                });
+                }
             }
-            catch (JsonReaderException ex)
+            catch (System.Text.Json.JsonException ex)
             {
                 throw FileFormatException.Create(ex, path);
             }
 
-            if (!wasObjectRead || jsonReader.TokenType != JsonToken.EndObject)
+            if (!wasObjectRead || jsonReader.TokenType != JsonTokenType.EndObject || jsonReader.CurrentDepth != 0)
             {
                 throw new InvalidDataException();
             }
 
             return dgspec;
+        }
+
+        private static void ParseRestoreSection(DependencyGraphSpec dgspec, ref Utf8JsonStreamReader jsonReader)
+        {
+            if (jsonReader.TokenType == JsonTokenType.StartObject)
+            {
+                while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
+                {
+                    var restoreProjectName = jsonReader.GetString();
+                    dgspec._restore.Add(restoreProjectName);
+
+                    // restore section is an object where each property name is the project, and the value
+                    // is an empty object. We need to skip the object so the reader is ready for the
+                    // next property name
+                    jsonReader.Skip();
+                }
+            }
+        }
+
+        private static void ParseProjectsSection(DependencyGraphSpec dgspec, ref Utf8JsonStreamReader jsonReader, string path)
+        {
+            if (jsonReader.TokenType == JsonTokenType.StartObject)
+            {
+                while (jsonReader.Read() && jsonReader.TokenType == JsonTokenType.PropertyName)
+                {
+                    var projectName = jsonReader.GetString();
+                    jsonReader.Read();
+                    var packageSpec = JsonPackageSpecReader.GetPackageSpec(ref jsonReader, name: null, path, EnvironmentVariableWrapper.Instance);
+                    dgspec._projects.Add(projectName, packageSpec);
+                }
+            }
         }
 
         public void Save(string path)

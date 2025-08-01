@@ -143,7 +143,7 @@ namespace NuGet.CommandLine.XPlat
         {
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
-            Console.Write(data);
+            LogInternal(LogLevel.Minimal, data);
             Console.ForegroundColor = currentColor;
         }
     }

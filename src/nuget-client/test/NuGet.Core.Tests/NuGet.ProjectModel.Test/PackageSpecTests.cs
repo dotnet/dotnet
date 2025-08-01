@@ -643,18 +643,6 @@ namespace NuGet.ProjectModel.Test
             return new FrameworkRuntimePair(NuGetFramework.Parse(tfm), rid);
         }
 
-        [Fact]
-        [Obsolete]
-        public void FrameworkRuntimePairCloneTest()
-        {
-            //Setup
-            var frp = CreateFrameworkRuntimePair();
-            //Act
-            var clone = frp.Clone();
-            //Assert
-            Assert.Same(frp, clone);
-        }
-
         private static CompatibilityProfile CreateCompatibilityProfile(string name, string tfm = "net461")
         {
             return new CompatibilityProfile(name, new FrameworkRuntimePair[] { CreateFrameworkRuntimePair(tfm, "win-x64"), CreateFrameworkRuntimePair(tfm, "win-x86") });

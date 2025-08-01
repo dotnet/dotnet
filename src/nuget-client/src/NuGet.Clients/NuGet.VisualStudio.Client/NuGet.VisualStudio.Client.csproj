@@ -60,10 +60,6 @@
       <Link>Modules\NuGet\NuGet.PackageManagement.PowerShellCmdlets.dll-Help.xml</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="$(PkgMicrosoft_Web_Xdt)\lib\net40\Microsoft.Web.XmlTransform.dll">
-      <Link>Microsoft.Web.XmlTransform.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="$(ArtifactsDirectory)\Scripts\Add-WrapperMembers.ps1">
       <Link>Modules\NuGet\Add-WrapperMembers.ps1</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -94,6 +90,14 @@
     </Content>
     <Content Include="extension.vsixlangpack">
       <IncludeInVSIX>false</IncludeInVSIX>
+    </Content>
+    <!-- Explicitly include the XmlTransform resource packages.
+         These aren't automatically included by the VSSDK in the correct spot.
+         Work around https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2523215
+    -->
+    <Content Include="$(OutputPath)**/Microsoft.Web.XmlTransform.resources.dll">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="$(BuildCommonDirectory)NOTICES.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -334,11 +338,16 @@
       <AllVsixAssemblies Include="@(VSIXSourceItem->'%(FileName)%(Extension)')" Condition=" '%(Extension)' == '.dll' Or '%(Extension)' == '.xml' ">
         <SourceFile>%(VSIXSourceItem.Identity)</SourceFile>
       </AllVsixAssemblies>
+      <!-- Work around https://dev.azure.com/devdiv/DevDiv/_workitems/edit/2523215 -->
+      <IncorrectCopyLocalSubDirAssemblies Include="@(VSIXSourceItem)" Condition="'%(VSIXSourceItem.VSIXSubPath)' == '' and '%(VSIXSourceItem.DestinationSubDirectory)' != ''">
+        <SourceFile>%(VSIXSourceItem.Identity)</SourceFile>
+      </IncorrectCopyLocalSubDirAssemblies>
     </ItemGroup>
     <ItemGroup>
       <SuppressPackaging Include="@(AllVsixAssemblies)" Exclude="@(IncludeVsixFilesList)" />
+      <SuppressPackaging Include="@(IncorrectCopyLocalSubDirAssemblies)" />
       <MissingRequiredAssemblies Include="@(IncludeVsixFilesList)" Exclude="@(AllVsixAssemblies)" />
-      <NotListedDependencies Include="@(SuppressPackaging)" Exclude="@(IgnoreVsixFilesList)" />
+      <NotListedDependencies Include="@(SuppressPackaging)" Exclude="@(IgnoreVsixFilesList);@(IncorrectCopyLocalSubDirAssemblies)" />
       <MissingIgnoredAssemblies Include="@(IgnoreVsixFilesList)" Exclude="@(AllVsixAssemblies)" />
       <VSIXSourceItem Remove="@(SuppressPackaging->'%(SourceFile)')" />
       <VSIXSourceItem Remove="@(AllVsixSymbols->'%(SourceFile)')" />
@@ -362,7 +371,6 @@
     </MSBuild>
     <ItemGroup>
       <VSIXSourceItem Include="@(LocalizedFilesForVsix)" />
-      <_LocalizedFiles Include="$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\**\Microsoft.Web.XmlTransform.resources.dll" />
       <_LocalizedFiles Include="$(ArtifactsDirectory)vsixlangpack\**\extension.vsixlangpack" />
       <_VsixLocFiles Include="@(_LocalizedFiles)">
         <TargetPath>%(_LocalizedFiles.RecursiveDir)%(_LocalizedFiles.Filename)%(_LocalizedFiles.Extension)</TargetPath>

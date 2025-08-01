@@ -16,5 +16,11 @@ namespace NuGet.CommandLine.Xplat.Tests
         public void LogMinimal(string data, ConsoleColor color)
         {
         }
+
+        public LogLevel LogLevel
+        {
+            get => VerbosityLevel;
+            set => VerbosityLevel = value;
+        }
     }
 }

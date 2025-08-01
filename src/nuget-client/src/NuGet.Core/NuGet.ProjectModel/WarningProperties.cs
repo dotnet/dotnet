@@ -42,12 +42,6 @@ namespace NuGet.ProjectModel
             WarningsNotAsErrors = new HashSet<NuGetLogCode>();
         }
 
-        [Obsolete("Use the constructor with 4 instead.")]
-        public WarningProperties(ISet<NuGetLogCode> warningsAsErrors, ISet<NuGetLogCode> noWarn, bool allWarningsAsErrors)
-            : this(warningsAsErrors, noWarn, allWarningsAsErrors, new HashSet<NuGetLogCode>())
-        {
-        }
-
         public WarningProperties(ISet<NuGetLogCode> warningsAsErrors, ISet<NuGetLogCode> noWarn, bool allWarningsAsErrors, ISet<NuGetLogCode> warningsNotAsErrors)
         {
             WarningsAsErrors = warningsAsErrors ?? throw new ArgumentNullException(nameof(warningsAsErrors));
@@ -105,15 +99,6 @@ namespace NuGet.ProjectModel
         }
 
         /// <summary>
-        /// Create warning properties from the msbuild property strings.
-        /// </summary>
-        [Obsolete]
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, string warningsAsErrors, string noWarn)
-        {
-            return GetWarningProperties(treatWarningsAsErrors, MSBuildStringUtility.GetNuGetLogCodes(warningsAsErrors), MSBuildStringUtility.GetNuGetLogCodes(noWarn));
-        }
-
-        /// <summary>
         /// Create warning properties from NuGetLogCode collection.
         /// </summary>
         public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn, ImmutableArray<NuGetLogCode> warningsNotAsErrors)
@@ -127,15 +112,6 @@ namespace NuGet.ProjectModel
             props.NoWarn.UnionWith(noWarn);
             props.WarningsNotAsErrors.UnionWith(warningsNotAsErrors);
             return props;
-        }
-
-        /// <summary>
-        /// Create warning properties from NuGetLogCode collection.
-        /// </summary>
-        [Obsolete]
-        public static WarningProperties GetWarningProperties(string treatWarningsAsErrors, ImmutableArray<NuGetLogCode> warningsAsErrors, ImmutableArray<NuGetLogCode> noWarn)
-        {
-            return GetWarningProperties(treatWarningsAsErrors, warningsAsErrors, noWarn, []);
         }
     }
 }

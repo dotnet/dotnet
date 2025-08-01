@@ -4,6 +4,7 @@
 #nullable enable
 
 using System.Collections.Generic;
+using NuGet.Common;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package.Update
 {
@@ -11,6 +12,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
     {
         public required string Project { get; init; }
 
-        public IReadOnlyList<string>? Packages { get; init; }
+        public required IReadOnlyList<Package> Packages { get; init; }
+
+        public required bool Interactive { get; init; }
+
+        public required LogLevel LogLevel { get; init; }
     }
 }
