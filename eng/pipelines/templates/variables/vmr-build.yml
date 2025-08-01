@@ -42,7 +42,7 @@ variables:
     value: false
 - ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
   # Enable IBC on the internal project if the, branch is a release branch
-  - ${{ if and(eq(parameters.isOfficialBuild, or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: ibcEnabled
       value: true
   # No IBC otherwise.
