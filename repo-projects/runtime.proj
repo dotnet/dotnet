@@ -33,7 +33,7 @@
     <BuildArgs Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) --bootstrap</BuildArgs>
 
     <!-- If this build is not a "special flavor" build, build everything that can be built for this target. -->
-    <BuildArgs Condition="'$(PgoInstrument)' != 'true' and '$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
+    <BuildArgs Condition="'$(DotNetBuildUseMonoRuntime)' != 'true'">$(BuildArgs) /p:DotNetBuildAllRuntimePacks=true</BuildArgs>
 
     <!-- When we're actually doing signing and the ESRP tool is available, forward down the path to the repo builds. -->
     <BuildArgs Condition="'$(DotNetBuildSign)' == 'true' and '$(ForceDryRunSigning)' != 'true' and '$(DotNetEsrpToolPath)' != ''">$(BuildArgs) /p:DotNetEsrpToolPath=$(DotNetEsrpToolPath)</BuildArgs>
