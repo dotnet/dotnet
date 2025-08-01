@@ -2,6 +2,10 @@
 
 - [Purpose](#purpose)
 - [Terminology](#terminology)
+- [Source synchronization](#source-synchronization)
+  - [Synchronization metadata](#synchronization-metadata)
+  - [Synchronizing Submodules](#synchronizing-submodules)
+  - [Tracking Sources](#tracking-sources)
 - [High-level code flow](#high-level-code-flow)
   - [Forward flow](#forward-flow)
   - [Backflow](#backflow)
@@ -18,8 +22,7 @@
   - [Conflicts during PR updates](#conflicts-during-pr-updates)
 - [Parallel flows](#parallel-flows)
   - [Conflicts caused by parallel flows](#conflicts-caused-by-parallel-flows)
-  - [Arcade](#arcade)
-    - [Updating `eng/common`](#updating-engcommon)
+  - [Arcade and `eng/common`](#arcade-and-engcommon)
 
 ## Purpose
 
@@ -37,6 +40,162 @@ This section presents more precise definitions of common terms used in this docu
 - **Backflow** - The process of moving changes from the VMR to an individual repository.
 - **Codeflow** - The process of moving changes between the VMR and individual repositories. This is a generic term that can refer to both forward flow and backflow.
 - **Codeflow PR** - A pull request carrying the code changes that is opened as part of the codeflow process. This can be a forward flow PR or a backflow PR.
+
+## Source synchronization
+
+The source synchronization is the process of gathering changes from either the individual repositories or the VMR and applying them to the counterpart side.
+The synchronization follows some further rules which are dictated by the VMR design and the requirements of the .NET product.
+
+The synchronization itself is done using git patches and diffs. The process itself tries to be as git native as possible so that all changes are applied similarly to how a single repository would be formed.
+This makes git handle most problems for us, such as EOLs, whitespace, binaries, etc.
+
+### Repository Source Mappings
+
+Each repository synchronized into the VMR will be configured explicitly in the [`src/source-mappings.json` file](../src/source-mappings.json).
+There are several options to configure the synchronization of the repository, such as the inclusion and exclusion filters which dictate which files are included in the synchronization.
+We call these records *source mappings*.
+
+For each repository in the `src/` directory that maps onto a development repository, the source mapping file shall contain an entry that specifies
+
+| Element         | Description                                                                                                                              | Examples                                           |
+|-----------------|------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------|
+| `name`          | Name of component. This is the directory that the source will map to.                                                                    | `name: sdk`                                        |
+| `defaultRef`    | *Optional*. If specified, this is the source branch, tag, or commit of the repository that maps onto this directory. Defaults to `main`. | `defaultRef: mytestBranch`<br />`defaultRef: v1.0` |
+| `defaultRemote` | Default git remote for the source                                                                                                        | `defaultRemote: https://github.com/dotnet/sdk`     |
+| `include`       | *Optional*. Inclusion globs. If omitted, everything is included (`**/*`).                                                                | `include: [ src/**/* ]`                            |
+| `exclude`       | *Optional*. Exclusion globs. If omitted, nothing is excluded.                                                                            | `exclude: [ eng/Version.Details, global.json ]`    |
+
+The `source-mappings.json` file might also contain other options that dictate how some other content in the VMR is generated.
+These can be for instance paths to templates from which we compile some of the files in the VMR such as the `THIRD-PARTY-NOTICES.txt`.
+
+### Mapping Defaults
+
+Furthermore, the `source-mappings.json` file will contain "useful defaults" (a default mapping) as we expect most of the repositories will share some common exclusions or a common `defaultRef`.
+The mappings will have a chance to discard the defaults by specifying a flag `overrideDefaults: true`.
+
+In practice, in/exclusion filters of the mappings would be merged with the defaults, so a following setup:
+```json
+{
+    "defaults": {
+        "defaultRef": "main",
+        "exclude": [
+            "**/*.dll",
+            "**/*.exe",
+        ]
+    },
+    "mappings": [
+        {
+            "name": "arcade",
+            "defaultRemote": "https://github.com/dotnet/arcade",
+            "include": [
+                "*.*",
+                ".*",
+                "eng/**/*",
+                "scripts/**/*"
+            ],
+            "exclude": [
+                "**/tests/**/*"
+            ]
+        },
+        {
+            "name": "fsharp",
+            "defaultRemote": "https://github.com/dotnet/fsharp"
+        },
+        {
+            "name": "aspnetcore",
+            "defaultRemote": "https://github.com/dotnet/aspnetcore",
+            "overrideDefaults": true,
+            "defaultRef": "dev",
+            "exclude": [
+                "**/samples/**/*.js"
+            ]
+        },
+    ]
+}
+```
+
+would yield the following subset of sources to be synchronized:
+
+```bash
+https://github.com/dotnet/arcade@main → src/arcade
+    included: 'eng/**/*', 'scripts/**/*',
+    excluded: '**/*.dll', '**/*.exe', '**/tests/**/*'
+
+https://github.com/dotnet/fsharp@master → src/fsharp
+    included: '**/*'
+    excluded: '**/*.dll', '**/*.exe'
+
+https://github.com/dotnet/aspnetcore@dev → src/aspnetcore
+    included: '**/*'
+    excluded: '**/samples/**/*.js'
+```
+
+#### Repo-level overrides for ex/inclusions
+
+Some exclusion patterns get complicated and would be hard to enforce using the include/exclude filters described above.
+For instance, it might be desirable for repositories to exclude all binaries (e.g., `**/*.pdb`).
+However, there might be exceptions to these rules where it might be needed to include specific PDB files. Actually, these already apply in today’s setting.
+
+For cases like these, it should be possible for the development repos to have a final say in which files are required or, in contrary, ignored.
+The repos should ultimately be able to override this as in the end they have the best knowledge about the concrete files.
+To deal with this requirement and to plug this together well with the process that we have for repo synchronization, the tooling will take into account git attributes that the repositories can set via the `.gitattributes` files.
+The repository will utilize two attributes named vmr-preserve and vmr-ignore and files tagged with these will override the filters from the mapping.
+
+Example `.gitattributes` record:
+```bash
+src/.nuget/**/*.pdb     vmr-preserve
+src/SomeNonDesiredFile.cs    vmr-ignore
+```
+
+### Synchronization metadata
+
+The information about the content synchronized in the VMR is stored in the [`src/source-manifest.json` file](../src/source-manifest.json).
+An example entry looks like this:
+
+```jsonc
+{
+  "path": "aspnetcore", // Path where sources are synchronized into
+  "remoteUri": "https://github.com/dotnet/aspnetcore",
+  "commitSha": "1e859f1c9e7e4a8aa823f7e95d820e7049892ee6"
+}
+```
+
+Vice versa, the VMR's SHA is stored in the `<Source>` tag in the `eng/Version.Details.xml` file in the individual repositories.
+
+### Synchronizing Submodules
+
+Some development repositories contain [git submodules](https://www.git-scm.com/book/en/v2/Git-Tools-Submodules) and need them to successfully build.
+Some of these are also external to the .NET Foundation.
+These could be kept as submodules in the VMR too, however, this conflicts with some of the requirements and goals for the VMR:
+
+- One of the main goals of the VMR is to be able to build the whole .NET product from any given commit always.
+- Some .NET distro maintainers require that the build needs to happen without internet connectivity to ensure no further artifacts are downloaded in the process.
+- Some .NET distro maintainers require that there are no non-text-based files in the VMR (e.g. binaries).
+- We would like to upstream as many changes back into the submodules as possible.
+- We would like to not be dependent on the external submodule remote to exist long-term (to be able to service .NET releases).
+
+The above gives us two options:
+- We would either must fork all submodules, strip all non-text-based files and reference these forks from the VMR.
+- Synchronize submodules into the VMR as hard copies of the sources instead of preserving them as a submodule (stripping the binaries during this process).
+
+We have considered both options and decided to go with the latter as it will mean less friction when working with these upstreams.
+Without the man-in-the-middle forks, we can consume new versions faster and contribute back to the upstream easier.
+
+Effectively, this means the tooling will be synchronizing the sources using patches and diffing the submodules the same way as when synchronizing non-submodule code.
+We call this process *submodule inlining*.
+We track which submodules are inlined in the [`src/source-manifest.json` file](../src/source-manifest.json) in the VMR.
+When we see changes in the original repositories (and their `.gitmodules`), we create the appropriate patches conveying the jump from one SHA to another and apply these patches to the VMR.
+
+### Tracking Sources
+
+When we synchronize sources from the development repositories into the VMR, we create a patch file for the diff of where we synchronized from, then transfer that onto the VMR sources.
+To be able to do this, we need to store the information about the currently synchronized sources.
+
+For every development repo synchronized into the VMR, the VMR tracks the remote URI and the last SHA it has pulled the last time when synchronizing.
+Whenever we synchronize the VMR and pull new changes from the development repo, we make a diff of the changes in the development repo between this last SHA and wherever we want to synchronize to (e.g., HEAD).
+We then apply this change set onto the VMR by creating a commit for the diff.
+
+Similarly to this, we need to be able to track the inlined submodules.
 
 ## High-level code flow
 
@@ -372,9 +531,7 @@ When creating the last forward flow branch (in red), we can leverage the fact th
 We can compare the file we're flowing with the version in the target branch by merging the target branch into our PR branch (`9.` to `11.`) which will create the conflict. We can try to take the file as it is in the target branch and apply the diff from the repo since the blue flow (`BBB` to `CCC`) on top of it. This will result in the file being changed from `BBB` to `CCC` and the conflict will be correctly resolved.
 This ensures continuity of the file content and prevent most of the non-conflicts from manifesting.
 
-### Arcade
-
-#### Updating `eng/common`
+### Arcade and `eng/common`
 
 The `eng/common` folder is currently hosted in the `dotnet/arcade` repository and copied to other repositories when they receive dependency updates from `dotnet/arcade`.
 Since repositories will also accept dependency updates from the VMR, we will need to distribute this folder from there too.
