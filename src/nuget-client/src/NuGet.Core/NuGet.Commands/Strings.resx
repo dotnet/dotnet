@@ -1161,4 +1161,10 @@ NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for
     <value>The following PackageReference item(s) do not have a version specified: {0}</value>
     <comment>0 - List of package names</comment>
   </data>
+  <data name="VerifyCommand_ContentHash" xml:space="preserve">
+    <value>Content hash: {0}</value>
+  </data>
+  <data name="Error_ProjectJson_Deprecated" xml:space="preserve">
+    <value>Managing packages with project.json is deprecated. Migrate to PackageReference.</value>
+  </data>
 </root>

@@ -30,7 +30,10 @@ namespace NuGet.CommandLine.XPlat
             Verbosity = GetVerbosityFromOption(verbosity);
         }
 
-        public PackageSearchArgs() { }
+        public PackageSearchArgs()
+            : this(null, null, null, null)
+        {
+        }
 
         private int VerifyInt(string number, int defaultValue, string option)
         {

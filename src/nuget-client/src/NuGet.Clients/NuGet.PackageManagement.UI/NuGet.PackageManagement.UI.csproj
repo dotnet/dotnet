@@ -7,7 +7,6 @@
     <Description>Package Management UI elements for Visual Studio, Package Manager UI, Migrator, Options dialog.</Description>
     <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
     <UseWpf>true</UseWpf>
-    <UseWinForms>true</UseWinForms>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <TargetFramework>$(NETFXTargetFramework)</TargetFramework>
     <ExcludeFromSourceOnlyBuild>true</ExcludeFromSourceOnlyBuild>
@@ -31,16 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Options\GeneralOptionControl.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GeneralOptionControl.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Options\PackageSourcesOptionsControl.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PackageSourcesOptionsControl.resx</DependentUpon>
-    </Compile>
     <Compile Update="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -53,13 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Options\GeneralOptionControl.resx">
-      <DependentUpon>GeneralOptionControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Options\PackageSourcesOptionsControl.resx">
-      <DependentUpon>PackageSourcesOptionsControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -96,12 +78,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PackageIconMonikers.tt</DependentUpon>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Options\ConfigurationFilesControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>

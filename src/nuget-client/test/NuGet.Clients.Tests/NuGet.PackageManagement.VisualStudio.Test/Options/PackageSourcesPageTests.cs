@@ -85,6 +85,58 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         }
 
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task SetValueAsync_WhenPackageNameChanging_RaisesSettingValuesChangedAsync(bool isPackageNameChanging)
+        {
+            // Arrange
+            string originalSourceName = "unitTestingSourceName";
+            string originalSourceUrl = "https://unitTestingSource";
+            string newSourceName = isPackageNameChanging ? "unitTestingSourceNameEdited" : originalSourceName;
+            // Change the source if the name is not changing so that something gets updated.
+            string newSourceUrl = isPackageNameChanging ? originalSourceUrl : "https://unitTestingSourceEdited";
+
+            bool wasVsSettingsSettingsChangedCalled = false;
+
+            _packageSources =
+            [
+                new PackageSource(originalSourceUrl, originalSourceName)
+            ];
+
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+            instance.SettingValuesChanged += (sender, e) =>
+            {
+                wasVsSettingsSettingsChangedCalled = true;
+            };
+
+            Dictionary<string, object> packageSourceDictionary = new Dictionary<string, object>();
+
+            // The ID from Unified Settings has not been updated to match the new name.
+            packageSourceDictionary[PackageSourcesPage.MonikerPackageSourceId] = originalSourceName;
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceName] = newSourceName;
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = newSourceUrl;
+            packageSourceDictionary[PackageSourcesPage.MonikerIsEnabled] = true;
+            packageSourceDictionary[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
+
+            IList<IDictionary<string, object>> packageSourceDictionaryList =
+                new List<IDictionary<string, object>>(capacity: 1)
+                {
+                    packageSourceDictionary
+                };
+
+            // Act
+            ExternalSettingOperationResult result = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerPackageSources,
+                packageSourceDictionaryList,
+                CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+            wasVsSettingsSettingsChangedCalled.Should().Be(isPackageNameChanging);
+        }
+
+        [Theory]
         [InlineData(@"http://")]
         [InlineData(@"https://")]
         [InlineData(@"https:// ")]
@@ -97,9 +149,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             PackageSourcesPage instance = CreateInstance(_vsSettings);
             Dictionary<string, object> packageSourceDictionary = new Dictionary<string, object>();
 
-            packageSourceDictionary["sourceName"] = "unitTestingSourceName";
-            packageSourceDictionary["sourceUrl"] = invalidSource;
-            packageSourceDictionary["isEnabled"] = true;
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceName] = "unitTestingSourceName";
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = invalidSource;
+            packageSourceDictionary[PackageSourcesPage.MonikerIsEnabled] = true;
+            packageSourceDictionary[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
 
             IList<IDictionary<string, object>> packageSourceDictionaryList =
                 new List<IDictionary<string, object>>(capacity: 1)
@@ -141,9 +194,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             PackageSourcesPage instance = CreateInstance(_vsSettings);
             Dictionary<string, object> packageSourceDictionary = new Dictionary<string, object>();
 
-            packageSourceDictionary["sourceName"] = "unitTestingSourceName";
-            packageSourceDictionary["sourceUrl"] = invalidSource;
-            packageSourceDictionary["isEnabled"] = true;
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceName] = "unitTestingSourceName";
+            packageSourceDictionary[PackageSourcesPage.MonikerSourceUrl] = invalidSource;
+            packageSourceDictionary[PackageSourcesPage.MonikerIsEnabled] = true;
+            packageSourceDictionary[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
 
             IList<IDictionary<string, object>> packageSourceDictionaryList =
                 new List<IDictionary<string, object>>(capacity: 1)
@@ -207,19 +261,22 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
 
             // Configure Unified Settings input to Toggle 2 of the 3 IsEnabled states.
             Dictionary<string, object> packageSourceDictionary1 = new Dictionary<string, object>();
-            packageSourceDictionary1["sourceName"] = sourceName1;
-            packageSourceDictionary1["sourceUrl"] = sourceUrl1;
-            packageSourceDictionary1["isEnabled"] = !isSource1Enabled; // Toggle the enabled state for the first source.
+            packageSourceDictionary1[PackageSourcesPage.MonikerSourceName] = sourceName1;
+            packageSourceDictionary1[PackageSourcesPage.MonikerSourceUrl] = sourceUrl1;
+            packageSourceDictionary1[PackageSourcesPage.MonikerIsEnabled] = !isSource1Enabled; // Toggle the enabled state for the first source.
+            packageSourceDictionary1[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
 
             Dictionary<string, object> packageSourceDictionary2 = new Dictionary<string, object>();
-            packageSourceDictionary2["sourceName"] = sourceName2;
-            packageSourceDictionary2["sourceUrl"] = sourceUrl2;
-            packageSourceDictionary2["isEnabled"] = isSource2Enabled;
+            packageSourceDictionary2[PackageSourcesPage.MonikerSourceName] = sourceName2;
+            packageSourceDictionary2[PackageSourcesPage.MonikerSourceUrl] = sourceUrl2;
+            packageSourceDictionary2[PackageSourcesPage.MonikerIsEnabled] = isSource2Enabled;
+            packageSourceDictionary2[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
 
             Dictionary<string, object> packageSourceDictionary3 = new Dictionary<string, object>();
-            packageSourceDictionary3["sourceName"] = sourceName3;
-            packageSourceDictionary3["sourceUrl"] = sourceUrl3;
-            packageSourceDictionary3["isEnabled"] = !isSource3Enabled; // Toggle the enabled state for the third source.
+            packageSourceDictionary3[PackageSourcesPage.MonikerSourceName] = sourceName3;
+            packageSourceDictionary3[PackageSourcesPage.MonikerSourceUrl] = sourceUrl3;
+            packageSourceDictionary3[PackageSourcesPage.MonikerIsEnabled] = !isSource3Enabled; // Toggle the enabled state for the third source.
+            packageSourceDictionary3[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
 
             IList<IDictionary<string, object>> packageSourceDictionaryList =
                 new List<IDictionary<string, object>>(capacity: 3)

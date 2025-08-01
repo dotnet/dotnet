@@ -12,7 +12,7 @@
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net9.0</NETCoreTargetFramework>
-    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true'">net10.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
     <NETCoreLegacyTargetFrameworkForSigning>net8.0</NETCoreLegacyTargetFrameworkForSigning>
 
     <!-- Target frameworks for class libraries-->
@@ -49,7 +49,7 @@
     <EnlistmentRootSrc>$(RepositoryRootDirectory)src</EnlistmentRootSrc>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(RepositoryRootDirectory)</SolutionDir>
     <ArtifactRoot>$(ArtifactsDirectory)</ArtifactRoot>
-    <NuGetBuildLocalizationRepository>$(RepositoryRootDirectory)submodules\NuGet.Build.Localization\</NuGetBuildLocalizationRepository>
+    <ArtifactTempDirectory>$(ArtifactsDirectory)temp</ArtifactTempDirectory>
     <LocalizationRootDirectory>$(NuGetBuildLocalizationRepository)localize</LocalizationRootDirectory>
     <LocalizationWorkDirectory>$(RepositoryRootDirectory)localize</LocalizationWorkDirectory>
     <NoWarn>$(NoWarn);NU5105;MSB3277;NETSDK1138</NoWarn>
@@ -134,7 +134,6 @@
   <!-- Write out .XML files for projects all projects, required to enforce IDE0005 on build. -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile Condition=" '$(DocumentationFile)' == '' AND '$(IsNetCoreProject)' != 'true' ">$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
   <!-- Set the output location for all non-test projects -->
@@ -148,44 +147,7 @@
     <AppxPackageDir>$(OutputPath)</AppxPackageDir>
   </PropertyGroup>
 
-  <!-- Generate AssemblyFileVersion and AssemblyVersion attributes. -->
-  <PropertyGroup Condition=" '$(IsNetCoreProject)' != 'true' ">
-    <!-- Turn on dynamic assembly attribute generation -->
-    <AssemblyAttributesPath>$(IntermediateOutputPath)AssemblyInfo.g.cs</AssemblyAttributesPath>
-    <GenerateAdditionalSources>true</GenerateAdditionalSources>
-  </PropertyGroup>
-
-  <!-- Assembly attributes for non net core projects-->
-  <ItemGroup Condition=" '$(SkipAssemblyAttributes)' != 'true' AND '$(IsNetCoreProject)' != 'true' ">
-    <!--
-      AssemblyVersion and AssemblyFileVersion attributes are generated automatically for every build.
-      NuGet package version is derived from AssemblyFileVersion.
-    -->
-    <AssemblyAttributes Include="AssemblyVersion">
-      <_Parameter1>$(SemanticVersion).$(PreReleaseVersion)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyFileVersion">
-      <_Parameter1>$(SemanticVersion).$(PreReleaseVersion)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyInformationalVersion">
-      <_Parameter1 Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</_Parameter1>
-      <_Parameter1 Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyCompany">
-      <_Parameter1>Microsoft Corporation</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyProduct">
-      <_Parameter1>NuGet</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="AssemblyCopyright">
-      <_Parameter1>&#169; Microsoft Corporation. All rights reserved.</_Parameter1>
-    </AssemblyAttributes>
-    <AssemblyAttributes Include="System.Resources.NeutralResourcesLanguage">
-      <_Parameter1>en-US</_Parameter1>
-    </AssemblyAttributes>
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(IsNetCoreProject)' == 'true' ">
+  <PropertyGroup>
     <!-- Assembly attributes for net core projects -->
     <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>

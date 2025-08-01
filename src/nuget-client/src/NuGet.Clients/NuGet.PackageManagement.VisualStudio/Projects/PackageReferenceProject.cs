@@ -39,10 +39,6 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private static readonly ProjectPackages EmptyProjectPackages = new(Array.Empty<PackageReference>(), Array.Empty<TransitivePackageReference>());
 
-        private readonly protected string _projectName;
-        private readonly protected string _projectUniqueName;
-        private readonly protected string _projectFullPath;
-
         // Cache
         private protected Dictionary<string, TransitiveEntry> TransitiveOriginsCache { get; set; }
         protected T InstalledPackages { get; set; }

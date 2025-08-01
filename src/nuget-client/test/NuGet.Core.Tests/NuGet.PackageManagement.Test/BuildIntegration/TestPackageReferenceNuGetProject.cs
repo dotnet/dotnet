@@ -32,9 +32,6 @@ namespace NuGet.Test
 
         public bool IsCacheEnabled { get; set; }
 
-        [Obsolete]
-        public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
-
         public IProjectSystemCapabilities Capabilities => throw new NotImplementedException();
 
         public IProjectSystemReferencesReader ReferencesReader => this;
@@ -64,6 +61,7 @@ namespace NuGet.Test
             InternalMetadata.Add(NuGetProjectMetadataKeys.TargetFramework, packageSpec.TargetFrameworks[0].FrameworkName);
             InternalMetadata.Add(NuGetProjectMetadataKeys.Name, packageSpec.Name);
             InternalMetadata.Add(NuGetProjectMetadataKeys.FullPath, packageSpec.FilePath);
+            ProjectStyle = ProjectStyle.PackageReference;
         }
 
         public void AddProjectReference(TestPackageReferenceNuGetProject project)

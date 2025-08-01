@@ -11,6 +11,8 @@ namespace NuGet.PackageManagement
 {
     public class PackageRestoreResult
     {
+        internal static readonly PackageRestoreResult NoopRestoreResult = new(false, []);
+
         public PackageRestoreResult(bool restored, IEnumerable<PackageIdentity> restoredPackages, AuditCheckResult? auditCheckResult)
             : this(restored, restoredPackages)
         {

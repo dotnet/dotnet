@@ -8,7 +8,6 @@
     <PackProject>false</PackProject>
     <IncludeInVsix>false</IncludeInVsix>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <GetSigningInputsDependsOn>GetSigningInputsCustom</GetSigningInputsDependsOn>
     <GetSymbolsToIndexDependsOn>GetSymbolsToIndexCustom</GetSymbolsToIndexDependsOn>
     <SignWithMicrosoftKey>true</SignWithMicrosoftKey>
   </PropertyGroup>
@@ -17,7 +16,7 @@
     <PackageReference Include="ILMerge" PrivateAssets="All" />
     <None Include="$(BuildCommonDirectory)NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\NuGet.CommandLine\NuGet.CommandLine.csproj" />
   </ItemGroup>
@@ -61,15 +60,6 @@
     </PropertyGroup>
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName($(PathToMergedNuGetExe)))" />
     <Exec Command="$(IlmergeCommand)" ContinueOnError="false" />
-  </Target>
-
-  <Target Name="GetSigningInputsCustom" Returns="@(DllsToSign)">
-    <ItemGroup>
-      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.Mssign.exe">
-        <StrongName>MsSharedLib72</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </DllsToSign>
-    </ItemGroup>
   </Target>
 
   <Target Name="GetSymbolsToIndexCustom" Returns="@(SymbolsToIndex)">
