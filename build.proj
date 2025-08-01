@@ -19,6 +19,8 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
                       Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'"
                       BuildInParallel="true" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)prebuild.proj"
+                      BuildInParallel="true" />
 
     <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />
 
