@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -21,8 +20,6 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 {
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
-
-    private RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
@@ -36,7 +33,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
         var generatedCSharpText = generatedDocument.SourceText;
         _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
-        var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options.ToIndentationOptions(), cancellationToken).ConfigureAwait(false);
+        var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options, cancellationToken).ConfigureAwait(false);
         _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
@@ -217,13 +214,13 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         return changedText.GetTextChangesArray(context.SourceText);
     }
 
-    private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorIndentationOptions options, CancellationToken cancellationToken)
+    private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
         using var helper = new RoslynWorkspaceHelper(_hostServicesProvider);
 
         var tree = CSharpSyntaxTree.ParseText(generatedCSharpText, cancellationToken: cancellationToken);
         var csharpRoot = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options, _csharpSyntaxFormattingOptionsOverride, cancellationToken);
+        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options.ToIndentationOptions(), options.CSharpSyntaxFormattingOptions, cancellationToken);
 
         return generatedCSharpText.WithChanges(csharpChanges);
     }
@@ -231,14 +228,4 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     [Obsolete("Only for the syntax visualizer, do not call")]
     internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument)
         => CSharpDocumentGenerator.Generate(codeDocument, new()).SourceText.ToString();
-
-    internal TestAccessor GetTestAccessor() => new TestAccessor(this);
-
-    internal readonly struct TestAccessor(CSharpFormattingPass instance)
-    {
-        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
-        {
-            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
-        }
-    }
 }
