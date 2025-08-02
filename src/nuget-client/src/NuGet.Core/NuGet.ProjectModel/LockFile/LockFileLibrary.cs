@@ -3,36 +3,39 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using NuGet.Shared;
 using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
 {
-    public class LockFileLibrary : IEquatable<LockFileLibrary>
+    public sealed record class LockFileLibrary : IEquatable<LockFileLibrary>
     {
-        public string Name { get; set; }
+        private static IList<string> EmptyFiles = ImmutableArray<string>.Empty;
 
-        public string Type { get; set; }
+        public string Name { get; init; }
 
-        public NuGetVersion Version { get; set; }
+        public string Type { get; init; }
 
-        public bool IsServiceable { get; set; }
+        public NuGetVersion Version { get; init; }
 
-        public string Sha512 { get; set; }
+        public bool IsServiceable { get; init; }
 
-        public IList<string> Files { get; set; } = new List<string>();
+        public string Sha512 { get; init; }
+
+        public IList<string> Files { get; init; } = EmptyFiles;
 
         /// <summary>
         /// Relative path to the project.json file for projects
         /// </summary>
-        public string Path { get; set; }
+        public string Path { get; init; }
 
         /// <summary>
         /// Relative path to the msbuild project file. Ex: xproj, csproj
         /// </summary>
-        public string MSBuildProject { get; set; }
+        public string MSBuildProject { get; init; }
 
-        public bool HasTools { get; set; }
+        public bool HasTools { get; init; }
 
         public bool Equals(LockFileLibrary other)
         {
@@ -61,11 +64,6 @@ namespace NuGet.ProjectModel
             return false;
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as LockFileLibrary);
-        }
-
         public override int GetHashCode()
         {
             var combiner = new HashCodeCombiner();
@@ -81,26 +79,6 @@ namespace NuGet.ProjectModel
             combiner.AddUnorderedSequence(Files);
 
             return combiner.CombinedHash;
-        }
-
-        /// <summary>
-        /// Makes a deep clone of the lock file library.
-        /// </summary>
-        /// <returns>The cloned lock file library.</returns>
-        public LockFileLibrary Clone()
-        {
-            return new LockFileLibrary
-            {
-                Name = Name,
-                Type = Type,
-                Version = Version,
-                IsServiceable = IsServiceable,
-                HasTools = HasTools,
-                Sha512 = Sha512,
-                Files = Files != null ? new List<string>(Files) : null,
-                Path = Path,
-                MSBuildProject = MSBuildProject
-            };
         }
     }
 }

@@ -4,6 +4,7 @@ CONFIGURATION=
 CI=0
 BUILD_NUMBER=
 RELEASE_LABEL=zlocal
+ARGUMENTS=()
 
 while true ; do
 	case "$1" in
@@ -12,6 +13,8 @@ while true ; do
 		--clear-cache) CLEAR_CACHE=1 ; shift ;;
 		-n) BUILD_NUMBER=$2 ; shift ;;
 		-l) RELEASE_LABEL=$2 ; shift ;;
+		-p:*) ARGUMENTS+=( "$1" ) ; shift ;;
+		/p:*) ARGUMENTS+=( "$1" ) ; shift ;;
 		--) shift ; break ;;
 		*) shift ; break ;;
 	esac
@@ -38,11 +41,11 @@ if [ "$CLEAR_CACHE" == "1" ]; then
 fi
 
 if [ "$BUILD_NUMBER" != "" ]; then
-	build_number_arg="/p:BuildNumber=$BUILD_NUMBER"
+	ARGUMENTS+=( "/p:BuildNumber=$BUILD_NUMBER" )
 fi
 
 if [ "$RELEASE_LABEL" != "" ]; then
-	release_label_arg="/p:ReleaseLabel=$RELEASE_LABEL"
+	ARGUMENTS+=( "/p:ReleaseLabel=$RELEASE_LABEL" )
 fi
 
 # CI build is Release by default, local builds are Debug by default
@@ -55,8 +58,8 @@ if [ "$CONFIGURATION" == "" ]; then
 fi
 
 # restore packages
-echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION $build_number_arg $release_label_arg"
-dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION $build_number_arg $release_label_arg
+echo "dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION" ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
+dotnet msbuild build/build.proj /t:Restore /p:Configuration=$CONFIGURATION ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
 
 if [ $? -ne 0 ]; then
 	echo "Restore failed!!"
@@ -64,8 +67,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # run tests
-echo "dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION $build_number_arg $release_label_arg"
-dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION $build_number_arg $release_label_arg
+echo "dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION" ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
+dotnet msbuild build/build.proj /t:CoreUnitTests /p:Configuration=$CONFIGURATION ${ARGUMENTS[@]+"${ARGUMENTS[@]}"}
 
 if [ $? -ne 0 ]; then
 	echo "Tests failed!!"
