@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
+    <body>
+      <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
+        <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
+        <target state="translated">Bulunan varlık dosyası geçerli bir paket spec özelliği içermiyor. Projeyi geri yüklemeyi yeniden deneyin. Varlık dosyasının konumu: {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="AssetsFileNotFound">
+        <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
+        <target state="translated">Geri yükleme tarafından oluşturulan varlık dosyası yok. Projeyi geri yüklemeyi yeniden deneyin. Varlık dosyasının beklenen konumu: {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileNotFound">
+        <source>The file '{0}' to be packed was not found on disk.</source>
+        <target state="translated">Paketlenecek '{0}' dosyası diskte bulunamadı.</target>
+        <note>{0} is the file being packed.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseCombination">
+        <source>Invalid metadata. Cannot specify both a PackageLicenseExpression and a PackageLicenseFile.</source>
+        <target state="translated">Meta veriler geçersiz. PackageLicenseExpression ve PackageLicenseFile aynı anda belirtilemez.</target>
+        <note>Please don't localize PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">'{0}' sürüm dizesi bu araç takımı tarafından desteklenmiyor. '{1}' desteklenen en yüksek sürümdür. Daha düşük bir sürümü kullanın ya da araç takımınızı yükseltin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpression">
+        <source>The license expression '{0}' cannot be parsed succesfully. {1}</source>
+        <target state="translated">'{0}' lisans ifadesi başarıyla ayrıştırılamıyor. {1}</target>
+        <note>0 - the license expression, 1 further details</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpressionVersion">
+        <source>The PackageLicenseExpressionVersion string '{0}' is not a valid version.</source>
+        <target state="translated">'{0}' PackageLicenseExpressionVersion dizesi geçerli bir sürüm dizesi değil.</target>
+        <note>{0} version string</note>
+      </trans-unit>
+      <trans-unit id="InvalidMinClientVersion">
+        <source>MinClientVersion string specified '{0}' is invalid.</source>
+        <target state="translated">Belirtilen MinClientVersion dizesi '{0}' geçersiz.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecProperties">
+        <source>NuspecProperties should be in the form of "key1=value1;key2=value2".</source>
+        <target state="translated">NuspecProperties, "key1=value1;key2=value2" biçiminde olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageReferenceVersion">
+        <source>PackageReference {0} needs to have a valid version.</source>
+        <target state="translated">PackageReference {0} geçerli bir sürüme sahip olmalıdır.</target>
+        <note>{0} is the ID of the PackageReference.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageVersion">
+        <source>PackageVersion string specified '{0}' is invalid.</source>
+        <target state="translated">Belirtilen PackageVersion dizesi '{0}' geçersiz.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidTargetFramework">
+        <source>Invalid target framework for the file '{0}'.</source>
+        <target state="translated">'{0}' dosyası için geçersiz hedef çerçeve.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsPackableFalseError">
+        <source>This project cannot be packaged because packaging has been disabled. Add &lt;IsPackable&gt;true&lt;/IsPackable&gt; to the project file to enable producing a package from this project.</source>
+        <target state="translated">Paketleme devre dışı bırakıldığından bu proje paketlenemiyor. Bu projeden bir paket oluşturulmasına olanak tanımak için proje dosyasına &lt;IsPackable&gt;true&lt;/IsPackable&gt; ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackItemProvided">
+        <source>No project was provided to the PackTask.</source>
+        <target state="translated">PackTask'e proje sağlanmadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenses_LicenseUrlCannotBeUsedInConjuctionWithLicense">
+        <source>The PackageLicenseUrl is being deprecated and cannot be used in conjunction with the PackageLicenseFile or PackageLicenseExpression.</source>
+        <target state="translated">PackageLicenseUrl kullanımdan kaldırıldığından PackageLicenseFile veya PackageLicenseExpression ile birlikte kullanılamaz.</target>
+        <note>Please don't localize PackageLicenseUrl, PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,6 +1,19 @@
 <Project>
   <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
 
+  <PropertyGroup Condition="'$(UsingToolXliff)' == 'true'">
+    <!--
+      Use Satellite assembly generation task from Microsoft.NET.Sdk even when building with
+      full Framework MSBuild. This will support public signing, is deterministic, and always
+      generates them as AnyCPU.
+    -->
+    <GenerateSatelliteAssembliesForCore Condition="'$(GenerateSatelliteAssembliesForCore)' == ''">true</GenerateSatelliteAssembliesForCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.XliffTasks" PrivateAssets="all" Condition="'$(UsingToolXliff)' == 'true'" />
+  </ItemGroup>
+
   <!--
     Gets a list of target frameworks that the project supports.
   -->
@@ -34,6 +47,19 @@
       <_SupportedProject Include="%(ProjectTargetFramework.ProjectFile)"
                          ProjectName="$(MSBuildProjectName)"
                          Condition="'%(Identity)' == '$(ProjectTargetFramework)'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- By default do not include satellite DLLs in any of the packages except for NuGet.Localization. -->
+  <Target Name="RemoveSatelliteDllsFromBuildOutputInPackage"
+          BeforeTargets="GenerateNuspec"
+          Condition="'$(IncludeSatelliteOutputInPack)' != 'true'">
+    <!--
+      Could not find a way to tell NuGet to exclude the satellite assemblies from the NuGet package so this target
+      does it.
+    -->
+    <ItemGroup>
+      <_BuildOutputInPackage Remove="$(IntermediateOutputPath)%(_TargetFramework.Identity)\**\$(AssemblyName).resources.dll" />
     </ItemGroup>
   </Target>
   

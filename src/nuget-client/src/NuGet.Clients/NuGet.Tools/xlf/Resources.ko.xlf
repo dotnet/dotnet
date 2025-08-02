@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Resources.resx">
+    <body>
+      <trans-unit id="BindingRedirects">
+        <source>Binding Redirects</source>
+        <target state="translated">바인딩 리디렉션</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CanNotCreateWindow">
+        <source>Can not create tool window.</source>
+        <target state="translated">도구 창을 만들 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DTE_ProjectUnsupported">
+        <source>The project '{0}' is unsupported</source>
+        <target state="translated">'{0}' 프로젝트는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorDialogBoxTitle">
+        <source>Operation failed</source>
+        <target state="translated">작업이 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceMappingPattern_Missing">
+        <source>A package pattern must be provided.</source>
+        <target state="translated">패키지 패턴을 제공해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceMappingSource_Missing">
+        <source>At least one source must be selected.</source>
+        <target state="translated">원본을 하나 이상 선택해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceName_Missing">
+        <source>A name must be provided.</source>
+        <target state="translated">이름을 제공해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceUriHostname_Missing">
+        <source>A hostname must be provided after '://'.</source>
+        <target state="translated">'://' 뒤에 호스트 이름을 입력해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSourceUri_Missing">
+        <source>A source must be provided.</source>
+        <target state="translated">원본을 제공해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectSelected">
+        <source>No project is selected for this operation.</source>
+        <target state="translated">이 작업에 대해 선택된 패키지가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSupportedProjectsInSolution">
+        <source>No projects supported by NuGet in the solution.</source>
+        <target state="translated">솔루션의 프로젝트가 NuGet에서 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetSearchProvider_CategoryShortcut">
+        <source>nuget</source>
+        <target state="translated">nuget</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetSearchProvider_Description">
+        <source>Search NuGet packages</source>
+        <target state="translated">NuGet 패키지 검색</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetSearchProvider_DisplayText">
+        <source>NuGet Packages</source>
+        <target state="translated">NuGet 패키지</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetStaticResult_DisplayText">
+        <source>Search Online for NuGet Packages matching '{0}'</source>
+        <target state="translated">'{0}'과(와) 일치하는 NuGet 패키지에 대한 온라인 검색</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagement">
+        <source>Package Management</source>
+        <target state="translated">패키지 관리</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReference">
+        <source>PackageReference</source>
+        <target state="translated">PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestore">
+        <source>Package Restore</source>
+        <target state="translated">패키지 복원</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreConsent">
+        <source>Allow NuGet to download missing packages</source>
+        <target state="translated">NuGet이 누락된 패키지를 다운로드하도록 허용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfig">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectHasAnInvalidNuGetConfiguration">
+        <source>{0} nuget configuration is invalid.</source>
+        <target state="translated">{0} Nuget 구성이 올바르지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectJsonMigrateErrorMessage">
+        <source>Project is not eligible for migration. Either the project is not packages.config based or doesn't support PackageReference yet. Visit https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference for more information.</source>
+        <target state="translated">프로젝트가 마이그레이션에 적합하지 않습니다. 프로젝트가 packages.config 기반이 아니거나 아직 PackageReference를 지원하지 않습니다. 자세한 내용은 https://docs.microsoft.com/en-us/nuget/reference/migrate-packages-config-to-package-reference를 방문하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectMigrateErrorMessage">
+        <source>Project is not eligible for migration as it's not project.json based.</source>
+        <target state="translated">프로젝트가 project.json 기반이 아니므로 마이그레이션에 적합하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SettingsStoredInNuGetConfiguration">
+        <source>These settings are stored in %NuGet.Config% files</source>
+        <target state="translated">이러한 설정은 %NuGet.Config% 파일에 저장됩니다.</target>
+        <note>Do not translate % % or what is between them</note>
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">솔루션이 저장되지 않았습니다. NuGet 패키지를 관리하려면 솔루션을 저장하십시오.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_AllowInsecureConnections_Header">
+        <source>Allow Insecure Connections</source>
+        <target state="new">Allow Insecure Connections</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_ConfigurationFiles_CommonLink">
+        <source>Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/)</source>
+        <target state="translated">일반적인 NuGet 구성: [설정 적용 방법](https://aka.ms/nuget/how-settings-are-applied/)</target>
+        <note>Please leave the [ and ] brackets in place and do translate the words between them. Do not translate the URL inside ( ).</note>
+      </trans-unit>
+      <trans-unit id="Text_ConfigurationFiles_Priority">
+        <source>Configuration files are listed in order from highest to lowest priority.</source>
+        <target state="translated">구성 파일은 높은 우선순위에서 가장 낮은 우선순위 순으로 나열됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_FilePath_Header">
+        <source>File Path</source>
+        <target state="translated">파일 경로</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_HttpSource_Error">
+        <source>NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) for more information.</source>
+        <target state="translated">NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. 자세한 내용은 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)를 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_HttpSource_Warning">
+        <source>HTTP sources are insecure. Consider using HTTPS instead. 'AllowInsecureConnections' is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere).</source>
+        <target state="translated">HTTP 원본은 안전하지 않습니다. 대신 HTTPS를 사용하는 것이 좋습니다. 'AllowInsecureConnections'가 활성화되어 HTTP 액세스를 허용합니다. 더 안전한 옵션은 [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)에서 확인하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSourceEnabled_Header">
+        <source>Enabled</source>
+        <target state="translated">사용</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSourceMappingPattern_Header">
+        <source>Package pattern</source>
+        <target state="translated">패키지 패턴</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSourceName_Header">
+        <source>Name</source>
+        <target state="translated">이름</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSourceUrl_Header">
+        <source>Source</source>
+        <target state="translated">원본</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_MachineWide">
+        <source>Machine-wide package sources</source>
+        <target state="translated">시스템 전체의 패키지 원본</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageSources_NotMachineWide">
+        <source>Package sources</source>
+        <target state="translated">패키지 원본</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_Watermark_ExamplePackageIdPattern">
+        <source>Contoso.Contracts or System.*</source>
+        <target state="translated">Contoso.Contracts 또는 System.*</target>
+        <note>"Contoso.Contracts" and "System.*" are examples of a package ID pattern and a package prefix pattern, respectively, so these two specific examples should not be translated.</note>
+      </trans-unit>
+      <trans-unit id="clearLocalResources">
+        <source>Clear NuGet local resources</source>
+        <target state="translated">NuGet 로컬 리소스 지우기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormat">
+        <source>Default package management format</source>
+        <target state="translated">기본 패키지 관리 형식</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreAutomatic">
+        <source>Automatically check for missing packages during build in Visual Studio</source>
+        <target state="translated">Visual Studio에서 빌드 시 누락된 패키지를 자동으로 확인</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="showPackageManagementChooser">
+        <source>Prompt for format selection on first package install</source>
+        <target state="translated">첫 번째 패키지 설치 시 서식 선택에 대한 프롬프트</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="skipBindingRedirects">
+        <source>Skip applying binding redirects</source>
+        <target state="translated">바인딩 리디렉션 적용 건너뛰기</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,52 @@
+﻿TEMA
+    about_NuGet
+    
+DESCRIPCIÓN CORTA
+    Proporciona información acerca de los comandos del Administrador de paquetes NuGet.
+           
+DESCRIPCIÓN LARGA
+    Este tema explica los comandos del Administrador de paquetes NuGet. NuGet es una herramienta 
+    de administración de paquetes integrada para agregar bibliotecas y herramientas a proyectos 
+    de .NET.
+
+                 
+    Se incluyen los siguientes cmdlets de NuGet.
+
+        Cmdlet					Descripción
+        ------------------		----------------------------------------------
+        Get-Package				Obtiene el conjunto de paquetes instalados. Con -ListAvailable, 
+                                obtiene el conjunto de paquetes disponibles en el origen del paquete.
+
+        Install-Package			Instala un paquete y sus dependencias en el proyecto.
+
+        Uninstall-Package		Desinstala un paquete. Si otros paquetes dependen de este paquete, 
+                                el comando dará error a menos que se especifique la opción –Force.
+
+        Update-Package			Actualiza un paquete y sus dependencias a una versión más 
+                                reciente.
+
+        Add-BindingRedirect			Examina todos los ensamblados de la ruta de acceso de salida 
+                                de un proyecto y agrega redireccionamientos de enlace al archivo de 
+                                configuración de la aplicación(o web)donde sea necesario.
+                            
+        Get-Project				Devuelve una referencia al Entorno de herramientas de 
+                                desarrollo (DTE) para el proyecto especificado. Si no hay ninguno 
+                                especificado, devuelve el proyecto predeterminado seleccionado en la 
+                                Consola del Administrador de paquetes.
+
+        Open-PackagePage        Abre el explorador apuntando al ProjectUrl, LicenseUrl o 
+                                ReportAbuseUrl del paquete especificado.
+
+        Register-TabExpansion		Registra una expansión con tabulador para los parámetros de un 
+                                comando.
+
+VEA TAMBIÉN
+    Documentación en línea: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

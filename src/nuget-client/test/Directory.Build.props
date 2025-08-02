@@ -1,0 +1,8 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  <PropertyGroup>
+    <UsingToolXliff>false</UsingToolXliff>
+  </PropertyGroup>
+  <!-- Empty target for Xliff update -->
+  <Target Name="UpdateXlf" />
+</Project>

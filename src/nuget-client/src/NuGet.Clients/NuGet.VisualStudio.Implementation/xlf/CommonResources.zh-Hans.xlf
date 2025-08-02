@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../CommonResources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Value cannot be null or an empty string.</source>
+        <target state="translated">值不能为 null 或空字符串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Between">
+        <source>Value must be between {0} and {1}.</source>
+        <target state="translated">值必须介于 {0} 与 {1} 之间。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Enum_Member">
+        <source>Value must be a value from the "{0}" enumeration.</source>
+        <target state="translated">值必须是来自“{0}”枚举的值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThan">
+        <source>Value must be greater than {0}.</source>
+        <target state="translated">值必须大于 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">值必须大于或等于 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_LessThan">
+        <source>Value must be less than {0}.</source>
+        <target state="translated">值必须小于 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_LessThanOrEqualTo">
+        <source>Value must be less than or equal to {0}.</source>
+        <target state="translated">值必须小于或等于 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
+        <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
+        <target state="translated">值不能为空字符串。它必须为 null 或为非空字符串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnsureImportedMessage">
+        <source>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</source>
+        <target state="translated">这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

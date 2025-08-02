@@ -1,0 +1,1335 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../NuGetCommand.resx">
+    <body>
+      <trans-unit id="AddCommandDescription">
+        <source>Adds the given package to a hierarchical source. http sources are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#add-command.</source>
+        <target state="translated">지정된 패키지를 계층적 원본에 추가합니다. http 원본은 지원되지 않습니다. 자세한 내용을 확인하려면 https://docs.nuget.org/consume/command-line-reference#add-command으로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandSourceDescription">
+        <source>Specifies the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</source>
+        <target state="translated">nupkg를 추가할 폴더 또는 UNC 공유인 패키지 원본을 지정합니다. Http 원본은 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageDescription">
+        <source>Specifies the path to the package to be added and the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</source>
+        <target state="translated">추가할 패키지의 경로와 nupkg가 추가될 폴더 또는 UNC 공유인 패키지 원본을 지정합니다. Http 원본은 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageExamples">
+        <source>nuget add foo.nupkg  -Source c:\bar\
+
+nuget add foo.nupkg -Source \\bar\packages\</source>
+        <target state="translated">nuget add foo.nupkg  -Source c:\bar\
+
+nuget add foo.nupkg -Source \\bar\packages\</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageSummary">
+        <source>&lt;packagePath&gt; -Source &lt;folderBasedPackageSource&gt; [options]</source>
+        <target state="translated">&lt;packagePath&gt; -원본 &lt;folderBasedPackageSource&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFilePathDescription">
+        <source>Path to certificate file.</source>
+        <target state="translated">인증서 파일의 경로.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFindByDescription">
+        <source>Search method to find certificate in certificate store (see docs).</source>
+        <target state="translated">인증서 저장소에서 인증서를 찾을 수 있는 검색 방법(문서 참조).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFindValueDescription">
+        <source>Search the certificate store for the supplied value. Used with FindValue (see docs).</source>
+        <target state="translated">인증서 저장소에서 제공된 값을 검색합니다. FindValue와 함께 사용합니다(문서 참조).</target>
+        <note>Don't translate FindValue</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandForceDescription">
+        <source>Skip certificate validation.</source>
+        <target state="translated">인증서 유효성 검사를 건너뜁니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandPackageSourceDescription">
+        <source>Package source name.</source>
+        <target state="translated">패키지 원본 이름.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandPasswordDescription">
+        <source>Password for the certificate, if needed.</source>
+        <target state="translated">인증서 암호(필요한 경우).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStoreLocationDescription">
+        <source>Certificate store location (see docs).</source>
+        <target state="translated">인증서 저장소 위치(문서 참조).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStoreNameDescription">
+        <source>Certificate store name (see docs).</source>
+        <target state="translated">인증서 저장소 이름(문서 참조).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStorePasswordInClearTextDescription">
+        <source>Enables storing portable certificate password by disabling password encryption.</source>
+        <target state="translated">암호 암호화를 비활성화하여 휴대용 인증서 암호 저장을 활성화합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandUsageExamples">
+        <source>nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
+
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Remove -PackageSource certificateName
+
+nuget client-certs
+
+nuget client-certs List</source>
+        <target state="translated">nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
+
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Remove -PackageSource certificateName
+
+nuget client-certs
+
+nuget client-certs List</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandUsageSummary">
+        <source>&lt;List|Add|Update|Remove&gt; [options]</source>
+        <target state="translated">&lt;List|Add|Update|Remove&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesDescription">
+        <source>Provides the ability to manage list of client certificates located in NuGet.config files</source>
+        <target state="translated">NuGet.config 파일에 있는 클라이언트 인증서 목록을 관리하는 기능을 제공합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandApiKey">
+        <source>The API key for the server.</source>
+        <target state="translated">서버의 API 키입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandDirectDownload">
+        <source>Download directly without populating any caches with metadata or binaries.</source>
+        <target state="translated">메타데이터 또는 이진 파일로 캐시를 채우지 않고 직접 다운로드합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandDisableParallelProcessing">
+        <source>Disable parallel processing of packages for this command.</source>
+        <target state="translated">이 명령에 대해 패키지의 병렬 처리를 사용하지 않도록 설정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandFallbackSourceDescription">
+        <source>A list of package sources to use as fallbacks for this command.</source>
+        <target state="translated">이 명령의 대체로 사용할 패키지 원본 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandInvalidArgumentException">
+        <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">'{0}'에 잘못된 값이 제공되었습니다. 허용되는 값 목록은 https://docs.nuget.org/docs/reference/command-line-reference를 참조하세요.</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="CommandMSBuildPath">
+        <source>Specifies the path of MSBuild to be used with this command. This command will takes precedence over MSbuildVersion, nuget will always pick MSbuild from this specified path.</source>
+        <target state="translated">이 명령에 사용할 MSBuild의 경로를 지정합니다. 이 명령은 MSbuildVersion보다 우선합니다. nuget은 항상 지정된 경로에서 MSbuild를 선택합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandMSBuildVersion">
+        <source>Specifies the version of MSBuild to be used with this command. Supported values are 4, 12, 14, 15.1, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0. By default the MSBuild in your path is picked, otherwise it defaults to the highest installed version of MSBuild.</source>
+        <target state="translated">이 명령과 함께 사용할 MSBuild의 버전을 지정합니다. 지원되는 값은 4, 12, 14, 15.1, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0입니다. 기본적으로 경로의 MSBuild가 선택되고, 그렇지 않으면 기본적으로 설치된 가장 높은 MSBuild 버전이 사용됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoCache">
+        <source>Disable using the machine cache as the first package source.</source>
+        <target state="translated">컴퓨터 캐시를 첫 번째 패키지 원본으로 사용하지 않도록 설정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoHttpCache">
+        <source>Disable the use of the HTTP cache and contact all configured package sources for live information.</source>
+        <target state="translated">HTTP 캐시 사용을 사용하지 않도록 설정하고 구성된 모든 패키지 원본에 라이브 정보를 문의합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoServiceEndpointDescription">
+        <source>Does not append "api/v2/packages" to the source URL.</source>
+        <target state="translated">원본 URL에 "api/v2/packages"를 추가하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandPackageSaveMode">
+        <source>Specifies types of files to save after package installation: nuspec, nupkg, nuspec;nupkg.</source>
+        <target state="translated">패키지 설치 후 저장할 파일 유형(nuspec, nupkg, nuspec;nupkg)을 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandSourceDescription">
+        <source>A list of packages sources to use for this command.</source>
+        <target state="translated">이 명령에 사용할 패키지 원본 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandAsPathDesc">
+        <source>Returns the config value as a path. This option is ignored when -Set is specified.</source>
+        <target state="translated">구성 값을 경로로 반환합니다. -Set을 지정하면 이 옵션이 무시됩니다.</target>
+        <note>Pease don't localize "-Set"</note>
+      </trans-unit>
+      <trans-unit id="ConfigCommandDesc">
+        <source>Gets or sets NuGet config values.</source>
+        <target state="translated">NuGet 구성 값을 가져오거나 설정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandExamples">
+        <source>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
+nuget config HTTP_PROXY</source>
+        <target state="translated">nuget 구성 - HTTP_PROXY=http://127.0.0.1 설정 - HTTP_PROXY.USER=domain\user 설정
+nuget 구성 HTTP_PROXY</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="ConfigCommandSetDesc">
+        <source>One on more key-value pairs to be set in config.</source>
+        <target state="translated">하나 이상의 키-값 쌍이 config에 설정됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandSummary">
+        <source>&lt;-Set name=value | name&gt;</source>
+        <target state="translated">&lt;-설정 이름=값 | 이름&gt;</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="DefaultConfigDescription">
+        <source>NuGet's default configuration is obtained by loading %AppData%\NuGet\NuGet.config, then loading any nuget.config or .nuget\nuget.config starting from root of drive and ending in current directory.</source>
+        <target state="translated">NuGet의 기본 구성은 %AppData%\NuGet\NuGet.config를 로드한 다음 드라이브 루트에서 시작하여 현재 디렉터리에서 끝나는 모든 nuget.config 또는 .nuget\nuget.config를 로드하여 가져옵니다.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "nuget.config", ".nuget\nuget.config"</note>
+      </trans-unit>
+      <trans-unit id="DeleteCommandDescription">
+        <source>Deletes a package from the server.</source>
+        <target state="translated">서버에서 패키지를 삭제합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandNoPromptDescription">
+        <source>Do not prompt when deleting.</source>
+        <target state="translated">삭제할 때 메시지를 표시하지 않음</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandSourceDescription">
+        <source>Package source (URL, UNC/folder path or package source name) to delete from. Defaults to DefaultPushSource if specified in NuGet.Config.</source>
+        <target state="translated">삭제할 패키지 원본(URL, UNC/폴더 경로 또는 패키지 원본 이름)입니다. NuGet.Config에 지정된 경우 기본값은 DefaultPushSource입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageDescription">
+        <source>Specify the Id and version of the package to delete from the server.</source>
+        <target state="translated">서버에서 삭제할 패키지의 ID와 버전을 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageExamples">
+        <source>nuget delete MyPackage 1.0
+    
+nuget delete MyPackage 1.0 -NoPrompt</source>
+        <target state="translated">nuget delete MyPackage 1.0
+    
+nuget delete MyPackage 1.0 -NoPrompt</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageSummary">
+        <source>&lt;package Id&gt; &lt;package version&gt; [API Key] [options]</source>
+        <target state="translated">&lt;package Id&gt; &lt;package version&gt; [API 키] [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EulaDescription">
+        <source>Display NuGet.exe's End User Liscence Agreement (EULA)</source>
+        <target state="translated">NuGet.exe EULA(최종 사용자 Liscence Agreement) 표시</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExpandDescription">
+        <source>If provided, a package added to offline feed is also expanded.</source>
+        <target state="translated">제공된 경우 오프라인 피드에 추가된 패키지도 확장됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForceRestoreCommand">
+        <source>Forces all dependencies to be resolved even if the last restore was successful. This is equivalent to deleting project.assets.json. (Does not apply to packages.config)</source>
+        <target state="translated">마지막 복원이 성공한 경우에도 모든 종속성을 강제로 해결합니다. project.assets.json을 삭제하는 것과 같습니다. (packages.config에는 적용되지 않음)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandAll">
+        <source>Print detailed help for all available commands.</source>
+        <target state="translated">사용 가능한 모든 명령에 대한 자세한 도움말을 인쇄합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandDescription">
+        <source>Displays general help information and help information about other commands.</source>
+        <target state="translated">일반 도움말 정보 및 기타 명령에 대한 도움말 정보를 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandMarkdown">
+        <source>Print detailed all help in markdown format.</source>
+        <target state="translated">자세한 모든 도움말을 Markdown 형식으로 인쇄하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageDescription">
+        <source>Pass a command name to display help information for that command.</source>
+        <target state="translated">해당 명령에 대한 도움말 정보를 표시하려면 명령 이름을 전달하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageExamples">
+        <source>nuget help
+
+nuget help push
+
+nuget ?
+
+nuget push -?</source>
+        <target state="translated">nuget 도움말
+
+nuget 도움말 푸시
+
+nuget ?
+
+nuget 푸시 -?</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageSummary">
+        <source>[command]</source>
+        <target state="translated">[명령]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Alias">
+        <source>alias: {0}</source>
+        <target state="translated">별칭: {0}</target>
+        <note>{0} - short command name (not localizable)</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_AltText">
+        <source> ({0})</source>
+        <target state="translated"> ({0})</target>
+        <note>{0} - command alternative name (not localizable); do not localize this string</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_AvailableCommands">
+        <source>Available commands:</source>
+        <target state="translated">사용 가능한 명령:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Examples">
+        <source>examples:</source>
+        <target state="translated">예:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Options">
+        <source>options:</source>
+        <target state="translated">옵션:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Suggestion">
+        <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
+        <target state="translated">특정 명령에 대한 도움말을 보려면 '{0} 도움말 &lt;command&gt;'를 입력합니다.</target>
+        <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_Title">
+        <source>{0} Command</source>
+        <target state="translated">{0} 명령</target>
+        <note>{0} - command name (not localizable)</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_Usage">
+        <source>usage: {0} &lt;command&gt; [args] [options]</source>
+        <target state="translated">사용법: {0} &lt;command&gt; [args] [options]</target>
+        <note>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_UsageDetail">
+        <source>usage: {0} {1} {2}</source>
+        <target state="translated">사용법: {0} {1} {2}</target>
+        <note>{0} - executable name: nuget.exe; {1} - command name (not localizable); {2} - command summary description</note>
+      </trans-unit>
+      <trans-unit id="InitCommandDescription">
+        <source>Adds all the packages from the &lt;srcPackageSourcePath&gt; to the hierarchical &lt;destPackageSourcePath&gt;. http feeds are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#init-command.</source>
+        <target state="translated">&lt;srcPackageSourcePath&gt;의 모든 패키지를 계층적 &lt;destPackageSourcePath&gt;에 추가합니다. http 피드는 지원되지 않습니다. 자세한 내용을 확인하려면 https://docs.nuget.org/consume/command-line-reference#init-command로 이동하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageDescription">
+        <source>Specify the path to source package source to be copied from and the path to the destination package source to be copied to.</source>
+        <target state="translated">복사할 원본 패키지 원본의 경로와 복사할 대상 패키지 원본의 경로를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageExamples">
+        <source>nuget init c:\foo c:\bar
+
+nuget init \\foo\packages \\bar\packages</source>
+        <target state="translated">nuget init c:\foo c:\bar
+
+nuget init \\foo\packages \\bar\packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageSummary">
+        <source>&lt;srcPackageSourcePath&gt; &lt;destPackageSourcePath&gt; [options]</source>
+        <target state="translated">&lt;srcPackageSourcePath&gt; &lt;destPackageSourcePath&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandDependencyVersion">
+        <source>Overrides the default dependency resolution behavior.</source>
+        <target state="translated">기본 종속성 확인 동작을 재정의합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandDescription">
+        <source>Installs a package using the specified sources. If no sources are specified, all sources defined in the NuGet configuration file are used. If the configuration file specifies no sources, uses the default NuGet feed.</source>
+        <target state="translated">지정된 원본을 사용하여 패키지를 설치합니다. 원본을 지정하지 않으면 NuGet 구성 파일에 정의된 모든 원본이 사용됩니다. 구성 파일이 원본을 지정하지 않으면 기본 NuGet 피드를 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandExcludeVersionDescription">
+        <source>If set, the destination folder will contain only the package name, not the version number</source>
+        <target state="translated">설정하면 대상 폴더에는 버전 번호가 아닌 패키지 이름만 포함됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandFrameworkDescription">
+        <source>Target framework used for selecting dependencies. Defaults to 'Any' if not specified.</source>
+        <target state="translated">종속성을 선택하는 데 사용되는 대상 프레임워크입니다. 지정하지 않으면 기본값은 '임의'입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandOutputDirDescription">
+        <source>Specifies the directory in which packages will be installed. If none specified, uses the current directory.</source>
+        <target state="translated">패키지가 설치될 디렉터리를 지정합니다. 지정되지 않은 경우 현재 디렉터리를 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPrerelease">
+        <source>Allows prerelease packages to be installed. This flag is not required when restoring packages by installing from packages.config.</source>
+        <target state="translated">시험판 패키지를 설치할 수 있습니다. packages.config에서 설치하여 패키지를 복원할 때는 이 플래그가 필요하지 않습니다.</target>
+        <note>Please don't localize "packages.config".</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandRequireConsent">
+        <source>Checks if package restore consent is granted before installing a package.</source>
+        <target state="translated">패키지를 설치하기 전에 패키지 복원 동의를 받았는지 확인합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandSolutionDirectory">
+        <source>Solution root for package restore.</source>
+        <target state="translated">패키지 복원을 위한 솔루션 루트입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageDescription">
+        <source>Specify the id and optionally the version of the package to install. If a path to a packages.config file is used instead of an id, all the packages it contains are installed.</source>
+        <target state="translated">설치할 패키지의 버전과 ID를 지정합니다. id 대신 packages.config 파일의 경로를 사용하면 여기에 포함된 모든 패키지가 설치됩니다.</target>
+        <note>Please don't localize "packages.config".</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageExamples">
+        <source>nuget install elmah
+
+nuget install packages.config
+
+nuget install ninject -o c:\foo</source>
+        <target state="translated">nuget install elmah
+
+nuget install packages.config
+
+nuget install ninject -o c:\foo</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageSummary">
+        <source>packageId|pathToPackagesConfig [options]</source>
+        <target state="translated">packageId|pathToPackagesConfig [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandVersionDescription">
+        <source>The version of the package to install.</source>
+        <target state="translated">설치할 패키지의 버전입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandAllVersionsDescription">
+        <source>List all versions of a package. By default, only the latest package version is displayed.</source>
+        <target state="translated">패키지의 모든 버전을 나열합니다. 기본적으로 최신 패키지 버전만 표시됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandDescription">
+        <source>Displays a list of packages from a given source. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used. If NuGet.config specifies no sources, uses the default NuGet feed.</source>
+        <target state="translated">지정된 원본의 패키지 목록을 표시합니다. 원본을 지정하지 않으면 %AppData%\NuGet\NuGet.config에 정의된 모든 원본이 사용됩니다. NuGet.config가 원본을 지정하지 않으면 기본 NuGet 피드를 사용합니다.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</note>
+      </trans-unit>
+      <trans-unit id="ListCommandIncludeDelisted">
+        <source>Allow unlisted packages to be shown.</source>
+        <target state="translated">목록에 없는 패키지가 표시되도록 허용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandPrerelease">
+        <source>Allow prerelease packages to be shown.</source>
+        <target state="translated">시험판 패키지가 표시되도록 허용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandSourceDescription">
+        <source>A list of packages sources to search.</source>
+        <target state="translated">검색할 패키지 원본 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandUsageDescription">
+        <source>Specify optional search terms.</source>
+        <target state="translated">선택적 검색어를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandUsageExamples">
+        <source>nuget list
+
+nuget list -verbose -allversions</source>
+        <target state="translated">nuget list
+
+nuget list -verbose -allversions</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="ListCommandUsageSummary">
+        <source>[search terms] [options]</source>
+        <target state="translated">[검색어] [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandVerboseListDescription">
+        <source>Displays a detailed list of information for each package.</source>
+        <target state="translated">각 패키지에 대한 세부 정보 목록을 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandClearDescription">
+        <source>Clear the selected local resources or cache location(s).</source>
+        <target state="translated">선택한 로컬 리소스 또는 캐시 위치를 지웁니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandDescription">
+        <source>Clears or lists local NuGet resources such as http requests cache, temp cache or machine-wide global packages folder.</source>
+        <target state="translated">http 요청 캐시, 임시 캐시 또는 컴퓨터 전체의 전역 패키지 폴더와 같은 로컬 NuGet 리소스를 지우거나 나열합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandExamples">
+        <source>nuget locals all -clear
+
+nuget locals http-cache -clear
+
+nuget locals temp -list
+
+nuget locals global-packages -list</source>
+        <target state="translated">nuget locals all -clear
+
+nuget locals http-cache -clear
+
+nuget locals temp -list
+]D; 
+nuget locals global-packages -list</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommandListDescription">
+        <source>List the selected local resources or cache location(s).</source>
+        <target state="translated">선택한 로컬 리소스 또는 캐시 위치의 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandSummary">
+        <source>&lt;all | http-cache | global-packages | temp | plugins-cache&gt; [-clear | -list]</source>
+        <target state="translated">&lt;모두 | http 캐시 | 글로벌 패키지 | 온도 | 플러그인 캐시&gt; [-clear | -목록]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoCacheInformation">
+        <source>NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead.</source>
+        <target state="translated">NoCache는 더 이상 사용되지 않으며 NoHttpCache로 이름이 바뀌었습니다. 대신 NoHttpCache를 사용하세요.</target>
+        <note>Do not translate NoCache and NoHttpCache</note>
+      </trans-unit>
+      <trans-unit id="Option_ConfigFile">
+        <source>The NuGet configuration file. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. To learn more about NuGet configuration go to https://docs.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior.</source>
+        <target state="translated">NuGet 구성 파일입니다. 지정한 경우 이 파일의 설정만 사용됩니다. 지정하지 않으면 현재 디렉터리의 구성 파일 계층 구조가 사용됩니다. NuGet 구성에 대한 자세한 정보는 https://docs.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior를 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_ForceEnglishOutput">
+        <source>Forces the application to run using an invariant, English-based culture.</source>
+        <target state="translated">고정 영어 기반 문화권을 사용하여 애플리케이션을 강제로 실행합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Help">
+        <source>Show command help and usage information.</source>
+        <target state="translated">명령 도움말과 사용 정보를 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_NonInteractive">
+        <source>Do not prompt for user input or confirmations.</source>
+        <target state="translated">사용자 입력을 요청하거나 확인을 묻는 메시지를 표시하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Verbosity">
+        <source>Display this amount of details in the output: normal, quiet, detailed.</source>
+        <target state="translated">출력에 이 정도의 세부 정보를 표시합니다. 일반, 조용함, 상세.</target>
+        <note>Please don't localize "normal", "quiet", "detailed"</note>
+      </trans-unit>
+      <trans-unit id="PackCommandUsageExamples">
+        <source>nuget pack
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec -Version 2.1.0</source>
+        <target state="translated">nuget pack
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec -Version 2.1.0</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandBasePathDescription">
+        <source>The base path of the files defined in the nuspec file.</source>
+        <target state="translated">nuspec 파일에 정의된 파일의 기본 경로입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandBuildDescription">
+        <source>Determines if the project should be built before building the package.</source>
+        <target state="translated">패키지를 빌드하기 전에 프로젝트를 빌드해야 하는지 여부를 결정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandConfigFile">
+        <source>Specify the configuration file for the pack command.</source>
+        <target state="translated">pack 명령에 대한 구성 파일을 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandDescription">
+        <source>Creates a NuGet package based on the specified nuspec or project file.</source>
+        <target state="translated">지정된 nuspec 또는 프로젝트 파일을 기반으로 NuGet 패키지를 만듭니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandDeterministic">
+        <source>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package.</source>
+        <target state="translated">명령이 결정적 패키지를 생성해야 하는지 여부를 지정합니다. pack 명령을 여러 번 호출하면 정확히 동일한 패키지가 생성됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandExcludeDescription">
+        <source>Specifies one or more wildcard patterns to exclude when creating a package.</source>
+        <target state="translated">패키지를 만들 때 제외할 와일드카드 패턴을 하나 이상 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandExcludeEmptyDirectories">
+        <source>Prevent inclusion of empty directories when building the package.</source>
+        <target state="translated">패키지를 빌드할 때 빈 디렉터리를 포함하지 않도록 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIncludeReferencedProjects">
+        <source>Include referenced projects either as dependencies or as part of the package.</source>
+        <target state="translated">참조된 프로젝트를 종속성 또는 패키지의 일부로 포함합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandInstallPackageToOutputPath">
+        <source>Specify if the command should prepare the package output directory to support share as feed.</source>
+        <target state="translated">명령이 피드로 공유를 지원하기 위해 패키지 출력 디렉터리를 준비해야 하는지 여부를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandMinClientVersion">
+        <source>Set the minClientVersion attribute for the created package.</source>
+        <target state="translated">만든 패키지의 minClientVersion 특정을 설정합니다.</target>
+        <note>Please don't localize "minClientVersion"</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandNoDefaultExcludes">
+        <source>Prevent default exclusion of NuGet package files and files and folders starting with a dot e.g. .svn.</source>
+        <target state="translated">NuGet 패키지 파일과 점으로 시작하는 파일 및 폴더(예: .svn)가 기본적으로 제외되지 않도록 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoRunAnalysis">
+        <source>Specify if the command should not run package analysis after building the package.</source>
+        <target state="translated">패키지를 빌드한 후 명령에서 패키지 분석을 실행하지 않아야 하는지 여부를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandOutputDirDescription">
+        <source>Specifies the directory for the created NuGet package file. If not specified, uses the current directory.</source>
+        <target state="translated">생성된 NuGet 패키지 파일의 디렉터리를 지정합니다. 지정하지 않으면 현재 디렉터리를 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandOutputFileNamesWithoutVersion">
+        <source>Specify if the command should prepare the package output name without the version.</source>
+        <target state="translated">명령이 버전 없이 패키지 출력 이름을 준비해야 하는지 여부를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPackagesDirectory">
+        <source>Specifies the packages folder.</source>
+        <target state="translated">패키지 폴더를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPropertiesDescription">
+        <source>Provides the ability to specify a semicolon ";" delimited list of properties when creating a package.</source>
+        <target state="translated">세미콜론 ";"을 지정하는 기능을 제공합니다. 패키지를 만들 때 속성의 구분된 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSolutionDirectory">
+        <source>Specifies the solution directory.</source>
+        <target state="translated">솔루션 디렉터리를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSuffixDescription">
+        <source>Appends a pre-release suffix to the internally generated version number.</source>
+        <target state="translated">내부적으로 생성된 버전 번호에 시험판 접미사를 추가합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSymbolPackageFormat">
+        <source>When creating a symbols package, allows to choose between the 'snupkg' and 'symbols.nupkg' format.</source>
+        <target state="translated">기호 패키지를 만들 때 'snupkg' 및 'symbols.nupkg' 형식 중에서 선택할 수 있습니다.</target>
+        <note>Do not localize snupkg and symbols.nupkg</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandSymbolsDescription">
+        <source>Determines if a package containing sources and symbols should be created. When specified with a nuspec, creates a regular NuGet package file and the corresponding symbols package.</source>
+        <target state="translated">원본 및 기호가 포함된 패키지를 만들지 여부를 결정합니다. nuspec을 사용하여 지정하는 경우 일반 NuGet 패키지 파일 및 해당하는 기호 패키지를 만듭니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandToolDescription">
+        <source>Determines if the output files of the project should be in the tool folder. </source>
+        <target state="translated">프로젝트의 출력 파일이 도구 폴더에 있어야 하는지 여부를 결정합니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandUsageDescription">
+        <source>Specify the location of the nuspec or project file to create a package.</source>
+        <target state="translated">패키지를 만들기 위해 nuspec 또는 프로젝트 파일의 위치를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandUsageSummary">
+        <source>&lt;nuspec | project&gt; [options]</source>
+        <target state="translated">&lt;nuspec | project&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandVerboseDescription">
+        <source>Shows verbose output for package building.</source>
+        <target state="translated">패키지 빌드에 대한 자세한 출력을 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandVersionDescription">
+        <source>Overrides the version number from the nuspec file.</source>
+        <target state="translated">nuspec 파일의 버전 번호를 재정의합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandDescription">
+        <source>Pushes a package to the server and publishes it.</source>
+        <target state="translated">패키지를 서버로 푸시하고 게시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandDisableBufferingDescription">
+        <source>Disable buffering when pushing to an HTTP(S) server to decrease memory usage. Note that when this option is enabled, integrated windows authentication might not work.</source>
+        <target state="translated">HTTP(S) 서버로 푸시할 때 버퍼링을 비활성화하여 메모리 사용량을 줄이세요. 이 옵션을 활성화하면 Windows 통합 인증이 작동하지 않을 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandNoSymbolsDescription">
+        <source>If a symbols package exists, it will not be pushed to a symbol server.</source>
+        <target state="translated">기호 패키지가 있으면 기호 서버로 푸시되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateDescription">
+        <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
+        <target state="translated">패키지 및 버전이 이미 있는 경우 건너뛴 후 푸시에서 다음 패키지(있는 경우)를 계속합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSourceDescription">
+        <source>Package source (URL, UNC/folder path or package source name) to push to. Defaults to DefaultPushSource if specified in NuGet.Config.</source>
+        <target state="translated">푸시할 패키지 원본(URL, UNC/폴더 경로 또는 패키지 원본 이름)입니다. NuGet.Config에 지정된 경우 기본값은 DefaultPushSource입니다.</target>
+        <note>Please don't localize "DefaultPushSource"</note>
+      </trans-unit>
+      <trans-unit id="PushCommandSymbolSourceDescription">
+        <source>Symbol server URL to push to.</source>
+        <target state="translated">푸시할 기호 서버 URL입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandTimeoutDescription">
+        <source>Timeout for pushing to a server in seconds. Defaults to 300 seconds (5 minutes).</source>
+        <target state="translated">서버에 푸시하기 위한 시간 제한(초)입니다. 기본값은 300초(5분)로 설정됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandUsageDescription">
+        <source>Specify the path to the package and your API key to push the package to the server.</source>
+        <target state="translated">패키지를 서버로 푸시하기 위해 패키지 및 API 키의 경로를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandUsageExamples">
+        <source>nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -src http://customsource/
+
+nuget push foo.nupkg
+
+nuget push foo.nupkg.symbols
+
+nuget push foo.nupkg -Timeout 360</source>
+        <target state="translated">nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -src http://customsource/
+
+nuget push foo.nupkg
+
+nuget push foo.nupkg.symbols
+
+nuget push foo.nupkg -Timeout 360</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="PushCommandUsageSummary">
+        <source>&lt;package path&gt; [API key] [options]</source>
+        <target state="translated">&lt;package path&gt; [API 키] [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandDescription">
+        <source>Restores NuGet packages.</source>
+        <target state="translated">NuGet 패키지를 복원합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandForceEvaluate">
+        <source>Forces restore to reevaluate all dependencies even if a lock file already exists.</source>
+        <target state="translated">잠금 파일이 이미 존재하는 경우에도 모든 종속성을 다시 평가하기 위해 복원합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandLockFilePath">
+        <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
+        <target state="translated">프로젝트 잠금 파일이 작성되는 출력 위치입니다. 기본적으로 'PROJECT_ROOT\packages.lock.json'입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandLockedMode">
+        <source>Don't allow updating project lock file.</source>
+        <target state="translated">프로젝트 잠금 파일 업데이트를 허용하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandP2PTimeOut">
+        <source>Timeout in seconds for resolving project to project references.</source>
+        <target state="translated">프로젝트 간 참조를 확인하기 위한 시간 초과(초)입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandPackagesDirectory">
+        <source>Specifies the packages folder.</source>
+        <target state="translated">패키지 폴더를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRecursive">
+        <source>Restore all referenced projects for UWP and NETCore projects. This does not include packages.config projects.</source>
+        <target state="translated">UWP 및 NETCore 프로젝트에 대해 참조된 모든 프로젝트를 복원합니다. 여기에는 packages.config 프로젝트가 포함되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRequireConsent">
+        <source>Checks if package restore consent is granted before installing a package.</source>
+        <target state="translated">패키지를 설치하기 전에 패키지 복원 동의를 받았는지 확인합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandSolutionDirectory">
+        <source>Specifies the solution directory. Not valid when restoring packages for a solution.</source>
+        <target state="translated">솔루션 디렉터리를 지정합니다. 솔루션에 대한 패키지를 복원할 때는 유효하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageDescription">
+        <source>If a solution is specified, this command restores NuGet packages that are installed in the solution and in projects contained in the solution. Otherwise, the command restores packages listed in the specified packages.config file, Microsoft Build project, or project.json file.</source>
+        <target state="translated">솔루션이 지정된 경우 이 명령은 솔루션 및 솔루션에 포함된 프로젝트에 설치된 NuGet 패키지를 복원합니다. 그렇지 않으면 명령은 지정된 packages.config 파일, Microsoft Build 프로젝트 또는 project.json 파일에 나열된 패키지를 복원합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageExamples">
+        <source>nuget restore MySolution.sln</source>
+        <target state="translated">너겟 복원 MySolution.sln</target>
+        <note>command line example, do not localize</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageSummary">
+        <source>[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</source>
+        <target state="translated">[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [옵션]</target>
+        <note>Please don't localize "packages.config"</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandUseLockFile">
+        <source>Enables project lock file to be generated and used with restore.</source>
+        <target state="translated">복원에 사용되고 생성될 프로젝트 잠금 파일을 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandDescription">
+        <source>Searches a given source using the query string provided. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used.</source>
+        <target state="translated">제공된 쿼리 문자열을 사용하여 주어진 원본을 검색합니다. 원본을 지정하지 않으면 %AppData%\NuGet\NuGet.config에 정의된 모든 원본이 사용됩니다.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</note>
+      </trans-unit>
+      <trans-unit id="SearchCommandPreRelease">
+        <source>Include prerelease packages.</source>
+        <target state="translated">시험판 패키지를 포함합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandSourceDescription">
+        <source>The package source to search. You can pass multiple -Source options to search multiple package sources.</source>
+        <target state="translated">검색할 패키지 원본입니다. 여러 패키지 원본을 검색하기 위해 여러 -Source 옵션을 전달할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandTake">
+        <source>The number of results to return. The default value is 20.</source>
+        <target state="translated">반환할 결과 수입니다. 기본값은 20입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageDescription">
+        <source>Specify search terms.</source>
+        <target state="translated">검색어를 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageExamples">
+        <source>nuget search foo
+
+nuget search foo -Verbosity detailed
+
+nuget search foo -PreRelease -Take 5</source>
+        <target state="translated">nuget search foo
+
+nuget search foo -Verbosity detailed
+
+nuget search foo -PreRelease -Take 5</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageSummary">
+        <source>[search terms] [options]</source>
+        <target state="translated">[검색어] [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandDescription">
+        <source>Saves an API key for a given server URL. When no URL is provided API key is saved for the NuGet gallery.</source>
+        <target state="translated">주어진 서버 URL에 대한 API 키를 저장합니다. URL이 제공되지 않으면 NuGet 갤러리에 대한 API 키가 저장됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandSourceDescription">
+        <source>Server URL where the API key is valid.</source>
+        <target state="translated">API 키가 유효한 서버 URL입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageDescription">
+        <source>Specify the API key to save and an optional URL to the server that provided the API key.</source>
+        <target state="translated">저장할 API 키와 API 키를 제공한 서버에 대한 선택적 URL을 지정하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageExamples">
+        <source>nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/nugetfeed</source>
+        <target state="translated">nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9feedb3a -Source http://example.com</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageSummary">
+        <source>&lt;API key&gt; [options]</source>
+        <target state="translated">&lt;API 키&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFingerprintDescription">
+        <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
+        <target state="translated">인증서에 대한 로컬 인증서 저장소를 검색하는 데 사용되는 인증서의 SHA-256, SHA-384 또는 SHA-512 지문입니다.
+인증서 저장소는 -CertificateStoreName 및 -CertificateStoreLocation 옵션으로 지정할 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePasswordDescription">
+        <source>Password for the certificate, if needed.
+This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
+        <target state="translated">필요한 경우 인증서의 암호입니다.
+이 옵션을 사용하여 인증서의 암호를 지정할 수 있습니다. 암호가 제공되지 않은 경우 -NonInteractive 옵션이 전달되지 않는 한 명령은 런타임에 암호를 묻는 메시지를 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePathDescription">
+        <source>File path to the certificate to be used while signing the package.</source>
+        <target state="translated">패키지에 서명하는 동안 사용할 인증서의 파일 경로입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreLocationDescription">
+        <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
+        <target state="translated">인증서를 검색하는 데 사용하는 X.509 인증서 저장소의 이름입니다. 기본값은 현재 사용자가 사용하는 X.509 인증서 저장소인 "CurrentUser"입니다.
+이 옵션은 -CertificateSubjectName 또는 -CertificateFingerprint 옵션을 통해 인증서를 지정할 때 사용해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNameDescription">
+        <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
+        <target state="translated">인증서를 검색하는 데 사용할 X.509 인증서 저장소의 이름입니다. 기본값은 개인 인증서용 X.509 인증서 저장소인 "My"입니다.
+이 옵션은 -CertificateSubjectName 또는 -CertificateFingerprint 옵션을 통해 인증서를 지정할 때 사용해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateSubjectNameDescription">
+        <source>Subject name of the certificate used to search a local certificate store for the certificate. 
+The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
+        <target state="translated">인증서에 대한 로컬 인증서 저장소를 검색하는 데 사용되는 인증서의 주체 이름입니다. 
+검색은 제공된 값을 사용하여 대소문자를 구분하지 않는 문자열 비교로, 다른 주제 값에 관계없이 해당 문자열을 포함하는 주제 이름을 가진 모든 인증서를 찾습니다.
+인증서 저장소는 -CertificateStoreName 및 -CertificateStoreLocation 옵션으로 지정됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDescription">
+        <source>Signs a NuGet package with the specified certificate.</source>
+        <target state="translated">지정된 인증서로 NuGet 패키지에 서명합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandExamples">
+        <source>nuget sign MyPackage.nupkg -CertificatePath C:\certificate.pfx
+nuget sign MyPackage.nupkg -CertificatePath \\path\to\certificate.pfx
+nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -OutputDirectory .\signed\</source>
+        <target state="translated">nuget sign MyPackage.nupkg -CertificatePath C:\certificate.pfx
+nuget sign MyPackage.nupkg -CertificatePath \\path\to\certificate.pfx
+nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -OutputDirectory .\signed\</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SignCommandHashAlgorithmDescription">
+        <source>Hash algorithm to be used to sign the package. Defaults to SHA256.</source>
+        <target state="translated">패키지에 서명하는 데 사용할 해시 알고리즘입니다. 기본값은 SHA256입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertificateFingerprint">
+        <source>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
+        <target state="translated">{0}: 'CertificateFingerprint' 옵션의 값이 잘못되었습니다. 값은 SHA-256, SHA-384 또는 SHA-512 인증서 지문(16진수)이어야 합니다.</target>
+        <note>{0} - error code</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMissingArgumentException">
+        <source>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">'{1}' 옵션을 사용할 때 필요한 '{0}'에 대한 값이 제공되지 않았습니다. 허용되는 값 목록을 보려면 https://docs.nuget.org/docs/reference/command-line-reference를 방문하세요.</target>
+        <note>0 - primary param name
+1 - other param name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertificateException">
+        <source>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">인증서를 지정하는 데 여러 옵션이 사용되었습니다. 인증서를 제공하는 허용되는 방법 목록을 보려면 https://docs.nuget.org/docs/reference/command-line-reference를 방문하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoArgumentException">
+        <source>No value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">'{0}'에 대한 값이 제공되지 않았습니다. 허용되는 값 목록을 보려면 https://docs.nuget.org/docs/reference/command-line-reference를 방문하세요.</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertificateException">
+        <source>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">인증서가 제공되지 않았습니다. 인증서를 제공하는 허용되는 방법 목록을 보려면 https://docs.nuget.org/docs/reference/command-line-reference를 방문하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoPackageException">
+        <source>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">패키지를 제공하지 않았습니다. 허용되는 패키지 제공 방법의 목록은 https://docs.nuget.org/docs/reference/command-line-reference를 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoTimestamperWarning">
+        <source>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">'-Timestamper' 옵션이 제공되지 않았습니다. 서명된 패키지에는 타임스탬프가 지정되지 않습니다. 이 옵션에 대해 자세히 알아보려면 https://docs.nuget.org/docs/reference/command-line-reference를 방문하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOutputDirectoryDescription">
+        <source>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</source>
+        <target state="translated">서명된 패키지를 저장할 디렉터리입니다. 기본적으로 원래 패키지를 서명된 패키지로 덮어씁니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOverwriteDescription">
+        <source>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</source>
+        <target state="translated">현재 시그니처를 덮어쓸지 여부를 나타내는 스위치입니다. 기본적으로 패키지에 이미 시그니처가 있으면 명령이 실패합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandSummary">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">NuGet 패키지에 서명합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandTimestampHashAlgorithmDescription">
+        <source>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</source>
+        <target state="translated">RFC 3161 타임스탬프 서버에서 사용할 해시 알고리즘입니다. 기본값은 SHA256입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandTimestamperDescription">
+        <source>URL to an RFC 3161 timestamping server.</source>
+        <target state="translated">RFC 3161 타임스탬핑 서버의 URL입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandUsageDescription">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">NuGet 패키지에 서명합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandUsageExamples">
+        <source>nuget sign MyPackage.nupkg -Timestamper https://foo.bar
+
+nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\..\Signed
+</source>
+        <target state="translated">nuget sign MyPackage.nupkg -Timestamper https://foo.bar
+
+nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\..\Signed
+</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; [-CertificatePath &lt;certificate_path&gt; | [ -CertificateStoreName &lt;certificate_store_name&gt; -CertificateStoreLocation &lt;certificate_store_location&gt; [-CertificateSubjectName &lt;certificate_subject_name&gt; | -CertificateFingerprint &lt;certificate_fingerprint&gt;]]] [options]</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; [-CertificatePath &lt;certificate_path&gt; | [ -CertificateStoreName &lt;certificate_store_name&gt; -CertificateStoreLocation &lt;certificate_store_location&gt; [-CertificateSubjectName &lt;certificate_subject_name&gt; | -CertificateFingerprint &lt;certificate_fingerprint&gt;]]] [options]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
+        <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">패키지를 추가하거나 업데이트하기 위한 HTTP 연결을 허용합니다. 참고: 이 메서드는 안전하지 않습니다. 보안 옵션은 https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandDescription">
+        <source>Provides the ability to manage list of sources located in NuGet.config files.</source>
+        <target state="translated">NuGet.config 파일에 있는 소스 목록을 관리하는 기능을 제공합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandFormatDescription">
+        <source>Applies to the list action. Accepts two values: Detailed (the default) and Short.</source>
+        <target state="translated">목록 작업에 적용됩니다. 두 가지 값(Detailed(기본값), Short)을 허용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNameDescription">
+        <source>Name of the source.</source>
+        <target state="translated">소스 이름입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandPasswordDescription">
+        <source>Password to be used when connecting to an authenticated source.</source>
+        <target state="translated">인증된 소스에 연결할 때 사용할 암호입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandProtocolVersionDescription">
+        <source>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</source>
+        <target state="translated">사용할 NuGet 서버 프로토콜 버전입니다. 현재 지원되는 버전은 2와 3입니다. 버전 3 프로토콜에 대한 자세한 내용은 https://learn.microsoft.com/nuget/api/overview를 참조하세요. 지정하지 않으면 기본값은 2입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDescription">
+        <source>Path to the package(s) source.</source>
+        <target state="translated">패키지 소스의 경로입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandStorePasswordInClearTextDescription">
+        <source>Enables storing portable package source credentials by disabling password encryption.</source>
+        <target state="translated">암호 암호화를 사용하지 않도록 설정하여 이식 가능한 패키지 소스 자격 증명을 저장할 수 있게 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandTrustDescription">
+        <source>Make a source a trusted repository for repository signature verification.</source>
+        <target state="translated">저장소 서명 확인을 위해 원본을 신뢰할 수 있는 저장소로 만드세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUsageSummary">
+        <source>&lt;List|Add|Remove|Enable|Disable|Update&gt; -Name [name] -Source [source]</source>
+        <target state="translated">&lt;List|Add|Remove|Enable|Disable|Update&gt; -Name [name] -Source [source]</target>
+        <note>Only localize "[name]" and "[source]"</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandUserNameDescription">
+        <source>Username to be used when connecting to an authenticated source.</source>
+        <target state="translated">인증된 소스에 연결할 때 사용할 사용자 이름.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidAuthenticationTypesDescription">
+        <source>Comma-separated list of valid authentication types for this source. By default, all authentication types are valid. Example: basic,negotiate</source>
+        <target state="translated">이 소스에 유효한 인증 유형의 쉼표로 구분된 목록입니다. 기본적으로 모든 인증 유형이 유효합니다. 예: basic,negotiate</target>
+        <note>Please don't localize "basic,negotiate"</note>
+      </trans-unit>
+      <trans-unit id="SpecCommandAssemblyPathDescription">
+        <source>Assembly to use for metadata.</source>
+        <target state="translated">메타데이터에 사용할 어셈블리입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandDescription">
+        <source>Generates a nuspec for a new package. If this command is run in the same folder as a project file (.csproj, .vbproj, .fsproj), it will create a tokenized nuspec file.</source>
+        <target state="translated">새 패키지에 대한 nuspec을 생성합니다. 이 명령을 프로젝트 파일(.csproj, .vbproj, .fsproj)과 동일한 폴더에서 실행하면 토큰화된 nuspec 파일이 생성됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandForceDescription">
+        <source>Overwrite nuspec file if it exists.</source>
+        <target state="translated">nuspec 파일이 있는 경우 덮어씁니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandUsageExamples">
+        <source>nuget spec
+
+nuget spec MyPackage
+
+nuget spec -a MyAssembly.dll</source>
+        <target state="translated">nuget spec
+
+nuget spec MyPackage
+
+nuget spec -a MyAssembly.dll</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SpecCommandUsageSummary">
+        <source>[package id]</source>
+        <target state="translated">[패키지 ID]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolApiKey">
+        <source>The API key for the symbol server.</source>
+        <target state="translated">기호 서버의 API 키입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">
+        <source>Set allowUntrustedRoot to true for the trusted signer's certificate to be added.</source>
+        <target state="translated">신뢰할 수 있는 서명자의 인증서를 추가하려면 allowUntrustedRoot를 true로 설정하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandAuthorDescription">
+        <source>Add the author signature of the package as a trusted author.</source>
+        <target state="translated">패키지의 작성자 서명을 신뢰할 수 있는 작성자로 추가합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandCertificateFingerprintDescription">
+        <source>Fingerprint of the certificate to trust.</source>
+        <target state="translated">신뢰할 수 있는 인증서의 지문입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandDescription">
+        <source>Provides the ability to manage the list of trusted signers.</source>
+        <target state="translated">신뢰할 수 있는 서명자 목록을 관리하는 기능을 제공합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandFingerprintAlgorithmDescription">
+        <source>Hash algorithm used to calculate the certificate fingerprint. Defaults to SHA256.</source>
+        <target state="translated">인증서 지문을 계산하는 데 사용되는 해시 알고리즘입니다. 기본값은 SHA256입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandNameDescription">
+        <source>Name of the trusted signer.</source>
+        <target state="translated">신뢰할 수 있는 서명자의 이름입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandOwnersDescription">
+        <source>List of owners allowed for a package signed with the trusted repository.</source>
+        <target state="translated">신뢰할 수 있는 저장소로 서명된 패키지에 대해 허용된 소유자 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandRepositoryDescription">
+        <source>Add the repository signature or countersignature of the package as a trusted repository.</source>
+        <target state="translated">패키지의 저장소 서명 또는 연대 서명을 신뢰할 수 있는 저장소로 추가합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandServiceIndexDescription">
+        <source>Service index for a repository to be trusted.</source>
+        <target state="translated">신뢰할 수 있는 리포지토리에 대한 서비스 인덱스입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandUsageExamples">
+        <source>nuget trusted-signers
+
+nuget trusted-signers Add -Name existingSource
+
+nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.test/v3ServiceIndex
+
+nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
+
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
+
+nuget trusted-signers Remove -Name TrustedRepo</source>
+        <target state="translated">nuget trusted-signers
+
+nuget trusted-signers Add -Name existingSource
+
+nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.test/v3ServiceIndex
+
+nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
+
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
+
+nuget trusted-signers Remove -Name TrustedRepo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandUsageSummary">
+        <source>&lt;List|Add|Remove|Sync&gt; [options]</source>
+        <target state="translated">&lt;List|Add|Remove|Sync&gt; [옵션]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandDependencyVersion">
+        <source>Overrides the default dependency resolution behavior.</source>
+        <target state="translated">기본 종속성 확인 동작을 재정의합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandDescription">
+        <source>Update packages to latest available versions. This command also updates NuGet.exe itself.</source>
+        <target state="translated">패키지를 사용 가능한 최신 버전으로 업데이트합니다. 이 명령은 NuGet.exe 자체도 업데이트합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandFileConflictAction">
+        <source>Set default action when a file from a package already exists in the target project. Set to Overwrite to always overwrite files. Set to Ignore to skip files. If not specified, it will prompt for each conflicting file.</source>
+        <target state="translated">패키지의 파일이 대상 프로젝트에 이미 있는 경우 기본 동작을 설정합니다. 파일을 항상 덮어쓰려면 덮어쓰기로 설정합니다. 파일을 건너뛰려면 무시로 설정합니다. 지정하지 않으면 충돌하는 각 파일에 대해 프롬프트가 표시됩니다.</target>
+        <note>Please don't localize "Overwrite", "Ignore".</note>
+      </trans-unit>
+      <trans-unit id="UpdateCommandIdDescription">
+        <source>Package ids to update.</source>
+        <target state="translated">업데이트할 패키지 ID입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandPrerelease">
+        <source>Allows updating to prerelease versions. This flag is not required when updating prerelease packages that are already installed.</source>
+        <target state="translated">시험판 버전으로 업데이트할 수 있습니다. 이미 설치된 시험판 패키지를 업데이트할 때는 이 플래그가 필요하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandRepositoryPathDescription">
+        <source>Path to the local packages folder (location where packages are installed).</source>
+        <target state="translated">로컬 패키지 폴더의 경로(패키지가 설치된 위치).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSafeDescription">
+        <source>Looks for updates with the highest version available within the same major and minor version as the installed package.</source>
+        <target state="translated">설치된 패키지와 동일한 주 버전 및 부 버전 내에서 사용 가능한 가장 높은 버전의 업데이트를 찾습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSelfDescription">
+        <source>Update the running NuGet.exe to the newest version available from the server.</source>
+        <target state="translated">실행 중인 NuGet.exe를 서버에서 사용 가능한 최신 버전으로 업데이트합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSourceDescription">
+        <source>A list of package sources to search for updates.</source>
+        <target state="translated">업데이트를 검색할 패키지 원본 목록입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUsageExamples">
+        <source>nuget update
+    
+nuget update -Safe
+
+nuget update -Self</source>
+        <target state="translated">nuget update
+    
+nuget update -Safe
+
+nuget update -Self</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="UpdateCommandVerboseDescription">
+        <source>Show verbose output while updating.</source>
+        <target state="translated">업데이트하는 동안 자세한 출력을 표시합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandVersionDescription">
+        <source>Updates the package in -Id to the version indicated.  Requires -Id to contain exactly one package id.</source>
+        <target state="translated">-Id의 패키지를 표시된 버전으로 업데이트합니다. 정확히 하나의 패키지 ID를 포함하려면 -Id가 필요합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandAllDescription">
+        <source>Specifies that all verifications possible should be performed to the package(s).</source>
+        <target state="translated">패키지에 대해 가능한 모든 확인을 수행하도록 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandCertificateFingerprintDescription">
+        <source>Verify that the signer certificate matches with one of the specified SHA256 fingerprints. A certificate SHA256 fingerprint is a SHA256 hash of the certificate used to identify the certificate. Multiple inputs should be semicolon separated.</source>
+        <target state="translated">서명자 인증서가 지정된 SHA256 지문 중 하나와 일치하는지 확인합니다. 인증서 SHA256 지문은 인증서를 식별하는 데 사용되는 인증서의 SHA256 해시입니다. 여러 입력은 세미콜론으로 구분해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandDescription">
+        <source>Verifies a signed NuGet package.</source>
+        <target state="translated">서명된 NuGet 패키지를 확인합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandSignaturesDescription">
+        <source>Specifies that package signature verification should be performed.</source>
+        <target state="translated">패키지 서명 확인을 수행해야 함을 지정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandUsageExamples">
+        <source>nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+
+nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
+
+nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
+
+nuget verify -Signatures .\*.nupkg</source>
+        <target state="translated">nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+
+nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
+
+nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
+
+nuget verify -Signatures .\*.nupkg</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommandUsageSummary">
+        <source>&lt;verification_type&gt; &lt;package_path&gt;  [options]</source>
+        <target state="translated">&lt;verification_type&gt; &lt;package_path&gt; [옵션]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

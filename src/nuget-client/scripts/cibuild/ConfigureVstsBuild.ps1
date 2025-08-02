@@ -98,18 +98,6 @@ Function Set-RtmLabel {
     Write-Host "##vso[task.setvariable variable=RtmLabel;]$label"
 }
 
-Function Get-LocBranchExists {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$branchName
-    )
-
-    Write-Host "Looking for branch '$branchName' in NuGet.Build.Localization"
-    $lsRemoteOpts = 'ls-remote', '--exit-code', 'origin', "refs/heads/$branchName"
-    $branchExists = & git -C $NuGetLocalization $lsRemoteOpts
-    return $LASTEXITCODE -eq 0
-}
-
 $isRTMBuild = [boolean]::Parse($BuildRTM)
 
 Set-RtmLabel -isRTMBuild $isRTMBuild
@@ -121,47 +109,11 @@ Set-RtmLabel -isRTMBuild $isRTMBuild
 $regKeyFileSystem = "HKLM:SYSTEM\CurrentControlSet\Control\FileSystem"
 $enableLongPathSupport = "LongPathsEnabled"
 
-$Submodules = Join-Path $RepositoryPath submodules -Resolve
-
-# NuGet.Build.Localization repository set-up
-$NuGetLocalization = Join-Path $Submodules NuGet.Build.Localization -Resolve
-
-# Check if there is a localization branch associated with this branch repo
-if (Get-LocBranchExists $BranchName)
-{
-    $NuGetLocalizationRepoBranch = $BranchName
-}
-else
-{
-    if ($BranchName -like "*-MSRC") {
-        $currentNuGetBranch = $BranchName -replace "-MSRC$", ""
-        if (Get-LocBranchExists $currentNuGetBranch) {
-            $NuGetLocalizationRepoBranch = $currentNuGetBranch
-        }
-        else
-        {
-            $NuGetLocalizationRepoBranch = "dev"
-        }
-    }
-    else {
-        $NuGetLocalizationRepoBranch = 'dev'
-    }
-}
-Write-Host "NuGet.Build.Localization Branch: $NuGetLocalizationRepoBranch"
-
-# update submodule NuGet.Build.Localization
-$updateOpts = 'switch', '-d', "origin/$NuGetLocalizationRepoBranch", "-q"
-Write-Host "git update NuGet.Build.Localization at $NuGetLocalization"
-& git -C $NuGetLocalization $updateOpts 2>&1 | Write-Host
-# Get the commit of the localization repository that will be used for this build.
-$LocalizationRepoCommitHash = & git -C $NuGetLocalization log --pretty=format:'%H' -n 1
-
 if (-not (Test-Path $regKeyFileSystem))
 {
     Write-Host "Enabling long path support on the build machine"
     Set-ItemProperty -Path $regKeyFileSystem -Name $enableLongPathSupport -Value 1
 }
-
 
 if ($BuildRTM -eq $true)
 {
@@ -182,8 +134,6 @@ else
         BuildNumber = $newBuildCounter
         CommitHash = $CommitHash
         BuildBranch = $BranchName
-        LocalizationRepositoryBranch = $NuGetLocalizationRepoBranch
-        LocalizationRepositoryCommitHash = $LocalizationRepoCommitHash
         VsTargetBranch = $VsTargetBranch
         VsTargetChannel = $VstargetChannel
         VsTargetMajorVersion = $VsTargetMajorVersion

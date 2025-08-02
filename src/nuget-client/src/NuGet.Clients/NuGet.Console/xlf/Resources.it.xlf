@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../Resources.resx">
+    <body>
+      <trans-unit id="Console_InitializeHostFails">
+        <source>Failed to initialize the PowerShell host. If your PowerShell execution policy setting is set to AllSigned, open the Package Manager Console to initialize the host first.</source>
+        <target state="translated">Non è stato possibile inizializzare l'host PowerShell. Se l'opzione relativa ai criteri di esecuzione di PowerShell è impostata su AllSigned, aprire la console di Gestione pacchetti per inizializzare prima l'host.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutingScript">
+        <source>Executing script file '{0}'...</source>
+        <target state="translated">Esecuzione del file di script '{0}' in corso...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputConsolePaneName">
+        <source>Package Manager</source>
+        <target state="translated">Gestione pacchetti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleBusy">
+        <source>Package Manager Console busy at the moment...</source>
+        <target state="translated">Console di Gestione pacchetti occupata...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleCommandExecuted">
+        <source>Package Manager Console Command Executed</source>
+        <target state="translated">Console di Gestione pacchetti - Comando eseguito</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegistryKeyShouldBeDWORD">
+        <source>Registry key '{0}' should be a DWORD.</source>
+        <target state="translated">La chiave del Registro di sistema '{0}' deve essere di tipo DWORD.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowInitializing">
+        <source>Initializing PowerShell host...</source>
+        <target state="translated">Inizializzazione dell'host PowerShell in corso...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowTitle">
+        <source>Package Manager Console</source>
+        <target state="translated">Console di Gestione pacchetti</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

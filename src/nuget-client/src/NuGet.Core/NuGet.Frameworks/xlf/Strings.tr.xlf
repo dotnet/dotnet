@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">Bağımsız değişken null veya boş olamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkDoesNotSupportProfiles">
+        <source>.NET 5.0 and above does not support profiles.</source>
+        <target state="translated">.NET 5.0 ve üzeri, profilleri desteklemez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkMismatch">
+        <source>Frameworks must have the same identifier, profile, and platform.</source>
+        <target state="translated">Çerçevelerin aynı tanımlayıcı, profil ve platforma sahip olmaları gerekir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkIdentifier">
+        <source>Invalid framework identifier '{0}'.</source>
+        <target state="translated">Geçersiz çerçeve tanımlayıcısı '{0}'.</target>
+        <note>{0} is the invalid framework identifier.</note>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid framework version '{0}'.</source>
+        <target state="translated">Geçersiz çerçeve sürümü '{0}'.</target>
+        <note>{0} is the invalid framework version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformVersion">
+        <source>Invalid platform version '{0}'.</source>
+        <target state="translated">'{0}' platform sürümü geçersiz.</target>
+        <note>{0} is the invalid platform version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPortableFrameworksDueToHyphen">
+        <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
+        <target state="translated">'{0}' için geçersiz taşınabilir çerçeveler. Taşınabilir çerçeve adlarının hiçbiri kısa çizgi içeremez.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+      <trans-unit id="MissingPortableFrameworks">
+        <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
+        <target state="translated">'{0}' için geçersiz taşınabilir çerçeveler. Taşınabilir çerçevelerin profilde en az bir çerçevesi olması gerekir.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

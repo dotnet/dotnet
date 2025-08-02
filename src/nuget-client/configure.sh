@@ -24,14 +24,14 @@ if [ "$DOTNET_SDK_VERSIONS" != "" ]; then
     do
         echo "Installing .NET SDKs..."
         echo "'cli/dotnet-install.sh -InstallDir $CLI_DIR -NoPath $CliArgs'"
-        
+
         cli/dotnet-install.sh -InstallDir $CLI_DIR -NoPath $CliArgs
         if (( $? )); then
             echo "The .NET install failed!"
             return 1
         fi
     done
-else 
+else
     # Get CLI Branches for testing
     cat build/DotNetSdkVersions.txt | while IFS=$'\r' read -r CliArgs || [[ -n $line ]];
     do
@@ -76,14 +76,14 @@ if [ "$DOTNET_SDK_TEST_VERSIONS" != "" ]; then
     do
         echo "Installing .NET SDKs for functional tests..."
         echo "'cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs'"
-        
+
         cli/dotnet-install.sh -InstallDir $NETSDK_FOR_TESTING_DIR -NoPath $CliArgs
         if (( $? )); then
             echo "The .NET SDK install failed!"
             return 1
         fi
     done
-else 
+else
     # Get CLI Branches for testing
     cat build/DotNetSdkTestVersions.txt | while IFS=$'\r' read -r CliArgs || [[ -n $line ]];
     do
@@ -100,10 +100,6 @@ else
 fi
 
 echo "=================================================================="
-
-echo "Initializing submodules..."
-git submodule init
-git submodule update
 
 if [ "$RESTORE_NUGET_PACKAGES" != "false" ]; then
     echo "Restoring NuGet packages..."

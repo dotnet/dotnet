@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VsixLanguagePack Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema-lp/2010">
+  <LocalizedName>NuGet 包管理器</LocalizedName>
+  <LocalizedDescription>一组用于自动执行从 VS 项目中安装、升级、配置和删除包的过程的工具。</LocalizedDescription>
+  <MoreInfoUrl>https://github.com/NuGet/NuGet.Client</MoreInfoUrl>
+</VsixLanguagePack>

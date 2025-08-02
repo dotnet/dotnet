@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddPackage_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">O pacote '{0}' já existe no feed '{1}' e é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">O pacote '{0}' já existe no feed '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_SuccessfullyAdded">
+        <source>Successfully added package '{0}' to feed '{1}'.</source>
+        <target state="translated">O pacote '{0}' foi adicionado ao feed '{1}' com êxito.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument can not be null or empty.</source>
+        <target state="translated">O argumento não pode ser nulo ou estar vazio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">o servidor de símbolos</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandCanceled">
+        <source>Delete canceled</source>
+        <target state="translated">Exclusão cancelada</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandConfirm">
+        <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
+        <target state="translated">{0} {1} será excluído do {2}. Gostaria de continuar?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletedPackage">
+        <source>{0} {1} was deleted successfully.</source>
+        <target state="translated">{0} {1} foi excluído com êxito.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletingPackage">
+        <source>Deleting {0} {1} from the {2}.</source>
+        <target state="translated">Excluindo {0} {1} do {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeletePackage_NotFound">
+        <source>Not Found.</source>
+        <target state="translated">Não Encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DownloadTimeout">
+        <source>The download of '{0}' timed out because no data was received for {1}ms.</source>
+        <target state="translated">O tempo limite para o download de '{0}' foi atingido porque nenhum dado foi recebido por {1} ms.</target>
+        <note>'{0}' is replaced with the resource that could not be downloaded.
+'{1}' is replaced with the integer (in milliseconds) of the timeout duration.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Você está executando a operação '{0}' com uma fonte 'HTTP', '{1}'. O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicitamente `'allowInsecureConnections'` como `true` no seu arquivo `NuGet.Config`. Consulte [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) para mais informações.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_Insecure_HTTP">
+        <source>You are using a NuGet source '{0}' that contains an 'HTTP' service index resource endpoint: '{1}'. This is insecure and not recommended. To allow HTTP resources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. For more information, visit https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">Você está usando uma origem do NuGet "{0}" que contém um ponto de extremidade de recurso de índice de serviço "HTTP": "{1}". Isso não é seguro e não é recomendado. Para permitir recursos HTTP, você deve definir explicitamente "allowInsecureConnections" como true no arquivo NuGet.Config. Para obter mais informações, visite https://aka.ms/nuget-https-everywhere.</target>
+        <note>0 - NuGet Package source url
+1- resource endpoint url</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForForbidden">
+        <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
+        <target state="translated">O servidor respondeu com HTTP '403 Proibido' ao acessar a origem '{0}'. Isso sugere que o servidor autenticou sua identidade, mas não permitiu que você acessasse o recurso solicitado. Forneça credenciais que tenham permissões para exibir esse recurso.</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForProxy">
+        <source>The server responded with HTTP '407 Proxy Authentication Required' when accessing the proxy '{0}'. This suggests that the server needs credentials to authenticate your identity to use a proxy. Provide credentials to access this resource.</source>
+        <target state="translated">O servidor respondeu com HTTP '407 Autenticação de Proxy Necessária' ao acessar o proxy '{0}'. Isso sugere que o servidor precisa de credenciais para autenticar sua identidade para usar um proxy. Forneça credenciais para acessar este recurso.</target>
+        <note>{0} is the proxy URL that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForUnauthorized">
+        <source>The server responded with HTTP '401 Unauthorized' when accessing the source '{0}'. This suggests that the server needs credentials to authenticate your identity. Provide credentials to access this resource.</source>
+        <target state="translated">O servidor respondeu com HTTP '401 Não Autorizado' ao acessar a origem '{0}'. Isso sugere que o servidor precisa de credenciais para autenticar sua identidade. Forneça credenciais para acessar este recurso.</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_RequestLog">
+        <source>{0} {1}</source>
+        <target state="translated">{0} {1}</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLog">
+        <source>{0} {1} {2}ms</source>
+        <target state="translated">{0} {1} {2}ms</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLogWithRetryAfter">
+        <source>{0} {1} {2}ms (retry after: {3}s)</source>
+        <target state="translated">{0}{1}{2}ms (tente novamente após:{3}s)</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds, retry after duration in milliseconds
+The "ms" should be localized to the abbreviation for milliseconds.
+The "s" should be localized to the abbreviation for seconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_Timeout">
+        <source>The HTTP request to '{0} {1}' has timed out after {2}ms.</source>
+        <target state="translated">A solicitação HTTP para '{0} {1}' expirou após {2}ms.</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI, timeout duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="InvalidVersionFolder">
+        <source>The folder '{0}' contains an invalid version.</source>
+        <target state="translated">A pasta '{0}' contém uma versão inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">a galeria do NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileNotFound">
+        <source>The file '{0}' does not exist in the package.</source>
+        <target state="translated">O arquivo '{0}' não existe no pacote.</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileTooLarge">
+        <source>Cannot load the file '{0}' because it is larger than {1} MB.</source>
+        <target state="translated">Não é possível carregar o arquivo '{0}' porque ele tem mais que {1} MB.</target>
+        <note>0 -file path, megabytes</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_UnknownProblemLoadingTheFile">
+        <source>Unknown problem loading the file '{0}'.</source>
+        <target state="translated">Problema desconhecido ao carregar o arquivo '{0}'.</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="Log_CanceledNupkgDownload">
+        <source>Downloading a package from '{0}' was canceled.</source>
+        <target state="translated">O download do pacote de '{0}' foi cancelado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorDownloading">
+        <source>Error downloading '{0}' from '{1}'.</source>
+        <target state="translated">Erro ao baixar '{0}' de '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToDownloadPackage">
+        <source>Failed to download package '{0}' from '{1}'.</source>
+        <target state="translated">Falha ao baixar o pacote '{0}' de '{1}'.</target>
+        <note>{0} is the identity of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2Feed">
+        <source>The V2 feed at '{0}' returned an unexpected status code '{1} {2}'.</source>
+        <target state="translated">O feed V2 no '{0}' retornou um código de status inesperado '{1} {2}'.</target>
+        <note>{0} is the URL that failed.
+{1} is the HTTP status code (an integer).
+{2} is the HTTP reason phrase (a non-translated string).</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2FeedHttp">
+        <source>Failed to fetch results from V2 feed at '{0}' with following message : {1}</source>
+        <target state="translated">Falha ao buscar resultados do feed V2 em '{0}' com a mensagem a seguir: {1}</target>
+        <note>{0} is the URL that failed.
+{1} is the message returned from HTTP call.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToGetNuspecStream">
+        <source>Unable to load nuspec from package '{0}'.</source>
+        <target state="translated">Não é possível carregar o nuspec do pacote '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToParseRepoSignInfor">
+        <source>Unable to parse {0} information from {1}. </source>
+        <target state="translated">Não é possível analisar as informações de {0} de {1}. </target>
+        <note>{0} is the information name that needs to be parsed. 
+{1} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadRepositorySignature">
+        <source>Unable to get repository signature information for source {0}.</source>
+        <target state="translated">Não é possível obter informações de assinatura do repositório para a origem {0}.</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadServiceIndex">
+        <source>Unable to load the service index for source {0}.</source>
+        <target state="translated">Não é possível carregar o índice de serviço para a origem {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToRetrievePackage">
+        <source>Failed to retrieve information about '{0}' from remote source '{1}'.</source>
+        <target state="translated">Falha ao recuperar informações sobre '{0}' da origem remota '{1}'.</target>
+        <note>{0} is the ID of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyRootDirectory">
+        <source>Failed to verify the root directory of local source '{0}'.</source>
+        <target state="translated">Falha ao verificar o diretório raiz da origem local '{0}'.</target>
+        <note>{0} is the path to the bad directory.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyValidFile">
+        <source>Failed to validate the file '{0}'.</source>
+        <target state="translated">Falha ao validar o arquivo '{0}'.</target>
+        <note>{0} is the file path.</note>
+      </trans-unit>
+      <trans-unit id="Log_FileIsCorrupt">
+        <source>The file '{0}' is corrupt.</source>
+        <target state="translated">O arquivo '{0}' está corrompido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidCacheEntry">
+        <source>An invalid cache entry was found for URL '{0}' and will be replaced.</source>
+        <target state="translated">Uma entrada de cache inválida foi encontrada para a URL '{0}' e será substituída.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidNupkgFromUrl">
+        <source>The nupkg at '{0}' is not valid.</source>
+        <target state="translated">O nupkg em '{0}' não é válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_LocalSourceNotExist">
+        <source>The local source '{0}' doesn't exist.</source>
+        <target state="translated">A fonte local '{0}' não existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingFindPackagesById">
+        <source>Retrying '{0}' for source '{1}'.</source>
+        <target state="translated">Repetindo '{0}' para a origem '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingHttp">
+        <source>An error was encountered when fetching '{0} {1}'. The request will now be retried.</source>
+        <target state="translated">Foi encontrado um erro ao buscar '{0} {1}'. A solicitação agora será repetida.</target>
+        <note>'{0}' is replaced with the HTTP method used.
+'{1}' is replaced with the URL that failed to be reached.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingRepositorySignature">
+        <source>Retrying repository signature request for source '{0}'.</source>
+        <target state="translated">Repetindo solicitação de assinatura de repositório para a origem '{0}'.</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingServiceIndex">
+        <source>Retrying service index request for source '{0}'.</source>
+        <target state="translated">Repetindo a solicitação de índice de serviço para a origem '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoApiKeyFound">
+        <source>No API Key was provided and no API Key could be found for {0}. To save an API Key for a source use the 'setApiKey' command.</source>
+        <target state="translated">Nenhuma Chave de API foi fornecida e nenhuma chave de API pôde ser encontrada para {0}. Para salvar uma Chave de API de uma origem, use o comando 'setApiKey'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) {0} is(are) not recognized by the current toolset.</source>
+        <target state="translated">Os identificadores de licença {0} não são reconhecidos pelo conjunto de ferramentas atual.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">A cadeia de caracteres da versão de licença '{0}' é maior do que aquele compatível com este conjunto de ferramentas '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_Invalid">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">'{0}' não é um arquivo nupkg válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidEx">
+        <source>'{0}' is not a valid nupkg file. Error: '{1}'.</source>
+        <target state="translated">'{0}' não é um arquivo nupkg válido. Erro: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OneOrMoreUrisMustBeSpecified">
+        <source>One or more URIs must be specified.</source>
+        <target state="translated">Um ou mais URIs devem ser especificados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Unable to find package '{0}'.</source>
+        <target state="translated">Não é possível localizar o pacote '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageServerEndpoint_NotSupported">
+        <source>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</source>
+        <target state="translated">ERRO: esta versão do nuget.exe não dá suporte à atualização de pacotes para a origem do pacote '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">'{0}' não é um caminho válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">'{0}' deve ser um caminho local ou um caminho de compartilhamento UNC.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionAlreadyStarted">
+        <source>A connection has already been started.</source>
+        <target state="translated">Uma conexão já foi iniciada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionIsClosed">
+        <source>The plugin connection is closed.</source>
+        <target state="translated">A conexão do plug-in está fechada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_DownloadNotSupportedSinceUnsignedNotAllowed">
+        <source>Downloading a package from a plugin is not supported since unsigned packages are not allowed and package download plugins do not support signed package verification.</source>
+        <target state="translated">Não há suporte para o download de pacote de um plug-in, pois pacotes não assinados não são permitidos e plug-ins de download de pacote não dão suporte à verificação do pacote assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_Exception">
+        <source>Plugin '{0}' failed with the exception:  {1}</source>
+        <target state="translated">Falha no plug-in '{0}' com a exceção: {1}</target>
+        <note>{0} is the plugin name
+{1} is the message from a caught exception</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOnCreation">
+        <source>Plugin '{0}' failed within {1:N3} seconds with exit code {2}.</source>
+        <target state="translated">O plug-in '{0}' falhou dentro de {1:N3} segundos com o código de saída {2}.</target>
+        <note>{0} is the plugin name
+{1} is the number of seconds
+{2} is the plugin process exit code</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOperationForPackage">
+        <source>Plugin '{0}' failed a {1} operation for package {2}.{3}.</source>
+        <target state="translated">Falha na operação {1} do plug-in '{0}' para o pacote {2}.{3}.</target>
+        <note>{0} is the plugin name
+{1} is a plugin operation name
+{2} is a package ID
+{3} is a package version</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailureQueryingPackageVersions">
+        <source>A failure occurred while attempting to query package versions for package '{0}' using the plugin at '{1}'.</source>
+        <target state="translated">Falha ao tentar consultar versões do pacote '{0}' usando o plug-in em '{1}'.</target>
+        <note>{0} is a package ID
+{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_Fault">
+        <source>Terminating plugin '{0}' due to an unrecoverable fault:  {1}</source>
+        <target state="translated">Encerrando plug-in '{0}' devido a uma falha irrecuperável: {1}</target>
+        <note>{0} is the plugin name
+{1} is the exception ToString() result</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FileNotFound">
+        <source>A plugin was not found at path '{0}'.</source>
+        <target state="translated">Plug-in não encontrado no caminho '{0}'.</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeFailed">
+        <source>The plugin handshake failed.</source>
+        <target state="translated">Falha no handshake do plug-in.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeRequestHandlerAlreadyExists">
+        <source>A handshake request handler already exists.</source>
+        <target state="translated">O manipulador de solicitações de handshake já existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_IdleTimeoutMustBeGreaterThanOrEqualToInfiniteTimeSpan">
+        <source>The idle timeout must be greater than or equal to System.Threading.Timeout.InfiniteTimeSpan.</source>
+        <target state="translated">O tempo limite de ociosidade deve ser maior ou igual a System.Threading.Timeout.InfiniteTimeSpan.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InitializationFailed">
+        <source>Plugin initialization failed.</source>
+        <target state="translated">Falha na inicialização do plug-in.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidEmbeddedSignature">
+        <source>The plugin at '{0}' did not have a valid embedded signature.</source>
+        <target state="translated">O plug-in em '{0}' não tinha nenhuma assinatura inserida válida.</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidMessageType">
+        <source>The message type '{0}' is invalid at this time.</source>
+        <target state="translated">O tipo de mensagem '{0}' é inválido neste momento.</target>
+        <note>{0} is a message type enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidPluginFilePath">
+        <source>The plugin file path '{0}' is invalid.</source>
+        <target state="translated">O caminho do arquivo de plug-in '{0}' é inválido.</target>
+        <note>{0} is a file system path.</note>
+      </trans-unit>
+      <trans-unit id="Plugin_NotConnected">
+        <source>A plugin is not connected.</source>
+        <target state="translated">Um plug-in não está conectado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_PackageDownloadFailed">
+        <source>Plugin '{0}' failed to download package '{1}'.</source>
+        <target state="translated">Falha no plug-in '{0}' ao baixar o pacote '{1}'.</target>
+        <note>{0} is the plugin name
+{1} is the package identity</note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProblemStartingPlugin">
+        <source>Problem starting the plugin '{0}'. {1}</source>
+        <target state="translated">Problema ao iniciar o plug-in '{0}'. {1}</target>
+        <note>0 - plugin path, 1 - error message </note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolException">
+        <source>A plugin protocol exception occurred.</source>
+        <target state="translated">Uma exceção de protocolo de plug-in ocorreu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionNotSupportedOnError">
+        <source>A protocol version is not supported on error.</source>
+        <target state="translated">Uma versão de protocolo não tem suporte em erro.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionOutOfRange">
+        <source>'{0}' must be greater than or equal to '{1}'.</source>
+        <target state="translated">'{0}' deve ser maior ou igual a '{1}'.</target>
+        <note>{0} is a parameter name
+{1} is a parameter name</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestContextDoesNotExist">
+        <source>Request context does not exist for request ID '{0}'.</source>
+        <target state="translated">O contexto da solicitação não existe para a ID da solicitação '{0}'.</target>
+        <note>{0} is a request ID</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestHandlerDoesNotExist">
+        <source>A request handler does not exist for the message method '{0}'.</source>
+        <target state="translated">Não existe nenhum manipulador de solicitações para o método de mensagem '{0}'.</target>
+        <note>{0} is a message method</note>
+      </trans-unit>
+      <trans-unit id="Plugin_TimeoutOutOfRange">
+        <source>Timeout must be greater than TimeSpan.Zero and less than or equal to TimeSpan.FromMilliseconds(int.MaxValue).</source>
+        <target state="translated">O tempo limite deve ser maior que TimeSpan.Zero e menor ou igual a TimeSpan.FromMilliseconds(int.MaxValue).</target>
+        <note>Do not localize:  TimeSpan.Zero, TimeSpan.FromMilliseconds(int.MaxValue)</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">O valor de enumeração '{0}' não é reconhecido.</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedOperationClaims">
+        <source>The operation claims are unrecognized:  {0}.</source>
+        <target state="translated">As declarações de operação não são reconhecidas: {0}.</target>
+        <note>{0} is a comma-delimited list of unrecognized enum values.</note>
+      </trans-unit>
+      <trans-unit id="Protocol_BadSource">
+        <source>Failed to retrieve metadata from source '{0}'.</source>
+        <target state="translated">Falha ao recuperar metadados da origem '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidJsonObject">
+        <source>The content at '{0}' is not a valid JSON object.</source>
+        <target state="translated">O conteúdo em '{0}' não é um objeto JSON válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidXml">
+        <source>The content at '{0}' is not valid XML.</source>
+        <target state="translated">O conteúdo em '{0}' não é um XML válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MalformedMetadataError">
+        <source>Metadata could not be loaded from the source '{0}'.</source>
+        <target state="translated">Não foi possível carregar metadados da origem '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingSearchService">
+        <source>The source does not have a Search service!</source>
+        <target state="translated">A origem não tem um serviço de Pesquisa!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingVersion">
+        <source>The source does not have the 'version' property.</source>
+        <target state="translated">A origem não tem a propriedade 'version'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageMetadataError">
+        <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
+        <target state="translated">Ocorreu um erro ao recuperar metadados do pacote para '{0}' da origem '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_Search_LocalSourceNotFound">
+        <source>The path '{0}' for the selected source could not be resolved.</source>
+        <target state="translated">Não foi possível resolver o caminho '{0}' para a fonte selecionada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_UnsupportedVersion">
+        <source>The source version is not supported: '{0}'.</source>
+        <target state="translated">Não há suporte para a versão de origem: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_duplicateUri">
+        <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
+        <target state="translated">'{0}' é uma URL duplicada que já foi baixada e levará a uma dependência cíclica. Corrija-a do servidor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPackagePushed">
+        <source>Your package was pushed.</source>
+        <target state="translated">Seu pacote foi enviado por push.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPushingPackage">
+        <source>Pushing {0} to {1}...</source>
+        <target state="translated">Enviando {0} para {1} por push...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseDotnetExe">
+        <source>To skip already published packages, use the option --skip-duplicate</source>
+        <target state="translated">Para ignorar pacotes já publicados, use a opção --skip-duplicate</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseNuGetExe">
+        <source>To skip already published packages, use the option -SkipDuplicate</source>
+        <target state="translated">Para ignorar pacotes já publicados, use a opção -SkipDuplicate</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateNotImplemented">
+        <source>The option to skip duplicates is not currently supported for this type of push.</source>
+        <target state="translated">No momento, não há suporte para a opção de ignorar duplicatas para esse tipo de push.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryContentUrlMustBeHttps">
+        <source>Repository content URL for repository signatures must be HTTPS.</source>
+        <target state="translated">A URL do conteúdo de repositório precisa ser HTTPS para assinaturas de repositório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositorySignaturesResourceMustBeHttps">
+        <source>Repository Signatures resouce must be served over HTTPS. Source: {0}</source>
+        <target state="translated">O recurso de Assinaturas do repositório deve ser atendido por meio do HTTPS. Origem: {0}</target>
+        <note>{0} source service index</note>
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">O argumento '{0}' da cadeia de caracteres não pode ser nulo nem estar vazio</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindFile">
+        <source>File does not exist ({0}).</source>
+        <target state="translated">O arquivo não existe ({0}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseFolderV3Version">
+        <source>Unable to parse a valid version from a v3 folder: '{0}'.</source>
+        <target state="translated">Não é possível analisar uma versão válida de uma pasta v3: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_CouldNotLoad">
+        <source>Package source '{0}' vulnerability data index '{1}' could not be loaded. This indicates a problem with the JSON file contents returned from the server.</source>
+        <target state="translated">A origem do pacote '{0}' índice de dados de vulnerabilidade '{1}' não pôde ser carregada. Isso indica um problema com o conteúdo do arquivo JSON retornado do servidor.</target>
+        <note>{0} - package source name (for example "nuget.org")
+{1} - URL where no data was loaded from</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_HasNoName">
+        <source>Vulnerability page index {0} does not contain a name (Source: '{1}')</source>
+        <target state="translated">Índice da página de vulnerabilidade {0} não contém um nome (Fonte: '{1}')</target>
+        <note>{0} - an index number
+{1} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameHasInvalidCharacters">
+        <source>Vulnerability page index {0} contains invalid characters (Source: '{1}')</source>
+        <target state="translated">Índice da página de vulnerabilidade {0} contém caracteres inválidos (Fonte: '{1}')</target>
+        <note>{0} - an index number
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameNotUnique">
+        <source>Vulnerability page name '{0}' is not unique. Only using the first (Source: '{1}')</source>
+        <target state="translated">O nome da página de vulnerabilidade '{0}' não é exclusivo. Usando apenas o primeiro (Fonte: '{1}')</target>
+        <note>{0} - file name
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameTooLong">
+        <source>Vulnerability page index {0} name is longer than {1} characters (Source: '{2}')</source>
+        <target state="translated">O índice da página de vulnerabilidade {0} nome é maior que {1} caracteres (Fonte: '{2}')</target>
+        <note>{0} - an index number
+{1} - number representing the max length allowed
+{2} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NoUrl">
+        <source>Vulnerability page '{0}' does not contain a URL (Source: '{1}')</source>
+        <target state="translated">A página de vulnerabilidade '{0}' não contém uma URL (Fonte: '{1}')</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_UrlNotHttp">
+        <source>Vulnerability page '{0}' contains URL that is not http(s) (Source: '{1}')</source>
+        <target state="translated">A página de vulnerabilidade '{0}' contém URL que não é http(s) (Fonte: '{1}')</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_TooManyPages">
+        <source>Package source '{0}' has {1} vulnerability data pages. Using the first {2}.</source>
+        <target state="translated">A origem do pacote '{0}' tem {1} páginas de dados de vulnerabilidade. Usando o primeiro {2}.</target>
+        <note>{0} - package source name
+{1} - number of vulerabilitiy files reported
+{2} - max count allowed</note>
+      </trans-unit>
+      <trans-unit id="Warning_SymbolServerNotConfigured">
+        <source>Found symbols package '{0}', but no API key was specified for the symbol server. To save an API Key, run 'NuGet.exe setApiKey [your API key from http://www.NuGet.org]'.</source>
+        <target state="translated">Encontrado um pacote de símbolos '{0}', mas nenhuma chave de API foi especificada para o servidor de símbolos. Para salvar uma chave de API, execute 'NuGet.exe setApiKey [sua chave de API de http://www.NuGet.org]'.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

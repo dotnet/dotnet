@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddPackage_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">'{1}' 피드에 '{0}' 패키지가 이미 있으며 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">'{1}' 피드에 '{0}' 패키지가 이미 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_SuccessfullyAdded">
+        <source>Successfully added package '{0}' to feed '{1}'.</source>
+        <target state="translated">'{1}' 피드에 '{0}' 패키지를 추가했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument can not be null or empty.</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">기호 서버</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandCanceled">
+        <source>Delete canceled</source>
+        <target state="translated">삭제 취소됨</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandConfirm">
+        <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
+        <target state="translated">{0} {1}이(가) {2}에서 삭제됩니다. 계속할까요?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletedPackage">
+        <source>{0} {1} was deleted successfully.</source>
+        <target state="translated">{0} {1}을(를) 삭제했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletingPackage">
+        <source>Deleting {0} {1} from the {2}.</source>
+        <target state="translated">{2}에서 {0} {1}을(를) 삭제합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeletePackage_NotFound">
+        <source>Not Found.</source>
+        <target state="translated">찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DownloadTimeout">
+        <source>The download of '{0}' timed out because no data was received for {1}ms.</source>
+        <target state="translated">{1}ms 동안 데이터를 받지 못해 '{0}' 다운로드가 시간 초과되었습니다.</target>
+        <note>'{0}' is replaced with the resource that could not be downloaded.
+'{1}' is replaced with the integer (in milliseconds) of the timeout duration.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">‘{1}’ 'HTTP' 원본을 사용하여 '{0}' 작업을 실행하고 있습니다. NuGet에 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 명시적으로 true로 설정해야 합니다. https://aka.ms/nuget-https-everywhere에서 자세한 내용을 참조하세요.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_Insecure_HTTP">
+        <source>You are using a NuGet source '{0}' that contains an 'HTTP' service index resource endpoint: '{1}'. This is insecure and not recommended. To allow HTTP resources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. For more information, visit https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">'HTTP' 서비스 인덱스 리소스 엔드포인트 '{1}'이(가) 포함된 NuGet 원본 '{0}'을(를) 사용하고 있습니다. 이는 안전하지 않으며 권장되지 않습니다. HTTP 리소스를 허용하려면 NuGet.Config 파일에서 'allowInsecureConnections'를 true로 명시적으로 설정해야 합니다. 자세한 내용은 https://aka.ms/nuget-https-everywhere를 방문하세요.</target>
+        <note>0 - NuGet Package source url
+1- resource endpoint url</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForForbidden">
+        <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
+        <target state="translated">'{0}' 원본에 액세스할 때 서버에서 HTTP '403 사용 권한 없음'으로 응답했습니다. 서버에서 ID를 인증했지만 요청된 리소스에 대한 액세스를 허용하지 않았습니다. 이 리소스를 볼 수 있는 권한이 있는 자격 증명을 제공하세요.</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForProxy">
+        <source>The server responded with HTTP '407 Proxy Authentication Required' when accessing the proxy '{0}'. This suggests that the server needs credentials to authenticate your identity to use a proxy. Provide credentials to access this resource.</source>
+        <target state="translated">'{0}' 프록시에 액세스할 때 서버에서 HTTP '407 프록시 인증 필요'로 응답했습니다. 서버에서 프록시를 사용하도록 ID를 인증하려면 자격 증명이 필요합니다. 이 리소스에 액세스할 자격 증명을 제공하세요.</target>
+        <note>{0} is the proxy URL that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForUnauthorized">
+        <source>The server responded with HTTP '401 Unauthorized' when accessing the source '{0}'. This suggests that the server needs credentials to authenticate your identity. Provide credentials to access this resource.</source>
+        <target state="translated">'{0}' 원본에 액세스할 때 서버에서 HTTP '401 권한이 없음'으로 응답했습니다. 서버에서 ID를 인증하려면 자격 증명이 필요합니다. 이 리소스에 액세스할 자격 증명을 제공하세요.</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_RequestLog">
+        <source>{0} {1}</source>
+        <target state="translated">{0} {1}</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLog">
+        <source>{0} {1} {2}ms</source>
+        <target state="translated">{0} {1} {2}밀리초</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLogWithRetryAfter">
+        <source>{0} {1} {2}ms (retry after: {3}s)</source>
+        <target state="translated">{0}{1}{2}ms({3}초 이후 다시 시도)</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds, retry after duration in milliseconds
+The "ms" should be localized to the abbreviation for milliseconds.
+The "s" should be localized to the abbreviation for seconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_Timeout">
+        <source>The HTTP request to '{0} {1}' has timed out after {2}ms.</source>
+        <target state="translated">{2}ms 후에 '{0} {1}'에 대한 HTTP 요청이 시간 초과되었습니다.</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI, timeout duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="InvalidVersionFolder">
+        <source>The folder '{0}' contains an invalid version.</source>
+        <target state="translated">'{0}' 폴더에 잘못된 버전이 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">NuGet 갤러리</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileNotFound">
+        <source>The file '{0}' does not exist in the package.</source>
+        <target state="translated">'{0}' 파일이 패키지에 없습니다.</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileTooLarge">
+        <source>Cannot load the file '{0}' because it is larger than {1} MB.</source>
+        <target state="translated">'{0}' 파일이 {1}MB보다 크기 때문에 로드할 수 없습니다.</target>
+        <note>0 -file path, megabytes</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_UnknownProblemLoadingTheFile">
+        <source>Unknown problem loading the file '{0}'.</source>
+        <target state="translated">'{0}' 파일을 로드하는 동안 알 수 없는 문제가 발생했습니다.</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="Log_CanceledNupkgDownload">
+        <source>Downloading a package from '{0}' was canceled.</source>
+        <target state="translated">'{0}'에서 패키지 다운로드가 취소되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorDownloading">
+        <source>Error downloading '{0}' from '{1}'.</source>
+        <target state="translated">'{1}'에서 '{0}'을(를) 다운로드하는 동안 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToDownloadPackage">
+        <source>Failed to download package '{0}' from '{1}'.</source>
+        <target state="translated">'{1}'에서 '{0}' 패키지를 다운로드하지 못했습니다.</target>
+        <note>{0} is the identity of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2Feed">
+        <source>The V2 feed at '{0}' returned an unexpected status code '{1} {2}'.</source>
+        <target state="translated">'{0}'의 V2 피드에서 예기치 않은 상태 코드 '{1} {2}'이(가) 반환되었습니다.</target>
+        <note>{0} is the URL that failed.
+{1} is the HTTP status code (an integer).
+{2} is the HTTP reason phrase (a non-translated string).</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2FeedHttp">
+        <source>Failed to fetch results from V2 feed at '{0}' with following message : {1}</source>
+        <target state="translated">'{0}'의 V2 피드에서 결과를 가져오지 못했습니다. 메시지: {1}</target>
+        <note>{0} is the URL that failed.
+{1} is the message returned from HTTP call.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToGetNuspecStream">
+        <source>Unable to load nuspec from package '{0}'.</source>
+        <target state="translated">'{0}' 패키지에서 nuspec를 로드할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToParseRepoSignInfor">
+        <source>Unable to parse {0} information from {1}. </source>
+        <target state="translated">{1}의 {0} 정보를 구문 분석할 수 없습니다. </target>
+        <note>{0} is the information name that needs to be parsed. 
+{1} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadRepositorySignature">
+        <source>Unable to get repository signature information for source {0}.</source>
+        <target state="translated">{0} 소스에 대한 리포지토리 시그니처 정보를 가져올 수 없습니다.</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadServiceIndex">
+        <source>Unable to load the service index for source {0}.</source>
+        <target state="translated">{0} 원본에 대한 서비스 인덱스를 로드할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToRetrievePackage">
+        <source>Failed to retrieve information about '{0}' from remote source '{1}'.</source>
+        <target state="translated">원격 원본 '{1}'에서 '{0}'에 대한 정보를 검색하지 못했습니다.</target>
+        <note>{0} is the ID of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyRootDirectory">
+        <source>Failed to verify the root directory of local source '{0}'.</source>
+        <target state="translated">로컬 원본 '{0}'의 루트 디렉터리를 확인하지 못했습니다.</target>
+        <note>{0} is the path to the bad directory.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyValidFile">
+        <source>Failed to validate the file '{0}'.</source>
+        <target state="translated">'{0}' 파일의 유효성을 검사하지 못했습니다.</target>
+        <note>{0} is the file path.</note>
+      </trans-unit>
+      <trans-unit id="Log_FileIsCorrupt">
+        <source>The file '{0}' is corrupt.</source>
+        <target state="translated">'{0}' 파일이 손상되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidCacheEntry">
+        <source>An invalid cache entry was found for URL '{0}' and will be replaced.</source>
+        <target state="translated">URL '{0}'에 대한 잘못된 캐시 항목이 발견되었으며 대체됩니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidNupkgFromUrl">
+        <source>The nupkg at '{0}' is not valid.</source>
+        <target state="translated">'{0}'의 nupkg가 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_LocalSourceNotExist">
+        <source>The local source '{0}' doesn't exist.</source>
+        <target state="translated">로컬 소스 '{0}'이(가) 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingFindPackagesById">
+        <source>Retrying '{0}' for source '{1}'.</source>
+        <target state="translated">'{1}' 원본에 대해 '{0}'을(를) 다시 시도합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingHttp">
+        <source>An error was encountered when fetching '{0} {1}'. The request will now be retried.</source>
+        <target state="translated">'{0} {1}'을(를) 가져오는 동안 오류가 발생했습니다. 지금 요청을 다시 시도합니다.</target>
+        <note>'{0}' is replaced with the HTTP method used.
+'{1}' is replaced with the URL that failed to be reached.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingRepositorySignature">
+        <source>Retrying repository signature request for source '{0}'.</source>
+        <target state="translated">소스 '{0}'에 대해 리포지토리 시그니처 요청을 다시 시도합니다.</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingServiceIndex">
+        <source>Retrying service index request for source '{0}'.</source>
+        <target state="translated">'{0}' 원본에 대한 서비스 인덱스 요청을 다시 시도합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoApiKeyFound">
+        <source>No API Key was provided and no API Key could be found for {0}. To save an API Key for a source use the 'setApiKey' command.</source>
+        <target state="translated">API 키를 제공하지 않았으며 {0}에 대한 API 키를 찾을 수 없습니다. 원본에 대한 API 키를 저장하려면 'setApiKey' 명령을 사용하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) {0} is(are) not recognized by the current toolset.</source>
+        <target state="translated">라이선스 식별자 {0}을(를) 현재 도구 집합에서 인식할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">라이선스 버전 문자열 '{0}'이(가) 이 도구 집합 '{1}'에서 지원하는 것보다 높습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_Invalid">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">'{0}'은(는) 유효한 nupkg 파일이 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidEx">
+        <source>'{0}' is not a valid nupkg file. Error: '{1}'.</source>
+        <target state="translated">'{0}'은(는) 유효한 nupkg 파일이 아닙니다. 오류: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OneOrMoreUrisMustBeSpecified">
+        <source>One or more URIs must be specified.</source>
+        <target state="translated">URI를 하나 이상 지정해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Unable to find package '{0}'.</source>
+        <target state="translated">'{0}' 패키지를 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageServerEndpoint_NotSupported">
+        <source>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</source>
+        <target state="translated">오류: 이 버전의 nuget.exe는 패키지 원본 '{0}'에 대한 패키지 업데이트를 지원하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">'{0}'은(는) 유효한 경로가 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">'{0}'은(는) 로컬 경로 또는 UNC 공유 경로여야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionAlreadyStarted">
+        <source>A connection has already been started.</source>
+        <target state="translated">연결이 이미 시작되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionIsClosed">
+        <source>The plugin connection is closed.</source>
+        <target state="translated">플러그 인 연결이 닫혀 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_DownloadNotSupportedSinceUnsignedNotAllowed">
+        <source>Downloading a package from a plugin is not supported since unsigned packages are not allowed and package download plugins do not support signed package verification.</source>
+        <target state="translated">서명되지 않은 패키지는 허용되지 않고 패키지 다운로드 플러그 인에서 서명된 패키지 확인을 지원하지 않기 때문에 플러그 인에서 패키지 다운로드는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_Exception">
+        <source>Plugin '{0}' failed with the exception:  {1}</source>
+        <target state="translated">예외가 발생하여 '{0}' 플러그 인이 실패했습니다.  {1}</target>
+        <note>{0} is the plugin name
+{1} is the message from a caught exception</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOnCreation">
+        <source>Plugin '{0}' failed within {1:N3} seconds with exit code {2}.</source>
+        <target state="translated">플러그 인 '{0}'이(가) {1:N3}초 이내에 실패했습니다(종료 코드: {2}).</target>
+        <note>{0} is the plugin name
+{1} is the number of seconds
+{2} is the plugin process exit code</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOperationForPackage">
+        <source>Plugin '{0}' failed a {1} operation for package {2}.{3}.</source>
+        <target state="translated">'{0}' 플러그 인이 {2} 패키지에 대한 {1} 작업에 실패했습니다.{3}.</target>
+        <note>{0} is the plugin name
+{1} is a plugin operation name
+{2} is a package ID
+{3} is a package version</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailureQueryingPackageVersions">
+        <source>A failure occurred while attempting to query package versions for package '{0}' using the plugin at '{1}'.</source>
+        <target state="translated">'{1}'의 플러그 인을 사용하여 '{0}' 패키지의 패키지 버전을 쿼리하는 동안 오류가 발생했습니다.</target>
+        <note>{0} is a package ID
+{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_Fault">
+        <source>Terminating plugin '{0}' due to an unrecoverable fault:  {1}</source>
+        <target state="translated">복구할 수 없는 오류로 인해 '{0}' 플러그 인을 종료하는 중입니다. {1}</target>
+        <note>{0} is the plugin name
+{1} is the exception ToString() result</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FileNotFound">
+        <source>A plugin was not found at path '{0}'.</source>
+        <target state="translated">'{0}' 경로에서 플러그 인을 찾을 수 없습니다.</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeFailed">
+        <source>The plugin handshake failed.</source>
+        <target state="translated">플러그 인 핸드셰이크가 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeRequestHandlerAlreadyExists">
+        <source>A handshake request handler already exists.</source>
+        <target state="translated">핸드셰이크 요청 처리기가 이미 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_IdleTimeoutMustBeGreaterThanOrEqualToInfiniteTimeSpan">
+        <source>The idle timeout must be greater than or equal to System.Threading.Timeout.InfiniteTimeSpan.</source>
+        <target state="translated">유휴 시간 제한이 System.Threading.Timeout.InfiniteTimeSpan보다 크거나 같아야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InitializationFailed">
+        <source>Plugin initialization failed.</source>
+        <target state="translated">플러그 인 초기화에 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidEmbeddedSignature">
+        <source>The plugin at '{0}' did not have a valid embedded signature.</source>
+        <target state="translated">'{0}'의 플러그 인에 포함된 유효한 시그니처가 없습니다.</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidMessageType">
+        <source>The message type '{0}' is invalid at this time.</source>
+        <target state="translated">지금은 메시지 유형 '{0}'이(가) 유효하지 않습니다.</target>
+        <note>{0} is a message type enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidPluginFilePath">
+        <source>The plugin file path '{0}' is invalid.</source>
+        <target state="translated">플러그 인 파일 경로 '{0}'이(가) 잘못되었습니다.</target>
+        <note>{0} is a file system path.</note>
+      </trans-unit>
+      <trans-unit id="Plugin_NotConnected">
+        <source>A plugin is not connected.</source>
+        <target state="translated">플러그 인이 연결되어 있지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_PackageDownloadFailed">
+        <source>Plugin '{0}' failed to download package '{1}'.</source>
+        <target state="translated">'{0}' 플러그 인이 '{1}' 패키지를 다운로드하지 못했습니다.</target>
+        <note>{0} is the plugin name
+{1} is the package identity</note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProblemStartingPlugin">
+        <source>Problem starting the plugin '{0}'. {1}</source>
+        <target state="translated">'{0}' 플러그 인을 시작하는 중 문제가 발생했습니다. {1}</target>
+        <note>0 - plugin path, 1 - error message </note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolException">
+        <source>A plugin protocol exception occurred.</source>
+        <target state="translated">플러그 인 프로토콜 예외가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionNotSupportedOnError">
+        <source>A protocol version is not supported on error.</source>
+        <target state="translated">오류 발생 시 프로토콜 버전이 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionOutOfRange">
+        <source>'{0}' must be greater than or equal to '{1}'.</source>
+        <target state="translated">'{0}'은(는) '{1}'보다 크거나 같아야 합니다.</target>
+        <note>{0} is a parameter name
+{1} is a parameter name</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestContextDoesNotExist">
+        <source>Request context does not exist for request ID '{0}'.</source>
+        <target state="translated">요청 ID '{0}'에 대한 요청 컨텍스트가 없습니다.</target>
+        <note>{0} is a request ID</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestHandlerDoesNotExist">
+        <source>A request handler does not exist for the message method '{0}'.</source>
+        <target state="translated">메시지 메서드 '{0}'에 대한 요청 처리기가 없습니다.</target>
+        <note>{0} is a message method</note>
+      </trans-unit>
+      <trans-unit id="Plugin_TimeoutOutOfRange">
+        <source>Timeout must be greater than TimeSpan.Zero and less than or equal to TimeSpan.FromMilliseconds(int.MaxValue).</source>
+        <target state="translated">시간 제한이 TimeSpan.Zero보다 크고 TimeSpan.FromMilliseconds(int.MaxValue)보다 작거나 같아야 합니다.</target>
+        <note>Do not localize:  TimeSpan.Zero, TimeSpan.FromMilliseconds(int.MaxValue)</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">열거형 값 '{0}'을(를) 인식할 수 없습니다.</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedOperationClaims">
+        <source>The operation claims are unrecognized:  {0}.</source>
+        <target state="translated">작업 클레임을 인식할 수 없습니다.  {0}.</target>
+        <note>{0} is a comma-delimited list of unrecognized enum values.</note>
+      </trans-unit>
+      <trans-unit id="Protocol_BadSource">
+        <source>Failed to retrieve metadata from source '{0}'.</source>
+        <target state="translated">'{0}' 원본에서 메타데이터를 검색하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidJsonObject">
+        <source>The content at '{0}' is not a valid JSON object.</source>
+        <target state="translated">'{0}'의 콘텐츠는 유효한 JSON 개체가 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidXml">
+        <source>The content at '{0}' is not valid XML.</source>
+        <target state="translated">'{0}'의 콘텐츠는 유효한 XML이 아닙니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MalformedMetadataError">
+        <source>Metadata could not be loaded from the source '{0}'.</source>
+        <target state="translated">'{0}' 원본에서 메타데이터를 로드할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingSearchService">
+        <source>The source does not have a Search service!</source>
+        <target state="translated">소스에 검색 서비스가 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingVersion">
+        <source>The source does not have the 'version' property.</source>
+        <target state="translated">원본에 'version' 속성이 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageMetadataError">
+        <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
+        <target state="translated">'{1}' 원본에서 '{0}'에 대한 패키지 메타데이터를 검색하는 동안 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_Search_LocalSourceNotFound">
+        <source>The path '{0}' for the selected source could not be resolved.</source>
+        <target state="translated">선택한 소스에 대한 '{0}' 경로를 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_UnsupportedVersion">
+        <source>The source version is not supported: '{0}'.</source>
+        <target state="translated">원본 버전이 지원되지 않습니다. '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_duplicateUri">
+        <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
+        <target state="translated">'{0}'은(는) 이미 다운로드된 중복 url이며 순환 종속성을 생성합니다. 서버에서 수정하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPackagePushed">
+        <source>Your package was pushed.</source>
+        <target state="translated">패키지를 푸시했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPushingPackage">
+        <source>Pushing {0} to {1}...</source>
+        <target state="translated">{0}을(를) {1}에 푸시하는 중...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseDotnetExe">
+        <source>To skip already published packages, use the option --skip-duplicate</source>
+        <target state="translated">이미 게시된 패키지를 건너뛰려면 --skip-duplicate 옵션을 사용하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseNuGetExe">
+        <source>To skip already published packages, use the option -SkipDuplicate</source>
+        <target state="translated">이미 게시된 패키지를 건너뛰려면 -SkipDuplicate 옵션을 사용하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateNotImplemented">
+        <source>The option to skip duplicates is not currently supported for this type of push.</source>
+        <target state="translated">이 푸시 형식의 경우 현재는 중복을 건너뛰는 옵션이 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryContentUrlMustBeHttps">
+        <source>Repository content URL for repository signatures must be HTTPS.</source>
+        <target state="translated">리포지토리 시그니처에 대한 리포지토리 콘텐츠 URL은 HTTPS여야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositorySignaturesResourceMustBeHttps">
+        <source>Repository Signatures resouce must be served over HTTPS. Source: {0}</source>
+        <target state="translated">리포지토리 시그니처 리소스는 HTTPS를 통해 제공해야 합니다. 소스: {0}</target>
+        <note>{0} source service index</note>
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">문자열 인수 '{0}'은(는) null이거나 비어 있을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindFile">
+        <source>File does not exist ({0}).</source>
+        <target state="translated">파일이 없습니다({0}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseFolderV3Version">
+        <source>Unable to parse a valid version from a v3 folder: '{0}'.</source>
+        <target state="translated">v3 폴더에서 유효한 버전을 구문 분석할 수 없습니다. '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_CouldNotLoad">
+        <source>Package source '{0}' vulnerability data index '{1}' could not be loaded. This indicates a problem with the JSON file contents returned from the server.</source>
+        <target state="translated">패키지 원본 '{0}' 취약성 데이터 인덱스 '{1}'을(를) 로드할 수 없습니다. 이는 서버에서 반환된 JSON 파일 내용에 문제가 있음을 나타냅니다.</target>
+        <note>{0} - package source name (for example "nuget.org")
+{1} - URL where no data was loaded from</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_HasNoName">
+        <source>Vulnerability page index {0} does not contain a name (Source: '{1}')</source>
+        <target state="translated">취약성 페이지 인덱스 {0}에 이름이 없습니다(원본: '{1}').</target>
+        <note>{0} - an index number
+{1} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameHasInvalidCharacters">
+        <source>Vulnerability page index {0} contains invalid characters (Source: '{1}')</source>
+        <target state="translated">취약성 페이지 인덱스 {0}에 잘못된 문자가 포함되어 있습니다(원본: '{1}').</target>
+        <note>{0} - an index number
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameNotUnique">
+        <source>Vulnerability page name '{0}' is not unique. Only using the first (Source: '{1}')</source>
+        <target state="translated">취약성 페이지 이름 '{0}'이(가) 고유하지 않습니다. 첫 번째만 사용 중(원본: '{1}')</target>
+        <note>{0} - file name
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameTooLong">
+        <source>Vulnerability page index {0} name is longer than {1} characters (Source: '{2}')</source>
+        <target state="translated">취약성 페이지 인덱스 {0} 이름이 {1}자보다 깁니다(원본: '{2}').</target>
+        <note>{0} - an index number
+{1} - number representing the max length allowed
+{2} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NoUrl">
+        <source>Vulnerability page '{0}' does not contain a URL (Source: '{1}')</source>
+        <target state="translated">취약성 페이지 '{0}'에 URL이 포함되어 있지 않습니다(원본: '{1}').</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_UrlNotHttp">
+        <source>Vulnerability page '{0}' contains URL that is not http(s) (Source: '{1}')</source>
+        <target state="translated">취약성 페이지 '{0}'에는 http가 아닌 URL이 포함되어 있습니다(원본: '{1}').</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_TooManyPages">
+        <source>Package source '{0}' has {1} vulnerability data pages. Using the first {2}.</source>
+        <target state="translated">패키지 원본 '{0}'에 취약성 데이터 페이지가 {1}개 있습니다. 첫 번째 {2}을(를) 사용하고 있습니다.</target>
+        <note>{0} - package source name
+{1} - number of vulerabilitiy files reported
+{2} - max count allowed</note>
+      </trans-unit>
+      <trans-unit id="Warning_SymbolServerNotConfigured">
+        <source>Found symbols package '{0}', but no API key was specified for the symbol server. To save an API Key, run 'NuGet.exe setApiKey [your API key from http://www.NuGet.org]'.</source>
+        <target state="translated">기호 패키지 '{0}'이(가) 있지만 기호 서버에 대한 API 키를 지정하지 않았습니다. API 키를 저장하려면 'NuGet.exe setApiKey [http://www.NuGet.org에서 받은 사용자 API 키]'를 실행하세요.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

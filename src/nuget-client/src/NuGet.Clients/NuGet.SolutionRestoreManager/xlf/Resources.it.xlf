@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">L'argomento non può essere Null o vuoto</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorOccurredRestoringPackages">
+        <source>Error occurred while restoring NuGet packages: {0}</source>
+        <target state="translated">Errore durante il ripristino dei pacchetti NuGet: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">Il pacchetto '{0}' non è una versione esatta come '[1.0.0]'. Con PackageDownload sono consentite solo versioni esatte.</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">Il pacchetto '{0} {1}' non è una versione esatta come '[1.0.0]'. Con PackageDownload sono consentite solo versioni esatte.</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkMessage">
+        <source>Manage NuGet Packages</source>
+        <target state="translated">Gestisci i pacchetti NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoBar_TextMessage">
+        <source>This solution contains packages with vulnerabilities.</source>
+        <target state="translated">Questa soluzione contiene pacchetti con vulnerabilità.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ItemValuesAreDifferentAcrossTargetFrameworks">
+        <source>'{0}' items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for '{0}' items.</source>
+        <target state="translated">'{0}' elementi non hanno gli stessi valori in tutti i framework di destinazione. Rimuovere qualsiasi condizione dai file MSBuild per '{0}' elementi.</target>
+        <note>{0} - MSBuild item type. For example, NuGetAuditSuppress</note>
+      </trans-unit>
+      <trans-unit id="NU1105">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">Non è possibile leggere le informazioni sul progetto per '{0}': {1}</target>
+        <note>0 - The name of the project with the error.
+1 - Message explaining what couldn't be read. Typically an exception's message</note>
+      </trans-unit>
+      <trans-unit id="NothingToRestore">
+        <source>All packages are already installed and there is nothing to restore.</source>
+        <target state="translated">Tutti i pacchetti sono già installati. Nessun elemento da ripristinare.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_Finished">
+        <source>========== Finished ==========</source>
+        <target state="translated">========== Operazione completata ==========</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">Tempo trascorso: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotRestoredBecauseOfNoConsent">
+        <source>One or more NuGet packages need to be restored but couldn't be because consent has not been granted. To give consent, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also give consent by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.
+
+Missing packages: {0}</source>
+        <target state="translated">È necessario ripristinare uno o più pacchetti NuGet, ma non è possibile perché non è stato concesso il consenso. Per concedere il consenso, aprire la finestra Opzioni di Visual Studio, fare clic sul nodo Gestione pacchetti NuGet e selezionare 'Consenti a NuGet di scaricare i pacchetti mancanti durante la compilazione'. In alternativa, per concedere il consenso è possibile impostare la variabile di ambiente 'EnableNuGetPackageRestore' su 'true'.
+
+Pacchetti mancanti: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRefNotRestoredBecauseOfNoConsent">
+        <source>NuGet restore is currently disabled. To enable it, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also enable it by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">Il ripristino di pacchetti NuGet è attualmente disabilitato. Per abilitarlo, aprire la finestra di dialogo Opzioni di Visual Studio, fare clic sul nodo Gestione pacchetti NuGet e selezionare 'Consenti a NuGet di scaricare i pacchetti mancanti durante la compilazione'. In alternativa, per abilitarlo è possibile impostare la variabile di ambiente 'EnableNuGetPackageRestore' su 'true'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreCanceled">
+        <source>NuGet package restore canceled.</source>
+        <target state="translated">Ripristino del pacchetto NuGet annullato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFailedForProject">
+        <source>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">Il ripristino del pacchetto NuGet non è riuscito per il progetto {0}: {1}. Vedere la finestra Elenco errori per un elenco dettagliato di avvisi ed errori.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinished">
+        <source>NuGet package restore finished.</source>
+        <target state="translated">Ripristino del pacchetto NuGet completato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedForProject">
+        <source>NuGet Package restore finished for project '{0}'.</source>
+        <target state="translated">Ripristino del pacchetto NuGet completato per il progetto {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedWithError">
+        <source>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">Il ripristino del pacchetto NuGet non è riuscito. Vedere la finestra Elenco errori per un elenco dettagliato di avvisi ed errori.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</source>
+        <target state="translated">Ripristino pacchetti NuGet...
+Per impedire che NuGet ripristini i pacchetti durante la compilazione, aprire la finestra di dialogo relativa alle opzioni di Visual Studio, fare clic sul nodo Gestione pacchetti NuGet e deselezionare 'Consenti a NuGet di scaricare i pacchetti mancanti durante la compilazione'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyDoesNotHaveSingleValue">
+        <source>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</source>
+        <target state="translated">Per la proprietà {0} era previsto un valore singolo in tutti i framework di destinazione, ma erano invece presenti i valori seguenti: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RelativeGlobalPackagesFolder">
+        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
+        <target state="translated">L'oggetto 'globalPackagesFolder' del file nuget.config o la variabile di ambiente è '{0}', un percorso relativo, e la soluzione non è stata salvata. Salvare la soluzione o configurare un oggetto 'globalPackagesFolder' che è un percorso completo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoredPackage">
+        <source>Restored NuGet package {0}.</source>
+        <target state="translated">Pacchetto NuGet {0} ripristinato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackages">
+        <source>Restoring NuGet packages...</source>
+        <target state="translated">Ripristino dei pacchetti NuGet in corso...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">Soluzione non salvata. Salvarla prima di gestire i pacchetti NuGet.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

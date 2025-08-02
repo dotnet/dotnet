@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../GeneralOptionControl.resx">
+    <body>
+      <trans-unit id="BindingRedirectsHeader.Text">
+        <source>Binding Redirects</source>
+        <target state="translated">繫結重新導向</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagementHeader.Text">
+        <source>Package Management</source>
+        <target state="translated">套件管理</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreHeader.Text">
+        <source>Package Restore</source>
+        <target state="translated">套件還原</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.AccessibleName">
+        <source>Default Package Management Format</source>
+        <target state="translated">預設套件管理格式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items">
+        <source>Packages.config</source>
+        <target state="new">Packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatItems.Items1">
+        <source>PackageReference</source>
+        <target state="translated">PackageReference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="defaultPackageManagementFormatLabel.Text">
+        <source>Default package management format:</source>
+        <target state="translated">預設套件管理格式:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandButton.Text">
+        <source>&amp;Clear All NuGet Storage</source>
+        <target state="translated">清除所有 NuGet 儲存體(&amp;C)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="localsCommandStatusText.Text">
+        <source>http://example.com/help/locals</source>
+        <target state="translated">http://example.com/help/locals</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreAutomaticCheckBox.Text">
+        <source>Auto&amp;matically check for missing packages during build in Visual Studio</source>
+        <target state="translated">在 Visual Studio 建置期間自動檢查遺漏的套件(&amp;M)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="packageRestoreConsentCheckBox.Text">
+        <source>&amp;Allow NuGet to download missing packages</source>
+        <target state="translated">允許 NuGet 下載遺漏的套件(&amp;A)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="showPackageManagementChooser.Text">
+        <source>Prompt for &amp;format selection on first package install</source>
+        <target state="translated">在安裝第一個套件時提示選擇格式(&amp;F)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="skipBindingRedirects.Text">
+        <source>Skip applying &amp;binding redirects</source>
+        <target state="translated">跳過套用繫結重新導向(&amp;B)</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

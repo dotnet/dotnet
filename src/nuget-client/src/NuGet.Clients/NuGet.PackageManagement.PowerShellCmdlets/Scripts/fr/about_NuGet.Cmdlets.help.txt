@@ -1,0 +1,48 @@
+﻿RUBRIQUE
+    about_NuGet
+    
+DESCRIPTION COURTE
+    Fournit des informations sur les commandes de NuGet Package Manager.
+           
+DESCRIPTION LONGUE
+    Cette rubrique décrit les commandes de NuGet Package Manager. NuGet est un outil de gestion de packages 
+    intégré qui permet d'ajouter des bibliothèques et des outils aux projets .NET.
+
+                 
+    Les cmdlets NuGet décrites sont les suivantes.
+
+        Cmdlet					Description
+        ------------------		----------------------------------------------
+        Get-Package				Obtient le jeu de packages installés.  Avec -ListAvailable, 
+                                obtient le jeu de packages disponibles auprès de la source de packages.
+
+        Install-Package			Installe package et ses dépendances dans le projet.
+
+        Uninstall-Package		Désinstalle un package. Si d'autres packages dépendent de ce package, 
+                                la commande échoue sauf si l'option –Force est spécifiée.
+
+        Update-Package			Met à jour un package et ses dépendances vers une version plus récente.
+
+        Add-BindingRedirect		Examine tous les assemblys dans le chemin de sortie d'un projet
+                                et ajoute des redirections de liaison au fichier de configuration de 
+                                l'application (ou du Web) au besoin.
+                            
+        Get-Project				Retourne une référence au DTE (Development Tools Environment) 
+                                pour le projet spécifié. Si aucun n'est spécifié, retourne 
+                                le projet par défaut sélectionné dans la console du Gestionnaire de package.
+
+        Open-PackagePage        Ouvre le navigateur pointant vers ProjectUrl, LicenseUrl or 
+                                ReportAbuseUrl du package spécifié.
+
+        Register-TabExpansion	Enregistre une expansion Tab pour les paramètres d'une commande.
+
+VOIR AUSSI
+    Documentation en ligne : http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

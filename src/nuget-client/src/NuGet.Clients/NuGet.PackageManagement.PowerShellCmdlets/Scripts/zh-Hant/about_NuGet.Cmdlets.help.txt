@@ -1,0 +1,48 @@
+﻿主題
+    about_NuGet
+    
+簡短描述
+提供有關 NuGet 封裝管理員命令。
+           
+詳細描述
+本主題描述 NuGet 封裝管理員命令。NuGet 是一個整合式封裝 
+管理工具，用來將程式庫和工具新增至 .NET 專案。
+
+                 
+已包含下列 NuGet cmdlets。
+
+        Cmdlet					描述
+        ------------------		----------------------------------------------
+        Get-Package				取得已安裝的封裝集。透過 -ListAvailable， 
+取得封裝來源可用的封裝集。
+
+        Install-Package			將封裝及其相依性安裝到專案中。
+
+        Uninstall-Package		解除安裝封裝。若此封裝件中有其他封裝， 
+則命令會失敗，除非已指定 –Force 選項。
+
+        Update-Package			將封裝及其相依性更新至更新版本。
+
+        Add-BindingRedirect		檢查專案中輸出路徑的所有組件，
+並依需要將繫結重新導向至應用程式 (或網路) 
+組態檔。
+                            
+        Get-Project				針對指定的專案，傳回 DTE (開發工具環境)  
+的參考。若未指定專案，請傳回在 Package Manager Console 中選取的 
+預設專案。
+
+Open-PackagePage        開始指向指定封裝之 ProjectUrl、LicenseUrl 或  
+ReportAbuseUrl。
+
+        Register-TabExpansion	針對命令參數註冊索引標籤擴充。
+
+也請參閱
+線上文件： http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

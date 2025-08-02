@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../Resources.resx">
+    <body>
+      <trans-unit id="PluginException_Abort_Format">
+        <source>Credential plugin {0} handles this request, but is unable to provide credentials. {1}</source>
+        <target state="translated">Il plug-in {0} delle credenziali gestisce la richiesta, ma non riesce a fornire le credenziali. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Exception_Format">
+        <source>Credential plugin {0} encountered exception {1}.</source>
+        <target state="translated">Il plug-in {0} delle credenziali ha riscontrato l'eccezione {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_InvalidResponse_Format">
+        <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
+        <target state="translated">Il plug-in {0} delle credenziali ha restituito {1}, ma il payload non è valido (nome utente = {2}, password = {3}, authTypes = {4}, messaggio = {5}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_NotStarted_Format">
+        <source>Credential plugin {0} failed to start.</source>
+        <target state="translated">L'avvio del plug-in {0} delle credenziali non è riuscito.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_PathNotFound_Format">
+        <source>Credential plugin {0} not found at any of the following locations {1}.</source>
+        <target state="translated">Il plug-in {0} delle credenziali non è stato trovato nei percorsi seguenti: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Timeout_Format">
+        <source>Credential plugin {0} timed out after {1} seconds.</source>
+        <target state="translated">Si è verificato il timeout del plug-in {0} delle credenziali dopo {1} secondi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnexpectedStatus_Format">
+        <source>Credential plugin {0} exited with unexpected error {1}.</source>
+        <target state="translated">Il plug-in {0} delle credenziali è stato chiuso con un errore imprevisto: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnreadableResponse_Format">
+        <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
+        <target state="translated">Il plug-in {0} delle credenziali ha restituito {1} con un payload non leggibile.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
+        <source>The credential plugin model used by '{0}' is deprecated. Please contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
+        <target state="translated">Il modello di plug-in delle credenziali usato da '{0}' è deprecato. Per un'alternativa, contattare il provider del plug-in. Per altre informazioni sul modello di plug-in consigliato, vedere '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_InvalidCredentialResponse">
+        <source>Could not create credential response object because the response was invalid.</source>
+        <target state="translated">Non è stato possibile creare l'oggetto risposta delle credenziali perché la risposta non è valida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_MalformedResponse">
+        <source>Credential provider gave an invalid response.</source>
+        <target state="translated">Il provider di credenziali ha restituito una risposta non valida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
+        <source>Using {0} as a credential provider plugin.</source>
+        <target state="translated">{0} verrà usato come plug-in del provider di credenziali.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
+      <trans-unit id="SecurePluginWarning_UseInteractiveOption">
+        <source>The plugin credential provider could not acquire credentials. Authentication may require manual action. Consider re-running the command with --interactive for `dotnet`, /p:NuGetInteractive="true" for MSBuild or removing the -NonInteractive switch for `NuGet`</source>
+        <target state="translated">Il provider di credenziali del plug-in non è riuscito ad acquisire le credenziali. Per l'autenticazione può essere necessario intervenire manualmente. Provare a eseguire di nuovo il comando con --interactive per `dotnet`, /p:NuGetInteractive="true" per MSBuild oppure a rimuovere l'opzione -NonInteractive per `NuGet`</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

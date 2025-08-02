@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引數不能為 Null 或空白</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CreatedDependencyGraphSpec">
+        <source>Created DependencyGraphSpec in {0:D2}ms.</source>
+        <target state="translated">已於 {0:D2} 毫秒建立 DependencyGraphSpec。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeterminingProjectsToRestore">
+        <source>Determining projects to restore...</source>
+        <target state="translated">正在判斷要還原的專案...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DgSpecGenerationFailed">
+        <source>Cannot write the dependency graph spec because the generation failed.</source>
+        <target state="translated">因為產生失敗，所以無法寫入相依性關係圖規格。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DuplicateItems">
+        <source>Duplicate '{0}' items found. Remove the duplicate items or use the Update functionality to ensure a consistent restore behavior. The duplicate '{0}' items are: {1}.</source>
+        <target state="translated">找到重複的 '{0}' 個項目。移除重複的項目，或使用 [更新] 功能確保還原行為一致。重複的 '{0}' 項目為: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MissingRestoreGraphOutputPath">
+        <source>Cannot write the dependency graph spec because the `RestoreGraphOutputPath` is missing.</source>
+        <target state="translated">因為遺漏 `RestoreGraphOutputPath`，所以無法寫入相依性關係圖規格。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">套件 '{0}' 沒有如 '[1.0.0]' 的精確版本。只有精確版本才允許使用 PackageDownload。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">套件 '{0} {1}' 沒有如 '[1.0.0]' 的精確版本。只有精確版本才允許使用 PackageDownload。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackagesConfigParseError">
+        <source>Error parsing packages.config file at {0}: {1}</source>
+        <target state="translated">剖析位於 {0} 的 packages.config 檔案時發生錯誤: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphNonZeroExitCode">
+        <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
+        <target state="translated">靜態圖形式還原失敗，結束代碼為 '{0}' 但未記錄錯誤。請在 https://github.com/NuGet/Home. 提出問題。</target>
+        <note>0 - the exit code of the process</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為發生未預期的引數數目，{0}。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note>0 - The number of arguments</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as end of the standard input stream was unexpectedly encountered. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為意外遇到標準輸入資料流程的結尾。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
+{1}</source>
+        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為讀取標準輸入資料流程時發生例外狀況，{0} 請在 https://github.com/NuGet/Home]D; 提出問題
+{1}</target>
+        <note>0 - The exception message
+1 - The string representation of the exception</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, is not an allowable value. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">剖析靜態圖形型還原中的命令列引數時發生錯誤，因為第一個讀取的整數 {0} 不是允許的值。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note>0 - The value of the first integer read from the stream</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreFailedToStart">
+        <source>An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">啟動靜態圖形式還原時發生錯誤。{0}。請在 https://github.com/NuGet/Home 提出問題</target>
+        <note>0 - The exception message</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphUnhandledException">
+        <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
+{0}</source>
+        <target state="translated">靜態圖形式還原發生未處理的例外狀況。請在 https://github.com/NuGet/Home 提出問題。例外狀況為: 
+{0}</target>
+        <note>0 - The exception as a string.</note>
+      </trans-unit>
+      <trans-unit id="ImportsFallbackWarning">
+        <source>ProjectReference '{0}' was resolved using '{1}' instead of the project target framework '{2}'. This project may not be fully compatible with your project.</source>
+        <target state="translated">已使用 '{1}' (而非專案目標 Framework '{2}') 解析了 ProjectReference '{0}'。此專案可能與您的專案無法完全相容。</target>
+        <note>0 - referenced project path
+1 - resolved tfm
+2 - project tfm</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandNothingToInstall">
+        <source>All packages listed in {0} are already installed.</source>
+        <target state="translated">已安裝 {0} 中列出的所有套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_NoProjectsForRestore">
+        <source>The solution did not have any projects to restore, ensure that all projects are known to be MSBuild and that the projects exist.</source>
+        <target state="translated">解決方案沒有任何要還原的專案，請確認所有專案都是 MSBuild，而且專案存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectsInSolutionNotKnowntoMSBuild">
+        <source>The solution contains '{0}' project(s) '{1}' that are not known to MSBuild. Ensure that all projects are known to be MSBuild before running restore on the solution.</source>
+        <target state="translated">解決方案包含 MSBuild 無法識別的 '{0}' 專案 '{1}'。在解決方案上執行還原之前，請先確認所有專案都是 MSBuild。</target>
+        <note>0 - number of projects not known to msbuild
+1 - list of projects</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoCacheInformation">
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
+        <target state="translated">RestoreNoCache 已被取代，且已重新命名為 RestoreNoHttpCache。請改用 RestoreNoHttpCache。</target>
+        <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
+      </trans-unit>
+      <trans-unit id="Log_RunningStaticGraphRestoreCommand">
+        <source>Running command: '{0}' {1}</source>
+        <target state="translated">正在執行命令:'{0}' {1}</target>
+        <note>0 - the path to the EXE being launched
+1 - The command-line arguments</note>
+      </trans-unit>
+      <trans-unit id="NoCompatibleTargetFramework">
+        <source>Project '{0}' targets '{2}'. It cannot be referenced by a project that targets '{1}'.</source>
+        <target state="translated">專案 '{0}' 以 '{2}' 為目標，無法供目標為 '{1}' 的專案參考。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsProvidedToTask">
+        <source>Unable to find a project to restore!</source>
+        <target state="translated">找不到可還原的專案!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsToRestore">
+        <source>Nothing to do. None of the projects specified contain packages to restore.</source>
+        <target state="translated">沒有任何動作可執行。指定的專案皆未包含可還原的套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectEvaluationSummary">
+        <source>Evaluated {0} project(s) in {1:D2}ms ({2} builds, {3} failures).</source>
+        <target state="translated">已於 {1:D2} 毫秒評估 {0} 項專案 ({2} 個組建，{3} 個失敗)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCanceled">
+        <source>Restore canceled!</source>
+        <target state="translated">已取消還原!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreNoSolutionFound">
+        <source>No solution found. Restore against a solution or pass in /p:SolutionDir</source>
+        <target state="translated">找不到任何方案。請根據方案還原或傳遞至 /p:SolutionDir</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFallbackFramework">
+        <source>The project fallback framework '{0}' is not a supported target framework.</source>
+        <target state="translated">專案後援 Framework '{0}' 不是支援的目標 Framework。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedTargetFramework">
+        <source>The project target framework '{0}' is not a supported target framework.</source>
+        <target state="translated">專案目標 Framework '{0}' 不是支援的目標 Framework。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_InvalidPackageSaveMode">
+        <source>Invalid PackageSaveMode value '{0}'.</source>
+        <target state="translated">PackageSaveMode 值 '{0}' 無效。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

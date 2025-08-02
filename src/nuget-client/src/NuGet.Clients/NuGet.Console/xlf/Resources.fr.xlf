@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Resources.resx">
+    <body>
+      <trans-unit id="Console_InitializeHostFails">
+        <source>Failed to initialize the PowerShell host. If your PowerShell execution policy setting is set to AllSigned, open the Package Manager Console to initialize the host first.</source>
+        <target state="translated">Échec de l'initialisation de l'hôte PowerShell. Si votre paramètre de stratégie d'exécution PowerShell est défini sur AllSigned, ouvrez la console du Gestionnaire de package pour initialiser l'hôte en premier lieu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExecutingScript">
+        <source>Executing script file '{0}'...</source>
+        <target state="translated">Exécution du fichier de script '{0}'...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputConsolePaneName">
+        <source>Package Manager</source>
+        <target state="translated">Gestionnaire de packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleBusy">
+        <source>Package Manager Console busy at the moment...</source>
+        <target state="translated">La console du Gestionnaire de package est occupée pour le moment...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageManagerConsoleCommandExecuted">
+        <source>Package Manager Console Command Executed</source>
+        <target state="translated">Commande de la console du Gestionnaire de package exécutée</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegistryKeyShouldBeDWORD">
+        <source>Registry key '{0}' should be a DWORD.</source>
+        <target state="translated">La clé de Registre '{0}' doit être un DWORD.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowInitializing">
+        <source>Initializing PowerShell host...</source>
+        <target state="translated">Initialisation de l'hôte PowerShell...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ToolWindowTitle">
+        <source>Package Manager Console</source>
+        <target state="translated">Console du Gestionnaire de package</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

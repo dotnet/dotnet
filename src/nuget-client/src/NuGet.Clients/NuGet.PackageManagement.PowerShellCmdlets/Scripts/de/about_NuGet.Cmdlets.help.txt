@@ -1,0 +1,48 @@
+﻿THEMA
+    about_NuGet
+    
+KURZE BESCHREIBUNG
+    Stellt Informationen über die NuGet-Paket-Manager-Befehle bereit.
+           
+AUSFÜHRLICHE BESCHREIBUNG
+    In diesem Thema werden die NuGet-Paket-Manager-Befehle beschrieben. NuGet ist ein integriertes Paket- 
+    Verwaltungstool für das Hinzufügen von Bibliotheken und Tools zu .NET-Projekten.
+
+                 
+    Die folgenden NuGet-Cmdlets sind enthalten.
+
+        Cmdlet					Beschreibung
+        ------------------		----------------------------------------------
+        Get-Package				Ruft den Satz der installierten Pakete ab.  Mit -ListAvailable 
+                                wird der Satz der verfügbaren Pakete von der Paketquelle abgerufen.
+
+        Install-Package			Installiert ein Paket und seine Abhängigkeiten in das Projekt.
+
+        Uninstall-Package		Deinstalliert ein Paket. Wenn andere Pakete von diesem Paket abhängen, 
+                                verursacht der Befehl einen Fehler, es sei denn die Option –Force wird angegeben.
+
+        Update-Package			Aktualisiert ein Paket und seine Abhängigkeiten auf eine neuere Version.
+
+        Add-BindingRedirect		Überprüft alle Assemblies im Ausgabepfad eines Projekts
+                                und fügt ggf. Bindungsumleitungen zur Anwendungs- (oder Web-) 
+                                Konfigurationsdatei hinzu.
+                            
+        Get-Project				Gibt einen Verweis zur DTE (Development Tools Environment, Umgebung für Entwicklungstools) 
+                                für das angegebene Projekt zurück. Wenn kein Projekt angegeben ist, wird das 
+                                in der Paket-Manager-Konsole gewählte Standardprojekt zurückgegeben.
+
+        Open-PackagePage        Öffnet den Browser und zeigt auf ProjectUrl, LicenseUrl or 
+                                ReportAbuseUrl des angegebenen Pakets.
+
+        Register-TabExpansion	Registriert die Erweiterung der Registerkarte für die Parameter eines Befehls.
+
+SIEHE AUCH
+    Online-Dokumentation: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

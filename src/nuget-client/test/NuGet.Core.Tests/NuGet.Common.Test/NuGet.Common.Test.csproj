@@ -13,4 +13,5 @@
   <ItemGroup Label="NuGet Shared">
     <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
   </ItemGroup>
+
 </Project>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Strings.resx">
+    <body>
+      <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
+        <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
+        <target state="translated">找到的資產檔未包含有效的套件 spec。請再次嘗試還原該專案。資產檔的位置為 {0}。</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="AssetsFileNotFound">
+        <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
+        <target state="translated">還原所產生的資產檔不存在。請再次嘗試還原該專案。資產檔案的位置應為 {0}。</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileNotFound">
+        <source>The file '{0}' to be packed was not found on disk.</source>
+        <target state="translated">在磁碟上找不到要壓縮的檔案 '{0}'。</target>
+        <note>{0} is the file being packed.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseCombination">
+        <source>Invalid metadata. Cannot specify both a PackageLicenseExpression and a PackageLicenseFile.</source>
+        <target state="translated">中繼資料無效。無法同時指定 PackageLicenseExpression 和 PackageLicenseFile。</target>
+        <note>Please don't localize PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">此工具組不支援版本字串 '{0}'。支援的最高版本是 '{1}'。請使用較低版本，或是升級您的工具組。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpression">
+        <source>The license expression '{0}' cannot be parsed succesfully. {1}</source>
+        <target state="translated">無法成功剖析授權運算式 '{0}'。{1}</target>
+        <note>0 - the license expression, 1 further details</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpressionVersion">
+        <source>The PackageLicenseExpressionVersion string '{0}' is not a valid version.</source>
+        <target state="translated">PackageLicenseExpressionVersion 字串 '{0}' 不是有效的版本。</target>
+        <note>{0} version string</note>
+      </trans-unit>
+      <trans-unit id="InvalidMinClientVersion">
+        <source>MinClientVersion string specified '{0}' is invalid.</source>
+        <target state="translated">指定的 MinClientVersion 字串 '{0}' 無效。</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecProperties">
+        <source>NuspecProperties should be in the form of "key1=value1;key2=value2".</source>
+        <target state="translated">NuspecProperties 應為 "key1=value1;key2=value2" 形式。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageReferenceVersion">
+        <source>PackageReference {0} needs to have a valid version.</source>
+        <target state="translated">PackageReference {0} 需要具備有效的版本。</target>
+        <note>{0} is the ID of the PackageReference.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageVersion">
+        <source>PackageVersion string specified '{0}' is invalid.</source>
+        <target state="translated">指定的 PackageVersion 字串 '{0}' 無效。</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidTargetFramework">
+        <source>Invalid target framework for the file '{0}'.</source>
+        <target state="translated">檔案 '{0}' 的目標架構無效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsPackableFalseError">
+        <source>This project cannot be packaged because packaging has been disabled. Add &lt;IsPackable&gt;true&lt;/IsPackable&gt; to the project file to enable producing a package from this project.</source>
+        <target state="translated">因為已停用封裝，所以無法封裝此專案。將 &lt;IsPackable&gt;true&lt;/IsPackable&gt; 新增到專案檔可從此專案產生套件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackItemProvided">
+        <source>No project was provided to the PackTask.</source>
+        <target state="translated">未對 PackTask 提供任何專案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenses_LicenseUrlCannotBeUsedInConjuctionWithLicense">
+        <source>The PackageLicenseUrl is being deprecated and cannot be used in conjunction with the PackageLicenseFile or PackageLicenseExpression.</source>
+        <target state="translated">PackageLicenseUrl 即將淘汰，不能與 PackageLicenseFile 或 PackageLicenseExpression 一起使用。</target>
+        <note>Please don't localize PackageLicenseUrl, PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

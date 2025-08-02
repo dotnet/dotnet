@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkDoesNotSupportProfiles">
+        <source>.NET 5.0 and above does not support profiles.</source>
+        <target state="translated">.NET 5.0 이상에서는 프로필을 지원하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FrameworkMismatch">
+        <source>Frameworks must have the same identifier, profile, and platform.</source>
+        <target state="translated">프레임워크에는 동일한 식별자, 프로필 및 플랫폼이 있어야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkIdentifier">
+        <source>Invalid framework identifier '{0}'.</source>
+        <target state="translated">잘못된 프레임워크 식별자 '{0}'입니다.</target>
+        <note>{0} is the invalid framework identifier.</note>
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkVersion">
+        <source>Invalid framework version '{0}'.</source>
+        <target state="translated">잘못된 프레임워크 버전 '{0}'입니다.</target>
+        <note>{0} is the invalid framework version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPlatformVersion">
+        <source>Invalid platform version '{0}'.</source>
+        <target state="translated">플랫폼 버전 '{0}'이(가) 잘못되었습니다.</target>
+        <note>{0} is the invalid platform version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPortableFrameworksDueToHyphen">
+        <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
+        <target state="translated">잘못된 휴대용 프레임워크 '{0}'입니다. 휴대용 프레임워크 이름에 하이픈이 없을 수 있습니다.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+      <trans-unit id="MissingPortableFrameworks">
+        <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
+        <target state="translated">'{0}'의 잘못된 휴대용 프레임워크입니다. 휴대용 프레임워크는 프로필에 프레임워크가 하나 이상 있어야 합니다.</target>
+        <note>{0} is the invalid portable framework string.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

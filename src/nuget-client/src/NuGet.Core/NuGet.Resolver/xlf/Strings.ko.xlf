@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="CircularDependencyDetected">
+        <source>Circular dependency detected '{0}'.</source>
+        <target state="translated">순환 종속성이 '{0}'을(를) 발견했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyConstraint">
+        <source>constraint</source>
+        <target state="translated">제약 조건</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependencyIdsError">
+        <source>The package '{0}' version '{1}' declared a duplicate dependency '{2}'. This might mean the package is corrupt or the server metadata for the package is corrupt.</source>
+        <target state="translated">'{0}' 패키지 '{1}' 버전에서 중복 종속성 '{2}'이(가) 선언되었습니다. 패키지가 손상되었거나 패키지의 서버 메타데이터가 손상되었을 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FatalError">
+        <source>A fatal error occured while resolving dependencies.</source>
+        <target state="translated">종속성을 확인하는 동안 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageConfig">
+        <source>One or more unresolved package dependency constraints detected in the existing packages.config file. All dependency constraints must be resolved to add or update packages. If these packages are being updated this message may be ignored, if not the following error(s) may be blocking the current package operation: {0}</source>
+        <target state="translated">기존 packages.config 파일에서 하나 이상의 확인되지 않은 패키지 종속성 제약 조건이 검색되었습니다. 모든 종속성 제약 조건을 확인해야만 패키지를 추가하거나 업데이트할 수 있습니다. 이러한 패키지를 업데이트하는 중인 경우 이 메시지를 무시해도 되지만, 그렇지 않은 경우 다음 오류로 인해 현재 패키지 작업이 차단될 수 있습니다. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDependencyInfo">
+        <source>Unable to find package '{0}'. Existing packages must be restored before performing an install or update.</source>
+        <target state="translated">'{0}' 패키지를 찾을 수 없습니다. 설치 또는 업데이트를 수행하기 전에 기존 패키지를 복원해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSolution">
+        <source>Unable to resolve dependencies.</source>
+        <target state="translated">종속성을 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigConstraint">
+        <source>'{0}' has an additional constraint {1} defined in {2}.</source>
+        <target state="translated">'{0}'에는 {2}에 정의된 추가 제약 조건 {1}이(가) 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverTotalTime">
+        <source>Resolving dependency information took {0}</source>
+        <target state="translated">종속성 정보 확인 시간: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleVersion">
+        <source>Unable to find a version of '{0}' that is compatible with {1}.</source>
+        <target state="translated">{1}과(와) 호환되는 '{0}' 버전을 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForEmptySource">
+        <source>Unable to resolve dependency '{0}'.</source>
+        <target state="translated">'{0}' 종속성을 확인할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForMultipleSources">
+        <source>Unable to resolve dependency '{0}'. Source(s) used: {1}.</source>
+        <target state="translated">'{0}' 종속성을 확인할 수 없습니다. 사용된 소스: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionIsNotCompatible">
+        <source>Unable to resolve dependencies. '{0}' is not compatible with {1}.</source>
+        <target state="translated">종속성을 확인할 수 없습니다. '{0}'이(가) {1}과(와) 호환되지 않습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

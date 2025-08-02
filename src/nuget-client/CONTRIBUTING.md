@@ -79,11 +79,11 @@ NuGet members may contribute directly to the main remote.
 
 1. Build with
 
-    `.\build.ps1 -SkipUnitTest`
+    `.\build.ps1`
 
    Or Build and Unit test with
 
-   `.\build.ps1`
+   `.\build.ps1 -RunUnitTests`
 
     > Note: You have to to run .\configure.ps1 and .\build.ps1 at least once in order for your build to succeed.
 
@@ -104,8 +104,8 @@ NuGet members may contribute directly to the main remote.
 
 ### Notable `build.ps1` switches
 
-- `-SkipUnitTest` - skips running unit tests.
-- `-Fast` - runs minimal incremental build. Skips end-to-end packaging step.
+- `-RunUnitTests` - Runs unit tests after building.
+- `-Clean` - cleans build artifacts without deleting files that configure.ps1 creates.
 
 > Reveal all script parameters and switches by running
   Get-Help .\build.ps1 -detailed

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
+    <body>
+      <trans-unit id="Error_PackageNotFoundWhenExpected">
+        <source>The feed '{0}' lists package '{1}' but multiple attempts to download the nupkg have failed. The feed is either invalid or required packages were removed while the current operation was in progress. Verify the package exists on the feed and try again.</source>
+        <target state="translated">Kanál {0} vypisuje balíček {1}, ale ani po několika pokusech se nupkg nepovedlo stáhnout. Buď kanál není platný, nebo se požadované balíčky v průběhu aktuální operace odebraly. Ověřte, že balíček v kanálu existuje, a zkuste to znovu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MatchingSourceFoundForPackage">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'.</source>
+        <target state="translated">Nalezené shody mapování zdroje balíčku pro ID balíčku {0}: {1}.</target>
+        <note>{0} - Package id {1} - list of sources</note>
+      </trans-unit>
+      <trans-unit id="Log_NoMatchingSourceFoundForPackage">
+        <source>Package source mapping match not found for package ID '{0}'.</source>
+        <target state="translated">Pro ID balíčku {0} se nenašla shoda mapování zdroje balíčku.</target>
+        <note>{0} - Package id</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

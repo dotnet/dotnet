@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="de" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Das Argument darf nicht NULL oder leer sein.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Invalid_GUID">
+        <source>The argument is not a valid GUID.</source>
+        <target state="translated">Das Argument ist keine gültige GUID.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">Der Wert muss größer oder gleich {0} sein.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExperimentVariableOverrideLogText">
+        <source>Experiment flight '{0}' evaluation overridden by environment variable '{1}' set to '{2}'</source>
+        <target state="translated">Die Auswertung des Testlaufs "{0}" wurde von der Umgebungsvariablen "{1}" überschrieben, die auf "{2}" festgelegt ist.</target>
+        <note>{0} is a flight name, {1} is a variable name, {2} is a string value of the variable</note>
+      </trans-unit>
+      <trans-unit id="Finished">
+        <source>========== Finished ==========</source>
+        <target state="translated">========== Abgeschlossen ==========</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatSelection">
+        <source>Select the NuGet package manager format for {0}</source>
+        <target state="translated">Wählen Sie das NuGet-Paket-Manager-Format für "{0}" aus.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatSelection_Solution">
+        <source>Select the NuGet package manager format for this Solution</source>
+        <target state="translated">Wählen Sie das NuGet-Paket-Manager-Format für "Solution" aus.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

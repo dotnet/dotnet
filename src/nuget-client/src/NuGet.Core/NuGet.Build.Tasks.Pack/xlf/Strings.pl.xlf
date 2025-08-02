@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../Strings.resx">
+    <body>
+      <trans-unit id="AssetsFileDoesNotHaveValidPackageSpec">
+        <source>The assets file found does not contain a valid package spec. Try restoring the project again. The location of the assets file is {0}.</source>
+        <target state="translated">Znaleziony plik zasobów nie zawiera prawidłowego elementu spec pakietu. Spróbuj ponownie przywrócić projekt. Lokalizacja pliku zasobów to {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="AssetsFileNotFound">
+        <source>The assets file produced by restore does not exist. Try restoring the project again. The expected location of the assets file is {0}.</source>
+        <target state="translated">Plik zasobów utworzony w wyniku przywracania nie istnieje. Spróbuj ponownie przywrócić projekt. Oczekiwana lokalizacja pliku zasobów to {0}.</target>
+        <note>{0} is the path to the assets file.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileNotFound">
+        <source>The file '{0}' to be packed was not found on disk.</source>
+        <target state="translated">Nie znaleziono na dysku pliku do spakowania „{0}”.</target>
+        <note>{0} is the file being packed.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseCombination">
+        <source>Invalid metadata. Cannot specify both a PackageLicenseExpression and a PackageLicenseFile.</source>
+        <target state="translated">Nieprawidłowe metadane. Nie można równocześnie określić parametrów PackageLicenseExpression i PackageLicenseFile.</target>
+        <note>Please don't localize PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">Ciąg wersji „{0}” nie jest obsługiwany przez ten zestaw narzędzi. Najwyższa obsługiwana wersja to „{1}”. Użyj starszej wersji lub uaktualnij zestaw narzędzi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpression">
+        <source>The license expression '{0}' cannot be parsed succesfully. {1}</source>
+        <target state="translated">Nie można pomyślnie przeanalizować wyrażenia licencji „{0}”. {1}</target>
+        <note>0 - the license expression, 1 further details</note>
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExpressionVersion">
+        <source>The PackageLicenseExpressionVersion string '{0}' is not a valid version.</source>
+        <target state="translated">Ciąg PackageLicenseExpressionVersion „{0}” nie jest prawidłową wersją.</target>
+        <note>{0} version string</note>
+      </trans-unit>
+      <trans-unit id="InvalidMinClientVersion">
+        <source>MinClientVersion string specified '{0}' is invalid.</source>
+        <target state="translated">Określony ciąg MinClientVersion „{0}” jest nieprawidłowy.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecProperties">
+        <source>NuspecProperties should be in the form of "key1=value1;key2=value2".</source>
+        <target state="translated">Wartość NuspecProperties powinna mieć postać „key1=value1;key2=value2”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageReferenceVersion">
+        <source>PackageReference {0} needs to have a valid version.</source>
+        <target state="translated">Element PackageReference {0} musi mieć prawidłową wersję.</target>
+        <note>{0} is the ID of the PackageReference.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageVersion">
+        <source>PackageVersion string specified '{0}' is invalid.</source>
+        <target state="translated">Określony ciąg PackageVersion {0} jest nieprawidłowy.</target>
+        <note>{0} is the version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidTargetFramework">
+        <source>Invalid target framework for the file '{0}'.</source>
+        <target state="translated">Nieprawidłowa struktura docelowa dla pliku „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IsPackableFalseError">
+        <source>This project cannot be packaged because packaging has been disabled. Add &lt;IsPackable&gt;true&lt;/IsPackable&gt; to the project file to enable producing a package from this project.</source>
+        <target state="translated">Nie można spakować tego projektu, ponieważ funkcja tworzenia pakietów została wyłączona. Dodaj wartość &lt;IsPackable&gt;true&lt;/IsPackable&gt; do pliku projektu, aby umożliwić utworzenie pakietu z tego projektu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackItemProvided">
+        <source>No project was provided to the PackTask.</source>
+        <target state="translated">Nie podano projektu dla elementu PackTask.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenses_LicenseUrlCannotBeUsedInConjuctionWithLicense">
+        <source>The PackageLicenseUrl is being deprecated and cannot be used in conjunction with the PackageLicenseFile or PackageLicenseExpression.</source>
+        <target state="translated">Parametr PackageLicenseUrl jest przestarzały i nie można go używać w połączeniu z parametrem PackageLicenseFile lub PackageLicenseExpression.</target>
+        <note>Please don't localize PackageLicenseUrl, PackageLicenseFile and PackageLicenseExpression.</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

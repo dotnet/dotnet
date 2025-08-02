@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="CannotCreateEmptyPackage">
+        <source>Cannot create a package that has no dependencies nor content.</source>
+        <target state="translated">Нельзя создать пакет, у которого нет ни зависимостей, ни содержимого.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyHasInvalidVersion">
+        <source>Dependency '{0}' has an invalid version.</source>
+        <target state="translated">У зависимости "{0}" недопустимая версия.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependenciesDefined">
+        <source>'{0}' already has a dependency defined for '{1}'.</source>
+        <target state="translated">У "{0}" уже есть зависимость, определенная для "{1}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundDuplicateFile">
+        <source>Attempted to pack multiple files into the same location(s). The following destinations were used multiple times: {0}</source>
+        <target state="translated">Предпринята попытка упаковать несколько файлов в одни и те же расположения. Следующие места назначения использовались несколько раз: {0}</target>
+        <note>0 - One or more duplicate files</note>
+      </trans-unit>
+      <trans-unit id="IconCannotOpenFile">
+        <source>Cannot open the icon file '{0}': {1}.</source>
+        <target state="translated">Не удается открыть файл значка "{0}": {1}.</target>
+        <note>0 - Path to the icon file, 1 - Error message for not opening the icon</note>
+      </trans-unit>
+      <trans-unit id="IconErrorEmpty">
+        <source>The icon file is empty.</source>
+        <target state="translated">Файл значка пуст.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconInvalidExtension">
+        <source>The 'icon' element '{0}' has an invalid file extension. Valid options are .png, .jpg or .jpeg.</source>
+        <target state="translated">Элемент "icon" "{0}" имеет недопустимое расширение файла. Допустимые расширения: PNG, JPG и JPEG.</target>
+        <note>0 - Icon entry in the nuspec</note>
+      </trans-unit>
+      <trans-unit id="IconMaxFileSizeExceeded">
+        <source>The icon file size must not exceed 1 megabyte.</source>
+        <target state="translated">Размер файла значка не должен превышать 1 МБ.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconMissingRequiredValue">
+        <source>The element 'icon' cannot be empty.</source>
+        <target state="translated">Элемент "icon" не может быть пустым.</target>
+        <note>Please, don't localize icon</note>
+      </trans-unit>
+      <trans-unit id="IconNoFileElement">
+        <source>The icon file '{0}' does not exist in the package.</source>
+        <target state="translated">Файл значка "{0}" отсутствует в пакете.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconNoFileElementWithHint">
+        <source>The icon file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">Файл значка "{0}" отсутствует в пакете. (Вы имели в виду "{1}"?)</target>
+        <note>0 - the icon file, 1 - hint to guessed icon file</note>
+      </trans-unit>
+      <trans-unit id="IncompatibleSchema">
+        <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
+        <target state="translated">Схема версии "{0}" несовместима с версией {1} в NuGet. Обновите NuGet до последней версии, расположенной по адресу http://go.microsoft.com/fwlink/?LinkId=213942.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageId">
+        <source>The package ID '{0}' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.</source>
+        <target state="translated">Идентификатор пакета "{0}" содержит недопустимые символы. Примеры допустимых значений: 'MyPackage'", "'MyPackage.Sample'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_DependenciesHasMixedElements">
+        <source>&lt;dependencies&gt; element must not contain both &lt;group&gt; and &lt;dependency&gt; child elements.</source>
+        <target state="translated">Элемент &lt;dependencies&gt; не может одновременно содержать дочерние элементы &lt;group&gt; и &lt;dependency&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ExcludeContainsInvalidCharacters">
+        <source>Exclude path '{0}' contains invalid characters.</source>
+        <target state="translated">Путь исключения "{0}" содержит недопустимые символы.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_IdMaxLengthExceeded">
+        <source>Id must not exceed 100 characters.</source>
+        <target state="translated">Длина идентификатора не должна превышать 100 символов.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidMinClientVersion">
+        <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
+        <target state="translated">Недопустимое значение атрибута minClientVersion в манифесте пакета. Это должна быть допустимая строка версии.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReference">
+        <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
+        <target state="translated">Недопустимая ссылка на сборку "{0}". Убедитесь, что в каталоге "lib" есть файл с именем "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReferenceFile">
+        <source>Assembly reference '{0}' contains invalid characters.</source>
+        <target state="translated">Ссылка на сборку "{0}" содержит недопустимые символы.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileExtensionIsInvalid">
+        <source>The license file '{0}' has an invalid extension. Valid options are .txt, .md or none.</source>
+        <target state="translated">Файл лицензии "{0}" имеет недопустимое расширение. Допустимые расширения: .txt, .md или отсутствие расширения.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkg">
+        <source>The license file '{0}' does not exist in the package.</source>
+        <target state="translated">Файл лицензии "{0}" отсутствует в пакете.</target>
+        <note>0 - the license file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkgWithHint">
+        <source>The license file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">Файл лицензии "{0}" отсутствует в пакете. (Вы имели в виду "{1}"?)</target>
+        <note>0 - the license file, 1 - hint to guessed licensed file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseUrlCannotBeUsedWithLicenseMetadata">
+        <source>The licenseUrl and license elements cannot be used together.</source>
+        <target state="translated">Параметр licenseUrl и элементы лицензии не могут использоваться совместно.</target>
+        <note>Please don't localize licenseUrl and license</note>
+      </trans-unit>
+      <trans-unit id="Manifest_PropertyValueReadFailure">
+        <source>An error occured while trying to parse the value '{0}' of property '{1}' in the manifest file.</source>
+        <target state="translated">Произошла ошибка при попытке проанализировать значение "{0}" свойства "{1}" в файле манифеста.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesHasMixedElements">
+        <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
+        <target state="translated">Элемент &lt;references&gt; не должен содержать оба дочерних элемента: &lt;group&gt; и &lt;reference&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesIsEmpty">
+        <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
+        <target state="translated">Элемент package\metadata\references\group должен содержать не меньше одного дочернего элемента &lt;reference&gt;.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
+        <source>EmitRequireLicenseAcceptance must not be set to false if RequireLicenseAcceptance is set to true.</source>
+        <target state="translated">EmitRequireLicenseAcceptance не должно иметь значение FALSE, если RequireLicenseAcceptance имеет значение TRUE.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresLicenseUrl">
+        <source>Enabling license acceptance requires a license or a licenseUrl to be specified. The licenseUrl will be deprecated, consider using the license metadata.</source>
+        <target state="translated">Чтобы включить принятие условий лицензии, необходимо указать лицензию или элемент licenseUrl. Элемент licenseUrl перестанет использоваться, поэтому по возможности используйте метаданные лицензии.</target>
+        <note>Please don't localize license and licenseUrl in 'requires a license or a licenseUrl' part.</note>
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredElementMissing">
+        <source>The required element '{0}' is missing from the manifest.</source>
+        <target state="translated">В манифесте отсутствует обязательный элемент «{0}».</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredMetadataMissing">
+        <source>{0} is required.</source>
+        <target state="translated">Требуется {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_SourceContainsInvalidCharacters">
+        <source>Source path '{0}' contains invalid characters.</source>
+        <target state="translated">Исходный путь "{0}" содержит недопустимые символы.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_TargetContainsInvalidCharacters">
+        <source>Target path '{0}' contains invalid characters.</source>
+        <target state="translated">Конечный путь "{0}" содержит недопустимые символы.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_UriCannotBeEmpty">
+        <source>{0} cannot be empty.</source>
+        <target state="translated">У {0} не может быть пустое значение.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAuthoring_FileNotFound">
+        <source>File not found: '{0}'.</source>
+        <target state="translated">Файл не найден: "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeCannotOpenFile">
+        <source>Cannot open the readme file '{0}': {1}.</source>
+        <target state="translated">Не удается открыть файл сведений "{0}": {1}.</target>
+        <note>0 - Path to the readme file, 1 - Error message for not opening the readme</note>
+      </trans-unit>
+      <trans-unit id="ReadmeErrorEmpty">
+        <source>The readme file '{0}' is empty.</source>
+        <target state="translated">Файл сведений "{0}" пуст.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeFileExtensionIsInvalid">
+        <source>The readme file '{0}' has an invalid extension. It must end in .md.</source>
+        <target state="translated">Недопустимое расширение файла сведений "{0}". Оно должно заканчиваться на. md.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeMissingRequiredValue">
+        <source>The element 'readme' cannot be empty.</source>
+        <target state="translated">Элемент "файл сведений" не может быть пустым.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeNoFileElement">
+        <source>The readme file '{0}' does not exist in the package.</source>
+        <target state="translated">Файл сведений "{0}" отсутствует в пакете.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownSchemaVersion">
+        <source>Unknown schema version '{0}'.</source>
+        <target state="translated">Неизвестная схема версии "{0}".</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -189,13 +189,6 @@ stages:
         sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
 
       - output: pipelineArtifact
-        displayName: 'Publish localizationArtifacts artifact'
-        condition: "or(eq(variables['OverridePublishLocalizationArtifact'], 'true'), and(succeeded(), eq(variables['IsOfficialBuild'], 'true')))"
-        targetPath: "$(Build.Repository.LocalPath)\\artifacts\\localizationArtifacts\\"
-        artifactName: "localizationArtifacts"
-        sbomBuildDropPath: $(Build.SourcesDirectory)/artifacts
-
-      - output: pipelineArtifact
         displayName: 'Publish symbols as pipeline artifacts'
         condition: "and(succeeded(), eq(variables['IsOfficialBuild'], 'true'))"
         targetPath: "$(Build.Repository.LocalPath)\\artifacts\\symbolstoindex"
@@ -238,6 +231,7 @@ stages:
         BuildRTM: false
         NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
+        SigningType: ${{ parameters.SigningType }}
 
 - stage: Build_For_Publishing
   displayName: Build NuGet published to nuget.org
@@ -301,6 +295,7 @@ stages:
         BuildRTM: true
         NuGetLocalizationType: Full
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
+        SigningType: ${{ parameters.SigningType }}
 
   - job: Validate_Publishing_Artifacts
     condition: "and(succeeded(), ne(variables['RunBuildForPublishing'], 'false'))"

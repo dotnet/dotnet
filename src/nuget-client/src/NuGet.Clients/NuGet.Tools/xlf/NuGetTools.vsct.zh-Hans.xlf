@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../NuGetTools.vsct">
+    <body>
+      <trans-unit id="cmdidAddPackagesForSolution|ButtonText">
+        <source>Manage &amp;NuGet Packages for Solution...</source>
+        <target state="new">Manage &amp;NuGet Packages for Solution...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddPackagesForSolution|CommandName">
+        <source>cmdidAddPackagesForSolution</source>
+        <target state="new">cmdidAddPackagesForSolution</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddPackages|ButtonText">
+        <source>Manage &amp;NuGet Packages...</source>
+        <target state="new">Manage &amp;NuGet Packages...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidAddPackages|CommandName">
+        <source>cmdidAddPackages</source>
+        <target state="new">cmdidAddPackages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidClearHost|ButtonText">
+        <source>&amp;Clear Console</source>
+        <target state="new">&amp;Clear Console</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidClearNuGetLocalResources|ButtonText">
+        <source>ClearLocals</source>
+        <target state="new">ClearLocals</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidClearNuGetLocalResources|CommandName">
+        <source>cmdidClearNuGetLocalResources</source>
+        <target state="new">cmdidClearNuGetLocalResources</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidPowerConsole|ButtonText">
+        <source>Package Manager C&amp;onsole</source>
+        <target state="new">Package Manager C&amp;onsole</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidProjects|ButtonText">
+        <source>Default pro&amp;ject:</source>
+        <target state="new">Default pro&amp;ject:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidRestorePackages|ButtonText">
+        <source>Restore NuGet Packa&amp;ges</source>
+        <target state="new">Restore NuGet Packa&amp;ges</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidRestorePackages|CommandName">
+        <source>cmdRestorePackages</source>
+        <target state="new">cmdRestorePackages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidSourceSettings|ButtonText">
+        <source>&amp;Package Manager Settings</source>
+        <target state="new">&amp;Package Manager Settings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidSources|ButtonText">
+        <source>Pac&amp;kage source:</source>
+        <target state="new">Pac&amp;kage source:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidStopHost|ButtonText">
+        <source>&amp;Stop command execution</source>
+        <target state="new">&amp;Stop command execution</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpdatePackages|ButtonText">
+        <source>U&amp;pdate...</source>
+        <target state="new">U&amp;pdate...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpdatePackages|CommandName">
+        <source>cmdidUpdatePackages</source>
+        <target state="new">cmdidUpdatePackages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpdatePackage|ButtonText">
+        <source>U&amp;pdate...</source>
+        <target state="new">U&amp;pdate...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpdatePackage|CommandName">
+        <source>cmdidUpdatePackage</source>
+        <target state="new">cmdidUpdatePackage</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradeNuGetProject|ButtonText">
+        <source>&amp;Migrate packages.config to PackageReference...</source>
+        <target state="new">&amp;Migrate packages.config to PackageReference...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradeNuGetProject|CommandName">
+        <source>cmdidUpgradeNuGetProject</source>
+        <target state="new">cmdidUpgradeNuGetProject</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradePackagesConfig|ButtonText">
+        <source>&amp;Migrate packages.config to PackageReference...</source>
+        <target state="new">&amp;Migrate packages.config to PackageReference...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradePackagesConfig|CommandName">
+        <source>cmdidUpgradePackagesConfig</source>
+        <target state="new">cmdidUpgradePackagesConfig</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradeProjectJsonNuGetProject|ButtonText">
+        <source>&amp;Migrate project.json to PackageReference...</source>
+        <target state="new">&amp;Migrate project.json to PackageReference...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="cmdidUpgradeProjectJsonNuGetProject|CommandName">
+        <source>cmdidUpgradeProjectJsonNuGetProject</source>
+        <target state="new">cmdidUpgradeProjectJsonNuGetProject</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="idGeneralSettings|ButtonText">
+        <source>&amp;Package Manager Settings</source>
+        <target state="new">&amp;Package Manager Settings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="idGeneralSettings|CommandName">
+        <source>cmdidGeneralSettings</source>
+        <target state="new">cmdidGeneralSettings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="idLibraryPackageManager|ButtonText">
+        <source>NuGet Package Ma&amp;nager</source>
+        <target state="new">NuGet Package Ma&amp;nager</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="idToolbar|ButtonText">
+        <source>Package Manager Console</source>
+        <target state="new">Package Manager Console</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

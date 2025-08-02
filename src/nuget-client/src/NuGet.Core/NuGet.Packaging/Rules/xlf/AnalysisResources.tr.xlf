@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../AnalysisResources.resx">
+    <body>
+      <trans-unit id="AssemblyDirectlyUnderLibWarning">
+        <source>The assembly '{0}' is placed directly under 'lib' folder. It is recommended that assemblies be placed inside a framework-specific folder. Move it into a framework-specific folder.</source>
+        <target state="translated">'{0}' bütünleştirilmiş kodu doğrudan 'lib' klasörünün altına yerleştirilmiş. Bütünleştirilmiş kodların çerçeveye özel bir klasöre yerleştirilmesi önerilir. Bütünleştirilmiş kodu çerçeveye özel bir klasöre taşıyın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssemblyOutsideLibWarning">
+        <source>The assembly '{0}' is not inside the 'lib' folder and hence it won't be added as a reference when the package is installed into a project. Move it into the 'lib' folder if it needs to be referenced.</source>
+        <target state="translated">'{0}' bütünleştirilmiş kodu 'lib' klasörünün içinde olmadığından paket bir projeye yüklendiğinde başvuru olarak eklenmeyecek. Başvuru olarak kullanılması gerekiyorsa bütünleştirilmiş kodu 'lib' klasörüne taşıyın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BuildConventionIsViolatedWarning">
+        <source>- At least one {0} file was found in '{1}', but '{2}' was not.</source>
+        <target state="translated">- '{1}' içinde en az bir {0} dosyası bulundu, ancak '{2}' bulunamadı.</target>
+        <note>0 - file extension (either .props or .targets)
+1 - directory that the file falls under
+2 - correct file path </note>
+      </trans-unit>
+      <trans-unit id="DefaultSpecValueWarning">
+        <source>The value "{0}" for {1} is a sample value and should be removed. Replace it with an appropriate value or remove it and rebuild your package.</source>
+        <target state="translated">{1} için "{0}" değeri örnek bir değerdir ve kaldırılmalıdır. Uygun bir değerle değiştirin veya kaldırıp paketinizi yeniden derleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToFiles">
+        <source>- Add lib or ref assemblies for the</source>
+        <target state="translated">- Şunun için kitaplık veya başvuru bütünleştirilmiş kodu ekleyin:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMBeginningToNuspec">
+        <source>- Add a dependency group for</source>
+        <target state="translated">- Şunun için bir bağımlılık grubu ekleyin:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToFile">
+        <source>target framework</source>
+        <target state="translated">hedef çerçeve</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMEndingToNuspec">
+        <source>to the nuspec</source>
+        <target state="translated">nuspec'e</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasCompatMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder have compatible matches, but not exact matches in the other location. Unless intentional, consult the list of actions below:</source>
+        <target state="translated">Nuspec ve kitaplık/başvuru klasörünün bağımlılıklar grubunda bildirilen bazı hedef çerçeveler uyumlu eşleşmelere sahip, ancak diğer konumda tam eşleşmelere sahip değil. Bu durum bilerek gerçekleştirilmediyse aşağıdaki eylemler listesine başvurun:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="DependenciesGroupsForEachTFMHasNoExactMatch">
+        <source>Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:</source>
+        <target state="translated">Nuspec ve kitaplık/başvuru klasörünün bağımlılıklar grubunda bildirilen bazı hedef çerçeveler diğer konumda tam eşleşmelere sahip değil. Aşağıdaki eylemler listesine başvurun:</target>
+        <note>Do not localize `dependencies`</note>
+      </trans-unit>
+      <trans-unit id="FilePathTooLongWarning">
+        <source>The file '{0}' path, name, or both are too long. Your package might not work without long file path support. Please shorten the file path or file name.</source>
+        <target state="translated">'{0}' dosyasının yolu, adı veya her ikisi de çok uzun. Paketiniz uzun dosya yolu desteği olmadan çalışmayabilir. Lütfen dosya yolunu veya dosya adını kısaltın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconUrlDeprecationWarning">
+        <source>The 'PackageIconUrl'/'iconUrl' element is deprecated. Consider using the 'PackageIcon'/'icon' element instead. Learn more at https://aka.ms/deprecateIconUrl</source>
+        <target state="translated">'PackageIconUrl'/'iconUrl' öğesi kullanım dışı. Bunun yerine 'PackageIcon'/'icon' öğesini kullanmayı deneyin. https://aka.ms/deprecateIconUrl adresinden daha fazla bilgi edinin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidFrameworkWarning">
+        <source>The folder '{0}' under 'lib' is not recognized as a valid framework name or a supported culture identifier. Rename it to a valid framework name or culture identifier.</source>
+        <target state="translated">'lib' altındaki '{0}' klasörü geçerli bir çerçeve adı veya desteklenen bir kültür tanımlayıcısı olarak tanınmıyor. Geçerli bir çerçeve adı veya kültür tanımlayıcısı olarak yeniden adlandırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPlaceholderFileWarning">
+        <source>The file at '{0}' uses the symbol for empty directory '_._', but it is present in a directory that contains other files. Please remove this file from directories that contain other files.</source>
+        <target state="translated">'{0}' konumundaki dosya, boş dizin simgesini '_._' kullanıyor, ancak başka dosyalar içeren bir dizinde de mevcut. Lütfen bu dosyayı başka dosyalar içeren dizinlerden kaldırın.</target>
+        <note>0 - file path ending in _._</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrereleaseDependencyWarning">
+        <source>A stable release of a package should not have a prerelease dependency. Either modify the version spec of dependency "{0}" or update the version field in the nuspec.</source>
+        <target state="translated">Bir paketin kararlı bir yayınının yayın öncesi bağımlılıkları olmamalıdır. "{0}" bağımlılığının sürüm belirtimini değiştirin veya nuspec'te sürüm alanını güncelleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInDependencyGroupsWarning">
+        <source>The following dependency group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Şu bağımlılık grupları çerçeve sürümünde nokta gerektiriyor: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFilesWarning">
+        <source>The following packaged file folder(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Şu paketlenmiş dosya klasörleri çerçeve sürümünde nokta gerektiriyor: {0}</target>
+        <note>0 - comma-separated list of paths</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInFrameworkAssemblyGroupsWarning">
+        <source>The following framework assembly group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Şu çerçeve bütünleştirilmiş kodu grupları çerçeve sürümünde nokta gerektiriyor: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkInReferenceGroupsWarning">
+        <source>The following reference group(s) require(s) dots in the framework version: {0}</source>
+        <target state="translated">Şu başvuru grupları çerçeve sürümünde nokta gerektiriyor: {0}</target>
+        <note>0 - comma-separated list of target frameworks</note>
+      </trans-unit>
+      <trans-unit id="InvalidUndottedFrameworkWarning">
+        <source>One or more target framework specifiers in your package are missing required dots in their framework version numbers. This is required as of .NET5.0. Please rename them to include dots as needed (e.g. 'net50' to 'net5.0').</source>
+        <target state="translated">Paketinizdeki bir veya daha fazla hedef çerçeve belirticisinin çerçeve sürüm numaralarında gerekli noktalar eksik. Bu noktalar .NET5.0 sürümünden itibaren gereklidir. Lütfen çerçeve sürüm numaralarını, gerektiği gibi noktaları içerecek biçimde (ör. 'net50'yi net5.0' olarak) yeniden adlandırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LegacyVersionWarning">
+        <source>The package version '{0}' uses SemVer 2.0.0 or components of SemVer 1.0.0 that are not supported on legacy clients. Change the package version to a SemVer 1.0.0 string. If the version contains a release label it must start with a letter. This message can be ignored if the package is not intended for older clients.</source>
+        <target state="translated">'{0}' paket sürümü eski istemcilerde desteklenmeyen SemVer 2.0.0 sürümünü veya SemVer 1.0.0 bileşenlerini kullanıyor. Paket sürümünü bir SemVer 1.0.0 dizesi olarak değiştirin. Sürüm bir yayın etiketi içeriyorsa bir harfle başlamalıdır. Paket eski istemcilere yönelik değilse bu iletiyi yoksayabilirsiniz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LicenseUrlDeprecationWarning">
+        <source>The 'licenseUrl' element will be deprecated. Consider using the 'license' element instead.</source>
+        <target state="translated">'licenseUrl' öğesi kullanım dışı bırakılacaktır. Bunun yerine 'lisans' öğesini kullanmayı deneyin.</target>
+        <note>Please don't localize the items in the ''. license and licenseUrl</note>
+      </trans-unit>
+      <trans-unit id="Migrator_AssemblyDirectlyUnderLibWarning">
+        <source>The assembly 'lib\{0}' will be ignored when the package is installed after the migration.</source>
+        <target state="translated">'lib\{0}' bütünleştirilmiş kodu geçişten sonra paket yüklendiğinde yoksayılacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasContentFolder">
+        <source>'content' assets will not be available when the package is installed after the migration.</source>
+        <target state="translated">Geçişten sonra paket yüklendiğinde 'content' varlıkları kullanılamayacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_PackageHasInstallScript">
+        <source>install.ps1 script will be ignored when the package is installed after the migration.</source>
+        <target state="translated">Geçişten sonra paket yüklendiğinde install.ps1 betiği yoksayılacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrator_XdtTransformInPackage">
+        <source>XDT transform file '{0}' will not be applied when the package is installed after the migration.</source>
+        <target state="translated">XDT dönüşüm dosyası '{0}' geçişten sonra paket yüklendiğinde uygulanmayacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedInitScriptWarning">
+        <source>The file '{0}' will be ignored by NuGet because it is not directly under 'tools' folder. Place the file directly under 'tools' folder.</source>
+        <target state="translated">Doğrudan 'tools' klasörü altında olmadığından '{0}' dosyası NuGet tarafından yoksayılır. Dosyayı doğrudan 'tools' klasörünün altına yerleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MisplacedTransformFileWarning">
+        <source>The transform file '{0}' is outside the 'content' folder and hence will not be transformed during installation of this package. Move it into the 'content' folder.</source>
+        <target state="translated">'{0}' dönüşüm dosyası 'content' klasörünün dışında olduğundan bu paketin yüklenmesi sırasında dönüştürülmeyecek. Dosyayı 'content' klasörüne taşıyın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingReadmeInformation">
+        <source>The package {0} is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.</source>
+        <target state="translated">{0} paketinde bir Benioku dosyası eksik. Paket readme dosyalarının neden önemli olduğunu öğrenmek için https://aka.ms/nuget/authoring-best-practices/readme sayfasına gidin.</target>
+        <note>0 - package identity</note>
+      </trans-unit>
+      <trans-unit id="NoRefOrLibFolderInPackage">
+        <source>This package does not contain a lib/ or ref/ folder, and will therefore be treated as compatible for all frameworks. Since framework specific files were found under the build/ directory for {0}, consider creating the following empty files to correctly narrow the compatibility of the package:
+{1}</source>
+        <target state="translated">Bu paket bir lib/ veya ref/ klasörü içermiyor ve bu nedenle tüm çerçeveler için uyumlu olarak kabul edilecek. Çerçeveye özgü dosyalar {0} için derleme/dizin altında bulunduğundan, paketin uyumluluğunu doğru bir şekilde daraltmak için aşağıdaki boş dosyaları oluşturun:
+{1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PlaceholderFileInPackageWarning">
+        <source>An empty folder placeholder file '{0}' is in a non-empty folder and should be removed.</source>
+        <target state="translated">Boş klasör yer tutucu dosyası '{0}', boş olmayan bir klasörde ve kaldırılması gerekiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarning">
+        <source>References were found in the nuspec, but some reference assemblies were not found in both the nuspec and ref folder. Add the following reference assemblies:</source>
+        <target state="translated">Nuspec'te başvurular bulundu, ancak bazı başvuru bütünleştirilmiş kodları nuspec ve başvuru klasörünün her ikisinde de bulunamadı. Şu başvuru bütünleştirilmiş kodlarını ekleyin:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecListItemFormat">
+        <source>- Add {0} to the {1} reference group in the nuspec</source>
+        <target state="translated">- Nuspec'teki {1} başvuru grubuna {0} ekleyin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToNuspecNoTfmListItemFormat">
+        <source>- Add {0} to the references element in the nuspec</source>
+        <target state="translated">- Nuspec'teki başvurular öğesine {0} ekleyin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferencesInNuspecAndRefFilesDontMatchWarningAddToRefListItemFormat">
+        <source>- Add {0} to the ref/{1}/ directory</source>
+        <target state="translated">- ref/{1}/ dizinine {0} ekleyin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ScriptOutsideToolsWarning">
+        <source>The script file '{0}' is outside the 'tools' folder and hence will not be executed during installation of this package. Move it into the 'tools' folder.</source>
+        <target state="translated">'{0}' betik dosyası 'tools' klasörünün dışında olduğundan bu paketin yüklenmesi sırasında yürütülmeyecek. Dosyayı 'tools' klasörüne taşıyın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedLicenseIdentifier">
+        <source>The license identifier '{0}' is not recognized by the current toolset.</source>
+        <target state="translated">'{0}' lisans tanımlayıcısı geçerli araç takımı tarafından tanınmıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedScriptWarning">
+        <source>The script file '{0}' is not recognized by NuGet and hence will not be executed during installation of this package. Rename it to install.ps1, uninstall.ps1 or init.ps1 and place it directly under 'tools'.</source>
+        <target state="translated">'{0}' betik dosyası NuGet tarafından tanınmıyor ve bu paketin yüklenmesi sırasında yürütülmeyecek. Dosyayı install.ps1, uninstall.ps1 veya init.ps1 olarak yeniden adlandırın ve doğrudan 'tools' klasörünün altına yerleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnspecifiedDependencyVersionWarning">
+        <source>The version of dependency '{0}' is not specified. Specify the version of dependency and rebuild your package.</source>
+        <target state="translated">'{0}' bağımlılığının sürümü belirtilmemiş. Bağımlılık sürümünü belirtip paketinizi yeniden derleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WinRTObsoleteWarning">
+        <source>The file at '{0}' uses the obsolete 'WinRT' as the framework folder. Replace 'WinRT' or 'WinRT45' with 'NetCore45'.</source>
+        <target state="translated">'{0}' konumundaki dosya, çerçeve klasörü olarak eski 'WinRT' sürümünü kullanıyor. 'WinRT' veya 'WinRT45' değerini 'NetCore45' ile değiştirin.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

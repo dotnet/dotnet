@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../PackageSourcesOptionsControl.resx">
+    <body>
+      <trans-unit id="BrowseButton.AccessibleName">
+        <source>Browse</source>
+        <target state="translated">찾아보기</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BrowseButton.Text">
+        <source>...</source>
+        <target state="new">...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CopyPackageSourceStripMenuItem.Text">
+        <source>Copy</source>
+        <target state="translated">복사</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HeaderLabel.Text">
+        <source>Package sources:</source>
+        <target state="translated">패키지 소스:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpWarningIcon.AccessibleDescription">
+        <source>HTTP Warning Icon</source>
+        <target state="translated">HTTP 경고 아이콘</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpWarningIcon.AccessibleName">
+        <source>HTTP Warning Icon</source>
+        <target state="translated">HTTP 경고 아이콘</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MachineWidePackageSourcesListBox.AccessibleName">
+        <source>Machine-wide package sources</source>
+        <target state="translated">시스템 전체의 패키지 원본</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MachineWideSourcesLabel.Text">
+        <source>&amp;Machine-wide package sources:</source>
+        <target state="translated">시스템 전체의 패키지 소스(&amp;M):</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewPackageNameLabel.Text">
+        <source>&amp;Name:</source>
+        <target state="translated">이름(&amp;N):</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewPackageSourceLabel.Text">
+        <source>&amp;Source:</source>
+        <target state="translated">소스(&amp;S):</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSourcesListBox.AccessibleName">
+        <source>Package sources</source>
+        <target state="translated">패키지 원본</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="addButton.AccessibleDescription">
+        <source>Add a new package source</source>
+        <target state="translated">새 패키지 소스 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="addButton.AccessibleName">
+        <source>Add package source</source>
+        <target state="translated">패키지 원본 추가</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="removeButton.AccessibleDescription">
+        <source>Delete the selected package source</source>
+        <target state="translated">선택된 패키지 소스 삭제</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="removeButton.AccessibleName">
+        <source>Delete package source</source>
+        <target state="translated">패키지 원본 삭제</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="updateButton.Text">
+        <source>&amp;Update</source>
+        <target state="translated">업데이트(&amp;U)</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

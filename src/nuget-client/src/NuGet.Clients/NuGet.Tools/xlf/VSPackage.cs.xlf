@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../VSPackage.resx">
+    <body>
+      <trans-unit id="1">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="110">
+        <source>NuGet Package Manager</source>
+        <target state="translated">Správce balíčků NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="112">
+        <source>NuGet Package Manager in Visual Studio. For more information about NuGet, visit https://docs.nuget.org/</source>
+        <target state="translated">Správce balíčků NuGet v sadě Visual Studio. Další informace o NuGet najdete na webu https://docs.nuget.org/.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="113">
+        <source>NuGet Package Manager</source>
+        <target state="translated">Správce balíčků NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="114">
+        <source>Package Sources</source>
+        <target state="translated">Zdroje balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="115">
+        <source>General</source>
+        <target state="translated">Obecné</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="116">
+        <source>Package Source Mapping</source>
+        <target state="translated">Mapování zdroje balíčku:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="117">
+        <source>Configuration Files</source>
+        <target state="translated">Konfigurační soubory</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="2">
+        <source>plk</source>
+        <target state="translated">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="200">
+        <source>Package Manager Console</source>
+        <target state="translated">Konzola Správce balíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="3">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="300">
+        <source>PackageManagerDocumentWindow</source>
+        <target state="translated">OknoDokumentuSprávceBalíčků</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="4">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

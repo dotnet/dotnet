@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
-  
+
   <Target Name="ValidateManifest"
           Condition="'$(IsVsixBuild)' == 'true'" />
 </Project>

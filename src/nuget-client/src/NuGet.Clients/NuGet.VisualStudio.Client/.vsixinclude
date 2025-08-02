@@ -1,34 +1,59 @@
 # NuGet delay signed assemblies
 NuGet.Console.dll
+NuGet.Console.resources.dll
 NuGet.Credentials.dll
+NuGet.Credentials.resources.dll
 NuGet.PackageManagement.PowerShellCmdlets.dll
+NuGet.PackageManagement.PowerShellCmdlets.resources.dll
 NuGet.PackageManagement.VisualStudio.dll
+NuGet.PackageManagement.VisualStudio.resources.dll
 NuGet.SolutionRestoreManager.dll
+NuGet.SolutionRestoreManager.resources.dll
 NuGet.Tools.dll
+NuGet.Tools.resources.dll
 NuGet.VisualStudio.Common.dll
+NuGet.VisualStudio.Common.resources.dll
 NuGet.VisualStudio.Contracts.dll
 NuGet.VisualStudio.Implementation.dll
+NuGet.VisualStudio.Implementation.resources.dll
 NuGet.VisualStudio.Internal.Contracts.dll
+NuGet.VisualStudio.Internal.Contracts.resources.dll
 NuGet.VisualStudio.Interop.dll
 NuGet.VisualStudio.dll
+NuGet.VisualStudio.resources.dll
 
 # MS delay signed assemblies
 Microsoft.Build.NuGetSdkResolver.dll
+Microsoft.Build.NuGetSdkResolver.resources.dll
 NuGet.Build.Tasks.dll
+NuGet.Build.Tasks.resources.dll
 NuGet.Commands.dll
+NuGet.Commands.resources.dll
 NuGet.Common.dll
+NuGet.Common.resources.dll
 NuGet.Configuration.dll
+NuGet.Configuration.resources.dll
 NuGet.DependencyResolver.Core.dll
+NuGet.DependencyResolver.Core.resources.dll
 NuGet.Frameworks.dll
+NuGet.Frameworks.resources.dll
 NuGet.Indexing.dll
 NuGet.LibraryModel.dll
+NuGet.LibraryModel.resources.dll
 NuGet.PackageManagement.UI.dll
+NuGet.PackageManagement.UI.resources.dll
 NuGet.PackageManagement.dll
+NuGet.PackageManagement.resources.dll
 NuGet.Packaging.dll
+NuGet.Packaging.resources.dll
 NuGet.ProjectModel.dll
+NuGet.ProjectModel.resources.dll
 NuGet.Protocol.dll
+NuGet.Protocol.resources.dll
 NuGet.Resolver.dll
+NuGet.Resolver.resources.dll
 NuGet.Versioning.dll
+NuGet.Versioning.resources.dll
 
 # 3rd party dlls to keep
 Microsoft.Extensions.FileProviders.Abstractions.dll
