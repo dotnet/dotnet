@@ -109,9 +109,15 @@ namespace NuGet.PackageManagement
             }
 
             return packages.Where(package =>
-                (package.HasVersion && installed.ContainsKey(package.Id))
-                    ?
-                installed[package.Id] <= package.Version : true);
+            {
+                if (package.HasVersion &&
+                    installed.TryGetValue(package.Id, out NuGetVersion version))
+                {
+                    return version <= package.Version;
+                }
+
+                return true;
+            });
         }
 
         public static IEnumerable<SourcePackageDependencyInfo> PruneDisallowedVersions(IEnumerable<SourcePackageDependencyInfo> packages, IEnumerable<Packaging.PackageReference> packageReferences)

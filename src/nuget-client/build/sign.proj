@@ -14,13 +14,6 @@
     <SignTargetsDependOn Condition="'$(SignPackages)' == 'true' AND '$(BuildRTM)' != 'true'">GetOutputNupkgs;GetOutputVsix</SignTargetsDependOn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <FilesToSign Include="$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\**\Microsoft.Web.XmlTransform.resources.dll">
-      <Authenticode>Microsoft400</Authenticode>
-      <StrongName>67</StrongName>
-    </FilesToSign>
-  </ItemGroup>
 
   <Target Name="Sign"
           BeforeTargets="AfterBuild"
@@ -32,13 +25,13 @@
              BuildInParallel="true">
       <Output TaskParameter="TargetOutputs" ItemName="FilesToSign" />
     </MSBuild>
-    
+
     <MSBuild Projects="$(VSIXProject)"
              Targets="GetThirdPartyAssemblies"
              BuildInParallel="true">
       <Output TaskParameter="TargetOutputs" ItemName="ThirdPartyAssembly" />
     </MSBuild>
-    
+
     <ItemGroup>
       <FilesToSign Include="%(ThirdPartyAssembly.TargetPath)" Authenticode="3PartySHA2" />
     </ItemGroup>
