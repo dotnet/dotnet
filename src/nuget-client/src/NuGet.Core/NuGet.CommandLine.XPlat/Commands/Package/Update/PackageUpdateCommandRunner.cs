@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NuGet.Commands;
+using NuGet.CommandLine.XPlat.Utility;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Credentials;
@@ -22,247 +22,277 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
 
-namespace NuGet.CommandLine.XPlat.Commands.Package.Update
+namespace NuGet.CommandLine.XPlat.Commands.Package.Update;
+
+internal static class PackageUpdateCommandRunner
 {
-    internal static class PackageUpdateCommandRunner
+    // This overload sets static state, so should not be used in tests.
+    internal static Task<int> Run(PackageUpdateArgs args, CancellationToken cancellationToken)
     {
-        internal static async Task<int> Run(PackageUpdateArgs args, ILoggerWithColor logger, IDGSpecFactory dGSpecFactory, MSBuildAPIUtility msbuild, CancellationToken cancellationToken)
+        ILoggerWithColor logger = new CommandOutputLogger(args.LogLevel)
         {
-            XPlatUtility.ConfigureProtocol();
-            DefaultCredentialServiceUtility.SetupDefaultCredentialService(logger, nonInteractive: false);
+            HidePrefixForInfoAndMinimal = true
+        };
 
-            // 1. Get DGSpec for project/solution
-            // 2. Find suitable version of package(s) to update
-            // 3. Preview restore to validate changes
-            // 4. Update MSBuild files
-            // 5. Commit restore if everything successful
+        XPlatUtility.ConfigureProtocol();
+        DefaultCredentialServiceUtility.SetupDefaultCredentialService(logger, nonInteractive: !args.Interactive);
 
-            // 1. Get DGSpec for project/solution
-            string settingsRoot = Directory.Exists(args.Project) ? args.Project : Path.GetDirectoryName(args.Project)!;
-            ISettings settings = Settings.LoadDefaultSettings(settingsRoot);
+        // MSBuildAPIUtility's output is different to what we want for package update.
+        // While it would probably be a good idea to align the output of all commands using MSBuildAPIUtility,
+        // in order to meet deadlines, we'll suppress its output, and leave improvements for later.
+        MSBuildAPIUtility msBuild = new(NullLogger.Instance);
 
-            var dgSpec = dGSpecFactory.GetDependencyGraphSpec(args.Project);
+        var restoreHelper = new PackageUpdateIO(msBuild, EnvironmentVariableWrapper.Instance);
 
-            if (dgSpec is null || dgSpec.Restore is null || dgSpec.Restore.Count == 0)
-            {
-                logger.LogMinimal(
-                    string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, args.Project),
-                    ConsoleColor.Red);
-                return ExitCodes.Error;
-            }
+        return Run(args, logger, restoreHelper, cancellationToken);
+    }
 
-            if (dgSpec.Restore.Count > 1)
-            {
-                logger.LogMinimal(Strings.Unsupported_UpdatingMoreThanOneProject, ConsoleColor.Red);
-                return ExitCodes.Error;
-            }
+    internal static async Task<int> Run(PackageUpdateArgs args, ILoggerWithColor logger, IPackageUpdateIO packageUpdateIO, CancellationToken cancellationToken)
+    {
+        // 1. Get DGSpec for project/solution
+        // 2. Find suitable version of package(s) to update
+        // 3. Preview restore to validate changes
+        // 4. Update MSBuild files
+        // 5. Commit restore if everything successful
 
-            // 2. Find suitable version of package(s) to update
-            // Source provider will be needed to find the package version and to restore, so create it here.
-            CachingSourceProvider sourceProvider = new CachingSourceProvider(new PackageSourceProvider(settings));
-            using SourceCacheContext sourceCacheContext = new();
-            (PackageDependency? packageToUpdate, List<NuGetFramework>? packageTfms) = await GetPackageToUpdateAsync(args.Packages, dgSpec.Projects.Single(), sourceProvider, settings, sourceCacheContext, logger, cancellationToken);
+        // 1. Get DGSpec for project/solution
+        logger.LogVerbose(Strings.PackageUpdate_LoadingDGSpec);
+        var dgSpec = packageUpdateIO.GetDependencyGraphSpec(args.Project);
 
-            if (packageToUpdate is null)
-            {
-                // GetPackagesToUpdateAsync is responsible for outputting an error message.
-                return ExitCodes.Error;
-            }
-
-            // 3. Preview restore to validate changes
-            var updatedPackageSpec = dgSpec.Projects[0].Clone();
-            PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageToUpdate);
-
-            var updatedDgSpec = dgSpec.WithReplacedSpec(updatedPackageSpec).WithoutRestores();
-            updatedDgSpec.AddRestore(updatedPackageSpec.RestoreMetadata.ProjectUniqueName);
-
-            logger.LogDebug("Running Restore preview");
-
-            var restorePreviewResult = await PreviewUpdatePackageReferenceAsync(updatedDgSpec, sourceCacheContext, logger, cancellationToken);
-
-            logger.LogDebug("Restore preview completed");
-
-            if (!restorePreviewResult.Result.Success)
-            {
-                logger.LogMinimal(Strings.PackageUpdate_PreviewRestoreFailed, ConsoleColor.Red);
-                return ExitCodes.Error;
-            }
-
-            var libraryDependency = AddPackageReferenceCommandRunner.GenerateLibraryDependency(
-                updatedPackageSpec,
-                customPackagesPath: null,
-                restorePreviewResult,
-                packageTfms,
-                packageToUpdate);
-
-            // 4. Update MSBuild files
-            if (packageTfms!.Count == dgSpec.Projects[0].TargetFrameworks.Count)
-            {
-                // package is used by all project TFMs (no condition)
-
-                msbuild.AddPackageReference(dgSpec.Projects[0].FilePath, libraryDependency, noVersion: true);
-            }
-            else
-            {
-                var frameworkAliases = packageTfms
-                    .Select(e => AddPackageReferenceCommandRunner.GetAliasForFramework(dgSpec.Projects[0], e))
-                    .Where(originalFramework => originalFramework != null);
-
-                msbuild.AddPackageReferencePerTFM(dgSpec.Projects[0].FilePath, libraryDependency, frameworkAliases, noVersion: true);
-            }
-
-            // 5. Commit restore if everything successful
-            await RestoreRunner.CommitAsync(restorePreviewResult, CancellationToken.None);
-
-            return ExitCodes.Success;
+        if (dgSpec is null || dgSpec.Restore is null || dgSpec.Restore.Count == 0)
+        {
+            logger.LogMinimal(
+                string.Format(CultureInfo.CurrentCulture, Strings.Error_PathIsMissingOrInvalid, args.Project),
+                ConsoleColor.Red);
+            return ExitCodes.Error;
         }
 
-        private static async Task<RestoreResultPair> PreviewUpdatePackageReferenceAsync(
-            DependencyGraphSpec dgSpec,
-            SourceCacheContext cacheContext,
-            ILogger logger,
-            CancellationToken cancellationToken)
+        logger.LogInformation(Format.PackageUpdate_UpdatingOutdatedPackages(args.Project));
+
+        if (dgSpec.Restore.Count > 1)
         {
-            var providerCache = new RestoreCommandProvidersCache();
-
-            // Pre-loaded request provider containing the graph file
-            var providers = new List<IPreLoadedRestoreRequestProvider>
-                {
-                    new DependencyGraphSpecRequestProvider(providerCache, dgSpec)
-                };
-
-            var globalPackagesFolder = dgSpec.GetProjectSpec(dgSpec.Restore.Single()).RestoreMetadata.PackagesPath;
-
-            var restoreContext = new RestoreArgs()
-            {
-                CacheContext = cacheContext,
-                LockFileVersion = LockFileFormat.Version,
-                Log = logger,
-                MachineWideSettings = new XPlatMachineWideSetting(),
-                GlobalPackagesFolder = globalPackagesFolder,
-                PreLoadedRequestProviders = providers
-                // Sources : No need to pass it, because SourceRepositories contains the already built SourceRepository objects
-            };
-
-            // Generate Restore Requests. There will always be 1 request here since we are restoring for 1 project.
-            var restoreRequests = await RestoreRunner.GetRequests(restoreContext);
-
-            // Run restore without commit. This will always return 1 Result pair since we are restoring for 1 request.
-            var restoreResult = await RestoreRunner.RunWithoutCommitAsync(restoreRequests, restoreContext, cancellationToken);
-
-            return restoreResult.Single();
+            logger.LogMinimal(Strings.Unsupported_UpdatingMoreThanOneProject, ConsoleColor.Red);
+            return ExitCodes.Error;
         }
 
-        private static async Task<(PackageDependency?, List<NuGetFramework>?)> GetPackageToUpdateAsync(
-            IReadOnlyList<string>? packages,
-            PackageSpec project,
-            CachingSourceProvider sourceProvider,
-            ISettings settings,
-            SourceCacheContext sourceCacheContext,
-            ILoggerWithColor logger,
-            CancellationToken cancellationToken)
+        // 2. Find suitable version of package(s) to update
+        // Source provider will be needed to find the package version and to restore, so create it here.
+        logger.LogVerbose(Strings.PackageUpdate_FindingUpdateVersions);
+
+        string settingsRoot = Directory.Exists(args.Project) ? args.Project : Path.GetDirectoryName(args.Project)!;
+        ISettings settings = packageUpdateIO.LoadSettings(settingsRoot);
+
+        CachingSourceProvider sourceProvider = new CachingSourceProvider(new PackageSourceProvider(settings));
+        using SourceCacheContext sourceCacheContext = new();
+        var versionChooser = new VersionChooser(sourceProvider, settings, sourceCacheContext);
+        (PackageToUpdate? packageToUpdate, List<NuGetFramework>? packageTfms) = await GetPackageToUpdateAsync(args.Packages, dgSpec.Projects.Single(), versionChooser, settings, logger, cancellationToken);
+
+        if (packageToUpdate is null)
         {
-            if (packages is null || packages.Count == 0)
-            {
-                logger.LogMinimal(Strings.Unsupported_UpgradeAllPackages, ConsoleColor.Red);
-                return (null, null);
-            }
+            // GetPackagesToUpdateAsync is responsible for outputting an error message.
+            return ExitCodes.Error;
+        }
 
-            if (packages.Count > 1)
-            {
-                logger.LogMinimal(Strings.Unsupported_MoreThanOnePackage, ConsoleColor.Red);
-                return (null, null);
-            }
+        // 3. Preview restore to validate changes
+        logger.LogDebug(Strings.PackageUpdate_PreviewRestore);
+        var updatedDgSpec = GetUpdatedDependencyGraphSpec(dgSpec, packageToUpdate);
+        var restorePreviewResult = await packageUpdateIO.PreviewUpdatePackageReferenceAsync(updatedDgSpec, sourceCacheContext, logger, cancellationToken);
 
-            var sourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
-            if (sourceMapping.IsEnabled)
-            {
-                logger.LogMinimal(Strings.Unsupported_PackageSourceMapping, ConsoleColor.Red);
-                return (null, null);
-            }
+        if (!restorePreviewResult.Success)
+        {
+            logger.LogMinimal(Strings.PackageUpdate_PreviewRestoreFailed, ConsoleColor.Red);
+            return ExitCodes.Error;
+        }
 
-            var packageId = packages.Single();
+        // 4. Update MSBuild files
+        var projectName = Path.GetFileNameWithoutExtension(dgSpec.Projects[0].FilePath);
+        logger.LogInformation($"  {projectName}:");
+        logger.LogInformation($"    " + Format.PackageUpdate_UpdatedMessage(packageToUpdate.Id, packageToUpdate.CurrentVersion.ToShortString(), packageToUpdate.NewVersion.ToShortString()));
+        logger.LogInformation("");
 
-            VersionRange? existingVersion = null;
-            List<NuGetFramework>? frameworks = null;
-            foreach (var tfm in project.TargetFrameworks)
+        var updatedPackageSpec = updatedDgSpec.Projects[0];
+        packageUpdateIO.UpdatePackageReference(updatedPackageSpec, restorePreviewResult, packageTfms!, packageToUpdate);
+
+        // 5. Commit restore if everything successful
+        await packageUpdateIO.CommitAsync(restorePreviewResult, CancellationToken.None);
+
+        int updatedCount = 1;
+        int scannedCount = 1;
+        logger.LogMinimal(Format.PackageUpdate_FinalSummary(updatedCount, scannedCount), ConsoleColor.Green);
+
+        return ExitCodes.Success;
+    }
+
+    internal static async Task<(PackageToUpdate?, List<NuGetFramework>?)> GetPackageToUpdateAsync(
+        IReadOnlyList<Package> packages,
+        PackageSpec project,
+        IVersionChooser versionChooser,
+        ISettings settings,
+        ILoggerWithColor logger,
+        CancellationToken cancellationToken)
+    {
+        if (packages is null || packages.Count == 0)
+        {
+            logger.LogMinimal(Strings.Unsupported_UpgradeAllPackages, ConsoleColor.Red);
+            return (null, null);
+        }
+
+        if (packages.Count > 1)
+        {
+            logger.LogMinimal(Strings.Unsupported_MoreThanOnePackage, ConsoleColor.Red);
+            return (null, null);
+        }
+
+        var sourceMapping = PackageSourceMapping.GetPackageSourceMapping(settings);
+        if (sourceMapping.IsEnabled)
+        {
+            logger.LogMinimal(Strings.Unsupported_PackageSourceMapping, ConsoleColor.Red);
+            return (null, null);
+        }
+
+        var package = packages.Single();
+
+        VersionRange? existingVersion = null;
+        List<NuGetFramework>? frameworks = null;
+        foreach (var tfm in project.TargetFrameworks)
+        {
+            foreach (var dependency in tfm.Dependencies)
             {
-                foreach (var dependency in tfm.Dependencies)
+                if (string.Equals(package.Id, dependency.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (string.Equals(packageId, dependency.Name, StringComparison.OrdinalIgnoreCase))
+                    if (frameworks is null)
                     {
-                        if (frameworks is null)
-                        {
-                            frameworks = new List<NuGetFramework>();
-                        }
-                        frameworks.Add(tfm.FrameworkName);
+                        frameworks = new List<NuGetFramework>();
+                    }
+                    frameworks.Add(tfm.FrameworkName);
 
-                        VersionRange tfmVersionRange;
-                        if (project.RestoreMetadata.CentralPackageFloatingVersionsEnabled)
+                    VersionRange tfmVersionRange;
+                    if (project.RestoreMetadata.CentralPackageFloatingVersionsEnabled)
+                    {
+                        if (!tfm.CentralPackageVersions.TryGetValue(
+                            package.Id,
+                            out CentralPackageVersion? centralVersion))
                         {
-                            if (!tfm.CentralPackageVersions.TryGetValue(
-                                packageId,
-                                out CentralPackageVersion? centralVersion))
-                            {
-                                logger.LogMinimal(
-                                    Messages.Error_CouldNotFindPackageVersionForCpmPackage(packageId),
-                                    ConsoleColor.Red);
-                                return (null, null);
-                            }
-                            tfmVersionRange = centralVersion.VersionRange;
+                            logger.LogMinimal(
+                                Messages.Error_CouldNotFindPackageVersionForCpmPackage(package.Id),
+                                ConsoleColor.Red);
+                            return (null, null);
                         }
-                        else
-                        {
-                            tfmVersionRange = dependency.LibraryRange.VersionRange ?? VersionRange.All;
-                        }
+                        tfmVersionRange = centralVersion.VersionRange;
+                    }
+                    else
+                    {
+                        tfmVersionRange = dependency.LibraryRange.VersionRange ?? VersionRange.All;
+                    }
 
-                        if (existingVersion == null)
+                    if (existingVersion == null)
+                    {
+                        existingVersion = tfmVersionRange;
+                    }
+                    else
+                    {
+                        if (tfmVersionRange != existingVersion)
                         {
-                            existingVersion = tfmVersionRange;
-                        }
-                        else
-                        {
-                            if (tfmVersionRange != existingVersion)
-                            {
-                                logger.LogMinimal(
-                                    Messages.Unsupported_UpdatePackageWithDifferentPerTfmVersions(packageId, project.FilePath),
-                                    ConsoleColor.Red);
-                                return (null, null);
-                            }
+                            logger.LogMinimal(
+                                Messages.Unsupported_UpdatePackageWithDifferentPerTfmVersions(package.Id, project.FilePath),
+                                ConsoleColor.Red);
+                            return (null, null);
                         }
                     }
                 }
             }
+        }
 
-            if (existingVersion is null)
-            {
-                logger.LogMinimal(Messages.Error_PackageNotReferenced(packageId, project.FilePath), ConsoleColor.Red);
-                return (null, null);
-            }
+        if (existingVersion is null)
+        {
+            logger.LogMinimal(Messages.Error_PackageNotReferenced(package.Id, project.FilePath), ConsoleColor.Red);
+            return (null, null);
+        }
 
-            NuGetVersion? highestVersion = await VersionChooser.GetLatestVersionAsync(
-                packageId,
-                sourceProvider,
-                settings,
-                sourceCacheContext,
+        VersionRange newVersion;
+        if (package.VersionRange is null)
+        {
+            // NuGet.Protocol outputs request and response info at normal verbosity, which update doesn't want.
+            var protocolLogger = new RemappedLevelLogger(
                 logger,
+                new RemappedLevelLogger.Mapping
+                {
+                    Information = LogLevel.Verbose,
+                });
+
+            NuGetVersion? highestVersion = await versionChooser.GetLatestVersionAsync(
+                package.Id,
+                protocolLogger,
                 cancellationToken);
 
             if (highestVersion is null)
             {
-                logger.LogMinimal(Messages.Error_NoVersionsAvailable(packageId), ConsoleColor.Red);
+                logger.LogMinimal(Messages.Error_NoVersionsAvailable(package.Id), ConsoleColor.Red);
                 return (null, null);
             }
 
             if (existingVersion.MinVersion == highestVersion)
             {
-                logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(packageId, highestVersion.OriginalVersion, project.FilePath), ConsoleColor.Red);
+                logger.LogMinimal(Messages.Warning_AlreadyHighestVersion(package.Id, highestVersion.OriginalVersion, project.FilePath), ConsoleColor.Red);
                 return (null, null);
             }
 
-            PackageDependency packageToUpdate = new(packageId, new VersionRange(highestVersion));
+            newVersion = new VersionRange(highestVersion);
+        }
+        else
+        {
+            newVersion = package.VersionRange;
+            if (newVersion == existingVersion)
+            {
+                logger.LogMinimal(Messages.Warning_AlreadyUsingSameVersion(package.Id, newVersion.OriginalString), ConsoleColor.Red);
+                return (null, null);
+            }
+        }
 
-            return (packageToUpdate, frameworks);
+        var packageToUpdate = new PackageToUpdate
+        {
+            Id = package.Id,
+            CurrentVersion = existingVersion,
+            NewVersion = newVersion
+        };
+
+        return (packageToUpdate, frameworks);
+    }
+
+    private static DependencyGraphSpec GetUpdatedDependencyGraphSpec(DependencyGraphSpec currentDgSpec, PackageToUpdate packageToUpdate)
+    {
+        var updatedPackageSpec = currentDgSpec.Projects[0].Clone();
+        PackageDependency packageDependency = new PackageDependency(packageToUpdate.Id, packageToUpdate.NewVersion);
+        PackageSpecOperations.AddOrUpdateDependency(updatedPackageSpec, packageDependency);
+
+        var updatedDgSpec = currentDgSpec.WithReplacedSpec(updatedPackageSpec).WithoutRestores();
+        updatedDgSpec.AddRestore(updatedPackageSpec.RestoreMetadata.ProjectUniqueName);
+
+        return updatedDgSpec;
+    }
+
+    internal record PackageToUpdate
+    {
+        public required string Id { get; init; }
+        public required VersionRange CurrentVersion { get; init; }
+        public required VersionRange NewVersion { get; init; }
+    }
+
+    private static class Format
+    {
+        internal static string PackageUpdate_UpdatingOutdatedPackages(string projectPath)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.PackageUpdate_UpdatingOutdatedPackages, projectPath);
+        }
+
+        internal static string PackageUpdate_UpdatedMessage(string packageId, string currentVersion, string newVersion)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.PackageUpdate_UpdatedMessage, packageId, currentVersion, newVersion);
+        }
+
+        internal static string PackageUpdate_FinalSummary(int updatedCount, int scannedCount)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.PackageUpdate_FinalSummary, updatedCount, scannedCount);
         }
     }
 }

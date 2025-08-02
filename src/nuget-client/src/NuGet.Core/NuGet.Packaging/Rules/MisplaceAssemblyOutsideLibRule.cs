@@ -35,7 +35,6 @@ namespace NuGet.Packaging.Rules
             foreach (var packageFile in getFiles())
             {
                 var file = PathUtility.GetPathWithDirectorySeparator(packageFile);
-                var directory = Path.GetDirectoryName(file);
 
                 if (!ValidFolders.Any(folder => file.StartsWith(folder, StringComparison.OrdinalIgnoreCase)))
                 {

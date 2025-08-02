@@ -1,9 +1,6 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
-using System;
-
 namespace NuGet.ProjectManagement
 {
     /// <summary>
@@ -16,12 +13,6 @@ namespace NuGet.ProjectManagement
     /// </summary>
     public interface INuGetProjectServices
     {
-        /// <summary>
-        /// Service to access project's build properties.
-        /// </summary>
-        [Obsolete]
-        IProjectBuildProperties BuildProperties { get; }
-
         /// <summary>
         /// Service to query project system capabilities.
         /// </summary>
