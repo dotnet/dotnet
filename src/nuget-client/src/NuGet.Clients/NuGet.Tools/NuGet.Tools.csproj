@@ -13,16 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="GeneralSettings.pkgdef" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="GeneralSettings.pkgdef">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NuGet.Console\NuGet.Console.csproj" />
     <!-- NuGet.PackageManagement.PowerShellCmdlets is referenced only to enable generation of .pkgdef entries via ProvideCodeBaseAttribute. -->
     <ProjectReference Include="..\NuGet.PackageManagement.PowerShellCmdlets\NuGet.PackageManagement.PowerShellCmdlets.csproj" />

@@ -31,5 +31,20 @@ namespace NuGet.CommandLine.XPlat
         {
             return string.Format(CultureInfo.CurrentCulture, Strings.Warning_AlreadyHighestVersion, packageId, version, projectPath);
         }
+
+        internal static string Warning_AlreadyUsingSameVersion(string packageId, string version)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Warning_AlreadyUsingSameVersion, packageId, version);
+        }
+
+        internal static string Error_MissingVersion(string packageId)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Error_MissingVersion, packageId);
+        }
+
+        internal static string Error_InvalidVersionRange(string input)
+        {
+            return string.Format(CultureInfo.CurrentCulture, Strings.Error_InvalidVersionRange, input);
+        }
     }
 }

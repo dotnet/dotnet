@@ -106,36 +106,5 @@ namespace NuGet.Commands
                 packageSource.AllowInsecureConnections,
                 logger);
         }
-
-        [Obsolete("Use Run method which takes multiple package paths.")]
-        public static Task Run(
-            ISettings settings,
-            IPackageSourceProvider sourceProvider,
-            string packagePath,
-            string source,
-            string apiKey,
-            string symbolSource,
-            string symbolApiKey,
-            int timeoutSeconds,
-            bool disableBuffering,
-            bool noSymbols,
-            bool noServiceEndpoint,
-            bool skipDuplicate,
-            ILogger logger)
-        {
-            return Run(settings: settings,
-                sourceProvider: sourceProvider,
-                packagePaths: new[] { packagePath },
-                source: source,
-                apiKey: apiKey,
-                symbolSource: symbolSource,
-                symbolApiKey: symbolApiKey,
-                timeoutSeconds: timeoutSeconds,
-                disableBuffering: disableBuffering,
-                noSymbols: noSymbols,
-                noServiceEndpoint: noServiceEndpoint,
-                skipDuplicate: skipDuplicate,
-                logger: logger);
-        }
     }
 }

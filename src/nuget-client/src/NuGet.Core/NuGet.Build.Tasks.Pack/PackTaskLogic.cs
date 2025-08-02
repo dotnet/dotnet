@@ -940,12 +940,24 @@ namespace NuGet.Build.Tasks.Pack
                     }
                 }
 
+                var dependencies = dependenciesByFramework[framework.FrameworkName];
+                dependencies.RemoveWhere(dependency => IsDependencyPruned(dependency, framework.PackagesToPrune));
                 frameworks[i] = framework;
             }
 
             if (packageSpecificNoWarnProperties.Keys.Count > 0)
             {
                 _packageSpecificWarningProperties = PackageSpecificWarningProperties.CreatePackageSpecificWarningProperties(packageSpecificNoWarnProperties);
+            }
+
+            static bool IsDependencyPruned(LibraryDependency dependency, IReadOnlyDictionary<string, PrunePackageReference> packagesToPrune)
+            {
+                if (packagesToPrune?.TryGetValue(dependency.Name, out PrunePackageReference packageToPrune) == true
+                    && dependency.LibraryRange.VersionRange.Satisfies(packageToPrune.VersionRange.MaxVersion))
+                {
+                    return true;
+                }
+                return false;
             }
         }
 

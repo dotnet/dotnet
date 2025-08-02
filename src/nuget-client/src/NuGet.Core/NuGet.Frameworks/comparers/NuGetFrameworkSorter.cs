@@ -13,12 +13,9 @@ namespace NuGet.Frameworks
     /// </summary>
     public class NuGetFrameworkSorter : IComparer<NuGetFramework>
     {
-#pragma warning disable CS0618 // Type or member is obsolete
         public static NuGetFrameworkSorter Instance { get; } = new();
-#pragma warning restore CS0618 // Type or member is obsolete
 
-        [Obsolete("Use Instance singleton instead")]
-        public NuGetFrameworkSorter()
+        private NuGetFrameworkSorter()
         {
         }
 
