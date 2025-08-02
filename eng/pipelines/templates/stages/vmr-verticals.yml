@@ -30,6 +30,11 @@ parameters:
   type: boolean
   default: true
 
+# True when the build is a build run from the production pipeline
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
 # List of verifications to run during PRs.
 - name: verifications
   type: object
@@ -90,6 +95,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
         desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
@@ -126,6 +132,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
         desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     jobs:
@@ -136,6 +143,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -148,6 +156,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -159,6 +168,7 @@ stages:
           buildName: Android_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.androidCrossContainerName }}
@@ -172,6 +182,7 @@ stages:
           buildName: Browser_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.browserCrossContainerName }}
@@ -186,6 +197,7 @@ stages:
           buildName: iOSSimulator_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: iossimulator
           targetArchitecture: arm64
@@ -198,6 +210,7 @@ stages:
           buildName: Android_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.androidCrossContainerName }}
@@ -210,6 +223,7 @@ stages:
           buildName: Android_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.androidCrossContainerName }}
@@ -222,6 +236,7 @@ stages:
           buildName: Android_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.androidCrossContainerName }}
@@ -234,6 +249,7 @@ stages:
           buildName: Browser_Multithreaded_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.browserCrossContainerName }}
@@ -248,6 +264,7 @@ stages:
           buildName: LinuxBionic_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.linuxBionicCrossContainerName }}
@@ -260,6 +277,7 @@ stages:
           buildName: LinuxBionic_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.linuxBionicCrossContainerName }}
@@ -272,6 +290,7 @@ stages:
           buildName: LinuxBionic_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.linuxBionicCrossContainerName }}
@@ -284,6 +303,7 @@ stages:
           buildName: iOS_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: ios
           targetArchitecture: arm64
@@ -293,6 +313,7 @@ stages:
           buildName: iOSSimulator_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: iossimulator
           targetArchitecture: x64
@@ -302,6 +323,7 @@ stages:
           buildName: MacCatalyst_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: maccatalyst
           targetArchitecture: arm64
@@ -311,6 +333,7 @@ stages:
           buildName: MacCatalyst_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: maccatalyst
           targetArchitecture: x64
@@ -320,6 +343,7 @@ stages:
           buildName: tvOS_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: tvos
           targetArchitecture: arm64
@@ -329,6 +353,7 @@ stages:
           buildName: tvOSSimulator_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: tvossimulator
           targetArchitecture: arm64
@@ -338,6 +363,7 @@ stages:
           buildName: tvOSSimulator_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: tvossimulator
           targetArchitecture: x64
@@ -347,6 +373,7 @@ stages:
           buildName: Wasi_Shortstack
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.wasiCrossContainerName }}
@@ -360,6 +387,7 @@ stages:
           buildName: OSX
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: x64
@@ -369,6 +397,7 @@ stages:
           buildName: OSX_Shortstack_Mono_LLVMAOT
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           useMonoRuntime: true
           targetOS: osx
@@ -380,6 +409,7 @@ stages:
           buildName: AzureLinux_x64_Cross
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxX64CrossContainerName }}
@@ -407,6 +437,7 @@ stages:
           buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.azurelinuxX64CrossContainerName }}
@@ -422,6 +453,7 @@ stages:
           buildName: AzureLinux_x64_Cross
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxArmCrossContainerName }}
@@ -435,6 +467,7 @@ stages:
           buildName: AzureLinux_x64_Cross
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxArm64CrossContainerName }}
@@ -462,6 +495,7 @@ stages:
           buildName: AzureLinux_x64_Cross_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxX64MuslCrossContainerName }}
@@ -476,6 +510,7 @@ stages:
           buildName: AzureLinux_x64_Cross_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxArmMuslCrossContainerName }}
@@ -490,6 +525,7 @@ stages:
           buildName: AzureLinux_x64_Cross_Alpine
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux }}
           container:
             name: ${{ variables.azurelinuxArm64MuslCrossContainerName }}
@@ -504,6 +540,7 @@ stages:
           buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Linux_Shortstack }}
           container:
             name: ${{ variables.azurelinuxArm64CrossContainerName }}
@@ -519,6 +556,7 @@ stages:
           buildName: OSX
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Mac }}
           targetOS: osx
           targetArchitecture: arm64
@@ -528,6 +566,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -573,6 +612,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           signDac: ${{ variables.signDacEnabled }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
@@ -592,6 +632,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -607,6 +648,7 @@ stages:
           buildName: Windows_Workloads
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -640,6 +682,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x64
@@ -655,6 +698,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: x86
@@ -670,6 +714,7 @@ stages:
           buildName: Windows
           isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
           sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
           pool: ${{ parameters.pool_Windows }}
           targetOS: windows
           targetArchitecture: arm64
@@ -689,6 +734,7 @@ stages:
     - template: ../variables/vmr-build.yml
       parameters:
         desiredSigning: ${{ parameters.desiredSigning }}
+        isOfficialBuild: ${{ parameters.isOfficialBuild }}
         desiredIBC: ${{ parameters.desiredIBC }}
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         isScoutingJob: true
@@ -699,6 +745,7 @@ stages:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
+        signType: ${{ variables.signType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -710,6 +757,7 @@ stages:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
+        signType: ${{ variables.signType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -720,6 +768,7 @@ stages:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
+        signType: ${{ variables.signType }}
         signDac: ${{ variables.signDacEnabled }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
@@ -734,6 +783,7 @@ stages:
         buildName: Windows
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
         sign: ${{ variables.signEnabled }}
+        signType: ${{ variables.signType }}
         pool: ${{ parameters.pool_Windows }}
         targetOS: windows
         targetArchitecture: x64

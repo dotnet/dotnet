@@ -30,6 +30,10 @@ parameters:
   type: boolean
   default: true
 
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
 # List of verifications to run during PRs.
 - name: verifications
   type: object
@@ -90,13 +94,14 @@ stages:
 - template: vmr-verticals.yml
   parameters:
     desiredSigning: ${{ parameters.desiredSigning }}
+    isOfficialBuild: ${{ parameters.isOfficialBuild }}
     desiredIbc: ${{ parameters.desiredIbc }}
     desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
 
-- ${{ if and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+- ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets
     displayName: Publish Assets
     dependsOn:
@@ -118,6 +123,7 @@ stages:
   - template: vmr-validation.yml
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
 
 - ${{ if notin(parameters.scope, 'scout') }}:
   - template: source-build-stages.yml

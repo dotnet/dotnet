@@ -48,6 +48,11 @@ parameters:
   type: boolean
   default: false
 
+- name: signType
+  displayName: Signing type
+  type: string
+  default: ''
+
 - name: signDac
   displayName: True when the diagnostic files should be signed
   type: boolean
@@ -275,7 +280,7 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if eq(parameters.signType, 'DryRun') }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -283,9 +288,9 @@ jobs:
         value: /p:ForceDryRunSigning=true
     - ${{ else }}:
       - name: _SignType
-        value: real
+        value: ${{ parameters.signType }}
       - name: signProperties
-        value: /p:DotNetSignType=real /p:TeamName=$(_TeamName)
+        value: /p:DotNetSignType=${{ parameters.signType }} /p:TeamName=$(_TeamName)
   - ${{ else }}:
     - name: signArguments
       value: ''
@@ -425,11 +430,13 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.buildSourceOnly, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
