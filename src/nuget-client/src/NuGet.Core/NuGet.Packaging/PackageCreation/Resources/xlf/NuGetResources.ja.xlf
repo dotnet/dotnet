@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../NuGetResources.resx">
+    <body>
+      <trans-unit id="CannotCreateEmptyPackage">
+        <source>Cannot create a package that has no dependencies nor content.</source>
+        <target state="translated">依存関係とコンテンツのないパッケージは作成できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyHasInvalidVersion">
+        <source>Dependency '{0}' has an invalid version.</source>
+        <target state="translated">依存関係 '{0}' のバージョンが無効です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependenciesDefined">
+        <source>'{0}' already has a dependency defined for '{1}'.</source>
+        <target state="translated">'{0}' にはすでに '{1}' に対して定義された依存関係があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundDuplicateFile">
+        <source>Attempted to pack multiple files into the same location(s). The following destinations were used multiple times: {0}</source>
+        <target state="translated">複数のファイルを同じ場所にパックしようとしました。次の宛先が複数回使用されました: {0}</target>
+        <note>0 - One or more duplicate files</note>
+      </trans-unit>
+      <trans-unit id="IconCannotOpenFile">
+        <source>Cannot open the icon file '{0}': {1}.</source>
+        <target state="translated">アイコン ファイル '{0}' を開くことができません: {1}。</target>
+        <note>0 - Path to the icon file, 1 - Error message for not opening the icon</note>
+      </trans-unit>
+      <trans-unit id="IconErrorEmpty">
+        <source>The icon file is empty.</source>
+        <target state="translated">アイコン ファイルが空です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconInvalidExtension">
+        <source>The 'icon' element '{0}' has an invalid file extension. Valid options are .png, .jpg or .jpeg.</source>
+        <target state="translated">'icon' 要素 '{0}' に無効なファイル拡張子が含まれています。有効なオプションは .png、.jpg、.jpeg です。</target>
+        <note>0 - Icon entry in the nuspec</note>
+      </trans-unit>
+      <trans-unit id="IconMaxFileSizeExceeded">
+        <source>The icon file size must not exceed 1 megabyte.</source>
+        <target state="translated">アイコン ファイルのサイズは 1 MB 以下でなければなりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconMissingRequiredValue">
+        <source>The element 'icon' cannot be empty.</source>
+        <target state="translated">'icon' 要素を空にすることはできません。</target>
+        <note>Please, don't localize icon</note>
+      </trans-unit>
+      <trans-unit id="IconNoFileElement">
+        <source>The icon file '{0}' does not exist in the package.</source>
+        <target state="translated">アイコン ファイル '{0}' がパッケージに存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IconNoFileElementWithHint">
+        <source>The icon file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">アイコン ファイル '{0}' がパッケージに存在しません。('{1}' を意図していましたか?)</target>
+        <note>0 - the icon file, 1 - hint to guessed icon file</note>
+      </trans-unit>
+      <trans-unit id="IncompatibleSchema">
+        <source>The schema version of '{0}' is incompatible with version {1} of NuGet. Please upgrade NuGet to the latest version from http://go.microsoft.com/fwlink/?LinkId=213942.</source>
+        <target state="translated">スキーマのバージョン '{0}' は NuGet のバージョン {1} と互換性がありません。http://go.microsoft.com/fwlink/?LinkId=213942 から NuGet の最新バージョンを取得してアップグレードしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageId">
+        <source>The package ID '{0}' contains invalid characters. Examples of valid package IDs include 'MyPackage' and 'MyPackage.Sample'.</source>
+        <target state="translated">パッケージ ID '{0}' に無効な文字が含まれています。有効なパッケージ ID の例には、'MyPackage'、'MyPackage.Sample' などがあります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_DependenciesHasMixedElements">
+        <source>&lt;dependencies&gt; element must not contain both &lt;group&gt; and &lt;dependency&gt; child elements.</source>
+        <target state="translated">&lt;dependencies&gt; 要素には &lt;group&gt; および &lt;dependency&gt; 子要素のいずれも含むことはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ExcludeContainsInvalidCharacters">
+        <source>Exclude path '{0}' contains invalid characters.</source>
+        <target state="translated">除外パス '{0}' に無効な文字が含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_IdMaxLengthExceeded">
+        <source>Id must not exceed 100 characters.</source>
+        <target state="translated">ID は 100 文字以内でなければなりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidMinClientVersion">
+        <source>The 'minClientVersion' attribute in the package manifest has invalid value. It must be a valid version string.</source>
+        <target state="translated">パッケージ マニフェストの 'minClientVersion' 属性の値が無効です。有効なバージョン文字列でなければなりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReference">
+        <source>Invalid assembly reference '{0}'. Ensure that a file named '{0}' exists in the lib directory.</source>
+        <target state="translated">アセンブリ参照 '{0}' が無効です。lib ディレクトリの下に '{0}' というファイルが存在することを確認してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_InvalidReferenceFile">
+        <source>Assembly reference '{0}' contains invalid characters.</source>
+        <target state="translated">アセンブリの参照 '{0}' に無効な文字が含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileExtensionIsInvalid">
+        <source>The license file '{0}' has an invalid extension. Valid options are .txt, .md or none.</source>
+        <target state="translated">ライセンス ファイル '{0}' の拡張子が無効です。有効なオプションは、.txt、.md、なしのいずれかです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkg">
+        <source>The license file '{0}' does not exist in the package.</source>
+        <target state="translated">ライセンス ファイル '{0}' がパッケージに存在しません。</target>
+        <note>0 - the license file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseFileIsNotInNupkgWithHint">
+        <source>The license file '{0}' does not exist in the package. (Did you mean '{1}'?)</source>
+        <target state="translated">ライセンス ファイル '{0}' がパッケージに存在しません。('{1}' を意図していましたか?)</target>
+        <note>0 - the license file, 1 - hint to guessed licensed file</note>
+      </trans-unit>
+      <trans-unit id="Manifest_LicenseUrlCannotBeUsedWithLicenseMetadata">
+        <source>The licenseUrl and license elements cannot be used together.</source>
+        <target state="translated">licenseUrl 要素と license 要素を併用することはできません。</target>
+        <note>Please don't localize licenseUrl and license</note>
+      </trans-unit>
+      <trans-unit id="Manifest_PropertyValueReadFailure">
+        <source>An error occured while trying to parse the value '{0}' of property '{1}' in the manifest file.</source>
+        <target state="translated">マニフェスト ファイル内のプロパティ '{1}' の値 '{0}' を解析しようとしてエラーが発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesHasMixedElements">
+        <source>&lt;references&gt; element must not contain both &lt;group&gt; and &lt;reference&gt; child elements.</source>
+        <target state="translated">&lt;references&gt; 要素には &lt;group&gt; および &lt;reference&gt; 子要素のいずれも含むことはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_ReferencesIsEmpty">
+        <source>The element package\metadata\references\group must contain at least one &lt;reference&gt; child element.</source>
+        <target state="translated">要素 package\metadata\references\group には、少なくとも 1 つの &lt;reference&gt; 子要素が含まれる必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresEmit">
+        <source>EmitRequireLicenseAcceptance must not be set to false if RequireLicenseAcceptance is set to true.</source>
+        <target state="translated">RequireLicenseAcceptance が true に設定されている場合、EmitRequireLicenseAcceptance を false に設定することはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequireLicenseAcceptanceRequiresLicenseUrl">
+        <source>Enabling license acceptance requires a license or a licenseUrl to be specified. The licenseUrl will be deprecated, consider using the license metadata.</source>
+        <target state="translated">ライセンスの同意を有効にするには、license と licenseUrl のいずれかを指定する必要があります。licenseUrl は非推奨になる予定のため、license メタデータの使用をご検討ください。</target>
+        <note>Please don't localize license and licenseUrl in 'requires a license or a licenseUrl' part.</note>
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredElementMissing">
+        <source>The required element '{0}' is missing from the manifest.</source>
+        <target state="translated">必須の要素 '{0}' がマニフェストにありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_RequiredMetadataMissing">
+        <source>{0} is required.</source>
+        <target state="translated">{0} が必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_SourceContainsInvalidCharacters">
+        <source>Source path '{0}' contains invalid characters.</source>
+        <target state="translated">ソース パス '{0}' に無効な文字が含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_TargetContainsInvalidCharacters">
+        <source>Target path '{0}' contains invalid characters.</source>
+        <target state="translated">ターゲット パス '{0}' に無効な文字が含まれています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Manifest_UriCannotBeEmpty">
+        <source>{0} cannot be empty.</source>
+        <target state="translated">{0} を空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAuthoring_FileNotFound">
+        <source>File not found: '{0}'.</source>
+        <target state="translated">ファイルが見つかりません: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeCannotOpenFile">
+        <source>Cannot open the readme file '{0}': {1}.</source>
+        <target state="translated">Readme ファイル '{0}' を開くことができません: {1}。</target>
+        <note>0 - Path to the readme file, 1 - Error message for not opening the readme</note>
+      </trans-unit>
+      <trans-unit id="ReadmeErrorEmpty">
+        <source>The readme file '{0}' is empty.</source>
+        <target state="translated">Readme ファイル '{0}' が空です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeFileExtensionIsInvalid">
+        <source>The readme file '{0}' has an invalid extension. It must end in .md.</source>
+        <target state="translated">Readme ファイル '{0}' の拡張子が無効です。これは .md で終了する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeMissingRequiredValue">
+        <source>The element 'readme' cannot be empty.</source>
+        <target state="translated">'readme' 要素を空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReadmeNoFileElement">
+        <source>The readme file '{0}' does not exist in the package.</source>
+        <target state="translated">Readme ファイル '{0}' がパッケージに存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownSchemaVersion">
+        <source>Unknown schema version '{0}'.</source>
+        <target state="translated">不明なスキーマのバージョン '{0}' です。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

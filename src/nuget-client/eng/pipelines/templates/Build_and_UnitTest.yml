@@ -7,6 +7,9 @@ parameters:
   displayName: Run unit tests
   type: boolean
   default: true
+- name: SigningType
+  displayName: Type of signing to use
+  type: string
 
 steps:
 - task: PowerShell@1
@@ -106,32 +109,11 @@ steps:
   inputs:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:SkipILMergeOfNuGetExe=true /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
+    msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
 
 - task: CodeQL3000Finalize@0
   displayName: Finalize CodeQL
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), eq(variables['Codeql.Enabled'], 'true'))"
-
-- task: MSBuild@1
-  displayName: "Localize Assemblies"
-  inputs:
-    solution: "build\\loc.proj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /property:LocType=${{parameters.NuGetLocalizationType}} /binarylogger:$(Build.StagingDirectory)\\binlog\\03.Localize.binlog"
-
-- task: MSBuild@1
-  displayName: "Build NuGet.exe Localized"
-  inputs:
-    solution: "src\\NuGet.Clients\\NuGet.CommandLine\\NuGet.CommandLine.csproj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /t:Build /p:SkipILMergeOfNuGetExe=true /bl:$(Build.StagingDirectory)\\binlog\\04.BuildNuGetExe.binlog"
-
-- task: MSBuild@1
-  displayName: "ILMerge NuGet.exe"
-  inputs:
-    solution: "src\\NuGet.Clients\\NuGet.CommandLine\\NuGet.CommandLine.csproj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore:false /target:ILMergeNuGetExe /binarylogger:$(Build.StagingDirectory)\\binlog\\05.ILMergeNuGetExe.binlog"
 
 - task: MSBuild@1
   displayName: "Publish NuGet.exe (ILMerged) into NuGet.CommandLine.Test (Mac tests use this)"
@@ -171,20 +153,6 @@ steps:
       searchFolder: "$(Build.Repository.LocalPath)\\build\\TestResults"
       publishRunAttachments: "false"
     condition: "and(succeededOrFailed(),eq(variables['BuildRTM'], 'true'))"
-
-- task: MSBuild@1
-  displayName: "Sign Assemblies"
-  inputs:
-    solution: "build\\sign.proj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignAssemblies.binlog"
-
-- task: MSBuild@1
-  displayName: "Copy signed assemblies to localize artifacts folder"
-  inputs:
-    solution: "build\\loc.proj"
-    configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /t:CopyBinariesToLocalizationArtifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\10.LocalizeFolderAssemblies.binlog"
 
 - task: MSBuild@1
   displayName: "Pack Nupkgs"
@@ -230,11 +198,11 @@ steps:
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
 
 - task: MSBuild@1
-  displayName: "Sign Nupkgs and VSIX"
+  displayName: "Sign"
   inputs:
     solution: "build\\sign.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /property:SignPackages=true /binarylogger:$(Build.StagingDirectory)\\binlog\\15.SignPackages.binlog"
+    msbuildArguments: "/restore /p:DryRunSigning=false /p:DotNetSignType=$(SigningType) /p:SigningLogDirectory=$(Build.StagingDirectory)\\binlog /binarylogger:$(Build.StagingDirectory)\\binlog\\15.Sign.binlog"
 
 - task: NuGetToolInstaller@1
   displayName: Use NuGet 6.x

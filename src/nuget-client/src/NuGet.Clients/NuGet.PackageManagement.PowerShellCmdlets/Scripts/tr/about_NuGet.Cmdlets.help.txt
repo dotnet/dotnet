@@ -1,0 +1,48 @@
+﻿KONU
+    about_NuGet
+    
+KISA AÇIKLAMA
+    NuGet Paket Yöneticisi komutları hakkında bilgi verir.
+           
+UZUN AÇIKLAMA
+    Bu konuda NuGet Paket Yöneticisi komutları açıklanmaktadır. NuGet, .NET projelerine kitaplıklar ve araçlar eklemeye yönelik tümleşik bir paket 
+    yönetim aracıdır.
+
+                 
+    Aşağıdaki NuGet cmdlets dahildir.
+
+        Cmdlet					Açıklama
+        ------------------		----------------------------------------------
+        Get-Package				Yüklü paketler kümesini alır.  –ListAvailable ile 
+                                Paket kaynağında mevcut olan paketler kümesini alır.
+
+        Install-Package			Bir paketi ve bağımlılıklarını projeye yükler.
+
+        Uninstall-Package		Bir paketi kaldırır. Bu pakete bağımlı başka paketler varsa, 
+                                –Force seçeneği belirtilmedikçe komut başarısız olur.
+
+        Update-Package			Bir paketi ve bağımlılıklarını daha yeni bir sürüme güncelleştirir.
+
+        Add-BindingRedirect		Bir projenin çıkış yolundaki tüm derlemeleri inceler
+                                ve gerekirse uygulama (veya web)
+                                yapılandırma dosyasına bağlama yeniden yönlendirmeleri ekler.
+                            
+        Get-Project				Belirtilen proje için DTE’ye (Geliştirme Araçları Ortamı) 
+                                bir referans döndürür. Hiçbiri belirtilmemişse, Paket Yöneticisi Konsolu’nda 
+                                seçilen varsayılan projeyi döndürür.
+
+        Open-PackagePage        Belirtilen paketin ProjectUrl, LicenseUrl veya 
+                                ReportAbuseUrl öğesine işaret eden tarayıcıyı açar.
+
+        Register-TabExpansion	Bir komutun parametreleri için sekme genişletmesi kaydeder.
+
+AYRICA BKZ.
+    Çevrimiçi belgeler: http://go.microsoft.com/fwlink/?LinkID=206619
+    Get-Package
+    Install-Package
+    Uninstall-Package
+    Update-Package
+    Add-BindingRedirect
+    Get-Project
+    Open-PackagePage
+    Register-TabExpansion

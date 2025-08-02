@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../VsResources.resx">
+    <body>
+      <trans-unit id="CouldNotGetShortFrameworkName">
+        <source>The framework name '{0}' cannot be converted to a short framework name.</source>
+        <target state="translated">'{0}' çerçeve adı, bir kısa çerçeve adına dönüştürülemiyor.</target>
+        <note>Arguments in order:
+The string representation of the user's input framework name.</note>
+      </trans-unit>
+      <trans-unit id="DiagnosticBrowseObjectClassName">
+        <source>Diagnostic</source>
+        <target state="translated">Tanılama</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticCodeDescription">
+        <source>The diagnostic's identifying code.</source>
+        <target state="translated">Tanılamanın tanımlayıcı kodu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticCodeDisplayName">
+        <source>Code</source>
+        <target state="translated">Kod</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLevelDescription">
+        <source>The diagnostic's level.</source>
+        <target state="translated">Tanılamanın düzeyi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLevelDisplayName">
+        <source>Level</source>
+        <target state="translated">Düzey</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLibraryNameDescription">
+        <source>The name of the package or project this diagnostic applies to.</source>
+        <target state="translated">Bu tanılamanın geçerli olduğu paketin veya projenin adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticLibraryNameDisplayName">
+        <source>Library</source>
+        <target state="translated">Kitaplık</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticMessageDescription">
+        <source>The diagnostic's descriptive message.</source>
+        <target state="translated">Tanılamanın açıklayıcı iletisi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticMessageDisplayName">
+        <source>Message</source>
+        <target state="translated">İleti</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticWarningLevelDescription">
+        <source>The diagnostic's warning level. Only applies to warnings.</source>
+        <target state="translated">Tanılamanın uyarı düzeyi. Yalnızca uyarılar için geçerlidir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DiagnosticWarningLevelDisplayName">
+        <source>Warning Level</source>
+        <target state="translated">Uyarı Düzeyi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>The project file '{0}' does not exist on disk.</source>
+        <target state="translated">'{0}' proje dosyası disk üzerinde değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectNotInCache">
+        <source>Project {0} does not exist in the project system cache.</source>
+        <target state="translated">{0} projesi, proje sistem önbelleğinde yer almıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNetStandardFramework">
+        <source>The specified framework name '{0}' must be .NETStandard.</source>
+        <target state="translated">Belirtilen çerçeve adı '{0}', .NETStandard olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNuGetVersionString">
+        <source>The provided version string is not a valid nuget version.</source>
+        <target state="translated">Belirtilen sürüm dizesi, geçerli bir nuget sürümü değil.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Please provide a valid source.</source>
+        <target state="translated">Belirtilen '{0}' kaynağı geçersiz. Lütfen geçerli bir kaynak belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyBrowseObjectClassName">
+        <source>Assembly</source>
+        <target state="translated">Bütünleştirilmiş Kod</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyNameDescription">
+        <source>The assembly's name.</source>
+        <target state="translated">Bütünleştirilmiş kodun adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyNameDisplayName">
+        <source>Name</source>
+        <target state="translated">Ad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyPathDescription">
+        <source>The assembly's path.</source>
+        <target state="translated">Bütünleştirilmiş kodun yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAssemblyPathDisplayName">
+        <source>Path</source>
+        <target state="translated">Yol</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileBrowseObjectClassName">
+        <source>Build File</source>
+        <target state="translated">Derleme Dosyası</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileGroupName">
+        <source>Build Files</source>
+        <target state="translated">Derleme Dosyaları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileNameDescription">
+        <source>The build file's name.</source>
+        <target state="translated">Derleme dosyası adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFileNameDisplayName">
+        <source>Name</source>
+        <target state="translated">Ad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFilePathDescription">
+        <source>The build file's path.</source>
+        <target state="translated">Derleme dosyası yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildFilePathDisplayName">
+        <source>Path</source>
+        <target state="translated">Yol</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageBuildMultiTargetingFileGroupName">
+        <source>Build Files (Multi-targeting)</source>
+        <target state="translated">Derleme Dosyaları (Multi-targeting)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCompileTimeAssemblyGroupName">
+        <source>Compile Time Assemblies</source>
+        <target state="translated">Derleme Zamanı Bütünleştirilmiş Kodları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBrowseObjectClassName">
+        <source>Content File</source>
+        <target state="translated">İçerik Dosyası</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBuildActionDescription">
+        <source>The content file's build action.</source>
+        <target state="translated">İçerik dosyasının derleme eylemi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileBuildActionDisplayName">
+        <source>Build Action</source>
+        <target state="translated">Derleme Eylemi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCodeLanguageDescription">
+        <source>Controls whether this file should be included in the referencing project based on that project's language.</source>
+        <target state="translated">Bu dosyanın, bu projenin diline bağlı olarak başvuruda bulunan projeye eklenip eklenmeyeceğini denetler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCodeLanguageDisplayName">
+        <source>Code Language</source>
+        <target state="translated">Kod Dili</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCopyToOutputDescription">
+        <source>Whether the content file is copied to the output directory during build.</source>
+        <target state="translated">İçerik dosyasının derleme sırasında çıkış dizinine kopyalanıp kopyalanmayacağını belirtir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileCopyToOutputDisplayName">
+        <source>Copy to Output</source>
+        <target state="translated">Çıkışa Kopyala</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileOutputPathDescription">
+        <source>The content file's output path.</source>
+        <target state="translated">İçerik dosyasının çıkış yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFileOutputPathDisplayName">
+        <source>Output Path</source>
+        <target state="translated">Çıkış Yolu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePPOutputPathDescription">
+        <source>The content file's preprocessed output path.</source>
+        <target state="translated">İçerik dosyasının önceden işlenmiş çıkış yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePPOutputPathDisplayName">
+        <source>Preprocessed Output Path</source>
+        <target state="translated">Önceden İşlenmiş Çıkış Yolu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePathDescription">
+        <source>The content file's path.</source>
+        <target state="translated">İçerik dosyasının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilePathDisplayName">
+        <source>Path</source>
+        <target state="translated">Yol</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageContentFilesGroupName">
+        <source>Content Files</source>
+        <target state="translated">İçerik Dosyaları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentBrowseObjectClassName">
+        <source>Package Document</source>
+        <target state="translated">Paket Belgesi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentGroupName">
+        <source>Documents</source>
+        <target state="translated">Belgeler</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentPathDescription">
+        <source>The document's path.</source>
+        <target state="translated">Belge yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDocumentPathDisplayName">
+        <source>Path</source>
+        <target state="translated">Yol</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageFrameworkAssemblyGroupName">
+        <source>Framework Assemblies</source>
+        <target state="translated">Çerçeve Bütünleştirilmiş Kodları</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceBrowseObjectClassName">
+        <source>Package Reference</source>
+        <target state="translated">Paket Başvurusu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceNameDescription">
+        <source>The package's name.</source>
+        <target state="translated">Paketin adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceNameDisplayName">
+        <source>Name</source>
+        <target state="translated">Ad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferencePathDescription">
+        <source>The package's resolved full path.</source>
+        <target state="translated">Paketin çözümlenmiş tam yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferencePathDisplayName">
+        <source>Path</source>
+        <target state="translated">Yol</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceVersionDescription">
+        <source>The package's version.</source>
+        <target state="translated">Paketin sürümü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageReferenceVersionDisplayName">
+        <source>Version</source>
+        <target state="translated">Sürüm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PathContext_CreateContextError">
+        <source>Failed creating a path context for "{0}". Reason: {1}</source>
+        <target state="translated">"{0}" için yol içeriği oluşturma başarısız oldu. Nedeni: {1}</target>
+        <note>{0} is the project name or full path, {1} is the error message generated earlier</note>
+      </trans-unit>
+      <trans-unit id="PathContext_LockFileError">
+        <source>The lock file doesn't exist or it's an older format that doesn't have the package folders property persisted.</source>
+        <target state="translated">Kilit dosyası mevcut değil ya da kalıcı özellik paketi klasörleri olmayan eski bir biçimdedir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PathContext_PackageDirectoryNotFound">
+        <source>Package directory for "{0}" is not found.</source>
+        <target state="translated">"{0}" için paket dizini bulunamadı.</target>
+        <note>{0} is the package ID</note>
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_ExtensionManagerError">
+        <source>Error accessing Extension Manager.</source>
+        <target state="translated">Uzantı Yöneticisi'ne erişim hatası.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
+        <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
+        <target state="translated">Gerekli paketlerin tümü projeye eklenemedi. Şu paketler, '{0}' kaynağından yüklenemedi:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_InvalidExtensionId">
+        <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
+        <target state="translated">Önceden yüklenen paketler, eksik bir Uzantı'ya yönelik bir başvuru içeriyor. '{0}' kimlikli bir Uzantı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
+        <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
+        <target state="translated">Önceden yüklenen paketler, eksik bir Kayıt defteri değerine yönelik bir başvuru içeriyor. '{1}' altında '{0}' adlı bir Kayıt defteri anahtarı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_PackageInstallStatus">
+        <source>Adding {0}.{1} to project...</source>
+        <target state="translated">{0}.{1} projeye ekleniyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_RegistryKeyError">
+        <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
+        <target state="translated">Önceden yüklenen paketler, Kayıt defteri tarafından sağlanan bir paket deposu kullanacak biçimde yapılandırılmış ancak '{0}' adlı Kayıt defteri anahtarına erişim sırasında bir hata oluştu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PreinstalledPackages_VersionConflict">
+        <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
+        <target state="translated">'{0}' öğesinin '{1}' sürümü yüklenmeye çalışılıyor ancak projede zaten başka bir sürüm mevcut. Atlanıyor...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceBrowseObjectClassName">
+        <source>Project Reference</source>
+        <target state="translated">Proje Başvurusu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceNameDescription">
+        <source>The project's name.</source>
+        <target state="translated">Projenin adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectReferenceNameDisplayName">
+        <source>Name</source>
+        <target state="translated">Ad</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}' boş olamaz.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="TemplateWizard_ErrorDialogTitle">
+        <source>Package Installation Error</source>
+        <target state="translated">Paket Yükleme Hatası</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
+        <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
+        <target state="translated">Proje şablonu, "id" veya "version" özniteliklerinde eksik, boş veya geçersiz değerlere sahip bir veya daha çok paket listeliyor. Her iki öznitelik de zorunludur ve geçerli değerlere sahip olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
+        <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
+        <target state="translated">Paket öğesinin "repository" özniteliği geçersiz bir değere sahip: '{0}'. Geçerli değerler: 'template' veya 'extension'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_InvalidWizardRunKind">
+        <source>This template wizard can only be applied to single-project or project-item templates.</source>
+        <target state="translated">Bu şablon sihirbazı, yalnızca tek proje veya proje öğesi şablonlarına uygulanabilir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_MissingExtensionId">
+        <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
+        <target state="translated">Proje şablonu, Uzantı'ya özel bir paket deposu kullanacak biçimde yapılandırılmış, ancak Uzantı Kimliği belirtilmemiş. Uzantı Kimliği'ni belirtmek için "repositoryId" özniteliğini kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TemplateWizard_MissingRegistryKeyName">
+        <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
+        <target state="translated">Proje şablonu, Kayıt defteri tarafından sağlanan bir paket deposu kullanacak biçimde yapılandırılmış, ancak Kayıt defteri değerinin adı belirtilmemiş. Kayıt defteri değerini belirtmek için "keyName" özniteliğini kullanın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackage">
+        <source>Unable to find package '{0}'.</source>
+        <target state="translated">'{0}' paketi bulunamadı.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Empty_Or_WhiteSpaceOnly">
+        <source>Argument cannot be null, empty, or whitespace only.</source>
+        <target state="translated">引数を null、空、空白文字にすることはできません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Value cannot be null or empty string.</source>
+        <target state="translated">値を null または空の文字列にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttributeNotAllowed">
+        <source>Attribute '{0}' is not allowed in element '{1}'.</source>
+        <target state="translated">属性 '{0}' は、要素 '{1}' では許可されていません。</target>
+        <note>0 - attribute name
+1 - element name</note>
+      </trans-unit>
+      <trans-unit id="AttributeValueNotAllowed">
+        <source>The attribute '{0}' has an unallowed value '{1}' in element '{2}'.</source>
+        <target state="translated">属性 '{0}' に、要素 '{2}' で許可されていない値 '{1}' が含まれています。</target>
+        <note>0 - attribute name
+1 - attribute value
+2 - element name</note>
+      </trans-unit>
+      <trans-unit id="CannotUpdateDifferentItems">
+        <source>The item passed to the Update method cannot refer to a different item than the one being updated.</source>
+        <target state="translated">Update メソッドに渡された項目は、更新中以外の項目を参照できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateMachineWide">
+        <source>Unable to update setting since it is in a machine-wide NuGet.Config.</source>
+        <target state="translated">設定がコンピューター全体の NuGet.Config にあるため、更新することができません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateNode">
+        <source>Cannot update the node of a setting.</source>
+        <target state="translated">設定のノードを更新できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotUpdateReadOnlyConfig">
+        <source>Unable to update setting since it is in an uneditable config file.</source>
+        <target state="translated">編集不可能な構成ファイルに含まれているため、設定を更新できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificateDuplicateConfiguration">
+        <source>There are multiple client certificate configurations associated with the same package source(s): {0}</source>
+        <target state="translated">同じパッケージ ソースに複数のクライアント証明書の構成が関連付けられています: {0}</target>
+        <note>0 - Package sources separated with comma</note>
+      </trans-unit>
+      <trans-unit id="CredentialsItemMustHaveUsernamePassword">
+        <source>Credentials item must have username and password.</source>
+        <target state="translated">資格情報の項目には、ユーザー名とパスワードが必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DuplicatePackageSource">
+        <source>PackageSourceMapping is enabled and there are multiple package sources associated with the same key(s): {0}. Path: {1}</source>
+        <target state="translated">PackageSourceMapping が有効になっており、同じキーに関連付けられている複数のパッケージ ソースがあります: {0}。パス: {1}</target>
+        <note>0 - package sources separated with comma 1 - path</note>
+      </trans-unit>
+      <trans-unit id="Error_EncryptionUnsupported">
+        <source>Encryption is not supported on non-Windows platforms.</source>
+        <target state="translated">Windows 以外のプラットフォームにおける暗号化はサポートされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidAttribute">
+        <source>The attribute {0}-{1} is not valid.</source>
+        <target state="translated">属性 {0}-{1} が無効です。</target>
+        <note>0 - attribute name
+1 - attribute value</note>
+      </trans-unit>
+      <trans-unit id="Error_ItemNeedsAtLeastOnePackagePattern">
+        <source>Package source '{0}' must have at least one package pattern.</source>
+        <target state="translated">パッケージ ソース '{0}' には、少なくとも 1 つのパッケージ パターンが必要です。</target>
+        <note>0 - The name of the item.</note>
+      </trans-unit>
+      <trans-unit id="Error_ItemNeedsAtLeastOnePackagePatternWithPath">
+        <source>Package source '{0}' must have at least one package pattern. Path: '{1}'</source>
+        <target state="translated">パッケージ ソース '{0}' には、少なくとも 1 つのパッケージ パターンが必要です。パス: '{1}'</target>
+        <note>0 - The name of the item
+1 - file path</note>
+      </trans-unit>
+      <trans-unit id="Error_MergeTwoDifferentSections">
+        <source>Cannot merge two different sections.</source>
+        <target state="translated">2 つの異なるセクションを結合できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOnePassword">
+        <source>A credentials item must have only one Password or ClearTextPassword entry.</source>
+        <target state="translated">資格情報項目に含めることができる Password エントリまたは ClearTextPassword エントリは 1 つのみです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOneUsername">
+        <source>A credentials item must have only one Username entry.</source>
+        <target state="translated">資格情報項目に含めることができる Username エントリは 1 つのみです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MoreThanOneValidAuthenticationTypes">
+        <source>A credentials item must have only one ValidAuthenticationTypes entry.</source>
+        <target state="translated">資格情報項目に含めることができる ValidAuthenticationTypes エントリは 1 つのみです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StoreCertCertificateNotFound">
+        <source>Certificate for the package source '{0}' was not found in '{1}.{2}' storage by '{3}' criteria with '{4}' value.</source>
+        <target state="translated">'{4}' 値を持つ '{3}' 条件では、パッケージ ソース '{0}' の証明書が '{1}.{2}' ストレージに見つかりませんでした。</target>
+        <note>0 - Package source name
+1 - Store location
+2 - Store name
+3 - Find by
+4 - Find value</note>
+      </trans-unit>
+      <trans-unit id="FileCertItemPasswordAndClearTextPasswordAtSameTime">
+        <source>Password and ClearTextPassword cannot be used at the same time.</source>
+        <target state="translated">Password と ClearTextPassword を同時に使用することはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileCertItemPasswordCannotBeDecrypted">
+        <source>Client certificate configuration password for the package source '{0}' cannot be decrypted</source>
+        <target state="translated">パッケージ ソース '{0}' のクライアント証明書構成パスワードの暗号化を解除できません</target>
+        <note>0 - Package name</note>
+      </trans-unit>
+      <trans-unit id="FileCertItemPathFileNotExist">
+        <source>A fileCert path specified a file that does not exist.</source>
+        <target state="translated">fileCert パスで、存在しないファイルが指定されていました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileCertItemPathFileNotSet">
+        <source>A fileCert item path was not set.</source>
+        <target state="translated">fileCert 項目のパスが設定されていませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileDoesNotExist">
+        <source>File '{0}' does not exist.</source>
+        <target state="translated">ファイル '{0}' は存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNullSettingsOperation">
+        <source>"{0}" cannot be called on a NullSettings. This may be caused on account of insufficient permissions to read or write to "%AppData%\NuGet\NuGet.config".</source>
+        <target state="translated">"{0}" を NullSettings で呼び出すことはできません。これは "%AppData%\NuGet\NuGet.config" への読み取りまたは書き込みのアクセス許可が不十分なために発生した可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ItemDoesNotExist">
+        <source>The item does not exist in the {0} section.</source>
+        <target state="translated">{0} セクションに項目が存在しません。</target>
+        <note>0 - section name</note>
+      </trans-unit>
+      <trans-unit id="MissingRequiredAttribute">
+        <source>Missing required attribute '{0}' in element '{1}'.</source>
+        <target state="translated">要素 '{1}' に必要な属性 '{0}' がありません。</target>
+        <note>0 - attribute name
+1 - element name</note>
+      </trans-unit>
+      <trans-unit id="MustContainAbsolutePath">
+        <source>'{0}' must contain an absolute path '{1}'.</source>
+        <target state="translated">'{0}' には絶対パス '{1}' を含める必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoAttributesAllowed">
+        <source>The {0} item should not have any attributes and it was found with {1}.</source>
+        <target state="translated">{0} 項目は属性を持つことはできません。{1} で検出されました。</target>
+        <note>0 - item name
+1- attributes count</note>
+      </trans-unit>
+      <trans-unit id="NoWritteableConfig">
+        <source>There is no NuGet.Config that could be used for writing settings. Please create one at the desired location and restart the client.</source>
+        <target state="translated">設定の書き込みに使用できる NuGet.Config がありません。希望する場所に 1 つ作成し、クライアントを再起動してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OwnersItemMustHaveAtLeastOneOwner">
+        <source>Owners item must have at least one owner.</source>
+        <target state="translated">所有者項目には所有者が少なくとも 1 人必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OwnersMustOnlyHaveContent">
+        <source>Owners item must only have text content and cannot be empty.</source>
+        <target state="translated">所有者項目に使用できるのはテキスト コンテンツのみであり、空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNullOrEmpty">
+        <source>{0} cannot be null or empty.</source>
+        <target state="translated">{0} を null または空に設定することはできません。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RepositoryMustHaveOneOwners">
+        <source>The repository item with name '{0}' and service index '{1}' has more than one owners item in it.</source>
+        <target state="translated">名前が '{0}' でサービス インデックスが '{1}' のリポジトリ項目に複数の所有者項目が含まれています。</target>
+        <note>0 - repository name
+1 - service index</note>
+      </trans-unit>
+      <trans-unit id="SectionDoesNotExist">
+        <source>The section '{0}' does not exist in the settings.</source>
+        <target state="translated">設定にセクション '{0}' が存在しません。</target>
+        <note>0 - section name</note>
+      </trans-unit>
+      <trans-unit id="Settings_FileName_Cannot_Be_A_Path">
+        <source>Parameter 'fileName' to Settings must be just a file name and not a path.</source>
+        <target state="translated">設定に対するパラメーター 'fileName' にはファイル名のみを指定し、パスを含めてはなりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_CannotHaveChildren">
+        <source>Error parsing NuGet.Config. Element '{0}' cannot have descendant elements. Path: '{1}'.</source>
+        <target state="translated">NuGet.Config の解析中にエラーが発生しました。要素 '{0}' は、子孫要素を持つことができません。パス: '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigDuplicateDisabledSources">
+        <source>Cannot update package sources, config file contains a duplicated key '{0}' in the disabled package sources section. Path: '{1}'</source>
+        <target state="translated">パッケージ ソースを更新できません。構成ファイル内の無効化されているパッケージ ソースのセクションに、重複するキー '{0}' が含まれています。パス: '{1}'</target>
+        <note>0 - key 
+1 - config file path
+</note>
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigHasInvalidPackageSource">
+        <source>{0}: NuGet.Config has an invalid package source value '{1}'. Reason: {2}</source>
+        <target state="translated">{0}: NuGet.Config に無効なパッケージ ソース値 '{1}' があります。理由: {2}</target>
+        <note>0 - NU log code
+1 - package source value
+2 - original exception message</note>
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigInvalidOperation">
+        <source>NuGet.Config is malformed. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config の形式が正しくありません。パス: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigInvalidXml">
+        <source>NuGet.Config is not valid XML. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config が妥当な XML ではありません。パス: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigRootInvalid">
+        <source>NuGet.Config does not contain the expected root element: 'configuration'. Path: '{0}'.</source>
+        <target state="translated">想定されているルート要素: 'configuration' が NuGet.Config に含まれていません。パス: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_ConfigUnauthorizedAccess">
+        <source>Failed to read NuGet.Config due to unauthorized access. Path: '{0}'.</source>
+        <target state="translated">許可されていないアクセスのために NuGet.Config を読み取れませんでした。パス: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ShowError_UnknownOrigin">
+        <source>File location not known</source>
+        <target state="translated">ファイルの場所が不明です</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TextShouldNotBeEmpty">
+        <source>Text elements should not be empty.</source>
+        <target state="translated">テキスト要素を空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerMustHaveCertificates">
+        <source>A trusted signer entry must have at least one certificate entry.</source>
+        <target state="translated">信頼される署名者エントリには少なくとも 1 つの証明書エントリが必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownHashAlgorithmNotSupported">
+        <source>Unknown hash algorithm is not supported.</source>
+        <target state="translated">不明なハッシュ アルゴリズムはサポートされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unknown_Config_Exception">
+        <source>Unexpected failure reading NuGet.Config. Path: '{0}'.</source>
+        <target state="translated">NuGet.Config の読み取り中に予期しないエラーが発生しました。パス: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedDecryptPassword">
+        <source>Password decryption is not supported on .NET Core for this platform. The following feed uses an encrypted password: '{0}'. You can use a clear text password as a workaround.</source>
+        <target state="translated">パスワードの解読は、このプラットフォーム用の .NET Core でサポートされていません。次のフィードは暗号化されたパスワード '{0}' を使います。回避策として、クリア テキストのパスワードを使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedEncryptPassword">
+        <source>Password encryption is not supported on .NET Core for this platform. The following feed try to use an encrypted password: '{0}'. You can use a clear text password as a workaround.</source>
+        <target state="translated">パスワードの暗号化は、このプラットフォーム用の .NET Core でサポートされていません。次のフィードは暗号化されたパスワード '{0}' を使おうとします。回避策として、クリア テキストのパスワードを使用できます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>Certificate entry has an unsupported hash algorithm: '{0}'.</source>
+        <target state="translated">証明書エントリに、サポートされていないハッシュ アルゴリズムが含まれています: '{0}'。</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="UserSettings_UnableToParseConfigFile">
+        <source>Unable to parse config file because: {0} Path: '{1}'.</source>
+        <target state="translated">構成ファイルを解析できません。理由: {0} パス: '{1}'。</target>
+        <note>0 - reason
+1- config file path</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

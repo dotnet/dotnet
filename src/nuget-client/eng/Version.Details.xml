@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="03fb78540de4e5b3c8874da30e60b58321956993" BarId="276888" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="6a953e76162f3f079405f80e28664fa51b136740" BarId="276981" />
   <!--
     Currently this file is required to publish builds to .NET build asset registry.
     See https://github.com/dotnet/arcade/issues/2396 for details.
@@ -26,9 +26,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Web.Xdt" Version="3.0.0">
-      <Uri>https://github.com/aspnet/xdt</Uri>
-      <Sha>d4d088b6a9c793525b1a27a119cb66ba4587bb39</Sha>
+    <Dependency Name="Microsoft.Web.Xdt" Version="3.2.0">
+      <Uri>https://github.com/dotnet/xdt</Uri>
+      <Sha>dea0a90f9a8f54babf081db780922a00a1ecc32c</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25208.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -56,9 +56,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25376.102">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25377.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>03fb78540de4e5b3c8874da30e60b58321956993</Sha>
+      <Sha>6a953e76162f3f079405f80e28664fa51b136740</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25377.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>6a953e76162f3f079405f80e28664fa51b136740</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
