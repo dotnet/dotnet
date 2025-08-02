@@ -1,0 +1,1139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="AnAbsoluteUriIsRequired">
+        <source>An absolute URI is required.</source>
+        <target state="translated">绝对 URI 是必需的。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">参数不能为 null 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AuthorPrimarySignatureFriendlyName">
+        <source>author primary signature</source>
+        <target state="translated">作者主签名</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHash">
+        <source>{0} hash: {1}</source>
+        <target state="translated">{0} 哈希: {1}</target>
+        <note>0 - Hash algorithm name
+1 - certificate hash in given hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHashSha1">
+        <source>SHA1 hash: {0}</source>
+        <target state="translated">SHA1 哈希: {0}</target>
+        <note>0 - certificate sha1 hash</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateIssuer">
+        <source>Issued by: {0}</source>
+        <target state="translated">颁发者: {0}</target>
+        <note>0 - certificate issuer</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateSubjectName">
+        <source>Subject Name: {0}</source>
+        <target state="translated">使用者名称: {0}</target>
+        <note>0 - certificate subject name</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateValidity">
+        <source>Valid from: {0} to {1}</source>
+        <target state="translated">有效期: {0} 至 {1}</target>
+        <note>0 -  start date
+1 - end date</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesFooter">
+        <source>... {0} more.</source>
+        <target state="translated">...另外 {0} 个。</target>
+        <note>0 - number of certificates left</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesHeader">
+        <source>The following certificates meet all given criteria:</source>
+        <target state="translated">以下证书满足所有给定条件:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainBuildFailed">
+        <source>A complete certificate chain could not be built for the signing certificate.</source>
+        <target state="translated">无法为签名证书生成完整的证书链。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainValidationFailed">
+        <source>Certificate chain validation failed.</source>
+        <target state="translated">证书链验证失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForCodeSigning">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for code signing.</source>
+        <target state="translated">X.509 证书链验证将使用 .NET 选择的默认信任存储进行代码签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForTimestamping">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for timestamping.</source>
+        <target state="translated">X.509 证书链验证将使用 .NET 选择的默认信任存储进行时间戳。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingFallbackCertificateBundle">
+        <source>X.509 certificate chain validation will use the fallback certificate bundle at '{0}'.</source>
+        <target state="translated">X.509 证书链验证将使用 "{0}" 处的回退证书捆绑包。</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingNoCertificateBundle">
+        <source>X.509 certificate chain validation will not have any trusted roots. Chain building will fail with an untrusted status.</source>
+        <target state="translated">X.509 证书链验证将不会有任何受信任的根。链生成将失败，且状态不受信任。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingSystemCertificateBundle">
+        <source>X.509 certificate chain validation will use the system certificate bundle at '{0}'.</source>
+        <target state="translated">X.509 证书链验证将使用 "{0}" 处的系统证书捆绑包。</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalid">
+        <source>The commitment-type-indication attribute is invalid.</source>
+        <target state="translated">commitment-type-indication 属性无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalidCombination">
+        <source>The commitment-type-indication attribute contains an invalid combination of values.</source>
+        <target state="translated">commitment-type-indication 属性包含无效的值组合。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConflictingAllowUntrustedRoot">
+        <source>There are two certificates with conflicting allowUntrustedRoot attributes in the computed settings. The allowUntrustedRoot attribute is going to be set to false. Certificate: {0}-{1}</source>
+        <target state="translated">计算设置中有两个证书的 allowUntrustedRoot 属性冲突。allowUntrustedRoot 属性将被设置为 False。证书: {0}-{1}</target>
+        <note>0 - Hash algorithm
+1 - Fingerprint
+'allowUntrustedRoot' should not be localized</note>
+      </trans-unit>
+      <trans-unit id="DefaultError_EmptyAllowList">
+        <source>A list of trusted signers is required but none was found.</source>
+        <target state="translated">需要受信任签名者列表，但找不到任何此类列表。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultError_NoMatchInAllowList">
+        <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
+        <target state="translated">包签名证书指纹与允许列表中的任何证书指纹均不匹配。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
+        <source>Cannot target author signatures that are countersignatures.</source>
+        <target state="translated">无法以属于副署的作者签名为目标。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorByteSignatureNotFound">
+        <source>Byte signature not found in package archive:  0x{0}</source>
+        <target state="translated">在包存档中找不到字节签名: 0x{0}</target>
+        <note>{0} is the byte signature in hexadecimal</note>
+      </trans-unit>
+      <trans-unit id="ErrorDuplicatePackages">
+        <source>There are duplicate packages: {0}</source>
+        <target state="translated">存在重复的程序包: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidAllowedVersions">
+        <source>Invalid allowedVersions for package id '{0}': '{1}'</source>
+        <target state="translated">ID 为“{0}”的程序包的 allowedVersions 无效:“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidCertificateChainUnspecifiedReason">
+        <source>Certificate chain validation failed for an unspecified reason.</source>
+        <target state="translated">证书链验证失败，原因不明。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidMinClientVersion">
+        <source>Invalid minClientVersion: '{0}'</source>
+        <target state="translated">minClientVersion 无效:“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageArchive">
+        <source>Invalid package archive.</source>
+        <target state="translated">包存档无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersion">
+        <source>Invalid package version for package id '{0}': '{1}'</source>
+        <target state="translated">ID 为“{0}”的程序包的程序包版本无效:“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersionForDependency">
+        <source>Invalid package version for a dependency with id '{0}' in package '{1}': '{2}'</source>
+        <target state="translated">包“{1}”中具有 ID“{0}”的依赖项的包版本无效:“{2}”</target>
+        <note>{0} is the dependency's package id.
+{1} is the package's identity.
+{2} is the dependency's version range.</note>
+      </trans-unit>
+      <trans-unit id="ErrorManifestFileNotFound">
+        <source>Manifest file not found at '{0}'</source>
+        <target state="translated">在“{0}”处找不到清单文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMultipleTimestamps">
+        <source>Multiple timestamps are not accepted.</source>
+        <target state="translated">不接受多个时间戳。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNoTimestamp">
+        <source>The signature should be timestamped to enable long-term signature validity after the certificate has expired.</source>
+        <target state="translated">应对签名加盖时间戳，使签名在证书过期后能够长期有效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNullOrEmptyPackageId">
+        <source>Null or empty package id</source>
+        <target state="translated">程序包 ID 为 null 或为空</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">未对软件包进行签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageSignatureInvalid">
+        <source>The package signature is invalid or cannot be verified on this platform.</source>
+        <target state="translated">包签名无效或无法在此平台上进行验证。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableCheckPackageEntries">
+        <source>An unexpected error occurred while checking package entries.</source>
+        <target state="translated">检查包条目时发生意外错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableToDeleteFile">
+        <source>Unable to delete temporary file '{0}'. Error: '{1}'.</source>
+        <target state="translated">无法删除临时文件“{0}”。错误:“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnsafePackageEntry">
+        <source>The package '{0}' contains an entry '{1}' which is unsafe for extraction.</source>
+        <target state="translated">包“{0}”包含不能安全提取的条目“{1}”。</target>
+        <note>{0} is the package identity.
+    {1} is the package entry</note>
+      </trans-unit>
+      <trans-unit id="ErrorZip64NotSupported">
+        <source>Signed Zip64 packages are not supported.</source>
+        <target state="translated">已签名 Zip64 包不受支持。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Unsupported targetFramework value '{0}'.</source>
+        <target state="translated">不支持的 targetFramework 值“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_LoadingHashFile">
+        <source>Error parsing nupkg metadata file {0} : {1}</source>
+        <target state="translated">分析 nupkg 元数据文件 {0} 时出错: {1}</target>
+        <note>0 - nupkg metadata file path
+1 - error message</note>
+      </trans-unit>
+      <trans-unit id="Error_MissingNuspecFile">
+        <source>The package is missing the required nuspec file. </source>
+        <target state="translated">包缺少所需的 nuspec 文件。</target>
+        <note>package folder path will be appended to this message, if exists</note>
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">signatureValidationMode 设置为“要求”，因此仅当被受信任签署人签署后才允许使用包；但未指定任何受信任签署人。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">此包已签署，但不是由受信任的签署人签署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingRepositoryCertificate">
+        <source>This package was not repository signed with a certificate listed by this repository.</source>
+        <target state="translated">此包不是使用由此存储库列出的证书签署的存储库。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoRepoAllowList">
+        <source>This repository indicated that all its packages are repository signed; however, it listed no signing certificates.</source>
+        <target state="translated">此存储库指示其所有包都已签署存储库；但列出了未签名的证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOnePrimarySignature">
+        <source>The package signature file does not contain exactly one primary signature.</source>
+        <target state="translated">包签名文件正好不包含一个主签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOneRepositoryCounterSignature">
+        <source>The package signature contains multiple repository countersignatures.</source>
+        <target state="translated">包签名中包含多个存储库副署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySettings_UnsignedPackage">
+        <source>This repository indicated that all its packages are repository signed; however, this package is unsigned.</source>
+        <target state="translated">此存储库指示其所有包都已签署存储库；但此包未签署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySignatureMustNotHaveARepositoryCountersignature">
+        <source>A repository primary signature must not have a repository countersignature.</source>
+        <target state="translated">存储库主签名不得具有存储库副署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RequireMode_UnsignedPackage">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.</source>
+        <target state="translated">signatureValidationMode 设置为“要求”，因此仅当被受信任签署人签署后才允许使用包；但此包未签署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeRequired">
+        <source>Exactly one {0} attribute is required.</source>
+        <target state="translated">恰好只需要一个 {0} 特性。</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeValueRequired">
+        <source>The {0} attribute must have exactly one attribute value.</source>
+        <target state="translated">{0} 特性必须恰好只有一个特性值。</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExtractionLog_InformationPrefix">
+        <source>Package '{0} {1}' from source '{2}': {3}</source>
+        <target state="translated">来自源“{2}: {3}”的包“{0}{1}”</target>
+        <note>0 - package ID
+1 - package versions
+2 - package source url
+3 - Log Message</note>
+      </trans-unit>
+      <trans-unit id="FailToLoadPackagesConfig">
+        <source>Fail to load packages.config as XML file. Please check it. </source>
+        <target state="translated">无法将 packages.config 加载为 XML 文件。请检查该文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailToWritePackagesConfig">
+        <source>Failed to write packages.config as XML file '{0}'. Error: '{1}'.</source>
+        <target state="translated">未能将 packages.config 写入为 XML 文件“{0}”。错误:“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedFileTime">
+        <source>Failed to update file time for {0}: {1}</source>
+        <target state="translated">更新 {0} 的文件时间失败: {1} </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FallbackFolderNotFound">
+        <source>Unable to find fallback package folder '{0}'.</source>
+        <target state="translated">无法找到回退包文件夹“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpOrHttpsIsRequired">
+        <source>HTTP or HTTPS is required.</source>
+        <target state="translated">HTTP 或 HTTPS 是必需的。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgument">
+        <source>The argument is invalid.</source>
+        <target state="translated">参数无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgumentCombination">
+        <source>Invalid combination of arguments {0} and {1}.</source>
+        <target state="translated">无效的参数组合 {0} 和 {1}。</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="InvalidAsn1">
+        <source>The ASN.1 data is invalid.</source>
+        <target state="translated">ASN.1 数据无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">此工具集不支持版本字符串“{0}”。支持的最高版本为“{1}”。请使用较低版本或升级工具集。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNuspecElement">
+        <source>{0} This validation error occurred in a '{1}' element.</source>
+        <target state="translated">{0}此验证错误发生在“{1}”元素中。</target>
+        <note>{0} is the validation error message.
+{1} is the local name of the XML element that causes the validation error.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecEntry">
+        <source>The nuspec contains an invalid entry '{0}' in package '{1}' .</source>
+        <target state="translated">nuspec 包含包“{1}”中的无效条目“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageFrameworkFolderName">
+        <source>The framework in the folder name of '{0}' in package '{1}' could not be parsed.</source>
+        <target state="translated">无法分析程序包“{1}”中“{0}”的文件夹名中的框架。</target>
+        <note>{0} is the invalid path.
+{1} is the package ID and version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageNupkg">
+        <source>The file is not a valid nupkg. File path: {0}</source>
+        <target state="translated">文件不是有效的 nupkg。文件路径: {0}</target>
+        <note>0 - Nupkg file path</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFile">
+        <source>The package contains an invalid package signature file.</source>
+        <target state="translated">此包包含无效的包签名文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntry">
+        <source>The package signature file entry is invalid. {0}</source>
+        <target state="translated">包签名文件条目无效。{0}</target>
+        <note>{0} - error message suffix containing the reason for failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
+        <source>The central directory header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">中央目录标头字段“{0}”具有无效值({1})。</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryLocalFileHeader">
+        <source>The local file header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">本地文件标头字段“{0}”具有无效值({1})。</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageTypeVersion">
+        <source>Nuspec file contains a package type with an invalid package version '{0}'.</source>
+        <target state="translated">Nuspec 文件包含具有无效包版本“{0}”的包类型。</target>
+        <note>{0} is the invalid version string.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrimarySignature">
+        <source>The primary signature is invalid.</source>
+        <target state="translated">主签名无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRepositoryCountersignature">
+        <source>The repository countersignature is invalid.</source>
+        <target state="translated">存储库副署无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSignatureContent">
+        <source>The package signature content is invalid.</source>
+        <target state="translated">包签名内容无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestampSignature">
+        <source>The timestamp signature is invalid.</source>
+        <target state="translated">时间戳签名无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL value is invalid.</source>
+        <target state="translated">URL 值无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidX509StorePurpose">
+        <source>Invalid X.509 store purpose.</source>
+        <target state="translated">X.509 存储用途无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledPackage">
+        <source>Installed {0} {1} from {2} to {3} with content hash {4}.</source>
+        <target state="translated">已使用内容哈希 {4} 从 {2} 到 {3} 安装 {0} {1}。</target>
+        <note>0 - package id
+1 - package version
+2 - package source
+3 - package installed path
+4 - hex byte string, representing content hash</note>
+      </trans-unit>
+      <trans-unit id="Message_Path">
+        <source>Path: {0}</source>
+        <target state="translated">路径: {0}</target>
+        <note>0 - folder path</note>
+      </trans-unit>
+      <trans-unit id="MinClientVersionAlreadyExist">
+        <source>MinClientVersion already exists in packages.config</source>
+        <target state="translated">MinClientVersion 已存在于 packages.config 中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingMetadataNode">
+        <source>Nuspec file does not contain the '{0}' node.</source>
+        <target state="translated">Nuspec 文件不包含“{0}”节点。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPackageTypeName">
+        <source>Nuspec file contains a package type that is missing the name attribute.</source>
+        <target state="translated">Nuspec 文件包含缺少 name 特性的包类型。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromDependencyGroups">
+        <source>Some dependency group TFMs are missing a platform version: {0}</source>
+        <target state="translated">某些依赖项组 TFM 缺少平台版本: {0}</target>
+        <note>0 - comma-separated list of dependency group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyGroups">
+        <source>Some reference assembly group TFMs are missing a platform version: {0}</source>
+        <target state="translated">某些引用程序集组 TFM 缺少平台版本: {0}</target>
+        <note>0 - comma-separated list of reference assembly group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyReferences">
+        <source>Some framework assembly reference TFMs are missing a platform version: {0}</source>
+        <target state="translated">某些框架程序集引用 TFM 缺少平台版本: {0}</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromIncludedFiles">
+        <source>Some included files are included under TFMs which are missing a platform version: {0}</source>
+        <target state="translated">某些包含的文件包含在缺少平台版本的 TFM 下: {0}</target>
+        <note>0 - comma-separated list of files with bad TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromReferenceGroups">
+        <source>Some reference group TFMs are missing a platform version: {0}</source>
+        <target state="translated">某些引用组 TFM 缺少平台版本: {0}</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MultipleAttributesDisallowed">
+        <source>Multiple {0} attributes are not allowed.</source>
+        <target state="translated">不允许使用多个 {0} 特性。</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="MultipleNuspecFiles">
+        <source>Package contains multiple nuspec files.</source>
+        <target state="translated">包内含了多个 nuspec 文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageSignatureFiles">
+        <source>The package contains multiple package signature files.</source>
+        <target state="translated">此包包含多个包签名文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainAbsolutePath">
+        <source>'{0}' must contain an absolute path '{1}'.</source>
+        <target state="translated">'“{0}”必须包含绝对路径“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageSignatureFile">
+        <source>The package does not contain a valid package signature file.</source>
+        <target state="translated">此包不包含有效的包签名文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoRepositoryCountersignature">
+        <source>Verification settings require a repository countersignature, but the package does not have a repository countersignature.</source>
+        <target state="translated">验证设置需要存储库副署，但包不含存储库副署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_DeprecatedIdentifier">
+        <source>The identifier '{0}' is deprecated.</source>
+        <target state="translated">标识符“{0}”已弃用。</target>
+        <note>0 - identifier (license or exception)</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_ExceptionIdentifierIsLicense">
+        <source>The identifier '{0}' is a license. It cannot be used as an exception.</source>
+        <target state="translated">标识符“{0}”是许可证。它不能用作异常。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_IllegalUnlicensedOperator">
+        <source>The 'UNLICENSED' license identifier cannot be combined with the '+' operator.</source>
+        <target state="translated">"UNLICENSED" 许可证标识符不能与 "+" 运算符合并。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidCharacters">
+        <source>The license expression '{0}' contains invalid characters.</source>
+        <target state="translated">许可证表达式“{0}”包含无效的字符。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExceptionIdentifier">
+        <source>The identifier '{0}' is not a standard exception.</source>
+        <target state="translated">标识符“{0}”不是标准异常。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExpression">
+        <source>The license expression is invalid.</source>
+        <target state="translated">许可证表达式无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidToken">
+        <source>Invalid element '{0}'.</source>
+        <target state="translated">无效的元素“{0}”。</target>
+        <note>0 - The element value</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseIdentifierIsException">
+        <source>The identifier '{0}' is an exception. It cannot be used as a license.</source>
+        <target state="translated">标识符“{0}”是异常。它不能用作许可证。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseInvalidCharacters">
+        <source>The license identifier '{0}' contains invalid characters.</source>
+        <target state="translated">许可证标识符“{0}”包含无效的字符。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_MismatchedParentheses">
+        <source>Mismatched parentheses in the expression.</source>
+        <target state="translated">表达式中的括号不匹配。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) '{0}' is(are) not recognized by the current toolset.</source>
+        <target state="translated">当前工具集无法识别许可证标识符“{0}”。</target>
+        <note>0 - semicolon delimited list of identifiers</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnexpectedIdentifier">
+        <source>Unexpected license identifier '{0}'. The identifier is not allowed in this context.</source>
+        <target state="translated">意外的许可证标识符 {0}。此上下文中不允许使用该标识符。</target>
+        <note>0 - the license identifier.</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnlicensedPackageWarning">
+        <source>The owner has marked this package as 'UNLICENSED'. This means that there is no license that allows this package to be used outside of the copyright owner.</source>
+        <target state="translated">所有者已将此包标记为 "UNLICENSED"。这意味着，只有版权所有者才能使用此包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseExpressionVersion">
+        <source>The license version string '{0}'  is invalid.</source>
+        <target state="translated">许可证版本字符串“{0}”无效。</target>
+        <note>0 - version string, 1 - the metadata</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseType">
+        <source>Unrecognized license type '{0}'</source>
+        <target state="translated">无法识别的许可证类型“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseElementMissingValue">
+        <source>The license element value is empty. This is likely due to an authoring error. </source>
+        <target state="translated">许可证元素值为空。这可能由创作错误导致。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">许可版本字符串 {0} 比此工具集 {1} 支持的值高。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_MissingRequiredValue">
+        <source>The element 'license' cannot be empty. </source>
+        <target state="translated">"license" 元素不能为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwners">
+        <source>Owners: {0}</source>
+        <target state="translated">所有者: {0}</target>
+        <note>0 - The nuget-package-owners value</note>
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalid">
+        <source>The nuget-package-owners attribute is invalid.</source>
+        <target state="translated">nuget-package-owners 特性无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalidValue">
+        <source>One or more package owner values are invalid.</source>
+        <target state="translated">一个或多个包所有者值无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrl">
+        <source>Service index: {0}</source>
+        <target state="translated">服务索引: {0}</target>
+        <note>0- The nuget-v3-service-index-url value</note>
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalid">
+        <source>The nuget-v3-service-index-url attribute is invalid.</source>
+        <target state="translated">nuget-v3-service-index-url 特性无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalidValue">
+        <source>The nuget-v3-service-index-url attribute value is invalid.</source>
+        <target state="translated">nuget-v3-service-index-url 特性值无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryAlreadyExist">
+        <source>Package entry already exists in packages.config. Id: {0}</source>
+        <target state="translated">程序包条目已存在于 packages.config 中。ID: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryNotExist">
+        <source>Package entry does not exists in packages.config. Id: {0}, Version: {1}</source>
+        <target state="translated">程序包条目在 packages.config 中不存在。ID: {0}，版本: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageMinVersionNotSatisfied">
+        <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget</source>
+        <target state="translated">“{0}”包需要 NuGet 客户端版本“{1}”或更高版本，但是当前 NuGet 版本为“{2}”。若要升级 NuGet，请访问 https://docs.nuget.org/consume/installing-nuget</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSignatureVerificationLog">
+        <source>PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</source>
+        <target state="translated">PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</target>
+        <note>0 - package id and version
+1 - package source url
+2 - validation result as a bool</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">程序包流应该是可查找的</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesNodeNotExist">
+        <source>Packages node does not exists in packages.config at {0}.</source>
+        <target state="translated">位于 {0} 处的 packages.config 中没有包节点。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureFriendlyName">
+        <source>primary signature</source>
+        <target state="translated">主签名</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureHasNoTimestamp">
+        <source>The primary signature does not have a timestamp.</source>
+        <target state="translated">主签名没有时间戳。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">“{0}”不能为 null。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RangeOutOfBoundsForArray">
+        <source>Arguments {0} and {1} were out of bounds for the array.</source>
+        <target state="translated">参数 {0} 和 {1} 超出了数组界限。</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureFriendlyName">
+        <source>repository countersignature</source>
+        <target state="translated">存储库副署</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoCertificate">
+        <source>The repository countersignature does not have a signing certificate.</source>
+        <target state="translated">存储库副署不具有签名证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoTimestamp">
+        <source>The repository countersignature does not have a timestamp.</source>
+        <target state="translated">存储库副署不具有时间戳。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryPrimarySignatureFriendlyName">
+        <source>repository primary signature</source>
+        <target state="translated">存储库主签名</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">时间戳证书不满足最小公钥长度要求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampGeneralizedTimeInvalid">
+        <source>The timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">时间戳的一般化时间超出了时间戳证书的有效期。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampIntegrityCheckFailed">
+        <source>The timestamp integrity check failed.</source>
+        <target state="translated">时间戳完整性检查失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNoCertificate">
+        <source>The timestamp does not have a signing certificate.</source>
+        <target state="translated">时间戳没有签名证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNotYetValid">
+        <source>The timestamp signing certificate is not yet valid.</source>
+        <target state="translated">时间戳签名证书尚未生效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampSignatureValidationFailed">
+        <source>The timestamp signature validation failed.</source>
+        <target state="translated">时间戳签名验证失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignFailureCertificateInvalidProviderType">
+        <source>The following certificate cannot be used for package signing as the private key provider is unsupported:</source>
+        <target state="translated">以下证书不能用于包签名，因为私钥提供程序不受支持:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureContainsInvalidAttribute">
+        <source>Package signature contains an invalid attribute: {0}</source>
+        <target state="translated">包签名包含无效的属性: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureDebug_HashOidFound">
+        <source>Signature hash OID found: {0}</source>
+        <target state="translated">找到签名哈希 OID: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFailureInvalidHashAlgorithmOid">
+        <source>The package hash uses an unsupported hash algorithm.</source>
+        <target state="translated">包哈希使用了不受支持的哈希算法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFriendlyName">
+        <source>signature</source>
+        <target state="translated">签名</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureHashAlgorithm">
+        <source>Signature Hash Algorithm: {0}</source>
+        <target state="translated">签名哈希算法: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignaturePackageIntegrityFailure">
+        <source>The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.</source>
+        <target state="translated">包完整性检查失败。该包自签名后已更改。请尝试清除本地 http 缓存并再次运行 nuget 操作。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureType">
+        <source>Signature type: {0}</source>
+        <target state="translated">签名类型: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageAlreadySigned">
+        <source>The package already contains a signature. Please remove the existing signature before adding a new signature.</source>
+        <target state="translated">包中已包含一个签名。添加新签名之前，请删除现有签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOExtraRead">
+        <source>Package stream read position cannot be longer than the length of the stream.</source>
+        <target state="translated">包流读取位置的长度不可比流的长。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOInvalidRead">
+        <source>Package stream read position cannot be before the current position in the stream.</source>
+        <target state="translated">包流读取位置不可位于流中当前位置的前面。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnRemove">
+        <source>The package is not signed. Unable to remove signature from an unsigned package.</source>
+        <target state="translated">包未签名。无法删除未签名包中的签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnVerify">
+        <source>The package is not signed. Unable to verify signature from an unsigned package.</source>
+        <target state="translated">包未签名。无法验证未签名包中的签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackagePackageAlreadyCountersigned">
+        <source>The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.</source>
+        <target state="translated">包中已包含一个存储库副署。添加新存储库副署之前，请删除现有签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageUnableToAccessSignature">
+        <source>The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package.</source>
+        <target state="translated">包未正确打开，无法执行签名操作。请使用基于流的构造函数访问包的签名属性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCannotBeDoneInPlace">
+        <source>{0} and {1} should be different. Package signing cannot be done in place.</source>
+        <target state="translated">{0} 和 {1} 不应相同。包签名不能就地完成。</target>
+        <note>0 - PackageFilePath parameter name
+1 - OutputFilePath parameter name</note>
+      </trans-unit>
+      <trans-unit id="SigningCertificateAttributeMustNotBePresent">
+        <source>The signing-certificate attribute is not allowed.</source>
+        <target state="translated">不允许使用 signing-certificate 属性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateCertificateNotFound">
+        <source>A certificate referenced by the signing-certificate attribute could not be found.</source>
+        <target state="translated">找不到 signing-certificate 属性所引用的证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateInvalid">
+        <source>The signing-certificate attribute is invalid.</source>
+        <target state="translated">signing-certificate 属性无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV1OrV2AttributeMustBePresent">
+        <source>Either the signing-certificate or signing-certificate-v2 attribute must be present.</source>
+        <target state="translated">必须存在 signing-certificate 或 signing-certificate-v2 属性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2CertificateNotFound">
+        <source>A certificate referenced by the signing-certificate-v2 attribute could not be found.</source>
+        <target state="translated">找不到 signing-certificate-v2 属性所引用的证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2Invalid">
+        <source>The signing-certificate-v2 attribute is invalid.</source>
+        <target state="translated">signing-certificate-v2 属性无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2UnsupportedHashAlgorithm">
+        <source>The signing-certificate-v2 attribute uses an unsupported hash algorithm.</source>
+        <target state="translated">signing-certificate-v2 属性使用了不受支持的哈希算法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The signing certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">签名证书不满足最小公钥长度要求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the signing certificate is not supported.</source>
+        <target state="translated">不支持签名证书中的生存期签名 EKU。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The signing certificate has an unsupported signature algorithm.</source>
+        <target state="translated">签名证书具有不受支持的签名算法。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_NotYetValid">
+        <source>The signing certificate is not yet valid.</source>
+        <target state="translated">签名证书尚未生效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningWouldRequireZip64">
+        <source>The package cannot be signed as it would require the Zip64 format.</source>
+        <target state="translated">无法对包进行签名，因为它要求 Zip64 格式。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeReadable">
+        <source>The stream must be readable.</source>
+        <target state="translated">流必须可读。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeSeekable">
+        <source>The stream must be seekable.</source>
+        <target state="translated">流必须可查找。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">字符串参数“{0}”不能为 null 或空</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampCertificateUnsupportedSignatureAlgorithm">
+        <source>The timestamp certificate has an unsupported signature algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">时间戳证书具有不受支持的签名算法({0})。支持以下算法: {1}。</target>
+        <note>0 - certificate signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureInvalidHttpScheme">
+        <source>The timestamper URL '{0}' has an invalid URI scheme. The supported schemes are '{1}' and '{2}'.</source>
+        <target state="translated">时间戳程序 URL“{0}”具有无效的 URI 方案。支持的方案为“{1}”和“{2}”。</target>
+        <note>0 - url value
+1 - Uri.Http scheme
+2 - Uri.Https scheme</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureNonceMismatch">
+        <source>The timestamp response is invalid.  Nonces did not match.</source>
+        <target state="translated">时间戳响应无效。Nonce 不匹配。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampServiceRespondedError">
+        <source>The timestamp service responded with HTTP status code '{0}' ('{1}').</source>
+        <target state="translated">时间戳服务已响应，HTTP 状态代码为“{0}”(“{1}”)。</target>
+        <note>{0} is the httpResponse.StatusCode, {1} is the httpResponse.ReasonPhrase.</note>
+      </trans-unit>
+      <trans-unit id="TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The timestamp signature has an unsupported digest algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">时间戳签名具有不受支持的摘要算法({0})。支持以下算法: {1}。</target>
+        <note>0 - signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampValue">
+        <source>Timestamp: {0}</source>
+        <target state="translated">时间戳: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToAddEntry">
+        <source>An error occurred while updating packages.config. The file was closed before the entry could be added.</source>
+        <target state="translated">更新 packages.config 时出错。在可以添加条目之前，该文件已关闭。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseClientVersion">
+        <source>Unable to parse the current NuGet client version.</source>
+        <target state="translated">无法解析当前 NuGet 客户端版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToReadPackageHashInformation">
+        <source>Package hash information could not be read from the package signature.</source>
+        <target state="translated">无法从包签名读取包哈希信息。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedPackageSignatureVerificationError">
+        <source>An unexpected error occurred while verifying a package signature.</source>
+        <target state="translated">验证包签名时发生意外的错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">无法识别枚举值“{0}”。</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="UnrelatedSignatures">
+        <source>The primary signature and repository countersignature are unrelated.</source>
+        <target state="translated">主签名和存储库副署无关。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedAsn1">
+        <source>The ASN.1 data is unsupported.</source>
+        <target state="translated">不支持 ASN.1 数据。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureFormatVersion">
+        <source>The package signature format version is not supported. Updating your client may solve this problem.</source>
+        <target state="translated">不支持包签名格式版本。更新客户端可能会解决此问题。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because it is not present in the certificate bundle at {0}.  For more information, see documentation for NU3042.
+    Subject:  {1}
+    Fingerprint (SHA-256):  {2}
+    Certificate (PEM):
+{3}</source>
+        <target state="translated">以下 X.509 根证书不受信任，因为它不在{0}处的证书捆绑包中。有关详细信息，请参阅 NU3042 文档。
+    主题: {1}
+    指纹(SHA-256):  {2}
+    证书(PEM):
+{3}</target>
+        <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithoutCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because no certificate bundle was found.  For more information, see documentation for NU3042.
+    Subject:  {0}
+    Fingerprint (SHA-256):  {1}
+    Certificate (PEM):
+{2}</source>
+        <target state="translated">以下 X.509 根证书不受信任，因为未找到证书捆绑包。有关详细信息，请参阅 NU3042 的文档。
+    主题: {0}
+    指纹(SHA-256):  {1}
+    证书(PEM):
+{2}</target>
+        <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="VerificationCertDisplay">
+        <source>Verifying the {0} with certificate: {1}</source>
+        <target state="translated">正在使用证书验证 {0}: {1}</target>
+        <note>0 - Signature friendly
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerificationTimestamperCertDisplay">
+        <source>Verifying {0}'s timestamp with timestamping service certificate: {1}</source>
+        <target state="translated">正在用时间戳服务证书验证 {0} 的时间戳: {1}</target>
+        <note>0 - signature friendly name
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOffline">
+        <source>The revocation function was unable to check revocation because the certificate is not available in the cached certificate revocation list and NUGET_CERT_REVOCATION_MODE environment variable has been set to offline. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">吊销功能无法检查吊销，因为证书在缓存的证书吊销列表中不可用，且 NUGET_CERT_REVOCATION_MODE 环境变量已设置为脱机。有关详细信息，请访问 https://aka.ms/certificateRevocationMode。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOnline">
+        <source>The revocation function was unable to check revocation because the revocation server could not be reached. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">吊销功能无法检查吊销，因为无法访问吊销服务器。有关详细信息，请访问 https://aka.ms/certificateRevocationMode。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue">
+        <source>The {0} found a chain building issue: {1}</source>
+        <target state="translated">{0} 发现链生成问题: {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s signing certificate is not trusted by the trust provider.</source>
+        <target state="translated">信任提供程序不信任 {0} 的签名证书。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">{0} 的证书不满足最小公钥长度要求。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the {0}'s certificate is not supported.</source>
+        <target state="translated">不支持 {0} 的证书中的生存期签名 EKU。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The {0}'s certificate has an unsupported signature algorithm.</source>
+        <target state="translated">{0} 的证书具有不受支持的签名算法。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateNotYetValid">
+        <source>The {0}'s certificate is not yet valid.</source>
+        <target state="translated">{0} 的证书尚未生效。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_InvalidCertificateChain">
+        <source>The {0}'s certificate chain validation failed with error(s): {1}</source>
+        <target state="translated">{0} 的证书链验证失败，错误为: {1}</target>
+        <note>0 - Signature friendly name
+1 - error list</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureNotTimeValid">
+        <source>The {0} validity period has expired.</source>
+        <target state="translated">{0} 的有效期限已满。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureVerificationFailed">
+        <source>The {0} validation failed.</source>
+        <target state="translated">{0} 验证失败。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">{0} 的时间戳证书不满足最小公钥长度要求。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampGeneralizedTimeInvalid">
+        <source>The {0}'s timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">{0} 的时间戳的一般化时间超出了时间戳证书的有效期。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampIntegrityCheckFailed">
+        <source>The {0}'s timestamp integrity check failed.</source>
+        <target state="translated">{0} 的时间戳完整性检查失败。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampInvalid">
+        <source>The {0} contains an invalid timestamp.</source>
+        <target state="translated">{0} 包含无效的时间戳。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampMessageImprintUnsupportedHashAlgorithm">
+        <source>The {0} timestamp's message imprint uses an unsupported hash algorithm.</source>
+        <target state="translated">{0} 时间戳的消息印记使用不支持的哈希算法。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNoCertificate">
+        <source>The {0}'s timestamp does not have a signing certificate.</source>
+        <target state="translated">{0} 的时间戳没有签名证书。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNotYetValid">
+        <source>The {0}'s timestamp signing certificate is not yet valid.</source>
+        <target state="translated">{0} 的时间戳签名证书尚未生效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The {0}'s timestamp signature has an unsupported digest algorithm.</source>
+        <target state="translated">{0} 的时间戳签名具有不受支持的摘要算法。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureValidationFailed">
+        <source>The {0}'s timestamp signature validation failed.</source>
+        <target state="translated">{0} 的时间戳签名验证失败。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampUnsupportedSignatureAlgorithm">
+        <source>The {0}'s timestamp certificate has an unsupported signature algorithm.</source>
+        <target state="translated">{0} 的时间戳证书具有不受支持的签名算法。</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampVerifyChainBuildingIssue">
+        <source>The {0}'s timestamp found a chain building issue: {1}</source>
+        <target state="translated">{0} 的时间戳发现链生成问题: {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyTimestampChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s timestamping certificate is not trusted by the trust provider.</source>
+        <target state="translated">信任提供程序不信任 {0} 的时间戳证书。</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="Verify_ErrorNoCertificate">
+        <source>The {0} does not have a signing certificate.</source>
+        <target state="translated">{0} 不具有签名证书。</target>
+        <note>0 - signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="ZipFileLastWriteTimeStampModifiedMessage">
+        <source>'{0}' changed from '{1}' to '{2}'</source>
+        <target state="translated">“{0}”已从“{1}”更改为“{2}”</target>
+        <note>0 - File name
+1 - Original last write timestamp
+2 - Updated last write timestamp</note>
+      </trans-unit>
+      <trans-unit id="ZipFileTimeStampModifiedWarning">
+        <source>The zip format supports a limited date range. The following files are outside the supported range:</source>
+        <target state="translated">zip 格式支持受限日期范围。以下文件不在支持的范围之内:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

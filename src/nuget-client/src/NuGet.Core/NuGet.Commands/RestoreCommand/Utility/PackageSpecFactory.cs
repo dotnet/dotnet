@@ -882,17 +882,6 @@ namespace NuGet.Commands.Restore.Utility
             return outputPath == null ? null : Path.GetFullPath(Path.Combine(project.Directory, outputPath));
         }
 
-        internal static string[] GetTargetFrameworkStrings(ITargetFramework project)
-        {
-            string? targetFrameworks = project.GetProperty("TargetFrameworks");
-            if (string.IsNullOrEmpty(targetFrameworks))
-            {
-                targetFrameworks = project.GetProperty("TargetFramework");
-            }
-            var projectFrameworkStrings = MSBuildStringUtility.Split(targetFrameworks);
-            return projectFrameworkStrings;
-        }
-
         internal static bool IsPropertyTrue(this ITargetFramework project, string propertyName, bool defaultValue = false)
         {
             string? value = project.GetProperty(propertyName);

@@ -1,0 +1,1507 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">引数を null または空にすることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotBeUsedWithOtherValues">
+        <source>'{0}' cannot be used in conjunction with other values.</source>
+        <target state="translated">'{0}' を他の値と組み合わせて使用することはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyAdded">
+        <source>Client certificate configured for the package source '{0}' was successfully added.</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書が正常に追加されました。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyRemoved">
+        <source>Client certificate configured for the package source '{0}' was successfully removed.</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書が正常に削除されました。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyUpdated">
+        <source>Client certificate configured for the package source '{0}' was successfully updated.</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書が正常に更新されました。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertFilePath">
+        <source>{0}File path: {1}</source>
+        <target state="translated">{0}ファイル パス: {1}</target>
+        <note>0 - default indentation
+    1 - file path</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertNoPassword">
+        <source>{0}Password: -</source>
+        <target state="translated">{0}パスワード: -</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertWithPassword">
+        <source>{0}Password: ****</source>
+        <target state="translated">{0}パスワード: ****</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateError">
+        <source>{0}Certificates status: {1}</source>
+        <target state="translated">{0}証明書の状態: {1}</target>
+        <note>0 - default indentation
+    1 - error message</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateMessage">
+        <source>{0}Certificate: {1}</source>
+        <target state="translated">{0}証明書: {1}</target>
+        <note>0 - default indentation
+    1 - certificate hash string
+</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesLogTitle">
+        <source>{0}{1} [{2}]</source>
+        <target state="translated">{0}{1} [{2}]</target>
+        <note>0 - default indentation
+    1 - package source name
+    2 - client certificate source type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindBy">
+        <source>{0}Find by: {1}</source>
+        <target state="translated">{0}検索方法: {1}</target>
+        <note>0 - default indentation
+    1 - find type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindValue">
+        <source>{0}Find value: {1}</source>
+        <target state="translated">{0}値の検索: {1}</target>
+        <note>0 - default indentation
+    1 - find value</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreLocation">
+        <source>{0}Store location: {1}</source>
+        <target state="translated">{0}ストアの場所: {1}</target>
+        <note>0 - default indentation
+    1 - store location</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreName">
+        <source>{0}Store name: {1}</source>
+        <target state="translated">{0}ストア名: {1}</target>
+        <note>0 - default indentation
+    1 - store name
+</note>
+      </trans-unit>
+      <trans-unit id="Error_AuthorTrustExpectedAuthorSignature">
+        <source>Unable to add trusted author. The package is not author signed.</source>
+        <target state="translated">信頼された作成者を追加できません。パッケージは署名済み作成者ではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find version of msbuild.</source>
+        <target state="translated">msbuild のバージョンが見つかりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotTrustOwnersForAuthor">
+        <source>Trusted owners are not supported in trusted author items.</source>
+        <target state="translated">信頼された所有者は、信頼されている作成者項目ではサポートされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_FloatingVersionsNotAllowed">
+        <source>The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011</source>
+        <target state="translated">次の PackageVersion 項目では、フローティング バージョンを指定できません: {0}。Central Package Management を使用するプロジェクトに対してこの機能を有効化する方法については、https://aka.ms/nu1011 を参照してください</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs</source>
+        <target state="translated">次の PackageReference 項目は暗黙的に定義されており、PackageVersion 項目を定義することはできません: {0}。Central Package Management を使用するプロジェクトでは、暗黙的なパッケージ バージョンは PackageReference 項目によって指定されている必要があります。詳細情報については、https://aka.ms/sdkimplicitrefs にアクセスしてください</target>
+        <note>
+      0 - Comma delimited list of the package IDs that were implicitly defined and should not have a PackageVersion item
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingPackageVersion">
+        <source>The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">次の PackageReference 項目では、対応する PackageVersion 項目を定義していません: {0}。Central Package Management を使用するプロジェクトでは、PackageReference 項目と PackageVersion 項目を、名前が一致するように宣言する必要があります。詳細情報については、https://aka.ms/nuget/cpm/gettingstarted を参照してください</target>
+        <note>
+      0 - The comma delimited list of package names that did not have a version specified.
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">次の PackageReference 項目では、Version の値を定義できません: {0}。Central Package Management を使用するプロジェクトでは、PackageVersion 項目で Version 値を定義する必要があります。詳細情報については、https://aka.ms/nuget/cpm/gettingstarted を参照してください</target>
+        <note>
+      0 - Comma delimited list of the package IDs that specified a Version
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_VersionOverrideNotAllowed">
+        <source>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</source>
+        <target state="translated">次の PackageReference 項目では、VersionOverride の値を指定できません: {0}。 現在、Central Package Management を使用するプロジェクトは、この機能を無効にするように構成されています。詳細については、https://aka.ms/nuget/cpm/versionoverride を参照してください</target>
+        <note>
+      0 - The comma delimited list of package names that specified a value for VersionOverride.
+      Do not localize `PackageReference`
+      Do not localize `VersionOverride`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateAlreadyExist">
+        <source>Client certificate configured for the package source '{0}' already exists.</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書は既に存在します。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateNotExist">
+        <source>Client certificate configured for the package source '{0}' does not exist</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書が存在しません</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateTypeMismatch">
+        <source>Client certificate configured for the package source '{0}' cannot be modified due to a type mismatch.</source>
+        <target state="translated">種類が一致しないため、パッケージ ソース '{0}' 用に構成されたクライアント証明書を変更できません。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificatesNotFound">
+        <source>Client certificates were not found.</source>
+        <target state="translated">クライアント証明書が見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CouldNotAdd">
+        <source>Could not add the trusted signer: {0}</source>
+        <target state="translated">信頼された署名者を追加できませんでした: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotList">
+        <source>Could not list the trusted signers: {0}</source>
+        <target state="translated">信頼された署名者の一覧を作成できませんでした: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotRemove">
+        <source>Could not remove the trusted signer: {0}</source>
+        <target state="translated">信頼された署名者を削除できませんでした: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotSync">
+        <source>Could not sync the trusted repository: {0}</source>
+        <target state="translated">信頼されたリポジトリを同期できませんでした: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateClientCertificate">
+        <source>Could not update the client certificate: {0}</source>
+        <target state="translated">クライアント証明書を更新できませんでした: {0}</target>
+        <note>0 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateMetadataLastAccessTime">
+        <source>Updating last access time on file {0} failed with {1}</source>
+        <target state="translated">ファイル {0} の最終アクセス時刻の更新が {1} で失敗しました</target>
+        <note>0 - file path
+    1 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptyCertificateListInRepository">
+        <source>The repository with the service index '{0}' does not list any trusted certificates.</source>
+        <target state="translated">サービス インデックス '{0}' を含むリポジトリは、信頼された証明書の一覧を作成しません。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFilePath">
+        <source>A source file was added with an empty path.</source>
+        <target state="translated">空のパスでソース ファイルが追加されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFileProjectDirectory">
+        <source>The project directory for the source file '{0}' could not be found.</source>
+        <target state="translated">ソース ファイル '{0}' のプロジェクト ディレクトリが見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single_Short">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'HTTP' ソースを使用して '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'HTTP' ソースで '{0}' 操作を実行しています: {1}。NuGet には HTTPS ソースが必要です。HTTP ソースを使用するには、NuGet.Config ファイルで 'allowInsecureConnections' を [true] に明示的に設定する必要があります。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Error_IncompatiblePackageType">
+        <source>The package {0} {1} has a package type {2} that is incompatible with this project.</source>
+        <target state="translated">パッケージ {0} {1} には、このプロジェクトと互換性のないパッケージの種類 {2} が含まれています。</target>
+        <note>0 - package id, 1 - version, 2 - package type</note>
+      </trans-unit>
+      <trans-unit id="Error_InputFileNotSpecified">
+        <source>Specify a nuspec, project.json, or project file to use</source>
+        <target state="translated">nuspec、project.json、使用するプロジェクト ファイルを指定してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidATF">
+        <source>PackageTargetFallback and AssetTargetFallback cannot be used together. Remove PackageTargetFallback(deprecated) references from the project environment.</source>
+        <target state="translated">PackageTargetFallback と AssetTargetFallback を一緒に使用することはできません。PackageTargetFallback(deprecated) 参照をプロジェクト環境から削除してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCertificateInformationFromServer">
+        <source>Invalid certificate information from the service index '{0}'.</source>
+        <target state="translated">サービス インデックス '{0}' からの証明書情報が無効です。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidCombinationOfArguments">
+        <source>Invalid combination of arguments.</source>
+        <target state="translated">引数の組み合わせが無効です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInput">
+        <source>Invalid input '{0}'. The file type was not recognized.</source>
+        <target state="translated">入力 '{0}' が正しくありません。ファイルの種類を認識できませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputConfig">
+        <source>Invalid input '{0}'. Valid file names are 'packages.config' or 'packages.*.config'.</source>
+        <target state="translated">無効な入力 '{0}'。有効なファイル名は 'packages.config' または 'packages.*.config' です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputJson">
+        <source>Invalid input '{0}'. Valid file names are 'project.json' or '*.project.json'.</source>
+        <target state="translated">無効な入力 '{0}'。有効なファイル名は 'project.json' または '*.project.json' です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidDependencyVersionConstraints">
+        <source>Package version constraints for '{0}' return a version range that is empty.</source>
+        <target state="translated">'{0}' のパッケージのバージョン制約は空のバージョン範囲を返します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">RestorePackagesWithLockFile プロパティが False に設定されているが、{0} にパッケージ ロック ファイルが存在する場合、復元入力が無効です。</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditLevelValue">
+        <source>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAuditLevel 値 '{0}' が無効です。有効な値: {1}</target>
+        <note>Don't translate 'NuGetAuditLevel'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditModeValue">
+        <source>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAuditMode 値 '{0}' が無効です。有効な値: {1}</target>
+        <note>Don't translate 'NuGetAuditMode'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "direct, all"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditValue">
+        <source>Invalid NuGetAudit value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAudit 値 '{0}' が無効です。有効な値: {1}</target>
+        <note>Don't translate 'NuGetAudit'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "true, false"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidProjectPackageCombo">
+        <source>Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type</source>
+        <target state="translated">{0} {1} のプロジェクト パケージの組み合わせが無効です。DotnetToolReference プロジェクト形式には、DotnetTool タイプの参照のみ含めることができます。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSymbolPackageFormat">
+        <source>The provided SymbolPackageFormat value {0} is invalid. Allowed values : 'snupkg', 'symbols.nupkg'.</source>
+        <target state="translated">指定された SymbolPackageFormat 値 {0} が無効です。使用できる値は 'snupkg'、'symbols.nupkg' です。</target>
+        <note>Do not localize snupkg and symbols.nupkg</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Failed to build package because of an unsupported targetFramework value on '{0}'.</source>
+        <target state="translated">'{0}' にあるサポートされない targetFramework 値が原因で、パッケージをビルドできませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidWindowsTargetPlatformMinVersion">
+        <source>Invalid value for WindowsTargetPlatformMinVersion: {0}</source>
+        <target state="translated">WindowsTargetPlatformMinVersion の値が無効です: {0}</target>
+        <note>{0} is the value supplied </note>
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">ソース パラメーターが指定されていませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultiplePackagePaths">
+        <source>{0} contains more than one path</source>
+        <target state="translated">{0} に複数のパスが含まれています</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">signatureValidationMode は必須に設定されているため、パッケージは信頼できる署名者によって署名されている場合にのみ許可されます。しかし、信頼できる署名者は指定されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingCertificate">
+        <source>The package signature did not match any of the allowed certificate fingerprints.</source>
+        <target state="translated">パッケージの署名が、許可されている証明書のフィンガープリントのいずれとも一致しませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">このパッケージは署名されていますが、信頼できる署名者による署名ではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExist">
+        <source>Unable to find package {0}. No packages exist with this id in source(s): {1}</source>
+        <target state="translated">パッケージ {0} が見つかりません。ソース {1} には、この ID のパッケージが存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExistInRange">
+        <source>Unable to find package {0} with version {1}</source>
+        <target state="translated">バージョン {1} のパッケージ {0} が見つかりません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoSignatureTrustedForPackage">
+        <source>No signature to be trusted was specified for the package '{0}'. Specify either Author or Repository.</source>
+        <target state="translated">パッケージ '{0}' に信頼できる署名が指定されていません。作成者またはリポジトリを指定してください。</target>
+        <note>0 - Package path</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSourcesInformation">
+        <source>Unable to get package sources information.</source>
+        <target state="translated">パッケージ ソース情報を取得できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoStablePackageVersionsExist">
+        <source>Unable to find a stable package {0} with version {1}</source>
+        <target state="translated">バージョン {1} の安定版パッケージ {0} が見つかりません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotSupportedHashAlgorithm">
+        <source>'{0}' is not a supported hash algorithm.</source>
+        <target state="translated">'{0}' はサポート対象のハッシュ アルゴリズムではありません。</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="Error_PackFailed">
+        <source>Failed to build package. {0}</source>
+        <target state="translated">パッケージをビルドできませんでした。{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">パッケージを構築できませんでした。'{0}' にアセンブリ ファイルが含まれていることを確認してください。シンボル パッケージの構築のヘルプについては、{1} にアクセスしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">パッケージを構築できませんでした。'{0}' にソース ファイルとシンボル ファイルが含まれていることを確認してください。シンボル パッケージの構築のヘルプについては、{1} にアクセスしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}{1}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">パッケージが署名されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageReference_NoVersion">
+        <source>The following PackageReference item(s) do not have a version specified: {0}</source>
+        <target state="translated">次の PackageReference 項目には、バージョンが指定されていません: {0}</target>
+        <note>0 - List of package names</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">{0} に対するパッケージ コンテンツ ハッシュの検証に失敗しました。パッケージが前回の復元とは異なります。</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_PlatformVersionNotPresent">
+        <source>Platform version is not present for one or more target frameworks, even though they have specified a platform: {0}</source>
+        <target state="translated">1 つまたは複数のターゲット フレームワークには、プラットフォームが指定されていますが、プラットフォーム バージョンがありません: {0}</target>
+        <note>0 - comma-separated list of TFMs missing a platform version</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectDoesNotExist">
+        <source>Unable to find project '{0}'. Check that the project reference is valid and that the project file exists.</source>
+        <target state="translated">プロジェクト '{0}' が見つかりません。プロジェクト参照が有効であり、プロジェクト ファイルが存在することを確認してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated">
+        <source>Managing packages with project.json is deprecated. Migrate to PackageReference.</source>
+        <target state="translated">project.json によるパッケージ管理は非推奨になりました。PackageReference に移行してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonIsUnreadable">
+        <source>The runtime.json specified in the project '{0}' could not be parsed. {1}</source>
+        <target state="translated">プロジェクト '{0}' で指定された runtime.json を解析できませんでした。{1}</target>
+        <note>0 - runtime.json path, 1 - Additional Message, Please do not localize 'runtime.json'.</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonNotFound">
+        <source>The runtime.json specified in the project '{0}' could not be found.</source>
+        <target state="translated">プロジェクト '{0}' で指定された runtime.json が見つかりませんでした。</target>
+        <note>0 - runtime.json path, Please do not localize 'runtime.json'</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectWithIncorrectDependenciesCount">
+        <source>Project {0} must have a single package reference(s).</source>
+        <target state="translated">プロジェクト{0} には 1 つのパッケージ参照が必要です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PropertyCannotBeNullOrEmpty">
+        <source>Property '{0}' should not be null or empty.</source>
+        <target state="translated">プロパティ '{0}' を null または空にすることはできません。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="Error_RepoTrustExpectedRepoSignature">
+        <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
+        <target state="translated">信頼されたリポジトリを追加できません。パッケージは署名済みまたは副署名済みリポジトリではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedMode">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</source>
+        <target state="translated">パッケージ ロック ファイルはプロジェクトの依存関係と一貫性がないため、ロック モードで復元を実行できません。RestoreLockedMode MSBuild プロパティを無効にするか、明示的な --force-evaluate オプションを渡して復元を実行し、ロック ファイルを更新してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningDirectPackageReference">
+        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
+        <target state="translated">PackageReference {0} は排除されません。このパッケージは不要である可能性があるため、依存関係から削除することを検討してください。</target>
+        <note>0 - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningProjectReference">
+        <source>A ProjectReference cannot be pruned, {0}.</source>
+        <target state="translated">ProjectReference は排除できません。{0}。</target>
+        <note>0 - project reference</note>
+      </trans-unit>
+      <trans-unit id="Error_ServiceIndexShouldBeHttps">
+        <source>The repository service index '{0}' is not a valid HTTPS url.</source>
+        <target state="translated">リポジトリ サービス インデックス '{0}' は有効な HTTPS URL ではありません。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_ToolsPackageWithExtraPackageTypes">
+        <source>Invalid tools package {0} {1}. Tools packages cannot contain more than one PackageType.</source>
+        <target state="translated">無効なツール パッケージ {0} {1} です。ツール パッケージに複数の PackageType を含めることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedAuthorNoOwners">
+        <source>A trusted author cannot have owners.</source>
+        <target state="translated">信頼された作成者に所有者を含めることはできません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepoAlreadyExists">
+        <source>A trusted repository with the service index '{0}' already exists.</source>
+        <target state="translated">サービス インデックス '{0}' を含む信頼されたリポジトリが既に存在します。</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepositoryDoesNotExist">
+        <source>A trusted repository '{0}' does not exist.</source>
+        <target state="translated">信頼されたリポジトリ '{0}' は存在しません。</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedSignerAlreadyExists">
+        <source>A trusted signer '{0}' already exists.</source>
+        <target state="translated">信頼された署名者 '{0}' が既に存在します。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToFindProjectInfo">
+        <source>Unable to find project information for '{0}'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">'{0}' のプロジェクト情報が見つかりません。Visual Studio を使用している場合、プロジェクトがアンロードされているか、現在のソリューションの一部ではないことが原因の可能性があります。そのため、コマンドラインから復元を実行してください。それ以外の場合、プロジェクト ファイルが無効であるか、復元に必要なターゲットがない可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateBuildOutput">
+        <source>No build found in {0}. Use the -Build option or build the project.</source>
+        <target state="translated">{0} でビルドが見つかりません。-Build オプションを使用するか、プロジェクトをビルドしてください。</target>
+        <note>{0} is the project output directory</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain a project to restore.</source>
+        <target state="translated">フォルダー '{0}' には復元するプロジェクトが含まれていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToSignPackage">
+        <source>Unable to sign package.</source>
+        <target state="translated">パッケージに署名できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnavailableSource">
+        <source>Source '{0}' does not exist or cannot be retrived.</source>
+        <target state="translated">ソース '{0}' が存在しないか、取得できません。</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownBuildAction">
+        <source>Package '{0}' specifies an invalid build action '{1}' for file '{2}'.</source>
+        <target state="translated">パッケージ '{0}' で無効なビルド アクション '{1}' がファイル '{2}' に対して指定されています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificateStoreType">
+        <source>Cannot determine client certificate store type</source>
+        <target state="translated">クライアント証明書ストアの種類を特定できません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesFindBy">
+        <source>The find by search type '{0}' is not recognized.</source>
+        <target state="translated">検索の種類 '{0}' による検索を認識できません。</target>
+        <note>0 - find type</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreLocation">
+        <source>The store location '{0}' is not recognized.</source>
+        <target state="translated">ストアの場所 '{0}' を認識できません。</target>
+        <note>0 - store location</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreName">
+        <source>The source name '{0}' is not recognized.</source>
+        <target state="translated">ソース名 '{0}' を認識できません。</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedTrustTarget">
+        <source>The trust target '{0}' is unsupported.</source>
+        <target state="translated">信頼ターゲット '{0}' はサポートされていません。</target>
+        <note>0 - VerificationTarget</note>
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">パッケージの脆弱性データの取得中にエラーが発生しました: {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WriteResolvedNuSpecOverwriteOriginal">
+        <source>Unable to output resolved nuspec file because it would overwrite the original at '{0}'</source>
+        <target state="translated"> '{0}' のオリジナルが上書きされる可能性があるため、解決された nuspec ファイルを出力できません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_XPROJNotAllowed">
+        <source>Invalid input '{0}'. XProj support has been removed. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">入力 '{0}' が無効です。XProj がサポートされなくなりました。XProj とスタンドアロン project.json ファイルがサポートされなくなったため、レガシ プロジェクトを使用して引き続き作業するには、https://nuget.org/downloads から NuGet 3.5.x を使用してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">'{0}' を構築できませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">パッケージに既にファイル '{1}' が含まれているため、ファイル '{0}' は追加されませんでした</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSource">
+        <source>Found {0} version(s) in {1} [ Nearest version: {2} ]</source>
+        <target state="translated">{0} バージョンが {1} に見つかりました。 [ 最も近いバージョン: {2} ]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSourceWithoutMatch">
+        <source>Found {0} version(s) in {1}</source>
+        <target state="translated">{0} バージョンが {1} に見つかりました</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInput">
+        <source>Invalid restore input. {0}</source>
+        <target state="translated">復元入力が無効です。{0}</target>
+        <note>0 is an error message specific to the validation failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInputWithFiles">
+        <source>Invalid restore input. {0} Input files: {1}.</source>
+        <target state="translated">復元入力が無効です。{0} 入力ファイル: {1}。</target>
+        <note>0 is an error message specific to the validation failure. 1 is a list of file paths.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Provide a valid source.</source>
+        <target state="translated">指定されたソース '{0}' が正しくありません。有効なソースを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">{0} の値: '{1}' が無効です。有効な例: '{2}'</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Invalid_Framework">
+        <source>One or more invalid frameworks were detected.</source>
+        <target state="translated">1 つ以上の無効なフレームワークが検出されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: Unable to delete one or more files.</source>
+        <target state="translated">ローカル リソースをクリアできませんでした。1 つ以上のファイルを削除できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">ローカル リソースがクリアされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesFolder">
+        <source>Clearing NuGet global packages folder: {0}</source>
+        <target state="translated">NuGet グローバル パッケージ フォルダーをクリア中: {0}</target>
+        <note>{0} : Global packages cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">NuGet HTTP キャッシュをクリア中: {0}</target>
+        <note>{0} : Http cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetPluginsCache">
+        <source>Clearing NuGet plugins cache: {0}</source>
+        <target state="translated">NuGet プラグイン キャッシュをクリア中: {0}</target>
+        <note>{0}: Plugins cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetTempCache">
+        <source>Clearing NuGet Temp cache: {0}</source>
+        <target state="translated">NuGet 一時キャッシュをクリア中: {0}</target>
+        <note>{0} : Temp cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">'{0}' を削除できませんでした。</target>
+        <note>{0} : Path to be deleted</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_Help">
+        <source>usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">使用法: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+詳細については、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Provide one of the following values: http-cache, temp, global-packages, all.</source>
+        <target state="translated">無効なローカル リソース名が指定されました。次のいずれかの値を指定してください: http-cache、temp、global-packages、all。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">ローカル リソース '{0}' の場所が定義されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">ローカル リソースが一部クリアされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AllProjectsUpToDate">
+        <source>All projects are up-to-date for restore.</source>
+        <target state="translated">復元対象のすべてのプロジェクトは最新です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AssetsFileNotOnDisk">
+        <source>The expected assets file for {0} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">{0} の予想されるアセット ファイルが存在しません。操作を中止できません。復元を続行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_CPVM_DowngradeError">
+        <source>Detected package downgrade: {0} from {1} to centrally defined {2}. Update the centrally managed package version to a higher version.</source>
+        <target state="translated">パッケージのダウングレード ({1} の {0} から一元的に定義された {2} へ) が検出されました。一元管理されたパッケージ バージョンをより新しいバージョンに更新してください。</target>
+        <note>{0} is package id, {1} is the package version, {2} is the downgraded package version.</note>
+      </trans-unit>
+      <trans-unit id="Log_Committing">
+        <source>Committing restore...</source>
+        <target state="translated">復元をコミットしています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConfigFileSummary">
+        <source>NuGet Config files used:</source>
+        <target state="translated">使用されている NuGet Config ファイル:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConvertedPackageToOriginalCase">
+        <source>The package {0} was converted to original case in the packages directory.</source>
+        <target state="translated">パッケージ {0} が、パッケージ ディレクトリ内の元の大文字/小文字に変換されました。</target>
+        <note>{0} is the package identity.</note>
+      </trans-unit>
+      <trans-unit id="Log_CycleDetected">
+        <source>Cycle detected.</source>
+        <target state="translated">サイクルが検出されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DependencyBumpedUp">
+        <source>Dependency specified was {0} {1} but ended up with {2} {3}.</source>
+        <target state="translated">指定された依存関係は {0} {1} でしたが、最終的に {2} {3} となりました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DowngradeWarning">
+        <source>Detected package downgrade: {0} from {1} to {2}. Reference the package directly from the project to select a different version.</source>
+        <target state="translated">{0} の {1} から {2} へのパッケージ ダウングレードが検出されました。別のバージョンを選択するには、プロジェクトから直接パッケージを参照してください。</target>
+        <note>{0}: package id
+{1}: requested version
+{2}: resolved version</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorSummary">
+        <source>Errors in {0}</source>
+        <target state="translated">{0} でのエラー</target>
+        <note>0 - project name/type</note>
+      </trans-unit>
+      <trans-unit id="Log_FeedsUsedSummary">
+        <source>Feeds used:</source>
+        <target state="translated">使用されているフィード:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FrameworkDisplay">
+        <source>{0} ({1})</source>
+        <target state="translated">{0} ({1})</target>
+        <note>0 - framework short name, 1 - System.FrameworkName</note>
+      </trans-unit>
+      <trans-unit id="Log_FrameworkRIDDisplay">
+        <source>{0} ({1}) / {2}</source>
+        <target state="translated">{0} ({1}) / {2}</target>
+        <note>0 - framework short name, 1 - System.FrameworkName, 2 - Runtime ID</note>
+      </trans-unit>
+      <trans-unit id="Log_GeneratingMsBuildFile">
+        <source>Generating MSBuild file {0}.</source>
+        <target state="translated">MSBuild ファイル {0} を生成しています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ImportsFallbackWarning">
+        <source>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</source>
+        <target state="translated">パッケージ '{0}' はプロジェクトのターゲット フレームワーク '{2}' ではなく '{1}' を使用して復元されました。このパッケージは、使用しているプロジェクトとの完全な互換性がない可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummary">
+        <source>Installed:</source>
+        <target state="translated">インストール済み:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummaryCount">
+        <source>{0} package(s) to {1}</source>
+        <target state="translated">{1} に対する {0} 個のパッケージ</target>
+        <note>0 - installed package count
+1 - folder path</note>
+      </trans-unit>
+      <trans-unit id="Log_LockFileNotOnDisk">
+        <source>The lock file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">{1} の場所に {0} のロック ファイルが存在しません。操作を中止できません。復元を続行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MergingRuntimes">
+        <source>Merging in runtimes defined in {0}.</source>
+        <target state="translated">{0} で定義されているランタイムをマージしています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFx">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no compatible run-time assembly.</source>
+        <target state="translated">{0} {1} には {2} に対するコンパイル時参照アセンブリ ({3} 上) がありますが、互換性のあるランタイム アセンブリが存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFxRuntime">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no run-time assembly compatible with {4}.</source>
+        <target state="translated">{0} {1} には {2} に対するコンパイル時参照アセンブリ ({3} 上) がありますが、{4} との互換性を持つランタイム アセンブリが存在しません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingPackagesOnDisk">
+        <source>Not all packages are on disk for: {0}</source>
+        <target state="translated">ディスク上に {0} のすべてのパッケージがあるわけではありません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">ファイル '{0}' を追加しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">'{0}' のシンボル パッケージを構築しようとしています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandInstallPackageToOutputPath">
+        <source>Install {0} to output path '{1}'</source>
+        <target state="translated">{0} をインストールしてパス '{1}' を出力する</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">パッケージ '{0}' が正常に作成されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageContentHashValidationFailed">
+        <source>Package content hash validation failed for {0}. Expected: {1} Actual: {2}</source>
+        <target state="translated">{0} に対するパッケージ コンテンツ ハッシュの検証に失敗しました。必要: {1} 実際: {2}</target>
+        <note>0 - package ID, 1 - expected Sha, 2 - actual sha</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx">
+        <source>Package {0} {1} is not compatible with {2}.</source>
+        <target state="translated">パッケージ {0} {1} は {2} と互換性がありません。</target>
+        <note>0 - package id, 1 - version, 2 - target framework</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_NoSupports">
+        <source>Package {0} {1} does not support any target frameworks.</source>
+        <target state="translated">パッケージ {0} {1} はどのターゲット フレームワークもサポートしません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_Supports">
+        <source>Package {0} {1} supports:</source>
+        <target state="translated">パッケージ {0} {1} がサポートするもの:</target>
+        <note>0 - package id, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="Log_PackagesAndProjectsAreCompatible">
+        <source>All packages and projects are compatible with {0}.</source>
+        <target state="translated">すべてのパッケージとプロジェクトは {0} と互換性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectDoesNotSpecifyTargetFrameworks">
+        <source>The project {0} does not specify any target frameworks in {1}.</source>
+        <target state="translated">プロジェクト '{0}' ではターゲット フレームワークが '{1}' で指定されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx">
+        <source>Project {0} is not compatible with {1}.</source>
+        <target state="translated">プロジェクト {0} は {1} と互換性がありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_NoSupports">
+        <source>Project {0} does not support any target frameworks.</source>
+        <target state="translated">プロジェクト {0} はどのターゲット フレームワークもサポートしません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_Supports">
+        <source>Project {0} supports:</source>
+        <target state="translated">プロジェクト {0} がサポートするもの:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectUpToDateSummary">
+        <source>{0} of {1} projects are up-to-date for restore.</source>
+        <target state="translated">{1} 個中 {0} 個の復元対象のプロジェクトは最新です。</target>
+        <note>0 - number of projects that were up-to-date
+1 - Total number of projects</note>
+      </trans-unit>
+      <trans-unit id="Log_PropsFileNotOnDisk">
+        <source>The props file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">{1} の場所に {0} のプロパティ ファイルが存在しません。操作を中止できません。復元を続行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ReadingProject">
+        <source>Reading project file {0}.</source>
+        <target state="translated">プロジェクト ファイル {0} を読み取っています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ResolverConflict">
+        <source>Unable to satisfy conflicting requests for '{0}': {1} Framework: {2}</source>
+        <target state="translated">'{0}' の競合する要求を満たすことができません: {1} フレームワーク: {2}</target>
+        <note>0 - package id, 1 - comma delimited list of conflicts, 2 - framework</note>
+      </trans-unit>
+      <trans-unit id="Log_ResolvingConflicts">
+        <source>Resolving conflicts for {0}...</source>
+        <target state="translated">{0} の競合を解決しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreComplete">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">{0} を復元しました ({1})。</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreCompleteDotnetTool">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">{0} を復元しました ({1})。</target>
+        <note>{0} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailed">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">{0} を復元できませんでした ({1})。</target>
+        <note>{0} is the path to the project file.
+    {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailedDotnetTool">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">{0} を復元できませんでした ({1})。</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpDGChanged">
+        <source>The restore inputs for '{0}' have changed. Continuing restore.</source>
+        <target state="translated">'{0}' の復元入力が変更されています。復元を続行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpFinish">
+        <source>The restore inputs for '{0}' have not changed. No further actions are required to complete the restore.</source>
+        <target state="translated">'{0}' の復元入力は変更されていません。復元を完了するのに、これ以降の操作は必要ありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoringPackages">
+        <source>Restoring packages for {0}...</source>
+        <target state="translated">{0} のパッケージを復元しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningNonParallelRestore">
+        <source>Running non-parallel restore.</source>
+        <target state="translated">並列でない復元を実行しています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningParallelRestore">
+        <source>Running restore with {0} concurrent jobs.</source>
+        <target state="translated">{0} 件の同時実行ジョブで復元を実行しています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ScanningForRuntimeJson">
+        <source>Scanning packages for runtime.json files...</source>
+        <target state="translated">パッケージをスキャンして runtime.json ファイルを探しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingAssetsFile">
+        <source>Assets file has not changed. Skipping assets file writing. Path: {0}</source>
+        <target state="translated">アセット ファイルは変更されていません。アセット ファイルの書き込みを省略します。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingCacheFile">
+        <source>No-Op restore. The cache will not be updated. Path: {0}</source>
+        <target state="translated">復元を行いません。キャッシュは更新されません。パス: {0}</target>
+        <note>{0}: Path to cache file</note>
+      </trans-unit>
+      <trans-unit id="Log_SkippingPackagesLockFileGeneration">
+        <source>Skipping the lock file regeneration for '{0}'.</source>
+        <target state="translated">'{0}' のロック ファイルの再生成をスキップしています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SourceMappingEnabledNoMatchingPackageSources">
+        <source>PackageSourceMapping is enabled, the following source(s) were not considered: {0}.</source>
+        <target state="translated">PackageSourceMapping が有効になっています。次のソースは考慮されませんでした: {0}。</target>
+        <note>Please do not localize `PackageSourceMapping`. 0 - package source names list.</note>
+      </trans-unit>
+      <trans-unit id="Log_TargetsFileNotOnDisk">
+        <source>The targets file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">{1} の場所に {0} のターゲット ファイルが存在しません。操作を中止できません。復元を続行します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolSkippingAssetsFile">
+        <source>Tool assets file has not changed. Skipping assets file write. Path: {0}</source>
+        <target state="translated">ツール アセット ファイルは変更されていません。アセット ファイルの書き込みを省略します。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingAssetsFile">
+        <source>Writing tool assets file to disk. Path: {0}</source>
+        <target state="translated">ディスクにツール アセット ファイルを書き込んでいます。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingCacheFile">
+        <source>Writing tool cache file to disk. Path: {0}</source>
+        <target state="translated">ツール キャッシュ ファイルをディスクに書き込みます。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnknownCompatibilityProfile">
+        <source>Unknown Compatibility Profile: {0}</source>
+        <target state="translated">不明な互換性プロファイル: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnresolvedDependency">
+        <source>Unable to resolve '{0}' for '{1}'.</source>
+        <target state="translated">'{1}' に対する '{0}' を解決できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflict">
+        <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
+        <target state="translated">{0} のバージョンの競合が検出されました。この問題を解決するには、{1} をプロジェクト {2} に直接インストールするか、参照します。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingAssetsFile">
+        <source>Writing assets file to disk. Path: {0}</source>
+        <target state="translated">アセット ファイルをディスクに書き込んでいます。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingCacheFile">
+        <source>Writing cache file to disk. Path: {0}</source>
+        <target state="translated">キャッシュ ファイルをディスクに書き込んでいます。パス: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingPackagesLockFile">
+        <source>Writing packages lock file at disk. Path: {0}</source>
+        <target state="translated">パッケージ ロック ファイルをディスクに書き込んでいます。パス: {0}</target>
+        <note>{0} - Path to packages lock file</note>
+      </trans-unit>
+      <trans-unit id="MSBuildWarning_MultiTarget">
+        <source>Packages containing MSBuild targets and props files cannot be fully installed in projects targeting multiple frameworks. The MSBuild targets and props files have been ignored.</source>
+        <target state="translated">パッケージに MSBuild targets ファイルと props ファイルが存在しているため、複数のフレームワークをターゲットとするプロジェクトにこのパッケージを完全にインストールすることはできません。MSBuild targets ファイルと props ファイルは無視されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredProperty">
+        <source>Missing required property '{0}'.</source>
+        <target state="translated">必須プロパティ '{0}' がありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredPropertyForProjectType">
+        <source>Missing required property '{0}' for project type '{1}'.</source>
+        <target state="translated">プロジェクト タイプ '{1}' の必須プロパティ '{0}' がありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Multiple_Nupkgs_Detected">
+        <source>Multiple nupkg files detected on '{0}' path to trust, only 1 is allowed.</source>
+        <target state="translated">'{0}' パスで信頼するべき nupkg ファイルが複数検出されました。許可されたのは 1 つだけです。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificates">
+        <source>There are no client certificates.</source>
+        <target state="translated">クライアント証明書がありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificatesMatching">
+        <source>There are no client certificates configured for the package source '{0}'.</source>
+        <target state="translated">パッケージ ソース '{0}' 用に構成されたクライアント証明書がありません。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="NoTrustedSigners">
+        <source>There are no trusted signers.</source>
+        <target state="translated">信頼された署名者がいません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTrustedSignersMatching">
+        <source>No trusted signers with the name: '{0}' were found.</source>
+        <target state="translated">名前 '{0}' の信頼された署名者が見つかりませんでした。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="NonMatchingProperties">
+        <source>Properties '{0}':'{1}' and '{2}':'{3}' do not match.</source>
+        <target state="translated">プロパティ '{0}':'{1}' および '{2}':'{3}' が一致しません。</target>
+        <note>0 - first property name
+1 - first property value
+2 - second property name
+3 - second property value</note>
+      </trans-unit>
+      <trans-unit id="NuGetDocs">
+        <source>https://docs.nuget.org/</source>
+        <target state="translated">https://docs.nuget.org/</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowed">
+        <source>Invalid input combination. Property '{0}' is not allowed.</source>
+        <target state="translated">入力の組み合わせが無効です。プロパティ '{0}' は指定できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowedForProjectType">
+        <source>Invalid input combination. Property '{0}' is not allowed for project type '{1}'.</source>
+        <target state="translated">入力の組み合わせが無効です。プロパティ '{0}' はプロジェクト タイプ '{1}' に関して指定できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredClientCertificates">
+        <source>Registered client certificates:</source>
+        <target state="translated">登録されているクライアント証明書:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredTrustedSigners">
+        <source>Registered trusted signers:</source>
+        <target state="translated">登録済みの信頼された署名者:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReservedPackageNameAll">
+        <source>All</source>
+        <target state="translated">すべて</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverRequest_ToStringFormat">
+        <source>{0} (via {1})</source>
+        <target state="translated">{0} ({1} 経由)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreDebugPruningPackageReference">
+        <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
+        <target state="translated">パッケージ '{0}' を '{1}' の依存関係として排除しています。排除可能な最大バージョンが '{2}'</target>
+        <note>0 - package id and version, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFileNotFound">
+        <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">証明書ファイル '{0}' は見つかりませんでした。証明書を提供する承認済みの方法のリストについて、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
+        <note>{0} is the certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNotFound">
+        <source>Certificate store '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">証明書ストア '{0}' は見つかりませんでした。証明書を提供する承認済みの方法のリストについて、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
+        <note>{0} is the certificate store name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandDialogMessage">
+        <source>Select a valid certificate</source>
+        <target state="translated">有効な証明書を選択します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDialogTitle">
+        <source>NuGet Sign Certificate Selection</source>
+        <target state="translated">NuGet の署名証明書の選択</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayCertificate">
+        <source>Signing package(s) with certificate:</source>
+        <target state="translated">次の証明書でパッケージに署名しています:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayTimestamper">
+        <source>Timestamping package(s) with:</source>
+        <target state="translated">次の項目を使用してパッケージにタイムスタンプを設定しています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertException">
+        <source>Certificate file '{0}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">証明書ファイル '{0}' が無効です。証明書を提供する承認済みの方法のリストについて、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
+        <note>0 - certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidPasswordException">
+        <source>Invalid password was provided for the certificate file '{0}'. Provide a valid password using the '-{1}' option</source>
+        <target state="translated">証明書ファイル '{0}' に、無効なパスワードが指定されました。'-{1}' オプションを使用して、有効なパスワードを指定してください</target>
+        <note>0 - certificate file path
+1 - certificate password option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertException">
+        <source>Multiple certificates were found that meet all the given criteria. Use the '-{0}' option with the hash of the desired certificate.</source>
+        <target state="translated">指定されたすべての条件に一致する証明書が複数見つかりました。目的の証明書のハッシュを付けて、'-{0}' オプションを使用してください。</target>
+        <note>0 - CertificateFingerprint option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertException">
+        <source>No certificates were found that meet all the given criteria. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">指定された条件すべてを満たす証明書は見つかりませんでした。証明書を提供する承認済みの方法のリストについて、https://docs.nuget.org/docs/reference/command-line-reference をご覧ください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOutputPath">
+        <source>Signed package(s) output path:</source>
+        <target state="translated">署名済みパッケージの出力パス:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandSuccess">
+        <source>Package(s) signed successfully.</source>
+        <target state="translated">パッケージが正常に署名されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceNotConsidered">
+        <source>Versions from {0} were not considered</source>
+        <target state="translated">{0} からのバージョンは考慮されませんでした。</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Source_DefaultNamePrefix">
+        <source>Package source </source>
+        <target state="translated">パッケージ ソース </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_InvalidFormatValue">
+        <source>invalid value for --format: {0}. Allowed values: 'detailed' or 'short'</source>
+        <target state="translated">--format の値が無効です: {0}。許可値: 'detailed' または 'short'</target>
+        <note>don't localize 'format', 'detailed' or 'short'</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllNameIsReserved">
+        <source>Package source name 'All' is a reserved name.</source>
+        <target state="translated">パッケージ ソース名 'All' は予約された名前です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandClearingExistingAuthTypes">
+        <source>Clearing existing authentication types settings for package source '{0}'.</source>
+        <target state="translated">パッケージ ソース '{0}' の既存の認証の種類の設定をクリアしています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequired">
+        <source>Both UserName and Password must be specified.</source>
+        <target state="translated">ユーザー名とパスワードの両方を指定する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequiredWithAuthTypes">
+        <source>Both UserName and Password must be specified if ValidAuthenticationTypes is specified.</source>
+        <target state="translated">ValidAuthenticationTypes が指定されている場合、ユーザー名とパスワードの両方を指定する必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandDisabled">
+        <source>Disabled</source>
+        <target state="translated">無効</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandEnabled">
+        <source>Enabled</source>
+        <target state="translated">有効</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandInvalidSource">
+        <source>The source specified is invalid. Provide a valid source.</source>
+        <target state="translated">指定されたソースが無効です。有効なソースを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoMatchingSourcesFound">
+        <source>Unable to find any package source(s) matching name: {0}.</source>
+        <target state="translated">名前 {0} に一致するパッケージ ソースが見つかりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoSources">
+        <source>No sources found.</source>
+        <target state="translated">ソースが見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandRegisteredSources">
+        <source>Registered Sources:</source>
+        <target state="translated">登録されているソース:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceAddedSuccessfully">
+        <source>Package source with Name: {0} added successfully.</source>
+        <target state="translated">名前 {0} のパッケージ ソースが正常に追加されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDisabledSuccessfully">
+        <source>Package source with Name: {0} disabled successfully.</source>
+        <target state="translated">名前 {0} のパッケージ ソースが正常に無効にされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceEnabledSuccessfully">
+        <source>Package source with Name: {0} enabled successfully.</source>
+        <target state="translated">名前 {0} のパッケージ ソースが正常に有効にされました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceRemovedSuccessfully">
+        <source>Package source with Name: {0} removed successfully.</source>
+        <target state="translated">名前 {0} のパッケージ ソースが正常に削除されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueName">
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="translated">指定された名前は利用可能なパッケージ ソースの一覧に既に追加されています。一意な名前を指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="translated">指定されたソースは利用可能なパッケージ ソースの一覧に既に追加されています。一意なソースを指定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUpdateSuccessful">
+        <source>Package source "{0}" was successfully updated.</source>
+        <target state="translated">パッケージ ソース "{0}" が正常に更新されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidProtocolVersion">
+        <source>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</source>
+        <target state="translated">指定されたプロトコル バージョンが無効です。有効なプロトコル バージョンは {0} から {1} です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationDuplicateFrameworks">
+        <source>Duplicate frameworks found: '{0}'.</source>
+        <target state="translated">重複するフレームワークが見つかりました: '{0}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationInvalidFramework">
+        <source>Invalid target framework '{0}'.</source>
+        <target state="translated">ターゲット フレームワーク '{0}' が無効です。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationMissingProject">
+        <source>Missing project '{0}'.</source>
+        <target state="translated">プロジェクト '{0}' がありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationNoFrameworks">
+        <source>No target frameworks specified.</source>
+        <target state="translated">ターゲット フレームワークが指定されていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationUAPSingleFramework">
+        <source>UAP projects must contain exactly one target framework.</source>
+        <target state="translated">UAP プロジェクトにはターゲット フレームワークが 1 つだけ入っている必要があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationZeroRestoreRequests">
+        <source>Restore request does not contain any projects to restore.</source>
+        <target state="translated">復元要求に、復元対象のプロジェクトが含まれていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidation_OriginalTargetFrameworksMustMatchAliases">
+        <source>The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}.</source>
+        <target state="translated">元のターゲット フレームワーク値はエイリアスと一致する必要があります。元のターゲット フレームワーク: {0}、エイリアス: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullUpdatedTrustedSigner">
+        <source>Successfully updated the trusted signer '{0}'.</source>
+        <target state="translated">信頼された署名者 '{0}' が正常に更新されました。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedAuthor">
+        <source>Successfully added a trusted author '{0}'.</source>
+        <target state="translated">信頼された作成者 '{0}' が正常に追加されました。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedRepository">
+        <source>Successfully added a trusted repository '{0}'.</source>
+        <target state="translated">信頼されたリポジトリ '{0}' が正常に追加されました。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyRemovedTrustedSigner">
+        <source>Successfully removed the trusted signer '{0}'.</source>
+        <target state="translated">信頼された署名者 '{0}' が正常に削除されました。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullySynchronizedTrustedRepository">
+        <source>Successfully synchronized the trusted repository '{0}'.</source>
+        <target state="translated">信頼されたリポジトリ '{0}' が正常に同期されました。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryAllowUntrustedRoot">
+        <source>[U] {0} - {1}</source>
+        <target state="translated">[U] {0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryUnallowUntrustedRoot">
+        <source>{0} - {1}</source>
+        <target state="translated">{0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificates">
+        <source>Certificate fingerprint(s):</source>
+        <target state="translated">証明書のフィンガープリント:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogOwners">
+        <source>Trusted owners: {0}</source>
+        <target state="translated">信頼された所有者: {0}</target>
+        <note>0 - semi-colon separated owners list</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogServiceIndex">
+        <source>Service Index: {0}</source>
+        <target state="translated">サービス インデックス: {0}</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogTitle">
+        <source>{0} [{1}]</source>
+        <target state="translated">{0} [{1}]</target>
+        <note>0 - signer name
+1 - signer type
+</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>The hash algorithm is unsupported:  '{0}'.</source>
+        <target state="translated">ハッシュ アルゴリズムはサポートされていません: '{0}'。</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedProject">
+        <source>Skipping restore for project '{0}'. The project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">プロジェクト '{0}' の復元をスキップしています。プロジェクト ファイルが無効であるか、復元に必要なターゲットが見つからない可能性があります。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_ContentHash">
+        <source>Content hash: {0}</source>
+        <target state="translated">コンテンツのハッシュ: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Failed">
+        <source>Package signature validation failed.</source>
+        <target state="translated">パッケージの署名の検証に失敗しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_FinishedWithErrors">
+        <source>Finished with {0} errors and {1} warnings.</source>
+        <target state="translated">完了しました。エラー {0}、警告 {1}。</target>
+        <note>{0} is the number of errors produced and {1} is the number of warnings.</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_NotSupported">
+        <source>Package signature validation command is not supported on this platform.</source>
+        <target state="translated">パッケージの署名検証コマンドは、このプラットフォームではサポートされていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_PackageIsNotValid">
+        <source>'{0}' is not a valid package file.</source>
+        <target state="translated">'{0}' は有効なパッケージ ファイルではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Success">
+        <source>Successfully verified package '{0}'.</source>
+        <target state="translated">パッケージ '{0}' が正常に検証されました。</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerificationTypeNotSupported">
+        <source>Verification type not supported. Use only one of the following supported types: -All, -Signatures</source>
+        <target state="translated">サポートされていない検証の種類です。次のいずれかのサポートされている種類を使用してください: -All、-Signatures</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerifyingPackage">
+        <source>Verifying {0}</source>
+        <target state="translated">'{0}' を確認しています</target>
+        <note>{0} should be the package identity of the package to verify</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Critical">
+        <source>critical</source>
+        <target state="translated">クリティカル</target>
+        <note>As in "This package has a critical severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_High">
+        <source>high</source>
+        <target state="translated">高</target>
+        <note>As in "This package has a high severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Low">
+        <source>low</source>
+        <target state="translated">低</target>
+        <note>As in "This package has a low severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Moderate">
+        <source>moderate</source>
+        <target state="translated">中</target>
+        <note>As in "This package has a moderate severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_unknown">
+        <source>unknown</source>
+        <target state="translated">不明</target>
+        <note>As in "This package has a unknown severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="WarningAsError">
+        <source>Warning As Error: {0}</source>
+        <target state="translated">エラーとして警告: {0}</target>
+        <note>{0} is a warning message</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutVulnerabilityData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">監査ソース '{0}' は脆弱性データを提供しませんでした。</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
+        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">お客様の構成には {0} 個のパッケージ ソースが定義されています。中央パッケージ管理を使用する場合は、パッケージ ソース マッピング (https://aka.ms/nuget-package-source-mapping) を使用してパッケージ ソースをマップするか、単一のパッケージ ソースを指定してください: {1}</target>
+        <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">'{0}' キーは Properties コレクションに既に存在します。値をオーバーライドします。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileExcludedByDefault">
+        <source>File '{0}' was not added to the package. Files and folders starting with '.' or ending with '.nupkg' are excluded by default. To include this file, use -NoDefaultExcludes from the commandline</source>
+        <target state="translated">ファイル '{0}' がパッケージに追加されませんでした。既定で、先頭が '.' で始まるファイルとフォルダー、末尾が '.nupkg' のファイルとフォルダーは除外されます。このファイルを含めるには、コマンドラインから -NoDefaultExcludes を使用します</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</source>
+        <target state="translated">'HTTP' ソース '{1}' で '{0}' 操作を実行しています。HTTPS 以外のアクセスは、今後のバージョンでは削除されます。'HTTPS' ソースへの移行を検討してください。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSource">
+        <source>The following is a 'Non-HTTPS' source: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">"非 HTTPS" ソースを次に示します: {0}
+NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSources">
+        <source>The following are 'Non-HTTPS' sources: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'非 HTTPS' ソースを次に示します: {0}
+NuGet には HTTPS ソースが必要です。詳細については、https://aka.ms/nuget-https-everywhere を参照してください。</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionDoesNotExist">
+        <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
+        <target state="translated">{0} は {1} によって異なりますが、{2} が見つかりませんでした。代わりに {3} が解決されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionNonInclusive">
+        <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
+        <target state="translated">{0} では、依存関係 {1} の下限値 (その値を含む) を指定しませんでした。代わりに、{2} が解決されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">パッケージ '{0}' {1} に既知の {2} 重大度の脆弱性があります、{3}</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingLowerBound">
+        <source>Project dependency {0} does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.</source>
+        <target state="translated">プロジェクトの依存関係 {0} には下限値 (その値を含む) が含まれていません。復元結果の一貫性を確保するには、依存関係バージョンの下限値を含めてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingVersion">
+        <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
+        <target state="translated">プロジェクトの依存関係 '{0}' でバージョンが指定されていません。一貫性のある復元結果を得るには、依存関係のバージョンを含めます。</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_VersionAboveUpperBound">
+        <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
+        <target state="translated">依存関係の制約外で検出されたパッケージのバージョン: {0} では {1} が必要ですが、バージョン {2} は解決されました。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

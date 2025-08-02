@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -427,17 +428,17 @@ namespace NuGet.Commands
                 }
             }
 
-            return new CompatibilityData(files, targetLibrary, packageSpec);
+            return new CompatibilityData(files.ToImmutableArray(), targetLibrary, packageSpec);
         }
 
         private class CompatibilityData
         {
-            public IEnumerable<string> Files { get; }
+            public ImmutableArray<string> Files { get; }
             public LockFileTargetLibrary TargetLibrary { get; }
 
             public PackageSpec PackageSpec { get; }
 
-            public CompatibilityData(IEnumerable<string> files, LockFileTargetLibrary targetLibrary, PackageSpec packageSpec)
+            public CompatibilityData(ImmutableArray<string> files, LockFileTargetLibrary targetLibrary, PackageSpec packageSpec)
             {
                 Files = files;
                 TargetLibrary = targetLibrary;
