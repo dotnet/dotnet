@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>$(TargetFrameworksUnitTest)</TargetFrameworks>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -13,25 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Dotnet.Integration.Test" />
-    <InternalsVisibleTo Include="NuGet.CommandLine.FuncTest" />
-    <InternalsVisibleTo Include="NuGet.Commands.FuncTest" />
-    <InternalsVisibleTo Include="NuGet.Commands.Test" />
-    <InternalsVisibleTo Include="NuGet.MSSigning.Extensions.FuncTest" />
-    <InternalsVisibleTo Include="NuGet.Packaging.FuncTest" />
-    <InternalsVisibleTo Include="NuGet.Packaging.Test" />
-    <InternalsVisibleTo Include="NuGet.Signing.CrossFramework.Test" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == '$(NETFXTargetFramework)' ">
-    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.CommandLine\NuGet.CommandLine.csproj" />
-    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.PackageManagement.VisualStudio\NuGet.PackageManagement.VisualStudio.csproj" />
-    <ProjectReference Include="..\..\..\src\NuGet.Clients\NuGet.VisualStudio.Common\NuGet.VisualStudio.Common.csproj" />
+    <Compile Include="$(SharedDirectory)\IsExternalInit.cs" />
+    <Compile Include="$(SharedDirectory)\RequiredModifierAttributes.cs" />
   </ItemGroup>
 
  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Commands\NuGet.Commands.csproj" />
-    <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Resolver\NuGet.Resolver.csproj" />
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.PackageManagement\NuGet.PackageManagement.csproj" />
     <ProjectReference Include="..\Microsoft.Internal.NuGet.Testing.SignedPackages\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj" />
   </ItemGroup>
@@ -46,8 +32,6 @@
     <PackageReference Include="Microsoft.Build" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VisualStudio.ProjectSystem" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="System.Formats.Asn1" />
   </ItemGroup>
 
@@ -57,21 +41,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net" />
     <Reference Include="System.Security" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">
     <PackageReference Include="System.Security.Cryptography.Pkcs" />
-  </ItemGroup>
-
-  <!-- Remove files that do not support netcore -->
-  <ItemGroup Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' ">
-    <Compile Remove="ProjectManagement\TestCpsPackageReferenceProject.cs" />
-    <Compile Remove="ProjectManagement\TestExternalProjectReference.cs" />
-    <Compile Remove="ProjectManagement\TestProjectKProject.cs" />
-    <Compile Remove="ProjectManagement\TestProjectSystemServices.cs" />
-    <Compile Remove="ProjectManagement\TestProjectThreadingService.cs" />
-    <Compile Remove="Threading\*.cs" />
-    <Compile Remove="VisualStudio\*.cs" />
   </ItemGroup>
 </Project>

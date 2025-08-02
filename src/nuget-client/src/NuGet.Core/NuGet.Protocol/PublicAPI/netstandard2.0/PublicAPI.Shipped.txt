@@ -225,8 +225,6 @@ NuGet.Protocol.Core.Types.PackageUpdateResource
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.PackageUpdateResource(string source, NuGet.Protocol.HttpSource httpSource) -> void
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
-~NuGet.Protocol.Core.Types.PackageUpdateResource.Push(string packagePath, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, NuGet.Protocol.Core.Types.SymbolPackageUpdateResourceV3 symbolPackageUpdateResource, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.PushAsync(System.Collections.Generic.IList<string> packagePaths, string symbolSource, int timeoutInSecond, bool disableBuffering, System.Func<string, string> getApiKey, System.Func<string, string> getSymbolApiKey, bool noServiceEndpoint, bool skipDuplicate, bool allowSnupkg, bool allowInsecureConnections, NuGet.Common.ILogger log) -> System.Threading.Tasks.Task
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.get -> NuGet.Configuration.ISettings
 ~NuGet.Protocol.Core.Types.PackageUpdateResource.Settings.set -> void
@@ -328,7 +326,6 @@ NuGet.Protocol.Core.Types.UserAgentStringBuilder
 ~NuGet.Protocol.Core.Types.UserAgentStringBuilder.NuGetClientVersion.get -> string
 NuGet.Protocol.Core.Types.UserAgentStringBuilder.UserAgentStringBuilder() -> void
 ~NuGet.Protocol.Core.Types.UserAgentStringBuilder.UserAgentStringBuilder(string clientName) -> void
-~NuGet.Protocol.Core.Types.UserAgentStringBuilder.WithOSDescription(string osInfo) -> NuGet.Protocol.Core.Types.UserAgentStringBuilder
 ~NuGet.Protocol.Core.Types.UserAgentStringBuilder.WithVisualStudioSKU(string vsInfo) -> NuGet.Protocol.Core.Types.UserAgentStringBuilder
 NuGet.Protocol.Core.Types.VersionInfo
 NuGet.Protocol.Core.Types.VersionInfo.DownloadCount.get -> long?
@@ -356,8 +353,6 @@ NuGet.Protocol.DownloadResourceV2Feed
 NuGet.Protocol.DownloadResourceV2FeedProvider
 NuGet.Protocol.DownloadResourceV2FeedProvider.DownloadResourceV2FeedProvider() -> void
 NuGet.Protocol.DownloadResourceV3
-~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(NuGet.Protocol.HttpSource client, NuGet.Protocol.RegistrationResourceV3 regResource) -> void
-~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(NuGet.Protocol.HttpSource client, string packageBaseAddress) -> void
 ~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string source, NuGet.Protocol.HttpSource client, NuGet.Protocol.RegistrationResourceV3 regResource) -> void
 ~NuGet.Protocol.DownloadResourceV3.DownloadResourceV3(string source, NuGet.Protocol.HttpSource client, string packageBaseAddress) -> void
 NuGet.Protocol.DownloadResourceV3Provider
@@ -600,7 +595,6 @@ NuGet.Protocol.LocalDependencyInfoResource
 NuGet.Protocol.LocalDependencyInfoResourceProvider
 NuGet.Protocol.LocalDependencyInfoResourceProvider.LocalDependencyInfoResourceProvider() -> void
 NuGet.Protocol.LocalDownloadResource
-~NuGet.Protocol.LocalDownloadResource.LocalDownloadResource(NuGet.Protocol.FindLocalPackagesResource localResource) -> void
 ~NuGet.Protocol.LocalDownloadResource.LocalDownloadResource(string source, NuGet.Protocol.FindLocalPackagesResource localResource) -> void
 NuGet.Protocol.LocalDownloadResourceProvider
 NuGet.Protocol.LocalDownloadResourceProvider.LocalDownloadResourceProvider() -> void
@@ -625,7 +619,6 @@ NuGet.Protocol.LocalPackageFileCache.LocalPackageFileCache() -> void
 ~NuGet.Protocol.LocalPackageFileCache.UpdateLastAccessTime(string nupkgMetadataPath) -> void
 NuGet.Protocol.LocalPackageInfo
 NuGet.Protocol.LocalPackageInfo.LocalPackageInfo() -> void
-~NuGet.Protocol.LocalPackageInfo.LocalPackageInfo(NuGet.Packaging.Core.PackageIdentity identity, string path, System.DateTime lastWriteTimeUtc, System.Lazy<NuGet.Packaging.NuspecReader> nuspec, System.Func<NuGet.Packaging.PackageReaderBase> getPackageReader) -> void
 ~NuGet.Protocol.LocalPackageInfo.LocalPackageInfo(NuGet.Packaging.Core.PackageIdentity identity, string path, System.DateTime lastWriteTimeUtc, System.Lazy<NuGet.Packaging.NuspecReader> nuspec, bool useFolder) -> void
 NuGet.Protocol.LocalPackageListResource
 ~NuGet.Protocol.LocalPackageListResource.LocalPackageListResource(NuGet.Protocol.Core.Types.PackageSearchResource localPackageSearchResource, string baseAddress) -> void

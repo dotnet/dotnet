@@ -70,6 +70,7 @@
 
   <ItemGroup>
     <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="System.Memory" />
     <None Include="$(BuildCommonDirectory)\NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 

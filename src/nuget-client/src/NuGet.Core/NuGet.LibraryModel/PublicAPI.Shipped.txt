@@ -8,7 +8,6 @@ NuGet.LibraryModel.CentralPackageVersionNameComparer
 NuGet.LibraryModel.CentralPackageVersionNameComparer.Equals(NuGet.LibraryModel.CentralPackageVersion? x, NuGet.LibraryModel.CentralPackageVersion? y) -> bool
 NuGet.LibraryModel.CentralPackageVersionNameComparer.GetHashCode(NuGet.LibraryModel.CentralPackageVersion! obj) -> int
 NuGet.LibraryModel.DownloadDependency
-NuGet.LibraryModel.DownloadDependency.Clone() -> NuGet.LibraryModel.DownloadDependency!
 NuGet.LibraryModel.DownloadDependency.CompareTo(NuGet.LibraryModel.DownloadDependency? other) -> int
 NuGet.LibraryModel.DownloadDependency.DownloadDependency(string! name, NuGet.Versioning.VersionRange! versionRange) -> void
 NuGet.LibraryModel.DownloadDependency.Equals(NuGet.LibraryModel.DownloadDependency? other) -> bool
