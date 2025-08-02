@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.LanguageServer.Hosting;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Cohost;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Cohost;
@@ -111,7 +112,8 @@ internal sealed class CohostOnTypeFormattingEndpoint(
             htmlChanges = htmlEdits.SelectAsArray(sourceText.GetTextChange);
         }
 
-        var options = RazorFormattingOptions.From(request.Options, clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine);
+        var csharpSyntaxFormattingOptions = RazorCSharpFormattingInteractionService.GetRazorCSharpSyntaxFormattingOptions(razorDocument.Project.Solution.Services);
+        var options = RazorFormattingOptions.From(request.Options, clientSettings.AdvancedSettings.CodeBlockBraceOnNextLine, csharpSyntaxFormattingOptions);
 
         _logger.LogDebug($"Calling OOP with the {htmlChanges.Length} html edits, so it can fill in the rest");
         var remoteResult = await _remoteServiceInvoker.TryInvokeAsync<IRemoteFormattingService, ImmutableArray<TextChange>>(
@@ -154,4 +156,3 @@ internal sealed class CohostOnTypeFormattingEndpoint(
             => instance.HandleRequestAsync(request, razorDocument, cancellationToken);
     }
 }
-

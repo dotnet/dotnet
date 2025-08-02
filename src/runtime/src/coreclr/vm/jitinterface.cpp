@@ -6501,7 +6501,7 @@ DWORD CEEInfo::getMethodAttribsInternal (CORINFO_METHOD_HANDLE ftn)
         result |= CORINFO_FLG_SHAREDINST;
     }
 
-    if (pMD->IsNDirect())
+    if (pMD->IsPInvoke())
     {
         result |= CORINFO_FLG_PINVOKE;
     }
@@ -9133,7 +9133,17 @@ void CEEInfo::getFunctionEntryPoint(CORINFO_METHOD_HANDLE  ftnHnd,
     // Resolve methodImpl.
     ftn = ftn->GetMethodTable()->MapMethodDeclToMethodImpl(ftn);
 
-    if (!ftn->IsFCall() && ftn->IsVersionableWithPrecode() && (ftn->GetPrecodeType() == PRECODE_FIXUP) && !ftn->IsPointingToStableNativeCode())
+    if (ftn->IsFCall())
+    {
+        // FCalls can be called directly
+        ret = (void*)ECall::GetFCallImpl(ftn, false /* throwForInvalidFCall */);
+        if (ret == NULL)
+        {
+            ret = ((FixupPrecode*)ftn->GetOrCreatePrecode())->GetTargetSlot();
+            accessType = IAT_PVALUE;
+        }
+    }
+    else if (ftn->IsVersionableWithPrecode() && (ftn->GetPrecodeType() == PRECODE_FIXUP) && !ftn->IsPointingToStableNativeCode())
     {
         ret = ((FixupPrecode*)ftn->GetOrCreatePrecode())->GetTargetSlot();
         accessType = IAT_PVALUE;
@@ -9869,11 +9879,11 @@ namespace
 
         if (methodCallConv == CORINFO_CALLCONV_DEFAULT || methodCallConv == CORINFO_CALLCONV_VARARG)
         {
-            _ASSERTE(pMD->IsNDirect() || pMD->HasUnmanagedCallersOnlyAttribute());
-            if (pMD->IsNDirect())
+            _ASSERTE(pMD->IsPInvoke() || pMD->HasUnmanagedCallersOnlyAttribute());
+            if (pMD->IsPInvoke())
             {
                 CorInfoCallConvExtension unmanagedCallConv;
-                NDirect::GetCallingConvention_IgnoreErrors(pMD, &unmanagedCallConv, pSuppressGCTransition);
+                PInvoke::GetCallingConvention_IgnoreErrors(pMD, &unmanagedCallConv, pSuppressGCTransition);
                 return unmanagedCallConv;
             }
             else
@@ -9953,7 +9963,7 @@ bool CEEInfo::pInvokeMarshalingRequired(CORINFO_METHOD_HANDLE method, CORINFO_SI
         // check the call site signature
         SigTypeContext typeContext;
         GetTypeContext(&callSiteSig->sigInst, &typeContext);
-        result = NDirect::MarshalingRequired(
+        result = PInvoke::MarshalingRequired(
                     NULL,
                     SigPointer{ callSiteSig->pSig, callSiteSig->cbSig },
                     GetModule(callSiteSig->scope),
@@ -9962,13 +9972,13 @@ bool CEEInfo::pInvokeMarshalingRequired(CORINFO_METHOD_HANDLE method, CORINFO_SI
     else
     {
         MethodDesc* ftn = GetMethod(method);
-        _ASSERTE(ftn->IsNDirect());
-        NDirectMethodDesc *pMD = (NDirectMethodDesc*)ftn;
+        _ASSERTE(ftn->IsPInvoke());
+        PInvokeMethodDesc *pMD = (PInvokeMethodDesc*)ftn;
 
-#if defined(HAS_NDIRECT_IMPORT_PRECODE)
+#if defined(HAS_PINVOKE_IMPORT_PRECODE)
         if (pMD->IsVarArg())
         {
-            // Varag P/Invoke must not be inlined because its NDirectMethodDesc
+            // Varag P/Invoke must not be inlined because its PInvokeMethodDesc
             // does not contain a meaningful stack size (it is call site specific).
             // See code:InlinedCallFrame.UpdateRegDisplay where this is needed.
             result = TRUE;
@@ -9985,7 +9995,7 @@ bool CEEInfo::pInvokeMarshalingRequired(CORINFO_METHOD_HANDLE method, CORINFO_SI
         }
 #else
         // Marshalling is required to lazy initialize the indirection cell
-        // without NDirectImportPrecode.
+        // without PInvokeImportPrecode.
         result = TRUE;
 #endif
     }
@@ -10053,7 +10063,7 @@ bool CEEInfo::satisfiesMethodConstraints(
 
 
 /*********************************************************************/
-// return address of fixup area for late-bound N/Direct calls.
+// return address of fixup area for late-bound PInvoke calls.
 void CEEInfo::getAddressOfPInvokeTarget(CORINFO_METHOD_HANDLE method,
                                         CORINFO_CONST_LOOKUP *pLookup)
 {
@@ -10066,12 +10076,12 @@ void CEEInfo::getAddressOfPInvokeTarget(CORINFO_METHOD_HANDLE method,
     JIT_TO_EE_TRANSITION();
 
     MethodDesc* pMD = GetMethod(method);
-    _ASSERTE(pMD->IsNDirect());
+    _ASSERTE(pMD->IsPInvoke());
 
-    NDirectMethodDesc* pNMD = reinterpret_cast<NDirectMethodDesc*>(pMD);
+    PInvokeMethodDesc* pNMD = reinterpret_cast<PInvokeMethodDesc*>(pMD);
 
     void* pIndirection;
-    if (NDirectMethodDesc::TryGetResolvedNDirectTarget(pNMD, &pIndirection))
+    if (PInvokeMethodDesc::TryGetResolvedPInvokeTarget(pNMD, &pIndirection))
     {
         pLookup->accessType = IAT_VALUE;
         pLookup->addr = pIndirection;
@@ -10079,7 +10089,7 @@ void CEEInfo::getAddressOfPInvokeTarget(CORINFO_METHOD_HANDLE method,
     else
     {
         pLookup->accessType = IAT_PVALUE;
-        pLookup->addr = (LPVOID)&(pNMD->ndirect.m_pNDirectTarget);
+        pLookup->addr = (LPVOID)&(pNMD->m_pPInvokeTarget);
     }
 
     EE_TO_JIT_TRANSITION();
@@ -10258,6 +10268,8 @@ void CEEInfo::getAsyncInfo(CORINFO_ASYNC_INFO* pAsyncInfoOut)
     pAsyncInfoOut->captureExecutionContextMethHnd = CORINFO_METHOD_HANDLE(CoreLibBinder::GetMethod(METHOD__ASYNC_HELPERS__CAPTURE_EXECUTION_CONTEXT));
     pAsyncInfoOut->restoreExecutionContextMethHnd = CORINFO_METHOD_HANDLE(CoreLibBinder::GetMethod(METHOD__ASYNC_HELPERS__RESTORE_EXECUTION_CONTEXT));
     pAsyncInfoOut->captureContinuationContextMethHnd = CORINFO_METHOD_HANDLE(CoreLibBinder::GetMethod(METHOD__ASYNC_HELPERS__CAPTURE_CONTINUATION_CONTEXT));
+    pAsyncInfoOut->captureContextsMethHnd = CORINFO_METHOD_HANDLE(CoreLibBinder::GetMethod(METHOD__ASYNC_HELPERS__CAPTURE_CONTEXTS));
+    pAsyncInfoOut->restoreContextsMethHnd = CORINFO_METHOD_HANDLE(CoreLibBinder::GetMethod(METHOD__ASYNC_HELPERS__RESTORE_CONTEXTS));
 
     EE_TO_JIT_TRANSITION();
 }
@@ -11190,9 +11202,11 @@ LPVOID CEEInfo::GetCookieForInterpreterCalliSig(CORINFO_SIG_INFO* szMetaSig)
 
 #ifdef FEATURE_INTERPRETER
 
+
 LPVOID CInterpreterJitInfo::GetCookieForInterpreterCalliSig(CORINFO_SIG_INFO* szMetaSig)
 {
     void* result = NULL;
+#ifndef TARGET_WASM
     JIT_TO_EE_TRANSITION();
 
     Module* module = GetModule(szMetaSig->scope);
@@ -11206,7 +11220,9 @@ LPVOID CInterpreterJitInfo::GetCookieForInterpreterCalliSig(CORINFO_SIG_INFO* sz
     result = callStubGenerator.GenerateCallStubForSig(sig);
 
     EE_TO_JIT_TRANSITION();
-
+#else
+    PORTABILITY_ASSERT("GetCookieForInterpreterCalliSig is not supported on wasm yet");
+#endif // !TARGET_WASM
     return result;
 }
 
@@ -13103,9 +13119,12 @@ static TADDR UnsafeJitFunctionWorker(
         if (g_pDebugInterface)
         {
             g_pDebugInterface->JITComplete(nativeCodeVersion, (TADDR)nativeEntry);
-#ifdef DEBUG
-            ValidateILOffsets(ftn, NULL, 0, (uint8_t*)nativeEntry, sizeOfCode);
-#endif // DEBUG
+
+            // Validation currently disabled, see https://github.com/dotnet/runtime/issues/117561
+            //
+//#ifdef DEBUG
+//            ValidateILOffsets(ftn, NULL, 0, (uint8_t*)nativeEntry, sizeOfCode);
+//#endif // DEBUG
         }
 #endif // DEBUGGING_SUPPORTED
     }
@@ -13656,7 +13675,7 @@ bool IsInstructionSetSupported(CORJIT_FLAGS jitFlags, ReadyToRunInstructionSet r
 BOOL LoadDynamicInfoEntry(Module *currentModule,
                           RVA fixupRva,
                           SIZE_T *entry,
-                          BOOL mayUsePrecompiledNDirectMethods)
+                          BOOL mayUsePrecompiledPInvokeMethods)
 {
     STANDARD_VM_CONTRACT;
 
@@ -13794,20 +13813,20 @@ BOOL LoadDynamicInfoEntry(Module *currentModule,
         {
             MethodDesc *pMethod = ZapSig::DecodeMethod(currentModule, pInfoModule, pBlob);
 
-            _ASSERTE(pMethod->IsNDirect());
-            NDirectMethodDesc *pMD = (NDirectMethodDesc*)pMethod;
-            result = (size_t)(LPVOID)&(pMD->ndirect.m_pNDirectTarget);
+            _ASSERTE(pMethod->IsPInvoke());
+            PInvokeMethodDesc *pMD = (PInvokeMethodDesc*)pMethod;
+            result = (size_t)(LPVOID)&(pMD->m_pPInvokeTarget);
         }
         break;
 
     case READYTORUN_FIXUP_PInvokeTarget:
         {
-            if (mayUsePrecompiledNDirectMethods)
+            if (mayUsePrecompiledPInvokeMethods)
             {
                 MethodDesc *pMethod = ZapSig::DecodeMethod(currentModule, pInfoModule, pBlob);
 
-                _ASSERTE(pMethod->IsNDirect());
-                result = (size_t)(LPVOID)NDirectMethodDesc::ResolveAndSetNDirectTarget((NDirectMethodDesc*)pMethod);
+                _ASSERTE(pMethod->IsPInvoke());
+                result = (size_t)(LPVOID)PInvokeMethodDesc::ResolveAndSetPInvokeTarget((PInvokeMethodDesc*)pMethod);
             }
             else
             {

@@ -164,6 +164,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
+            enableCoreDumpGeneration: true     # ✅
 
           - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
             distro: ubuntu
@@ -184,6 +185,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            enableCoreDumpGeneration: true     # ✅
             reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
 
           - buildNameFormat: '{0}_Mono_Offline_CurrentSourceBuiltSdk'

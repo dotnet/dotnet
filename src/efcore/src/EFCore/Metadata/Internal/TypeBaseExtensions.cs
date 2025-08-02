@@ -42,7 +42,11 @@ public static class TypeBaseExtensions
     {
         Check.NotNull(property);
 
-        return !property.DeclaringType.IsAssignableFrom(structuralType) && !property.DeclaringType.ContainingType.IsAssignableFrom(structuralType)
+        return !property.DeclaringType.IsAssignableFrom(structuralType)
+            && (!((IRuntimeTypeBase)property.DeclaringType).ContainingEntryType.IsAssignableFrom(structuralType)
+                || (property.DeclaringType is IComplexType complexType
+                        && complexType.ComplexProperty.IsCollection))
+            && structuralType.ClrType != typeof(object) // For testing
             ? throw new InvalidOperationException(
                 CoreStrings.PropertyDoesNotBelong(property.Name, property.DeclaringType.DisplayName(), structuralType.DisplayName()))
             : property;
