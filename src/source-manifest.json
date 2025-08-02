@@ -43,10 +43,10 @@
       "commitSha": "f13fcb1de700e966f96bb07086705bbe6452991a"
     },
     {
-      "barId": 276379,
+      "barId": 277402,
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "d65eb5b36511b6422cbad6e2e140a86831a004d2"
+      "commitSha": "b7028483caf8304909c9f3ee17a8f5b3c685f5bc"
     },
     {
       "barId": 277429,
@@ -61,10 +61,10 @@
       "commitSha": "3427ef4b39861b0e0129713e731e9440a8426ea3"
     },
     {
-      "barId": 271771,
+      "barId": 277201,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "772ee13d2bafaa1414d90dbfbd77e0941115ef19"
+      "commitSha": "4d25915cdeb377a6ae6173ae418d9181893e653d"
     },
     {
       "barId": 277262,
@@ -97,10 +97,10 @@
       "commitSha": "086c9380ad71ac75c8af5d5091d3ad339fc842e1"
     },
     {
-      "barId": 276758,
+      "barId": 277637,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "d4e9bbcbe1f5ab6e4f53246d7a7bc892624453dc"
+      "commitSha": "af6e3c41367244efbf9a9e9b5fdb9b2decf3e627"
     },
     {
       "barId": 277345,
@@ -145,10 +145,10 @@
       "commitSha": "6e61bc0eb3e889793443d89ccd0b3371e2aa0fd7"
     },
     {
-      "barId": 276740,
+      "barId": 277390,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "3e7d1160037e5e328558210c328cc6af7f9b6b0d"
+      "commitSha": "4bd646467b69e97898fd126772d9dcdb8b1ed314"
     },
     {
       "barId": 276515,

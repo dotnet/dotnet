@@ -17,9 +17,6 @@ namespace NuGet.ProjectManagement
     /// </summary>
     internal sealed class DefaultProjectServices
         : INuGetProjectServices
-#pragma warning disable CS0618 // Type or member is obsolete
-        , IProjectBuildProperties
-#pragma warning restore CS0618 // Type or member is obsolete
         , IProjectScriptHostService
         , IProjectSystemCapabilities
         , IProjectSystemReferencesReader
@@ -27,9 +24,6 @@ namespace NuGet.ProjectManagement
         , IProjectSystemService
     {
         public static INuGetProjectServices Instance { get; } = new DefaultProjectServices();
-
-        [Obsolete]
-        public IProjectBuildProperties BuildProperties => this;
         public IProjectSystemCapabilities Capabilities => this;
         public IProjectSystemReferencesReader ReferencesReader => this;
         public IProjectSystemService ProjectSystem => this;
@@ -65,16 +59,6 @@ namespace NuGet.ProjectManagement
         {
             IReadOnlyList<(string, string[])> items = Array.Empty<(string, string[])>();
             return Task.FromResult(items);
-        }
-
-        public string GetPropertyValue(string propertyName)
-        {
-            return null;
-        }
-
-        public Task<string> GetPropertyValueAsync(string propertyName)
-        {
-            return TaskResult.Null<string>();
         }
 
         public T GetGlobalService<T>() where T : class

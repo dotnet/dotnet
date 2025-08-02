@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="NuGet.72c5d240-f742-48d4-a0f1-7016671e405b" Version="17.99.99" Language="en-US" Publisher="Microsoft Corporation" />
-        <DisplayName>NuGet Package Manager for Visual Studio 2022</DisplayName>
+        <Identity Id="NuGet.72c5d240-f742-48d4-a0f1-7016671e405b" Version="18.99.99" Language="en-US" Publisher="Microsoft Corporation" />
+        <DisplayName>NuGet Package Manager for Visual Studio</DisplayName>
         <Description>A collection of tools to automate the process of downloading, installing, upgrading, configuring, and removing packages from a VS Project.</Description>
         <PackageId>Microsoft.VisualStudio.NuGet.Core</PackageId>
         <AllowClientRole>true</AllowClientRole>

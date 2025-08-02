@@ -4,11 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
 using NuGet.Common;
+using NuGet.Packaging;
 using NuGet.Test.Utility;
 using Test.Utility.Signing;
 using Xunit;
@@ -51,6 +53,33 @@ namespace Dotnet.Integration.Test
                     testOutputHelper: _testOutputHelper);
 
                 result.Output.Should().Contain(_notSignedErrorCode);
+            }
+        }
+
+        [Fact]
+        public async Task Verify_AnyPackage_OutputsContentHash()
+        {
+            // Arrange
+            using (var packageDir = TestDirectory.Create())
+            {
+                var packageId = "Unsigned.PackageX";
+                var packageVersion = "1.0.0";
+                var packageFile = await TestPackagesCore.GetRuntimePackageAsync(packageDir, packageId, packageVersion);
+
+                //Act
+                var result = _dotnetFixture.RunDotnetExpectFailure(
+                    packageDir,
+                    $"nuget verify {packageFile.FullName}",
+                    testOutputHelper: _testOutputHelper);
+
+                // Assert
+                string contentHash;
+                using (var packageReader = new PackageArchiveReader(packageFile.FullName))
+                {
+                    contentHash = packageReader.GetContentHash(CancellationToken.None);
+                }
+
+                result.Output.Should().Contain(contentHash);
             }
         }
 

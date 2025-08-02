@@ -154,7 +154,7 @@ namespace NuGet.MSSigning.Extensions
             }
         }
 
-        protected void ValidateCertificateInputs(ILogger logger)
+        protected void ValidateCertificateInputs()
         {
             if (string.IsNullOrEmpty(CertificateFile))
             {
@@ -176,22 +176,13 @@ namespace NuGet.MSSigning.Extensions
                         nameof(KeyContainer)));
             }
 
-            if (string.IsNullOrEmpty(CertificateFingerprint))
+            if (string.IsNullOrEmpty(CertificateFingerprint) ||
+                !CertificateUtility.TryDeduceHashAlgorithm(CertificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName) ||
+                hashAlgorithmName == Common.HashAlgorithmName.SHA1)
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         NuGetMSSignCommand.MSSignCommandInvalidCertificateFingerprint,
-                        nameof(CertificateFingerprint)));
-            }
-            else
-            {
-                if (!CertificateUtility.TryDeduceHashAlgorithm(CertificateFingerprint, out Common.HashAlgorithmName hashAlgorithmName))
-                {
-                    throw new ArgumentException(NuGetMSSignCommand.MSSignCommandInvalidCertificateFingerprint);
-                }
-                else if (hashAlgorithmName == Common.HashAlgorithmName.SHA1)
-                {
-                    logger.Log(LogMessage.CreateWarning(NuGetLogCode.NU3043, NuGetMSSignCommand.MSSignCommandInvalidCertificateFingerprint));
-                }
+                        NuGetLogCode.NU3043));
             }
         }
 

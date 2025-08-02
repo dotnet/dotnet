@@ -386,7 +386,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task ExecuteNuGetProjectActionsAsync_MixedProjects()
         {
             // Arrange
