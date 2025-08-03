@@ -27,10 +27,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# init the repo
-git submodule init
-git submodule update
-
 # clear caches
 if [ "$CLEAR_CACHE" == "1" ]; then
 	# echo "Clearing the nuget web cache folder"
