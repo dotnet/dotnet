@@ -37,16 +37,9 @@ public class SourceBuiltArtifactsTests : SdkTests
             // Verify the commit SHA
             // A valid commit SHA is contains only hexadecimal characters and is exactly 40 characters long.
 
-            // In a dev environment, the commit SHA will likely be either a valid commit SHA or an error message, depending on
+            // In a dev environment, the commit SHA will likely be either a valid commit SHA or an unknown commit SHA, depending on
             // the state of the repository and git installation.
-            // Therefore, we only verify the commit SHA is not an error message.
-            // Error messages can be:
-            // | Situation                 | Error Message Example                                                              |
-            // |---------------------------|------------------------------------------------------------------------------------|
-            // | Not a git repo            | fatal: not a git repository (or any of the parent directories): .git               |
-            // | No commits yet            | fatal: Needed a single revision                                                    |
-            // | Corrupt repo/HEAD missing | fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree |
-            // | git not installed         | git: command not found                                                             |
+            // Therefore, we only verify the commit SHA is not an unknown commit SHA.
 
             string commitSha = versionLines[0];
             OutputHelper.WriteLine($"Commit SHA: {commitSha}");
@@ -54,8 +47,7 @@ public class SourceBuiltArtifactsTests : SdkTests
             {
                 Assert.Equal(40, commitSha.Length);
                 Assert.True(commitSha.All(c => char.IsLetterOrDigit(c)));
-                Assert.False(commitSha.Contains("fatal:", StringComparison.OrdinalIgnoreCase));
-                Assert.False(commitSha.Contains("git:", StringComparison.OrdinalIgnoreCase));
+                Assert.False(commitSha.Equals("unknown commit SHA", StringComparison.OrdinalIgnoreCase));
             }
 
             // Verify the SDK version

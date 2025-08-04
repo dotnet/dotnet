@@ -184,6 +184,11 @@
       StandardOutputImportance="Low" IgnoreExitCode="true" IgnoreStandardErrorWarningFormat="true" ConsoleToMSBuild="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="RepositoryCommit" />
     </Exec>
+
+    <PropertyGroup>
+      <RepositoryCommit Condition="$(RepositoryCommit.StartsWith('git:')) Or $(RepositoryCommit.StartsWith('fatal:'))">unknown commit SHA</RepositoryCommit>
+    </PropertyGroup>
+
     <!-- Content of the .version file to include in the tarball -->
     <ItemGroup>
       <VersionFileContent Include="$(RepositoryCommit);$(SourceBuiltSdkNonStableVersion)" />
