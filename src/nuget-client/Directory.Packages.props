@@ -29,6 +29,7 @@
     <SystemMemoryPackageVersion Condition="'$(SystemMemoryPackageVersion)' == ''">4.6.3</SystemMemoryPackageVersion>
     <SystemSecurityCryptographyPkcsVersion Condition="'$(SystemSecurityCryptographyPkcsVersion)' == ''">9.0.6</SystemSecurityCryptographyPkcsVersion>
     <SystemSecurityCryptographyProtectedDataVersion Condition="'$(SystemSecurityCryptographyProtectedDataVersion)' == ''">9.0.6</SystemSecurityCryptographyProtectedDataVersion>
+    <MicrosoftDotNetXliffTasksVersion Condition="'$(MicrosoftDotNetXliffTasksVersion)' == ''">10.0.0-beta.25260.104</MicrosoftDotNetXliffTasksVersion>
   </PropertyGroup>
 
   <ItemGroup>
