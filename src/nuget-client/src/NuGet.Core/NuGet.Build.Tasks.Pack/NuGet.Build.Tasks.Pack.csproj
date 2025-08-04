@@ -10,6 +10,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <XPLATProject>true</XPLATProject>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSatelliteOutputInPack>true</IncludeSatelliteOutputInPack>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CreatePackNupkg</TargetsForTfmSpecificContentInPackage>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -47,14 +48,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" GeneratePathProperty="true" />
   </ItemGroup>
 
-  <ItemGroup Label="transitive package pinning">
-    <!--
-      This package is a dependency of Microsoft.Build.Tasks.Core
-      When it is upgraded to a newer version, try deleting the below PackageReference
-      -->
-    <PackageReference Include="System.Security.Cryptography.Xml" GeneratePathProperty="true" Condition=" '$(TargetFramework)' != '$(NETFXTargetFramework)' " />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -74,12 +67,12 @@
     Name="PublishAndMergePackNupkg"
     AfterTargets="AfterBuild"
     Condition="'$(TargetFramework)' != '' AND '$(IsXPlat)' != 'true' AND '$(DotNetBuildSourceOnly)' != 'true' AND '$(BuildingInsideVisualStudio)' != 'true'">
-    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish;ILMergeNuGetPack" />
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish;ILMergeNuGetPack;ILMergeNuGetPackResourcesPerCulture" />
   </Target>
 
   <Target Name="ILMergeNuGetPackResourcesPerCulture" DependsOnTargets="Publish">
     <ItemGroup>
-      <_PackResourceDlls Include="$(OutputPath)**\$(AssemblyName).resources.dll" />
+      <_PackResourceDlls Include="$(OutputPath)publish\**\$(AssemblyName).resources.dll" />
     </ItemGroup>
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="ILMergeNuGetPackResources"
              Properties="CurrentCulture=%(_PackResourceDlls.RecursiveDir);
@@ -229,7 +222,7 @@
       <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet.Build.Tasks.Pack.dll" Condition="'$(DotNetBuildSourceOnly)' != 'true'">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)**\NuGet*.resources.dll">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)**\NuGet*.resources.dll" Exclude="$(OutputPath)\$(ILMergeSubpath)publish\**\NuGet*.resources.dll">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet*.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'">
@@ -239,7 +232,6 @@
   </Target>
 
   <PropertyGroup>
-    <SignTargetsForRealSigning Condition="'$(IsSymbolsBuild)' != 'true'">GetIlmergeBuildOutput</SignTargetsForRealSigning>
     <SymbolTargetsToGetPdbs>GetIlmergeSymbolOutput;GetFinalBuildOutput</SymbolTargetsToGetPdbs>
   </PropertyGroup>
 </Project>

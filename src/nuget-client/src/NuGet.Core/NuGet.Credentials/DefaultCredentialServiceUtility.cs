@@ -63,7 +63,7 @@ namespace NuGet.Credentials
         {
             var providers = new List<ICredentialProvider>();
 
-            var securePluginProviders = await new SecurePluginCredentialProviderBuilder(pluginManager: PluginManager.Instance, canShowDialog: false, logger: logger).BuildAllAsync();
+            var securePluginProviders = await new SecurePluginCredentialProviderBuilder(pluginManager: PluginManager.Instance, canShowDialog: true, logger: logger).BuildAllAsync();
             providers.AddRange(securePluginProviders);
 
             if (providers.Any())

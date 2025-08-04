@@ -70,6 +70,8 @@ namespace NuGet.Protocol
             ILogger log,
             CancellationToken token)
         {
+            ThrowIfHttpUriAndInsecureConnectionsNotAllowed(request.Uri);
+
             var cacheResult = HttpCacheUtility.InitializeHttpCacheResult(
                 HttpCacheDirectory,
                 _sourceUri,
@@ -219,6 +221,8 @@ namespace NuGet.Protocol
             ILogger log,
             CancellationToken token)
         {
+            ThrowIfHttpUriAndInsecureConnectionsNotAllowed(request.RequestFactory().RequestUri.AbsoluteUri);
+
             return await ProcessResponseAsync(
                 request,
                 async response =>
@@ -506,6 +510,24 @@ namespace NuGet.Protocol
                 finally
                 {
                     Interlocked.Exchange(ref _throttle, null)?.Release();
+                }
+            }
+        }
+
+        private void ThrowIfHttpUriAndInsecureConnectionsNotAllowed(string uri)
+        {
+            var parsedUri = new Uri(uri);
+
+            if (string.Equals(parsedUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
+            {
+                if (_packageSource.IsHttps && !_packageSource.AllowInsecureConnections)
+                {
+                    throw new HttpSourceException(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Strings.Error_Insecure_HTTP,
+                            _sourceUri.AbsoluteUri ?? "<unknown>",
+                            uri));
                 }
             }
         }

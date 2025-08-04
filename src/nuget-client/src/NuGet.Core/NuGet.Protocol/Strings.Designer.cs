@@ -178,6 +178,15 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are using a NuGet source &apos;{0}&apos; that contains an &apos;HTTP&apos; service index resource endpoint: &apos;{1}&apos;. This is insecure and not recommended. To allow HTTP resources, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. For more information, visit https://aka.ms/nuget-https-everywhere..
+        /// </summary>
+        internal static string Error_Insecure_HTTP {
+            get {
+                return ResourceManager.GetString("Error_Insecure_HTTP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server responded with HTTP &apos;403 Forbidden&apos; when accessing the source &apos;{0}&apos;. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource..
         /// </summary>
         internal static string Http_CredentialsForForbidden {

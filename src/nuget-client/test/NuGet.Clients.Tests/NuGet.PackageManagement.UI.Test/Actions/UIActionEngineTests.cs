@@ -162,19 +162,21 @@ namespace NuGet.PackageManagement.UI.Test
             Assert.Equal(packageIdentityC.Id, addedResults[2].Id);
         }
 
-        private UIActionEngine CreateUIActionEngine(ISettings settings = null)
+        private UIActionEngine CreateUIActionEngine(ISettings settings = null, INuGetTelemetryProvider nuGetTelemetryProvider = null)
         {
             settings = settings ?? Mock.Of<ISettings>();
+            nuGetTelemetryProvider = nuGetTelemetryProvider ?? Mock.Of<INuGetTelemetryProvider>();
             var sourceRepositoryProvider = Mock.Of<ISourceRepositoryProvider>();
             var packageManager = new NuGetPackageManager(
                 sourceRepositoryProvider,
-                Mock.Of<ISettings>(),
+                settings,
                 TestDirectory.Create().Path);
 
             return new UIActionEngine(
                 sourceRepositoryProvider,
                 packageManager,
-                Mock.Of<INuGetLockService>());
+                Mock.Of<INuGetLockService>(),
+                nuGetTelemetryProvider);
         }
 
         [Theory]
@@ -182,19 +184,17 @@ namespace NuGet.PackageManagement.UI.Test
         public async Task CreateInstallAction_OnInstallingProject_WithNewSourceMapping_DoesNotLogTelemetry(ContractsItemFilter activeTab, bool isSolutionLevel, string packageIdToInstall, bool? expectedPackageWasTransitive)
         {
             // Arrange
-            var telemetrySession = new Mock<ITelemetrySession>();
             TelemetryEvent lastTelemetryEvent = null;
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+            var telemetryProvider = new Mock<INuGetTelemetryProvider>();
+            telemetryProvider
+                .Setup(x => x.EmitEvent(It.IsAny<TelemetryEvent>()))
                 .Callback<TelemetryEvent>(x => lastTelemetryEvent = x);
-            var telemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-            TelemetryActivity.NuGetTelemetryService = telemetryService;
 
             var sourceProvider = new Mock<ISourceRepositoryProvider>();
             var settings = new Mock<ISettings>();
             var nugetPM = new NuGetPackageManager(sourceProvider.Object, settings.Object, @"\packagesFolder");
             var lockService = new NuGetLockService(ThreadHelper.JoinableTaskContext);
-            var uiEngine = new UIActionEngine(sourceProvider.Object, nugetPM, lockService);
+            var uiEngine = new UIActionEngine(sourceProvider.Object, nugetPM, lockService, telemetryProvider.Object);
 
             var installedAndTransitive = new InstalledAndTransitivePackages(
                 new[] {
@@ -431,19 +431,17 @@ namespace NuGet.PackageManagement.UI.Test
         public async Task CreateInstallAction_OnInstallingProject_EmitsPkgWasTransitiveTelemetryAndTabAndIsSolutionPropertiesAsync(ContractsItemFilter activeTab, bool isSolutionLevel, string packageIdToInstall, bool? expectedPackageWasTransitive)
         {
             // Arrange
-            var telemetrySession = new Mock<ITelemetrySession>();
             TelemetryEvent lastTelemetryEvent = null;
-            telemetrySession
-                .Setup(x => x.PostEvent(It.IsAny<TelemetryEvent>()))
+            var telemetryProvider = new Mock<INuGetTelemetryProvider>();
+            telemetryProvider
+                .Setup(x => x.EmitEvent(It.IsAny<TelemetryEvent>()))
                 .Callback<TelemetryEvent>(x => lastTelemetryEvent = x);
-            var telemetryService = new NuGetVSTelemetryService(telemetrySession.Object);
-            TelemetryActivity.NuGetTelemetryService = telemetryService;
 
             var sourceProvider = new Mock<ISourceRepositoryProvider>();
             var settings = new Mock<ISettings>();
             var nugetPM = new NuGetPackageManager(sourceProvider.Object, settings.Object, @"\packagesFolder");
             var lockService = new NuGetLockService(ThreadHelper.JoinableTaskContext);
-            var uiEngine = new UIActionEngine(sourceProvider.Object, nugetPM, lockService);
+            var uiEngine = new UIActionEngine(sourceProvider.Object, nugetPM, lockService, telemetryProvider.Object);
 
             var installedAndTransitive = new InstalledAndTransitivePackages(
                 new[] {
@@ -686,7 +684,7 @@ namespace NuGet.PackageManagement.UI.Test
             SetupActivePackageSource(activePackageSource, mockUiService);
 
             NuGetPackageManager packageManager = new(sourceRepositoryProvider, settings.Object, @"\packagesFolder");
-            uiActionEngine = new(sourceRepositoryProvider, packageManager, lockService);
+            uiActionEngine = new(sourceRepositoryProvider, packageManager, lockService, Mock.Of<INuGetTelemetryProvider>());
 
             SetupUIService(mockUiService, uiContext, projectContext, settings, throwOnShowError);
             SetupProjectInstallAction(
