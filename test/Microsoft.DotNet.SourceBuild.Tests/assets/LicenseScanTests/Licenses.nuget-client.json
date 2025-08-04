@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.cs.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.de.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.es.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.ja.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.ko.xlf",
+      "detected_license_expression": "proprietary-license AND unknown-license-reference"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.pl.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.pt-BR.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.ru.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.tr.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.zh-Hans.xlf",
+      "detected_license_expression": "proprietary-license"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.CommandLine/xlf/NuGetCommand.zh-Hant.xlf",
+      "detected_license_expression": "proprietary-license"
+    }
+  ]
+}
