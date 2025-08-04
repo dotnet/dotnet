@@ -11,8 +11,8 @@ Release label to use for package and assemblies versioning (zlocal by default)
 .PARAMETER BuildNumber
 Build number to use for package and assemblies versioning (auto-generated if not provided)
 
-.PARAMETER Fast
-Runs minimal incremental build. Skips end-to-end packaging step.
+.PARAMETER Clean
+Cleans output artifacts before building
 
 .PARAMETER CI
 Indicates the build script is invoked from CI
@@ -22,6 +22,12 @@ Indicates whether to create the end to end package.
 
 .PARAMETER SkipDelaySigning
 Indicates whether to skip strong name signing.  By default assemblies will be delay signed and require strong name validation exclusions.
+
+.PARAMETER RunUnitTests
+Indicates whether to run unit tests after building
+
+.PARAMETER Pack
+Creates NuGet's packages after building
 
 .EXAMPLE
 .\build.ps1
@@ -46,14 +52,16 @@ param (
     [Alias('n')]
     [int]$BuildNumber,
     [Alias('su')]
-    [switch]$SkipUnitTest,
+    [switch]$RunUnitTests,
     [Alias('f')]
-    [switch]$Fast,
+    [switch]$Clean,
     [switch]$CI,
     [switch]$PackageEndToEnd,
     [switch]$SkipDelaySigning,
     [switch]$Binlog,
-    [switch]$IncludeApex
+    [switch]$IncludeApex,
+    [switch]$UpdateXlf,
+    [switch]$Pack
 )
 
 . "$PSScriptRoot\build\common.ps1"
@@ -84,16 +92,20 @@ Invoke-BuildStep 'Cleaning artifacts' {
     Clear-Artifacts
     Clear-Nupkgs
 } `
--skip:$Fast `
+-skip:(-not $Clean) `
 -ev +BuildErrors
 
-if ($SkipUnitTest) {
-    $VSTarget = "BuildVS;Pack";
-    $VSMessage = "Running Build"
-}
-else {
+if ($RunUnitTests) {
     $VSTarget = "RunVS";
     $VSMessage = "Running Build, Pack, Core unit tests, and Unit tests";
+}
+else {
+    if ($Pack) {
+        $VSTarget = "BuildVS;Pack";
+    } else {
+        $VSTarget = "BuildVS";
+    }
+    $VSMessage = "Running Build"
 }
 
 $MSBuildExe = Get-MSBuildExe
@@ -123,6 +135,20 @@ Invoke-BuildStep 'Running Restore' {
 } `
 -ev +BuildErrors
 
+Invoke-BuildStep 'Updating Xlf' {
+    $buildArgs = 'build\build.proj', "/t:UpdateXlf", '/v:m', '/m'
+
+    Trace-Log ". `"$MSBuildExe`" $buildArgs"
+    & $MSBuildExe @buildArgs
+
+    if (-not $?)
+    {
+        Write-Error "Failed - Updating Xlf"
+        exit 1
+    }
+} `
+-skip:(-not $UpdateXlf)`
+-ev +BuildErrors
 
 Invoke-BuildStep $VSMessage {
 

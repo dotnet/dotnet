@@ -61,11 +61,13 @@ namespace NuGet.CommandLine.XPlat
 
             //If the given file is a solution, get the list of projects
             //If not, then it's a project, which is put in a list
+            string fileExtension = Path.GetExtension(listPackageArgs.Path);
             var projectsPaths =
-                (Path.GetExtension(listPackageArgs.Path).Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ||
-                     Path.GetExtension(listPackageArgs.Path).Equals(".slnx", PathUtility.GetStringComparisonBasedOnOS())) ?
-                           (await MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path, listPackageArgs.CancellationToken)).Where(f => File.Exists(f)) :
-                           new List<string>(new string[] { listPackageArgs.Path });
+                (fileExtension.Equals(".sln", PathUtility.GetStringComparisonBasedOnOS()) ||
+                    fileExtension.Equals(".slnx", PathUtility.GetStringComparisonBasedOnOS()) ||
+                    fileExtension.Equals(".slnf", PathUtility.GetStringComparisonBasedOnOS()))
+                    ? MSBuildAPIUtility.GetProjectsFromSolution(listPackageArgs.Path).Where(File.Exists)
+                    : [listPackageArgs.Path];
 
             MSBuildAPIUtility msBuild = listPackageReportModel.MSBuildAPIUtility;
 

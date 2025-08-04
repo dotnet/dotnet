@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Build.Definition;
 using Microsoft.Build.Evaluation;
@@ -461,7 +460,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
+        public void GetListOfProjectsFromPathArgument_WithProjectFile_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -472,7 +471,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             projectA.Save();
 
             // Act
-            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(projectA.ProjectPath);
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(projectA.ProjectPath);
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -480,7 +479,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
+        public void GetListOfProjectsFromPathArgument_WithProjectDirectory_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -491,7 +490,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             projectA.Save();
 
             // Act
-            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(Path.GetDirectoryName(projectA.ProjectPath));
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(projectA.ProjectPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 1);
@@ -499,7 +498,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
+        public void GetListOfProjectsFromPathArgument_WithSolutionFile_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -514,7 +513,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(Path.GetDirectoryName(solution.SolutionPath));
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(Path.GetDirectoryName(solution.SolutionPath));
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -523,7 +522,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
+        public void GetListOfProjectsFromPathArgument_WithSolutionDirectory_ReturnsCorrectPaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -538,7 +537,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var projectList = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(pathContext.SolutionRoot);
+            var projectList = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot);
 
             // Assert
             Assert.Equal(projectList.Count(), 2);
@@ -547,7 +546,7 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Fact]
-        public async Task GetProjectsFromSolution_WithSolutionFile_ReturnsCorrectAbsolutePaths()
+        public void GetProjectsFromSolution_WithSolutionFile_ReturnsCorrectAbsolutePaths()
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -562,7 +561,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             solution.Create(pathContext.SolutionRoot);
 
             // Act
-            var projectList = await MSBuildAPIUtility.GetProjectsFromSolution(solution.SolutionPath);
+            var projectList = MSBuildAPIUtility.GetProjectsFromSolution(solution.SolutionPath);
 
             // Assert
             projectList.Count().Should().Be(2);
@@ -573,12 +572,49 @@ namespace NuGet.CommandLine.Xplat.Tests
         }
 
         [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void GetProjectsFromSolution_WithSolutionFilter_ReturnsFilteredProjects(bool useSlnx)
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx);
+            var tfm = FrameworkConstants.CommonFrameworks.NetStandard20;
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("a", pathContext.SolutionRoot, tfm);
+            var projectB = SimpleTestProjectContext.CreateNETCore("b", pathContext.SolutionRoot, tfm);
+
+            solution.Projects.Add(projectA);
+            solution.Projects.Add(projectB);
+            solution.Create(pathContext.SolutionRoot);
+
+            var slnfContents = $$"""
+                {
+                    "solution": {
+                        "path": "solution.{{(useSlnx ? "slnx" : "sln")}}",
+                        "projects": [
+                            "a\\a.csproj"
+                        ]
+                    }
+                }
+                """;
+            var slnfPath = Path.Combine(pathContext.SolutionRoot, "filter.slnf");
+            File.WriteAllText(slnfPath, slnfContents);
+
+            // Act
+            var projectList = MSBuildAPIUtility.GetProjectsFromSolution(slnfPath);
+
+            // Assert
+            projectList.Should().BeEquivalentTo([projectA.ProjectPath]);
+        }
+
+        [Theory]
         [InlineData("X.sln", "Y.sln")]
         [InlineData("A.csproj", "B.csproj")]
         [InlineData("X.sln", "A.csproj")]
         [InlineData()]
         [InlineData("random.txt")]
-        public async Task GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
+        public void GetListOfProjectsFromPathArgument_WithDirectoryWithInvalidNumberOfSolutionsOrProjects_ThrowsException(params string[] directoryFiles)
         {
             // Arrange
             var pathContext = new SimpleTestPathContext();
@@ -591,7 +627,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             }
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(pathContext.SolutionRoot));
+            Assert.Throws<ArgumentException>(() => MSBuildAPIUtility.GetListOfProjectsFromPathArgument(pathContext.SolutionRoot));
         }
 
         [Fact]

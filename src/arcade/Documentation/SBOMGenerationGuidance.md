@@ -1,5 +1,7 @@
 # SBOM Generation Guidance
 
+### Note: this document needs an update, it is not up to date with respect to 1ES PT changes.  See https://github.com/dotnet/arcade/issues/16012
+
 ## Background
 
 An SBOM (Software Bill of Materials) is a formal record containing the details and supply chain

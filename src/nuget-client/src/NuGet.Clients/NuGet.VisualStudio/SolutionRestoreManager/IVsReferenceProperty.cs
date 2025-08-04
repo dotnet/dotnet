@@ -13,6 +13,7 @@ namespace NuGet.SolutionRestoreManager
     /// </summary>
     [ComImport]
     [Guid("1513778e-10b7-411e-a4d4-58dcbe51a9a5")]
+    [Obsolete]
     public interface IVsReferenceProperty
     {
         /// <summary>
