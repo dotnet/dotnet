@@ -9,50 +9,76 @@
       BuildRTM=$(BuildRTM);
     </CommonMSBuildProperties>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
-    <SignTargetsDependOn>BatchSign</SignTargetsDependOn>
-    <SignTargetsDependOn Condition="'$(SignPackages)' == 'true'">GetOutputNupkgs</SignTargetsDependOn>
-    <SignTargetsDependOn Condition="'$(SignPackages)' == 'true' AND '$(BuildRTM)' != 'true'">GetOutputNupkgs;GetOutputVsix</SignTargetsDependOn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.SignTool" />
+  </ItemGroup>
+
   <Target Name="Sign"
           BeforeTargets="AfterBuild"
-          DependsOnTargets="$(SignTargetsDependOn)" />
+          DependsOnTargets="$(SignTargetsDependOn)">
 
-  <Target Name="BatchSign">
-    <MSBuild Projects="@(SolutionProjectsWithoutVSIX)"
-             Targets="GetSigningInputs"
-             BuildInParallel="true">
-      <Output TaskParameter="TargetOutputs" ItemName="FilesToSign" />
-    </MSBuild>
+    <PropertyGroup>
+      <DryRunSigning Condition="'$(DryRunSigning)' == ''">true</DryRunSigning>
+      <TestSigning>false</TestSigning>
+      <TestSigning Condition="'$(DotNetSignType)' == 'test'">true</TestSigning>
 
-    <MSBuild Projects="$(VSIXProject)"
-             Targets="GetThirdPartyAssemblies"
-             BuildInParallel="true">
-      <Output TaskParameter="TargetOutputs" ItemName="ThirdPartyAssembly" />
-    </MSBuild>
+      <SigningTempDirectory Condition="'$(SigningTempDirectory)' == ''">$(ArtifactTempDirectory)</SigningTempDirectory>
+      <SigningLogDirectory Condition="'$(SigningLogDirectory)' == ''">$(ArtifactTempDirectory)</SigningLogDirectory>
+
+      <!-- Number of containers to repack in parallel -->
+      <SignToolRepackParallelism>16</SignToolRepackParallelism>
+      <!-- Maximum size in MB that a file may be before it is repacked serially -->
+      <SignToolRepackMaximumParallelFileSize>128</SignToolRepackMaximumParallelFileSize>
+
+      <SignToolDotNetTimeout Condition="'$(SignToolDotNetTimeout)' == ''">-1</SignToolDotNetTimeout>
+    </PropertyGroup>
 
     <ItemGroup>
-      <FilesToSign Include="%(ThirdPartyAssembly.TargetPath)" Authenticode="3PartySHA2" />
+      <CertificatesSignInfo Include="3PartyDual" DualSigningAllowed="true" />
+      <CertificatesSignInfo Include="3PartySHA2" DualSigningAllowed="true" />
+
+      <ItemsToSign Include="$(VsixPublishDestination)**\*.vsix" />
+      <ItemsToSign Include="$(NupkgOutputDirectory)**\*.nupkg" />
+      <ItemsToSign Include="$(VsixPublishDestination)**\*.exe" />
+
+      <StrongNameSignInfo Include="MsSharedLib72" PublicKeyToken="31bf3856ad364e35" CertificateName="Microsoft400" />
+      <StrongNameSignInfo Include="SilverlightCert121" PublicKeyToken="7cec85d7bea7798e" CertificateName="Microsoft400" />
+      <StrongNameSignInfo Include="StrongName" PublicKeyToken="b77a5c561934e089" CertificateName="Microsoft400" />
+      <StrongNameSignInfo Include="StrongName" PublicKeyToken="b03f5f7f11d50a3a" CertificateName="Microsoft400" />
+
+      <FileExtensionSignInfo Include=".nupkg" CertificateName="NuGet" />
+      <FileExtensionSignInfo Include=".vsix" CertificateName="VsixSHA2" />
+      <FileExtensionSignInfo Include=".ps1;.psd1;.psm1;.psc1;.py;.ps1xml" CertificateName="Microsoft400" />
+      <FileExtensionSignInfo Include=".dll;.exe;.mibc;.msi" CertificateName="Microsoft400" />
+      <FileExtensionSignInfo Include=".xml" CertificateName="MicrosoftXmlSHA2" />
+
+      <FileSignInfo Include="Lucene.Net.dll" CertificateName="3PartySHA2" />
+      <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="3PartySHA2" />
+      <FileSignInfo Include="NuGet.exe" CertificateName="Microsoft400" StrongName="MsSharedLib72" />
+      <FileSignInfo Include="NuGet.Mssign.exe" CertificateName="Microsoft400" StrongName="MsSharedLib72" />
     </ItemGroup>
 
-    <Message Text="Files to sign:" Importance="High" />
-    <Message Text="  %(FilesToSign.Identity), Authenticode='%(FilesToSign.Authenticode)', StrongName='%(FilesToSign.StrongName)'" Importance="High" />
-  </Target>
 
-  <Target Name="GetOutputVsix">
-    <ItemGroup>
-      <FilesToSign Include="$(VsixPublishDestination)**\*.vsix">
-        <Authenticode>VsixSHA2</Authenticode>
-      </FilesToSign>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetOutputNupkgs">
-    <ItemGroup>
-      <FilesToSign Include="$(NupkgOutputDirectory)**\*.nupkg">
-        <Authenticode>NuGet</Authenticode>
-      </FilesToSign>
-    </ItemGroup>
+    <Microsoft.DotNet.SignTool.SignToolTask
+        DryRun="$(DryRunSigning)"
+        TestSign="$(TestSigning)"
+        DoStrongNameCheck="$(DoStrongNameCheck)"
+        AllowEmptySignList="false"
+        CertificatesSignInfo="@(CertificatesSignInfo)"
+        ItemsToSign="@(ItemsToSign)"
+        StrongNameSignInfo="@(StrongNameSignInfo)"
+        FileSignInfo="@(FileSignInfo)"
+        FileExtensionSignInfo="@(FileExtensionSignInfo)"
+        TempDir="$(SigningTempDirectory)"
+        LogDir="$(SigningLogDirectory)"
+        DotNetPath="$(DotnetExePath)"
+        MicroBuildCorePath="$(PkgMicrosoft_VisualStudioEng_MicroBuild_Core)"
+        RepackParallelism="$(SignToolRepackParallelism)"
+        MaximumParallelFileSize="$(SignToolRepackMaximumParallelFileSize)"
+        DotNetTimeout="$(SignToolDotNetTimeout)"
+        MSBuildVerbosity="$(SignToolMSBuildVerbosity)" />
   </Target>
 </Project>

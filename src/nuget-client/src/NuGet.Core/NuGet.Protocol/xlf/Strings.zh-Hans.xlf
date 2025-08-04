@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddPackage_ExistingPackageInvalid">
+        <source>Package '{0}' already exists at feed '{1}' and is invalid.</source>
+        <target state="translated">源“{1}”处已存在包“{0}”，且该包无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_PackageAlreadyExists">
+        <source>Package '{0}' already exists at feed '{1}'.</source>
+        <target state="translated">源“{1}”处已存在包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPackage_SuccessfullyAdded">
+        <source>Successfully added package '{0}' to feed '{1}'.</source>
+        <target state="translated">已将包“{0}”成功添加到源“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">参数不能为 null 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument can not be null or empty.</source>
+        <target state="translated">参数不能为 null 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultSymbolServer">
+        <source>the symbol server</source>
+        <target state="translated">符号服务器</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandCanceled">
+        <source>Delete canceled</source>
+        <target state="translated">已取消删除</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandConfirm">
+        <source>{0} {1} will be deleted from the {2}. Would you like to continue?</source>
+        <target state="translated">{0} 将从 {2} 删除 {1}。是否继续?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletedPackage">
+        <source>{0} {1} was deleted successfully.</source>
+        <target state="translated">{0} 已成功删除 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandDeletingPackage">
+        <source>Deleting {0} {1} from the {2}.</source>
+        <target state="translated">正在从 {2} 删除 {0} {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeletePackage_NotFound">
+        <source>Not Found.</source>
+        <target state="translated">找不到。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DownloadTimeout">
+        <source>The download of '{0}' timed out because no data was received for {1}ms.</source>
+        <target state="translated">由于在 {1} 毫秒内未接收到数据，“{0}”的下载超时。</target>
+        <note>'{0}' is replaced with the resource that could not be downloaded.
+'{1}' is replaced with the integer (in milliseconds) of the timeout duration.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">正在通过“HTTP”源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将“allowInsecureConnections”显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_Insecure_HTTP">
+        <source>You are using a NuGet source '{0}' that contains an 'HTTP' service index resource endpoint: '{1}'. This is insecure and not recommended. To allow HTTP resources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. For more information, visit https://aka.ms/nuget-https-everywhere.</source>
+        <target state="translated">你使用的 NuGet 源 "{0}" 包含 "HTTP" 服务索引资源终结点: "{1}"。这是不安全的，不建议这样做。若要允许 HTTP 资源，必须在 NuGet.Config 文件中将 "allowInsecureConnections" 显式设置为 true。有关详细信息，请访问 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - NuGet Package source url
+1- resource endpoint url</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForForbidden">
+        <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
+        <target state="translated">访问源“{0}”时，服务器响应为 HTTP“403 禁止访问”。这表明服务器已验证你的身份，但不允许访问你请求的资源。请提供有权查看此资源的凭据。</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForProxy">
+        <source>The server responded with HTTP '407 Proxy Authentication Required' when accessing the proxy '{0}'. This suggests that the server needs credentials to authenticate your identity to use a proxy. Provide credentials to access this resource.</source>
+        <target state="translated">访问代理“{0}”时，服务器响应为 HTTP“407 需要代理身份验证”。这表明服务器需要凭据来验证你的身份才能使用代理。请提供凭据以访问此资源。</target>
+        <note>{0} is the proxy URL that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_CredentialsForUnauthorized">
+        <source>The server responded with HTTP '401 Unauthorized' when accessing the source '{0}'. This suggests that the server needs credentials to authenticate your identity. Provide credentials to access this resource.</source>
+        <target state="translated">访问源“{0}”时，服务器响应为 HTTP“401 未经授权”。这表明服务器需要凭据来验证你的身份。请提供凭据以访问此资源。</target>
+        <note>{0} is the source that needs credentials to be accessed.</note>
+      </trans-unit>
+      <trans-unit id="Http_RequestLog">
+        <source>{0} {1}</source>
+        <target state="translated">{0} {1}</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLog">
+        <source>{0} {1} {2}ms</source>
+        <target state="translated">{0} {1} {2} 毫秒</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_ResponseLogWithRetryAfter">
+        <source>{0} {1} {2}ms (retry after: {3}s)</source>
+        <target state="translated">{0}{1}{2}毫秒(请在以下时间后重试: {3} 秒)</target>
+        <note>Parameters in order: non-localizable HTTP status, non-localizable HTTP request URI, request duration in milliseconds, retry after duration in milliseconds
+The "ms" should be localized to the abbreviation for milliseconds.
+The "s" should be localized to the abbreviation for seconds.</note>
+      </trans-unit>
+      <trans-unit id="Http_Timeout">
+        <source>The HTTP request to '{0} {1}' has timed out after {2}ms.</source>
+        <target state="translated">对“{0} {1}”的 HTTP 请求在 {2} 毫秒后超时。</target>
+        <note>Parameters in order: non-localizable HTTP method, non-localizable HTTP request URI, timeout duration in milliseconds.
+The "ms" should be localized to the abbreviation for milliseconds.</note>
+      </trans-unit>
+      <trans-unit id="InvalidVersionFolder">
+        <source>The folder '{0}' contains an invalid version.</source>
+        <target state="translated">文件夹“{0}”包含无效的版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LiveFeed">
+        <source>the NuGet gallery</source>
+        <target state="translated">NuGet 库</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileNotFound">
+        <source>The file '{0}' does not exist in the package.</source>
+        <target state="translated">包中不存在文件 {0}。</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_FileTooLarge">
+        <source>Cannot load the file '{0}' because it is larger than {1} MB.</source>
+        <target state="translated">无法加载文件 {0}，因为该文件大于 {1} MB。</target>
+        <note>0 -file path, megabytes</note>
+      </trans-unit>
+      <trans-unit id="LoadFileFromNupkg_UnknownProblemLoadingTheFile">
+        <source>Unknown problem loading the file '{0}'.</source>
+        <target state="translated">加载文件 {0} 时出现未知错误。</target>
+        <note>0 - file path relative to the nupkg.</note>
+      </trans-unit>
+      <trans-unit id="Log_CanceledNupkgDownload">
+        <source>Downloading a package from '{0}' was canceled.</source>
+        <target state="translated">已取消从“{0}”下载程序包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorDownloading">
+        <source>Error downloading '{0}' from '{1}'.</source>
+        <target state="translated">从“{1}”下载“{0}”时出错。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToDownloadPackage">
+        <source>Failed to download package '{0}' from '{1}'.</source>
+        <target state="translated">未能从“{1}”下载包“{0}”。</target>
+        <note>{0} is the identity of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2Feed">
+        <source>The V2 feed at '{0}' returned an unexpected status code '{1} {2}'.</source>
+        <target state="translated">“{0}”处的 V2 源返回了意外的状态代码“{1} {2}”。</target>
+        <note>{0} is the URL that failed.
+{1} is the HTTP status code (an integer).
+{2} is the HTTP reason phrase (a non-translated string).</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToFetchV2FeedHttp">
+        <source>Failed to fetch results from V2 feed at '{0}' with following message : {1}</source>
+        <target state="translated">未能从“{0}”的 V2 源中提取结果，显示以下消息: {1}</target>
+        <note>{0} is the URL that failed.
+{1} is the message returned from HTTP call.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToGetNuspecStream">
+        <source>Unable to load nuspec from package '{0}'.</source>
+        <target state="translated">无法从包“{0}”加载 nuspec。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToParseRepoSignInfor">
+        <source>Unable to parse {0} information from {1}. </source>
+        <target state="translated">无法分析 {1} 中的 {0} 信息。</target>
+        <note>{0} is the information name that needs to be parsed. 
+{1} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadRepositorySignature">
+        <source>Unable to get repository signature information for source {0}.</source>
+        <target state="translated">无法获取源 {0} 的存储库签名信息。</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToReadServiceIndex">
+        <source>Unable to load the service index for source {0}.</source>
+        <target state="translated">无法加载源 {0} 的服务索引。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FailedToRetrievePackage">
+        <source>Failed to retrieve information about '{0}' from remote source '{1}'.</source>
+        <target state="translated">未能从远程源“{1}”检索有关“{0}”的信息。</target>
+        <note>{0} is the ID of the package.
+{1} is the URI.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyRootDirectory">
+        <source>Failed to verify the root directory of local source '{0}'.</source>
+        <target state="translated">未能验证本地源“{0}”的根目录。</target>
+        <note>{0} is the path to the bad directory.</note>
+      </trans-unit>
+      <trans-unit id="Log_FailedToVerifyValidFile">
+        <source>Failed to validate the file '{0}'.</source>
+        <target state="translated">未能验证文件“{0}”。</target>
+        <note>{0} is the file path.</note>
+      </trans-unit>
+      <trans-unit id="Log_FileIsCorrupt">
+        <source>The file '{0}' is corrupt.</source>
+        <target state="translated">文件“{0}”已损坏。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidCacheEntry">
+        <source>An invalid cache entry was found for URL '{0}' and will be replaced.</source>
+        <target state="translated">为 URL {0} 找到无效的缓存条目，将替换该条目。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidNupkgFromUrl">
+        <source>The nupkg at '{0}' is not valid.</source>
+        <target state="translated">“{0}”处的 nupkg 无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_LocalSourceNotExist">
+        <source>The local source '{0}' doesn't exist.</source>
+        <target state="translated">本地源“{0}”不存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingFindPackagesById">
+        <source>Retrying '{0}' for source '{1}'.</source>
+        <target state="translated">对源“{1}”重试“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RetryingHttp">
+        <source>An error was encountered when fetching '{0} {1}'. The request will now be retried.</source>
+        <target state="translated">提取“{0} {1}”时遇到错误。现将重试请求。</target>
+        <note>'{0}' is replaced with the HTTP method used.
+'{1}' is replaced with the URL that failed to be reached.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingRepositorySignature">
+        <source>Retrying repository signature request for source '{0}'.</source>
+        <target state="translated">正在重试源 {0} 的存储库签名请求。</target>
+        <note>{0} is the repository signature information endpoint.</note>
+      </trans-unit>
+      <trans-unit id="Log_RetryingServiceIndex">
+        <source>Retrying service index request for source '{0}'.</source>
+        <target state="translated">重试对源“{0}”的服务索引请求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoApiKeyFound">
+        <source>No API Key was provided and no API Key could be found for {0}. To save an API Key for a source use the 'setApiKey' command.</source>
+        <target state="translated">未提供 API 密钥，找不到 {0} 的 API 密钥。要保存源的 API 密钥，请使用 "setApiKey" 密钥。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) {0} is(are) not recognized by the current toolset.</source>
+        <target state="translated">当前工具集无法识别许可证标识符 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">许可版本字符串 {0} 比此工具集 {1} 支持的值高。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_Invalid">
+        <source>'{0}' is not a valid nupkg file.</source>
+        <target state="translated">“{0}”不是有效的 nupkg 文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NupkgPath_InvalidEx">
+        <source>'{0}' is not a valid nupkg file. Error: '{1}'.</source>
+        <target state="translated">“{0}”不是有效的 nupkg 文件。错误:“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OneOrMoreUrisMustBeSpecified">
+        <source>One or more URIs must be specified.</source>
+        <target state="translated">必须指定一个或多个 URI。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Unable to find package '{0}'.</source>
+        <target state="translated">无法找到包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageServerEndpoint_NotSupported">
+        <source>ERROR: This version of nuget.exe does not support updating packages to package source '{0}'.</source>
+        <target state="translated">错误: 此版本的 nuget.exe 不支持将包更新到包源“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid">
+        <source>'{0}' is not a valid path.</source>
+        <target state="translated">“{0}”不是有效的路径。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Path_Invalid_NotFileNotUnc">
+        <source>'{0}' should be a local path or a UNC share path.</source>
+        <target state="translated">“{0}”应为本地路径或 UNC 共享路径。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionAlreadyStarted">
+        <source>A connection has already been started.</source>
+        <target state="translated">已开始连接。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ConnectionIsClosed">
+        <source>The plugin connection is closed.</source>
+        <target state="translated">插件连接已关闭。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_DownloadNotSupportedSinceUnsignedNotAllowed">
+        <source>Downloading a package from a plugin is not supported since unsigned packages are not allowed and package download plugins do not support signed package verification.</source>
+        <target state="translated">不支持从插件下载包，因为不允许未签名的包并且包下载插件不支持已签名包验证。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_Exception">
+        <source>Plugin '{0}' failed with the exception:  {1}</source>
+        <target state="translated">插件“{0}”操作失败，出现异常: {1}</target>
+        <note>{0} is the plugin name
+{1} is the message from a caught exception</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOnCreation">
+        <source>Plugin '{0}' failed within {1:N3} seconds with exit code {2}.</source>
+        <target state="translated">插件“{0}”在 {1:N3} 秒内失败，退出代码为 {2}。</target>
+        <note>{0} is the plugin name
+{1} is the number of seconds
+{2} is the plugin process exit code</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailedOperationForPackage">
+        <source>Plugin '{0}' failed a {1} operation for package {2}.{3}.</source>
+        <target state="translated">对包 {2}.{3} 的插件“{0}”执行 {1} 操作失败。</target>
+        <note>{0} is the plugin name
+{1} is a plugin operation name
+{2} is a package ID
+{3} is a package version</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FailureQueryingPackageVersions">
+        <source>A failure occurred while attempting to query package versions for package '{0}' using the plugin at '{1}'.</source>
+        <target state="translated">尝试使用“{0}”处的插件查询包“{1}”的包版本时出现问题。</target>
+        <note>{0} is a package ID
+{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_Fault">
+        <source>Terminating plugin '{0}' due to an unrecoverable fault:  {1}</source>
+        <target state="translated">由于不可恢复的故障“{1}”，正在终止插件“{0}”</target>
+        <note>{0} is the plugin name
+{1} is the exception ToString() result</note>
+      </trans-unit>
+      <trans-unit id="Plugin_FileNotFound">
+        <source>A plugin was not found at path '{0}'.</source>
+        <target state="translated">路径“{0}”中找不到插件。</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeFailed">
+        <source>The plugin handshake failed.</source>
+        <target state="translated">插件握手失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_HandshakeRequestHandlerAlreadyExists">
+        <source>A handshake request handler already exists.</source>
+        <target state="translated">握手请求处理程序已存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_IdleTimeoutMustBeGreaterThanOrEqualToInfiniteTimeSpan">
+        <source>The idle timeout must be greater than or equal to System.Threading.Timeout.InfiniteTimeSpan.</source>
+        <target state="translated">空闲超时必须大于或等于 System.Threading.Timeout.InfiniteTimeSpan。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InitializationFailed">
+        <source>Plugin initialization failed.</source>
+        <target state="translated">插件初始化失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidEmbeddedSignature">
+        <source>The plugin at '{0}' did not have a valid embedded signature.</source>
+        <target state="translated">“{0}”中的插件不具有有效的嵌入式签名。</target>
+        <note>{0} is a file system path</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidMessageType">
+        <source>The message type '{0}' is invalid at this time.</source>
+        <target state="translated">消息类型“{0}”此时无效。</target>
+        <note>{0} is a message type enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_InvalidPluginFilePath">
+        <source>The plugin file path '{0}' is invalid.</source>
+        <target state="translated">插件文件路径“{0}”无效。</target>
+        <note>{0} is a file system path.</note>
+      </trans-unit>
+      <trans-unit id="Plugin_NotConnected">
+        <source>A plugin is not connected.</source>
+        <target state="translated">插件未连接。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_PackageDownloadFailed">
+        <source>Plugin '{0}' failed to download package '{1}'.</source>
+        <target state="translated">插件“{0}”未能下载包“{1}”。</target>
+        <note>{0} is the plugin name
+{1} is the package identity</note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProblemStartingPlugin">
+        <source>Problem starting the plugin '{0}'. {1}</source>
+        <target state="translated">启动插件“{0}”时出现问题。{1}</target>
+        <note>0 - plugin path, 1 - error message </note>
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolException">
+        <source>A plugin protocol exception occurred.</source>
+        <target state="translated">插件协议出现了异常。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionNotSupportedOnError">
+        <source>A protocol version is not supported on error.</source>
+        <target state="translated">协议 版本不受支持错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Plugin_ProtocolVersionOutOfRange">
+        <source>'{0}' must be greater than or equal to '{1}'.</source>
+        <target state="translated">“{0}”必须大于或等于“{1}”。</target>
+        <note>{0} is a parameter name
+{1} is a parameter name</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestContextDoesNotExist">
+        <source>Request context does not exist for request ID '{0}'.</source>
+        <target state="translated">请求 ID“{0}”的请求上下文不存在。</target>
+        <note>{0} is a request ID</note>
+      </trans-unit>
+      <trans-unit id="Plugin_RequestHandlerDoesNotExist">
+        <source>A request handler does not exist for the message method '{0}'.</source>
+        <target state="translated">消息方法“{0}”的请求处理程序不存在。</target>
+        <note>{0} is a message method</note>
+      </trans-unit>
+      <trans-unit id="Plugin_TimeoutOutOfRange">
+        <source>Timeout must be greater than TimeSpan.Zero and less than or equal to TimeSpan.FromMilliseconds(int.MaxValue).</source>
+        <target state="translated">超时值必须大于 TimeSpan.Zero 且小于或等于 TimeSpan.FromMilliseconds(int.MaxValue)。</target>
+        <note>Do not localize:  TimeSpan.Zero, TimeSpan.FromMilliseconds(int.MaxValue)</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">无法识别枚举值 {0}。</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="Plugin_UnrecognizedOperationClaims">
+        <source>The operation claims are unrecognized:  {0}.</source>
+        <target state="translated">无法识别操作声明: {0}。</target>
+        <note>{0} is a comma-delimited list of unrecognized enum values.</note>
+      </trans-unit>
+      <trans-unit id="Protocol_BadSource">
+        <source>Failed to retrieve metadata from source '{0}'.</source>
+        <target state="translated">未能从源“{0}”检索元数据。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidJsonObject">
+        <source>The content at '{0}' is not a valid JSON object.</source>
+        <target state="translated">“{0}”处的内容不是有效的 JSON 对象。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_InvalidXml">
+        <source>The content at '{0}' is not valid XML.</source>
+        <target state="translated">“{0}”处的内容不是有效的 XML。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MalformedMetadataError">
+        <source>Metadata could not be loaded from the source '{0}'.</source>
+        <target state="translated">无法从源“{0}”加载元数据。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingSearchService">
+        <source>The source does not have a Search service!</source>
+        <target state="translated">源没有搜索服务!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_MissingVersion">
+        <source>The source does not have the 'version' property.</source>
+        <target state="translated">源不具有 "version" 属性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_PackageMetadataError">
+        <source>An error occurred while retrieving package metadata for '{0}' from source '{1}'.</source>
+        <target state="translated">从源“{1}”检索“{0}”的包元数据时出错。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_Search_LocalSourceNotFound">
+        <source>The path '{0}' for the selected source could not be resolved.</source>
+        <target state="translated">无法解析选定源的路径“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_UnsupportedVersion">
+        <source>The source version is not supported: '{0}'.</source>
+        <target state="translated">源版本不受支持:“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Protocol_duplicateUri">
+        <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
+        <target state="translated">“{0}”是已下载的重复 URL，将导致循环依赖。请送服务器更正。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPackagePushed">
+        <source>Your package was pushed.</source>
+        <target state="translated">已推送包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandPushingPackage">
+        <source>Pushing {0} to {1}...</source>
+        <target state="translated">正在将 {0} 推送到 {1}...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseDotnetExe">
+        <source>To skip already published packages, use the option --skip-duplicate</source>
+        <target state="translated">要跳过已发布的包，请使用 --skip-duplicate 选项</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateAdvertiseNuGetExe">
+        <source>To skip already published packages, use the option -SkipDuplicate</source>
+        <target state="translated">要跳过已发布的包，请使用 -SkipDuplicate 选项</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateNotImplemented">
+        <source>The option to skip duplicates is not currently supported for this type of push.</source>
+        <target state="translated">此类型的推送当前不支持跳过重复项的选项。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryContentUrlMustBeHttps">
+        <source>Repository content URL for repository signatures must be HTTPS.</source>
+        <target state="translated">存储库签名的存储库内容 URL 必须是 HTTPS。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositorySignaturesResourceMustBeHttps">
+        <source>Repository Signatures resouce must be served over HTTPS. Source: {0}</source>
+        <target state="translated">必须通过 HTTPS 提供存储库签名资源。源: {0}</target>
+        <note>{0} source service index</note>
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">字符串参数“{0}”不能为 null 或空</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindFile">
+        <source>File does not exist ({0}).</source>
+        <target state="translated">文件不存在({0})。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseFolderV3Version">
+        <source>Unable to parse a valid version from a v3 folder: '{0}'.</source>
+        <target state="translated">无法从 v3 文件夹解析出有效的版本:“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_CouldNotLoad">
+        <source>Package source '{0}' vulnerability data index '{1}' could not be loaded. This indicates a problem with the JSON file contents returned from the server.</source>
+        <target state="translated">无法加载包源 "{0}" 漏洞数据索引 "{1}"。这表示从服务器返回的 JSON 文件内容有问题。</target>
+        <note>{0} - package source name (for example "nuget.org")
+{1} - URL where no data was loaded from</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_HasNoName">
+        <source>Vulnerability page index {0} does not contain a name (Source: '{1}')</source>
+        <target state="translated">漏洞页索引 {0} 不包含名称(源: "{1}")</target>
+        <note>{0} - an index number
+{1} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameHasInvalidCharacters">
+        <source>Vulnerability page index {0} contains invalid characters (Source: '{1}')</source>
+        <target state="translated">漏洞页索引 {0} 包含无效字符(源: "{1}")</target>
+        <note>{0} - an index number
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameNotUnique">
+        <source>Vulnerability page name '{0}' is not unique. Only using the first (Source: '{1}')</source>
+        <target state="translated">漏洞页名称 "{0}" 不唯一。仅使用第一个(源: "{1}")</target>
+        <note>{0} - file name
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NameTooLong">
+        <source>Vulnerability page index {0} name is longer than {1} characters (Source: '{2}')</source>
+        <target state="translated">漏洞页索引 {0} 名称的长度超过 {1} 个字符(源: "{2}")</target>
+        <note>{0} - an index number
+{1} - number representing the max length allowed
+{2} - the package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_NoUrl">
+        <source>Vulnerability page '{0}' does not contain a URL (Source: '{1}')</source>
+        <target state="translated">漏洞页 "{0}" 不包含 URL (源: "{1}")</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="VulnerabilityPage_UrlNotHttp">
+        <source>Vulnerability page '{0}' contains URL that is not http(s) (Source: '{1}')</source>
+        <target state="translated">漏洞页 "{0}" 包含不是 http 的 URL (源: "{1}")</target>
+        <note>{0} - name of file
+{1} - package source name</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_TooManyPages">
+        <source>Package source '{0}' has {1} vulnerability data pages. Using the first {2}.</source>
+        <target state="translated">包源 "{0}" 具有 {1} 漏洞数据页。使用第一个 {2}。</target>
+        <note>{0} - package source name
+{1} - number of vulerabilitiy files reported
+{2} - max count allowed</note>
+      </trans-unit>
+      <trans-unit id="Warning_SymbolServerNotConfigured">
+        <source>Found symbols package '{0}', but no API key was specified for the symbol server. To save an API Key, run 'NuGet.exe setApiKey [your API key from http://www.NuGet.org]'.</source>
+        <target state="translated">找到符号包“{0}”，但未为符号服务器指定 API 密钥。若要保存 API 密钥，请运行“NuGet.exe setApiKey [http://www.NuGet.org 中属于你的 API 密钥]”。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

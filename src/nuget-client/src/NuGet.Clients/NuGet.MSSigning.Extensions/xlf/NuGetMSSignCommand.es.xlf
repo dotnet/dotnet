@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../NuGetMSSignCommand.resx">
+    <body>
+      <trans-unit id="MSSignCommandCSPNameDescription">
+        <source>Name of the cryptographic service provider which contains the private key container.</source>
+        <target state="translated">Nombre del proveedor de servicios criptográficos que incluye el contenedor de claves privadas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandCertificateFileDescription">
+        <source>File path to the p7b file to be used while signing the package.</source>
+        <target state="translated">Ruta de acceso al archivo p7b que se va a usar al firmar el paquete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandCertificateFingerprintDescription">
+        <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate.</source>
+        <target state="translated">Huella digital SHA-256, SHA-384 o SHA-512 del certificado que se usa al buscar un archivo p7b para el certificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandDescription">
+        <source>Signs a NuGet package with the specified p7b file.</source>
+        <target state="translated">Firma un paquete NuGet con el archivo p7b especificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandHashAlgorithmDescription">
+        <source>Hash algorithm to be used while generating the package manifest file. Defaults to SHA256.</source>
+        <target state="translated">Algoritmo hash que se va a usar al generar el archivo de manifiesto del paquete. El valor predeterminado es SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidArgumentException">
+        <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
+        <target state="translated">Se proporcionó un valor no válido para "{0}". Para obtener una lista de los valores aceptados, visite https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
+        <source>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
+        <target state="translated">{0}: valor no válido para la opción "CertificateFingerprint". El valor debe ser una huella de certificado SHA-256, SHA-384 o SHA-512 (en hexadecimal).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidCngKeyException">
+        <source>Cng Key is not an RSA key.</source>
+        <target state="translated">La clave CNG no es una clave RSA.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandKeyContainerDescription">
+        <source>Name of the key container which has the private key.</source>
+        <target state="translated">Nombre del contenedor de claves que incluye la clave privada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoCertException">
+        <source>Can't find specified certificate.</source>
+        <target state="translated">No se encuentra el certificado especificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoCngKeyException">
+        <source>Can't find cng key.</source>
+        <target state="translated">No se encuentra la clave CNG.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoPackageException">
+        <source>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">No se proporcionó ningún paquete. Para obtener una lista de las formas aceptadas para proporcionar un paquete, visite https://docs.nuget.org/docs/reference/command-line-reference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoTimestamperWarning">
+        <source>No '-Timestamper' option was provided the signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">No se proporcionó ninguna opción para "-Timestamper" y no se incluirá la marca de tiempo en el paquete firmado. Para obtener más información acerca de esta opción, visite https://docs.nuget.org/docs/reference/command-line-reference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoValidCertificateFileException">
+        <source>No CertificateFile provided or provided file is not a p7b file.</source>
+        <target state="translated">No se proporcionó ningún archivo de certificado (CertificateFile) o el archivo proporcionado no es p7b.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandOutputDirectoryDescription">
+        <source>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</source>
+        <target state="translated">Directorio donde se debe guardar el paquete firmado. De forma predeterminada, el paquete original se sobrescribe con el paquete firmado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandOverwriteDescription">
+        <source>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</source>
+        <target state="translated">Se cambia para indicar si la firma actual debe sobrescribirse. Se produce un error del comando de forma predeterminada si el paquete ya tiene una firma.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandTimestampHashAlgorithmDescription">
+        <source>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</source>
+        <target state="translated">Algoritmo hash que va a usar el servidor de asignación de marca de tiempo RFC 3161. El valor predeterminado es SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandTimestamperDescription">
+        <source>URL to an RFC 3161 timestamping server.</source>
+        <target state="translated">Dirección URL a un servidor de asignación de marca de tiempo RFC 3161.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageDescription">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">Firma un paquete NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageExamples">
+        <source>nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</source>
+        <target state="translated">nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="RepoSignCommandDescription">
+        <source>Sign a NuGet package by adding repository signature with specified p7b file.</source>
+        <target state="translated">Firma un paquete NuGet agregando la firma del repositorio con el archivo p7b especificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandPackageOwnersDescription">
+        <source>Semicolon-separated list of package owners.</source>
+        <target state="translated">Lista separada por signos de punto y coma de propietarios del paquete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageDescription">
+        <source>Sign a NuGet package with repository signature.</source>
+        <target state="translated">Firma un paquete NuGet con la firma del repositorio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageExamples">
+        <source>nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</source>
+        <target state="translated">nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandV3ServiceIndexUrlDescription">
+        <source>Repository V3 service index URL.</source>
+        <target state="translated">Dirección URL del índice del servicio de repositorio V3.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
