@@ -1,0 +1,1139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pt-BR" original="../Strings.resx">
+    <body>
+      <trans-unit id="AnAbsoluteUriIsRequired">
+        <source>An absolute URI is required.</source>
+        <target state="translated">Um URI absoluto é necessário.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">O argumento não pode ser nulo nem vazio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AuthorPrimarySignatureFriendlyName">
+        <source>author primary signature</source>
+        <target state="translated">assinatura principal do autor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHash">
+        <source>{0} hash: {1}</source>
+        <target state="translated">{0} hash: {1}</target>
+        <note>0 - Hash algorithm name
+1 - certificate hash in given hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateHashSha1">
+        <source>SHA1 hash: {0}</source>
+        <target state="translated">Hash SHA1: {0}</target>
+        <note>0 - certificate sha1 hash</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateIssuer">
+        <source>Issued by: {0}</source>
+        <target state="translated">Emitido por: {0}</target>
+        <note>0 - certificate issuer</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateSubjectName">
+        <source>Subject Name: {0}</source>
+        <target state="translated">Nome da entidade: {0}</target>
+        <note>0 - certificate subject name</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityCertificateValidity">
+        <source>Valid from: {0} to {1}</source>
+        <target state="translated">Válido de {0} até {1}</target>
+        <note>0 -  start date
+1 - end date</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesFooter">
+        <source>... {0} more.</source>
+        <target state="translated">... {0} mais.</target>
+        <note>0 - number of certificates left</note>
+      </trans-unit>
+      <trans-unit id="CertUtilityMultipleCertificatesHeader">
+        <source>The following certificates meet all given criteria:</source>
+        <target state="translated">Os certificados a seguir atenderem a todos os critérios fornecidos:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainBuildFailed">
+        <source>A complete certificate chain could not be built for the signing certificate.</source>
+        <target state="translated">Não foi possível criar uma cadeia de certificados completa para o certificado de autenticação.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CertificateChainValidationFailed">
+        <source>Certificate chain validation failed.</source>
+        <target state="translated">Falha na validação da cadeia de certificados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForCodeSigning">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for code signing.</source>
+        <target state="translated">A validação da cadeia de certificados X.509 usará o repositório de confiança padrão selecionado pelo .NET.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingDefaultTrustStoreForTimestamping">
+        <source>X.509 certificate chain validation will use the default trust store selected by .NET for timestamping.</source>
+        <target state="translated">A validação da cadeia de certificados X.509 usará o repositório de confiança padrão selecionado pelo .NET.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingFallbackCertificateBundle">
+        <source>X.509 certificate chain validation will use the fallback certificate bundle at '{0}'.</source>
+        <target state="translated">A validação da cadeia de certificados X.509 usará o pacote de certificados de fallback em '{0}'.</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingNoCertificateBundle">
+        <source>X.509 certificate chain validation will not have any trusted roots. Chain building will fail with an untrusted status.</source>
+        <target state="translated">A validação da cadeia de certificados X.509 não terá raízes confiáveis. A construção de cadeia falhará com um status não confiável.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ChainBuilding_UsingSystemCertificateBundle">
+        <source>X.509 certificate chain validation will use the system certificate bundle at '{0}'.</source>
+        <target state="translated">A validação da cadeia de certificados X.509 usará o pacote de certificados do sistema em '{0}'.</target>
+        <note>{0} is the file path</note>
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalid">
+        <source>The commitment-type-indication attribute is invalid.</source>
+        <target state="translated">O atributo commitment-type-indication é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommitmentTypeIndicationAttributeInvalidCombination">
+        <source>The commitment-type-indication attribute contains an invalid combination of values.</source>
+        <target state="translated">O atributo commitment-type-indication contém uma combinação inválida de valores.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConflictingAllowUntrustedRoot">
+        <source>There are two certificates with conflicting allowUntrustedRoot attributes in the computed settings. The allowUntrustedRoot attribute is going to be set to false. Certificate: {0}-{1}</source>
+        <target state="translated">Existem dois certificados com atributos allowUntrustedRoot conflitantes nas configurações computadas. O atributo allowUntrustedRoot será definido como false. Certificado: {0}–{1}</target>
+        <note>0 - Hash algorithm
+1 - Fingerprint
+'allowUntrustedRoot' should not be localized</note>
+      </trans-unit>
+      <trans-unit id="DefaultError_EmptyAllowList">
+        <source>A list of trusted signers is required but none was found.</source>
+        <target state="translated">Uma lista de signatários confiáveis é exigida, mas nenhum foi encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefaultError_NoMatchInAllowList">
+        <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
+        <target state="translated">A impressão digital do certificado de assinatura de pacote não corresponde a nenhuma impressão digital de certificado na lista de permissões.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
+        <source>Cannot target author signatures that are countersignatures.</source>
+        <target state="translated">Não é possível direcionar assinaturas do autor que são referendas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorByteSignatureNotFound">
+        <source>Byte signature not found in package archive:  0x{0}</source>
+        <target state="translated">Assinatura de byte não encontrada no arquivo do pacote: 0x{0}</target>
+        <note>{0} is the byte signature in hexadecimal</note>
+      </trans-unit>
+      <trans-unit id="ErrorDuplicatePackages">
+        <source>There are duplicate packages: {0}</source>
+        <target state="translated">Há pacotes duplicados: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidAllowedVersions">
+        <source>Invalid allowedVersions for package id '{0}': '{1}'</source>
+        <target state="translated">allowedVersions inválido para a ID do pacote '{0}': '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidCertificateChainUnspecifiedReason">
+        <source>Certificate chain validation failed for an unspecified reason.</source>
+        <target state="translated">Falha na validação da cadeia de certificados por uma razão não especificada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidMinClientVersion">
+        <source>Invalid minClientVersion: '{0}'</source>
+        <target state="translated">minClientVersion inválido: '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageArchive">
+        <source>Invalid package archive.</source>
+        <target state="translated">Arquivo de pacote inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersion">
+        <source>Invalid package version for package id '{0}': '{1}'</source>
+        <target state="translated">Versão do pacote inválida para a ID do pacote '{0}': '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorInvalidPackageVersionForDependency">
+        <source>Invalid package version for a dependency with id '{0}' in package '{1}': '{2}'</source>
+        <target state="translated">Versão do pacote inválida para uma dependência com a ID '{0}' no pacote '{1}': '{2}'</target>
+        <note>{0} is the dependency's package id.
+{1} is the package's identity.
+{2} is the dependency's version range.</note>
+      </trans-unit>
+      <trans-unit id="ErrorManifestFileNotFound">
+        <source>Manifest file not found at '{0}'</source>
+        <target state="translated">Arquivo de manifesto não encontrado em '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorMultipleTimestamps">
+        <source>Multiple timestamps are not accepted.</source>
+        <target state="translated">Vários carimbos de data/hora não são aceitos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNoTimestamp">
+        <source>The signature should be timestamped to enable long-term signature validity after the certificate has expired.</source>
+        <target state="translated">A assinatura deve receber o carimbo de data/hora para habilitar a validade de assinatura de longo prazo após o certificado ter expirado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNullOrEmptyPackageId">
+        <source>Null or empty package id</source>
+        <target state="translated">ID do pacote nula ou vazia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">O pacote não está assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorPackageSignatureInvalid">
+        <source>The package signature is invalid or cannot be verified on this platform.</source>
+        <target state="translated">A assinatura de pacote é inválida ou não pode ser verificada nesta plataforma.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableCheckPackageEntries">
+        <source>An unexpected error occurred while checking package entries.</source>
+        <target state="translated">Ocorreu um erro inesperado ao verificar as entradas do pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnableToDeleteFile">
+        <source>Unable to delete temporary file '{0}'. Error: '{1}'.</source>
+        <target state="translated">Não foi possível excluir o arquivo temporário '{0}'. Erro: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorUnsafePackageEntry">
+        <source>The package '{0}' contains an entry '{1}' which is unsafe for extraction.</source>
+        <target state="translated">O pacote '{0}' contém uma entrada '{1}' que não é segura para extração.</target>
+        <note>{0} is the package identity.
+    {1} is the package entry</note>
+      </trans-unit>
+      <trans-unit id="ErrorZip64NotSupported">
+        <source>Signed Zip64 packages are not supported.</source>
+        <target state="translated">Pacotes Zip64 assinados não são compatíveis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Unsupported targetFramework value '{0}'.</source>
+        <target state="translated">Valor targetFramework '{0}' sem suporte.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_LoadingHashFile">
+        <source>Error parsing nupkg metadata file {0} : {1}</source>
+        <target state="translated">Erro ao analisar o arquivo de metadados nupkg {0} : {1}</target>
+        <note>0 - nupkg metadata file path
+1 - error message</note>
+      </trans-unit>
+      <trans-unit id="Error_MissingNuspecFile">
+        <source>The package is missing the required nuspec file. </source>
+        <target state="translated">O arquivo do nuspec obrigatório está ausente no pacote. </target>
+        <note>package folder path will be appended to this message, if exists</note>
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">signatureValidationMode está definido como necessário, portanto, os pacotes são permitidos somente se assinados por signatários confiáveis; no entanto, nenhum signatário confiável foi especificado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">Este pacote é assinado, mas não por um signatário confiável.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingRepositoryCertificate">
+        <source>This package was not repository signed with a certificate listed by this repository.</source>
+        <target state="translated">Este pacote não foi assinado pelo repositório com um certificado listado por este repositório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoRepoAllowList">
+        <source>This repository indicated that all its packages are repository signed; however, it listed no signing certificates.</source>
+        <target state="translated">Este repositório indicou que todos os seus pacotes estão assinados pelo repositório; no entanto, ele não listou nenhum certificado de assinatura.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOnePrimarySignature">
+        <source>The package signature file does not contain exactly one primary signature.</source>
+        <target state="translated">O arquivo de assinatura de pacote não contém exatamente uma assinatura principal.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotOneRepositoryCounterSignature">
+        <source>The package signature contains multiple repository countersignatures.</source>
+        <target state="translated">A assinatura de pacote contém várias referendas do repositório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySettings_UnsignedPackage">
+        <source>This repository indicated that all its packages are repository signed; however, this package is unsigned.</source>
+        <target state="translated">Este repositório indicou que todos os seus pacotes estão assinados pelo repositório; no entanto, este pacote não está assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RepositorySignatureMustNotHaveARepositoryCountersignature">
+        <source>A repository primary signature must not have a repository countersignature.</source>
+        <target state="translated">A assinatura principal do repositório não pode ter referendas de um repositório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RequireMode_UnsignedPackage">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, this package is unsigned.</source>
+        <target state="translated">signatureValidationMode está definido como necessário, portanto, os pacotes são permitidos somente se assinados por signatários confiáveis; no entanto, este pacote não está assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeRequired">
+        <source>Exactly one {0} attribute is required.</source>
+        <target state="translated">Exatamente um atributo {0} é necessário.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExactlyOneAttributeValueRequired">
+        <source>The {0} attribute must have exactly one attribute value.</source>
+        <target state="translated">O atributo {0} deve ter exatamente um valor do atributo.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="ExtractionLog_InformationPrefix">
+        <source>Package '{0} {1}' from source '{2}': {3}</source>
+        <target state="translated">Pacote '{0} {1}' da fonte '{2}': {3}</target>
+        <note>0 - package ID
+1 - package versions
+2 - package source url
+3 - Log Message</note>
+      </trans-unit>
+      <trans-unit id="FailToLoadPackagesConfig">
+        <source>Fail to load packages.config as XML file. Please check it. </source>
+        <target state="translated">Falha ao carregar packages.config como arquivo XML. Verifique isso. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailToWritePackagesConfig">
+        <source>Failed to write packages.config as XML file '{0}'. Error: '{1}'.</source>
+        <target state="translated">Falha ao gravar packages.config como arquivo XML '{0}'. Erro: '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedFileTime">
+        <source>Failed to update file time for {0}: {1}</source>
+        <target state="translated">Falha ao atualizar o tempo de arquivo para {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FallbackFolderNotFound">
+        <source>Unable to find fallback package folder '{0}'.</source>
+        <target state="translated">Não foi possível encontrar a pasta do pacote de fallback '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpOrHttpsIsRequired">
+        <source>HTTP or HTTPS is required.</source>
+        <target state="translated">HTTP ou HTTPS é necessário.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgument">
+        <source>The argument is invalid.</source>
+        <target state="translated">O argumento é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidArgumentCombination">
+        <source>Invalid combination of arguments {0} and {1}.</source>
+        <target state="translated">Combinação inválida de argumentos {0} e {1}.</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="InvalidAsn1">
+        <source>The ASN.1 data is invalid.</source>
+        <target state="translated">Os dados ASN.1 são inválidos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidLicenseExppressionVersion_VersionTooHigh">
+        <source>The version string '{0}' is not supported by this toolset. The highest supported version is '{1}'. Either use a lower version or upgrade your toolset.</source>
+        <target state="translated">A cadeia de caracteres de versão '{0}' não é compatível com este conjunto de ferramentas. A versão compatível mais recente é '{1}'. Use uma versão inferior ou atualize seu conjunto de ferramentas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidNuspecElement">
+        <source>{0} This validation error occurred in a '{1}' element.</source>
+        <target state="translated">{0} Esse erro de validação ocorreu em um elemento '{1}'.</target>
+        <note>{0} is the validation error message.
+{1} is the local name of the XML element that causes the validation error.</note>
+      </trans-unit>
+      <trans-unit id="InvalidNuspecEntry">
+        <source>The nuspec contains an invalid entry '{0}' in package '{1}' .</source>
+        <target state="translated">O nuspec possui uma entrada inválida '{0}' no pacote '{1}' .</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageFrameworkFolderName">
+        <source>The framework in the folder name of '{0}' in package '{1}' could not be parsed.</source>
+        <target state="translated">O framework no nome da pasta de '{0}' no pacote '{1}' não pôde ser analisado.</target>
+        <note>{0} is the invalid path.
+{1} is the package ID and version.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageNupkg">
+        <source>The file is not a valid nupkg. File path: {0}</source>
+        <target state="translated">O arquivo não é um nupkg válido. Caminho do arquivo: {0}</target>
+        <note>0 - Nupkg file path</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFile">
+        <source>The package contains an invalid package signature file.</source>
+        <target state="translated">O pacote contém um arquivo de assinatura de pacote inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntry">
+        <source>The package signature file entry is invalid. {0}</source>
+        <target state="translated">A entrada do arquivo de assinatura de pacote é inválida. {0}</target>
+        <note>{0} - error message suffix containing the reason for failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
+        <source>The central directory header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">O campo do cabeçalho do diretório central '{0}' tem um valor inválido ({1}).</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageSignatureFileEntryLocalFileHeader">
+        <source>The local file header field '{0}' has an invalid value ({1}).</source>
+        <target state="translated">O campo '{0}' do cabeçalho do arquivo local tem um valor inválido ({1}).</target>
+        <note>{0} is the name of field with the invalid value
+{1} is the field value</note>
+      </trans-unit>
+      <trans-unit id="InvalidPackageTypeVersion">
+        <source>Nuspec file contains a package type with an invalid package version '{0}'.</source>
+        <target state="translated">O arquivo Nuspec contém um tipo de pacote com uma versão de pacote '{0}' inválida.</target>
+        <note>{0} is the invalid version string.</note>
+      </trans-unit>
+      <trans-unit id="InvalidPrimarySignature">
+        <source>The primary signature is invalid.</source>
+        <target state="translated">A assinatura principal é inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRepositoryCountersignature">
+        <source>The repository countersignature is invalid.</source>
+        <target state="translated">A referenda do repositório é inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidSignatureContent">
+        <source>The package signature content is invalid.</source>
+        <target state="translated">O conteúdo de assinatura de pacote é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidTimestampSignature">
+        <source>The timestamp signature is invalid.</source>
+        <target state="translated">A assinatura do carimbo de data/hora é inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidUrl">
+        <source>The URL value is invalid.</source>
+        <target state="translated">O valor da URL é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidX509StorePurpose">
+        <source>Invalid X.509 store purpose.</source>
+        <target state="translated">Finalidade de repositório X.509 inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledPackage">
+        <source>Installed {0} {1} from {2} to {3} with content hash {4}.</source>
+        <target state="translated">Instalado {0}{1} de {2} para {3} com hash de conteúdo {4}.</target>
+        <note>0 - package id
+1 - package version
+2 - package source
+3 - package installed path
+4 - hex byte string, representing content hash</note>
+      </trans-unit>
+      <trans-unit id="Message_Path">
+        <source>Path: {0}</source>
+        <target state="translated">Caminho: {0}</target>
+        <note>0 - folder path</note>
+      </trans-unit>
+      <trans-unit id="MinClientVersionAlreadyExist">
+        <source>MinClientVersion already exists in packages.config</source>
+        <target state="translated">MinClientVersion já existe em packages.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingMetadataNode">
+        <source>Nuspec file does not contain the '{0}' node.</source>
+        <target state="translated">O arquivo Nuspec não contém o nó '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingPackageTypeName">
+        <source>Nuspec file contains a package type that is missing the name attribute.</source>
+        <target state="translated">O arquivo Nuspec contém um tipo de pacote que não tem um atributo de nome.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromDependencyGroups">
+        <source>Some dependency group TFMs are missing a platform version: {0}</source>
+        <target state="translated">Alguns TFMs do grupo de dependências não contêm uma versão de plataforma: {0}</target>
+        <note>0 - comma-separated list of dependency group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyGroups">
+        <source>Some reference assembly group TFMs are missing a platform version: {0}</source>
+        <target state="translated">Alguns TFMs do grupo de assemblies de referência não contêm uma versão de plataforma: {0}</target>
+        <note>0 - comma-separated list of reference assembly group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromFrameworkAssemblyReferences">
+        <source>Some framework assembly reference TFMs are missing a platform version: {0}</source>
+        <target state="translated">Alguns TFMs de referência do assembly de estrutura não contêm uma versão de plataforma: {0}</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromIncludedFiles">
+        <source>Some included files are included under TFMs which are missing a platform version: {0}</source>
+        <target state="translated">Alguns arquivos estão incluídos em TFMs que não contêm uma versão de plataforma: {0}</target>
+        <note>0 - comma-separated list of files with bad TFMs</note>
+      </trans-unit>
+      <trans-unit id="MissingTargetPlatformVersionsFromReferenceGroups">
+        <source>Some reference group TFMs are missing a platform version: {0}</source>
+        <target state="translated">Alguns TFMs do grupo de referências não contêm uma versão de plataforma: {0}</target>
+        <note>0 - comma-separated list of reference group TFMs</note>
+      </trans-unit>
+      <trans-unit id="MultipleAttributesDisallowed">
+        <source>Multiple {0} attributes are not allowed.</source>
+        <target state="translated">Não são permitidos vários atributos de {0}.</target>
+        <note>{0} is the attribute name</note>
+      </trans-unit>
+      <trans-unit id="MultipleNuspecFiles">
+        <source>Package contains multiple nuspec files.</source>
+        <target state="translated">O pacote contêm vários arquivos nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageSignatureFiles">
+        <source>The package contains multiple package signature files.</source>
+        <target state="translated">O pacote contém vários arquivos de assinatura de pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MustContainAbsolutePath">
+        <source>'{0}' must contain an absolute path '{1}'.</source>
+        <target state="translated">O '{0}' deve conter um caminho absoluto '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageSignatureFile">
+        <source>The package does not contain a valid package signature file.</source>
+        <target state="translated">O pacote não contém um arquivo de assinatura de pacote válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoRepositoryCountersignature">
+        <source>Verification settings require a repository countersignature, but the package does not have a repository countersignature.</source>
+        <target state="translated">Configurações de verificação requerem uma referenda de repositório, mas o pacote não tem uma.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_DeprecatedIdentifier">
+        <source>The identifier '{0}' is deprecated.</source>
+        <target state="translated">O identificador '{0}' é preterido.</target>
+        <note>0 - identifier (license or exception)</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_ExceptionIdentifierIsLicense">
+        <source>The identifier '{0}' is a license. It cannot be used as an exception.</source>
+        <target state="translated">O identificador '{0}' é uma licença. Ele não pode ser usado como uma exceção.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_IllegalUnlicensedOperator">
+        <source>The 'UNLICENSED' license identifier cannot be combined with the '+' operator.</source>
+        <target state="translated">O identificador de licença 'UNLICENSED' não pode ser combinado com o operador '+'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidCharacters">
+        <source>The license expression '{0}' contains invalid characters.</source>
+        <target state="translated">A expressão de licença '{0}' contém caracteres inválidos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExceptionIdentifier">
+        <source>The identifier '{0}' is not a standard exception.</source>
+        <target state="translated">O identificador '{0}' não é uma exceção padrão.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidExpression">
+        <source>The license expression is invalid.</source>
+        <target state="translated">A expressão de licença é inválida.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_InvalidToken">
+        <source>Invalid element '{0}'.</source>
+        <target state="translated">Elemento inválido '{0}'.</target>
+        <note>0 - The element value</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseIdentifierIsException">
+        <source>The identifier '{0}' is an exception. It cannot be used as a license.</source>
+        <target state="translated">O identificador '{0}' é uma exceção. Ele não pode ser usado como uma licença.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_LicenseInvalidCharacters">
+        <source>The license identifier '{0}' contains invalid characters.</source>
+        <target state="translated">O identificador de licença '{0}' contém caracteres inválidos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_MismatchedParentheses">
+        <source>Mismatched parentheses in the expression.</source>
+        <target state="translated">Parênteses sem correspondência na expressão.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_NonStandardIdentifier">
+        <source>The license identifier(s) '{0}' is(are) not recognized by the current toolset.</source>
+        <target state="translated">Os identificadores de licença '{0}' não são reconhecidos pelo conjunto de ferramentas atual.</target>
+        <note>0 - semicolon delimited list of identifiers</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnexpectedIdentifier">
+        <source>Unexpected license identifier '{0}'. The identifier is not allowed in this context.</source>
+        <target state="translated">Identificador de licença inesperado '{0}'. O identificador não é permitido neste contexto.</target>
+        <note>0 - the license identifier.</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicenseExpression_UnlicensedPackageWarning">
+        <source>The owner has marked this package as 'UNLICENSED'. This means that there is no license that allows this package to be used outside of the copyright owner.</source>
+        <target state="translated">O proprietário marcou este pacote como 'UNLICENSED'. Isso significa que não há nenhuma licença que permita que ele seja usado fora do proprietário dos direitos autorais.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseExpressionVersion">
+        <source>The license version string '{0}'  is invalid.</source>
+        <target state="translated">A cadeia de caracteres da versão de licença '{0}' é inválida.</target>
+        <note>0 - version string, 1 - the metadata</note>
+      </trans-unit>
+      <trans-unit id="NuGetLicense_InvalidLicenseType">
+        <source>Unrecognized license type '{0}'</source>
+        <target state="translated">Tipo de licença '{0}' não reconhecido</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseElementMissingValue">
+        <source>The license element value is empty. This is likely due to an authoring error. </source>
+        <target state="translated">O valor do elemento de licença está vazio. Isso provavelmente ocorre devido a um erro de criação. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_LicenseExpressionVersionTooHigh">
+        <source>The license version string '{0}' is higher than the one supported by this toolset '{1}'.</source>
+        <target state="translated">A cadeia de caracteres da versão de licença '{0}' é maior do que aquele compatível com este conjunto de ferramentas '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetLicense_MissingRequiredValue">
+        <source>The element 'license' cannot be empty. </source>
+        <target state="translated">O elemento 'license' não pode ficar vazio. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwners">
+        <source>Owners: {0}</source>
+        <target state="translated">Os Proprietários: {0}</target>
+        <note>0 - The nuget-package-owners value</note>
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalid">
+        <source>The nuget-package-owners attribute is invalid.</source>
+        <target state="translated">O atributo nuget-package-owners é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetPackageOwnersInvalidValue">
+        <source>One or more package owner values are invalid.</source>
+        <target state="translated">Um ou mais valores de proprietário de pacote são inválidos.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrl">
+        <source>Service index: {0}</source>
+        <target state="translated">Índice de serviço: {0}</target>
+        <note>0- The nuget-v3-service-index-url value</note>
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalid">
+        <source>The nuget-v3-service-index-url attribute is invalid.</source>
+        <target state="translated">O atributo nuget-v3-service-index-url é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetV3ServiceIndexUrlInvalidValue">
+        <source>The nuget-v3-service-index-url attribute value is invalid.</source>
+        <target state="translated">O valor do atributo nuget-v3-service-index-url é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryAlreadyExist">
+        <source>Package entry already exists in packages.config. Id: {0}</source>
+        <target state="translated">A entrada de pacote já existe em packages.config. Id: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageEntryNotExist">
+        <source>Package entry does not exists in packages.config. Id: {0}, Version: {1}</source>
+        <target state="translated">A entrada de pacote não existe em packages.config. Id: {0}, Versão: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageMinVersionNotSatisfied">
+        <source>The '{0}' package requires NuGet client version '{1}' or above, but the current NuGet version is '{2}'. To upgrade NuGet, please go to https://docs.nuget.org/consume/installing-nuget</source>
+        <target state="translated">O pacote '{0}' exige a versão '{1}' ou superior do cliente NuGet, mas a versão atual do NuGet é '{2}'. Para atualizar o NuGet, acesse https://docs.nuget.org/consume/installing-nuget</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSignatureVerificationLog">
+        <source>PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</source>
+        <target state="translated">PackageSignatureVerificationLog: PackageIdentity: {0} Source: {1} PackageSignatureValidity: {2}</target>
+        <note>0 - package id and version
+1 - package source url
+2 - validation result as a bool</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">O fluxo do pacote deve ser pesquisável</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesNodeNotExist">
+        <source>Packages node does not exists in packages.config at {0}.</source>
+        <target state="translated">Não existem pacotes de nó no packages.config em {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureFriendlyName">
+        <source>primary signature</source>
+        <target state="translated">assinatura principal</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PrimarySignatureHasNoTimestamp">
+        <source>The primary signature does not have a timestamp.</source>
+        <target state="translated">A assinatura principal não tem um carimbo de data/hora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}' não pode ser nulo.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RangeOutOfBoundsForArray">
+        <source>Arguments {0} and {1} were out of bounds for the array.</source>
+        <target state="translated">Os argumentos {0} e {1} estavam fora dos limites da matriz.</target>
+        <note>{0} and {1} are parameter names</note>
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureFriendlyName">
+        <source>repository countersignature</source>
+        <target state="translated">referenda do repositório</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoCertificate">
+        <source>The repository countersignature does not have a signing certificate.</source>
+        <target state="translated">A referenda não tem um certificado de autenticação.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryCountersignatureHasNoTimestamp">
+        <source>The repository countersignature does not have a timestamp.</source>
+        <target state="translated">A referenda do repositório não tem um carimbo de data/hora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepositoryPrimarySignatureFriendlyName">
+        <source>repository primary signature</source>
+        <target state="translated">assinatura principal do repositório</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">O certificado de carimbo de data/hora não atende ao requisito de comprimento mínimo de chave pública.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampGeneralizedTimeInvalid">
+        <source>The timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">A hora generalizada do carimbo de data/hora está fora do período de validade do certificado de carimbo de data/hora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampIntegrityCheckFailed">
+        <source>The timestamp integrity check failed.</source>
+        <target state="translated">Falha na verificação de integridade do carimbo de data/hora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNoCertificate">
+        <source>The timestamp does not have a signing certificate.</source>
+        <target state="translated">O carimbo de data/hora não tem um certificado de autenticação.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampNotYetValid">
+        <source>The timestamp signing certificate is not yet valid.</source>
+        <target state="translated">O certificado de autenticação de carimbo de data/hora ainda não é válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignError_TimestampSignatureValidationFailed">
+        <source>The timestamp signature validation failed.</source>
+        <target state="translated">Falha na validação da assinatura do carimbo de data/hora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignFailureCertificateInvalidProviderType">
+        <source>The following certificate cannot be used for package signing as the private key provider is unsupported:</source>
+        <target state="translated">O certificado a seguir não pode ser usado para a assinatura de pacote, já que o provedor de chave privada não é compatível:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureContainsInvalidAttribute">
+        <source>Package signature contains an invalid attribute: {0}</source>
+        <target state="translated">A assinatura de pacote contém um atributo inválido: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureDebug_HashOidFound">
+        <source>Signature hash OID found: {0}</source>
+        <target state="translated">OID de hash de assinatura encontrada: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFailureInvalidHashAlgorithmOid">
+        <source>The package hash uses an unsupported hash algorithm.</source>
+        <target state="translated">O hash do pacote usa um algoritmo de hash incompatível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureFriendlyName">
+        <source>signature</source>
+        <target state="translated">assinatura</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureHashAlgorithm">
+        <source>Signature Hash Algorithm: {0}</source>
+        <target state="translated">Algoritmo de Hash de Assinatura: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignaturePackageIntegrityFailure">
+        <source>The package integrity check failed. The package has changed since it was signed. Try clearing the local http-cache and run nuget operation again.</source>
+        <target state="translated">A verificação de integridade do pacote falhou. O pacote mudou desde que foi assinado. Tente limpar o cache http local e execute a operação nuget novamente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureType">
+        <source>Signature type: {0}</source>
+        <target state="translated">Tipo de assinatura: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageAlreadySigned">
+        <source>The package already contains a signature. Please remove the existing signature before adding a new signature.</source>
+        <target state="translated">O pacote já contém uma assinatura. Remova a assinatura existente antes de adicionar uma nova assinatura.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOExtraRead">
+        <source>Package stream read position cannot be longer than the length of the stream.</source>
+        <target state="translated">A posição de leitura do fluxo do pacote não pode ser maior que o comprimento do fluxo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageArchiveIOInvalidRead">
+        <source>Package stream read position cannot be before the current position in the stream.</source>
+        <target state="translated">A posição de leitura do fluxo do pacote não pode ser anterior a posição atual no fluxo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnRemove">
+        <source>The package is not signed. Unable to remove signature from an unsigned package.</source>
+        <target state="translated">O pacote não está assinado. Não é possível remover a assinatura de um pacote não assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageNotSignedOnVerify">
+        <source>The package is not signed. Unable to verify signature from an unsigned package.</source>
+        <target state="translated">O pacote não está assinado. Não é possível verificar a assinatura de um pacote não assinado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackagePackageAlreadyCountersigned">
+        <source>The package already contains a repository countersignature. Please remove the existing signature before adding a new repository countersignature.</source>
+        <target state="translated">O pacote já contém uma referenda de repositório. Remova a assinatura existente antes de adicionar uma nova referenda de repositório.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignedPackageUnableToAccessSignature">
+        <source>The package was not opened correctly to perform signature operations. Please use a Stream-based constructor to have access to signature attributes of the package.</source>
+        <target state="translated">O pacote não foi aberto corretamente para executar operações de assinatura. Use um construtor baseado em fluxo para ter acesso aos atributos da assinatura do pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCannotBeDoneInPlace">
+        <source>{0} and {1} should be different. Package signing cannot be done in place.</source>
+        <target state="translated">{0} e {1} devem ser diferentes. A assinatura do pacote não pode ser feita no lugar.</target>
+        <note>0 - PackageFilePath parameter name
+1 - OutputFilePath parameter name</note>
+      </trans-unit>
+      <trans-unit id="SigningCertificateAttributeMustNotBePresent">
+        <source>The signing-certificate attribute is not allowed.</source>
+        <target state="translated">O atributo signing-certificate não é permitido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateCertificateNotFound">
+        <source>A certificate referenced by the signing-certificate attribute could not be found.</source>
+        <target state="translated">Não foi possível encontrar um certificado referenciado pelo atributo signing-certificate.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateInvalid">
+        <source>The signing-certificate attribute is invalid.</source>
+        <target state="translated">O atributo signing-certificate é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV1OrV2AttributeMustBePresent">
+        <source>Either the signing-certificate or signing-certificate-v2 attribute must be present.</source>
+        <target state="translated">O atributo signing-certificate ou signing-certificate-v2 deve estar presente.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2CertificateNotFound">
+        <source>A certificate referenced by the signing-certificate-v2 attribute could not be found.</source>
+        <target state="translated">Um certificado referenciado pelo atributo signing-certificate-v2 não pôde ser encontrado.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2Invalid">
+        <source>The signing-certificate-v2 attribute is invalid.</source>
+        <target state="translated">O atributo signing-certificate-v2 é inválido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningCertificateV2UnsupportedHashAlgorithm">
+        <source>The signing-certificate-v2 attribute uses an unsupported hash algorithm.</source>
+        <target state="translated">O atributo signing-certificate-v2 usa um algoritmo de hash incompatível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The signing certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">O certificado de autenticação não atende ao requisito de comprimento mínimo de chave pública.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the signing certificate is not supported.</source>
+        <target state="translated">O EKU de assinatura de tempo de vida no certificado de autenticação não é compatível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The signing certificate has an unsupported signature algorithm.</source>
+        <target state="translated">O certificado de autenticação tem um algoritmo de assinatura não compatível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningError_NotYetValid">
+        <source>The signing certificate is not yet valid.</source>
+        <target state="translated">O certificado de autenticação ainda não é válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SigningWouldRequireZip64">
+        <source>The package cannot be signed as it would require the Zip64 format.</source>
+        <target state="translated">O pacote não pode ser assinado porque ele requer o formato Zip64.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeReadable">
+        <source>The stream must be readable.</source>
+        <target state="translated">O fluxo deve ser legível.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StreamMustBeSeekable">
+        <source>The stream must be seekable.</source>
+        <target state="translated">O fluxo deve ser buscável.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringCannotBeNullOrEmpty">
+        <source>String argument '{0}' cannot be null or empty</source>
+        <target state="translated">O argumento '{0}' da cadeia de caracteres não pode ser nulo nem estar vazio</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampCertificateUnsupportedSignatureAlgorithm">
+        <source>The timestamp certificate has an unsupported signature algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">O certificado do carimbo de data/hora tem um algoritmo de assinatura sem suporte ({0}). Há suporte para os seguintes algoritmos: {1}.</target>
+        <note>0 - certificate signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureInvalidHttpScheme">
+        <source>The timestamper URL '{0}' has an invalid URI scheme. The supported schemes are '{1}' and '{2}'.</source>
+        <target state="translated">A URL '{0}' do aplicador de carimbo de data/hora tem um esquema de URI inválido. Os esquemas compatíveis são '{1}' e '{2}'.</target>
+        <note>0 - url value
+1 - Uri.Http scheme
+2 - Uri.Https scheme</note>
+      </trans-unit>
+      <trans-unit id="TimestampFailureNonceMismatch">
+        <source>The timestamp response is invalid.  Nonces did not match.</source>
+        <target state="translated">A resposta de carimbo de data/hora é inválida. Os Nonces são diferentes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TimestampServiceRespondedError">
+        <source>The timestamp service responded with HTTP status code '{0}' ('{1}').</source>
+        <target state="translated">O serviço de carimbo de data/hora respondeu com o código de status HTTP '{0}' ('{1}').</target>
+        <note>{0} is the httpResponse.StatusCode, {1} is the httpResponse.ReasonPhrase.</note>
+      </trans-unit>
+      <trans-unit id="TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The timestamp signature has an unsupported digest algorithm ({0}). The following algorithms are supported: {1}.</source>
+        <target state="translated">A resposta de carimbo de data/hora tem um algoritmo digest sem suporte ({0}). Há suporte para os seguintes algoritmos: {1}.</target>
+        <note>0 - signature algorithm name/oid
+1 - supported signature algorithm names</note>
+      </trans-unit>
+      <trans-unit id="TimestampValue">
+        <source>Timestamp: {0}</source>
+        <target state="translated">Carimbo de data/hora: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToAddEntry">
+        <source>An error occurred while updating packages.config. The file was closed before the entry could be added.</source>
+        <target state="translated">Ocorreu um erro durante a atualização de packages.config. O arquivo foi fechado antes que a entrada pudesse ser adicionada.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToParseClientVersion">
+        <source>Unable to parse the current NuGet client version.</source>
+        <target state="translated">Não foi possível analisar a versão do cliente do NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToReadPackageHashInformation">
+        <source>Package hash information could not be read from the package signature.</source>
+        <target state="translated">Não foi possível ler informações sobre pacote de hash da assinatura de pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnexpectedPackageSignatureVerificationError">
+        <source>An unexpected error occurred while verifying a package signature.</source>
+        <target state="translated">Ocorreu um erro inesperado ao verificar uma assinatura de pacote.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnrecognizedEnumValue">
+        <source>The enum value '{0}' is unrecognized.</source>
+        <target state="translated">O valor da enumeração '{0}' não é reconhecido.</target>
+        <note>{0} is an undefined enum value</note>
+      </trans-unit>
+      <trans-unit id="UnrelatedSignatures">
+        <source>The primary signature and repository countersignature are unrelated.</source>
+        <target state="translated">A assinatura principal e a referenda do repositório não estão relacionadas.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedAsn1">
+        <source>The ASN.1 data is unsupported.</source>
+        <target state="translated">Os dados ASN.1 não são compatíveis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedSignatureFormatVersion">
+        <source>The package signature format version is not supported. Updating your client may solve this problem.</source>
+        <target state="translated">A versão do formato da assinatura de pacote não é compatível. Atualizar o cliente poderá resolver esse problema.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because it is not present in the certificate bundle at {0}.  For more information, see documentation for NU3042.
+    Subject:  {1}
+    Fingerprint (SHA-256):  {2}
+    Certificate (PEM):
+{3}</source>
+        <target state="translated">O seguinte certificado raiz X.509 não é confiável porque não está presente no pacote de certificados em {0}.  Para obter mais informações, veja a documentação do NU3042.
+     Assunto:  {1}
+     Impressão digital (SHA-256):  {2}
+     Certificado (PEM):
+{3}</target>
+        <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="UntrustedRoot_WithoutCertificateBundle">
+        <source>The following X.509 root certificate is untrusted because no certificate bundle was found.  For more information, see documentation for NU3042.
+    Subject:  {0}
+    Fingerprint (SHA-256):  {1}
+    Certificate (PEM):
+{2}</source>
+        <target state="translated">O seguinte certificado raiz X.509 não é confiável porque nenhum pacote de certificados foi encontrado.  Para obter mais informações, veja a documentação do NU3042.
+     Assunto:  {0}
+     Impressão digital (SHA-256):  {1}
+     Certificado (PEM):
+{2}</target>
+        <note>0 is a certificate subject, 1 is a certificate fingerprint, and 2 is a PEM-encoded certificate.</note>
+      </trans-unit>
+      <trans-unit id="VerificationCertDisplay">
+        <source>Verifying the {0} with certificate: {1}</source>
+        <target state="translated">Verificando o {0} com o certificado: {1}</target>
+        <note>0 - Signature friendly
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerificationTimestamperCertDisplay">
+        <source>Verifying {0}'s timestamp with timestamping service certificate: {1}</source>
+        <target state="translated">Verificando o carimbo de data/hora de {0} com o certificado de serviço de aplicação de carimbo de data/hora: {1}</target>
+        <note>0 - signature friendly name
+1 -  X509Certificate2 details in the following format -
+Subject Name:
+SHA1 hash:
+Issued by:
+Valid from:</note>
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOffline">
+        <source>The revocation function was unable to check revocation because the certificate is not available in the cached certificate revocation list and NUGET_CERT_REVOCATION_MODE environment variable has been set to offline. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">A função de revogação não pôde verificar a revogação porque o certificado não está disponível na lista de certificados revogados armazenada em cache e a variável de ambiente NUGET_CERT_REVOCATION_MODE foi definida como offline. Para obter mais informações, visite https://aka.ms/certificateRevocationMode.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCertTrustOfflineWhileRevocationModeOnline">
+        <source>The revocation function was unable to check revocation because the revocation server could not be reached. For more information, visit https://aka.ms/certificateRevocationMode.</source>
+        <target state="translated">A função de revogação não pôde verificar a revogação porque não foi possível acessar o servidor de revogação. Para obter mais informações, visite https://aka.ms/certificateRevocationMode.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue">
+        <source>The {0} found a chain building issue: {1}</source>
+        <target state="translated">O {0} encontrou um problema de construção de cadeia: {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s signing certificate is not trusted by the trust provider.</source>
+        <target state="translated">O certificado de assinatura de {0} não é confiável para o provedor de confiança.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">O certificado de {0} não atende ao requisito de comprimento mínimo de chave pública.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasLifetimeSigningEKU">
+        <source>The lifetime signing EKU in the {0}'s certificate is not supported.</source>
+        <target state="translated">O EKU de assinatura de tempo de vida no certificado {0} não é compatível.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateHasUnsupportedSignatureAlgorithm">
+        <source>The {0}'s certificate has an unsupported signature algorithm.</source>
+        <target state="translated">O certificado de {0} tem um algoritmo de assinatura incompatível.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_CertificateNotYetValid">
+        <source>The {0}'s certificate is not yet valid.</source>
+        <target state="translated">O certificado de {0} ainda não é válido.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_InvalidCertificateChain">
+        <source>The {0}'s certificate chain validation failed with error(s): {1}</source>
+        <target state="translated">Falha na validação da cadeia de certificados de {0} devido aos erros: {1}</target>
+        <note>0 - Signature friendly name
+1 - error list</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureNotTimeValid">
+        <source>The {0} validity period has expired.</source>
+        <target state="translated">O período de validade da {0} expirou.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_SignatureVerificationFailed">
+        <source>The {0} validation failed.</source>
+        <target state="translated">Falha na validação de {0}.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampCertificateFailsPublicKeyLengthRequirement">
+        <source>The {0}'s timestamp certificate does not meet a minimum public key length requirement.</source>
+        <target state="translated">O certificado de carimbo de data/hora de {0} não atende ao requisito de comprimento mínimo de chave pública.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampGeneralizedTimeInvalid">
+        <source>The {0}'s timestamp's generalized time is outside the timestamping certificate's validity period.</source>
+        <target state="translated">A hora generalizada do carimbo de data/hora de {0} está fora do período de validade do certificado de carimbo de data/hora.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampIntegrityCheckFailed">
+        <source>The {0}'s timestamp integrity check failed.</source>
+        <target state="translated">Falha na verificação de integridade do carimbo de data/hora {0}.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampInvalid">
+        <source>The {0} contains an invalid timestamp.</source>
+        <target state="translated">{0} contém um carimbo de data/hora inválido.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampMessageImprintUnsupportedHashAlgorithm">
+        <source>The {0} timestamp's message imprint uses an unsupported hash algorithm.</source>
+        <target state="translated">A impressão de mensagem do carimbo de data/hora {0} usa um algoritmo de hash não compatível.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNoCertificate">
+        <source>The {0}'s timestamp does not have a signing certificate.</source>
+        <target state="translated">A assinatura de carimbo de data/hora de {0} não tem um certificado de autenticação.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampNotYetValid">
+        <source>The {0}'s timestamp signing certificate is not yet valid.</source>
+        <target state="translated">O certificado de autenticação de carimbo de data/hora de {0} ainda não é válido.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureUnsupportedDigestAlgorithm">
+        <source>The {0}'s timestamp signature has an unsupported digest algorithm.</source>
+        <target state="translated">A assinatura do carimbo de data/hora do {0} tem um algoritmo digest sem suporte.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampSignatureValidationFailed">
+        <source>The {0}'s timestamp signature validation failed.</source>
+        <target state="translated">Falha na validação da assinatura do carimbo de data/hora de {0}.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampUnsupportedSignatureAlgorithm">
+        <source>The {0}'s timestamp certificate has an unsupported signature algorithm.</source>
+        <target state="translated">O certificado de carimbo de data/hora de {0} tem um algoritmo de assinatura não compatível.</target>
+        <note>0 - Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="VerifyError_TimestampVerifyChainBuildingIssue">
+        <source>The {0}'s timestamp found a chain building issue: {1}</source>
+        <target state="translated">O carimbo de data/hora de {0} encontrou um problema de construção de cadeia: {1}</target>
+        <note>0 - Signature friendly name
+1 - issue message</note>
+      </trans-unit>
+      <trans-unit id="VerifyTimestampChainBuildingIssue_UntrustedRoot">
+        <source>The {0}'s timestamping certificate is not trusted by the trust provider.</source>
+        <target state="translated">O certificado de carimbo de data/hora de {0} não é confiável para o provedor de confiança.</target>
+        <note>0 -Signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="Verify_ErrorNoCertificate">
+        <source>The {0} does not have a signing certificate.</source>
+        <target state="translated">{0} não tem um certificado de autenticação.</target>
+        <note>0 - signature friendly name</note>
+      </trans-unit>
+      <trans-unit id="ZipFileLastWriteTimeStampModifiedMessage">
+        <source>'{0}' changed from '{1}' to '{2}'</source>
+        <target state="translated">'{0}' alterado de '{1}' para '{2}'</target>
+        <note>0 - File name
+1 - Original last write timestamp
+2 - Updated last write timestamp</note>
+      </trans-unit>
+      <trans-unit id="ZipFileTimeStampModifiedWarning">
+        <source>The zip format supports a limited date range. The following files are outside the supported range:</source>
+        <target state="translated">O formato zip dá suporte a um intervalo de datas limitado. Os seguintes arquivos estão fora do intervalo com suporte:</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

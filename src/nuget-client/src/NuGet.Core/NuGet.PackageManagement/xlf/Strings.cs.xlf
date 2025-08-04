@@ -1,0 +1,523 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddedPackageToFolder">
+        <source>Added package '{0}' to folder '{1}'</source>
+        <target state="translated">Balíček {0} se přidal do složky {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToFolderFromSource">
+        <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
+        <target state="translated">Do složky {1} ze zdroje {2} se přidal balíček {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToPackagesConfig">
+        <source>Added package '{0}' to '{1}'</source>
+        <target state="translated">Balíček {0} se přidal do {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageToFolder">
+        <source>Adding package '{0}' to folder '{1}'</source>
+        <target state="translated">Přidává se balíček {0} do složky {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyDependencies">
+        <source>Adding package '{0}', which only has dependencies, to project '{1}'.</source>
+        <target state="translated">Přidává se balíček {0}, který má jenom závislosti, do projektu {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyToolsGroup">
+        <source>Adding package '{0}', which only has tools group, to project '{1}'</source>
+        <target state="translated">Přidává se balíček {0}, který má jenom skupinu nástrojů, do projektu {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Argument nesmí být null ani prázdný.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfo">
+        <source>Attempting to gather dependency information for package '{0}' with respect to project '{1}', targeting '{2}'</source>
+        <target state="translated">Probíhá pokus o získání informací o závislostech pro balíček {0} s ohledem na projekt {1} a cílení {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfoForMultiplePackages">
+        <source>Attempting to gather dependency information for multiple packages with respect to project '{0}', targeting '{1}'</source>
+        <target state="translated">Probíhá pokus o získání informací o závislostech pro víc balíčků s ohledem na projekt {0} a cílení {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependencies">
+        <source>Attempting to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">Pokus o vyřešení závislostí pro balíček {0} s DependencyBehavior {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependenciesForMultiplePackages">
+        <source>Attempting to resolve dependencies for multiple packages.</source>
+        <target state="translated">Probíhá pokus o vyřešení závislostí pro víc balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">Byl přidán soubor {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToFolder">
+        <source>Added file '{0}' to folder '{1}'.</source>
+        <target state="translated">Byl přidán soubor {0} do složky {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'.</source>
+        <target state="translated">Byl odebrán soubor {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'.</source>
+        <target state="translated">Soubor {0} byl přesunutý ze složky {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">Byla odebrána složka {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfo">
+        <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
+        <target state="translated">&gt;&gt; {0} se přidávají z {1}{2}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfoPrefix">
+        <source>For adding package '{0}' to project '{1}' that targets '{2}'.</source>
+        <target state="translated">Když chcete přidat balíček {0} k projektu {1} s cílem {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyDoesNotHaveValidVersion">
+        <source>Dependency '{0}' has invalid version specification.</source>
+        <target state="translated">Závislá součást {0} má neplatnou specifikaci verze.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadResourceNotFound">
+        <source>Cannot download packages from '{0}'.</source>
+        <target state="translated">Nejde stáhnout balíčky pro {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadStreamNotAvailable">
+        <source>Package stream for '{0}' cannot be found at '{1}'.</source>
+        <target state="translated">Stream balíčků pro {0} nejde najít: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorLoadingPackagesConfig">
+        <source>An error occurred while reading file '{0}': {1}</source>
+        <target state="translated">Došlo k chybě při čtení souboru {0}: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingPackagesConfig">
+        <source>An error occurred while writing file '{0}': {1}</source>
+        <target state="translated">Došlo k chybě při zápisu souboru {0}: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DirectoryDoesNotExist">
+        <source>Directory {0} does not exist.</source>
+        <target state="translated">Adresář {0} neexistuje.</target>
+        <note>{0} is the directory name.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileDoesNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">Soubor {0} neexistuje.</target>
+        <note>{0} is the filename.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Máte spuštěnu operaci {0} se zdrojem HTTP: {1}. NuGet vyžaduje zdroje HTTPS. Pokud chcete použít zdroj HTTP, musíte v souboru NuGet.Config explicitně nastavit možnost allowInsecureConnections na true. Další informace najdete na https://aka.ms/nuget-https-everywhere.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">Neplatný vstup obnovení, kde vlastnost RestorePackagesWithLockFile je nastavená na hodnotu false, ale v {0} existuje soubor zámku balíčků.</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">Ověření hodnoty hash obsahu balíčku pro {0} neproběhlo úspěšně. Balíček je jiný než při posledním obnovení.</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedModePackagesConfig">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Run restore without using restore locked mode to update the lock file.</source>
+        <target state="translated">Soubor zámku balíčků není konzistentní se závislostmi projektu, obnovení proto nelze spustit v uzamčeném režimu. Spusťte obnovení bez použití uzamčeného režimu, aby se soubor zámku aktualizoval.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">Při získávání dat o ohrožení zabezpečení balíčku došlo k chybě: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionWhenTryingToAddSource">
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
+        <target state="translated">Objevila se výjimka {0} při pokusu o přidání zdroje {1}. Ověřte prosím, že jsou k dispozici všechny online zdroje balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictMessage">
+        <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
+        <target state="translated">Soubor {0} už v projektu {1} existuje. Chcete ho přepsat?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundPackageInPackagesFolder">
+        <source>Found package '{0} {1}' in '{2}'.</source>
+        <target state="translated">Našel se balíček {0} {1} v {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GatherTotalTime">
+        <source>Gathering dependency information took {0}</source>
+        <target state="translated">Doba shromažďování informací o závislostech: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Info_OverwritingExistingFile">
+        <source>Overwriting existing file '{0}'..</source>
+        <target state="translated">Přepisuje se stávající soubor {0}...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProjectName">
+        <source>Unable to determine the project name for '{0}'.</source>
+        <target state="translated">Nejde určit název projektu pro {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageTypesNotSupported">
+        <source>Package '{0}' has multiple package types, which is not supported.</source>
+        <target state="translated">Balíček {0} má více typů balíčků. Podporuje se jenom jeden typ balíčku.</target>
+        <note>{0} is replaced with the package identity.</note>
+      </trans-unit>
+      <trans-unit id="NewerVersionAlreadyReferenced">
+        <source>Already referencing a newer version of '{0}'..</source>
+        <target state="translated">Už se odkazuje na novější verzi {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoLatestVersionFound">
+        <source>No latest version found for '{0}' for the given source repositories and resolution context</source>
+        <target state="translated">Nenašla se nejnovější verze ({0}) pro zadaná zdrojová úložiště a kontext rozlišení.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageUpdates">
+        <source>No package updates are available from the current package source for project '{0}'.</source>
+        <target state="translated">V aktuálním zdroji balíčků pro projekt {0} nejsou k dispozici žádné aktualizace balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesInProject">
+        <source>No packages were found in packages.config for project '{0}'.</source>
+        <target state="translated">V souboru packages.config pro projekt {0} se nenašly žádné balíčky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoUpdatesAvailable">
+        <source>There are no new updates available.</source>
+        <target state="translated">K dispozici nejsou žádné nové aktualizace.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NugetActionsTotalTime">
+        <source>Executing nuget actions took {0}</source>
+        <target state="translated">Doba provádění akcí nuget: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInFolder">
+        <source>Package '{0}' already exists in folder '{1}'</source>
+        <target state="translated">Balíček {0} už ve složce {1} existuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInPackagesConfig">
+        <source>Package '{0}' already exists in '{1}'</source>
+        <target state="translated">Balíček {0} už v {1} existuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInProject">
+        <source>Package '{0}' already exists in project '{1}'</source>
+        <target state="translated">Balíček {0} už v projektu {1} existuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCancelledFromSource">
+        <source>Getting package '{0}' from source '{1}' was cancelled.</source>
+        <target state="translated">Získávání balíčku {0} ze zdroje {1} se zrušilo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCouldNotBeInstalled">
+        <source>Package '{0}' could not be installed</source>
+        <target state="translated">Balíček {0} nešlo nainstalovat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInFolder">
+        <source>Package '{0}' does not exist in folder '{1}'</source>
+        <target state="translated">Balíček {0} ve složce {1} neexistuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInProject">
+        <source>Package '{0}' does not exist in project '{1}'</source>
+        <target state="translated">Balíček {0} v projektu {1} neexistuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExisttInPackagesConfig">
+        <source>Package '{0}' does not exists in '{1}'</source>
+        <target state="translated">Balíček {0} v {1} neexistuje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependent">
+        <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
+        <target state="translated">Nelze odinstalovat balíček {0}, protože na něm závisí {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependents">
+        <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
+        <target state="translated">Nelze odinstalovat balíček {0}, protože na něm závisejí {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Package '{0}' is not found</source>
+        <target state="translated">Balíček {0} se nenašel.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundInPrimarySources">
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">Balíček {0} se nenašel v následujících primárních zdrojích: {1}. Ověřte prosím, že jsou všechny online zdroje balíčků dostupné (NEBO) že jsou správně zadané ID a verze balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundOnSource">
+        <source>Package '{0}' is not found on source '{1}'.</source>
+        <target state="translated">Balíček {0} se u zdroje {1} nenašel.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternMatchFound">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'</source>
+        <target state="translated">Pro ID balíčku {0} se našly shody mapování zdroje balíčku: {1}</target>
+        <note>{0} - package id
+{1} - sources ids</note>
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternNoMatchFound">
+        <source>Package source mapping match not found for package ID '{0}'</source>
+        <target state="translated">Pro ID balíčku {0} se nenašla shoda mapování zdroje balíčku.</target>
+        <note>{0} - package id</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">Stream balíčků by mělo jít prohledávat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageToBeUninstalledCouldNotBeFound">
+        <source>Package '{0}' to be uninstalled could not be found in project '{1}'</source>
+        <target state="translated">Balíček {0}, který se má odinstalovat, se v projektu {1} nenašel.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersionConflict">
+        <source>Unable to resolve '{0}'. An additional constraint '{1}' defined in {2} prevents this operation.</source>
+        <target state="translated">Nejde rozpoznat {0}. Další podmínka {1} definovaná v {2} téhle operaci brání.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersions">
+        <source>Applying constraint '{0}' defined in '{1}'.</source>
+        <target state="translated">Aplikuje se omezení {0} definované v {1}.</target>
+        <note>{0} is the package constraint.
+{1} is the 'packages.config'</note>
+      </trans-unit>
+      <trans-unit id="PackagesCouldNotBeInstalled">
+        <source>Packages could not be installed</source>
+        <target state="translated">Balíčky nešlo nainstalovat.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ParameterCannotBeZeroOrNegative">
+        <source>Parameter cannot be zero or negative</source>
+        <target state="translated">Parametr nemůže být záporný nebo nulový.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">Operace se nepovedla, protože podrobnosti pro projekt {0} nešlo načíst.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">Hodnota {0} nemůže být nulová.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromFolder">
+        <source>Removed package '{0}' from folder '{1}'</source>
+        <target state="translated">Ze složky {1} byl odebraný balíček {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromPackagesConfig">
+        <source>Removed package '{0}' from '{1}'</source>
+        <target state="translated">Z {1} byl odebraný balíček {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovingPackageFromFolder">
+        <source>Removing package '{0}' from folder '{1}'</source>
+        <target state="translated">Odebírá se balíček {0} ze složky {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolutionSuccessfulNoAction">
+        <source>Resolution was successful but resulted in no action</source>
+        <target state="translated">Řešení bylo úspěšné, ale nevedlo k žádné akci.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToInstallPackage">
+        <source>Resolved actions to install package '{0}'</source>
+        <target state="translated">Vyřešily se akce pro instalaci balíčku {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToUninstallPackage">
+        <source>Resolved actions to uninstall package '{0}'</source>
+        <target state="translated">Vyřešily se akce pro odinstalaci balíčku {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallOrUpdateMultiplePackages">
+        <source>Resolving actions install multiple packages</source>
+        <target state="translated">Řeší se akce pro instalaci více balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallPackage">
+        <source>Resolving actions to install package '{0}'</source>
+        <target state="translated">Řeší se akce pro instalaci balíčku {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToUninstallPackage">
+        <source>Resolving actions to uninstall package '{0}'</source>
+        <target state="translated">Řeší se akce pro odinstalaci balíčku {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreFailedRollingBack">
+        <source>Package restore failed. Rolling back package changes for '{0}'.</source>
+        <target state="translated">Obnova balíčků se nepovedla. Změny balíčku pro {0} se vrací zpět.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackage">
+        <source>Restoring NuGet package {0}.</source>
+        <target state="translated">Probíhá obnovení balíčku NuGet {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RetrievingPackageStart">
+        <source>Retrieving package '{0} {1}' from '{2}'.</source>
+        <target state="translated">Načítá se balíček {0} {1} z {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureVerificationMultiple">
+        <source>Signed package validation failed with multiple errors:{0}</source>
+        <target state="translated">Ověřování podepsaného balíčku neproběhlo úspěšně kvůli několika chybám: {0}</target>
+        <note>0 - new line separated list of errors</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotAvailable">
+        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <target state="translated">Řešení není otevřené nebo není uložené. Zkontrolujte, že je řešení otevřené a uložené.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionManagerNotAvailableForUninstall">
+        <source>Uninstall is not supported when SolutionManager is not available</source>
+        <target state="translated">Když není SolutionManager k dispozici, není odinstalace podporovaná.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyInstalled">
+        <source>Successfully installed '{0}' to {1}</source>
+        <target state="translated">{0} – úspěšně nainstalováno do: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyUninstalled">
+        <source>Successfully uninstalled '{0}' from {1}</source>
+        <target state="translated">{0} – úspěšně odinstalováno z: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleItems">
+        <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
+        <target state="translated">Nebylo možné nainstalovat balíček {0}. Pokoušíte se tento balíček nainstalovat do projektu, jehož cílem je {1}, avšak balíček neobsahuje žádné odkazy sestavení nebo soubory obsahu kompatibilní s daným rozhraním. Další informace získáte od autora balíčku.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPathInLookupOrList">
+        <source>Either should have value in {0} for {1} or {2} &amp; {3}.</source>
+        <target state="translated">V tabulce {0} by měla být hodnota buď pro {1}, nebo pro {2} a {3}.</target>
+        <note>0 - Lookup table
+1 - Project Path
+2 - Package ID
+3 - Package Sources</note>
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfo">
+        <source>Unable to gather dependency information for package '{0}'</source>
+        <target state="translated">Není možné získat informace o závislostech pro balíček {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfoForMultiplePackages">
+        <source>Unable to gather dependency information for multiple packages</source>
+        <target state="translated">Není možné získat informace o závislostech pro víc balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherPackageFromSource">
+        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
+        <target state="translated">Nejde získat balíček {0} ze zdroje {1}. Ověřte prosím, že jsou k dispozici všechny online zdroje balíčků. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfo">
+        <source>Unable to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">Nejde vyřešit závislosti pro balíček {0} s DependencyBehavior {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfoForMultiplePackages">
+        <source>Unable to resolve dependencies for multiple packages</source>
+        <target state="translated">Nejde vyřešit závislosti pro víc balíčků.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">Nenašel se balíček {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackageSpecificVersion">
+        <source>Unable to find version '{1}' of package '{0}'.</source>
+        <target state="translated">Nelze nalézt verzi {1} balíčku {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPackageType">
+        <source>Package '{0}' has a package type '{1}' that is not supported by project '{2}'.</source>
+        <target state="translated">Balíček {0} je typu {1}, který se v projektu {2} nepodporuje.</target>
+        <note>{0} is the package identity.
+{1} is the unsupported package type.
+{2} is the project name.</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">Zdroj auditu {0} neposkytl žádná data o ohrožení zabezpečení.</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">Adresář {0} není prázdný. Přeskakuje se...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ErrorFindingRepository">
+        <source>Error finding repository for '{0}': {1}</source>
+        <target state="translated">Chyba při hledání úložiště pro {0}: {1}</target>
+        <note>0 - package source
+1 - exception message</note>
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">Soubor {0} již existuje. Bude přeskočen...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileModified">
+        <source>Skipping '{0}' because it was modified.</source>
+        <target state="translated">Soubor {0} bude přeskočen, protože byl upraven.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">Balíček „{0}“ {1} má známé {2} ohrožení zabezpečení závažnosti, {3}</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_RollingBack">
+        <source>Install failed. Rolling back...</source>
+        <target state="translated">Instalace se nepovedla. Vrací se zpět...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XdtError">
+        <source>An error occurred while applying transformation to '{0}' in project '{1}'</source>
+        <target state="translated">Vyskytla se chyba při použití transformace na {0} v projektu {1}</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -13,16 +13,19 @@
     <MicroBuild_SigningEnabled>false</MicroBuild_SigningEnabled>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.Xdt" ExcludeAssets="all" GeneratePathProperty="true" />
+  </ItemGroup>
+
   <PropertyGroup>
     <ReferenceOutputPath>$(ArtifactsDirectory)NuGet.VisualStudio.Client\bin\$(Configuration)\net472\</ReferenceOutputPath>
-    <XmlTransformPath>$(ArtifactsDirectory)microsoft.web.xdt\lib\net40\</XmlTransformPath>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- Variables added here will be usable in the swr file.  This is a semi colon delimited
           list of name=value items.  Use $(name) in the swr file to reference the variable.
     -->
-    <PackagePreprocessorDefinitions>$(PackagePreprocessorDefinitions);ReferenceOutputPath=$(ReferenceOutputPath);XmlTransformPath=$(XmlTransformPath);BuildNumber=$(BuildNumber);MajorNuGetVersion=$(MajorNuGetVersion);MinorNuGetVersion=$(MinorNuGetVersion);PatchNuGetVersion=$(PatchNuGetVersion);MajorVSVersion=$(MajorVSVersion)</PackagePreprocessorDefinitions>
+    <PackagePreprocessorDefinitions>$(PackagePreprocessorDefinitions);ReferenceOutputPath=$(ReferenceOutputPath);BuildNumber=$(BuildNumber);MajorNuGetVersion=$(MajorNuGetVersion);MinorNuGetVersion=$(MinorNuGetVersion);PatchNuGetVersion=$(PatchNuGetVersion);MajorVSVersion=$(MajorVSVersion)</PackagePreprocessorDefinitions>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +36,6 @@
     <Copy SourceFiles="$(OutputPath)$(TargetName).vsix" DestinationFolder="$(VsixPublishDestination)" />
     <Copy SourceFiles="$(OutputPath)$(TargetName).json" DestinationFolder="$(VsixPublishDestination)" />
   </Target>
-  
+
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

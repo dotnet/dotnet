@@ -86,12 +86,6 @@ namespace NuGet.Commands
             return result;
         }
 
-        [Obsolete("Do not use this. Use RunPackageBuild() instead as it accounts for the effects of package analysis to the complete operation status.")]
-        public void BuildPackage()
-        {
-            BuildPackage(Path.GetFullPath(Path.Combine(_packArgs.CurrentDirectory, _packArgs.Path)));
-        }
-
         private bool BuildPackage(string path)
         {
             string extension = Path.GetExtension(path);
@@ -103,28 +97,6 @@ namespace NuGet.Commands
             {
                 return BuildFromProjectFile(path);
             }
-        }
-
-        /// <summary>
-        /// Builds and validates the package.
-        /// If a core validation fails, this method will throw a <see cref="PackagingException"/>.
-        /// If for any other reason the package creation fails (like for example, a validation rule got bumped from warning to an error, this will return <see langword="null"/>.
-        /// </summary>
-        /// <param name="builder">The package builder to use.</param>
-        /// <param name="outputPath">The package output path.</param>
-        /// <returns>A <see cref="PackageArchiveReader"/> if everything completed succesfully. Throws if a core package validation fails. Returns <see langword="null"/> if a validation rule got elevated from a warning to an error.</returns>
-        /// <exception cref="PackagingException">If a core packaging validation fails.</exception>
-        [Obsolete("Do not use this. Use RunPackageBuild() instead as it accounts for the effects of package analysis to the complete operation status.")]
-        public PackageArchiveReader BuildPackage(PackageBuilder builder, string outputPath = null)
-        {
-            outputPath = outputPath ?? GetOutputPath(builder, _packArgs, false, builder.Version);
-            var successful = BuildPackage(builder, outputPath, symbolsPackage: false);
-            PackageArchiveReader packageArchiveReader = null;
-            if (successful && File.Exists(outputPath))
-            {
-                packageArchiveReader = new PackageArchiveReader(outputPath);
-            }
-            return packageArchiveReader;
         }
 
         /// <summary>
