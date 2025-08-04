@@ -368,6 +368,7 @@
     </PropertyGroup>
     <PropertyGroup>
       <DotNetTestAdditionalArgs Condition="'$(SYSTEM_DEBUG)' == 'true' And '$(BINLOG_DIRECTORY)' != ''">--diag &quot;$(BINLOG_DIRECTORY)\vstest.log&quot;</DotNetTestAdditionalArgs>
+      <SkipDesktopAssemblies Condition="'$(SkipDesktopAssemblies)' == '' and '$(OS)' != 'Windows_NT'">true</SkipDesktopAssemblies>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(SkipDesktopAssemblies)' != 'true' ">
