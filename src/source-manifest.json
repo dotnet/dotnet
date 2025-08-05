@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "packageVersion": "9.0.0-beta.25325.4",
+      "packageVersion": "9.0.0-beta.25380.1",
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "13b20849f8294593bf150a801cab639397e6c29d"
+      "commitSha": "7e67a7b4b62513a475afe46c4cd74d54b68f65c9"
     },
     {
       "packageVersion": "8.2.2-preview.1.24521.5",
@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.41-preview-25359-01",
+      "packageVersion": "17.12.43-preview-25404-04",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "9dcc26a5fd6a7449e6c1dc1d99c332141aeae361"
+      "commitSha": "481b855f7315f967f9c14b83d4391ae05b7be1af"
     },
     {
       "packageVersion": "6.12.4-rc.9",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1a19d371fff08ed178787bcdab264a5a0231231a"
+      "commitSha": "e910b9b25b4a47d06cefd6209799d62da1058222"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",

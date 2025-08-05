@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@13b2084](https://github.com/dotnet/arcade/tree/13b20849f8294593bf150a801cab639397e6c29d)*
+*[dotnet/arcade@7e67a7b](https://github.com/dotnet/arcade/tree/7e67a7b4b62513a475afe46c4cd74d54b68f65c9)*
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@47d4e3f](https://github.com/dotnet/fsharp/tree/47d4e3f91e4e5414b6dafbf14288b9c5a798ef99)*
 - `src/msbuild`  
-*[dotnet/msbuild@9dcc26a](https://github.com/dotnet/msbuild/tree/9dcc26a5fd6a7449e6c1dc1d99c332141aeae361)*
+*[dotnet/msbuild@481b855](https://github.com/dotnet/msbuild/tree/481b855f7315f967f9c14b83d4391ae05b7be1af)*
 - `src/nuget-client`  
 *[nuget/nuget.client@42bfb45](https://github.com/nuget/nuget.client/tree/42bfb4554167e1d2fc2b950728d9bd8164f806c1)*
     - `src/nuget-client/submodules/NuGet.Build.Localization`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@270606f](https://github.com/dotnet/scenario-tests/tree/270606f9f338c1c2dfb255b6f18bbcb5f085a06c)*
 - `src/sdk`  
-*[dotnet/sdk@1a19d37](https://github.com/dotnet/sdk/tree/1a19d371fff08ed178787bcdab264a5a0231231a)*
+*[dotnet/sdk@e910b9b](https://github.com/dotnet/sdk/tree/e910b9b25b4a47d06cefd6209799d62da1058222)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
