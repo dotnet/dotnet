@@ -32,6 +32,21 @@ namespace NuGet.Commands
         public const string PropsExtension = ".props";
 
         /// <summary>
+        /// This value is written into generated Restore props files, but
+        /// if it changes across tooling that ships different NuGet versions
+        /// (like Visual Studio and the dotnet CLI) it can cause unintentional
+        /// problems with MSBuild incrementality. As a result, we set it to a new,
+        /// fixed value higher than the current NuGet version (6.14.x) and 
+        /// never change it again, so that starting in .NET 10 onwards this 
+        /// won't cause rebuilds.
+        /// 
+        /// We could remove the property entirely, but there are some uses of it
+        /// on public GitHub that aren't just from checked-in generated files, so
+        /// keeping it around but stable is the most compatible option.
+        /// </summary>
+        internal const string PermanentNuGetToolsVersionValue = "7.0.0";
+
+        /// <summary>
         /// The macros that we may use in MSBuild to replace path roots.
         /// </summary>
         public static readonly string[] MacroCandidates = new[]
@@ -185,7 +200,7 @@ namespace NuGet.Commands
                             GenerateProperty("NuGetPackageRoot", ReplacePathsWithMacros(repositoryRoot, environmentVariableReader)),
                             GenerateProperty("NuGetPackageFolders", string.Join(";", packageFolders)),
                             GenerateProperty("NuGetProjectStyle", projectStyle.ToString()),
-                            GenerateProperty("NuGetToolVersion", MinClientVersionUtility.GetNuGetClientVersion().ToFullString())),
+                            GenerateProperty("NuGetToolVersion", PermanentNuGetToolsVersionValue)),
                 new XElement(Namespace + "ItemGroup",
                             new XAttribute("Condition", $" {ExcludeAllCondition} "),
                             packageFolders.Select(e => GenerateItem("SourceRoot", PathUtility.EnsureTrailingSlash(e)))));

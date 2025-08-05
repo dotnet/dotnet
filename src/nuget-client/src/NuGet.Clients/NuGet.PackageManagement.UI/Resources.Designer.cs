@@ -19,7 +19,7 @@ namespace NuGet.PackageManagement.UI {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -304,24 +304,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select a Package Source Folder.
-        /// </summary>
-        public static string BrowseFolderDialogDescription {
-            get {
-                return ResourceManager.GetString("BrowseFolderDialogDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Select.
-        /// </summary>
-        public static string BrowseFolderDialogSelectButton {
-            get {
-                return ResourceManager.GetString("BrowseFolderDialogSelectButton", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to _Apply.
         /// </summary>
         public static string Button_Apply {
@@ -484,24 +466,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check.
-        /// </summary>
-        public static string CheckBox_DefaultAction_Check {
-            get {
-                return ResourceManager.GetString("CheckBox_DefaultAction_Check", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Uncheck.
-        /// </summary>
-        public static string CheckBox_DefaultAction_Uncheck {
-            get {
-                return ResourceManager.GetString("CheckBox_DefaultAction_Uncheck", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Allow format selection on first package install.
         /// </summary>
         public static string CheckBox_DefaultPackageFormat {
@@ -651,15 +615,6 @@ namespace NuGet.PackageManagement.UI {
         public static string ColumnHeader_Selected {
             get {
                 return ResourceManager.GetString("ColumnHeader_Selected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Getting Configuration Files....
-        /// </summary>
-        public static string ConfigurationFilesOptions_OnActivated {
-            get {
-                return ResourceManager.GetString("ConfigurationFilesOptions_OnActivated", resourceCulture);
             }
         }
         
@@ -822,15 +777,6 @@ namespace NuGet.PackageManagement.UI {
         public static string Error_UnableToLoadReadme {
             get {
                 return ResourceManager.GetString("Error_UnableToLoadReadme", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Operation failed.
-        /// </summary>
-        public static string ErrorDialogBoxTitle {
-            get {
-                return ResourceManager.GetString("ErrorDialogBoxTitle", resourceCulture);
             }
         }
         
@@ -1645,33 +1591,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Getting Package Source Mappings....
-        /// </summary>
-        public static string PackageSourceMappingOptions_OnActivated {
-            get {
-                return ResourceManager.GetString("PackageSourceMappingOptions_OnActivated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Getting Package Sources....
-        /// </summary>
-        public static string PackageSourceOptions_OnActivated {
-            get {
-                return ResourceManager.GetString("PackageSourceOptions_OnActivated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Applying changes....
-        /// </summary>
-        public static string PackageSourceOptions_OnApply {
-            get {
-                return ResourceManager.GetString("PackageSourceOptions_OnApply", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} by {1}.
         /// </summary>
         public static string PackageVersionWithTransitiveOrigins {
@@ -1762,42 +1681,6 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to apply NuGet Package Manager settings. Please report a problem using Help &gt; Send Feedback &gt; Report a Problem..
-        /// </summary>
-        public static string ShowError_ApplySettingFailed {
-            get {
-                return ResourceManager.GetString("ShowError_ApplySettingFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Can not access NuGet.Config, Please check NuGet.Config.
-        /// </summary>
-        public static string ShowError_ConfigUnauthorizedAccess {
-            get {
-                return ResourceManager.GetString("ShowError_ConfigUnauthorizedAccess", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The following file could not be found:.
-        /// </summary>
-        public static string ShowError_FileNotFound {
-            get {
-                return ResourceManager.GetString("ShowError_FileNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to initialize NuGet Package Manager Settings. Please report a problem using Help &gt; Send Feedback &gt; Report a Problem..
-        /// </summary>
-        public static string ShowError_SettingActivatedFailed {
-            get {
-                return ResourceManager.GetString("ShowError_SettingActivatedFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to NuGet storage clear failed at {0}. 
         ///Error: {1}
         ///Please see https://aka.ms/troubleshoot_nuget_cache for more help..
@@ -1823,42 +1706,6 @@ namespace NuGet.PackageManagement.UI {
         public static string ShowMessage_LocalsCommandWorking {
             get {
                 return ResourceManager.GetString("ShowMessage_LocalsCommandWorking", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The source specified is invalid. Please provide a valid source..
-        /// </summary>
-        public static string ShowWarning_InvalidSource {
-            get {
-                return ResourceManager.GetString("ShowWarning_InvalidSource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name and source specified cannot be empty. Please provide a valid name and source..
-        /// </summary>
-        public static string ShowWarning_NameAndSourceRequired {
-            get {
-                return ResourceManager.GetString("ShowWarning_NameAndSourceRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name specified cannot be empty. Please provide a valid name..
-        /// </summary>
-        public static string ShowWarning_NameRequired {
-            get {
-                return ResourceManager.GetString("ShowWarning_NameRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The source specified cannot be empty. Please provide a valid source..
-        /// </summary>
-        public static string ShowWarning_SourceRequried {
-            get {
-                return ResourceManager.GetString("ShowWarning_SourceRequried", resourceCulture);
             }
         }
         
@@ -1922,24 +1769,6 @@ namespace NuGet.PackageManagement.UI {
         public static string Status_Ready {
             get {
                 return ResourceManager.GetString("Status_Ready", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Note: Configuration files are listed in order from highest to lowest priority..
-        /// </summary>
-        public static string Text_ApplyingConfigurationFiles {
-            get {
-                return ResourceManager.GetString("Text_ApplyingConfigurationFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Common NuGet configurations: How settings are applied.
-        /// </summary>
-        public static string Text_ApplyingConfigurationFiles_DocumentLink {
-            get {
-                return ResourceManager.GetString("Text_ApplyingConfigurationFiles_DocumentLink", resourceCulture);
             }
         }
         
@@ -2601,128 +2430,11 @@ namespace NuGet.PackageManagement.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configuration files list.
-        /// </summary>
-        public static string VSOptions_Accessibility_ConfigurationFilesList {
-            get {
-                return ResourceManager.GetString("VSOptions_Accessibility_ConfigurationFilesList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Package sources list.
-        /// </summary>
-        public static string VSOptions_Accessibility_SourcesList {
-            get {
-                return ResourceManager.GetString("VSOptions_Accessibility_SourcesList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add.
-        /// </summary>
-        public static string VSOptions_Button_Add {
-            get {
-                return ResourceManager.GetString("VSOptions_Button_Add", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        public static string VSOptions_Button_Cancel {
-            get {
-                return ResourceManager.GetString("VSOptions_Button_Cancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string VSOptions_Button_Close {
             get {
                 return ResourceManager.GetString("VSOptions_Button_Close", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to _Open.
-        /// </summary>
-        public static string VSOptions_Button_Open {
-            get {
-                return ResourceManager.GetString("VSOptions_Button_Open", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove.
-        /// </summary>
-        public static string VSOptions_Button_Remove {
-            get {
-                return ResourceManager.GetString("VSOptions_Button_Remove", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove All.
-        /// </summary>
-        public static string VSOptions_Button_RemoveAll {
-            get {
-                return ResourceManager.GetString("VSOptions_Button_RemoveAll", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open the settings page.
-        /// </summary>
-        public static string VSOptions_ButtonOpenSettingsPage {
-            get {
-                return ResourceManager.GetString("VSOptions_ButtonOpenSettingsPage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add New Package Source Mapping.
-        /// </summary>
-        public static string VSOptions_Label_AddPackageNamespace {
-            get {
-                return ResourceManager.GetString("VSOptions_Label_AddPackageNamespace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Configuration Files:.
-        /// </summary>
-        public static string VSOptions_Label_ConfigurationFiles {
-            get {
-                return ResourceManager.GetString("VSOptions_Label_ConfigurationFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Package pattern:.
-        /// </summary>
-        public static string VSOptions_Label_PackagePattern {
-            get {
-                return ResourceManager.GetString("VSOptions_Label_PackagePattern", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Package Source Mappings:.
-        /// </summary>
-        public static string VSOptions_Label_PackageSourceMappings {
-            get {
-                return ResourceManager.GetString("VSOptions_Label_PackageSourceMappings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source.
-        /// </summary>
-        public static string VSOptions_Label_Source {
-            get {
-                return ResourceManager.GetString("VSOptions_Label_Source", resourceCulture);
             }
         }
         
@@ -2750,33 +2462,6 @@ namespace NuGet.PackageManagement.UI {
         public static string VSOptions_Text_ClearLocalsPromptTitle {
             get {
                 return ResourceManager.GetString("VSOptions_Text_ClearLocalsPromptTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This settings page has moved to Unified Settings..
-        /// </summary>
-        public static string VSOptions_Text_MovedToUnifiedSettings {
-            get {
-                return ResourceManager.GetString("VSOptions_Text_MovedToUnifiedSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to save changes before closing this dialog?.
-        /// </summary>
-        public static string VSOptions_Text_PromptShortcutUnifiedSettings {
-            get {
-                return ResourceManager.GetString("VSOptions_Text_PromptShortcutUnifiedSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Example: Contoso.Contracts or System.*.
-        /// </summary>
-        public static string VSOptions_Watermark_AddPackageNamespace {
-            get {
-                return ResourceManager.GetString("VSOptions_Watermark_AddPackageNamespace", resourceCulture);
             }
         }
         

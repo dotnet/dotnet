@@ -128,26 +128,6 @@ Function Invoke-BuildStep {
     }
 }
 
-Function Update-Submodules {
-    [CmdletBinding()]
-    param(
-        [switch]$Force
-    )
-    $Submodules = Join-Path $NuGetClientRoot submodules -Resolve
-    $GitAttributes = gci $Submodules\* -Filter '.gitattributes' -r -ea Ignore
-    if ($Force -or -not $GitAttributes) {
-        $opts = 'submodule', 'update'
-        $opts += '--init'
-        if (-not $VerbosePreference) {
-            $opts += '--quiet'
-        }
-
-        Trace-Log 'Updating and initializing submodules'
-        Trace-Log "git $opts"
-        & git $opts 2>&1
-    }
-}
-
 Function Download-DotNetInstallScript {
     [CmdletBinding()]
     param(
@@ -187,14 +167,14 @@ Function Install-DotnetCLI {
         }
 
         Trace-Log "$DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath"
- 
+
         & powershell $DotNetInstall $CliBranch -InstallDir $CLIRoot -NoPath
         if ($LASTEXITCODE -ne 0)
         {
             throw "dotnet-install.ps1 exited with non-zero exit code"
         }
     }
-    
+
     if (-not (Test-Path $DotNetExe)) {
         Error-Log "Unable to find dotnet.exe. The CLI install may have failed." -Fatal
     }
@@ -207,7 +187,7 @@ Function Install-DotnetCLI {
             throw "dotnet --info exited with non-zero exit code"
         }
     }
-    
+
     if ($env:CI -eq "true") {
         Write-Host "##vso[task.setvariable variable=DOTNET_ROOT;isOutput=false;issecret=false;]$CLIRoot"
         Write-Host "##vso[task.setvariable variable=DOTNET_MULTILEVEL_LOOKUP;isOutput=false;issecret=false;]0"
@@ -250,7 +230,7 @@ Function Install-DotNetSdksForTesting {
         }
 
         Trace-Log "$DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath"
- 
+
         & powershell $DotNetInstall $SdkItem -InstallDir $SdkTestingRoot -Architecture $arch -NoPath
         if ($LASTEXITCODE -ne 0)
         {
@@ -325,7 +305,7 @@ Function Install-ProcDump {
     if ($Env:OS -eq "Windows_NT")
     {
         Trace-Log "Downloading ProcDump..."
-        
+
         $ProcDumpZip = Join-Path $env:TEMP 'ProcDump.zip'
         $TestDir = Join-Path $NuGetClientRoot '.test'
         $ProcDumpDir = Join-Path $TestDir 'ProcDump'
@@ -398,7 +378,7 @@ Function Download-FileWithRetry {
                 $Retries--
                 Trace-Log "Waiting 10 seconds before retrying. Retries left: $Retries"
                 Start-Sleep -Seconds 10
- 
+
             }
             else
             {

@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../Resources.resx">
+    <body>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">Wszystkie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">Argument nie może mieć wartości null ani być pusty</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_CommandObsolete">
+        <source>This Command/Parameter combination has been deprecated and will be removed in the next release. Please consider using the new command that replaces it: '{0}'.</source>
+        <target state="translated">Kombinacja polecenia i parametru jest przestarzała i zostanie usunięta w następnej wersji. Rozważ użycie nowego polecenia, które je zastępuje: „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DeprecatedFrameworkContinue">
+        <source>Would you like to continue with the project action(s) anyways?</source>
+        <target state="translated">Czy mimo to chcesz kontynuować akcje dotyczące projektu?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DeprecatedFrameworkNoHelp">
+        <source>Do not continue with the project action(s)</source>
+        <target state="translated">Nie kontynuuj akcji dotyczących projektu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DeprecatedFrameworkYesDoNotPromptAgainHelp">
+        <source>Continue with the project action(s) and do not prompt for confirmation again</source>
+        <target state="translated">Kontynuuj akcje dotyczące projektu i nie monituj już o potwierdzenie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DeprecatedFrameworkYesHelp">
+        <source>Continue with the project action(s)</source>
+        <target state="translated">Kontynuuj akcje dotyczące projektu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DisplayMorePackagesNoHelp">
+        <source>Stop to display more packages</source>
+        <target state="translated">Przestań wyświetlać kolejne pakiety</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_DisplayMorePackagesYesHelp">
+        <source>Continue to display more packages</source>
+        <target state="translated">Kontynuuj wyświetlanie kolejnych pakietów</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_ExecutingScript">
+        <source>Executing script file '{0}'</source>
+        <target state="translated">Wykonywanie pliku skryptu „{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FailToParsePackages">
+        <source>Failed to parse package identities from file {0} with exception: {1}</source>
+        <target state="translated">Nie można przeanalizować tożsamości pakietu z pliku {0} z powodu wyjątku: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FailToParseVersion">
+        <source>Failed to parse the input of Version parameter: {0} to a valid Semantic version. </source>
+        <target state="translated">Nie można przeanalizować danych wejściowych parametru wersji {0} do prawidłowej wersji semantycznej. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FailedToSearchSource">
+        <source>The following source failed to search for packages: '{0}'{1}{2}</source>
+        <target state="translated">Dla następującego źródła nie powiodło się wyszukiwanie pakietów: „{0}”{1}{2}</target>
+        <note>{0} is the source that failed.
+{1} is a line separator.
+{2} is the exception message.</note>
+      </trans-unit>
+      <trans-unit id="Cmdlet_FileConflictNoAllHelp">
+        <source>Skip this file and all subsequent files</source>
+        <target state="translated">Pomiń ten plik i wszystkie kolejne pliki</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FileConflictNoHelp">
+        <source>Skip this file</source>
+        <target state="translated">Pomiń ten plik</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FileConflictTitle">
+        <source>File Conflict</source>
+        <target state="translated">Konflikt plików</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FileConflictYesAllHelp">
+        <source>Overwrite this file and all subsequent files</source>
+        <target state="translated">Zastąp ten plik i wszystkie kolejne pliki</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_FileConflictYesHelp">
+        <source>Overwrite this file</source>
+        <target state="translated">Zastąp ten plik</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_GetPackageNoPackageFound">
+        <source>No packages found in the current package source.</source>
+        <target state="translated">Nie znaleziono pakietów w bieżącym źródle pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_InvalidPSDrive">
+        <source>The PSDrive '{0}' was not found.</source>
+        <target state="translated">Nie odnaleziono elementu PSDrive „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_InvalidPathSyntax">
+        <source>The path '{0}' is invalid.</source>
+        <target state="translated">Ścieżka „{0}” jest nieprawidłowa.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_InvalidProvider">
+        <source>Only paths residing on a FileSystemProvider are supported.</source>
+        <target state="translated">Obsługiwane są tylko ścieżki dostawcy FileSystemProvider.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_MissingPackages">
+        <source>Some NuGet packages are missing from the solution. The packages need to be restored in order to build the dependency graph. Restore the packages before performing any operations.</source>
+        <target state="translated">W rozwiązaniu brakuje niektórych pakietów NuGet. Aby móc utworzyć wykres zależności, musisz przywrócić pakiety. Przywróć pakiety przed wykonaniem jakichkolwiek operacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_No">
+        <source>&amp;No</source>
+        <target state="translated">&amp;Nie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoAll">
+        <source>No to Al&amp;l</source>
+        <target state="translated">Nie na wszystk&amp;o</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoCompatibleProjects">
+        <source>No compatible project(s) found in the active solution.</source>
+        <target state="translated">Nie znaleziono żadnych zgodnych projektów w aktywnym rozwiązaniu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoPackageActions">
+        <source>No package actions available to be executed.</source>
+        <target state="translated">Brak dostępnych akcji do wykonania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoPackageUpdates">
+        <source>No package updates are available from the current package source for project '{0}'.</source>
+        <target state="translated">Nie ma dostępnych aktualizacji pakietów z bieżącego źródła pakietów dla projektu „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoPackagesInstalled">
+        <source>No packages installed.</source>
+        <target state="translated">Nie zainstalowano żadnych pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoProjectsToSyncPackage">
+        <source>There are no other projects to sync the package '{0}'.</source>
+        <target state="translated">Brak innych projektów do zsynchronizowania pakietu „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_NoSolution">
+        <source>The current environment doesn't have a solution open.</source>
+        <target state="translated">W bieżącym środowisku nie ma otwartego rozwiązania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_PackageNotInstalled">
+        <source>Package with the Id '{0}' is not installed to project '{1}'.</source>
+        <target state="translated">Pakiet o identyfikatorze „{0}” nie został zainstalowany w projekcie „{1}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_PackageNotInstalledInAnyProject">
+        <source>'{0}' was not installed in any project. Update failed.</source>
+        <target state="translated">Pakiet „{0}” nie został zainstalowany w żadnym projekcie. Aktualizacja nie powiodła się.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_ProjectNotFound">
+        <source>Project '{0}' is not found.</source>
+        <target state="translated">Nie znaleziono projektu „{0}”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_PrompToDisplayMorePackages">
+        <source>There may be more packages to display. Do you want to continue?</source>
+        <target state="translated">Może być więcej pakietów do wyświetlenia. Czy chcesz kontynuować?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_RequestRestartToCompleteUninstall">
+        <source>One or more packages could not be completely uninstalled: '{0}'. Restart Visual Studio to finish uninstall.</source>
+        <target state="translated">Nie można w całości odinstalować co najmniej jednego pakietu: „{0}”. Uruchom ponownie program Visual Studio, aby ukończyć dezinstalację.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">Czas trwania: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_Yes">
+        <source>&amp;Yes</source>
+        <target state="translated">&amp;Tak</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_YesAll">
+        <source>Yes to &amp;All</source>
+        <target state="translated">Tak na &amp;wszystko</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cmdlet_YesDoNotPromptAgain">
+        <source>Yes and &amp;Ignore future warnings</source>
+        <target state="translated">Tak i &amp;ignoruj przyszłe ostrzeżenia</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Console_DisclaimerText">
+        <source>Each package is licensed to you by its owner. NuGet is not responsible for, nor does it grant any licenses to, third-party packages. Some packages may include dependencies which are governed by additional licenses. Follow the package source (feed) URL to determine any dependencies.</source>
+        <target state="translated">Licencja na każdy pakiet jest udzielana przez jego właściciela. Firma NuGet nie ponosi odpowiedzialności za pakiety innych firm ani nie udziela na nie żadnych licencji. Niektóre pakiety mogą zawierać zależności podlegające dodatkowym licencjom. Sprawdź adres URL źródła pakietu (kanału informacyjnego), aby określić zależności.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Console_HelpText">
+        <source>Type 'get-help NuGet' to see all available NuGet commands.</source>
+        <target state="translated">Wpisz „get-help NuGet”, aby wyświetlić wszystkie dostępne polecenia NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorNestedPromptNotSupported">
+        <source>Nested prompt not supported.</source>
+        <target state="translated">Monit zagnieżdżony nie jest obsługiwany.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_PackageNotFound">
+        <source>Unable to find package '{0}' at source '{1}'.</source>
+        <target state="translated">Nie można odnaleźć pakietu „{0}” w źródle „{1}”.</target>
+        <note>{0} - package id
+{1} - source string specified by the user</note>
+      </trans-unit>
+      <trans-unit id="Host_PSNotInstalled">
+        <source>Error: The Package Manager Console requires PowerShell 2.0 runtime, which is not detected on this machine. Please install the PowerShell 2.0 from http://support.microsoft.com/kb/968929 and restart Visual Studio.</source>
+        <target state="translated">Błąd: konsola menedżera pakietów (Package Manager Console) wymaga środowiska uruchomieniowego programu PowerShell 2.0, którego nie wykryto na tym komputerze. Zainstaluj program PowerShell 2.0 dostępny na stronie http://support.microsoft.com/kb/968929 i ponownie uruchom program Visual Studio.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PowerShellHostTitle">
+        <source>Package Manager Console Host Version {0}</source>
+        <target state="translated">Host konsoli menedżera pakietów w wersji {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PromptForChoiceSuffix">
+        <source>[?] Help (default is "{0}"):</source>
+        <target state="translated">[?] Pomoc (wartość domyślna to „{0}”):</target>
+        <note>{0} = defaultChoice</note>
+      </trans-unit>
+      <trans-unit id="UnknownSource">
+        <source>Source '{0}' not found. Please provide an HTTP or local source.</source>
+        <target state="translated">Nie odnaleziono źródła „{0}”. Podaj źródło lokalne lub HTTP.</target>
+        <note>{0} is the source</note>
+      </trans-unit>
+      <trans-unit id="UnknownSourceType">
+        <source>Unsupported type of source '{0}'. Please provide an HTTP or local source.</source>
+        <target state="translated">Nieobsługiwany typ źródła: „{0}”. Podaj źródło lokalne lub HTTP.</target>
+        <note>{0} is the input source.</note>
+      </trans-unit>
+      <trans-unit id="UnknownSourceWithId">
+        <source>Unable to find package '{0}' at source '{1}'. Source not found.</source>
+        <target state="translated">Nie można odnaleźć pakietu „{0}” w źródle „{1}”. Nie odnaleziono źródła.</target>
+        <note>Used to fix the accuracy of the error message
+{0} is package id
+{1} is source path</note>
+      </trans-unit>
+      <trans-unit id="Warning_ReinstallNotRespectedForProjectType">
+        <source>The `-Reinstall` parameter does not apply to PackageReference based projects `{0}'.</source>
+        <target state="translated">Parametr „Reinstall” nie ma zastosowania do projektów opartych na protokole PackageReference „{0}”.</target>
+        <note>0 - semicolon separated project list.</note>
+      </trans-unit>
+      <trans-unit id="Warning_SourceNotRespectedForProjectType">
+        <source>The '{0}' parameter is not respected for the transitive package management based project(s) {1}. The enabled sources in your NuGet configuration will be used. </source>
+        <target state="translated">Parametr „{0}” nie jest brany pod uwagę dla projektów opartych na zarządzaniu pakietami przejściowymi {1}. Zostaną użyte włączone źródła w konfiguracji NuGet. </target>
+        <note>{0} is the parameter, {1} are the project names</note>
+      </trans-unit>
+      <trans-unit id="ZeroLengthCollection">
+        <source>Zero length collection.</source>
+        <target state="translated">Kolekcja o zerowej długości.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

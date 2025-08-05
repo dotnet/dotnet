@@ -13,6 +13,7 @@ namespace NuGet.SolutionRestoreManager
     /// </summary>
     [ComImport]
     [Guid("ab43992d-b977-436d-84c2-e76aeed20de2")]
+    [Obsolete]
     public interface IVsProjectRestoreInfo
     {
         /// <summary>
