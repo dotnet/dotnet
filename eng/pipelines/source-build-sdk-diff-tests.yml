@@ -49,12 +49,6 @@ parameters:
   type: string
   default: ' '
 
-variables:
-- template: /eng/pipelines/templates/variables/vmr-build.yml@self
-
-# GH access token for SB bot - BotAccount-dotnet-sb-bot-pat
-- group: Dotnet-SourceBuild-Secrets
-
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
