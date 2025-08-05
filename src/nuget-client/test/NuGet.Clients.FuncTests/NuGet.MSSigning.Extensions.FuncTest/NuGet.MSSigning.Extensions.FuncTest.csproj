@@ -11,6 +11,8 @@
     <ProjectReference Include="..\..\TestUtilities\Test.Utility\Test.Utility.csproj" />
 
     <Reference Include="System.IO.Compression" />
+
+    <PackageReference Include="Microsoft.Build.Framework" />
   </ItemGroup>
 
   <Target Name="CopyFinalNuGetExeToOutputPath"

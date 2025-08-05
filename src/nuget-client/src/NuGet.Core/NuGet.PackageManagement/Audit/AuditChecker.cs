@@ -45,6 +45,11 @@ namespace NuGet.PackageManagement
             if (packages == null) throw new ArgumentNullException(nameof(packages));
             if (restoreAuditProperties == null) throw new ArgumentNullException(nameof(restoreAuditProperties));
 
+            if (!packages.Any())
+            {
+                return AuditCheckResult.NoopAuditResult;
+            }
+
             // Before fetching vulnerability data, check if any projects are enabled for audit
             // If there are no settings, then run the audit for all packages
             bool anyProjectsEnabledForAudit = restoreAuditProperties.Count == 0;
@@ -59,10 +64,7 @@ namespace NuGet.PackageManagement
 
             if (!anyProjectsEnabledForAudit)
             {
-                return new AuditCheckResult(Array.Empty<ILogMessage>())
-                {
-                    IsAuditEnabled = false,
-                };
+                return AuditCheckResult.NoopAuditResult;
             }
 
             Stopwatch stopwatch = Stopwatch.StartNew();

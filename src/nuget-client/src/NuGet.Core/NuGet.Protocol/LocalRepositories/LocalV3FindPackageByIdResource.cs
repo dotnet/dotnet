@@ -279,8 +279,6 @@ namespace NuGet.Protocol
                 FindPackageByIdDependencyInfo dependencyInfo = null;
                 if (DoesVersionExist(id, version))
                 {
-                    var identity = new PackageIdentity(id, version);
-
                     dependencyInfo = ProcessNuspecReader(
                         id,
                         version,

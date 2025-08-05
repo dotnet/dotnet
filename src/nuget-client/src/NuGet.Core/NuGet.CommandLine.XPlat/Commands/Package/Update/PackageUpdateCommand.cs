@@ -9,59 +9,56 @@ using System.CommandLine;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using NuGet.Common;
 
-namespace NuGet.CommandLine.XPlat.Commands.Package.Update
+namespace NuGet.CommandLine.XPlat.Commands.Package.Update;
+
+internal static class PackageUpdateCommand
 {
-    internal static class PackageUpdateCommand
+    internal static void Register(Command packageCommand, Option<bool> interactiveOption)
     {
-        internal static void Register(Command packageCommand)
+        Register(packageCommand, interactiveOption, PackageUpdateCommandRunner.Run);
+    }
+
+    internal static void Register(Command packageCommand, Option<bool> interactiveOption, Func<PackageUpdateArgs, CancellationToken, Task<int>> action)
+    {
+        var command = new DocumentedCommand("update", Strings.PackageUpdateCommand_Description, "https://aka.ms/dotnet/package/update");
+
+        var packagesArguments = new Argument<IReadOnlyList<Package>>("packages")
         {
-            Func<ILoggerWithColor> getLogger = () =>
+            Description = Strings.PackageUpdate_PackageArgumentDescription,
+            Arity = ArgumentArity.ZeroOrMore,
+            CustomParser = Package.Parse
+        };
+        command.Arguments.Add(packagesArguments);
+
+        var projectOption = new Option<FileSystemInfo>("--project").AcceptExistingOnly();
+        projectOption.Description = Strings.PackageUpdateCommand_ProjectOptionDescription;
+        command.Options.Add(projectOption);
+
+        command.Options.Add(interactiveOption);
+
+        var verbosityOption = CommonOptions.GetVerbosityOption();
+        command.Options.Add(verbosityOption);
+
+        packageCommand.Subcommands.Add(command);
+        command.SetAction(async (args, cancellationToken) =>
+        {
+            FileSystemInfo? project = args.GetValue(projectOption);
+            IReadOnlyList<Package> packages = args.GetValue(packagesArguments) ?? [];
+            bool interactive = args.GetValue(interactiveOption);
+            VerbosityEnum verbosity = args.GetValue(verbosityOption) ?? VerbosityEnum.normal;
+            LogLevel logLevel = verbosity.ToLogLevel();
+
+            var commandArgs = new PackageUpdateArgs
             {
-                var logger = new CommandOutputLogger(Common.LogLevel.Minimal);
-                logger.HidePrefixForInfoAndMinimal = true;
-                return logger;
+                Project = project?.FullName ?? Environment.CurrentDirectory,
+                Packages = packages,
+                Interactive = interactive,
+                LogLevel = logLevel,
             };
-            Register(packageCommand, getLogger);
-        }
 
-        internal static void Register(Command packageCommand, Func<ILoggerWithColor> getLogger)
-        {
-            Register(packageCommand, getLogger, PackageUpdateCommandRunner.Run);
-        }
-
-        internal static void Register(Command packageCommand, Func<ILoggerWithColor> getLogger, Func<PackageUpdateArgs, ILoggerWithColor, IDGSpecFactory, MSBuildAPIUtility, CancellationToken, Task<int>> action)
-        {
-            var command = new DocumentedCommand("update", Strings.PackageUpdateCommand_Description, "https://aka.ms/dotnet/package/update");
-
-            var packagesArguments = new Argument<List<string>>("packages")
-            {
-                Arity = ArgumentArity.ZeroOrMore,
-            };
-            command.Arguments.Add(packagesArguments);
-
-            var projectOption = new Option<FileSystemInfo>("--project").AcceptExistingOnly();
-            projectOption.Description = Strings.PackageUpdateCommand_ProjectOptionDescription;
-            command.Options.Add(projectOption);
-
-            packageCommand.Subcommands.Add(command);
-            command.SetAction(async (args, cancellationToken) =>
-            {
-                var logger = getLogger();
-                var project = args.GetValue(projectOption);
-                var packages = args.GetValue(packagesArguments);
-
-                var commandArgs = new PackageUpdateArgs
-                {
-                    Project = project?.FullName ?? Environment.CurrentDirectory,
-                    Packages = packages,
-                };
-
-                IDGSpecFactory dGSpecFactory = new DGSpecFactory();
-                MSBuildAPIUtility mSBuild = new(logger);
-
-                return await action(commandArgs, logger, dGSpecFactory, mSBuild, cancellationToken);
-            });
-        }
+            return await action(commandArgs, cancellationToken);
+        });
     }
 }

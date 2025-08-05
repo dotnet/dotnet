@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		build\BannedSymbols.txt = build\BannedSymbols.txt
-		build\common.legacy.props = build\common.legacy.props
 		build\common.project.props = build\common.project.props
 		build\common.props = build\common.props
 		build\common.ps1 = build\common.ps1
@@ -338,6 +337,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuGet.Tests.Apex.Daily", "test\NuGet.Tests.Apex\NuGet.Tests.Apex.Daily\NuGet.Tests.Apex.Daily.csproj", "{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Internal.NuGet.Testing.SignedPackages", "test\TestUtilities\Microsoft.Internal.NuGet.Testing.SignedPackages\Microsoft.Internal.NuGet.Testing.SignedPackages.csproj", "{E41384AA-ED2D-4251-A571-F5C924CE2913}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualStudio.Test.Utility", "test\TestUtilities\VisualStudio.Test.Utility\VisualStudio.Test.Utility.csproj", "{905A8AD5-46C7-A612-22CC-B2962D4CB40E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -709,6 +710,10 @@ Global
 		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E41384AA-ED2D-4251-A571-F5C924CE2913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905A8AD5-46C7-A612-22CC-B2962D4CB40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905A8AD5-46C7-A612-22CC-B2962D4CB40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905A8AD5-46C7-A612-22CC-B2962D4CB40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905A8AD5-46C7-A612-22CC-B2962D4CB40E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -823,6 +828,7 @@ Global
 		{719AC60C-59EF-4A63-AC9E-7841DF14179D} = {CE4C7E1B-6883-49C3-A407-F807094777CC}
 		{9DD99D1D-6C9A-40BF-A650-3F14AA8B1275} = {3150445A-C422-4D40-B341-DE5AD063C632}
 		{E41384AA-ED2D-4251-A571-F5C924CE2913} = {79266117-FEDD-45B3-B603-33A4B6E9F12F}
+		{905A8AD5-46C7-A612-22CC-B2962D4CB40E} = {79266117-FEDD-45B3-B603-33A4B6E9F12F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3747A66A-00D1-41B8-A9C5-ED0D7BEA9D25}
