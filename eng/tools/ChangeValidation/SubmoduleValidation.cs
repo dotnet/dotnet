@@ -49,7 +49,7 @@ internal class SubmoduleValidation : IValidationStep
             matcher.AddInclude(pattern);
         }
 
-        var directory = new InMemoryDirectoryInfo(_repoRoot, prInfo.ChangedFiles);
+        var directory = new InMemoryDirectoryInfo("", prInfo.ChangedFiles);
 
         var result = matcher.Execute(directory);
 
