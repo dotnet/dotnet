@@ -47,13 +47,13 @@ stages:
     ${{ else }}:
       scope: full
 
-- stage: ValidateSubmodules
-  displayName: 'Validate VMR Submodules'
+- stage: ValidateUserChanges
+  displayName: 'Validate user changes in VMR'
   dependsOn: []
   condition: and(eq(variables['isPRTrigger'], 'true'), ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'))
   jobs:
-  - job: RunValidationTool
-    displayName: 'Run ValidateVmrChanges Tool'
+  - job: Validate
+    displayName: 'Run Validation Script'
     pool:
       vmImage: 'windows-latest'
     steps:

@@ -1,8 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using Microsoft.DotNet.DarcLib;
+using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
+using Microsoft.DotNet.DarcLib.Models.VirtualMonoRepo;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
@@ -10,138 +15,94 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 using static ValidateVmrChanges.Validate;
+using Microsoft.DotNet.DarcLib.Helpers;
 
 namespace ValidateVmrChanges;
 
-internal class ExclusionFileValidation
+internal class ExclusionFileValidation : IValidationStep
 {
-    private static readonly string SourceMappingsPath = "src/source-mappings.json";
+    private static readonly int maxDisplayedFiles = 20;
+    private readonly IVmrDependencyTracker _dependencyTracker;
+    private readonly IProcessManager _processManager;
 
-    internal static List<ProcessingMessage> VerifyFileExclusions(List<string> diffFiles, string targetBranch)
+    private readonly string _repoRoot;
+
+    internal ExclusionFileValidation()
     {
-        List<ProcessingMessage> messages = [];
+        _processManager = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
+        VmrInfo vmrInfo = new VmrInfo(_processManager.FindGitRoot(""), "");
+        ILogger<VmrDependencyTracker> nullLogger = NullLogger<VmrDependencyTracker>.Instance;
+        SourceMappingParser parser = new SourceMappingParser(vmrInfo, new FileSystem());
+        SourceManifest sourceManifest = new SourceManifest([], []);
+        _dependencyTracker = new VmrDependencyTracker(vmrInfo, new FileSystem(), parser, sourceManifest, nullLogger);
+        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+    }
 
-        string remoteTargetBranch = "origin/" + targetBranch;
-        var originalExclusionRules = GetExclusionPatternsFromBranch(remoteTargetBranch);
+    public string DisplayName => "Exclusion File Validation";
 
-        if (originalExclusionRules == null || !originalExclusionRules.Any())
-        {
-            AddProcessingMessage(messages, Error($"No exclusion rules found in `{SourceMappingsPath}` on the target branch, or the file does not exist."));
-            return messages;
-        }
+    public async Task<bool> Execute(PrInfo prInfo)
+    {
+        var originalExclusionRules = await GetExclusionPatternsFromBranch("origin/" + prInfo.TargetBranch);
+        var newExclusionRules = await GetExclusionPatternsFromBranch("HEAD");
 
-        var newExclusionRules = GetExclusionPatternsFromBranch("HEAD");
 
-        if (newExclusionRules == null || !newExclusionRules.Any())
-        {
-            AddProcessingMessage(messages, Error($"No exclusion rules found in `{SourceMappingsPath}` on the PR branch, or the file does not exist."));
-            return messages;
-        }
+        var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
+        var newExcludedFiles = FindMatchingFiles(newExclusionRules);
 
-        var originalExcludedFiles = VmrFileMatches(originalExclusionRules);
-        var newExcludedFiles = VmrFileMatches(newExclusionRules);
-
-        var excludedFilesInPr = diffFiles
+        var excludedFilesInPr = prInfo.ChangedFiles
             .Where(file => newExcludedFiles.Contains(NormalizePath(file)))
             .ToList();
 
         var filesMatchingNewExclusionRules = newExcludedFiles
-            .Where(file => !originalExcludedFiles.Contains(NormalizePath(file)) && !diffFiles.Contains(NormalizePath(file)))
+            .Where(file => !originalExcludedFiles.Contains(NormalizePath(file)) && !prInfo.ChangedFiles.Contains(NormalizePath(file)))
             .ToList();
 
-        if (excludedFilesInPr.Any())
+        foreach (var file in excludedFilesInPr.Take(maxDisplayedFiles).ToList())
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"This PR modifies or creates {excludedFilesInPr.Count} file(s) that are in the exclusion list.");
-            sb.AppendLine("If these files are not needed in the VMR, please delete them in this PR.");
-            foreach (var file in excludedFilesInPr)
-            {
-                sb.AppendLine($" - {file}");
-            }
-            string warningMessage = sb.ToString();
-            AddProcessingMessage(messages, Error(warningMessage));
+            LogError($"This PR modifies the file `{file}`, which is part of the excluded files defined in {VmrInfo.DefaultRelativeSourceMappingsPath}. If these changes are necessary, please contact the repository organizers.");
         }
 
-        if (filesMatchingNewExclusionRules.Any())
+        if (excludedFilesInPr.Count > maxDisplayedFiles)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"This PR modifies exclusion rules in {SourceMappingsPath}, leading to {filesMatchingNewExclusionRules.Count} newly excluded file(s) in the VMR.");
-            sb.AppendLine("If these files are not needed in the VMR, please delete them in this PR.");
-            foreach (var file in filesMatchingNewExclusionRules)
-            {
-                sb.AppendLine($" - {file}");
-            }
-            string warningMessage = sb.ToString();
-            AddProcessingMessage(messages, Error(warningMessage));
+            LogError($"... {excludedFilesInPr.Count - maxDisplayedFiles} more excluded files detected in the PR. Only showing the first {maxDisplayedFiles} files.");
         }
 
-        if (!excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any())
+        foreach (var file in filesMatchingNewExclusionRules.Take(maxDisplayedFiles).ToList())
         {
-            AddProcessingMessage(messages, Success($"Exclusion file validation succeeded."));
-        } else
-        {
-            AddProcessingMessage(messages, Error($"Exclusion file validation failed."));
+            LogError($"The new exclusion rules defined in {VmrInfo.DefaultRelativeSourceMappingsPath} include the VMR file `{file}`. If this file is not needed in the VMR, consider deleting it as part of the PR.");
         }
-        return messages;
+
+        if (filesMatchingNewExclusionRules.Count > maxDisplayedFiles)
+        {
+            LogError($"... {filesMatchingNewExclusionRules.Count - maxDisplayedFiles} more VMR files match the new exclusion rules. Only showing the first {maxDisplayedFiles} files.");
+        }
+
+        return excludedFilesInPr.Any() || filesMatchingNewExclusionRules.Any();
     }
 
-    private static List<string> GetExclusionPatternsFromBranch(string branchName)
+    private async Task<List<string>> GetExclusionPatternsFromBranch(string branchName)
     {
-        Console.WriteLine($"Retrieving {SourceMappingsPath} from branch `{branchName}`...");
-        string? fileContents = null;
+        string originalBranch = (await _processManager.ExecuteGit(_repoRoot, "rev-parse", "abbrev-ref HEAD")).StandardOutput;
         try
         {
-            fileContents = RunGitCommand($"show {branchName}:src/source-mappings.json");
-        } catch (Exception ex)
-        {
-            Console.WriteLine($"Error retrieving {SourceMappingsPath} from branch `{branchName}`: {ex.Message}");
-            return [];
+            await _processManager.ExecuteGit(_repoRoot, "checkout", branchName);
+            await _dependencyTracker.RefreshMetadata(_repoRoot);
+            var sourceMappings = _dependencyTracker.Mappings;
+
+            return sourceMappings.Select(mapping => mapping.Exclude)
+                .SelectMany(exclude => exclude)
+                .Distinct()
+                .ToList();
         }
-
-        if (string.IsNullOrEmpty(fileContents))
+        finally
         {
-            Console.WriteLine($"Error: Could not retrieve {SourceMappingsPath} from branch `{branchName}`. The file may not exist or is empty.");
-            return [];
+            await _processManager.ExecuteGit(_repoRoot, $"checkout {originalBranch}");
         }
-
-        JArray? mappings = null;
-        try
-        {
-            var jsonRoot = JObject.Parse(fileContents);
-
-            if (jsonRoot.TryGetValue("mappings", out JToken? mappingsToken) && mappingsToken?.Type == JTokenType.Array)
-            {
-                mappings = (JArray)mappingsToken;
-            }
-            else
-            {
-                Console.WriteLine($"Cannot find mappings in {SourceMappingsPath}");
-                return [];
-            }
-        }
-        catch (Exception)
-        {
-            Console.WriteLine($"Error parsing {SourceMappingsPath}");
-            return [];
-        }
-
-        List<string> allExcludes = new List<string>();
-
-        foreach (var mapping in mappings.OfType<JObject>())
-        {
-            var excludes = mapping["exclude"] as JArray;
-            if (excludes != null)
-            {
-                allExcludes.AddRange(excludes.Values<string>().Where(x => x != null)!);
-            }
-        }
-
-        return allExcludes;
     }
     
-    private static HashSet<string> VmrFileMatches(List<string> globPatterns)
+    private HashSet<string> FindMatchingFiles(List<string> globPatterns)
     {
-        var repoRoot = FindGitRepoRoot(AppContext.BaseDirectory);
+        var repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
 
         var matcher = new Matcher();
         foreach (var pattern in globPatterns)
@@ -161,20 +122,5 @@ internal class ExclusionFileValidation
     internal static string NormalizePath(string path)
     {
         return path.Replace('\\', '/');
-    }
-
-    private static string FindGitRepoRoot(string startDirectory)
-    {
-        var dir = new DirectoryInfo(startDirectory);
-        while (dir != null)
-        {
-            var gitPath = Path.Combine(dir.FullName, ".git");
-            if (Directory.Exists(gitPath) || File.Exists(gitPath))
-            {
-                return dir.FullName;
-            }
-            dir = dir.Parent;
-        }
-        throw new InvalidOperationException("Could not find the Git repository root.");
     }
 }

@@ -27,6 +27,7 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-rc.1.25411.109</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.100-rc.1.25411.109</PrivateSourceBuiltArtifactsVersion>
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25404.1</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -40,6 +41,6 @@
     <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>10.0.0</OctokitVersion>
+    <OctokitVersion>13.0.1</OctokitVersion>
   </PropertyGroup>
 </Project>
