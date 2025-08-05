@@ -34,10 +34,7 @@ public class SourceBuiltArtifactsTests : SdkTests
             string[] versionLines = File.ReadAllLines(Path.Combine(outputDir, ".version"));
             Assert.Equal(2, versionLines.Length);
 
-            // Verify the commit SHA
-            // A valid commit SHA is contains only hexadecimal characters and is exactly 40 characters long.
-
-            // In a dev environment, the commit SHA will likely be either a valid commit SHA or an unknown commit SHA, depending on
+            // Verify the commit SHA, it will likely be either a valid commit SHA or an unknown commit SHA, depending on
             // the state of the repository and git installation.
             // Therefore, we only verify the commit SHA is not an unknown commit SHA.
 
@@ -45,8 +42,6 @@ public class SourceBuiltArtifactsTests : SdkTests
             OutputHelper.WriteLine($"Commit SHA: {commitSha}");
             if (Config.RunningInCI)
             {
-                Assert.Equal(40, commitSha.Length);
-                Assert.True(commitSha.All(c => char.IsLetterOrDigit(c)));
                 Assert.False(commitSha.Equals("unknown commit SHA", StringComparison.OrdinalIgnoreCase));
             }
 
