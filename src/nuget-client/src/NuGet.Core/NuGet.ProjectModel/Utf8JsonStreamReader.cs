@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -88,6 +89,8 @@ namespace NuGet.ProjectModel
         internal bool GetBoolean() => _reader.GetBoolean();
 
         internal int GetInt32() => _reader.GetInt32();
+
+        internal int CurrentDepth => _reader.CurrentDepth;
 
         internal bool Read()
         {
@@ -195,6 +198,44 @@ namespace NuGet.ProjectModel
                 }
             }
             return strings;
+        }
+
+        internal ImmutableArray<string> ReadStringArrayAsImmutableArray()
+        {
+            string[] strings = null;
+            var index = 0;
+
+            if (TokenType == JsonTokenType.StartArray)
+            {
+                while (Read() && TokenType != JsonTokenType.EndArray)
+                {
+                    if (strings == null)
+                    {
+                        strings = ArrayPool<string>.Shared.Rent(16);
+                    }
+                    else if (strings.Length == index)
+                    {
+                        var oldStrings = strings;
+
+                        strings = ArrayPool<string>.Shared.Rent(strings.Length * 2);
+                        oldStrings.CopyTo(strings, index: 0);
+
+                        ArrayPool<string>.Shared.Return(oldStrings);
+                    }
+
+                    strings[index++] = _reader.ReadTokenAsString();
+                }
+            }
+
+            if (strings == null)
+            {
+                return [];
+            }
+
+            var retVal = strings.AsSpan(0, index).ToImmutableArray();
+            ArrayPool<string>.Shared.Return(strings);
+
+            return retVal;
         }
 
         internal IReadOnlyList<string> ReadDelimitedString()

@@ -530,4 +530,9 @@ The "s" should be localized to the abbreviation for seconds.</comment>
 {1} - number of vulerabilitiy files reported
 {2} - max count allowed</comment>
   </data>
+  <data name="Error_Insecure_HTTP" xml:space="preserve">
+    <value>You are using a NuGet source '{0}' that contains an 'HTTP' service index resource endpoint: '{1}'. This is insecure and not recommended. To allow HTTP resources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. For more information, visit https://aka.ms/nuget-https-everywhere.</value>
+    <comment>0 - NuGet Package source url
+1- resource endpoint url</comment>
+  </data>
 </root>

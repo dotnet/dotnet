@@ -91,8 +91,8 @@ src/msbuild/src/Tasks/XamlRules/ProjectItemsSchema.xaml|unknown-license-referenc
 src/nuget-client/.editorconfig|unknown-license-reference
 src/nuget-client/README.md|unknown-license-reference
 src/nuget-client/scripts/utils/UpdateNuGetLicenseSPDXList.ps1|json
+src/nuget-client/src/NuGet.Clients/NuGet.CommandLine/xlf/*.xlf|proprietary-license,unknown-license-reference
 src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.UI/Resources.Designer.cs|unknown-license-reference
-src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.UI/Resources.resx|unknown-license-reference
 src/nuget-client/src/NuGet.Clients/NuGet.PackageManagement.UI/Actions/UIActionEngine.cs|unknown-license-reference
 src/nuget-client/src/NuGet.Clients/NuGet.VisualStudio.Internal.Contracts/Formatters/LicenseMetadataFormatter.cs|proprietary-license
 src/nuget-client/src/NuGet.Core/NuGet.Packaging/Rules/DefaultManifestValuesRule.cs|unknown-license-reference
@@ -182,7 +182,6 @@ src/source-build-reference-packages/src/externalPackages/src/application-insight
 src/source-build-reference-packages/src/externalPackages/src/application-insights/WEB/ThirdPartyNotices.txt|unknown-license-reference
 src/source-build-reference-packages/src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/src/Microsoft.IdentityModel.Validators/AadIssuerValidator/AadIssuerValidatorConstants.cs|cpl-1.0
 src/source-build-reference-packages/src/externalPackages/src/humanizer/NuSpecs/*.nuspec*
-src/source-build-reference-packages/src/externalPackages/src/spectre-console/README.md|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/microsoft.aspnetcore.app.ref/8.0.0/THIRD-PARTY-NOTICES.TXT|unknown
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library/2.0.*/THIRD-PARTY-NOTICES.TXT|unknown-license-reference
 src/source-build-reference-packages/src/targetPacks/ILsrc/netstandard.library.ref/2.1.0/THIRD-PARTY-NOTICES.TXT|codesourcery-2004

@@ -164,7 +164,7 @@ namespace Dotnet.Integration.Test
         internal CommandRunnerResult RunDotnetExpectFailure(string workingDirectory, string args = "", IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
             => RunDotnet(workingDirectory, args, expectSuccess: false, environmentVariables, testOutputHelper);
 
-        private CommandRunnerResult RunDotnet(string workingDirectory, string args = "", bool expectSuccess = true, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
+        internal CommandRunnerResult RunDotnet(string workingDirectory, string args = "", bool expectSuccess = true, IReadOnlyDictionary<string, string> environmentVariables = null, ITestOutputHelper testOutputHelper = null)
         {
             bool enableDiagnostics = CIDebug && !string.IsNullOrWhiteSpace(BinLogDirectory);
 
@@ -175,6 +175,12 @@ namespace Dotnet.Integration.Test
                 ["MSBuildSDKsPath"] = MsBuildSdksPath,
                 ["DOTNET_MULTILEVEL_LOOKUP"] = "0",
                 ["DOTNET_ROOT"] = _cliDirectory,
+                // We need to force-override this because otherwise the MSBuildExtensionsPath
+                // set from the _outer_ dotnet cli call (which could be any version) will override
+                // the one set by the _inner_ (test environment-specific) dotnet cli call we're about to make.
+                // We need to ensure that this points to the correct SDK directory because this value
+                // is used to locate many Tasks - especially those located by relative path or name.
+                ["MSBuildExtensionsPath"] = SdkDirectory.FullName
             };
 
             if (enableDiagnostics)

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="it" original="../Strings.resx">
+    <body>
+      <trans-unit id="Error_PackageNotFoundWhenExpected">
+        <source>The feed '{0}' lists package '{1}' but multiple attempts to download the nupkg have failed. The feed is either invalid or required packages were removed while the current operation was in progress. Verify the package exists on the feed and try again.</source>
+        <target state="translated">Il feed '{0}' elenca il pacchetto '{1}', ma diversi tentativi di scaricare il pacchetto nupkg hanno avuto esito negativo. Il feed non è valido o i pacchetti richiesti sono stati rimossi mentre l'operazione corrente era in corso. Verificare l'esistenza del pacchetto nel feed e riprovare.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MatchingSourceFoundForPackage">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'.</source>
+        <target state="translated">Le corrispondenze del mapping di origine del pacchetto trovate per l'ID pacchetto '{0}' sono: '{1}'.</target>
+        <note>{0} - Package id {1} - list of sources</note>
+      </trans-unit>
+      <trans-unit id="Log_NoMatchingSourceFoundForPackage">
+        <source>Package source mapping match not found for package ID '{0}'.</source>
+        <target state="translated">Corrispondenza del mapping di origine del pacchetto non trovata per l'ID pacchetto '{0}'.</target>
+        <note>{0} - Package id</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

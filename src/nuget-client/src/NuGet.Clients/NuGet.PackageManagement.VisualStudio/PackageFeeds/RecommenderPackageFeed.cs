@@ -137,8 +137,8 @@ namespace NuGet.PackageManagement.VisualStudio
                 if (!(NuGetRecommender is null))
                 {
                     var VersionDict = NuGetRecommender.GetVersionInfo();
-                    VersionInfo = (modelVersion: VersionDict.ContainsKey("Model") ? VersionDict["Model"] : null,
-                                    vsixVersion: VersionDict.ContainsKey("Vsix") ? VersionDict["Vsix"] : null);
+                    VersionInfo = (modelVersion: VersionDict.TryGetValue("Model", out var model) ? model : null,
+                                    vsixVersion: VersionDict.TryGetValue("Vsix", out var vsix) ? vsix : null);
                 }
             }
 
