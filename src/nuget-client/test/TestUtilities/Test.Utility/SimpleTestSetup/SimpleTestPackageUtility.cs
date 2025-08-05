@@ -156,8 +156,8 @@ namespace NuGet.Test.Utility
                 }
                 else
                 {
-                    zip.AddEntry("contentFiles/any/any/config.xml", new byte[] { 0 });
-                    zip.AddEntry("contentFiles/cs/net45/code.cs", new byte[] { 0 });
+                    zip.AddEntry("contentFiles/any/any/config.xml", @"", Encoding.UTF8);
+                    zip.AddEntry("contentFiles/cs/net45/code.cs", @"", Encoding.UTF8);
                     zip.AddEntry("lib/net45/a.dll", new byte[] { 0 });
                     zip.AddEntry("lib/netstandard1.0/a.dll", new byte[] { 0 });
                     zip.AddEntry($"build/net45/{id}.targets", @"<Project />", Encoding.UTF8);

@@ -24,9 +24,6 @@ namespace NuGet.PackageManagement.VisualStudio
             ScriptService = new VsProjectScriptHostService(vsProjectAdapter, scriptExecutor);
         }
 
-        [Obsolete]
-        public IProjectBuildProperties BuildProperties => throw new NotSupportedException();
-
         public IProjectSystemCapabilities Capabilities => throw new NotSupportedException();
 
         public IProjectSystemReferencesReader ReferencesReader => throw new NotSupportedException();

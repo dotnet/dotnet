@@ -22,10 +22,6 @@
     <PackageReference Include="System.Formats.Asn1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFrameworkIdentifier)' != '.NETFramework' ">
-    <PackageReference Include="System.Security.Cryptography.Pkcs" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="xunit" />
   </ItemGroup>

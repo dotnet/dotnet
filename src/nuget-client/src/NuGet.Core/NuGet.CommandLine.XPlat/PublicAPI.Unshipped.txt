@@ -1,2 +1,3 @@
 NuGet.CommandLine.XPlat.NuGetCommands
 static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.RootCommand rootCommand) -> void
+static NuGet.CommandLine.XPlat.NuGetCommands.Add(System.CommandLine.RootCommand rootCommand, System.CommandLine.Option<bool> interactiveOption) -> void

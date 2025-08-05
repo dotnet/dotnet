@@ -6,7 +6,7 @@ resources:
   pipelines:
   - pipeline: 'MSBuild'
     project: 'DevDiv'
-    source: 'MSBuild/MSBuild-ExpPerf'
+    source: 'MSBuild'
     trigger:
       branches:
         include:

@@ -1,0 +1,24 @@
+id: 
+name: GitOps.PullRequestIssueManagement.ComplianceReminders
+description: Reminders to consider Compliance tasks and provide pointers to relevant documentation.
+owner: 
+resource: repository
+disabled: false
+where: 
+configuration:
+  resourceManagementConfiguration:
+    eventResponderTasks:
+    - if:
+      - payloadType: Pull_Request
+      - isAction:
+          action: Opened
+      - filesMatchPattern:
+          pattern: '.*\.xaml$'
+          matchAny: true
+      then:
+      - addReply:
+          reply: 'This PR contains changes to XAML files. Verify that you''ve completed the following tasks: 
+        
+        - [ ] Complete [accessibility testing](https://github.com/NuGet/NuGet.Client/blob/dev/docs/ui-guidelines.md#accessibility-testing). 
+        
+        - [ ] Complete [localizability testing](https://github.com/NuGet/NuGet.Client/blob/dev/docs/ui-guidelines.md#localizability-testing).'
