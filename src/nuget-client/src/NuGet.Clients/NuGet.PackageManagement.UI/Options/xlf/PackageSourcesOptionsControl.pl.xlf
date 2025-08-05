@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../PackageSourcesOptionsControl.resx">
+    <body>
+      <trans-unit id="BrowseButton.AccessibleName">
+        <source>Browse</source>
+        <target state="translated">Przeglądaj</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BrowseButton.Text">
+        <source>...</source>
+        <target state="new">...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CopyPackageSourceStripMenuItem.Text">
+        <source>Copy</source>
+        <target state="translated">Kopiuj</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HeaderLabel.Text">
+        <source>Package sources:</source>
+        <target state="translated">Źródła pakietów:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpWarningIcon.AccessibleDescription">
+        <source>HTTP Warning Icon</source>
+        <target state="translated">Ikona ostrzeżenia HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HttpWarningIcon.AccessibleName">
+        <source>HTTP Warning Icon</source>
+        <target state="translated">Ikona ostrzeżenia HTTP</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MachineWidePackageSourcesListBox.AccessibleName">
+        <source>Machine-wide package sources</source>
+        <target state="translated">Źródła pakietów na całym komputerze</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MachineWideSourcesLabel.Text">
+        <source>&amp;Machine-wide package sources:</source>
+        <target state="translated">&amp;Źródła pakietów na całym komputerze:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewPackageNameLabel.Text">
+        <source>&amp;Name:</source>
+        <target state="translated">&amp;Nazwa:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NewPackageSourceLabel.Text">
+        <source>&amp;Source:</source>
+        <target state="translated">Źró&amp;dło:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSourcesListBox.AccessibleName">
+        <source>Package sources</source>
+        <target state="translated">Źródła pakietów</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="addButton.AccessibleDescription">
+        <source>Add a new package source</source>
+        <target state="translated">Dodaj nowe źródło pakietów</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="addButton.AccessibleName">
+        <source>Add package source</source>
+        <target state="translated">Dodaj źródło pakietu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="removeButton.AccessibleDescription">
+        <source>Delete the selected package source</source>
+        <target state="translated">Usuń wybrane źródło pakietów</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="removeButton.AccessibleName">
+        <source>Delete package source</source>
+        <target state="translated">Usuń źródło pakietu</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="updateButton.Text">
+        <source>&amp;Update</source>
+        <target state="translated">&amp;Aktualizuj</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

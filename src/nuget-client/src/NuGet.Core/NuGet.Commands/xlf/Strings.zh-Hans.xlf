@@ -1,0 +1,1507 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">参数不能为 null 或为空。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotBeUsedWithOtherValues">
+        <source>'{0}' cannot be used in conjunction with other values.</source>
+        <target state="translated">“{0}”不能连同其他值使用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyAdded">
+        <source>Client certificate configured for the package source '{0}' was successfully added.</source>
+        <target state="translated">已成功添加为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyRemoved">
+        <source>Client certificate configured for the package source '{0}' was successfully removed.</source>
+        <target state="translated">已成功删除为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyUpdated">
+        <source>Client certificate configured for the package source '{0}' was successfully updated.</source>
+        <target state="translated">已成功更新为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertFilePath">
+        <source>{0}File path: {1}</source>
+        <target state="translated">{0}文件路径: {1}</target>
+        <note>0 - default indentation
+    1 - file path</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertNoPassword">
+        <source>{0}Password: -</source>
+        <target state="translated">{0}密码: -</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertWithPassword">
+        <source>{0}Password: ****</source>
+        <target state="translated">{0}密码: ****</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateError">
+        <source>{0}Certificates status: {1}</source>
+        <target state="translated">{0}证书状态: {1}</target>
+        <note>0 - default indentation
+    1 - error message</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateMessage">
+        <source>{0}Certificate: {1}</source>
+        <target state="translated">{0}证书: {1}</target>
+        <note>0 - default indentation
+    1 - certificate hash string
+</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesLogTitle">
+        <source>{0}{1} [{2}]</source>
+        <target state="translated">{0}{1} [{2}]</target>
+        <note>0 - default indentation
+    1 - package source name
+    2 - client certificate source type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindBy">
+        <source>{0}Find by: {1}</source>
+        <target state="translated">{0}查找依据: {1}</target>
+        <note>0 - default indentation
+    1 - find type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindValue">
+        <source>{0}Find value: {1}</source>
+        <target state="translated">{0}查找值: {1}</target>
+        <note>0 - default indentation
+    1 - find value</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreLocation">
+        <source>{0}Store location: {1}</source>
+        <target state="translated">{0}存储位置: {1}</target>
+        <note>0 - default indentation
+    1 - store location</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreName">
+        <source>{0}Store name: {1}</source>
+        <target state="translated">{0}存储名称: {1}</target>
+        <note>0 - default indentation
+    1 - store name
+</note>
+      </trans-unit>
+      <trans-unit id="Error_AuthorTrustExpectedAuthorSignature">
+        <source>Unable to add trusted author. The package is not author signed.</source>
+        <target state="translated">无法添加受信任的创建者。此包未经过创建者签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find version of msbuild.</source>
+        <target state="translated">找不到 msbuild 的版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotTrustOwnersForAuthor">
+        <source>Trusted owners are not supported in trusted author items.</source>
+        <target state="translated">受信任的创建者项不支持受信任的所有者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_FloatingVersionsNotAllowed">
+        <source>The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011</source>
+        <target state="translated">以下 PackageVersion 项无法指定浮动版本: {0}。有关如何使用中央包管理为项目启用此功能的详细信息，请访问 https://aka.ms/nu1011</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs</source>
+        <target state="translated">以下 PackageReference 项是隐式定义的，无法定义 PackageVersion 项: {0}。使用中央包管理的项目要求 PackageReference 项指定隐式包版本。有关详细信息，请访问 https://aka.ms/sdkimplicitrefs</target>
+        <note>
+      0 - Comma delimited list of the package IDs that were implicitly defined and should not have a PackageVersion item
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingPackageVersion">
+        <source>The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">以下 PackageReference 项未定义相应的 PackageVersion 项: {0}。使用中央包管理的项目必须声明具有匹配名称的 PackageReference 和 PackageVersion 项。有关详细信息，请访问 https://aka.ms/nuget/cpm/gettingstarted</target>
+        <note>
+      0 - The comma delimited list of package names that did not have a version specified.
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">以下 PackageReference 项无法定义版本的值: {0}。使用中央包管理的项目必须在 PackageVersion 项上定义版本值。有关详细信息，请访问 https://aka.ms/nuget/cpm/gettingstarted</target>
+        <note>
+      0 - Comma delimited list of the package IDs that specified a Version
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_VersionOverrideNotAllowed">
+        <source>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</source>
+        <target state="translated">以下 PackageReference 项无法指定 VersionOverride 的值: {0}。 使用中央包管理的项目当前配置为禁用此功能。有关详细信息，请访问 https://aka.ms/nuget/cpm/versionoverride</target>
+        <note>
+      0 - The comma delimited list of package names that specified a value for VersionOverride.
+      Do not localize `PackageReference`
+      Do not localize `VersionOverride`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateAlreadyExist">
+        <source>Client certificate configured for the package source '{0}' already exists.</source>
+        <target state="translated">已存在为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateNotExist">
+        <source>Client certificate configured for the package source '{0}' does not exist</source>
+        <target state="translated">为包源 "{0}" 配置的客户端证书不存在</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateTypeMismatch">
+        <source>Client certificate configured for the package source '{0}' cannot be modified due to a type mismatch.</source>
+        <target state="translated">由于类型不匹配，无法修改为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificatesNotFound">
+        <source>Client certificates were not found.</source>
+        <target state="translated">未找到客户端证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CouldNotAdd">
+        <source>Could not add the trusted signer: {0}</source>
+        <target state="translated">无法添加受信任的签名者: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotList">
+        <source>Could not list the trusted signers: {0}</source>
+        <target state="translated">无法列出受信任的签名者: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotRemove">
+        <source>Could not remove the trusted signer: {0}</source>
+        <target state="translated">无法删除受信任的签名者: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotSync">
+        <source>Could not sync the trusted repository: {0}</source>
+        <target state="translated">无法同步受信任的存储库: {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateClientCertificate">
+        <source>Could not update the client certificate: {0}</source>
+        <target state="translated">无法更新客户端证书: {0}</target>
+        <note>0 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateMetadataLastAccessTime">
+        <source>Updating last access time on file {0} failed with {1}</source>
+        <target state="translated">更新对文件 {0} 的上次访问时间失败，{1}</target>
+        <note>0 - file path
+    1 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptyCertificateListInRepository">
+        <source>The repository with the service index '{0}' does not list any trusted certificates.</source>
+        <target state="translated">服务索引为 {0} 的存储库未列出任何受信任的证书。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFilePath">
+        <source>A source file was added with an empty path.</source>
+        <target state="translated">添加了带空路径的源文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFileProjectDirectory">
+        <source>The project directory for the source file '{0}' could not be found.</source>
+        <target state="translated">找不到源文件“{0}”的项目目录。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 'allowInsecureConnections' 显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single_Short">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">正在使用“HTTP”源运行“{0}”操作: {1}。NuGet 需要 HTTPS 源。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 'allowInsecureConnections' 显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Error_IncompatiblePackageType">
+        <source>The package {0} {1} has a package type {2} that is incompatible with this project.</source>
+        <target state="translated">包 {0} {1} 的包类型 {2} 与此项目不兼容。</target>
+        <note>0 - package id, 1 - version, 2 - package type</note>
+      </trans-unit>
+      <trans-unit id="Error_InputFileNotSpecified">
+        <source>Specify a nuspec, project.json, or project file to use</source>
+        <target state="translated">指定 nuspec、project.json 或项目文件以供使用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidATF">
+        <source>PackageTargetFallback and AssetTargetFallback cannot be used together. Remove PackageTargetFallback(deprecated) references from the project environment.</source>
+        <target state="translated">PackageTargetFallback 和 AssetTargetFallback 不能一起使用。请从项目环境中删除 PackageTargetFallback(已弃用)引用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCertificateInformationFromServer">
+        <source>Invalid certificate information from the service index '{0}'.</source>
+        <target state="translated">来自服务索引 {0} 的证书信息无效。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidCombinationOfArguments">
+        <source>Invalid combination of arguments.</source>
+        <target state="translated">参数组合无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInput">
+        <source>Invalid input '{0}'. The file type was not recognized.</source>
+        <target state="translated">输入“{0}”无效。文件类型未识别。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputConfig">
+        <source>Invalid input '{0}'. Valid file names are 'packages.config' or 'packages.*.config'.</source>
+        <target state="translated">无效的输入“{0}”。有效文件名为“packages.config”或“packages.*.config”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputJson">
+        <source>Invalid input '{0}'. Valid file names are 'project.json' or '*.project.json'.</source>
+        <target state="translated">无效的输入“{0}”。有效文件名为“project.json”或“*.project.json”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidDependencyVersionConstraints">
+        <source>Package version constraints for '{0}' return a version range that is empty.</source>
+        <target state="translated">“{0}”的包版本约束返回为空的版本范围。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">还原输入无效，其中 RestorePackagesWithLockFile 属性设置为 false，但 {0} 处存在包锁定文件。</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditLevelValue">
+        <source>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAuditLevel 值 "{0}" 无效。有效值: {1}</target>
+        <note>Don't translate 'NuGetAuditLevel'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditModeValue">
+        <source>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAuditMode 值 "{0}" 无效。有效值: {1}</target>
+        <note>Don't translate 'NuGetAuditMode'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "direct, all"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditValue">
+        <source>Invalid NuGetAudit value '{0}'. Valid values: {1}</source>
+        <target state="translated">NuGetAudit 值 "{0}" 无效。有效值: {1}</target>
+        <note>Don't translate 'NuGetAudit'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "true, false"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidProjectPackageCombo">
+        <source>Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type</source>
+        <target state="translated">{0} {1} 的项目包组合无效。DotnetToolReference 项目类型仅可包含 DotnetTool 类型的引用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSymbolPackageFormat">
+        <source>The provided SymbolPackageFormat value {0} is invalid. Allowed values : 'snupkg', 'symbols.nupkg'.</source>
+        <target state="translated">提供的 SymbolPackageFormat 值 {0} 无效。允许的值: "snupkg"、"symbols.nupkg"。</target>
+        <note>Do not localize snupkg and symbols.nupkg</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Failed to build package because of an unsupported targetFramework value on '{0}'.</source>
+        <target state="translated">“{0}”中存在不支持的 targetFramework，导致创建包失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidWindowsTargetPlatformMinVersion">
+        <source>Invalid value for WindowsTargetPlatformMinVersion: {0}</source>
+        <target state="translated">WindowsTargetPlatformMinVersion 值无效: {0}</target>
+        <note>{0} is the value supplied </note>
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">未指定源参数。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultiplePackagePaths">
+        <source>{0} contains more than one path</source>
+        <target state="translated">{0} 包含多个路径</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">signatureValidationMode 设置为“要求”，因此仅当被受信任签署人签署后才允许使用包；但未指定任何受信任签署人。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingCertificate">
+        <source>The package signature did not match any of the allowed certificate fingerprints.</source>
+        <target state="translated">包签名与任何允许的证书指纹均不匹配。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">此包已签署，但不是由受信任的签署人签署。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExist">
+        <source>Unable to find package {0}. No packages exist with this id in source(s): {1}</source>
+        <target state="translated">找不到包 {0}。源 {1} 中不存在具有此 ID 的包</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExistInRange">
+        <source>Unable to find package {0} with version {1}</source>
+        <target state="translated">找不到版本为 {1} 的包 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoSignatureTrustedForPackage">
+        <source>No signature to be trusted was specified for the package '{0}'. Specify either Author or Repository.</source>
+        <target state="translated">未针对包 {0} 指定受信任的签名。请指定创建者或存储库。</target>
+        <note>0 - Package path</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSourcesInformation">
+        <source>Unable to get package sources information.</source>
+        <target state="translated">无法获取包源信息。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoStablePackageVersionsExist">
+        <source>Unable to find a stable package {0} with version {1}</source>
+        <target state="translated">找不到版本为 {1} 的稳定包 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotSupportedHashAlgorithm">
+        <source>'{0}' is not a supported hash algorithm.</source>
+        <target state="translated">“{0}”不是支持的哈希算法。</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="Error_PackFailed">
+        <source>Failed to build package. {0}</source>
+        <target state="translated">创建包失败。{0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">未能生成包。请确保“{0}”包含程序集文件。有关生成符号包方面的帮助，请访问 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">未能生成包。请确保“{0}”包含源文件和符号文件。有关生成符号包方面的帮助，请访问 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">包“{0}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">包“{0} {1}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">未对软件包进行签名。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageReference_NoVersion">
+        <source>The following PackageReference item(s) do not have a version specified: {0}</source>
+        <target state="translated">以下 PackageReference 项未指定版本: {0}</target>
+        <note>0 - List of package names</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">{0} 的包内容哈希验证失败。包与上次还原不同。</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_PlatformVersionNotPresent">
+        <source>Platform version is not present for one or more target frameworks, even though they have specified a platform: {0}</source>
+        <target state="translated">一个或多个目标框架的平台版本未显示，但它们已指定平台: {0}</target>
+        <note>0 - comma-separated list of TFMs missing a platform version</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectDoesNotExist">
+        <source>Unable to find project '{0}'. Check that the project reference is valid and that the project file exists.</source>
+        <target state="translated">找不到项目“{0}”。请检查项目引用是否有效以及项目文件是否存在。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated">
+        <source>Managing packages with project.json is deprecated. Migrate to PackageReference.</source>
+        <target state="translated">已弃用使用 project.json 管理包的功能。迁移到 PackageReference。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonIsUnreadable">
+        <source>The runtime.json specified in the project '{0}' could not be parsed. {1}</source>
+        <target state="translated">未能分析项目“{0}”中指定的 runtime.json。{1}</target>
+        <note>0 - runtime.json path, 1 - Additional Message, Please do not localize 'runtime.json'.</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonNotFound">
+        <source>The runtime.json specified in the project '{0}' could not be found.</source>
+        <target state="translated">项目“{0}”中找不到指定的 runtime.json。</target>
+        <note>0 - runtime.json path, Please do not localize 'runtime.json'</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectWithIncorrectDependenciesCount">
+        <source>Project {0} must have a single package reference(s).</source>
+        <target state="translated">项目 {0} 必须具有单个包引用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PropertyCannotBeNullOrEmpty">
+        <source>Property '{0}' should not be null or empty.</source>
+        <target state="translated">属性 {0} 不应为 null 或为空。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="Error_RepoTrustExpectedRepoSignature">
+        <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
+        <target state="translated">无法添加受信任的存储库。包未经过存储库签名或加签。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedMode">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</source>
+        <target state="translated">包锁定文件与项目依赖项不一致，因此无法在锁定模式下运行还原。请禁用 RestoreLockedMode MSBuild 属性或传递显式 --force-evaluate 选项，运行还原来更新锁定文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningDirectPackageReference">
+        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
+        <target state="translated">将不会删除 PackageReference {0}。请考虑从依赖项中删除此包，因为它可能不需要。</target>
+        <note>0 - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningProjectReference">
+        <source>A ProjectReference cannot be pruned, {0}.</source>
+        <target state="translated">无法删除 ProjectReference，{0}。</target>
+        <note>0 - project reference</note>
+      </trans-unit>
+      <trans-unit id="Error_ServiceIndexShouldBeHttps">
+        <source>The repository service index '{0}' is not a valid HTTPS url.</source>
+        <target state="translated">存储库服务索引 {0} 不是有效的 HTTPS URL。</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_ToolsPackageWithExtraPackageTypes">
+        <source>Invalid tools package {0} {1}. Tools packages cannot contain more than one PackageType.</source>
+        <target state="translated">工具包 {0} {1} 无效。工具包仅可包含一个 PackageType。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedAuthorNoOwners">
+        <source>A trusted author cannot have owners.</source>
+        <target state="translated">受信任的创建者不能包含所有者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepoAlreadyExists">
+        <source>A trusted repository with the service index '{0}' already exists.</source>
+        <target state="translated">具有服务索引 {0} 的受信任存储库已存在。</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepositoryDoesNotExist">
+        <source>A trusted repository '{0}' does not exist.</source>
+        <target state="translated">不存在受信任的存储库 {0}。</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedSignerAlreadyExists">
+        <source>A trusted signer '{0}' already exists.</source>
+        <target state="translated">受信任的签名者 {0} 已存在。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToFindProjectInfo">
+        <source>Unable to find project information for '{0}'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">找不到“{0}”的项目信息。如果使用 Visual Studio，这可能是因为该项目已被卸载或不属于当前解决方案，因此请从命令行运行还原。否则，项目文件可能无效或缺少还原所需的目标。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateBuildOutput">
+        <source>No build found in {0}. Use the -Build option or build the project.</source>
+        <target state="translated">在 {0} 中找不到生成项。请使用 -Build 选项生成项目。</target>
+        <note>{0} is the project output directory</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain a project to restore.</source>
+        <target state="translated">文件夹“{0}”不包含要还原的项目。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToSignPackage">
+        <source>Unable to sign package.</source>
+        <target state="translated">无法签名包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnavailableSource">
+        <source>Source '{0}' does not exist or cannot be retrived.</source>
+        <target state="translated">源 {0} 不存在或无法对其进行检索。</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownBuildAction">
+        <source>Package '{0}' specifies an invalid build action '{1}' for file '{2}'.</source>
+        <target state="translated">包“{0}”为文件“{2}”指定了无效的生成操作“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificateStoreType">
+        <source>Cannot determine client certificate store type</source>
+        <target state="translated">无法确定客户端证书存储类型</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesFindBy">
+        <source>The find by search type '{0}' is not recognized.</source>
+        <target state="translated">无法识别通过输入搜索内容“{0}”而找的结果。</target>
+        <note>0 - find type</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreLocation">
+        <source>The store location '{0}' is not recognized.</source>
+        <target state="translated">无法识别存储位置 "{0}"。</target>
+        <note>0 - store location</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreName">
+        <source>The source name '{0}' is not recognized.</source>
+        <target state="translated">无法识别源名称 "{0}"。</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedTrustTarget">
+        <source>The trust target '{0}' is unsupported.</source>
+        <target state="translated">不支持信任目标 {0}。</target>
+        <note>0 - VerificationTarget</note>
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">获取包漏洞数据时出错: {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WriteResolvedNuSpecOverwriteOriginal">
+        <source>Unable to output resolved nuspec file because it would overwrite the original at '{0}'</source>
+        <target state="translated">无法输出解析的 nuspec 文件，因为它会覆盖“{0}”处的原始文件</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_XPROJNotAllowed">
+        <source>Invalid input '{0}'. XProj support has been removed. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">输入“{0}”无效。已不再支持 XProj。不再支持 XProj 和独立 project.json 文件，若要继续处理旧项目，请从 https://nuget.org/downloads 下载使用 NuGet 3.5.x</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">未能生成“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">未添加文件“{0}”，因为包已包含文件“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSource">
+        <source>Found {0} version(s) in {1} [ Nearest version: {2} ]</source>
+        <target state="translated">在 {1} 中找到 {0} 个版本[ 最接近版本: {2} ]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSourceWithoutMatch">
+        <source>Found {0} version(s) in {1}</source>
+        <target state="translated">在 {1} 中找到 {0} 个版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInput">
+        <source>Invalid restore input. {0}</source>
+        <target state="translated">还原输入无效。{0}</target>
+        <note>0 is an error message specific to the validation failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInputWithFiles">
+        <source>Invalid restore input. {0} Input files: {1}.</source>
+        <target state="translated">还原输入无效。{0} 输入文件: {1}。</target>
+        <note>0 is an error message specific to the validation failure. 1 is a list of file paths.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Provide a valid source.</source>
+        <target state="translated">指定的源“{0}”无效。请提供有效的源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">{0} 值: `{1}` 无效。有效示例: `{2}`</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Invalid_Framework">
+        <source>One or more invalid frameworks were detected.</source>
+        <target state="translated">检测到一个或多个无效框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: Unable to delete one or more files.</source>
+        <target state="translated">清除本地资源失败: 无法删除一个或多个文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">本地资源已清除。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesFolder">
+        <source>Clearing NuGet global packages folder: {0}</source>
+        <target state="translated">正在清除 NuGet 全局包文件夹: {0}</target>
+        <note>{0} : Global packages cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">正在清除 NuGet HTTP 缓存: {0}</target>
+        <note>{0} : Http cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetPluginsCache">
+        <source>Clearing NuGet plugins cache: {0}</source>
+        <target state="translated">正在清除 NuGet 插件缓存: {0}</target>
+        <note>{0}: Plugins cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetTempCache">
+        <source>Clearing NuGet Temp cache: {0}</source>
+        <target state="translated">正在清除 NuGet 临时缓存: {0}</target>
+        <note>{0} : Temp cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">未能删除“{0}”。</target>
+        <note>{0} : Path to be deleted</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_Help">
+        <source>usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">用法: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+有关详细信息，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Provide one of the following values: http-cache, temp, global-packages, all.</source>
+        <target state="translated">提供了无效的本地资源名称。请提供以下值之一: http-cache、temp、global-packages、all。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">本地资源“{0}”的位置未定义。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">本地资源已部分清除。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AllProjectsUpToDate">
+        <source>All projects are up-to-date for restore.</source>
+        <target state="translated">所有项目均是最新的，无法还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AssetsFileNotOnDisk">
+        <source>The expected assets file for {0} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">{0} 所需的资产文件不存在，无法执行任何操作。继续还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_CPVM_DowngradeError">
+        <source>Detected package downgrade: {0} from {1} to centrally defined {2}. Update the centrally managed package version to a higher version.</source>
+        <target state="translated">检测到包降级: {0} 从 {1} 降级到集中定义的 {2}。请将集中管理的包版本更新到更高版本。</target>
+        <note>{0} is package id, {1} is the package version, {2} is the downgraded package version.</note>
+      </trans-unit>
+      <trans-unit id="Log_Committing">
+        <source>Committing restore...</source>
+        <target state="translated">正在提交还原...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConfigFileSummary">
+        <source>NuGet Config files used:</source>
+        <target state="translated">使用的 NuGet 配置文件:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConvertedPackageToOriginalCase">
+        <source>The package {0} was converted to original case in the packages directory.</source>
+        <target state="translated">包 {0} 已转换为包目录中的原始用例。</target>
+        <note>{0} is the package identity.</note>
+      </trans-unit>
+      <trans-unit id="Log_CycleDetected">
+        <source>Cycle detected.</source>
+        <target state="translated">检测到循环。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DependencyBumpedUp">
+        <source>Dependency specified was {0} {1} but ended up with {2} {3}.</source>
+        <target state="translated">指定的依赖性是 {0} {1}，但最终的依赖性是 {2} {3}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DowngradeWarning">
+        <source>Detected package downgrade: {0} from {1} to {2}. Reference the package directly from the project to select a different version.</source>
+        <target state="translated">检测到包降级: {0} 从 {1} 降级到 {2}。直接从项目引用包以选择不同版本。</target>
+        <note>{0}: package id
+{1}: requested version
+{2}: resolved version</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorSummary">
+        <source>Errors in {0}</source>
+        <target state="translated">{0} 中的错误</target>
+        <note>0 - project name/type</note>
+      </trans-unit>
+      <trans-unit id="Log_FeedsUsedSummary">
+        <source>Feeds used:</source>
+        <target state="translated">使用的源:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FrameworkDisplay">
+        <source>{0} ({1})</source>
+        <target state="translated">{0} ({1})</target>
+        <note>0 - framework short name, 1 - System.FrameworkName</note>
+      </trans-unit>
+      <trans-unit id="Log_FrameworkRIDDisplay">
+        <source>{0} ({1}) / {2}</source>
+        <target state="translated">{0} ({1}) / {2}</target>
+        <note>0 - framework short name, 1 - System.FrameworkName, 2 - Runtime ID</note>
+      </trans-unit>
+      <trans-unit id="Log_GeneratingMsBuildFile">
+        <source>Generating MSBuild file {0}.</source>
+        <target state="translated">正在生成 MSBuild 文件 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ImportsFallbackWarning">
+        <source>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</source>
+        <target state="translated">已使用“{1}”而不是项目目标框架“{2}”还原包“{0}”。此包可能与项目不完全兼容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummary">
+        <source>Installed:</source>
+        <target state="translated">已安装:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummaryCount">
+        <source>{0} package(s) to {1}</source>
+        <target state="translated">{1} 的 {0} 包</target>
+        <note>0 - installed package count
+1 - folder path</note>
+      </trans-unit>
+      <trans-unit id="Log_LockFileNotOnDisk">
+        <source>The lock file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">位置 {1} 处 {0} 的锁定文件不存在，无法执行 No-Op。继续还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MergingRuntimes">
+        <source>Merging in runtimes defined in {0}.</source>
+        <target state="translated">正在合并 {0} 中定义的运行时。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFx">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no compatible run-time assembly.</source>
+        <target state="translated">{0} {1} 为 {3} 上的 {2} 提供了编译时引用程序集，但没有兼容的运行时程序集。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFxRuntime">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no run-time assembly compatible with {4}.</source>
+        <target state="translated">{0} {1} 为 {3} 上的 {2} 提供了编译时引用程序集，但没有与 {4} 兼容的运行时程序集。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingPackagesOnDisk">
+        <source>Not all packages are on disk for: {0}</source>
+        <target state="translated">并非所有包都在 {0} 磁盘上</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">已添加文件“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">正在尝试生成“{0}”的符号包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandInstallPackageToOutputPath">
+        <source>Install {0} to output path '{1}'</source>
+        <target state="translated">安装 {0} 以输出路径“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">已成功创建包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageContentHashValidationFailed">
+        <source>Package content hash validation failed for {0}. Expected: {1} Actual: {2}</source>
+        <target state="translated">{0} 的包内容哈希验证失败。预期结果: {1} 实际结果: {2}</target>
+        <note>0 - package ID, 1 - expected Sha, 2 - actual sha</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx">
+        <source>Package {0} {1} is not compatible with {2}.</source>
+        <target state="translated">包 {0} {1} 与 {2} 不兼容。</target>
+        <note>0 - package id, 1 - version, 2 - target framework</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_NoSupports">
+        <source>Package {0} {1} does not support any target frameworks.</source>
+        <target state="translated">包 {0} {1} 不支持任何目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_Supports">
+        <source>Package {0} {1} supports:</source>
+        <target state="translated">包 {0} {1} 支持:</target>
+        <note>0 - package id, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="Log_PackagesAndProjectsAreCompatible">
+        <source>All packages and projects are compatible with {0}.</source>
+        <target state="translated">所有包和项目均与 {0} 兼容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectDoesNotSpecifyTargetFrameworks">
+        <source>The project {0} does not specify any target frameworks in {1}.</source>
+        <target state="translated">项目 {0} 未在 {1} 中指定任何目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx">
+        <source>Project {0} is not compatible with {1}.</source>
+        <target state="translated">项目 {0} 与 {1} 不兼容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_NoSupports">
+        <source>Project {0} does not support any target frameworks.</source>
+        <target state="translated">项目 {0} 不支持任何目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_Supports">
+        <source>Project {0} supports:</source>
+        <target state="translated">项目 {0} 支持:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectUpToDateSummary">
+        <source>{0} of {1} projects are up-to-date for restore.</source>
+        <target state="translated">{0} 个项目(共 {1} 个)是最新的，无法还原。</target>
+        <note>0 - number of projects that were up-to-date
+1 - Total number of projects</note>
+      </trans-unit>
+      <trans-unit id="Log_PropsFileNotOnDisk">
+        <source>The props file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">位置 {1} 处 {0} 的属性文件不存在，无法执行 No-Op。继续还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ReadingProject">
+        <source>Reading project file {0}.</source>
+        <target state="translated">正在读取项目文件 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ResolverConflict">
+        <source>Unable to satisfy conflicting requests for '{0}': {1} Framework: {2}</source>
+        <target state="translated">无法满足“{0}”的互相冲突的请求: {1} 框架: {2}</target>
+        <note>0 - package id, 1 - comma delimited list of conflicts, 2 - framework</note>
+      </trans-unit>
+      <trans-unit id="Log_ResolvingConflicts">
+        <source>Resolving conflicts for {0}...</source>
+        <target state="translated">正在解决 {0} 的冲突...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreComplete">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">已还原 {0} (用时 {1})。</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreCompleteDotnetTool">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">已还原 {0} (用时 {1})。</target>
+        <note>{0} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailed">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">未能还原 {0} (用时 {1})。</target>
+        <note>{0} is the path to the project file.
+    {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailedDotnetTool">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">未能还原 {0} (用时 {1})。</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpDGChanged">
+        <source>The restore inputs for '{0}' have changed. Continuing restore.</source>
+        <target state="translated">“{0}”的还原输入已改变。继续还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpFinish">
+        <source>The restore inputs for '{0}' have not changed. No further actions are required to complete the restore.</source>
+        <target state="translated">“{0}”的还原输入未改变。完成此还原不需要再进行进一步的操作。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoringPackages">
+        <source>Restoring packages for {0}...</source>
+        <target state="translated">正在还原 {0} 的包...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningNonParallelRestore">
+        <source>Running non-parallel restore.</source>
+        <target state="translated">正在运行非并行还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningParallelRestore">
+        <source>Running restore with {0} concurrent jobs.</source>
+        <target state="translated">正在使用 {0} 并行作业运行还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ScanningForRuntimeJson">
+        <source>Scanning packages for runtime.json files...</source>
+        <target state="translated">正在扫描 runtime.json 文件的包...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingAssetsFile">
+        <source>Assets file has not changed. Skipping assets file writing. Path: {0}</source>
+        <target state="translated">资产文件未改变。跳过资产文件写入。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingCacheFile">
+        <source>No-Op restore. The cache will not be updated. Path: {0}</source>
+        <target state="translated">No-Op 还原。缓存不会更新。路径: {0}</target>
+        <note>{0}: Path to cache file</note>
+      </trans-unit>
+      <trans-unit id="Log_SkippingPackagesLockFileGeneration">
+        <source>Skipping the lock file regeneration for '{0}'.</source>
+        <target state="translated">正在跳过 "{0}" 的锁定文件重新生成。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SourceMappingEnabledNoMatchingPackageSources">
+        <source>PackageSourceMapping is enabled, the following source(s) were not considered: {0}.</source>
+        <target state="translated">PackageSourceMapping 已启用，未考虑以下源: {0}。</target>
+        <note>Please do not localize `PackageSourceMapping`. 0 - package source names list.</note>
+      </trans-unit>
+      <trans-unit id="Log_TargetsFileNotOnDisk">
+        <source>The targets file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">位置 {1} 处的目标文件 {0} 不存在，no-op  不可能。继续还原。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolSkippingAssetsFile">
+        <source>Tool assets file has not changed. Skipping assets file write. Path: {0}</source>
+        <target state="translated">工具资产文件未改变。跳过资产文件写入。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingAssetsFile">
+        <source>Writing tool assets file to disk. Path: {0}</source>
+        <target state="translated">将工具资产文件写入磁盘。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingCacheFile">
+        <source>Writing tool cache file to disk. Path: {0}</source>
+        <target state="translated">将工具缓存文件写入磁盘。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnknownCompatibilityProfile">
+        <source>Unknown Compatibility Profile: {0}</source>
+        <target state="translated">未知的兼容性配置文件: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnresolvedDependency">
+        <source>Unable to resolve '{0}' for '{1}'.</source>
+        <target state="translated">无法解析 {1} 的“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflict">
+        <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
+        <target state="translated">{0} 中检测到版本冲突。直接安装/引用 {1} 到项目 {2} 可解决此问题。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingAssetsFile">
+        <source>Writing assets file to disk. Path: {0}</source>
+        <target state="translated">将资产文件写入磁盘。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingCacheFile">
+        <source>Writing cache file to disk. Path: {0}</source>
+        <target state="translated">将缓存文件写入磁盘。路径: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingPackagesLockFile">
+        <source>Writing packages lock file at disk. Path: {0}</source>
+        <target state="translated">在磁盘写入包锁定文件。路径: {0}</target>
+        <note>{0} - Path to packages lock file</note>
+      </trans-unit>
+      <trans-unit id="MSBuildWarning_MultiTarget">
+        <source>Packages containing MSBuild targets and props files cannot be fully installed in projects targeting multiple frameworks. The MSBuild targets and props files have been ignored.</source>
+        <target state="translated">无法在面向多个框架的项目中完全安装包含 MSBuild 目标与属性文件的包。已忽略 MSBuild 目标与属性文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredProperty">
+        <source>Missing required property '{0}'.</source>
+        <target state="translated">缺少必需属性“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredPropertyForProjectType">
+        <source>Missing required property '{0}' for project type '{1}'.</source>
+        <target state="translated">项目类型“{1}”缺少必需属性“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Multiple_Nupkgs_Detected">
+        <source>Multiple nupkg files detected on '{0}' path to trust, only 1 is allowed.</source>
+        <target state="translated">在“{0}”路径上检测到多个 nupkg 文件可信任，但仅允许 1 个。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificates">
+        <source>There are no client certificates.</source>
+        <target state="translated">没有客户端证书。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificatesMatching">
+        <source>There are no client certificates configured for the package source '{0}'.</source>
+        <target state="translated">没有为包源 "{0}" 配置的客户端证书。</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="NoTrustedSigners">
+        <source>There are no trusted signers.</source>
+        <target state="translated">没有任何受信任的签名者。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTrustedSignersMatching">
+        <source>No trusted signers with the name: '{0}' were found.</source>
+        <target state="translated">找不到名为“{0}”的任何受信任签名者。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="NonMatchingProperties">
+        <source>Properties '{0}':'{1}' and '{2}':'{3}' do not match.</source>
+        <target state="translated">属性“{0}”:“{1}”和“{2}”:“{3}”不匹配。</target>
+        <note>0 - first property name
+1 - first property value
+2 - second property name
+3 - second property value</note>
+      </trans-unit>
+      <trans-unit id="NuGetDocs">
+        <source>https://docs.nuget.org/</source>
+        <target state="translated">https://docs.nuget.org/</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowed">
+        <source>Invalid input combination. Property '{0}' is not allowed.</source>
+        <target state="translated">输入组合无效。不允许使用属性“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowedForProjectType">
+        <source>Invalid input combination. Property '{0}' is not allowed for project type '{1}'.</source>
+        <target state="translated">输入组合无效。项目类型“{1}”不允许使用属性“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredClientCertificates">
+        <source>Registered client certificates:</source>
+        <target state="translated">已注册的客户端证书:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredTrustedSigners">
+        <source>Registered trusted signers:</source>
+        <target state="translated">注册的受信任签名者:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReservedPackageNameAll">
+        <source>All</source>
+        <target state="translated">全部</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverRequest_ToStringFormat">
+        <source>{0} (via {1})</source>
+        <target state="translated">{0} (通过 {1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreDebugPruningPackageReference">
+        <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
+        <target state="translated">正在将包 '{0}' 作为 '{1}' 的依赖项进行修剪。最大可运行版本 '{2}'</target>
+        <note>0 - package id and version, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFileNotFound">
+        <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">找不到文件“{0}”。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} is the certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNotFound">
+        <source>Certificate store '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">找不到证书存储“{0}”。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} is the certificate store name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandDialogMessage">
+        <source>Select a valid certificate</source>
+        <target state="translated">选择一个有效的证书</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDialogTitle">
+        <source>NuGet Sign Certificate Selection</source>
+        <target state="translated">NuGet 签名证书选择</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayCertificate">
+        <source>Signing package(s) with certificate:</source>
+        <target state="translated">用证书对包签名:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayTimestamper">
+        <source>Timestamping package(s) with:</source>
+        <target state="translated">对以下程序对包加盖时间戳:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertException">
+        <source>Certificate file '{0}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">证书文件“{0}”无效。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>0 - certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidPasswordException">
+        <source>Invalid password was provided for the certificate file '{0}'. Provide a valid password using the '-{1}' option</source>
+        <target state="translated">为证书文件“{0}”提供的密码无效。请使用“-{1}”选项提供有效的密码</target>
+        <note>0 - certificate file path
+1 - certificate password option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertException">
+        <source>Multiple certificates were found that meet all the given criteria. Use the '-{0}' option with the hash of the desired certificate.</source>
+        <target state="translated">找到多个满足所有给定条件的证书。请使用“-{0}”选项对所需证书进行哈希处理。</target>
+        <note>0 - CertificateFingerprint option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertException">
+        <source>No certificates were found that meet all the given criteria. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">未找到满足所有给定条件的证书。要获取接受的证书提供方式列表，请访问 https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOutputPath">
+        <source>Signed package(s) output path:</source>
+        <target state="translated">已签名包的输出路径:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandSuccess">
+        <source>Package(s) signed successfully.</source>
+        <target state="translated">包签名成功。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceNotConsidered">
+        <source>Versions from {0} were not considered</source>
+        <target state="translated">未考虑来自{0}的版本</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Source_DefaultNamePrefix">
+        <source>Package source </source>
+        <target state="translated">程序包源</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_InvalidFormatValue">
+        <source>invalid value for --format: {0}. Allowed values: 'detailed' or 'short'</source>
+        <target state="translated">--format 的值无效: {0}。允许的值: "detailed" 或 "short"</target>
+        <note>don't localize 'format', 'detailed' or 'short'</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllNameIsReserved">
+        <source>Package source name 'All' is a reserved name.</source>
+        <target state="translated">包源名称 "All" 是保留名称。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandClearingExistingAuthTypes">
+        <source>Clearing existing authentication types settings for package source '{0}'.</source>
+        <target state="translated">正在清除包源“{0}”的现有身份验证类型设置。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequired">
+        <source>Both UserName and Password must be specified.</source>
+        <target state="translated">必须同时指定用户名和密码。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequiredWithAuthTypes">
+        <source>Both UserName and Password must be specified if ValidAuthenticationTypes is specified.</source>
+        <target state="translated">如果指定了 ValidAuthenticationTypes，则必须同时指定用户名和密码。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandDisabled">
+        <source>Disabled</source>
+        <target state="translated">已禁用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandEnabled">
+        <source>Enabled</source>
+        <target state="translated">已启用</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandInvalidSource">
+        <source>The source specified is invalid. Provide a valid source.</source>
+        <target state="translated">指定的源无效。请提供有效的源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoMatchingSourcesFound">
+        <source>Unable to find any package source(s) matching name: {0}.</source>
+        <target state="translated">找不到任何匹配以下名称的包源: {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoSources">
+        <source>No sources found.</source>
+        <target state="translated">找不到任何源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandRegisteredSources">
+        <source>Registered Sources:</source>
+        <target state="translated">注册的源:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceAddedSuccessfully">
+        <source>Package source with Name: {0} added successfully.</source>
+        <target state="translated">已成功添加名称为 {0} 的包源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDisabledSuccessfully">
+        <source>Package source with Name: {0} disabled successfully.</source>
+        <target state="translated">已成功禁用名称为 {0} 的包源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceEnabledSuccessfully">
+        <source>Package source with Name: {0} enabled successfully.</source>
+        <target state="translated">已成功启用名称为 {0} 的包源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceRemovedSuccessfully">
+        <source>Package source with Name: {0} removed successfully.</source>
+        <target state="translated">已成功移除名称为 {0} 的包源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueName">
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="translated">指定的名称已添加到可用程序包名称的列表中。请提供唯一的名称。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="translated">指定的源已添加到可用程序包源的列表中。请提供唯一的源。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUpdateSuccessful">
+        <source>Package source "{0}" was successfully updated.</source>
+        <target state="translated">已成功更新包源“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidProtocolVersion">
+        <source>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</source>
+        <target state="translated">指定的协议版本无效。有效的协议版本为 {0} 至 {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationDuplicateFrameworks">
+        <source>Duplicate frameworks found: '{0}'.</source>
+        <target state="translated">找到重复的框架:“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationInvalidFramework">
+        <source>Invalid target framework '{0}'.</source>
+        <target state="translated">目标框架“{0}”无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationMissingProject">
+        <source>Missing project '{0}'.</source>
+        <target state="translated">缺少项目“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationNoFrameworks">
+        <source>No target frameworks specified.</source>
+        <target state="translated">未指定目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationUAPSingleFramework">
+        <source>UAP projects must contain exactly one target framework.</source>
+        <target state="translated">UAP 项目必须恰好包含一个目标框架。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationZeroRestoreRequests">
+        <source>Restore request does not contain any projects to restore.</source>
+        <target state="translated">还原请求不包含要还原的任何项目。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidation_OriginalTargetFrameworksMustMatchAliases">
+        <source>The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}.</source>
+        <target state="translated">原始目标框架值必须与别名匹配。原始目标框架: {0}，别名: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullUpdatedTrustedSigner">
+        <source>Successfully updated the trusted signer '{0}'.</source>
+        <target state="translated">已成功更新受信任的签名者“{0}”。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedAuthor">
+        <source>Successfully added a trusted author '{0}'.</source>
+        <target state="translated">已成功添加受信任的创建者“{0}”。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedRepository">
+        <source>Successfully added a trusted repository '{0}'.</source>
+        <target state="translated">已成功添加的受信任的存储库“{0}”。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyRemovedTrustedSigner">
+        <source>Successfully removed the trusted signer '{0}'.</source>
+        <target state="translated">已成功删除受信任的签名者“{0}”。</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullySynchronizedTrustedRepository">
+        <source>Successfully synchronized the trusted repository '{0}'.</source>
+        <target state="translated">已成功同步受信任的存储库“{0}”。</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryAllowUntrustedRoot">
+        <source>[U] {0} - {1}</source>
+        <target state="translated">[U] {0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryUnallowUntrustedRoot">
+        <source>{0} - {1}</source>
+        <target state="translated">{0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificates">
+        <source>Certificate fingerprint(s):</source>
+        <target state="translated">证书指纹:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogOwners">
+        <source>Trusted owners: {0}</source>
+        <target state="translated">受信任的所有者: {0}</target>
+        <note>0 - semi-colon separated owners list</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogServiceIndex">
+        <source>Service Index: {0}</source>
+        <target state="translated">服务索引: {0}</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogTitle">
+        <source>{0} [{1}]</source>
+        <target state="translated">{0} [{1}]</target>
+        <note>0 - signer name
+1 - signer type
+</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>The hash algorithm is unsupported:  '{0}'.</source>
+        <target state="translated">不支持哈希算法 {0}。</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedProject">
+        <source>Skipping restore for project '{0}'. The project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">正在跳过项目“{0}”的还原操作。项目文件可能无效或缺少还原所需的目标。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_ContentHash">
+        <source>Content hash: {0}</source>
+        <target state="translated">内容哈希: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Failed">
+        <source>Package signature validation failed.</source>
+        <target state="translated">包签名验证失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_FinishedWithErrors">
+        <source>Finished with {0} errors and {1} warnings.</source>
+        <target state="translated">已完成，共有 {0} 个错误和 {1} 个警告。</target>
+        <note>{0} is the number of errors produced and {1} is the number of warnings.</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_NotSupported">
+        <source>Package signature validation command is not supported on this platform.</source>
+        <target state="translated">此平台上不支持包签名验证命令。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_PackageIsNotValid">
+        <source>'{0}' is not a valid package file.</source>
+        <target state="translated">“{0}”不是有效的包文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Success">
+        <source>Successfully verified package '{0}'.</source>
+        <target state="translated">已成功验证包“{0}”。</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerificationTypeNotSupported">
+        <source>Verification type not supported. Use only one of the following supported types: -All, -Signatures</source>
+        <target state="translated">验证类型不受支持。请使用以下受支持的类型之一: -All、-Signatures</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerifyingPackage">
+        <source>Verifying {0}</source>
+        <target state="translated">正在验证 {0}</target>
+        <note>{0} should be the package identity of the package to verify</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Critical">
+        <source>critical</source>
+        <target state="translated">严重</target>
+        <note>As in "This package has a critical severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_High">
+        <source>high</source>
+        <target state="translated">高</target>
+        <note>As in "This package has a high severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Low">
+        <source>low</source>
+        <target state="translated">低</target>
+        <note>As in "This package has a low severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Moderate">
+        <source>moderate</source>
+        <target state="translated">中</target>
+        <note>As in "This package has a moderate severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_unknown">
+        <source>unknown</source>
+        <target state="translated">未知</target>
+        <note>As in "This package has a unknown severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="WarningAsError">
+        <source>Warning As Error: {0}</source>
+        <target state="translated">错误形式的警告: {0}</target>
+        <note>{0} is a warning message</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutVulnerabilityData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">审核源“{0}”未提供任何漏洞数据。</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
+        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">配置中定义了{0} 个包源。使用中央包管理时，请使用包源映射映射你的包源(https://aka.ms/nuget-package-source-mapping)，或指定单个包源。以下源已定义: {1}</target>
+        <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">Properties 集合中已存在“{0}”键。正在重写值。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileExcludedByDefault">
+        <source>File '{0}' was not added to the package. Files and folders starting with '.' or ending with '.nupkg' are excluded by default. To include this file, use -NoDefaultExcludes from the commandline</source>
+        <target state="translated">文件“{0}”未添加到包。默认排除以 "." 开头或以 ".nupkg" 结尾的文件和文件夹。若要添加此文件，请在命令行中使用 -NoDefaultExcludes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</source>
+        <target state="translated">正在通过 “HTTP” 源“{1}”运行“{0}”操作。将来的版本中将删除非 HTTPS 访问权限。请考虑迁移到 “HTTPS” 源。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSource">
+        <source>The following is a 'Non-HTTPS' source: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">以下是“非 HTTPS”源: {0}
+NuGet 需要 HTTPS 源。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSources">
+        <source>The following are 'Non-HTTPS' sources: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">以下是“非 HTTPS”源: {0}
+NuGet 需要 HTTPS 源。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionDoesNotExist">
+        <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
+        <target state="translated">{0} 依赖于 {1}，但没有找到 {2}。已改为解析 {3}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionNonInclusive">
+        <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
+        <target state="translated">{0} 不提供依赖项 {1} 的下限(含)。已改为解析 {2}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">包 "{0}" {1} 具有已知的 {2} 严重性漏洞，{3}</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingLowerBound">
+        <source>Project dependency {0} does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.</source>
+        <target state="translated">项目依赖项 {0} 不具有包含下限。在依赖项版本中包含下限可确保一致的还原结果。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingVersion">
+        <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
+        <target state="translated">项目依赖项 "{0}" 未指定版本。请包含依赖项的版本，以确保还原结果一致。</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_VersionAboveUpperBound">
+        <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
+        <target state="translated">检测到的包版本在依赖项约束之外: {0} 需要 {1}，但版本 {2} 已解决。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

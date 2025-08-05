@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Strings.resx">
+    <body>
+      <trans-unit id="AggregateSourceName">
+        <source>All</source>
+        <target state="translated">모두</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">인수는 null이거나 비워 둘 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">값은 {0}보다 크거나 같아야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigErrorDialogBoxTitle">
+        <source>NuGet operation failed</source>
+        <target state="translated">NuGet 작업이 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_DefaultCredentialsCredentialProvider">
+        <source>The default credentials credential provider failed to load.</source>
+        <target state="translated">기본 자격 증명의 자격 증명 공급자를 로드하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_ImportedProvider">
+        <source>Failed to load credential provider from assembly {0}.</source>
+        <target state="translated">{0} 어셈블리에서 자격 증명 공급자를 로드하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_PluginCredentialProvider">
+        <source>The plugin credential providers could not be loaded.</source>
+        <target state="translated">플러그 인 자격 증명 공급자를 로드할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioAccountProvider">
+        <source>The Visual Studio or VSTS account provider failed to load.</source>
+        <target state="translated">Visual Studio 또는 VSTS 계정 공급자를 로드하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CredentialProviderFailed_VisualStudioCredentialProvider">
+        <source>The Visual Studio credential provider failed to load.</source>
+        <target state="translated">Visual Studio 자격 증명 공급자를 로드하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DTE_ProjectUnsupported">
+        <source>The project '{0}' is unsupported</source>
+        <target state="translated">'{0}' 프로젝트는 지원되지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddGacReference">
+        <source>Added reference '{0}' in the Global Assembly Cache to project '{1}'</source>
+        <target state="translated">'{1}' 프로젝트에 전역 어셈블리 캐시의 '{0}' 참조를 추가했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToProject">
+        <source>Added file '{0}' to project '{1}'.</source>
+        <target state="translated">'{1}' 프로젝트에 '{0}' 파일을 추가했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedReferenceToProject">
+        <source>Added reference '{0}' to project:'{1}'. The Reference was Resolved To Package (resolvedToPackage):'{2}', where Reference Path from DTE(dteOriginalPath):'{3}' and Reference Path from package reference(assemblyFullPath):'{4}'.</source>
+        <target state="translated">'{1}' 프로젝트에 대한 '{0}' 참조를 추가했습니다. 참조가 패키지 '{2}'(으)로 확인(resolvedToPackage)되었습니다. 여기서 DTE의 참조 경로(dteOriginalPath)는 '{3}'이고 패키지 참조의 참조 경로(assemblyFullPath)는 '{4}'입니다.</target>
+        <note>{0} is the reference name
+{1} is the project name
+{2} is boolean flag (true or false)
+{3} is the project full path
+{4} is the reference assembly full path</note>
+      </trans-unit>
+      <trans-unit id="Debug_RemoveReference">
+        <source>Removed reference '{0}' from project '{1}'</source>
+        <target state="translated">'{1}' 프로젝트에서 '{0}' 참조가 제거되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'</source>
+        <target state="translated">'{0}' 파일이 제거되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'</source>
+        <target state="translated">'{1}' 폴더의 '{0}' 파일을 제거했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">'{0}' 폴더를 제거했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FailedToCreateParentFolder">
+        <source>Failed to create parent folder for file '{0}' in project {1}.</source>
+        <target state="translated">{1} 프로젝트에서 '{0}' 파일의 상위 폴더를 만들지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_FileNotExists">
+        <source>File '{0}' does not exist on disk. </source>
+        <target state="translated">'{0}' 파일이 디스크에 없습니다. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidJson">
+        <source>'{0}' is an invalid json file.</source>
+        <target state="translated">'{0}'은(는) 잘못된 json 파일입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultipleFrameworks">
+        <source>Failed to migrate project '{0}'. The project may only contain one target framework.</source>
+        <target state="translated">프로젝트 '{0}'을(를) 마이그레이션할 수 없습니다. 대상 프레임워크가 하나만 포함되어 있을 수 있습니다.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Error_NuGetConfig_InvalidState">
+        <source>One or more NuGet.Config files contain an error.</source>
+        <target state="translated">하나 이상의 NuGet.Config 파일에 오류가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_InvalidSource">
+        <source>The source specified is invalid.</source>
+        <target state="translated">지정된 원본이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueName">
+        <source>The name specified has already been added to the list of available package sources.</source>
+        <target state="translated">지정한 이름은 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageSource_UniqueSource">
+        <source>The source specified has already been added to the list of available package sources.</source>
+        <target state="translated">지정한 소스는 이미 사용 가능한 패키지 소스 목록에 추가되어 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">패키지 취약성 데이터를 가져오는 동안 오류가 발생했습니다. {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WhileLoadingConfigForBindingRedirects">
+        <source>Failed to load '{0}', while updating binding redirects. {1}</source>
+        <target state="translated">바인딩 리디렉션을 업데이트하는 동안 '{0}'을(를) 로드하지 못했습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Exception_InvalidContinuationToken">
+        <source>Invalid token</source>
+        <target state="translated">토큰이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddFacadeReference">
+        <source>Failed to add reference to '{0}'. The package '{1}' tried to add a framework reference to '{0}'. This reference is not required to be explicitly added by a package.</source>
+        <target state="translated">'{0}'에 대한 참조를 추가하지 못했습니다. '{1}' 패키지가 '{0}'에 대한 프레임워크 참조를 추가하려고 했습니다. 패키지에서 참조를 명시적으로 추가할 필요는 없습니다.</target>
+        <note>{0} is the framework facade reference name
+{1} is the package name</note>
+      </trans-unit>
+      <trans-unit id="FailedToAddGacReference">
+        <source>Failed to add reference. The package '{0}' tried to add a framework reference to '{1}' which was not found in the GAC. This is possibly a bug in the package. Please contact the package owners for assistance.</source>
+        <target state="translated">참조를 추가하지 못했습니다. '{0}' 패키지에서 GAC에 없는 '{1}'에 대한 프레임워크 참조를 추가하려고 했습니다. 이는 패키지의 버그일 수 있습니다. 도움이 필요하면 패키지 소유자에게 문의하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToAddReference">
+        <source>Failed to add reference to '{0}'.</source>
+        <target state="translated">'{0}'에 참조를 추가하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToRemoveReference">
+        <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
+        <target state="translated">제거될 '{0}' 참조에 대한 대/소문자 구분 없는 검색에서 2개 이상의 결과가 반환되었습니다. 요청을 수행할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToUpdateBindingRedirects">
+        <source>Failed to update binding redirects for {0} : {1}</source>
+        <target state="translated">{0}에 대한 바인딩 리디렉션을 업데이트하지 못했습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallingPackage">
+        <source>Installing NuGet package {0}.</source>
+        <target state="translated">NuGet 패키지 {0}을(를) 설치하고 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSBuildPropertyNotFound">
+        <source>The {0} MSBuild property could not be found for project '{1}'.</source>
+        <target state="translated">'{1}' 프로젝트에 대한 {0} MSBuild 속성을 찾을 수 없습니다.</target>
+        <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="PathToExistingFileNotPresent">
+        <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
+        <target state="translated">기존 파일에 대한 '{0}' 경로가 디스크에 없습니다. '{1}' 프로젝트를 추가할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">{0} 프로젝트에 대한 세부 정보를 로드할 수 없어 작업이 실패했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectUpgradeAndRetargetErrorMessage">
+        <source>Some NuGet packages were installed using a target framework different from the current target framework and may need to be reinstalled. Visit https://docs.nuget.org/docs/workflows/reinstalling-packages for more information.  Packages affected: {0}</source>
+        <target state="translated">일부 NuGet 패키지가 현재 대상 프레임워크와 다른 대상 프레임워크를 사용하여 설치되었으므로 다시 설치해야 할 수 있습니다. 자세한 내용은 https://docs.nuget.org/docs/workflows/reinstalling-packages를 참조하세요. 관련 패키지는 {0}입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectWithIdNotFound">
+        <source>A project with ID '{0}' was not found.</source>
+        <target state="translated">ID가 '{0}'인 프로젝트를 찾을 수 없습니다.</target>
+        <note>{0} is the project's unique ID (ProjectGuid)</note>
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">'{0}'은(는) null일 수 없습니다.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">솔루션이 저장되지 않았습니다. NuGet 패키지를 관리하려면 솔루션을 저장하십시오.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink">
+        <source>migration document</source>
+        <target state="translated">마이그레이션 문서</target>
+        <note>The text has the document hyperlink applied to it.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_After">
+        <source>.</source>
+        <target state="translated">.</target>
+        <note>This test goes immediately after the document link.</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_DocumentLink_Before">
+        <source>The NuGet operation failed due to one or more packages being incompatible with your project. The '{0}' ('{1}') project framework is deprecated. For more information about how to migrate your projects to a supported framework, please refer to the</source>
+        <target state="translated">하나 이상의 패키지가 프로젝트와 호환되지 않아 NuGet 작업에 실패했습니다. '{0}'('{1}') 프로젝트 프레임워크는 사용되지 않습니다. 프로젝트를 지원되는 프레임워크로 마이그레이션하는 방법에 대한 자세한 내용은 다음을 참조하세요.</target>
+        <note>This text goes immediately before the document link.
+{0} is the full name of the deprecated framework (e.g. ".NETFramework,Version=v4.5").
+{1} is the short folder representation of the framework (e.g. "net45").</note>
+      </trans-unit>
+      <trans-unit id="Text_DeprecatedFramework_ProjectList">
+        <source>The following project(s) target the deprecated framework:</source>
+        <target state="translated">다음 프로젝트가 사용되지 않는 프레임워크를 대상으로 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGetCPSPackageInstallationService">
+        <source>Unable to get the project's package installation service for project '{0}'.</source>
+        <target state="translated">'{0}' 프로젝트에 대한 프로젝트 패키지 설치 서비스를 가져올 수 없습니다.</target>
+        <note>{0} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="UnresolvedItemDuringProjectClosureWalk">
+        <source>Failed to resolve all items referenced by '{0}'. This message can typically be ignored. The issue may be resolved by fully restoring and building the solution. If the unresolved item is a project reference this can lead to an incomplete NuGet restore result and missing package references. To ensure that restore is able to find all projects verify that all projects are referenced correctly and exist on disk.</source>
+        <target state="translated">'{0}'에서 참조된 일부 항목을 확인하지 못했습니다. 일반적으로 이 메시지는 무시해도 됩니다. 솔루션을 완전히 복원하고 빌드하면 문제가 해결될 수도 있습니다. 확인되지 않은 항목이 프로젝트 참조이면 불완전한 NuGet 복원 결과와 누락된 패키지 참조가 발생할 수 있습니다. 복원 시 모든 프로젝트를 찾을 수 있도록 모든 프로젝트가 올바르게 참조되고 디스크에 있는지 확인하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFeedType">
+        <source>The feed type '{0}' is unsupported.</source>
+        <target state="translated">피드 형식 '{0}'은(는) 지원되지 않습니다.</target>
+        <note>{0} is the ItemFilter type which correlates to the selected tab</note>
+      </trans-unit>
+      <trans-unit id="VSOptions_Button_Open">
+        <source>_Open</source>
+        <target state="translated">열기(_O)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">'{0}' 디렉터리가 비어 있지 않습니다. 건너뛰는 중...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
+        <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
+        <target state="translated">Visual Studio가 다시 시작될 때 삭제되도록 표시된 다음 패키지 디렉터리를 제거하지 못했습니다. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
+        <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
+        <target state="translated">Visual Studio가 다시 시작될 때 삭제되도록 표시된 '{0}' 패키지 디렉터리를 제거하지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
+        <source>Failed to find match for removing reference '{0}'.</source>
+        <target state="translated">'{0}' 참조 제거에 대한 일치 항목을 찾지 못했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
+        <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
+        <target state="translated">Visual Studio가 다시 시작될 때 삭제되도록 '{0}' 패키지 디렉터리를 표시하지 못했습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">'{0}'이(가) 이미 있습니다. 건너뛰는 중...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_NoExactMatchForReference">
+        <source>No exact match found for removing reference '{0}'. Trying No No exact match found for removing reference '{0}'. Trying case-insensitive search...-</source>
+        <target state="translated">'{0}' 참조 제거에 대해 정확히 일치하는 항목이 없습니다. '{0}' 참조 제거에 대해 정확히 일치하는 항목을 찾으려고 합니다. 대/소문자 구분 없는 검색을 시도하는 중...</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

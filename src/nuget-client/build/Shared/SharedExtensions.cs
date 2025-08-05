@@ -165,5 +165,19 @@ namespace NuGet.Shared
 
             throw new InvalidOperationException();
         }
+
+        public static bool Any<T>(this IReadOnlyList<T> lst, Predicate<T> isMatch)
+        {
+            for (var index = 0; index < lst.Count; index++)
+            {
+                var item = lst[index];
+                if (isMatch(item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
