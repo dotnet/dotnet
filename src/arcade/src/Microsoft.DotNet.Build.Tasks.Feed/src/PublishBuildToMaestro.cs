@@ -529,6 +529,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 string repoIdentity = string.Empty;
                 string gitHubHost = "github.com";
 
+                if (Environment.GetEnvironmentVariable("GITHUB_TOKEN") is string envGitHubToken)
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", envGitHubToken);
+                }
+
                 if (!Uri.TryCreate(buildIdentity.AzureDevOpsRepository, UriKind.Absolute, out Uri repoAddr))
                 {
                     throw new Exception($"Can't parse the repository URL: {buildIdentity.AzureDevOpsRepository}");
@@ -550,26 +556,20 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 HttpResponseMessage response = client.GetAsync(url).Result;
 
                 const int MaxRetries = 5;
-                for (int retry = 1; retry <= MaxRetries && response.StatusCode == System.Net.HttpStatusCode.TooManyRequests; retry++)
+                for (int retry = 1; 
+                    retry <= MaxRetries && (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests || response.StatusCode == System.Net.HttpStatusCode.Forbidden);
+                    retry++)
                 {
-                    TimeSpan timeSpan;
-                    if (response.Headers.RetryAfter?.Delta != null)
+                    TimeSpan? timeSpan = GetTimeToWait(response);
+
+                    if (!timeSpan.HasValue)
                     {
-                        timeSpan = response.Headers.RetryAfter.Delta.Value;
-                    }
-                    else if (response.Headers.RetryAfter?.Date != null)
-                    {
-                        timeSpan = response.Headers.RetryAfter.Date.Value - DateTimeOffset.UtcNow;
-                    }
-                    else
-                    {
-                        const int defaultRetryAfterSeconds = 10;
-                        timeSpan = TimeSpan.FromSeconds(defaultRetryAfterSeconds);
+                        break;
                     }
 
                     Log.LogMessage(MessageImportance.High,
-                        $"API rate limit exceeded, retrying in {timeSpan.TotalSeconds} seconds. Retry attempt: {retry}");
-                    Thread.Sleep(timeSpan);
+                        $"API rate limit exceeded, retrying in {timeSpan.Value.TotalSeconds} seconds. Retry attempt: {retry}");
+                    Thread.Sleep(timeSpan.Value);
                     response = client.GetAsync(url).Result;
                 }
 
@@ -592,6 +592,37 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     _gitHubBranch = null;
                 }
             }
+        }
+
+        public static TimeSpan? GetTimeToWait(HttpResponseMessage response)
+        {
+            if (response.Headers.RetryAfter != null)
+            {
+                if (response.Headers.RetryAfter.Delta.HasValue)
+                {
+                    return response.Headers.RetryAfter.Delta.Value;
+                }
+                else if (response.Headers.RetryAfter.Date.HasValue)
+                {
+                    return response.Headers.RetryAfter.Date.Value - DateTimeOffset.Now;
+                }
+            }
+
+            if (response.Headers.TryGetValues("X-RateLimit-Remaining", out var values))
+            {
+                if (values.FirstOrDefault() != "0")
+                {
+                    // apparently not rate limited, so no need to wait
+                    return null;
+                }
+
+                values = response.Headers.GetValues("X-RateLimit-Reset");
+                if (long.TryParse(values.FirstOrDefault(), out long resetTime))
+                {
+                    return DateTimeOffset.FromUnixTimeSeconds(resetTime) - DateTimeOffset.Now;
+                }
+            }
+            return null;
         }
 
         public static string GetRepoName(string repoUrl)
