@@ -60,13 +60,14 @@ stages:
     - checkout: self
       fetchDepth: 0
 
-    - script: |
-        echo "Fetching target branch: $(System.PullRequest.TargetBranch)"
+    - powershell: |
+        Write-Host "Fetching target branch: $(System.PullRequest.TargetBranch)"
         git fetch origin $(System.PullRequest.TargetBranch)
-      displayName: 'Fetch PR target branch'
 
-    - script: dotnet run --project eng/tools/ChangeValidation/ChangeValidation.csproj
-      displayName: 'Execute ChangeValidation Tool'
+        . "$(Build.SourcesDirectory)\eng\common\tools.ps1"
+        InitializeDotNetCli -install $true
+
+        & "$env:DOTNET_INSTALL_DIR\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+      displayName: 'Fetch target branch and run ChangeValidation tool'
       env:
         SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
-

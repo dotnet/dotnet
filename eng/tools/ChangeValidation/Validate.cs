@@ -4,7 +4,16 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.DotNet.DarcLib;
 using Microsoft.DotNet.DarcLib.Helpers;
+using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
+using Microsoft.DotNet.DarcLib.Models.VirtualMonoRepo;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 
 namespace ValidateVmrChanges;
 
@@ -23,6 +32,7 @@ internal static class Validate
 
     internal static async Task<int> Main(string[] args)
     {
+        RegisterServices(args);
         PrInfo prInfo = SetupPrInfo();
         int stepCounter = 0;
         int failedSteps = 0;
@@ -103,5 +113,19 @@ internal static class Validate
             .ToList();
 
         return new PrInfo(targetBranch, changedFiles);
+    }
+
+    private static void RegisterServices(string[] args)
+    {
+        using var host = Host.CreateDefaultBuilder(args)
+        .ConfigureServices((_, services) =>
+        {
+            services.TryAddScoped<IVmrInfo>(sp => new VmrInfo(string.Empty, "tmp"));
+            services.TryAddScoped<ISourceManifest>(sp => new SourceManifest([], []));
+            services.TryAddScoped<IVmrDependencyTracker, VmrDependencyTracker>();
+            services.TryAddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
+            services.TryAddTransient<ISourceMappingParser, SourceMappingParser>();
+        })
+        .Build();
     }
 }
