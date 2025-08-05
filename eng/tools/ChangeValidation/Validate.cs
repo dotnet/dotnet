@@ -4,113 +4,58 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.DotNet.DarcLib.Helpers;
 
 namespace ValidateVmrChanges;
 
 internal static class Validate
 {
-    internal static ProcessingMessage Success(string message) => new ProcessingMessage(message, WarningLevel.Success);
-    internal static ProcessingMessage Info(string message) => new ProcessingMessage(message, WarningLevel.None);
-    internal static ProcessingMessage Warn(string message) => new ProcessingMessage(message, WarningLevel.Warning);
-    internal static ProcessingMessage Error(string message) => new ProcessingMessage(message, WarningLevel.Error);
+    internal static void LogInfo(string message) => Console.WriteLine($"##vso[task.logissue type=information] {message}");
+    internal static void LogWarning(string message) => Console.WriteLine($"##vso[task.logissue type=warning] {message}");
+    internal static void LogError(string message) => Console.WriteLine($"##vso[task.logissue type=error] {message}");
 
-    internal static int Main(string[] args)
+    private static List<IValidationStep> _validationSteps = new List<IValidationStep>
     {
-        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+        new ToolingFilesValidation(),
+        new SubmoduleValidation(),
+        new ExclusionFileValidation()
+    };
 
-        if (string.IsNullOrEmpty(targetBranch))
+    internal static async Task<int> Main(string[] args)
+    {
+        PrInfo prInfo = SetupPrInfo();
+        int stepCounter = 0;
+        int failedSteps = 0;
+
+        foreach (var validationStep in _validationSteps)
         {
-            Console.WriteLine("Error: The target branch is not specified. Please set the SYSTEM_PULLREQUEST_TARGETBRANCH environment variable.");
-            return 1;
-        }
-
-        List<ProcessingMessage> processingMessages = new List<ProcessingMessage>();
-
-        try
-        {
-            RunGitCommand($"fetch origin {targetBranch}");
-            string diffOutput = RunGitCommand($"diff --name-only origin/{targetBranch}...HEAD");
-
-            var changedFiles = diffOutput
-                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                .Select(f => f.Replace('\\', '/').Trim())
-                .ToList();
-
-            // Run Tooling Files Validation
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("1. Starting Tooling Files Validation...");
-            List<ProcessingMessage> toolingMessages;
+            stepCounter++;
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine($"{stepCounter}. Starting {validationStep.DisplayName}");
+            bool validationSuccess = false;
             try
             {
-                toolingMessages = ToolingFilesValidation.VerifyMaestroFileChanges(changedFiles);
+                validationSuccess = await validationStep.Execute(prInfo);
             }
             catch (Exception)
             {
-                toolingMessages = new List<ProcessingMessage>();
-                AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on tooling files."));
+                LogError($"An unexpected error occurred during the validation step: {validationStep.DisplayName}.");
             }
-            processingMessages.AddRange(toolingMessages);
-
-            // Run Submodule Validation
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("2. Starting Submodule Validation...");
-            List<ProcessingMessage> submoduleMessages;
-            try
+            if (!validationSuccess)
             {
-                submoduleMessages = SubmoduleValidation.VerifySubModuleFileChanges(changedFiles);
+                failedSteps++;
+                Console.WriteLine($"Validation step {validationStep.DisplayName} failed.");
             }
-            catch (Exception)
-            {
-                submoduleMessages = new List<ProcessingMessage>();
-                AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on submodule files."));
-            }
-            processingMessages.AddRange(submoduleMessages);
-
-            // Run Exclusion File Validation
-            Console.WriteLine("");
-            Console.WriteLine("");
-            Console.WriteLine("3. Starting Exclusion File Validation...");
-            List<ProcessingMessage> exclusionMessages;
-            try
-            {
-                exclusionMessages = ExclusionFileValidation.VerifyFileExclusions(changedFiles, targetBranch);
-            }
-            catch (Exception)
-            {
-                exclusionMessages = new List<ProcessingMessage>();
-                AddProcessingMessage(processingMessages, Error("Error: Failed to perform validation on exclusion files."));
-            }
-            processingMessages.AddRange(exclusionMessages);
         }
-        catch (Exception)
+        if (failedSteps > 0)
         {
-            Console.WriteLine($"An unexpected error occurred during the validation process.");
+            LogError($"Validation failed. {failedSteps} out of {_validationSteps.Count} steps failed.");
+            Console.WriteLine("Please review the errors above and fix the issues before proceeding.");
             return 1;
         }
-
-        var warnings = processingMessages
-            .Where(m => m.WarningLevel == WarningLevel.Warning)
-            .ToList();
-
-        var errors = processingMessages
-            .Where(m => m.WarningLevel == WarningLevel.Error)
-            .ToList();
-
-        if (errors.Any())
-        {
-            Console.WriteLine($"VMR Change Validation failed with {errors.Count} error(s) and {warnings.Count} warning(s).");
-            return 1;
-        }
-        else
-        {
-            Console.WriteLine($"VMR Change Validation completed successfully with {warnings.Count} warning(s).");
-            return 0;
-        }
+        return 0;
     }
-
-
 
     internal static string RunGitCommand(string arguments)
     {
@@ -140,55 +85,23 @@ internal static class Validate
         return output;
     }
 
-    internal static void AddProcessingMessage(List<ProcessingMessage> processingMessages, ProcessingMessage processingMessage)
+    private static PrInfo SetupPrInfo()
     {
-        var lines = processingMessage.Message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
 
-        if (processingMessage.WarningLevel == WarningLevel.Error)
+        if (string.IsNullOrEmpty(targetBranch))
         {
-            foreach (var line in lines)
-            {
-                Console.WriteLine($"##vso[task.logissue type=error] {line}");
-            }
+            throw new ArgumentException("Cannot determine PR target branch.");
         }
-        else if (processingMessage.WarningLevel == WarningLevel.Warning)
-        {
-            foreach (var line in lines)
-            {
-                Console.WriteLine($"##vso[task.logissue type=warning] {line}");
-            }
-        }
-        else if (processingMessage.WarningLevel == WarningLevel.Success)
-        {
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(processingMessage.Message);
-            Console.ResetColor();
-        }
-        else
-        {
-            Console.WriteLine(processingMessage.Message);
-        }
-        processingMessages.Add(processingMessage);
+        RunGitCommand($"fetch origin {targetBranch}");
+        string diffOutput = RunGitCommand($"diff --name-only origin/{targetBranch}...HEAD");
+
+        var changedFiles = diffOutput
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Select(f => f.Replace('\\', '/').Trim())
+            .ToList();
+
+        return new PrInfo(targetBranch, changedFiles);
     }
-}
-
-
-internal class ProcessingMessage
-{
-    public string Message { get; set; }
-    public WarningLevel WarningLevel { get; set; }
-    public ProcessingMessage(string message, WarningLevel warningLevel = WarningLevel.None)
-    {
-        Message = message;
-        WarningLevel = warningLevel;
-    }
-}
-
-internal enum WarningLevel
-{
-    None,
-    Success,
-    Warning,
-    Error
 }

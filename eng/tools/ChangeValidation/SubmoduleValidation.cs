@@ -1,41 +1,84 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-
+using System.Linq;
 using System.Text;
+using Microsoft.Extensions.FileSystemGlobbing;
+using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.DotNet.DarcLib;
+using Microsoft.DotNet.DarcLib.Helpers;
+using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
+using Microsoft.DotNet.DarcLib.Models.VirtualMonoRepo;
 using static ValidateVmrChanges.Validate;
 
 namespace ValidateVmrChanges;
 
-internal class SubmoduleValidation
+internal class SubmoduleValidation : IValidationStep
 {
-    // <summary>
-    // Verifies that the PR does not include any changes to submodule files
-    // </summary>
-    internal static List<ProcessingMessage> VerifySubModuleFileChanges(List<string> fileNames)
-    {
-        List<ProcessingMessage> messages = [];
+    private static readonly int maxDisplayedFiles = 20;
+    private readonly IVmrDependencyTracker _dependencyTracker;
+    private readonly IProcessManager _processManager;
+    private readonly string _repoRoot;
 
-        var submoduleChanges = fileNames
-            .Where(f => f.Equals(".gitmodules", StringComparison.OrdinalIgnoreCase) || f.Contains("submodules/") || f.EndsWith("/.gitmodules"))
+    public string DisplayName => "Submodule Validation";
+
+    internal SubmoduleValidation()
+    {
+        _processManager = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
+        VmrInfo vmrInfo = new VmrInfo(_processManager.FindGitRoot(""), "");
+        ILogger<VmrDependencyTracker> nullLogger = NullLogger<VmrDependencyTracker>.Instance;
+        SourceMappingParser parser = new SourceMappingParser(vmrInfo, new FileSystem());
+        SourceManifest sourceManifest = new SourceManifest([], []);
+        _dependencyTracker = new VmrDependencyTracker(vmrInfo, new FileSystem(), parser, sourceManifest, nullLogger);
+        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+    }
+
+    public async Task<bool> Execute(PrInfo prInfo)
+    {
+        var sourceManifest = await GetSourceManifestFromBranch("HEAD");
+        var submoduleGlobPatterns = sourceManifest.Submodules.Select(submodule => submodule.Path)
+            .Select(pattern => pattern.TrimStart('/')) // Remove leading slashes for globbing
             .ToList();
 
-        if (submoduleChanges.Any())
+        var matcher = new Matcher();
+
+        foreach (var pattern in submoduleGlobPatterns)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("The following submodule file(s) were modified:");
-            foreach (var file in submoduleChanges)
-            {
-                sb.AppendLine($" - {file}");
-            }
-            sb.AppendLine("Submodule validation failed: changes to submodule files are not permitted.");
-            AddProcessingMessage(messages, Error(sb.ToString()));
+            matcher.AddInclude(pattern);
+        }
+
+        var directory = new InMemoryDirectoryInfo(_repoRoot, prInfo.ChangedFiles);
+
+        var result = matcher.Execute(directory);
+
+        var modifiedSubmoduleFiles = result.Files.Select(f => f.Path).ToList();
+
+        foreach(var file in modifiedSubmoduleFiles.Take(maxDisplayedFiles).ToList())
+        {
+            LogError($"This PR modifies the submodule file `{file}`, which is not allowed. Submodule files are managed by the repository maintainers and should not be modified directly.");
+        }
+
+        if (modifiedSubmoduleFiles.Count > maxDisplayedFiles)
+        {
+            LogError($"... {modifiedSubmoduleFiles.Count - maxDisplayedFiles} more submodule files detected in the PR. Only showing the first {maxDisplayedFiles} files.");
+        }
+
+        if (modifiedSubmoduleFiles.Any())
+        {
+            return false;
         }
         else
         {
-            AddProcessingMessage(messages, Success("Submodule validation succeeded."));
+            return true;
         }
+    }
 
-        return messages;
+    private async Task<SourceManifest> GetSourceManifestFromBranch(string branchName)
+    {
+        var sourceManifestContent = await _processManager.ExecuteGit(_repoRoot, "show", $"{branchName}:{VmrInfo.DefaultRelativeSourceManifestPath}");
+        var sourceManifest = SourceManifest.FromJson(sourceManifestContent.StandardOutput);
+        return sourceManifest;
     }
 }
