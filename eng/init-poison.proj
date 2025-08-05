@@ -9,14 +9,10 @@
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.MarkAndCatalogPackages" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="PoisonPrebuiltPackages"
+  <Target Name="PoisonPackages"
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)PoisonPrebuiltPackages.complete">
-    <PropertyGroup>
-      <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
-      <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
-    </PropertyGroup>
+          Outputs="$(BaseIntermediateOutputPath)PoisonPackages.complete">
 
     <ItemGroup>
       <PrebuiltPackages Include="$(PrebuiltPackagesPath)**/*.nupkg" />
@@ -48,9 +44,7 @@
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />
 
-    <!-- There's an issue where the outputs of these tasks are not being fed into the poison check
-         See https://github.com/dotnet/source-build/issues/5297 -->
-    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PoisonReportDataFile)" MarkerFileName="$(PoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PrebuiltPoisonReportDataFile)" MarkerFileName="$(PrebuiltPoisonMarkerFile)" />
     <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages);@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />

@@ -27,14 +27,20 @@
       <PoisonFileToCheck Include="@(SbrpPackageToCheck)" />
     </ItemGroup>
 
+    <!-- Check for prebuilt and source-built packages. -->
+    <ItemGroup>
+      <PoisonReportDataFile Include="$(PrebuiltPoisonReportDataFile)" />
+      <PoisonReportDataFile Include="$(SourceBuiltPoisonReportDataFile)" />
+      <PoisonMarkerFile Include="$(PrebuiltPoisonMarkerFile)" />
+      <PoisonMarkerFile Include="$(SourceBuiltPoisonMarkerFile)" />
+    </ItemGroup>
+
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(PoisonFileToCheck) for poisoned files." />
 
-    <!-- There's an issue where not all of the markers and catalogs are being fed into this check.
-         See https://github.com/dotnet/source-build/issues/5297 -->
     <CheckForPoison FilesToCheck="@(PoisonFileToCheck)"
                     ProjectDirPath="$(RepoRoot)"
-                    HashCatalogFilePath="$(PoisonReportDataFile)"
-                    MarkerFileName="$(PoisonMarkerFile)"
+                    HashCatalogFilePaths="@(PoisonReportDataFile)"
+                    MarkerFileNames="@(PoisonMarkerFile)"
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)" />
 
     <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />
