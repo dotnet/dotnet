@@ -74,7 +74,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(OS)' == 'Windows_NT'">
-    <ProjectReference Include="windows\bundles\sdk\bundle.wixproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(MSBuildRestoreSessionId)' != ''" />
+    <ProjectReference Include="..\pkg\windows\bundles\sdk\bundle.wixproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Condition="'$(MSBuildRestoreSessionId)' != ''" />
     <ProjectReference Include="..\finalizer\finalizer.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" Private="false" />
   </ItemGroup>
 
