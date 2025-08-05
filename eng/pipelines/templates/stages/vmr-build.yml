@@ -134,8 +134,8 @@ stages:
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       verifications: ${{ parameters.verifications }}
-      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-        # For PR builds, we don't rely on Microsoft build assets for testing because not all of the required assets
+      ${{ if ne(parameters.scope, 'full') }}:
+        # For PR/lite builds, we don't rely on Microsoft build assets for testing because not all of the required assets
         # are available from the subset of jobs that get build in PRs compared to the full build. Instead, we run
         # the tests in the same job as the build and filter out some of the tests that can't be executed in this state.
         useMicrosoftBuildAssetsForTests: false
