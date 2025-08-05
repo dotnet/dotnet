@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../VSPackage.resx">
+    <body>
+      <trans-unit id="1">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="110">
+        <source>NuGet Package Manager</source>
+        <target state="translated">NuGet 套件管理員</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="112">
+        <source>NuGet Package Manager in Visual Studio. For more information about NuGet, visit https://docs.nuget.org/</source>
+        <target state="translated">Visual Studio 中的 NuGet 套件管理員。如需 NuGet 的詳細資訊，請前往 https://docs.nuget.org/</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="113">
+        <source>NuGet Package Manager</source>
+        <target state="translated">NuGet 套件管理員</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="114">
+        <source>Package Sources</source>
+        <target state="translated">套件來源</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="115">
+        <source>General</source>
+        <target state="translated">一般</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="116">
+        <source>Package Source Mapping</source>
+        <target state="translated">套件來源對應:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="117">
+        <source>Configuration Files</source>
+        <target state="translated">設定檔</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="2">
+        <source>plk</source>
+        <target state="translated">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="200">
+        <source>Package Manager Console</source>
+        <target state="translated">套件管理器主控台</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="3">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="300">
+        <source>PackageManagerDocumentWindow</source>
+        <target state="translated">封裝管理員文件視窗</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="4">
+        <source>plk</source>
+        <target state="new">plk</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

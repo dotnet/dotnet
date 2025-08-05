@@ -36,10 +36,8 @@ NuGet.ContentModel.ContentItem.Properties.get -> System.Collections.Generic.Dict
 NuGet.ContentModel.ContentItemCollection
 NuGet.ContentModel.ContentItemCollection.ContentItemCollection() -> void
 NuGet.ContentModel.ContentItemCollection.FindBestItemGroup(NuGet.ContentModel.SelectionCriteria! criteria, params NuGet.ContentModel.PatternSet![]! definitions) -> NuGet.ContentModel.ContentItemGroup?
-NuGet.ContentModel.ContentItemCollection.FindItemGroups(NuGet.ContentModel.PatternSet! definition) -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.ContentItemGroup!>!
 NuGet.ContentModel.ContentItemCollection.FindItems(NuGet.ContentModel.PatternSet! definition) -> System.Collections.Generic.IEnumerable<NuGet.ContentModel.ContentItem!>!
 NuGet.ContentModel.ContentItemCollection.HasContract.get -> bool
-NuGet.ContentModel.ContentItemCollection.HasItemGroup(NuGet.ContentModel.SelectionCriteria! criteria, params NuGet.ContentModel.PatternSet![]! definitions) -> bool
 NuGet.ContentModel.ContentItemCollection.Load(System.Collections.Generic.IEnumerable<string!>! paths) -> void
 NuGet.ContentModel.ContentItemCollection.PopulateItemGroups(NuGet.ContentModel.PatternSet! definition, System.Collections.Generic.IList<NuGet.ContentModel.ContentItemGroup!>! contentItemGroupList) -> void
 NuGet.ContentModel.ContentItemGroup
@@ -385,17 +383,6 @@ NuGet.Packaging.Licenses.WithOperator
 ~NuGet.Packaging.Licenses.WithOperator.Exception.get -> NuGet.Packaging.Licenses.NuGetLicenseException
 ~NuGet.Packaging.Licenses.WithOperator.License.get -> NuGet.Packaging.Licenses.NuGetLicense
 ~NuGet.Packaging.Licenses.WithOperator.WithOperator(NuGet.Packaging.Licenses.NuGetLicense license, NuGet.Packaging.Licenses.NuGetLicenseException exception) -> void
-NuGet.Packaging.LocalPackageArchiveDownloader
-~NuGet.Packaging.LocalPackageArchiveDownloader.ContentReader.get -> NuGet.Packaging.IAsyncPackageContentReader
-~NuGet.Packaging.LocalPackageArchiveDownloader.CopyNupkgFileToAsync(string destinationFilePath, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>
-~NuGet.Packaging.LocalPackageArchiveDownloader.CoreReader.get -> NuGet.Packaging.Core.IAsyncPackageCoreReader
-NuGet.Packaging.LocalPackageArchiveDownloader.Dispose() -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.GetPackageHashAsync(string hashAlgorithm, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string>
-~NuGet.Packaging.LocalPackageArchiveDownloader.LocalPackageArchiveDownloader(string source, string packageFilePath, NuGet.Packaging.Core.PackageIdentity packageIdentity, NuGet.Common.ILogger logger) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SetExceptionHandler(System.Func<System.Exception, System.Threading.Tasks.Task<bool>> handleExceptionAsync) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SetThrottle(System.Threading.SemaphoreSlim throttle) -> void
-~NuGet.Packaging.LocalPackageArchiveDownloader.SignedPackageReader.get -> NuGet.Packaging.Signing.ISignedPackageReader
-~NuGet.Packaging.LocalPackageArchiveDownloader.Source.get -> string
 NuGet.Packaging.Manifest
 ~NuGet.Packaging.Manifest.Files.get -> System.Collections.Generic.ICollection<NuGet.Packaging.ManifestFile>
 NuGet.Packaging.Manifest.HasFilesNode.get -> bool
@@ -1262,7 +1249,6 @@ NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.Compress = 2 -> NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.None = 0 -> NuGet.Packaging.XmlDocFileSaveMode
 NuGet.Packaging.XmlDocFileSaveMode.Skip = 1 -> NuGet.Packaging.XmlDocFileSaveMode
-NuGet.Packaging.XmlUtility
 NuGet.Packaging.ZipArchiveExtensions
 NuGet.Packaging.ZipFilePair
 ~NuGet.Packaging.ZipFilePair.FileFullPath.get -> string
@@ -1302,14 +1288,12 @@ NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart() -> void
 ~NuGet.RuntimeModel.JsonObjectWriter.WriteObjectStart(string name) -> void
 NuGet.RuntimeModel.JsonRuntimeFormat
 NuGet.RuntimeModel.RuntimeDependencySet
-~NuGet.RuntimeModel.RuntimeDependencySet.Clone() -> NuGet.RuntimeModel.RuntimeDependencySet
 ~NuGet.RuntimeModel.RuntimeDependencySet.Dependencies.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.RuntimePackageDependency>
 ~NuGet.RuntimeModel.RuntimeDependencySet.Equals(NuGet.RuntimeModel.RuntimeDependencySet other) -> bool
 ~NuGet.RuntimeModel.RuntimeDependencySet.Id.get -> string
 ~NuGet.RuntimeModel.RuntimeDependencySet.RuntimeDependencySet(string id) -> void
 ~NuGet.RuntimeModel.RuntimeDependencySet.RuntimeDependencySet(string id, System.Collections.Generic.IEnumerable<NuGet.RuntimeModel.RuntimePackageDependency> dependencies) -> void
 NuGet.RuntimeModel.RuntimeDescription
-~NuGet.RuntimeModel.RuntimeDescription.Clone() -> NuGet.RuntimeModel.RuntimeDescription
 ~NuGet.RuntimeModel.RuntimeDescription.Equals(NuGet.RuntimeModel.RuntimeDescription other) -> bool
 ~NuGet.RuntimeModel.RuntimeDescription.InheritedRuntimes.get -> System.Collections.Generic.IReadOnlyList<string>
 ~NuGet.RuntimeModel.RuntimeDescription.RuntimeDependencySets.get -> System.Collections.Generic.IReadOnlyDictionary<string, NuGet.RuntimeModel.RuntimeDependencySet>
@@ -1331,7 +1315,6 @@ NuGet.RuntimeModel.RuntimeGraph.RuntimeGraph(System.Collections.Generic.IEnumera
 NuGet.RuntimeModel.RuntimeGraph.Runtimes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.RuntimeDescription!>!
 NuGet.RuntimeModel.RuntimeGraph.Supports.get -> System.Collections.Generic.IReadOnlyDictionary<string!, NuGet.RuntimeModel.CompatibilityProfile!>!
 NuGet.RuntimeModel.RuntimePackageDependency
-~NuGet.RuntimeModel.RuntimePackageDependency.Clone() -> NuGet.RuntimeModel.RuntimePackageDependency
 ~NuGet.RuntimeModel.RuntimePackageDependency.Equals(NuGet.RuntimeModel.RuntimePackageDependency other) -> bool
 ~NuGet.RuntimeModel.RuntimePackageDependency.Id.get -> string
 ~NuGet.RuntimeModel.RuntimePackageDependency.RuntimePackageDependency(string id, NuGet.Versioning.VersionRange versionRange) -> void
@@ -1750,8 +1733,6 @@ static NuGet.Packaging.Signing.VerificationUtility.IsVerificationTarget(NuGet.Pa
 ~static NuGet.Packaging.XElementExtensions.ElementsNoNamespace(this System.Xml.Linq.XContainer container, string localName) -> System.Collections.Generic.IEnumerable<System.Xml.Linq.XElement>
 ~static NuGet.Packaging.XElementExtensions.Except(this System.Xml.Linq.XElement source, System.Xml.Linq.XElement target) -> System.Xml.Linq.XElement
 ~static NuGet.Packaging.XElementExtensions.GetOptionalAttributeValue(this System.Xml.Linq.XElement element, string localName, string namespaceName = null) -> string
-~static NuGet.Packaging.XmlUtility.LoadSafe(System.IO.Stream input) -> System.Xml.Linq.XDocument
-~static NuGet.Packaging.XmlUtility.LoadSafe(System.IO.Stream input, bool ignoreWhiteSpace) -> System.Xml.Linq.XDocument
 ~static NuGet.Packaging.ZipArchiveExtensions.GetFiles(this System.IO.Compression.ZipArchive zipArchive) -> System.Collections.Generic.IEnumerable<string>
 ~static NuGet.Packaging.ZipArchiveExtensions.LookupEntry(this System.IO.Compression.ZipArchive zipArchive, string path) -> System.IO.Compression.ZipArchiveEntry
 ~static NuGet.Packaging.ZipArchiveExtensions.OpenFile(this System.IO.Compression.ZipArchive zipArchive, string path) -> System.IO.Stream

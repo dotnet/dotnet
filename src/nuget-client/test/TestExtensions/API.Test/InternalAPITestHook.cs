@@ -3,12 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.Shell;
 using NuGet.Common;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.VisualStudio;
-using Task = System.Threading.Tasks.Task;
 
 namespace API.Test
 {
@@ -102,23 +100,6 @@ namespace API.Test
             }
 
             return null;
-        }
-
-        [SuppressMessage("Microsoft.VisualStudio.Threading.Analyzers", "VSTHRD002", Justification = "Task.Result for a completed task is safe here.")]
-        public static bool ExecuteInitScript(string id, string version, int timeoutSec = 30)
-        {
-            var scriptExecutor = ServiceLocator.GetComponent<IVsGlobalPackagesInitScriptExecutor>();
-            // It is important that this method does not wait on ExecuteInitScriptAsync on the calling thread.
-            // Calling thread is powershell execution thread and ExecuteInitScriptAsync needs to switch to
-            // Powershell execution thread to execute the scripts
-            var task = Task.Run(() => scriptExecutor.ExecuteInitScriptAsync(id, version));
-            Task.WaitAny(task, Task.Delay(TimeSpan.FromSeconds(timeoutSec)));
-            if (task.IsCompleted)
-            {
-                return task.Result;
-            }
-
-            return false;
         }
 
         public static bool BatchEventsApi(string id, string version)

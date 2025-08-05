@@ -1191,6 +1191,15 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow pushing to HTTP sources (insecure)..
+        /// </summary>
+        internal static string PushCommandAllowInsecureConnectionsDescription {
+            get {
+                return ResourceManager.GetString("PushCommandAllowInsecureConnectionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pushes a package to the server and publishes it..
         /// </summary>
         internal static string PushCommandDescription {
@@ -1609,7 +1618,7 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid value for &apos;CertificateFingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
+        ///   Looks up a localized string similar to {0}: Invalid value for &apos;CertificateFingerprint&apos; option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal)..
         /// </summary>
         internal static string SignCommandInvalidCertificateFingerprint {
             get {

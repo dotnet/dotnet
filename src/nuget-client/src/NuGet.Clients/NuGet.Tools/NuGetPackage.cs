@@ -22,7 +22,6 @@ using Microsoft.VisualStudio.Threading;
 using NuGet.Configuration;
 using NuGet.PackageManagement;
 using NuGet.PackageManagement.UI;
-using NuGet.PackageManagement.UI.Options;
 using NuGet.PackageManagement.VisualStudio;
 using NuGet.PackageManagement.VisualStudio.Options;
 using NuGet.ProjectManagement;
@@ -55,11 +54,6 @@ namespace NuGetVSExtension
         Style = VsDockStyle.Tabbed,
         Window = "{34E76E81-EE4A-11D0-AE2E-00A0C90FFFC3}", // this is the guid of the Output tool window, which is present in both VS and VWD
         Orientation = ToolWindowOrientation.Right)]
-    [ProvideOptionPage(typeof(GeneralOptionPage), "NuGet Package Manager", "General", 113, 115, true, IsInUnifiedSettings = true)]
-    [ProvideOptionPage(typeof(StubGeneralOptionsPage), "NuGet Package Manager", "GeneralStub", 113, 115, true, IsInUnifiedSettings = false, Sort = 0)]
-    [ProvideOptionPage(typeof(ConfigurationFilesOptionsPage), "NuGet Package Manager", "Configuration Files", 113, 117, true, IsInUnifiedSettings = true, Sort = 1)]
-    [ProvideOptionPage(typeof(PackageSourceOptionsPage), "NuGet Package Manager", "Package Sources", 113, 114, true, IsInUnifiedSettings = true, Sort = 2)]
-    [ProvideOptionPage(typeof(PackageSourceMappingOptionsPage), "NuGet Package Manager", "Package Source Mapping", 113, 116, true, Sort = 3)]
     [ProvideSettingsManifest]
     [ProvideSearchProvider(typeof(NuGetSearchProvider), "NuGet Search")]
     // UI Context rule for a project that could be upgraded to PackageReference from packages.config based project.
@@ -85,9 +79,6 @@ namespace NuGetVSExtension
     [ProvideBrokeredService(BrokeredServicesUtilities.ProjectUpgraderServiceName, BrokeredServicesUtilities.ProjectUpgraderServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.PackageFileServiceName, BrokeredServicesUtilities.PackageFileServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
     [ProvideBrokeredService(BrokeredServicesUtilities.SearchServiceName, BrokeredServicesUtilities.SearchServiceVersion, Audience = ServiceAudience.Local | ServiceAudience.RemoteExclusiveClient)]
-    [ProvideService(typeof(GeneralPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
-    [ProvideService(typeof(ConfigurationFilesPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
-    [ProvideService(typeof(PackageSourcesPage), IsCacheable = true, IsAsyncQueryable = true, IsFreeThreaded = true)]
     [Guid(GuidList.guidNuGetPkgString)]
     public sealed partial class NuGetPackage : AsyncPackage, IVsPackageExtensionProvider, IVsPersistSolutionOpts
     {
@@ -210,6 +201,7 @@ namespace NuGetVSExtension
 
             VSSettings vsSettings = Settings.Value as VSSettings;
             PackageSourceProvider packageSourceProvider = new(Settings.Value);
+            PackageSourceMappingProvider packageSourceMappingProvider = new(Settings.Value);
 
             AddService(typeof(GeneralPage),
                 (container, ct, serviceType) => Task.FromResult<object>(new GeneralPage(vsSettings)),
@@ -219,6 +211,9 @@ namespace NuGetVSExtension
                 promote: true);
             AddService(typeof(PackageSourcesPage),
                 (container, ct, serviceType) => Task.FromResult<object>(new PackageSourcesPage(vsSettings, packageSourceProvider)),
+                promote: true);
+            AddService(typeof(PackageSourceMappingPage),
+                (container, ct, serviceType) => Task.FromResult<object>(new PackageSourceMappingPage(vsSettings, packageSourceProvider, packageSourceMappingProvider)),
                 promote: true);
 
             ClearNuGetLocalResourcesCommand clearNuGetLocalResourcesCommand = new(oleMenuCommandService: _mcs, OutputConsoleLogger);
@@ -1311,21 +1306,24 @@ namespace NuGetVSExtension
 
         private void ShowPackageSourcesOptionPage(object sender, EventArgs args)
         {
-            ShowOptionPageSafe(typeof(PackageSourceOptionsPage));
+            ShowOptionPageSafe(OptionsPage.PackageSources);
         }
 
         private void ShowGeneralSettingsOptionPage(object sender, EventArgs args)
         {
-            ShowOptionPageSafe(typeof(GeneralOptionPage));
+            ShowOptionPageSafe(OptionsPage.General);
         }
 
-        private void ShowOptionPageSafe(Type optionPageType)
+        private static void ShowOptionPageSafe(OptionsPage optionsPage)
         {
             try
             {
-                ShowOptionPage(optionPageType);
+                var optionsPageActivator = ServiceLocator.GetComponentModelService<IOptionsPageActivator>();
+                optionsPageActivator.ActivatePage(optionsPage, closeCallback: null);
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception exception)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 MessageHelper.ShowErrorMessage(exception, Resources.ErrorDialogBoxTitle);
                 ExceptionHelper.WriteErrorToActivityLog(exception);
