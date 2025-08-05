@@ -325,11 +325,17 @@ namespace NuGet.CommandLine.Xplat.Tests.Commands.Why
         {
             assetsFile.PackageSpec.FilePath = ConvertWindowsPathToUnix(assetsFile.PackageSpec.FilePath);
 
-            var projectLibraries = assetsFile.Libraries.Where(l => l.Type == "project");
-
-            foreach (var library in projectLibraries)
+            for (var i = 0; i < assetsFile.Libraries.Count; i++)
             {
-                library.Path = ConvertWindowsPathToUnix(library.Path);
+                var library = assetsFile.Libraries[i];
+                if (library.Type == "project")
+                {
+                    var newPath = ConvertWindowsPathToUnix(library.Path);
+                    if (newPath != library.Path)
+                    {
+                        assetsFile.Libraries[i] = library with { Path = newPath };
+                    }
+                }
             }
 
             var packageSpecTargets = assetsFile.PackageSpec.RestoreMetadata.TargetFrameworks;

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="Error_PackageNotFoundWhenExpected">
+        <source>The feed '{0}' lists package '{1}' but multiple attempts to download the nupkg have failed. The feed is either invalid or required packages were removed while the current operation was in progress. Verify the package exists on the feed and try again.</source>
+        <target state="translated">源“{0}”列出了包“{1}”，但多次尝试下载该 nupkg 均已失败。要么源无效，要么在当前操作正在进行时删除了必需的包。请验证源上存在该包并重试。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MatchingSourceFoundForPackage">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'.</source>
+        <target state="translated">为包 ID "{0}" 找到的包源映射匹配项为: "{1}"。</target>
+        <note>{0} - Package id {1} - list of sources</note>
+      </trans-unit>
+      <trans-unit id="Log_NoMatchingSourceFoundForPackage">
+        <source>Package source mapping match not found for package ID '{0}'.</source>
+        <target state="translated">找不到包 ID "{0}" 的包源映射匹配项。</target>
+        <note>{0} - Package id</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

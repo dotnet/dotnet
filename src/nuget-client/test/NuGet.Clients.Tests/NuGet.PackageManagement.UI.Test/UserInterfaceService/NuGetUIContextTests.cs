@@ -18,6 +18,7 @@ using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using Xunit;
 
 namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
@@ -155,9 +156,10 @@ namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
             _testDirectory.Dispose();
         }
 
-        private NuGetUIContext CreateNuGetUIContext(ISettings settings = null)
+        private NuGetUIContext CreateNuGetUIContext(ISettings settings = null, INuGetTelemetryProvider nuGetTelemetryProvider = null)
         {
             settings = settings ?? Mock.Of<ISettings>();
+            nuGetTelemetryProvider = nuGetTelemetryProvider ?? Mock.Of<INuGetTelemetryProvider>();
             var sourceRepositoryProvider = Mock.Of<ISourceRepositoryProvider>();
             var packageManager = new NuGetPackageManager(
                 sourceRepositoryProvider,
@@ -173,7 +175,8 @@ namespace NuGet.PackageManagement.UI.Test.UserInterfaceService
                 new UIActionEngine(
                     sourceRepositoryProvider,
                     packageManager,
-                    Mock.Of<INuGetLockService>()),
+                    Mock.Of<INuGetLockService>(),
+                    Mock.Of<INuGetTelemetryProvider>()),
                 Mock.Of<IPackageRestoreManager>(),
                 Mock.Of<IOptionsPageActivator>(),
                 Mock.Of<IUserSettingsManager>(),

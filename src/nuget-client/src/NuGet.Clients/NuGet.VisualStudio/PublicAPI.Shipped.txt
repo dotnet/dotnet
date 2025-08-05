@@ -135,8 +135,6 @@ NuGet.VisualStudio.IVsFrameworkParser
 ~NuGet.VisualStudio.IVsFrameworkParser.ParseFrameworkName(string shortOrFullName) -> System.Runtime.Versioning.FrameworkName
 NuGet.VisualStudio.IVsFrameworkParser2
 ~NuGet.VisualStudio.IVsFrameworkParser2.TryParse(string input, out NuGet.VisualStudio.IVsNuGetFramework nuGetFramework) -> bool
-NuGet.VisualStudio.IVsGlobalPackagesInitScriptExecutor
-~NuGet.VisualStudio.IVsGlobalPackagesInitScriptExecutor.ExecuteInitScriptAsync(string packageId, string packageVersion) -> System.Threading.Tasks.Task<bool>
 NuGet.VisualStudio.IVsNuGetFramework
 ~NuGet.VisualStudio.IVsNuGetFramework.TargetFrameworkMoniker.get -> string
 ~NuGet.VisualStudio.IVsNuGetFramework.TargetPlatformMinVersion.get -> string
@@ -172,12 +170,6 @@ NuGet.VisualStudio.IVsPackageInstallerServices
 ~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id) -> bool
 ~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalled(EnvDTE.Project project, string id, NuGet.SemanticVersion version) -> bool
 ~NuGet.VisualStudio.IVsPackageInstallerServices.IsPackageInstalledEx(EnvDTE.Project project, string id, string versionString) -> bool
-NuGet.VisualStudio.IVsPackageManagerProvider
-~NuGet.VisualStudio.IVsPackageManagerProvider.CheckForPackageAsync(string packageId, string projectName, System.Threading.CancellationToken token) -> System.Threading.Tasks.Task<bool>
-~NuGet.VisualStudio.IVsPackageManagerProvider.Description.get -> string
-~NuGet.VisualStudio.IVsPackageManagerProvider.GoToPackage(string packageId, string projectName) -> void
-~NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerId.get -> string
-~NuGet.VisualStudio.IVsPackageManagerProvider.PackageManagerName.get -> string
 NuGet.VisualStudio.IVsPackageMetadata
 ~NuGet.VisualStudio.IVsPackageMetadata.Authors.get -> System.Collections.Generic.IEnumerable<string>
 ~NuGet.VisualStudio.IVsPackageMetadata.Description.get -> string
