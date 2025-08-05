@@ -1,0 +1,36 @@
+# Relies on dotnet-unified-build being in the same repo as this pipeline
+# https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops#branch-considerations
+resources:
+  pipelines:
+  - pipeline: dotnet-unified-build
+    source: dotnet-unified-build
+
+  - pipeline: dotnet-source-build-pre10.0
+    source: dotnet-source-build-pre10.0
+
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+pr: none
+trigger: none
+
+parameters:
+- name: dotnetDotnetRunId
+  displayName: 'Specific dotnet-dotnet run ID number (e.g `2108850`)'
+  type: string
+  default: ' '
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: NetCore1ESPool-Svc-Internal
+      image: 1es-ubuntu-2204
+      os: linux
+    stages:
+    - template: /eng/pipelines/templates/stages/source-build-sdk-diff-tests.yml@self
+      parameters:
+        dotnetDotnetRunId: ${{ parameters.dotnetDotnetRunId }}
