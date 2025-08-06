@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.DotNet.DarcLib;
@@ -105,7 +106,7 @@ internal static class Validate
         var changedFiles = diffOutput
             .Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
-            .ToList();
+            .ToImmutableList();
 
         return new PrInfo(targetBranch, changedFiles);
     }
@@ -115,11 +116,13 @@ internal static class Validate
         return Host.CreateDefaultBuilder(args)
         .ConfigureServices((_, services) =>
         {
-            services.TryAddScoped<IVmrInfo>(sp => new VmrInfo(string.Empty, "tmp"));
-            services.TryAddScoped<ISourceManifest>(sp => new SourceManifest([], []));
-            services.TryAddScoped<IVmrDependencyTracker, VmrDependencyTracker>();
-            services.TryAddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
-            services.TryAddTransient<ISourceMappingParser, SourceMappingParser>();
+            services.AddScoped<IVmrInfo>(sp => new VmrInfo(string.Empty, "tmp"));
+            services.AddScoped<ISourceManifest>(sp => new SourceManifest([], []));
+            services.AddScoped<IVmrDependencyTracker, VmrDependencyTracker>();
+            services.AddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
+            services.AddTransient<ISourceMappingParser, SourceMappingParser>();
+            services.AddSingleton<IFileSystem, FileSystem>();
+
         })
         .Build();
     }
