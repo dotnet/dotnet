@@ -701,6 +701,11 @@ nuget pack foo.nuspec -Version 2.1.0</target>
         <target state="translated">覆寫來自 nuspec 檔案的版本號碼。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PushCommandDescription">
         <source>Pushes a package to the server and publishes it.</source>
         <target state="translated">將套件推送至伺服器，並發佈該套件。</target>

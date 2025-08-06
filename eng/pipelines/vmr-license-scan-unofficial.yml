@@ -1,29 +1,7 @@
 # Pipeline documentation at https://github.com/dotnet/dotnet/blob/main/docs/license-scanning.md
 
-schedules:
-- cron: "0 7 * * 1"
-  displayName: Run on Mondays at 7am UTC
-  branches:
-    # For releases branches only run on internal/release branches because that's where dependencies flow.
-    # Previews don't have internal/release branches so they must be run from non-internal release branches.
-    include:
-    - main
-    - release/*.0.1xx-preview*
-    - internal/release/*.0.1xx*
-
 pr: none
-
-# Always trigger a run when changes are made to the license test implementation or baselines
-trigger:
-  branches:
-    include:
-    - main
-    - release/*.0.1xx-preview*
-    - internal/release/*.0.1xx*
-  paths:
-    include:
-    - test/Microsoft.DotNet.SourceBuild.Tests/LicenseScanTests.cs
-    - test/Microsoft.DotNet.SourceBuild.Tests/assets/LicenseScanTests
+trigger: none
 
 parameters:
 # Provides a way to scan a specific repo. If not provided, all repos of the VMR will be scanned.
@@ -40,7 +18,7 @@ resources:
     ref: refs/tags/release
 
 extends:
-  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
     pool:
       name: NetCore1ESPool-Svc-Internal
@@ -50,17 +28,6 @@ extends:
       azurelinuxSourceBuildTestContainer:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
         options: '--memory=6g'
-    sdl:
-      sourceAnalysisPool:
-          name: NetCore1ESPool-Svc-Internal
-          image: 1es-windows-2022
-          os: windows
-      binskim:
-        enabled: true
-      policheck:
-        enabled: true
-      tsa:
-        enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/vmr-license-scan.yml@self
       parameters:
