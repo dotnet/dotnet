@@ -111,7 +111,7 @@ internal static class PackageUpdateCommandRunner
         logger.LogInformation("");
 
         var updatedPackageSpec = updatedDgSpec.Projects[0];
-        packageUpdateIO.UpdatePackageReference(updatedPackageSpec, restorePreviewResult, packageTfms!, packageToUpdate);
+        packageUpdateIO.UpdatePackageReference(updatedPackageSpec, restorePreviewResult, packageTfms!, packageToUpdate, logger);
 
         // 5. Commit restore if everything successful
         await packageUpdateIO.CommitAsync(restorePreviewResult, CancellationToken.None);
