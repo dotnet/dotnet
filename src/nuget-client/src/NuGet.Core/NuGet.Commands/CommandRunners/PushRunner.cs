@@ -30,6 +30,7 @@ namespace NuGet.Commands
             bool noSymbols,
             bool noServiceEndpoint,
             bool skipDuplicate,
+            bool allowInsecureConnections,
             ILogger logger)
         {
             source = CommandRunnerUtility.ResolveSource(sourceProvider, source);
@@ -43,7 +44,7 @@ namespace NuGet.Commands
             var packageUpdateResource = await CommandRunnerUtility.GetPackageUpdateResource(sourceProvider, packageSource, CancellationToken.None);
 
             // Throw an error if an http source is used without setting AllowInsecureConnections
-            if (packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
+            if (!allowInsecureConnections && packageSource.IsHttp && !packageSource.IsHttps && !packageSource.AllowInsecureConnections)
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Strings.Error_HttpSource_Single, "push", packageSource.Source));
             }
@@ -103,7 +104,7 @@ namespace NuGet.Commands
                 noServiceEndpoint,
                 skipDuplicate,
                 allowSnupkg,
-                packageSource.AllowInsecureConnections,
+                allowInsecureConnections || packageSource.AllowInsecureConnections,
                 logger);
         }
     }

@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <!-- We just want to .zip these up -->
-  <Target Name="_ZipValidationExe" AfterTargets="Build" Condition="!Exists('DotNetRuntimeValidationZipFilePath')">
+  <Target Name="_ZipValidationExe" AfterTargets="DotNetPublish" Condition="!Exists('DotNetRuntimeValidationZipFilePath')">
     <ItemGroup>
-      <RuntimeValidationSourceFiles Include="$(ArtifactsBinDir)DotNetRuntimeValidation\**\DotNetRuntimeValidation.exe" />
+      <RuntimeValidationSourceFiles Include="$(PublishUrl)DotNetRuntimeValidation.exe" />
     </ItemGroup>
 
     <Copy 
