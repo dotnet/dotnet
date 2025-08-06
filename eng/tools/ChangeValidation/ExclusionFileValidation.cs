@@ -27,15 +27,12 @@ internal class ExclusionFileValidation : IValidationStep
 
     private readonly string _repoRoot;
 
-    internal ExclusionFileValidation()
+    internal ExclusionFileValidation(
+        IVmrDependencyTracker dependencyTracker,
+        IProcessManager processManager)
     {
-        _processManager = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
-        VmrInfo vmrInfo = new VmrInfo(_processManager.FindGitRoot(""), "");
-        ILogger<VmrDependencyTracker> nullLogger = NullLogger<VmrDependencyTracker>.Instance;
-        SourceMappingParser parser = new SourceMappingParser(vmrInfo, new FileSystem());
-        SourceManifest sourceManifest = new SourceManifest([], []);
-        _dependencyTracker = new VmrDependencyTracker(vmrInfo, new FileSystem(), parser, sourceManifest, nullLogger);
-        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+        _dependencyTracker = dependencyTracker;
+        _processManager = processManager;
     }
 
     public string DisplayName => "Exclusion File Validation";

@@ -24,15 +24,12 @@ internal class SubmoduleValidation : IValidationStep
 
     public string DisplayName => "Submodule Validation";
 
-    internal SubmoduleValidation()
+    internal SubmoduleValidation(
+        IVmrDependencyTracker vmrDependencyTracker,
+        IProcessManager processManager)
     {
-        _processManager = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
-        VmrInfo vmrInfo = new VmrInfo(_processManager.FindGitRoot(""), "");
-        ILogger<VmrDependencyTracker> nullLogger = NullLogger<VmrDependencyTracker>.Instance;
-        SourceMappingParser parser = new SourceMappingParser(vmrInfo, new FileSystem());
-        SourceManifest sourceManifest = new SourceManifest([], []);
-        _dependencyTracker = new VmrDependencyTracker(vmrInfo, new FileSystem(), parser, sourceManifest, nullLogger);
-        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+        _dependencyTracker = vmrDependencyTracker;  
+        _processManager = processManager;
     }
 
     public async Task<bool> Execute(PrInfo prInfo)
