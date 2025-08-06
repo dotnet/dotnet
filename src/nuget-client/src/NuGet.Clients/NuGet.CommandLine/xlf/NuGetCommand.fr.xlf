@@ -701,6 +701,11 @@ nuget pack foo.nuspec -Version 2.1.0</target>
         <target state="translated">Remplace le numéro de version à partir du fichier nuspec.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PushCommandDescription">
         <source>Pushes a package to the server and publishes it.</source>
         <target state="translated">Effectue un push d'un package sur le serveur et le publie.</target>

@@ -941,4 +941,7 @@ nuget client-certs List</value>
     <value>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
     <comment>{0} - error code</comment>
   </data>
+  <data name="PushCommandAllowInsecureConnectionsDescription" xml:space="preserve">
+    <value>Allow pushing to HTTP sources (insecure).</value>
+  </data>
 </root>

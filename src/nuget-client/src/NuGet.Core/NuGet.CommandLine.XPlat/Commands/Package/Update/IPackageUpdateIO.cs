@@ -60,10 +60,11 @@ internal interface IPackageUpdateIO
     /// is used by all target frameworks.
     /// </summary>
     /// <param name="updatedPackageSpec">The updated project specification containing target framework information.</param>
-    /// <param name="restorePreviewResult">The restore preview result containing resolved package information.</param>
     /// <param name="packageTfms">Target frameworks where the package is used.</param>
+    /// <param name="restorePreviewResult">The restore preview result containing resolved package information.</param>
     /// <param name="packageDependency">Package dependency information.</param>
-    void UpdatePackageReference(PackageSpec updatedPackageSpec, RestoreResult restorePreviewResult, List<NuGetFramework> packageTfms, PackageToUpdate packageDependency);
+    /// <param name="logger">Logger for the operation.</param>
+    void UpdatePackageReference(PackageSpec updatedPackageSpec, RestoreResult restorePreviewResult, List<NuGetFramework> packageTfms, PackageToUpdate packageDependency, ILogger logger);
 
     /// <summary>
     /// An opaque type, to aid in testing, representing the result of a restore operation.

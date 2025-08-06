@@ -1191,6 +1191,15 @@ namespace NuGet.CommandLine {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow pushing to HTTP sources (insecure)..
+        /// </summary>
+        internal static string PushCommandAllowInsecureConnectionsDescription {
+            get {
+                return ResourceManager.GetString("PushCommandAllowInsecureConnectionsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pushes a package to the server and publishes it..
         /// </summary>
         internal static string PushCommandDescription {
