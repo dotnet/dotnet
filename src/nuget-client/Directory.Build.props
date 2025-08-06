@@ -15,5 +15,6 @@
 
   <PropertyGroup>
     <UsingToolXliff>true</UsingToolXliff>
+    <UpdateXlfOnBuild Condition="'$(CI)' != 'true'">true</UpdateXlfOnBuild>
   </PropertyGroup>
 </Project>

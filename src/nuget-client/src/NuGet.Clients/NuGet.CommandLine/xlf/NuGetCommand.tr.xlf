@@ -701,6 +701,11 @@ nuget pack foo.nuspec -Sürüm 2.1.0</target>
         <target state="translated">nuspec dosyasından sürüm numarasını geçersiz kılar.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PushCommandDescription">
         <source>Pushes a package to the server and publishes it.</source>
         <target state="translated">Bir paketi sunucuya gönderir ve yayımlar.</target>

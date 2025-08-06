@@ -50,7 +50,9 @@ public class SingleProjectTests
             It.IsAny<PackageSpec>(),
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<List<NuGetFramework>>(),
-            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Test.Package" && p.NewVersion.ToString() == "[1.2.3, )")), Times.Once);
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Test.Package" && p.NewVersion.ToString() == "[1.2.3, )"),
+            It.IsAny<ILogger>()),
+            Times.Once);
     }
 
     [Fact]
@@ -89,7 +91,8 @@ public class SingleProjectTests
             It.IsAny<PackageSpec>(),
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<List<NuGetFramework>>(),
-            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Contoso.Polyfill" && p.NewVersion.ToString() == "[1.2.3, )")), Times.Once);
+            It.Is<PackageUpdateCommandRunner.PackageToUpdate>(p => p.Id == "Contoso.Polyfill" && p.NewVersion.ToString() == "[1.2.3, )"),
+            It.IsAny<ILogger>()), Times.Once);
     }
 
     [Fact]
@@ -123,7 +126,8 @@ public class SingleProjectTests
             It.IsAny<PackageSpec>(),
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<List<NuGetFramework>>(),
-            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>()), Times.Never);
+            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>(),
+            It.IsAny<ILogger>()), Times.Never);
     }
 
     [Fact]
@@ -157,7 +161,8 @@ public class SingleProjectTests
             It.IsAny<PackageSpec>(),
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<List<NuGetFramework>>(),
-            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>()), Times.Never);
+            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>(),
+            It.IsAny<ILogger>()), Times.Never);
     }
 
     [Fact]
@@ -235,7 +240,8 @@ public class SingleProjectTests
             It.IsAny<PackageSpec>(),
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
             It.IsAny<List<NuGetFramework>>(),
-            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>()));
+            It.IsAny<PackageUpdateCommandRunner.PackageToUpdate>(),
+            It.IsAny<ILogger>()));
 
         ioMock.Setup(x => x.CommitAsync(
             It.IsAny<IPackageUpdateIO.RestoreResult>(),
