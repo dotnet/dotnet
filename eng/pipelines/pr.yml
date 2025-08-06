@@ -68,6 +68,6 @@ stages:
         InitializeDotNetCli -install $true
 
         & "$env:DOTNET_INSTALL_DIR\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
-      displayName: 'Fetch target branch and run ChangeValidation tool'
+      displayName: 'Run ChangeValidation tool'
       env:
         SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)

@@ -23,21 +23,16 @@ internal static class Validate
     internal static void LogWarning(string message) => Console.WriteLine($"##vso[task.logissue type=warning] {message}");
     internal static void LogError(string message) => Console.WriteLine($"##vso[task.logissue type=error] {message}");
 
-    private static List<IValidationStep> _validationSteps = new List<IValidationStep>
-    {
-        new ToolingFilesValidation(),
-        new SubmoduleValidation(),
-        new ExclusionFileValidation()
-    };
-
     internal static async Task<int> Main(string[] args)
     {
-        RegisterServices(args);
+        using var host = RegisterServices(args);
+        List<IValidationStep> validationSteps = CreateValidationSteps(host.Services);
         PrInfo prInfo = SetupPrInfo();
+
         int stepCounter = 0;
         int failedSteps = 0;
 
-        foreach (var validationStep in _validationSteps)
+        foreach (var validationStep in validationSteps)
         {
             stepCounter++;
             Console.WriteLine();
@@ -60,7 +55,7 @@ internal static class Validate
         }
         if (failedSteps > 0)
         {
-            LogError($"Validation failed. {failedSteps} out of {_validationSteps.Count} steps failed.");
+            LogError($"Validation failed. {failedSteps} out of {validationSteps.Count} steps failed.");
             Console.WriteLine("Please review the errors above and fix the issues before proceeding.");
             return 1;
         }
@@ -115,9 +110,9 @@ internal static class Validate
         return new PrInfo(targetBranch, changedFiles);
     }
 
-    private static void RegisterServices(string[] args)
+    private static IHost RegisterServices(string[] args)
     {
-        using var host = Host.CreateDefaultBuilder(args)
+        return Host.CreateDefaultBuilder(args)
         .ConfigureServices((_, services) =>
         {
             services.TryAddScoped<IVmrInfo>(sp => new VmrInfo(string.Empty, "tmp"));
@@ -127,5 +122,14 @@ internal static class Validate
             services.TryAddTransient<ISourceMappingParser, SourceMappingParser>();
         })
         .Build();
+    }
+
+    private static List<IValidationStep> CreateValidationSteps(IServiceProvider serviceProvider)
+    {
+        return [
+            ActivatorUtilities.CreateInstance<ToolingFilesValidation>(serviceProvider),
+            ActivatorUtilities.CreateInstance<SubmoduleValidation>(serviceProvider),
+            ActivatorUtilities.CreateInstance<ExclusionFileValidation>(serviceProvider)
+            ];
     }
 }
