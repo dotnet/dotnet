@@ -856,10 +856,8 @@ namespace NuGet.CommandLine
             // Add the transform file to the package builder
             ProcessTransformFiles(builder, packages.SelectMany(GetTransformFiles));
 
-            var dependencies = new Dictionary<string, PackageDependency>();
-            dependencies = builder.DependencyGroups.SelectMany(d => d.Packages)
+            var dependencies = builder.DependencyGroups.SelectMany(d => d.Packages)
                 .ToDictionary(d => d.Id, StringComparer.OrdinalIgnoreCase);
-
 
             // Reduce the set of packages we want to include as dependencies to the minimal set.
             // Normally, packages.config has the full closure included, we only add top level
@@ -867,12 +865,14 @@ namespace NuGet.CommandLine
             foreach (var package in packages)
             {
                 // Don't add duplicate dependencies
-                if (dependencies.ContainsKey(package.GetIdentity().Id) || !FindDependency(package.GetIdentity(), packagesAndDependencies.Values))
+                var packageIdentity = package.GetIdentity();
+                if (dependencies.ContainsKey(packageIdentity.Id) ||
+                    !FindDependency(packageIdentity, packagesAndDependencies.Values))
                 {
                     continue;
                 }
 
-                var dependency = packagesAndDependencies[package.GetIdentity().Id].Item2;
+                var dependency = packagesAndDependencies[packageIdentity.Id].Item2;
                 dependencies[dependency.Id] = dependency;
             }
 
@@ -887,7 +887,6 @@ namespace NuGet.CommandLine
 
             var targetFramework = TargetFramework ?? NuGetFramework.AnyFramework;
             builder.DependencyGroups.Add(new PackageDependencyGroup(targetFramework, new HashSet<PackageDependency>(dependencies.Values)));
-
         }
 
         private bool FindDependency(PackageIdentity projectPackage, IEnumerable<Tuple<PackageReaderBase, Packaging.Core.PackageDependency>> packagesAndDependencies)

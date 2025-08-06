@@ -14,6 +14,7 @@ namespace NuGet.SolutionRestoreManager
     /// </summary>
     [ComImport]
     [Guid("0C9117CB-828D-4E16-B73F-FEEA9BD6A027")]
+    [Obsolete]
     public interface IVsTargetFrameworks2 : IEnumerable
     {
         /// <summary>

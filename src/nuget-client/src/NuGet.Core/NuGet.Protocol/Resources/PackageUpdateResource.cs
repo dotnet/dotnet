@@ -151,47 +151,6 @@ namespace NuGet.Protocol.Core.Types
                 log);
         }
 
-        [Obsolete("Use Push method which takes multiple package paths.")]
-        public Task Push(
-            string packagePath,
-            string symbolSource, // empty to not push symbols
-            int timeoutInSecond,
-            bool disableBuffering,
-            Func<string, string> getApiKey,
-            Func<string, string> getSymbolApiKey,
-            bool noServiceEndpoint,
-            bool skipDuplicate,
-            SymbolPackageUpdateResourceV3 symbolPackageUpdateResource,
-            ILogger log)
-        {
-            return Push(new[] { packagePath }, symbolSource, timeoutInSecond, disableBuffering, getApiKey,
-                getSymbolApiKey, noServiceEndpoint, skipDuplicate, symbolPackageUpdateResource, log);
-        }
-
-        [Obsolete("Consolidating to one PackageUpdateResource.Push method which has all parameters defined.")]
-        public async Task Push(
-            string packagePath,
-            string symbolSource, // empty to not push symbols
-            int timeoutInSecond,
-            bool disableBuffering,
-            Func<string, string> getApiKey,
-            Func<string, string> getSymbolApiKey,
-            bool noServiceEndpoint,
-            ILogger log)
-        {
-            await Push(
-                packagePath,
-                symbolSource,
-                timeoutInSecond,
-                disableBuffering,
-                getApiKey,
-                getSymbolApiKey,
-                noServiceEndpoint,
-                skipDuplicate: false,
-                symbolPackageUpdateResource: null,
-                log: log);
-        }
-
         public async Task Delete(string packageId,
             string packageVersion,
             Func<string, string> getApiKey,

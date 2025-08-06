@@ -17,6 +17,9 @@ namespace NuGet.CommandLine
         [Option(typeof(NuGetCommand), "PushCommandSourceDescription", AltName = "src")]
         public string Source { get; set; }
 
+        [Option(typeof(NuGetCommand), "PushCommandAllowInsecureConnectionsDescription")]
+        public bool AllowInsecureConnections { get; set; }
+
         [Option(typeof(NuGetCommand), "CommandApiKey")]
         public string ApiKey { get; set; }
 
@@ -70,6 +73,7 @@ namespace NuGet.CommandLine
                     NoSymbols,
                     NoServiceEndpoint,
                     SkipDuplicate,
+                    AllowInsecureConnections,
                     Console);
             }
             catch (TaskCanceledException ex)
