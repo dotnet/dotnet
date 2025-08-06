@@ -26,9 +26,11 @@ internal static class Validate
 
     internal static async Task<int> Main(string[] args)
     {
-        using var host = RegisterServices(args);
-        List<IValidationStep> validationSteps = CreateValidationSteps(host.Services);
-        PrInfo prInfo = SetupPrInfo();
+        var pm = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
+        var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
+        var serviceProvider = RegisterServices(repoRoot);
+        List<IValidationStep> validationSteps = CreateValidationSteps(serviceProvider);
+        PrInfo prInfo = await SetupPrInfo(pm, repoRoot);
 
         int stepCounter = 0;
         int failedSteps = 0;
@@ -72,73 +74,54 @@ internal static class Validate
         }
     }
 
-    internal static string RunGitCommand(string arguments)
+    private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        var process = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "git",
-                Arguments = arguments,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            }
-        };
-
-        process.Start();
-        string output = process.StandardOutput.ReadToEnd();
-        string err = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-
-        if (process.ExitCode != 0)
-        {
-            throw new Exception($"Git command failed: {arguments}\n{err}");
-        }
-
-        return output;
-    }
-
-    private static PrInfo SetupPrInfo()
-    {
-        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH") ?? "main";
 
         if (string.IsNullOrEmpty(targetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
-        RunGitCommand($"fetch origin {targetBranch}");
-        string diffOutput = RunGitCommand($"diff --name-only origin/{targetBranch}...HEAD");
+        await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
+        //string diffOutput = (await pm.ExecuteGit(repoPath, ["diff",  $"--name-only" ,$"origin/{targetBranch}...HEAD"])).StandardOutput;
+
+        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"{targetBranch}", "HEAD" ])).StandardOutput.Trim();
+        Console.WriteLine("Merge base commit:" + mergeBase);
+        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "HEAD" ])).StandardOutput;
+
+        Console.WriteLine("diff output length:" +diffOutput.Length);
 
         var changedFiles = diffOutput
             .Split('\n', StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
+        Console.WriteLine("changed files count: " + changedFiles.Count);
+
+        foreach (var file in changedFiles)
+        {
+            Console.WriteLine(file);
+        }
+
         return new PrInfo(targetBranch, changedFiles);
     }
 
-    private static IHost RegisterServices(string[] args)
+    private static IServiceProvider RegisterServices(string repoRoot)
     {
-        return Host.CreateDefaultBuilder(args)
-        .ConfigureServices((_, services) =>
-        {
-            services.AddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
-            services.AddSingleton<IVmrInfo>(sp =>
-            {
-                var pm = sp.GetRequiredService<IProcessManager>();
-                var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
-                return new VmrInfo(repoRoot, "tmp");
-            });
-            services.AddScoped<ISourceManifest>(sp => new SourceManifest([], []));
-            services.AddScoped<IVmrDependencyTracker, VmrDependencyTracker>();
-            services.AddTransient<ISourceMappingParser, SourceMappingParser>();
-            services.AddSingleton<IFileSystem, FileSystem>();
+        var services = new ServiceCollection();
 
-        })
-        .Build();
+        VmrRegistrations.AddSingleVmrSupport(
+            services,
+            "git",
+            repoRoot,
+            "tmp",
+            null,
+            null);
+
+        var serviceProvider = services.BuildServiceProvider();
+
+        return serviceProvider;
     }
 
     private static List<IValidationStep> CreateValidationSteps(IServiceProvider serviceProvider)
