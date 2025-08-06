@@ -33,6 +33,7 @@ internal class ExclusionFileValidation : IValidationStep
     {
         _dependencyTracker = dependencyTracker;
         _processManager = processManager;
+        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
     }
 
     public string DisplayName => "Exclusion File Validation";
