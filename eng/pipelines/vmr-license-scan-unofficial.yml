@@ -28,6 +28,17 @@ extends:
       azurelinuxSourceBuildTestContainer:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-source-build-test-amd64
         options: '--memory=6g'
+    sdl:
+      sourceAnalysisPool:
+          name: NetCore1ESPool-Svc-Internal
+          image: 1es-windows-2022
+          os: windows
+      binskim:
+        enabled: true
+      policheck:
+        enabled: true
+      tsa:
+        enabled: true
     stages:
     - template: /eng/pipelines/templates/stages/vmr-license-scan.yml@self
       parameters:
