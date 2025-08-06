@@ -87,9 +87,11 @@ internal class ExclusionFileValidation : IValidationStep
 
             var sourceMappings = _dependencyTracker.Mappings;
 
-            return sourceMappings.SelectMany(mapping => mapping.Exclude)
+            var exclusionPatterns =  sourceMappings.SelectMany(mapping => mapping.Exclude)
                 .Distinct()
                 .ToList();
+            LogInfo($"Exclusion patterns from branch {branchName}: {string.Join(", ", exclusionPatterns)}");
+            return exclusionPatterns;
         }
         finally
         {
