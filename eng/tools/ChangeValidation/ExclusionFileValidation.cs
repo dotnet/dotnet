@@ -43,7 +43,6 @@ internal class ExclusionFileValidation : IValidationStep
         var originalExclusionRules = await GetExclusionPatternsFromBranch("origin/" + prInfo.TargetBranch);
         var newExclusionRules = await GetExclusionPatternsFromBranch("HEAD");
 
-
         var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
         var newExcludedFiles = FindMatchingFiles(newExclusionRules);
 
@@ -75,7 +74,7 @@ internal class ExclusionFileValidation : IValidationStep
             LogError($"... {filesMatchingNewExclusionRules.Count - maxDisplayedFiles} more VMR files match the new exclusion rules. Only showing the first {maxDisplayedFiles} files.");
         }
 
-        return excludedFilesInPr.Any() || filesMatchingNewExclusionRules.Any();
+        return !excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any();
     }
 
     private async Task<List<string>> GetExclusionPatternsFromBranch(string branchName)
@@ -84,7 +83,8 @@ internal class ExclusionFileValidation : IValidationStep
         try
         {
             await _processManager.ExecuteGit(_repoRoot, ["checkout", branchName]);
-            await _dependencyTracker.RefreshMetadata(_repoRoot);
+            await _dependencyTracker.RefreshMetadata();
+
             var sourceMappings = _dependencyTracker.Mappings;
 
             return sourceMappings.SelectMany(mapping => mapping.Exclude)

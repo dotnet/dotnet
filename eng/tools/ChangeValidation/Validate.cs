@@ -46,21 +46,30 @@ internal static class Validate
             }
             catch (Exception)
             {
-                LogError($"An unexpected error occurred during the validation step: {validationStep.DisplayName}.");
+                LogError($"{validationStep.DisplayName} was interrupted with an unexpected error.");
             }
-            if (!validationSuccess)
+            if (validationSuccess)
+            {
+                LogInfo($"{validationStep.DisplayName} succeeded.");
+            }
+            else
             {
                 failedSteps++;
-                Console.WriteLine($"Validation step {validationStep.DisplayName} failed.");
+                Console.WriteLine($"{validationStep.DisplayName} failed.");
             }
         }
         if (failedSteps > 0)
         {
-            LogError($"Validation failed. {failedSteps} out of {validationSteps.Count} steps failed.");
-            Console.WriteLine("Please review the errors above and fix the issues before proceeding.");
+            Console.WriteLine();
+            Console.WriteLine();
+            LogError($"{failedSteps} out of {validationSteps.Count} validation steps have failed.");
             return 1;
         }
-        return 0;
+        else
+        {
+            LogInfo("All validation steps succeeded!");
+            return 0;
+        }
     }
 
     internal static string RunGitCommand(string arguments)
@@ -116,10 +125,15 @@ internal static class Validate
         return Host.CreateDefaultBuilder(args)
         .ConfigureServices((_, services) =>
         {
-            services.AddScoped<IVmrInfo>(sp => new VmrInfo(string.Empty, "tmp"));
+            services.AddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
+            services.AddSingleton<IVmrInfo>(sp =>
+            {
+                var pm = sp.GetRequiredService<IProcessManager>();
+                var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
+                return new VmrInfo(repoRoot, "tmp");
+            });
             services.AddScoped<ISourceManifest>(sp => new SourceManifest([], []));
             services.AddScoped<IVmrDependencyTracker, VmrDependencyTracker>();
-            services.AddTransient<IProcessManager>(sp => new ProcessManager(NullLogger<ProcessManager>.Instance, "git"));
             services.AddTransient<ISourceMappingParser, SourceMappingParser>();
             services.AddSingleton<IFileSystem, FileSystem>();
 
