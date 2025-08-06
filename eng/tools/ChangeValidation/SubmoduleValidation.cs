@@ -33,19 +33,19 @@ internal class SubmoduleValidation : IValidationStep
 
     public async Task<bool> Execute(PrInfo prInfo)
     {
-        var sourceManifest = await GetSourceManifestFromBranch("HEAD");
+        var repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+        var sourceManifest = await GetSourceManifestFromBranch("HEAD", repoRoot);
         var submoduleGlobPatterns = sourceManifest.Submodules.Select(submodule => submodule.Path)
             .Select(pattern => pattern.TrimStart('/')) // Remove leading slashes for globbing
             .ToList();
 
         var matcher = new Matcher();
-
         foreach (var pattern in submoduleGlobPatterns)
         {
             matcher.AddInclude(pattern);
         }
 
-        var directory = new InMemoryDirectoryInfo("", prInfo.ChangedFiles);
+        var directory = new InMemoryDirectoryInfo(repoRoot, prInfo.ChangedFiles);
 
         var result = matcher.Execute(directory);
 
@@ -64,10 +64,9 @@ internal class SubmoduleValidation : IValidationStep
         return !modifiedSubmoduleFiles.Any();
     }
 
-    private async Task<SourceManifest> GetSourceManifestFromBranch(string branchName)
+    private async Task<SourceManifest> GetSourceManifestFromBranch(string branchName, string repoRoot)
     {
-        var repoRoot = _processManager.FindGitRoot(string.Empty);
-        var sourceManifestContent = await _processManager.ExecuteGit(repoRoot, "show", $"{branchName}:{VmrInfo.DefaultRelativeSourceManifestPath}");
+        var sourceManifestContent = await _processManager.ExecuteGit(repoRoot, ["show", $"{branchName}:{VmrInfo.DefaultRelativeSourceManifestPath}"]);
         var sourceManifest = SourceManifest.FromJson(sourceManifestContent.StandardOutput);
         return sourceManifest;
     }
