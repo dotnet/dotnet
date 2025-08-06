@@ -86,7 +86,7 @@ internal static class Validate
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
         //string diffOutput = (await pm.ExecuteGit(repoPath, ["diff",  $"--name-only" ,$"origin/{targetBranch}...HEAD"])).StandardOutput;
 
-        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"{targetBranch}", "HEAD" ])).StandardOutput.Trim();
+        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"origin/{targetBranch}", "HEAD" ])).StandardOutput.Trim();
         Console.WriteLine("Merge base commit:" + mergeBase);
         string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "HEAD" ])).StandardOutput;
 
