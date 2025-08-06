@@ -1064,4 +1064,15 @@ Do not translate "PackageVersion"</comment>
     <comment>{0}: Number of packages updated
 {1}: Package checked for updated versions</comment>
   </data>
+  <data name="Error_AddPkgUnresolved" xml:space="preserve">
+    <value>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</value>
+    <comment>{0} Package Id</comment>
+  </data>
+  <data name="Error_AddPkgProjectReference" xml:space="preserve">
+    <value>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</value>
+    <comment>{0} - PackageId</comment>
+  </data>
+  <data name="AllowInsecureConnections_Description" xml:space="preserve">
+    <value>Allow pushing to HTTP sources (insecure).</value>
+  </data>
 </root>
