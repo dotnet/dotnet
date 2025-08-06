@@ -352,10 +352,10 @@ $env:DOTNETSDK_ALLOW_TARGETING_PACK_CACHING=0
 
 if ($bootstrap -eq $True) {
 
-  if ($actionsPassedIn) {
+  if ($actionPassedIn) {
     # Filter out all actions
     $bootstrapArguments = ($arguments -split ' ') | Where-Object {
-        $_ -notmatch '^/p:(' + ($actionsPassedIn -join '|') + ')=.*'
+        $_ -notmatch '^/p:(' + ($actionPassedIn -join '|') + ')=.*'
     } -join ' '
 
     # Preserve Restore and Build if they're passed in
@@ -365,6 +365,8 @@ if ($bootstrap -eq $True) {
     if ($arguments -match "/p:Build=true") {
       $bootstrapArguments += "/p:Build=true"
     }
+  } else {
+    $bootstrapArguments = $arguments
   }
 
   $bootstrapArguments += "/p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
