@@ -20,7 +20,7 @@ namespace ValidateVmrChanges;
 
 internal static class Validate
 {
-    internal static void LogInfo(string message) => Console.WriteLine($"##vso[task.logissue type=information] {message}");
+    internal static void LogInfo(string message) => Console.WriteLine(message);
     internal static void LogWarning(string message) => Console.WriteLine($"##vso[task.logissue type=warning] {message}");
     internal static void LogError(string message) => Console.WriteLine($"##vso[task.logissue type=error] {message}");
 
