@@ -48,14 +48,14 @@ stages:
       scope: full
 
 - stage: ValidateUserChanges
-  displayName: 'Validate user changes in VMR'
+  displayName: Validate user changes in VMR
   dependsOn: []
   condition: and(eq(variables['isPRTrigger'], 'true'), ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'))
   jobs:
   - job: Validate
-    displayName: 'Run Validation Script'
+    displayName: Run Validation Script
     pool:
-      vmImage: 'windows-latest'
+      vmImage: windows-latest
     steps:
     - checkout: self
       fetchDepth: 0
@@ -68,6 +68,6 @@ stages:
         InitializeDotNetCli -install $true
 
         & "$env:DOTNET_INSTALL_DIR\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
-      displayName: 'Run ChangeValidation tool'
+      displayName: Run ChangeValidation tool
       env:
         SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)

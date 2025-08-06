@@ -15,6 +15,7 @@ internal class ToolingFilesValidation : IValidationStep
         "^eng/Version\\.Details\\.xml$",
         "^src/source-manifest\\.json$",
         "^eng/Version\\.props$",
+        "^eng/Version\\.Details\\.props$",
         "^global\\.json$",
         "^eng/common/.*"
     };

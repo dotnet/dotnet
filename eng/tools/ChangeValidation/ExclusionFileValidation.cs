@@ -27,7 +27,7 @@ internal class ExclusionFileValidation : IValidationStep
 
     private readonly string _repoRoot;
 
-    internal ExclusionFileValidation(
+    public ExclusionFileValidation(
         IVmrDependencyTracker dependencyTracker,
         IProcessManager processManager)
     {
@@ -57,7 +57,7 @@ internal class ExclusionFileValidation : IValidationStep
 
         foreach (var file in excludedFilesInPr.Take(maxDisplayedFiles).ToList())
         {
-            LogError($"This PR modifies the file `{file}`, which is part of the excluded files defined in {VmrInfo.DefaultRelativeSourceMappingsPath}. If these changes are necessary, please contact the repository organizers.");
+            LogError($"This PR modifies the file `{file}`, which is part of the excluded files defined in {VmrInfo.DefaultRelativeSourceMappingsPath}. If these changes are necessary, please contact @dotnet/product-construction.");
         }
 
         if (excludedFilesInPr.Count > maxDisplayedFiles)
@@ -83,18 +83,17 @@ internal class ExclusionFileValidation : IValidationStep
         string originalBranch = (await _processManager.ExecuteGit(_repoRoot, "rev-parse", "abbrev-ref HEAD")).StandardOutput;
         try
         {
-            await _processManager.ExecuteGit(_repoRoot, "checkout", branchName);
+            await _processManager.ExecuteGit(_repoRoot, ["checkout", branchName]);
             await _dependencyTracker.RefreshMetadata(_repoRoot);
             var sourceMappings = _dependencyTracker.Mappings;
 
-            return sourceMappings.Select(mapping => mapping.Exclude)
-                .SelectMany(exclude => exclude)
+            return sourceMappings.SelectMany(mapping => mapping.Exclude)
                 .Distinct()
                 .ToList();
         }
         finally
         {
-            await _processManager.ExecuteGit(_repoRoot, $"checkout {originalBranch}");
+            await _processManager.ExecuteGit(_repoRoot, ["checkout", originalBranch]);
         }
     }
     

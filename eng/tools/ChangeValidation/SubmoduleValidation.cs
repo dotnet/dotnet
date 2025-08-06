@@ -23,7 +23,7 @@ internal class SubmoduleValidation : IValidationStep
 
     public string DisplayName => "Submodule Validation";
 
-    internal SubmoduleValidation(
+    public SubmoduleValidation(
         IVmrDependencyTracker vmrDependencyTracker,
         IProcessManager processManager)
     {
@@ -61,14 +61,7 @@ internal class SubmoduleValidation : IValidationStep
             LogError($"... {modifiedSubmoduleFiles.Count - maxDisplayedFiles} more submodule files detected in the PR. Only showing the first {maxDisplayedFiles} files.");
         }
 
-        if (modifiedSubmoduleFiles.Any())
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return !modifiedSubmoduleFiles.Any();
     }
 
     private async Task<SourceManifest> GetSourceManifestFromBranch(string branchName)

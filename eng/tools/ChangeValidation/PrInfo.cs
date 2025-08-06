@@ -2,17 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace ValidateVmrChanges;
 
-internal class PrInfo
-{
-    internal string TargetBranch { get; }
-    internal List<string> ChangedFiles { get; }
-    internal PrInfo(string targetBranch, List<string> changedFiles)
-    {
-        TargetBranch = targetBranch;
-        ChangedFiles = changedFiles;
-    }
-}
+internal record PrInfo(string TargetBranch, ImmutableList<string> ChangedFiles);
