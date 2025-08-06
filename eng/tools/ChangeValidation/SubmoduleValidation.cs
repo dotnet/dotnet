@@ -20,7 +20,6 @@ internal class SubmoduleValidation : IValidationStep
     private static readonly int maxDisplayedFiles = 20;
     private readonly IVmrDependencyTracker _dependencyTracker;
     private readonly IProcessManager _processManager;
-    private readonly string _repoRoot;
 
     public string DisplayName => "Submodule Validation";
 
@@ -74,7 +73,8 @@ internal class SubmoduleValidation : IValidationStep
 
     private async Task<SourceManifest> GetSourceManifestFromBranch(string branchName)
     {
-        var sourceManifestContent = await _processManager.ExecuteGit(_repoRoot, "show", $"{branchName}:{VmrInfo.DefaultRelativeSourceManifestPath}");
+        var repoRoot = _processManager.FindGitRoot(string.Empty);
+        var sourceManifestContent = await _processManager.ExecuteGit(repoRoot, "show", $"{branchName}:{VmrInfo.DefaultRelativeSourceManifestPath}");
         var sourceManifest = SourceManifest.FromJson(sourceManifestContent.StandardOutput);
         return sourceManifest;
     }
