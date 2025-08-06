@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../Strings.resx">
+    <body>
+      <trans-unit id="CircularDependencyDetected">
+        <source>Circular dependency detected '{0}'.</source>
+        <target state="translated">Se detectó una dependencia circular: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyConstraint">
+        <source>constraint</source>
+        <target state="translated">restricción</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DuplicateDependencyIdsError">
+        <source>The package '{0}' version '{1}' declared a duplicate dependency '{2}'. This might mean the package is corrupt or the server metadata for the package is corrupt.</source>
+        <target state="translated">El paquete '{0}' versión '{1}' declaró una dependencia duplicada '{2}'. Esto podría significar que el paquete o los metadatos del servidor del paquete están dañados.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FatalError">
+        <source>A fatal error occured while resolving dependencies.</source>
+        <target state="translated">Error irrecuperable durante la resolución de las dependencias.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageConfig">
+        <source>One or more unresolved package dependency constraints detected in the existing packages.config file. All dependency constraints must be resolved to add or update packages. If these packages are being updated this message may be ignored, if not the following error(s) may be blocking the current package operation: {0}</source>
+        <target state="translated">Se detectaron una o varias restricciones de dependencia de paquete sin resolver en el archivo existente packages.config. Todas las restricciones de dependencia deben resolverse para agregar o actualizar paquetes. Si estos paquetes se están actualizando, se puede ignorar este mensaje. De lo contrario, es posible que los siguientes errores bloqueen la operación de paquete actual: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingDependencyInfo">
+        <source>Unable to find package '{0}'. Existing packages must be restored before performing an install or update.</source>
+        <target state="translated">No se encuentra el paquete '{0}'. Los paquetes existentes deben restaurarse antes de realizar una instalación o una actualización.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSolution">
+        <source>Unable to resolve dependencies.</source>
+        <target state="translated">No se pueden resolver las dependencias.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigConstraint">
+        <source>'{0}' has an additional constraint {1} defined in {2}.</source>
+        <target state="translated">'{0}' tiene una restricción adicional {1} definida en {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverTotalTime">
+        <source>Resolving dependency information took {0}</source>
+        <target state="translated">La resolución de información de dependencia tardó {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleVersion">
+        <source>Unable to find a version of '{0}' that is compatible with {1}.</source>
+        <target state="translated">No se encuentra una versión de '{0}' compatible con {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForEmptySource">
+        <source>Unable to resolve dependency '{0}'.</source>
+        <target state="translated">No se puede resolver la dependencia '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyForMultipleSources">
+        <source>Unable to resolve dependency '{0}'. Source(s) used: {1}.</source>
+        <target state="translated">No se puede resolver la dependencia '{0}'. Orígenes usados: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VersionIsNotCompatible">
+        <source>Unable to resolve dependencies. '{0}' is not compatible with {1}.</source>
+        <target state="translated">No se pueden resolver las dependencias. '{0}' no es compatible con {1}.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

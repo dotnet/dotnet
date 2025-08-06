@@ -572,5 +572,40 @@ namespace NuGet.CommandLine.Xplat.Tests
             string message = _fixture.NormalizeNewlines(Message);
             message.Should().Contain(_fixture.ExpectedSearchResultNullInfoPackage);
         }
+
+        [Fact]
+        public async Task RunAsync_SearchWithNoArgument_ReturnsDefaultPackages()
+        {
+            // Arrange
+            using SimpleTestPathContext pathContext = new SimpleTestPathContext();
+            string source = $"{_fixture.ServerWithMultipleEndpoints.Uri}v3/index.json";
+            pathContext.Settings.AddSource(source, source, allowInsecureConnectionsValue: "true");
+
+            ISettings settings = Settings.LoadDefaultSettings(
+            pathContext.WorkingDirectory,
+            configFileName: pathContext.NuGetConfig,
+            machineWideSettings: new XPlatMachineWideSetting());
+            PackageSourceProvider sourceProvider = new PackageSourceProvider(settings);
+            PackageSearchArgs packageSearchArgs = new()
+            {
+                Prerelease = true,
+                ExactMatch = false,
+                Logger = GetLogger(),
+                Sources = new List<string> { source },
+                Format = PackageSearchFormat.Json
+            };
+
+            // Act
+            int exitCode = await PackageSearchRunner.RunAsync(
+                sourceProvider: sourceProvider,
+                packageSearchArgs,
+                cancellationToken: CancellationToken.None);
+
+            // Assert
+            string message = _fixture.NormalizeNewlines(Message);
+            message.Should().Contain(_fixture.ExpectedSearchResultNormal);
+            exitCode.Should().Be(ExitCodes.Success);
+        }
+
     }
 }

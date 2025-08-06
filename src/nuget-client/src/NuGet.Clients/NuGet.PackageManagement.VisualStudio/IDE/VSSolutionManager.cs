@@ -535,7 +535,9 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             // Check if user unchecks the "Tools - Options - Project & Soltuions - Save new projects when created" option
+#pragma warning disable CS0618 // Type or member is obsolete
             value = GetVSSolutionProperty((int)(__VSPROPID2.VSPROPID_DeferredSaveSolution));
+#pragma warning restore CS0618 // Type or member is obsolete
             return (bool)value;
         }
 

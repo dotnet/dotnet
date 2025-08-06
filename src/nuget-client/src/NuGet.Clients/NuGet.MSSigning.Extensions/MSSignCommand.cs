@@ -40,7 +40,7 @@ namespace NuGet.MSSigning.Extensions
         {
             ValidatePackagePath();
             WarnIfNoTimestamper(Console);
-            ValidateCertificateInputs(Console);
+            ValidateCertificateInputs();
             EnsureOutputDirectory();
 
             var signingSpec = SigningSpecifications.V1;

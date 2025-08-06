@@ -25,7 +25,7 @@ namespace NuGet.PackageManagement.Test
 {
     public class BuildIntegratedNuGetProjectTests
     {
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task BuildIntegratedNuGetProject_IsRestoreRequiredChangedSha512()
         {
             // Arrange
@@ -182,7 +182,7 @@ namespace NuGet.PackageManagement.Test
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task BuildIntegratedNuGetProject_IsRestoreRequiredMissingPackage()
         {
             // Arrange
@@ -275,7 +275,7 @@ namespace NuGet.PackageManagement.Test
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task BuildIntegratedNuGetProject_IsRestoreNotRequiredWithFloatingVersion()
         {
             // Arrange
@@ -353,7 +353,7 @@ namespace NuGet.PackageManagement.Test
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task BuildIntegratedNuGetProject_IsRestoreRequiredWithNoChanges()
         {
             // Arrange
