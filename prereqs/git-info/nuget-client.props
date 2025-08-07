@@ -2,9 +2,9 @@
 <Project>
   <PropertyGroup>
     <GitCommitHash>42bfb4554167e1d2fc2b950728d9bd8164f806c1</GitCommitHash>
-    <OfficialBuildId>20250610.1</OfficialBuildId>
-    <OutputPackageVersion>6.12.4-rc.9</OutputPackageVersion>
-    <PreReleaseVersionLabel>rc</PreReleaseVersionLabel>
-    <IsStable>false</IsStable>
+    <OfficialBuildId>20250807.1</OfficialBuildId>
+    <OutputPackageVersion>6.12.4</OutputPackageVersion>
+    <PreReleaseVersionLabel></PreReleaseVersionLabel>
+    <IsStable>true</IsStable>
   </PropertyGroup>
 </Project>
