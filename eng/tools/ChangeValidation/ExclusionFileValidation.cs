@@ -24,16 +24,21 @@ internal class ExclusionFileValidation : IValidationStep
     private static readonly int maxDisplayedFiles = 20;
     private readonly IVmrDependencyTracker _dependencyTracker;
     private readonly IProcessManager _processManager;
+    private readonly IGitRepoFactory _localGitRepoFactory;
+    private readonly IGitRepo _vmr;
 
     private readonly string _repoRoot;
 
     public ExclusionFileValidation(
         IVmrDependencyTracker dependencyTracker,
-        IProcessManager processManager)
+        IProcessManager processManager,
+        IGitRepoFactory localGitRepoFactory)
     {
         _dependencyTracker = dependencyTracker;
         _processManager = processManager;
         _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
+        _localGitRepoFactory = localGitRepoFactory;
+        _vmr = _localGitRepoFactory.CreateClient(_repoRoot);
     }
 
     public string DisplayName => "Exclusion File Validation";
@@ -79,7 +84,8 @@ internal class ExclusionFileValidation : IValidationStep
 
     private async Task<List<string>> GetExclusionPatternsFromBranch(string branchName)
     {
-        string originalBranch = (await _processManager.ExecuteGit(_repoRoot, "rev-parse", "abbrev-ref HEAD")).StandardOutput;
+        string originalRef = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"]))
+    .StandardOutput.Trim();
         try
         {
             await _processManager.ExecuteGit(_repoRoot, ["checkout", branchName]);
@@ -95,7 +101,7 @@ internal class ExclusionFileValidation : IValidationStep
         }
         finally
         {
-            await _processManager.ExecuteGit(_repoRoot, ["checkout", originalBranch]);
+            var res = await _processManager.ExecuteGit(_repoRoot, ["checkout", originalRef]);
         }
     }
     
