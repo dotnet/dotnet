@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <NuGetKeyFilePath>$(KeysDir)NuGet.Client.snk</NuGetKeyFilePath>
-
     <!-- Don't pass any build actions because the repo doesn't support them. -->
     <BuildActions></BuildActions>
     <!-- Call into a custom build script as nuget-client doesn't use Arcade infra. -->
@@ -20,11 +18,6 @@
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
     <RepositoryReference Include="xdt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EnvironmentVariables Include="MS_PFX_PATH=$(NuGetKeyFilePath)" />
-    <EnvironmentVariables Include="NUGET_PFX_PATH=$(NuGetKeyFilePath)" />
   </ItemGroup>
 
 </Project>
