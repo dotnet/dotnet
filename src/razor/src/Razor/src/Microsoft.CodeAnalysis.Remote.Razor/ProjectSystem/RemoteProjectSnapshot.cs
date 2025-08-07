@@ -189,6 +189,20 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
             : null;
     }
 
+    public async Task<TextDocument?> TryGetRazorDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
+    {
+        var runResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        if (runResult is null)
+        {
+            return null;
+        }
+
+        return runResult.GetFilePath(generatedDocumentHintName) is { } razorFilePath &&
+            _project.Solution.TryGetRazorDocument(razorFilePath, out var razorDocument)
+                ? razorDocument
+                : null;
+    }
+
     private async Task<RazorGeneratorResult?> GetRazorGeneratorResultAsync(CancellationToken cancellationToken)
     {
         var result = await _project.GetSourceGeneratorRunResultAsync(cancellationToken).ConfigureAwait(false);
