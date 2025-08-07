@@ -84,8 +84,7 @@ internal class ExclusionFileValidation : IValidationStep
 
     private async Task<List<string>> GetExclusionPatternsFromBranch(string branchName)
     {
-        string originalRef = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"]))
-    .StandardOutput.Trim();
+        string originalRef = await GetCurrentCheckedRef();
         try
         {
             Console.WriteLine("will do a checkout. original branch was: " + originalRef);
@@ -110,6 +109,24 @@ internal class ExclusionFileValidation : IValidationStep
             Console.WriteLine("std: " + res.StandardOutput);
             Console.WriteLine("err: " + res.StandardError);
         }
+    }
+
+    private async string GetCurrentCheckedRef()
+    {
+        var symbolicRef = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"]))
+    .StandardOutput.Trim();
+
+        string originalRef;
+        if (!string.IsNullOrEmpty(symbolicRef))
+        {
+            originalRef = symbolicRef;
+        }
+        else
+        {
+            originalRef = (await _processManager.ExecuteGit(_repoRoot, ["rev-parse", "HEAD"]))
+                .StandardOutput.Trim();
+        }
+        return originalRef;
     }
     
     private HashSet<string> FindMatchingFiles(List<string> globPatterns)
