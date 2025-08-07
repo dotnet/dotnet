@@ -88,7 +88,11 @@ internal class ExclusionFileValidation : IValidationStep
     .StandardOutput.Trim();
         try
         {
+            Console.WriteLine("will do a checkout. original branch was: " + originalRef);
             await _processManager.ExecuteGit(_repoRoot, ["checkout", branchName]);
+            Console.WriteLine("now should be on branch: " + branchName);
+            var justMakingSure = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"])).StandardOutput.Trim();
+            Console.WriteLine("just making sure. we are now on ref: " + justMakingSure);
             await _dependencyTracker.RefreshMetadata();
 
             var sourceMappings = _dependencyTracker.Mappings;
@@ -101,7 +105,10 @@ internal class ExclusionFileValidation : IValidationStep
         }
         finally
         {
+            Console.WriteLine("switching back to orgiinal branch: " + originalRef);
             var res = await _processManager.ExecuteGit(_repoRoot, ["checkout", originalRef]);
+            Console.WriteLine("std: " + res.StandardOutput);
+            Console.WriteLine("err: " + res.StandardError);
         }
     }
     
