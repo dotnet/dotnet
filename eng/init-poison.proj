@@ -45,7 +45,8 @@
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />
 
     <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PrebuiltPoisonReportDataFile)" MarkerFileName="$(PrebuiltPoisonMarkerFile)" />
-    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages);@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages)" CatalogOutputFilePath="$(PreviouslySourceBuiltPoisonReportDataFile)" MarkerFileName="$(PreviouslySourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SharedComponentPoisonReportDataFile)" MarkerFileName="$(SharedComponentPoisonMarkerFile)" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />
 

@@ -30,9 +30,11 @@
     <!-- Check for prebuilt and source-built packages. -->
     <ItemGroup>
       <PoisonReportDataFile Include="$(PrebuiltPoisonReportDataFile)" />
-      <PoisonReportDataFile Include="$(SourceBuiltPoisonReportDataFile)" />
+      <PoisonReportDataFile Include="$(PreviouslySourceBuiltPoisonReportDataFile)" />
+      <PoisonReportDataFile Include="$(SharedComponentPoisonReportDataFile)" />
       <PoisonMarkerFile Include="$(PrebuiltPoisonMarkerFile)" />
-      <PoisonMarkerFile Include="$(SourceBuiltPoisonMarkerFile)" />
+      <PoisonMarkerFile Include="$(PreviouslySourceBuiltPoisonMarkerFile)" />
+      <PoisonMarkerFile Include="$(SharedComponentPoisonMarkerFile)" />
     </ItemGroup>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(PoisonFileToCheck) for poisoned files." />

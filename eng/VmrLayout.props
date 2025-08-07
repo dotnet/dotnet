@@ -67,8 +67,10 @@
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
     <PrebuiltPoisonMarkerFile>.prebuilt.xml</PrebuiltPoisonMarkerFile>
     <PrebuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-prebuilt-catalog.xml</PrebuiltPoisonReportDataFile>
-    <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
-    <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
+    <PreviouslySourceBuiltPoisonMarkerFile>.previously-source-built.xml</PreviouslySourceBuiltPoisonMarkerFile>
+    <PreviouslySourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-previously-source-built-catalog.xml</PreviouslySourceBuiltPoisonReportDataFile>
+    <SharedComponentPoisonMarkerFile>.shared-component.xml</SharedComponentPoisonMarkerFile>
+    <SharedComponentPoisonReportDataFile>$(ArtifactsLogDir)poison-shared-component-catalog.xml</SharedComponentPoisonReportDataFile>
     <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
     <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
