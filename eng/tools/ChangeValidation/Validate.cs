@@ -76,7 +76,7 @@ internal static class Validate
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH") ?? "main";
+        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
 
         if (string.IsNullOrEmpty(targetBranch))
         {
@@ -84,16 +84,15 @@ internal static class Validate
         }
 
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
-        //string diffOutput = (await pm.ExecuteGit(repoPath, ["diff",  $"--name-only" ,$"origin/{targetBranch}...HEAD"])).StandardOutput;
 
-        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"origin/{targetBranch}", "HEAD" ])).StandardOutput.Trim();
+        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"{targetBranch}", "HEAD" ])).StandardOutput.Trim();
         Console.WriteLine("Merge base commit:" + mergeBase);
         string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "HEAD" ])).StandardOutput;
 
         Console.WriteLine("diff output length:" +diffOutput.Length);
 
         var changedFiles = diffOutput
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
