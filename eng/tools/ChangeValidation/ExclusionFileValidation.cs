@@ -111,7 +111,7 @@ internal class ExclusionFileValidation : IValidationStep
         }
     }
 
-    private async string GetCurrentCheckedRef()
+    private async Task<string> GetCurrentCheckedRef()
     {
         var symbolicRef = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"]))
     .StandardOutput.Trim();
