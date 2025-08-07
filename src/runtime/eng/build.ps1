@@ -354,9 +354,9 @@ if ($bootstrap -eq $True) {
 
   if ($actionPassedIn) {
     # Filter out all actions
-    $bootstrapArguments = ($arguments -split ' ') | Where-Object {
+    $bootstrapArguments = $(($arguments -split ' ') | Where-Object {
         $_ -notmatch '^/p:(' + ($actionPassedIn -join '|') + ')=.*'
-    } -join ' '
+    }) -join ' '
 
     # Preserve Restore and Build if they're passed in
     if ($arguments -match "/p:Restore=true") {
