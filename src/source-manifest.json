@@ -19,10 +19,10 @@
       "commitSha": "2478ada175a4089ab1310960d2590810e9adc4f9"
     },
     {
-      "barId": 277758,
+      "barId": 278006,
       "path": "command-line-api",
       "remoteUri": "https://github.com/dotnet/command-line-api",
-      "commitSha": "7b2062114a0e7fe6e8f17cebb68b6a7a82430546"
+      "commitSha": "5d9ac091aae3e3d1f59adf204067a30f0f4ce4c2"
     },
     {
       "barId": 277832,
@@ -49,10 +49,10 @@
       "commitSha": "b7028483caf8304909c9f3ee17a8f5b3c685f5bc"
     },
     {
-      "barId": 277830,
+      "barId": 278009,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "ecd8e2a5368fccef0c522b3803ff9aec1f8cf297"
+      "commitSha": "c8538461a1a07aea22368e97824fad47508a8ddf"
     },
     {
       "barId": 277783,
