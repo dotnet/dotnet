@@ -19,7 +19,7 @@ namespace NuGet.CommandLine.XPlat {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -201,6 +201,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string AddSourceCommandDescription {
             get {
                 return ResourceManager.GetString("AddSourceCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow pushing to HTTP sources (insecure)..
+        /// </summary>
+        internal static string AllowInsecureConnections_Description {
+            get {
+                return ResourceManager.GetString("AllowInsecureConnections_Description", resourceCulture);
             }
         }
         
@@ -498,6 +507,24 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Error_AddPkgIncompatibleWithAllFrameworks {
             get {
                 return ResourceManager.GetString("Error_AddPkgIncompatibleWithAllFrameworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to add a PackageReference for &apos;{0}&apos;. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project..
+        /// </summary>
+        internal static string Error_AddPkgProjectReference {
+            get {
+                return ResourceManager.GetString("Error_AddPkgProjectReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find a resolved package for &apos;{0}&apos;. This is a tooling error. Please file an issue at https://github.com/NuGet/Home..
+        /// </summary>
+        internal static string Error_AddPkgUnresolved {
+            get {
+                return ResourceManager.GetString("Error_AddPkgUnresolved", resourceCulture);
             }
         }
         
