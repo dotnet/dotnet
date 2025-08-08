@@ -5,6 +5,9 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
-internal record PrInfo(string TargetBranch, ImmutableList<string> ChangedFiles);
+internal record PrInfo(
+    string BaseBranch,
+    string TargetBranch, 
+    ImmutableList<string> ChangedFiles);

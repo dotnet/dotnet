@@ -1,7 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
 internal interface IValidationStep
 {
@@ -10,7 +10,7 @@ internal interface IValidationStep
     /// </summary>
     /// <param name="fileNames">List of file names to validate.</param>
     /// <returns>boolean determining the success of the validation step</returns>
-    Task<bool> Execute(PrInfo prInfo);
+    Task<bool> Validate(PrInfo prInfo);
 
     /// <summary>
     /// Gets the display name of the validation step.

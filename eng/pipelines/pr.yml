@@ -50,7 +50,13 @@ stages:
 - stage: ValidateUserChanges
   displayName: Validate user changes in VMR
   dependsOn: []
-  condition: and(eq(variables['isPRTrigger'], 'true'), ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'))
+  condition: and(
+                eq(variables['isPRTrigger'], 'true'),
+                and(
+                    ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'),
+                    ne(variables['Build.RequestedForEmail'], 'dotnet-sb-bot@microsoft.com')
+                    ) 
+                )
   jobs:
   - job: Validate
     displayName: Run Validation Script
