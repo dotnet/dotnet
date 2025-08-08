@@ -1,10 +1,11 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor;
 
@@ -12,9 +13,9 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 {
     public partial class RazorSourceGenerator
     {
-        internal static string GetIdentifierFromPath(string filePath)
+        internal static string GetIdentifierFromPath(ReadOnlySpan<char> filePath)
         {
-            var builder = new StringBuilder(filePath.Length);
+            using var _ = StringBuilderPool.GetPooledObject(out var builder);
 
             for (var i = 0; i < filePath.Length; i++)
             {
@@ -31,6 +32,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             }
 
             builder.Append(".g.cs");
+
             return builder.ToString();
         }
 
