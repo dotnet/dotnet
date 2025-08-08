@@ -213,19 +213,14 @@
 
   <Target Name="CreatePackNupkg">
     <PropertyGroup>
-      <!-- Build from source can't use ILMerge and XPLat builds don't run the ILmerge targets. -->
-      <ILMergeSubpath Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(IsXPlat)' != 'true'">ilmerge\</ILMergeSubpath>
       <PackagePathDir Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">Desktop/</PackagePathDir>
       <PackagePathDir Condition="'$(TargetFramework)' == '$(NetStandardVersion)'">CoreCLR/</PackagePathDir>
     </PropertyGroup>
     <ItemGroup>
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet.Build.Tasks.Pack.dll" Condition="'$(DotNetBuildSourceOnly)' != 'true'">
-        <PackagePath>$(PackagePathDir)</PackagePath>
-      </TfmSpecificPackageFile>
       <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)**\NuGet*.resources.dll" Exclude="$(OutputPath)\$(ILMergeSubpath)publish\**\NuGet*.resources.dll">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
-      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet*.dll" Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+      <TfmSpecificPackageFile Include="$(OutputPath)\$(ILMergeSubpath)NuGet*.dll">
         <PackagePath>$(PackagePathDir)</PackagePath>
       </TfmSpecificPackageFile>
     </ItemGroup>
