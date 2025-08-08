@@ -44,13 +44,13 @@ internal class ExclusionFileValidation : IValidationStep
     {
         ILocalGitRepo vmr = _localGitRepoFactory.Create(_vmrInfo.VmrPath);
 
-        Console.WriteLine("base branch: " + prInfo.BaseBranch);
-        Console.WriteLine("target branch: " + prInfo.TargetBranch);
-        var originalExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.TargetBranch);
-        var newExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.BaseBranch);
+        await vmr.CheckoutAsync(prInfo.BaseBranch);
 
-        var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
+        var newExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.BaseBranch);
+        var originalExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.TargetBranch);
+
         var newExcludedFiles = FindMatchingFiles(newExclusionRules);
+        var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
 
         var excludedFilesInPr = prInfo.ChangedFiles
             .Where(file => newExcludedFiles.Contains(NormalizePath(file)))
