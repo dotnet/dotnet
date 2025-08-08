@@ -161,16 +161,6 @@ namespace NuGet.Configuration
             return null;
         }
 
-        [Obsolete("Retained for backcompat only. Use UpdateCredential instead")]
-        public void Add(IWebProxy? proxy)
-        {
-            var webProxy = proxy as WebProxy;
-            if (webProxy?.Credentials is not null)
-            {
-                _cachedCredentials.TryAdd(webProxy.ProxyAddress, webProxy.Credentials);
-            }
-        }
-
 #if !IS_CORECLR
         private static WebProxy GetSystemProxy(Uri uri)
         {

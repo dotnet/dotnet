@@ -294,8 +294,8 @@ public class RunCommand
         if (EntryPointFileFullPath is not null)
         {
             var command = CreateVirtualCommand();
-            projectFactory = command.CreateProjectInstance;
             buildResult = command.Execute();
+            projectFactory = command.LastBuildLevel is BuildLevel.Csc ? null : command.CreateProjectInstance;
         }
         else
         {
@@ -348,6 +348,14 @@ public class RunCommand
 
     internal ICommand GetTargetCommand(Func<ProjectCollection, ProjectInstance>? projectFactory)
     {
+        if (projectFactory is null && ProjectFileFullPath is null)
+        {
+            // If we are running a file-based app and projectFactory is null, it means csc was used instead of full msbuild.
+            // So we can skip project evaluation to continue the optimized path.
+            Debug.Assert(EntryPointFileFullPath is not null);
+            return CreateCommandForCscBuiltProgram(EntryPointFileFullPath);
+        }
+
         FacadeLogger? logger = LoggerUtility.DetermineBinlogger([..MSBuildArgs.OtherMSBuildArgs], "dotnet-run");
         var project = EvaluateProject(ProjectFileFullPath, projectFactory, MSBuildArgs, logger);
         ValidatePreconditions(project);
@@ -402,15 +410,41 @@ public class RunCommand
             var command = CommandFactoryUsingResolver.Create(commandSpec)
                 .WorkingDirectory(runProperties.RunWorkingDirectory);
 
-            var rootVariableName = EnvironmentVariableNames.TryGetDotNetRootVariableName(
+            SetRootVariableName(
+                command,
                 project.GetPropertyValue("RuntimeIdentifier"),
                 project.GetPropertyValue("DefaultAppHostRuntimeIdentifier"),
                 project.GetPropertyValue("TargetFrameworkVersion"));
 
+            return command;
+        }
+
+        static void SetRootVariableName(ICommand command, string runtimeIdentifier, string defaultAppHostRuntimeIdentifier, string targetFrameworkVersion)
+        {
+            var rootVariableName = EnvironmentVariableNames.TryGetDotNetRootVariableName(
+                runtimeIdentifier,
+                defaultAppHostRuntimeIdentifier,
+                targetFrameworkVersion);
             if (rootVariableName != null && Environment.GetEnvironmentVariable(rootVariableName) == null)
             {
                 command.EnvironmentVariable(rootVariableName, Path.GetDirectoryName(new Muxer().MuxerPath));
             }
+        }
+
+        static ICommand CreateCommandForCscBuiltProgram(string entryPointFileFullPath)
+        {
+            var artifactsPath = VirtualProjectBuildingCommand.GetArtifactsPath(entryPointFileFullPath);
+            var exePath = Path.Join(artifactsPath, "bin", "debug", Path.GetFileNameWithoutExtension(entryPointFileFullPath) + FileNameSuffixes.CurrentPlatform.Exe);
+            var commandSpec = new CommandSpec(path: exePath, args: null);
+            var command = CommandFactoryUsingResolver.Create(commandSpec)
+                .WorkingDirectory(Path.GetDirectoryName(entryPointFileFullPath));
+
+            SetRootVariableName(
+                command,
+                runtimeIdentifier: RuntimeInformation.RuntimeIdentifier,
+                defaultAppHostRuntimeIdentifier: RuntimeInformation.RuntimeIdentifier,
+                targetFrameworkVersion: $"v{VirtualProjectBuildingCommand.TargetFrameworkVersion}");
+
             return command;
         }
 
@@ -432,20 +466,6 @@ public class RunCommand
     }
 
     static readonly string ComputeRunArgumentsTarget = "ComputeRunArguments";
-
-    private static LoggerVerbosity ToLoggerVerbosity(VerbosityOptions? verbosity)
-    {
-        // map all cases of VerbosityOptions enum to the matching LoggerVerbosity enum
-        return verbosity switch
-        {
-            VerbosityOptions.quiet | VerbosityOptions.q => LoggerVerbosity.Quiet,
-            VerbosityOptions.minimal | VerbosityOptions.m => LoggerVerbosity.Minimal,
-            VerbosityOptions.normal | VerbosityOptions.n => LoggerVerbosity.Normal,
-            VerbosityOptions.detailed | VerbosityOptions.d => LoggerVerbosity.Detailed,
-            VerbosityOptions.diagnostic | VerbosityOptions.diag => LoggerVerbosity.Diagnostic,
-            _ => LoggerVerbosity.Quiet // default to quiet because run should be invisible if possible
-        };
-    }
 
     private static void ThrowUnableToRunError(ProjectInstance project)
     {
@@ -487,6 +507,12 @@ public class RunCommand
         string? projectFilePath = Directory.Exists(projectFileOrDirectoryPath)
             ? TryFindSingleProjectInDirectory(projectFileOrDirectoryPath)
             : projectFileOrDirectoryPath;
+
+        // Check if the project file actually exists when it's specified as a direct file path
+        if (projectFilePath is not null && !emptyProjectOption && !File.Exists(projectFilePath))
+        {
+            throw new GracefulException(CliCommandStrings.CmdNonExistentFileErrorDescription, projectFilePath);
+        }
 
         // If no project exists in the directory and no --project was given,
         // try to resolve an entry-point file instead.

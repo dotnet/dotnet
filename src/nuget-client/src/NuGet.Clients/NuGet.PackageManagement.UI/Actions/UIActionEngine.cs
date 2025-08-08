@@ -22,6 +22,7 @@ using NuGet.ProjectManagement;
 using NuGet.Protocol.Core.Types;
 using NuGet.VisualStudio;
 using NuGet.VisualStudio.Internal.Contracts;
+using NuGet.VisualStudio.Telemetry;
 using Task = System.Threading.Tasks.Task;
 using TelemetryPiiProperty = Microsoft.VisualStudio.Telemetry.TelemetryPiiProperty;
 
@@ -37,6 +38,7 @@ namespace NuGet.PackageManagement.UI
         private readonly ISourceRepositoryProvider _sourceProvider;
         private readonly NuGetPackageManager _packageManager;
         private readonly INuGetLockService _lockService;
+        private readonly INuGetTelemetryProvider _telemetryProvider;
 
         /// <summary>
         /// Create a UIActionEngine to perform installs/uninstalls
@@ -44,11 +46,13 @@ namespace NuGet.PackageManagement.UI
         public UIActionEngine(
             ISourceRepositoryProvider sourceProvider,
             NuGetPackageManager packageManager,
-            INuGetLockService lockService)
+            INuGetLockService lockService,
+            INuGetTelemetryProvider telemetryProvider)
         {
             _sourceProvider = sourceProvider ?? throw new ArgumentNullException(nameof(sourceProvider));
             _packageManager = packageManager ?? throw new ArgumentNullException(nameof(packageManager));
             _lockService = lockService ?? throw new ArgumentNullException(nameof(lockService));
+            _telemetryProvider = telemetryProvider ?? throw new ArgumentNullException(nameof(telemetryProvider));
         }
 
         /// <summary>
@@ -130,7 +134,7 @@ namespace NuGet.PackageManagement.UI
                     NuGetOperationStatus.Cancelled,
                     packagesCount);
 
-                TelemetryActivity.EmitTelemetryEvent(upgradeTelemetryEvent);
+                _telemetryProvider.EmitEvent(upgradeTelemetryEvent);
 
                 return;
             }
@@ -584,7 +588,7 @@ namespace NuGet.PackageManagement.UI
                     }
                     actionTelemetryEvent["InstalledPackageEnumerationTimeInMilliseconds"] = packageEnumerationTime.ElapsedMilliseconds;
 
-                    TelemetryActivity.EmitTelemetryEvent(actionTelemetryEvent);
+                    _telemetryProvider.EmitEvent(actionTelemetryEvent);
                 }
             }, cancellationToken);
         }
@@ -1003,24 +1007,24 @@ namespace NuGet.PackageManagement.UI
 
                 foreach (var packageId in packageIds)
                 {
-                    var isInstalled = installed.ContainsKey(packageId);
-                    var isUninstalled = uninstalled.ContainsKey(packageId);
+                    var isInstalled = installed.TryGetValue(packageId, out var installedPackage);
+                    var isUninstalled = uninstalled.TryGetValue(packageId, out var uninstalledPackage);
 
                     if (isInstalled && isUninstalled)
                     {
                         // the package is updated
-                        updated.Add(new UpdatePreviewResult(uninstalled[packageId], installed[packageId]));
+                        updated.Add(new UpdatePreviewResult(uninstalledPackage, installedPackage));
                         installed.Remove(packageId);
                     }
                     else if (isInstalled && !isUninstalled)
                     {
                         // the package is added
-                        added.Add(new AccessiblePackageIdentity(installed[packageId]));
+                        added.Add(new AccessiblePackageIdentity(installedPackage));
                     }
                     else if (!isInstalled && isUninstalled)
                     {
                         // the package is deleted
-                        deleted.Add(new AccessiblePackageIdentity(uninstalled[packageId]));
+                        deleted.Add(new AccessiblePackageIdentity(uninstalledPackage));
                     }
                 }
 

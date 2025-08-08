@@ -2029,9 +2029,6 @@ namespace ProjectManagement.Test
         {
             public IDictionary<string, int> ScriptsExecuted { get; } = new Dictionary<string, int>();
 
-            [Obsolete]
-            public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
-
             public IProjectSystemCapabilities Capabilities => throw new NotImplementedException();
 
             public IProjectSystemReferencesReader ReferencesReader => throw new NotImplementedException();

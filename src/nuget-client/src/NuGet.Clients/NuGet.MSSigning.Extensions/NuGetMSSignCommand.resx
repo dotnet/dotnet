@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -203,6 +203,6 @@ nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -Certificate
     <value>Repository V3 service index URL.</value>
   </data>
   <data name="MSSignCommandInvalidCertificateFingerprint" xml:space="preserve">
-    <value>Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
+    <value>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
   </data>
 </root>

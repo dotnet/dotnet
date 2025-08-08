@@ -1,0 +1,135 @@
+# This yml is used by these pipelines:
+# - dotnet-unified-build (internal)
+#   https://dev.azure.com/dnceng/internal/_build?definitionId=1330
+
+trigger: none
+
+parameters:
+- name: desiredSigning
+  displayName: 'Sign?'
+  type: string
+  default: 'Default (unsigned)'
+  values:
+    - Signed (Test)
+    - Signed (Dry Run)
+    - Unsigned
+    - Default (unsigned)
+
+- name: buildScope
+  displayName: 'Build Scope'
+  type: string
+  default: 'lite'
+  values:
+    - lite
+    - full
+
+- name: desiredIBC
+  displayName: 'Enable IBC?'
+  type: string
+  default: 'Default (disabled)'
+  values:
+    - Enabled
+    - Disabled
+    - Default (disabled)
+
+- name: desiredFinalVersionKind
+  displayName: 'Final version kind'
+  type: string
+  default: 'Default (repo specifies)'
+  values:
+    - Default (repo specifies)
+    - Stable Preview
+    - Stable Final
+
+variables:
+- name: isScheduleTrigger
+  value: ${{ eq(variables['Build.Reason'], 'Schedule') }}
+
+- ${{ if eq(variables['System.TeamProject'], 'public') }}:
+  - name: skipComponentGovernanceDetection  # we run CG on internal builds only
+    value: true
+
+  - name: Codeql.Enabled  # we run CodeQL on internal builds only
+    value: false
+
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      incrementalSDLBinaryAnalysis: true
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+
+    containers:
+      ${{ variables.almaLinuxContainerName }}:
+        image: ${{ variables.almaLinuxContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.alpineContainerName }}:
+        image: ${{ variables.alpineContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.centOSStreamContainerName }}:
+        image: ${{ variables.centOSStreamContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.fedoraContainerName }}:
+        image: ${{ variables.fedoraContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.ubuntuContainerName }}:
+        image: ${{ variables.ubuntuContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.ubuntuArmContainerName }}:
+        image: ${{ variables.ubuntuArmContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxX64CrossContainerName }}:
+        image: ${{ variables.azurelinuxX64CrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxArmCrossContainerName }}:
+        image: ${{ variables.azurelinuxArmCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxArm64CrossContainerName }}:
+        image: ${{ variables.azurelinuxArm64CrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxX64MuslCrossContainerName }}:
+        image: ${{ variables.azurelinuxX64MuslCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxArmMuslCrossContainerName }}:
+        image: ${{ variables.azurelinuxArmMuslCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.azurelinuxArm64MuslCrossContainerName }}:
+        image: ${{ variables.azurelinuxArm64MuslCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.androidCrossContainerName }}:
+        image: ${{ variables.androidCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.linuxBionicCrossContainerName }}:
+        image: ${{ variables.linuxBionicCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.browserCrossContainerName }}:
+        image: ${{ variables.browserCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+      ${{ variables.wasiCrossContainerName }}:
+        image: ${{ variables.wasiCrossContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+
+    stages:
+    - template: /eng/pipelines/templates/stages/vmr-scan.yml@self
+
+    - template: /eng/pipelines/templates/stages/vmr-build.yml@self
+      parameters:
+        desiredSigning: ${{ parameters.desiredSigning }}
+        desiredIBC: ${{ parameters.desiredIBC }}
+        desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+        scope: ${{ parameters.buildScope }}
+        isOfficialBuild: false

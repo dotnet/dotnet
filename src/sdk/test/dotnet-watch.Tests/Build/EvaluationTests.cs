@@ -424,8 +424,8 @@ namespace Microsoft.DotNet.Watch.UnitTests
             var projectA = Path.Combine(testDirectory, "A", "A.csproj");
 
             var options = TestOptions.GetEnvironmentOptions(workingDirectory: testDirectory, muxerPath: MuxerPath);
-            var processRunner = new ProcessRunner(options.ProcessCleanupTimeout, CancellationToken.None);
-            var buildReporter = new BuildReporter(_reporter, options);
+            var processRunner = new ProcessRunner(options.ProcessCleanupTimeout);
+            var buildReporter = new BuildReporter(_reporter, new GlobalOptions(), options);
 
             var filesetFactory = new MSBuildFileSetFactory(projectA, buildArguments: ["/p:_DotNetWatchTraceOutput=true"], processRunner, buildReporter);
 
@@ -483,8 +483,8 @@ namespace Microsoft.DotNet.Watch.UnitTests
             var project1Path = GetTestProjectPath(testAsset);
 
             var options = TestOptions.GetEnvironmentOptions(workingDirectory: Path.GetDirectoryName(project1Path)!, muxerPath: MuxerPath);
-            var processRunner = new ProcessRunner(options.ProcessCleanupTimeout, CancellationToken.None);
-            var buildReporter = new BuildReporter(_reporter, options);
+            var processRunner = new ProcessRunner(options.ProcessCleanupTimeout);
+            var buildReporter = new BuildReporter(_reporter, new GlobalOptions(), options);
 
             var factory = new MSBuildFileSetFactory(project1Path, buildArguments: [], processRunner, buildReporter);
             var result = await factory.TryCreateAsync(requireProjectGraph: null, CancellationToken.None);
@@ -521,9 +521,9 @@ namespace Microsoft.DotNet.Watch.UnitTests
             async Task VerifyTargetsEvaluation()
             {
                 var options = TestOptions.GetEnvironmentOptions(workingDirectory: testDir, muxerPath: MuxerPath) with { TestOutput = testDir };
-                var processRunner = new ProcessRunner(options.ProcessCleanupTimeout, CancellationToken.None);
+                var processRunner = new ProcessRunner(options.ProcessCleanupTimeout);
                 var buildArguments = targetFramework != null ? new[] { "/p:TargetFramework=" + targetFramework } : [];
-                var buildReporter = new BuildReporter(_reporter, options);
+                var buildReporter = new BuildReporter(_reporter, new GlobalOptions(), options);
                 var factory = new MSBuildFileSetFactory(rootProjectPath, buildArguments, processRunner, buildReporter);
                 var targetsResult = await factory.TryCreateAsync(requireProjectGraph: null, CancellationToken.None);
                 Assert.NotNull(targetsResult);

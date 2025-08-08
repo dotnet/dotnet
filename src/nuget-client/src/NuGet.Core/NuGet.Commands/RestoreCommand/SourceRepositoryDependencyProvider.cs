@@ -681,7 +681,16 @@ namespace NuGet.Commands
                 }
                 else
                 {
-                    await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1301, ExceptionUtilities.DisplayMessage(e)));
+                    if (ContatinsHttpSourceException(e, out HttpSourceException httpSourceException))
+                    {
+                        // Log the HTTP endpoint error.
+                        await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1302, ExceptionUtilities.DisplayMessage(httpSourceException)));
+                    }
+                    else
+                    {
+                        // Log the generic error message.
+                        await logger.LogAsync(RestoreLogMessage.CreateError(NuGetLogCode.NU1301, ExceptionUtilities.DisplayMessage(e)));
+                    }
                 }
             }
 
@@ -695,6 +704,23 @@ namespace NuGet.Commands
                 var logMessageException = currentException as ILogMessageException;
 
                 return logMessageException?.AsLogMessage();
+            }
+
+            static bool ContatinsHttpSourceException(Exception e, out HttpSourceException httpSourceException)
+            {
+                while (e != null)
+                {
+                    if (e is HttpSourceException)
+                    {
+                        httpSourceException = (HttpSourceException)e;
+                        return true;
+                    }
+
+                    e = e.InnerException;
+                }
+
+                httpSourceException = null;
+                return false;
             }
         }
     }

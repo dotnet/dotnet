@@ -1,0 +1,523 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddedPackageToFolder">
+        <source>Added package '{0}' to folder '{1}'</source>
+        <target state="translated">已将程序包“{0}”添加到文件夹“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToFolderFromSource">
+        <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
+        <target state="translated">已将包“{0}”从源“{2}”添加到文件夹“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddedPackageToPackagesConfig">
+        <source>Added package '{0}' to '{1}'</source>
+        <target state="translated">已将程序包“{0}”添加到“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageToFolder">
+        <source>Adding package '{0}' to folder '{1}'</source>
+        <target state="translated">正在将程序包“{0}”添加到文件夹“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyDependencies">
+        <source>Adding package '{0}', which only has dependencies, to project '{1}'.</source>
+        <target state="translated">正在将只有依赖项的程序包“{0}”添加到项目“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddingPackageWithOnlyToolsGroup">
+        <source>Adding package '{0}', which only has tools group, to project '{1}'</source>
+        <target state="translated">正在将只有工具组的程序包“{0}”添加到“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">参数不能为 null 或空</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfo">
+        <source>Attempting to gather dependency information for package '{0}' with respect to project '{1}', targeting '{2}'</source>
+        <target state="translated">正在尝试收集与目标为“{2}”的项目“{1}”有关的包“{0}”的依赖项信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToGatherDependencyInfoForMultiplePackages">
+        <source>Attempting to gather dependency information for multiple packages with respect to project '{0}', targeting '{1}'</source>
+        <target state="translated">正在尝试收集与目标为“{1}”的项目“{0}”有关的多个包的依赖项信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependencies">
+        <source>Attempting to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">正在尝试解析程序包“{0}”的依赖项，DependencyBehavior 为“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AttemptingToResolveDependenciesForMultiplePackages">
+        <source>Attempting to resolve dependencies for multiple packages.</source>
+        <target state="translated">正在尝试解析多个包的依赖项。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">已添加文件“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_AddedFileToFolder">
+        <source>Added file '{0}' to folder '{1}'.</source>
+        <target state="translated">已将文件“{0}”添加到文件夹“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFile">
+        <source>Removed file '{0}'.</source>
+        <target state="translated">已删除文件“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFileFromFolder">
+        <source>Removed file '{0}' from folder '{1}'.</source>
+        <target state="translated">已从文件夹“{1}”中删除文件“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_RemovedFolder">
+        <source>Removed folder '{0}'.</source>
+        <target state="translated">已删除文件夹“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfo">
+        <source>&gt;&gt; {0} are being added from '{1}'{2}</source>
+        <target state="translated">&gt;&gt; 正在从“{1}”{2} 添加 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_TargetFrameworkInfoPrefix">
+        <source>For adding package '{0}' to project '{1}' that targets '{2}'.</source>
+        <target state="translated">为了将程序包“{0}”添加到目标为“{2}”的项目“{1}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DependencyDoesNotHaveValidVersion">
+        <source>Dependency '{0}' has invalid version specification.</source>
+        <target state="translated">依赖项“{0}”的版本规范无效。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadResourceNotFound">
+        <source>Cannot download packages from '{0}'.</source>
+        <target state="translated">无法从“{0}”下载程序包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DownloadStreamNotAvailable">
+        <source>Package stream for '{0}' cannot be found at '{1}'.</source>
+        <target state="translated">在“{1}”处找不到程序包流“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorLoadingPackagesConfig">
+        <source>An error occurred while reading file '{0}': {1}</source>
+        <target state="translated">读取文件“{0}”时出错: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorWritingPackagesConfig">
+        <source>An error occurred while writing file '{0}': {1}</source>
+        <target state="translated">写入文件“{0}”时出错: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DirectoryDoesNotExist">
+        <source>Directory {0} does not exist.</source>
+        <target state="translated">目录 {0} 不存在。</target>
+        <note>{0} is the directory name.</note>
+      </trans-unit>
+      <trans-unit id="Error_FileDoesNotExist">
+        <source>File {0} does not exist.</source>
+        <target state="translated">文件 {0} 不存在。</target>
+        <note>{0} is the filename.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">正在通过 “HTTP” 源 {1} 运行“{0}”操作。NuGet 需要 HTTPS 源。要使用 HTTP 源，必须在 NuGet.Config 文件中将 'allowInsecureConnections' 显式设置为 true。有关详细信息，请参阅 https://aka.ms/nuget-https-everywhere。</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">还原输入无效，其中 RestorePackagesWithLockFile 属性设置为 false，但 {0} 处存在包锁定文件。</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">{0} 的包内容哈希验证失败。包与上次还原不同。</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedModePackagesConfig">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Run restore without using restore locked mode to update the lock file.</source>
+        <target state="translated">包锁定文件与项目依赖项不一致，因此无法在锁定模式下运行还原。请在未使用还原锁定模式的情况下运行还原来更新锁定文件。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">获取包漏洞数据时出错: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExceptionWhenTryingToAddSource">
+        <source>Exception '{0}' thrown when trying to add source '{1}'. Please verify all your online package sources are available.</source>
+        <target state="translated">尝试添加源“{1}”时引发了异常“{0}”。请检查你的所有联机包源是否都可用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileConflictMessage">
+        <source>File '{0}' already exists in project '{1}'. Do you want to overwrite it?</source>
+        <target state="translated">项目“{1}”中已存在文件“{0}”。是否要覆盖该文件?</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundPackageInPackagesFolder">
+        <source>Found package '{0} {1}' in '{2}'.</source>
+        <target state="translated">在“{2}”中找到包“{0} {1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GatherTotalTime">
+        <source>Gathering dependency information took {0}</source>
+        <target state="translated">收集依赖项信息花费时间 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Info_OverwritingExistingFile">
+        <source>Overwriting existing file '{0}'..</source>
+        <target state="translated">正在覆盖现有文件“{0}”..</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidProjectName">
+        <source>Unable to determine the project name for '{0}'.</source>
+        <target state="translated">无法为“{0}”确定项目名称。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MultiplePackageTypesNotSupported">
+        <source>Package '{0}' has multiple package types, which is not supported.</source>
+        <target state="translated">包“{0}”具有多个不受支持的包类型。</target>
+        <note>{0} is replaced with the package identity.</note>
+      </trans-unit>
+      <trans-unit id="NewerVersionAlreadyReferenced">
+        <source>Already referencing a newer version of '{0}'..</source>
+        <target state="translated">始终引用更新版本的“{0}”..</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoLatestVersionFound">
+        <source>No latest version found for '{0}' for the given source repositories and resolution context</source>
+        <target state="translated">在给定源存储库和解决方案的情况下找不到“{0}”的最新版本</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackageUpdates">
+        <source>No package updates are available from the current package source for project '{0}'.</source>
+        <target state="translated">项目“{0}”的当前程序包源中未提供程序包更新。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoPackagesInProject">
+        <source>No packages were found in packages.config for project '{0}'.</source>
+        <target state="translated">未在 packages.config 中找到项目“{0}”的任何包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoUpdatesAvailable">
+        <source>There are no new updates available.</source>
+        <target state="translated">没有可用的新更新。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NugetActionsTotalTime">
+        <source>Executing nuget actions took {0}</source>
+        <target state="translated">执行 nuget 操作花费时间 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInFolder">
+        <source>Package '{0}' already exists in folder '{1}'</source>
+        <target state="translated">程序包“{0}”已存在于文件夹“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInPackagesConfig">
+        <source>Package '{0}' already exists in '{1}'</source>
+        <target state="translated">程序包“{0}”已存在于“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageAlreadyExistsInProject">
+        <source>Package '{0}' already exists in project '{1}'</source>
+        <target state="translated">程序包“{0}”已存在于项目“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCancelledFromSource">
+        <source>Getting package '{0}' from source '{1}' was cancelled.</source>
+        <target state="translated">已取消从源“{1}”获取包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCouldNotBeInstalled">
+        <source>Package '{0}' could not be installed</source>
+        <target state="translated">无法安装程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInFolder">
+        <source>Package '{0}' does not exist in folder '{1}'</source>
+        <target state="translated">程序包“{0}”不存在于文件夹“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExistInProject">
+        <source>Package '{0}' does not exist in project '{1}'</source>
+        <target state="translated">程序包“{0}”不存在于项目“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageDoesNotExisttInPackagesConfig">
+        <source>Package '{0}' does not exists in '{1}'</source>
+        <target state="translated">程序包“{0}”不存在于“{1}”中</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependent">
+        <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
+        <target state="translated">无法卸载“{0}”，因为“{1}”依赖于它。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageHasDependents">
+        <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
+        <target state="translated">无法卸载“{0}”，因为“{1}”依赖于它。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFound">
+        <source>Package '{0}' is not found</source>
+        <target state="translated">找不到程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundInPrimarySources">
+        <source>Package '{0}' is not found in the following primary source(s): '{1}'. Please verify all your online package sources are available (OR) package id, version are specified correctly.</source>
+        <target state="translated">在以下主源中找不到包“{0}”:“{1}”。请验证你的所有联机包源是否都可用，以及是否正确指定了包 ID、版本。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotFoundOnSource">
+        <source>Package '{0}' is not found on source '{1}'.</source>
+        <target state="translated">在源“{1}”上找不到包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternMatchFound">
+        <source>Package source mapping matches found for package ID '{0}' are: '{1}'</source>
+        <target state="translated">为包 ID "{0}" 找到的包源映射匹配项为: "{1}"</target>
+        <note>{0} - package id
+{1} - sources ids</note>
+      </trans-unit>
+      <trans-unit id="PackageSourceMappingPatternNoMatchFound">
+        <source>Package source mapping match not found for package ID '{0}'</source>
+        <target state="translated">找不到包 ID "{0}" 的包源映射匹配项</target>
+        <note>{0} - package id</note>
+      </trans-unit>
+      <trans-unit id="PackageStreamShouldBeSeekable">
+        <source>Package stream should be seekable</source>
+        <target state="translated">程序包流应该是可查找的</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageToBeUninstalledCouldNotBeFound">
+        <source>Package '{0}' to be uninstalled could not be found in project '{1}'</source>
+        <target state="translated">在项目“{1}”中找不到要卸载的程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersionConflict">
+        <source>Unable to resolve '{0}'. An additional constraint '{1}' defined in {2} prevents this operation.</source>
+        <target state="translated">无法解析“{0}”。在 {2} 中定义的其他约束“{1}”会阻止此操作。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesConfigAllowedVersions">
+        <source>Applying constraint '{0}' defined in '{1}'.</source>
+        <target state="translated">应用“{1}”中定义的约束“{0}”。</target>
+        <note>{0} is the package constraint.
+{1} is the 'packages.config'</note>
+      </trans-unit>
+      <trans-unit id="PackagesCouldNotBeInstalled">
+        <source>Packages could not be installed</source>
+        <target state="translated">无法安装程序包</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ParameterCannotBeZeroOrNegative">
+        <source>Parameter cannot be zero or negative</source>
+        <target state="translated">参数不能为零或负值</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectNotLoaded_RestoreFailed">
+        <source>The operation failed as details for project {0} could not be loaded.</source>
+        <target state="translated">由于无法加载项目 {0} 的详细信息，操作失败。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyCannotBeNull">
+        <source>'{0}' cannot be null.</source>
+        <target state="translated">“{0}”不能为 null。</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromFolder">
+        <source>Removed package '{0}' from folder '{1}'</source>
+        <target state="translated">已从文件夹“{1}”中删除程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovedPackageFromPackagesConfig">
+        <source>Removed package '{0}' from '{1}'</source>
+        <target state="translated">已从“{1}”中删除程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovingPackageFromFolder">
+        <source>Removing package '{0}' from folder '{1}'</source>
+        <target state="translated">正在从文件夹“{1}”中删除程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolutionSuccessfulNoAction">
+        <source>Resolution was successful but resulted in no action</source>
+        <target state="translated">解析已成功，但未导致任何操作</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToInstallPackage">
+        <source>Resolved actions to install package '{0}'</source>
+        <target state="translated">已解析操作以安装程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvedActionsToUninstallPackage">
+        <source>Resolved actions to uninstall package '{0}'</source>
+        <target state="translated">已解析操作以卸载程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallOrUpdateMultiplePackages">
+        <source>Resolving actions install multiple packages</source>
+        <target state="translated">正在解析操作以安装多个程序包</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToInstallPackage">
+        <source>Resolving actions to install package '{0}'</source>
+        <target state="translated">正在解析操作以安装程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolvingActionsToUninstallPackage">
+        <source>Resolving actions to uninstall package '{0}'</source>
+        <target state="translated">正在解析操作以卸载程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreFailedRollingBack">
+        <source>Package restore failed. Rolling back package changes for '{0}'.</source>
+        <target state="translated">程序包还原失败。正在回滚“{0}”的程序包更改。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackage">
+        <source>Restoring NuGet package {0}.</source>
+        <target state="translated">正在还原 NuGet 程序包 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RetrievingPackageStart">
+        <source>Retrieving package '{0} {1}' from '{2}'.</source>
+        <target state="translated">从“{2}”检索包“{0} {1}” </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignatureVerificationMultiple">
+        <source>Signed package validation failed with multiple errors:{0}</source>
+        <target state="translated">已签名包验证失败，出现多个错误:{0}</target>
+        <note>0 - new line separated list of errors</note>
+      </trans-unit>
+      <trans-unit id="SolutionDirectoryNotAvailable">
+        <source>Solution is not opened or not saved. Please ensure you have an open and saved solution.</source>
+        <target state="translated">未打开或保存解决方案。请确保你拥有打开的已保存解决方案。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionManagerNotAvailableForUninstall">
+        <source>Uninstall is not supported when SolutionManager is not available</source>
+        <target state="translated">在 SolutionManager 不可用时，不支持卸载</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyInstalled">
+        <source>Successfully installed '{0}' to {1}</source>
+        <target state="translated">已将“{0}”成功安装到 {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullyUninstalled">
+        <source>Successfully uninstalled '{0}' from {1}</source>
+        <target state="translated">已从 {1} 成功卸载“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindCompatibleItems">
+        <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
+        <target state="translated">无法安装程序包“{0}”。您正在尝试将此程序包安装到某个将“{1}”作为目标的项目中，但此程序包不包含与该框架兼容的任何程序集引用或内容文件。有关详细信息，请与程序包作者联系。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToFindPathInLookupOrList">
+        <source>Either should have value in {0} for {1} or {2} &amp; {3}.</source>
+        <target state="translated">{1} 应在 {0} 中有值，或者 {2} 且 {3}。</target>
+        <note>0 - Lookup table
+1 - Project Path
+2 - Package ID
+3 - Package Sources</note>
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfo">
+        <source>Unable to gather dependency information for package '{0}'</source>
+        <target state="translated">无法收集包“{0}”的依赖项信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherDependencyInfoForMultiplePackages">
+        <source>Unable to gather dependency information for multiple packages</source>
+        <target state="translated">无法收集多个包的依赖项信息</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToGatherPackageFromSource">
+        <source>Unable to gather package '{0}' from source '{1}'. Please verify all your online package sources are available. </source>
+        <target state="translated">无法从源“{1}”收集包“{0}”。请检查你的所有联机包源是否都可用。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfo">
+        <source>Unable to resolve dependencies for package '{0}' with DependencyBehavior '{1}'</source>
+        <target state="translated">无法解析程序包“{0}”的依赖项，DependencyBehavior 为“{1}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnableToResolveDependencyInfoForMultiplePackages">
+        <source>Unable to resolve dependencies for multiple packages</source>
+        <target state="translated">无法解析多个程序包的依赖项</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackage">
+        <source>Unable to find package '{0}'</source>
+        <target state="translated">找不到程序包“{0}”</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnknownPackageSpecificVersion">
+        <source>Unable to find version '{1}' of package '{0}'.</source>
+        <target state="translated">找不到“{1}”版本的程序包“{0}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedPackageType">
+        <source>Package '{0}' has a package type '{1}' that is not supported by project '{2}'.</source>
+        <target state="translated">包“{0}”具有一个包类型“{1}”，项目“{2}”不支持该类型。</target>
+        <note>{0} is the package identity.
+{1} is the unsupported package type.
+{2} is the project name.</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">审核源“{0}”未提供任何漏洞数据。</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_DirectoryNotEmpty">
+        <source>Directory '{0}' is not empty. Skipping...</source>
+        <target state="translated">目录“{0}”非空。正在跳过...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ErrorFindingRepository">
+        <source>Error finding repository for '{0}': {1}</source>
+        <target state="translated">查找“{0}”的存储库时出错: {1}</target>
+        <note>0 - package source
+1 - exception message</note>
+      </trans-unit>
+      <trans-unit id="Warning_FileAlreadyExists">
+        <source>'{0}' already exists. Skipping...</source>
+        <target state="translated">“{0}”已存在。正在跳过...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileModified">
+        <source>Skipping '{0}' because it was modified.</source>
+        <target state="translated">正在跳过“{0}”，因为它已修改。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">包 "{0}" {1} 具有已知的 {2} 严重性漏洞，{3}</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_RollingBack">
+        <source>Install failed. Rolling back...</source>
+        <target state="translated">安装失败。正在回滚...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="XdtError">
+        <source>An error occurred while applying transformation to '{0}' in project '{1}'</source>
+        <target state="translated">将转换应用到项目“{1}”中的“{0}”时出错</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
