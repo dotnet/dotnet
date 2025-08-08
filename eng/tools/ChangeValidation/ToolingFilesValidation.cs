@@ -3,8 +3,9 @@
 
 using System.Text;
 using System.Text.RegularExpressions;
+using static ChangeValidation.Validation;
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
 internal class ToolingFilesValidation : IValidationStep
 {
@@ -24,7 +25,7 @@ internal class ToolingFilesValidation : IValidationStep
         .Select(pattern => new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled))
         .ToList();
     
-    public Task<bool> Execute(PrInfo prInfo)
+    public Task<bool> Validate(PrInfo prInfo)
     {
         var syncToolingChanges = prInfo.ChangedFiles
             .Where(f => ToolingFilesRegexes.Any(regex => regex.IsMatch(f)))
@@ -34,7 +35,7 @@ internal class ToolingFilesValidation : IValidationStep
         {
             foreach (var file in syncToolingChanges)
             {
-                Validate.LogError($"The file {file} is a tooling file reserved for automated processes. Modifying this file is not permitted.");
+                LogError($"The file {file} is a tooling file reserved for automated processes. Modifying this file is not permitted.");
             }
             return Task.FromResult(false);
         }

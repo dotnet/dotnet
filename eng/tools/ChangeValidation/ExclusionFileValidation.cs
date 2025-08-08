@@ -13,40 +13,41 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-
-using static ValidateVmrChanges.Validate;
 using Microsoft.DotNet.DarcLib.Helpers;
+using static ChangeValidation.Validation;
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
 internal class ExclusionFileValidation : IValidationStep
 {
     private static readonly int maxDisplayedFiles = 20;
     private readonly IVmrDependencyTracker _dependencyTracker;
     private readonly IProcessManager _processManager;
-    private readonly IGitRepoFactory _localGitRepoFactory;
-    private readonly IGitRepo _vmr;
-
-    private readonly string _repoRoot;
+    private readonly IVmrInfo _vmrInfo;
+    private readonly ILocalGitRepoFactory _localGitRepoFactory;
 
     public ExclusionFileValidation(
         IVmrDependencyTracker dependencyTracker,
         IProcessManager processManager,
-        IGitRepoFactory localGitRepoFactory)
+        ILocalGitRepoFactory localGitRepoFactory,
+        IVmrInfo vmrInfo)
     {
         _dependencyTracker = dependencyTracker;
         _processManager = processManager;
-        _repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
         _localGitRepoFactory = localGitRepoFactory;
-        _vmr = _localGitRepoFactory.CreateClient(_repoRoot);
+        _vmrInfo = vmrInfo;
     }
 
     public string DisplayName => "Exclusion File Validation";
 
-    public async Task<bool> Execute(PrInfo prInfo)
+    public async Task<bool> Validate(PrInfo prInfo)
     {
-        var originalExclusionRules = await GetExclusionPatternsFromBranch("origin/" + prInfo.TargetBranch);
-        var newExclusionRules = await GetExclusionPatternsFromBranch("HEAD");
+        ILocalGitRepo vmr = _localGitRepoFactory.Create(_vmrInfo.VmrPath);
+
+        Console.WriteLine("base branch: " + prInfo.BaseBranch);
+        Console.WriteLine("target branch: " + prInfo.TargetBranch);
+        var originalExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.TargetBranch);
+        var newExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.BaseBranch);
 
         var originalExcludedFiles = FindMatchingFiles(originalExclusionRules);
         var newExcludedFiles = FindMatchingFiles(newExclusionRules);
@@ -61,37 +62,39 @@ internal class ExclusionFileValidation : IValidationStep
 
         foreach (var file in excludedFilesInPr.Take(maxDisplayedFiles).ToList())
         {
-            LogError($"This PR modifies the file `{file}`, which is part of the excluded files defined in {VmrInfo.DefaultRelativeSourceMappingsPath}. If these changes are necessary, please contact @dotnet/product-construction.");
+            LogError($"This PR modifies the file `{file}`, which is part of the excluded files" +
+                $" defined in {VmrInfo.DefaultRelativeSourceMappingsPath}. If these changes are" +
+                $" necessary, please contact @dotnet/product-construction.");
         }
 
         if (excludedFilesInPr.Count > maxDisplayedFiles)
         {
-            LogError($"... {excludedFilesInPr.Count - maxDisplayedFiles} more excluded files detected in the PR. Only showing the first {maxDisplayedFiles} files.");
+            LogError($"... {excludedFilesInPr.Count - maxDisplayedFiles} more excluded files detected" +
+                $" in the PR. Only showing the first {maxDisplayedFiles} files.");
         }
 
         foreach (var file in filesMatchingNewExclusionRules.Take(maxDisplayedFiles).ToList())
         {
-            LogError($"The new exclusion rules defined in {VmrInfo.DefaultRelativeSourceMappingsPath} include the VMR file `{file}`. If this file is not needed in the VMR, consider deleting it as part of the PR.");
+            LogError($"The new exclusion rules defined in {VmrInfo.DefaultRelativeSourceMappingsPath} " +
+                $"include the VMR file `{file}`. If this file is not needed in the VMR, consider " +
+                $"deleting it as part of the PR.");
         }
 
         if (filesMatchingNewExclusionRules.Count > maxDisplayedFiles)
         {
-            LogError($"... {filesMatchingNewExclusionRules.Count - maxDisplayedFiles} more VMR files match the new exclusion rules. Only showing the first {maxDisplayedFiles} files.");
+            LogError($"... {filesMatchingNewExclusionRules.Count - maxDisplayedFiles} more VMR files " +
+                $"match the new exclusion rules. Only showing the first {maxDisplayedFiles} files.");
         }
 
         return !excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any();
     }
 
-    private async Task<List<string>> GetExclusionPatternsFromBranch(string branchName)
+    private async Task<List<string>> GetExclusionPatternsFromBranch(ILocalGitRepo vmr, string branchName)
     {
-        string originalRef = await GetCurrentCheckedRef();
+        string originalRef = await vmr.GetCheckedOutBranchAsync();
         try
         {
-            Console.WriteLine("will do a checkout. original branch was: " + originalRef);
-            await _processManager.ExecuteGit(_repoRoot, ["checkout", branchName]);
-            Console.WriteLine("now should be on branch: " + branchName);
-            var justMakingSure = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"])).StandardOutput.Trim();
-            Console.WriteLine("just making sure. we are now on ref: " + justMakingSure);
+            await vmr.CheckoutAsync(branchName);
             await _dependencyTracker.RefreshMetadata();
 
             var sourceMappings = _dependencyTracker.Mappings;
@@ -104,42 +107,20 @@ internal class ExclusionFileValidation : IValidationStep
         }
         finally
         {
-            Console.WriteLine("switching back to orgiinal branch: " + originalRef);
-            var res = await _processManager.ExecuteGit(_repoRoot, ["checkout", originalRef]);
-            Console.WriteLine("std: " + res.StandardOutput);
-            Console.WriteLine("err: " + res.StandardError);
+            await vmr.CheckoutAsync(originalRef);
         }
-    }
-
-    private async Task<string> GetCurrentCheckedRef()
-    {
-        var symbolicRef = (await _processManager.ExecuteGit(_repoRoot, ["symbolic-ref", "--short", "HEAD"]))
-    .StandardOutput.Trim();
-
-        string originalRef;
-        if (!string.IsNullOrEmpty(symbolicRef))
-        {
-            originalRef = symbolicRef;
-        }
-        else
-        {
-            originalRef = (await _processManager.ExecuteGit(_repoRoot, ["rev-parse", "HEAD"]))
-                .StandardOutput.Trim();
-        }
-        return originalRef;
     }
     
     private HashSet<string> FindMatchingFiles(List<string> globPatterns)
     {
-        var repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
-
         var matcher = new Matcher();
+
         foreach (var pattern in globPatterns)
         {
             matcher.AddInclude(pattern);
         }
 
-        var directoryInfo = new DirectoryInfo(repoRoot);
+        var directoryInfo = new DirectoryInfo(_vmrInfo.VmrPath);
         var directoryWrapper = new DirectoryInfoWrapper(directoryInfo);
         var result = matcher.Execute(directoryWrapper);
 
