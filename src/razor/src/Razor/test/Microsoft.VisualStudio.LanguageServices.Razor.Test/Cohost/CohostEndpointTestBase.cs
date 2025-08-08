@@ -51,6 +51,11 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     /// </summary>
     private protected ExportProvider OOPExportProvider => _exportProvider.AssumeNotNull();
 
+    /// <summary>
+    /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
+    /// </summary>
+    private protected ExportProvider? RoslynDevenvExportProvider { get; private set; }
+
     protected override async Task InitializeAsync()
     {
         await base.InitializeAsync();
@@ -203,9 +208,17 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         (string fileName, string contents)[]? additionalFiles,
         bool inGlobalNamespace)
     {
-        var exportProvider = ConfigureRoslynDevenvComposition(TestComposition.Roslyn).ExportProviderFactory.CreateExportProvider();
-        AddDisposable(exportProvider);
-        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(exportProvider);
+        var composition = ConfigureRoslynDevenvComposition(TestComposition.Roslyn);
+
+        // We can't enforce that the composition is entirely valid, because we don't have a full MEF catalog, but we
+        // can assume there should be no errors related to Razor, and having this array makes debugging failures a lot
+        // easier.
+        var errors = composition.GetCompositionErrors().ToArray();
+        Assert.Empty(errors.Where(e => e.Contains("Razor")));
+
+        RoslynDevenvExportProvider = composition.ExportProviderFactory.CreateExportProvider();
+        AddDisposable(RoslynDevenvExportProvider);
+        var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(RoslynDevenvExportProvider);
         AddDisposable(workspace);
 
         var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
