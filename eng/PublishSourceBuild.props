@@ -1,4 +1,6 @@
 <Project>
+  <Import Project="$(RepositoryEngineeringDir)shared-source-only.targets" />
+
   <!-- Add targets here that run logic that depends on the merged asset manifest and published packages. -->
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.CheckForPoison" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" Condition="'$(EnablePoison)' == 'true'" />
   <Target Name="ReportPoisonUsage"
@@ -80,14 +82,21 @@
     </PropertyGroup>
   </Target>
 
+  <PropertyGroup>
+    <SharedComponentFilterMode>NonToolingOnly</SharedComponentFilterMode>
+    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn>DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive</CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
+    <CreatePrivateSourceBuiltArtifactsArchiveDependsOn Condition="Exists('$(SharedComponentsArtifactsPath)')">
+      $(CreatePrivateSourceBuiltArtifactsArchiveDependsOn);GetFilteredSharedComponentPackages
+    </CreatePrivateSourceBuiltArtifactsArchiveDependsOn>
+  </PropertyGroup>
+
   <!-- Create the SourceBuilt.Private.Artifacts archive when building source-only. -->
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.WritePackageVersionsProps" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreatePrivateSourceBuiltArtifactsArchive"
           AfterTargets="Publish"
-          DependsOnTargets="DiscoverArtifacts;GetOutputsForCreatePrivateSourceBuiltArtifactsArchive"
+          DependsOnTargets="$(CreatePrivateSourceBuiltArtifactsArchiveDependsOn)"
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
-          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)"
-          Condition="'$(IsPublishPass2)' != 'true'">
+          Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)">
     <ItemGroup>
       <PackageToPublish>
         <IncludeInSBTarball Condition="'%(PackageToPublish.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
@@ -96,9 +105,10 @@
         <IncludeInSBTarball Condition="'%(ProducedPackage.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
       </ProducedPackage>
     </ItemGroup>
+    
     <!-- Copy packages to layout directory. Since there are a large number of files,
           this will use symlinks instead of copying files to make this execute quickly. -->
-    <Copy SourceFiles="@(PackageToPublish->WithMetadataValue('IncludeInSBTarball','true'))"
+    <Copy SourceFiles="@(PackageToPublish->WithMetadataValue('IncludeInSBTarball','true'));@(SharedComponentFilteredPackages->'%(PackagePath)')"
           DestinationFolder="$(SourceBuiltLayoutDir)"
           UseSymbolicLinksIfPossible="true" />
 
@@ -125,7 +135,7 @@
           UseSymbolicLinksIfPossible="true" />
 
     <!-- Create a PackageVersions.props file that includes entries for all packages. -->
-    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->WithMetadataValue('IncludeInSBTarball','true')->Metadata('PackageId'))"
+    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->WithMetadataValue('IncludeInSBTarball','true')->Metadata('PackageId'));@(SharedComponentFilteredPackages)"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
@@ -159,6 +169,17 @@
           SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
     </Copy>
+  </Target>
+
+  <Target Name="IncludeSharedComponentsAsArtifacts"
+          AfterTargets="DiscoverArtifacts"
+          DependsOnTargets="GetFilteredSharedComponentPackages">
+
+    <ItemGroup>
+      <Artifact Include="@(SharedComponentFilteredPackages->'%(PackagePath)')">
+        <Kind>Package</Kind>
+      </Artifact>
+    </ItemGroup>
   </Target>
 
 </Project>
