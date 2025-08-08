@@ -16,9 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
-internal static class Validate
+internal static class Validation
 {
     internal static void LogInfo(string message) => Console.WriteLine(message);
     internal static void LogWarning(string message) => Console.WriteLine($"##vso[task.logissue type=warning] {message}");
@@ -27,11 +27,22 @@ internal static class Validate
     internal static async Task<int> Main(string[] args)
     {
         var pm = new ProcessManager(NullLogger<ProcessManager>.Instance, "git");
+
         var repoRoot = pm.FindGitRoot(AppContext.BaseDirectory);
+
         var serviceProvider = RegisterServices(repoRoot);
+
         List<IValidationStep> validationSteps = CreateValidationSteps(serviceProvider);
+
         PrInfo prInfo = await SetupPrInfo(pm, repoRoot);
 
+        await pm.ExecuteGit(repoPath, ["checkout", prInfo.BaseBranch]);
+
+        return await RunValidationSteps(validationSteps, prInfo) ? 0 : 1;
+    }
+
+    private static async Task<bool> RunValidationSteps(List<IValidationStep> validationSteps, PrInfo prInfo)
+    {
         int stepCounter = 0;
         int failedSteps = 0;
 
@@ -44,7 +55,7 @@ internal static class Validate
             bool validationSuccess = false;
             try
             {
-                validationSuccess = await validationStep.Execute(prInfo);
+                validationSuccess = await validationStep.Validate(prInfo);
             }
             catch (Exception)
             {
@@ -65,45 +76,42 @@ internal static class Validate
             Console.WriteLine();
             Console.WriteLine();
             LogError($"{failedSteps} out of {validationSteps.Count} validation steps have failed.");
-            return 1;
+            return false;
         }
         else
         {
             LogInfo("All validation steps succeeded!");
-            return 0;
+            return true;
         }
     }
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
+        string? baseBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
         string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
-
+        
         if (string.IsNullOrEmpty(targetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
+        if (string.IsNullOrEmpty(baseBranch))
+        {
+            throw new ArgumentException("Cannot determine PR source branch.");
+        }
+
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
+        await pm.ExecuteGit(repoPath, ["fetch", $"origin {baseBranch}"]);
 
-        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"{targetBranch}", "HEAD" ])).StandardOutput.Trim();
-        Console.WriteLine("Merge base commit:" + mergeBase);
+        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"origin/{targetBranch}", $"origin/{baseBranch}" ])).StandardOutput.Trim();
         string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "HEAD" ])).StandardOutput;
-
-        Console.WriteLine("diff output length:" +diffOutput.Length);
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine("changed files count: " + changedFiles.Count);
-
-        foreach (var file in changedFiles)
-        {
-            Console.WriteLine(file);
-        }
-
-        return new PrInfo(targetBranch, changedFiles);
+        return new PrInfo("origin/" + baseBranch, "origin/" + targetBranch, changedFiles);
     }
 
     private static IServiceProvider RegisterServices(string repoRoot)

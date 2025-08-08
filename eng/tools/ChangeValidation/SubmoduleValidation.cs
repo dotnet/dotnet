@@ -11,9 +11,9 @@ using Microsoft.DotNet.DarcLib;
 using Microsoft.DotNet.DarcLib.Helpers;
 using Microsoft.DotNet.DarcLib.VirtualMonoRepo;
 using Microsoft.DotNet.DarcLib.Models.VirtualMonoRepo;
-using static ValidateVmrChanges.Validate;
+using static ChangeValidation.Validation;
 
-namespace ValidateVmrChanges;
+namespace ChangeValidation;
 
 internal class SubmoduleValidation : IValidationStep
 {
@@ -31,7 +31,7 @@ internal class SubmoduleValidation : IValidationStep
         _processManager = processManager;
     }
 
-    public async Task<bool> Execute(PrInfo prInfo)
+    public async Task<bool> Validate(PrInfo prInfo)
     {
         var repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
         var sourceManifest = await GetSourceManifestFromBranch("HEAD", repoRoot);
