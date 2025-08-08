@@ -369,7 +369,7 @@ if ($bootstrap -eq $True) {
     $bootstrapArguments = $arguments
   }
 
-  $bootstrapArguments += "/p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
+  $bootstrapArguments += " /p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
   Invoke-Expression "& `"$PSScriptRoot/common/build.ps1`" $bootstrapArguments"
   
   # Remove artifacts from the bootstrap build so the product build is a "clean" build.
