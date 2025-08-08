@@ -7,17 +7,49 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 internal static partial class RazorEditHelper
 {
+    internal static bool TryGetMappedSpans(TextSpan span, SourceText source, RazorCSharpDocument output, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
+    {
+        foreach (var mapping in output.SourceMappings)
+        {
+            var original = mapping.OriginalSpan.AsTextSpan();
+            var generated = mapping.GeneratedSpan.AsTextSpan();
+
+            if (!generated.Contains(span))
+            {
+                // If the search span isn't contained within the generated span, it is not a match.
+                // A C# identifier won't cover multiple generated spans.
+                continue;
+            }
+
+            var leftOffset = span.Start - generated.Start;
+            var rightOffset = span.End - generated.End;
+            if (leftOffset >= 0 && rightOffset <= 0)
+            {
+                // This span mapping contains the span.
+                mappedSpan = new TextSpan(original.Start + leftOffset, (original.End + rightOffset) - (original.Start + leftOffset));
+                linePositionSpan = source.GetLinePositionSpan(mappedSpan);
+                return true;
+            }
+        }
+
+        mappedSpan = default;
+        linePositionSpan = default;
+        return false;
+    }
+
     /// <summary>
     /// Maps the given text edits for a razor file based on changes in csharp. It special
     /// cases usings directives to insure they are added correctly. All other edits
