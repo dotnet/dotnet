@@ -7,27 +7,27 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/roslyn dependencies -->
-    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftCodeAnalysisCommonPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisCommonPackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
-    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
-    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
-    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
-    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
-    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
-    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-2.25375.9</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
-    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.0.0-2.25375.9</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25375.9</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-2.25375.9</MicrosoftVisualStudioLanguageServicesPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisAnalyzersPackageVersion>
+    <MicrosoftCodeAnalysisCommonPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisCommonPackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisCSharpEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisEditorFeaturesCommonPackageVersion>
+    <MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisEditorFeaturesTextPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisExternalAccessFSharpPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisExternalAccessRazorEditorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisExternalAccessRazorFeaturesPackageVersion>
+    <MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisLanguageServerProtocolPackageVersion>
+    <MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisRemoteServiceHubPackageVersion>
+    <MicrosoftCodeAnalysisTestUtilitiesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisTestUtilitiesPackageVersion>
+    <MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisVisualBasicWorkspacesPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
+    <MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>5.0.0-2.25380.11</MicrosoftCodeAnalysisWorkspacesMSBuildPackageVersion>
+    <MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>5.0.0-2.25380.11</MicrosoftCommonLanguageServerProtocolFrameworkPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25380.11</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftVisualStudioLanguageServicesPackageVersion>5.0.0-2.25380.11</MicrosoftVisualStudioLanguageServicesPackageVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>9.0.0-beta.25255.5</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/aspnetcore dependencies -->

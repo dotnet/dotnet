@@ -26,6 +26,7 @@ internal static class RazorServices
             (typeof(IRemoteInlineCompletionService), null),
             (typeof(IRemoteDebugInfoService), null),
             (typeof(IRemoteWrapWithTagService), null),
+            (typeof(IRemoteSpanMappingService), null),
         ];
 
     // Internal for testing
