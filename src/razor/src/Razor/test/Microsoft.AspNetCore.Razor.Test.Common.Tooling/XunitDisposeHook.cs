@@ -63,7 +63,10 @@ internal sealed class XunitDisposeHook : MarshalByRefObject
                     // ret
                     Marshal.WriteByte(functionPointer, 0xC3);
                     break;
-
+                case Architecture.Arm64:
+                    // This place is not a place of honor. No highly esteemed deed is commemorated here.
+                    Marshal.WriteInt64(functionPointer, 0xD65F03C0);
+                    break;
                 default:
                     throw new NotSupportedException();
             }
