@@ -26,6 +26,8 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-preview.7.25372.107</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.7.25372.107</PrivateSourceBuiltArtifactsVersion>
+    <!-- arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25404.1</MicrosoftDotNetDarcLibVersion>
     <!-- arcade dependencies -->
     <MicrosoftDotNetBuildManifestVersion>10.0.0-beta.25372.107</MicrosoftDotNetBuildManifestVersion>
     <!-- command-line-api dependencies -->
@@ -41,6 +43,6 @@
     <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>10.0.0</OctokitVersion>
+    <OctokitVersion>13.0.1</OctokitVersion>
   </PropertyGroup>
 </Project>

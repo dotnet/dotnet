@@ -46,3 +46,34 @@ stages:
       scope: lite
     ${{ else }}:
       scope: full
+
+- stage: ValidateUserChanges
+  displayName: Validate user changes in VMR
+  dependsOn: []
+  condition: and(
+                eq(variables['isPRTrigger'], 'true'),
+                and(
+                    ne(variables['Build.RequestedForEmail'], 'maestro-dotnet-bot@microsoft.com'),
+                    ne(variables['Build.RequestedForEmail'], 'dotnet-sb-bot@microsoft.com')
+                    ) 
+                )
+  jobs:
+  - job: Validate
+    displayName: Run Validation Script
+    pool:
+      vmImage: windows-latest
+    steps:
+    - checkout: self
+      fetchDepth: 0
+
+    - powershell: |
+        Write-Host "Fetching target branch: $(System.PullRequest.TargetBranch)"
+        git fetch origin $(System.PullRequest.TargetBranch)
+
+        . "$(Build.SourcesDirectory)\eng\common\tools.ps1"
+        InitializeDotNetCli -install $true
+
+        & "$env:DOTNET_INSTALL_DIR\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+      displayName: Run ChangeValidation tool
+      env:
+        SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
