@@ -47,6 +47,8 @@
   <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
   <PropertyGroup Condition="'$(BuildNumber)' != ''">
     <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
+    <!-- Add 100 to the revision number to avoid clashing with the existing msft official build. -->
+    <PreReleaseVersion Condition="'$(DotNetBuildFromVMR)' == 'true'">$([MSBuild]::Add($(BuildNumber), 100))</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the product information for Beta builds-->
