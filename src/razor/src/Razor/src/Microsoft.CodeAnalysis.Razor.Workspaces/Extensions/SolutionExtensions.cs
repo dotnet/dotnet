@@ -37,6 +37,22 @@ internal static class SolutionExtensions
         return true;
     }
 
+    public static bool TryGetRazorDocument(this Solution solution, string filePath, [NotNullWhen(true)] out TextDocument? razorDocument)
+    {
+        var razorDocumentId = solution.GetDocumentIdsWithFilePath(filePath).FirstOrDefault();
+
+        // If we couldn't locate the .razor file, just return the generated file.
+        if (razorDocumentId is null ||
+            solution.GetAdditionalDocument(razorDocumentId) is not TextDocument document)
+        {
+            razorDocument = null;
+            return false;
+        }
+
+        razorDocument = document;
+        return true;
+    }
+
     public static bool TryGetProject(this Solution solution, ProjectId projectId, [NotNullWhen(true)] out Project? result)
     {
         result = solution.GetProject(projectId);
