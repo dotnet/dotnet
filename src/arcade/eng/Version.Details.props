@@ -17,13 +17,13 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/templating dependencies -->
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25379.3</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.25379.3</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25401.2</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.25401.2</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25378.2</MicrosoftDotNetDarcLibPackageVersion>
-    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25378.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25404.2</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25404.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet/xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25375.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25381.1</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
@@ -55,7 +55,7 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.0-beta5.25210.1</SystemCommandLinePackageVersion>
     <!-- dotnet/dnceng dependencies -->
-    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.25360.1</MicrosoftDncEngSecretManagerPackageVersion>
+    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.25381.1</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet/msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.12.36</MicrosoftBuildPackageVersion>
     <MicrosoftBuildFrameworkPackageVersion>17.12.36</MicrosoftBuildFrameworkPackageVersion>
