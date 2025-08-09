@@ -20,11 +20,14 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         protected VSSettings _vsSettings;
         protected const string MonikerDoesNotExist = "TESTING!doesNotExist";
 
-        protected abstract TPage CreateInstance(VSSettings? vsSettings);
+        protected abstract TPage CreateInstance(VSSettings vsSettings);
 
         protected NuGetExternalSettingsProviderTests()
         {
             var solutionManager = new Mock<ISolutionManager>();
+            solutionManager.Setup(obj => obj.IsSolutionOpen).Returns(true);
+            solutionManager.Setup(obj => obj.SolutionDirectory).Returns(() => GetSolutionDirectory());
+
             var machineWideSettings = new Mock<IMachineWideSettings>();
             var slnConfigWatcher = new Mock<IFileWatcher>();
             var userConfigWatcher = new Mock<IFileWatcher>();
@@ -36,6 +39,11 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             _vsSettings = new VSSettings(solutionManager.Object, machineWideSettings.Object, watcherFactory.Object);
         }
 
+        protected virtual string GetSolutionDirectory()
+        {
+            return string.Empty;
+        }
+
         [Fact]
         public void Constructor_NullVsSettings_ThrowsArgumentNullException()
         {
@@ -43,14 +51,14 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             VSSettings? vsSettings = null;
 
             // Act
-            Action act = () => CreateInstance(vsSettings);
+            Action act = () => CreateInstance(vsSettings!);
 
             // Assert
             act.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public virtual async Task GetValueAsync_MonikerDoesNotExist_ThrowsInvalidOperationExceptionAsync()
+        public async Task GetValueAsync_MonikerDoesNotExist_ThrowsInvalidOperationExceptionAsync()
         {
             // Arrange
             VSSettings vsSettings = _vsSettings;
@@ -67,7 +75,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         }
 
         [Fact]
-        public virtual async Task SetValueAsync_MonikerDoesNotExist_ThrowsInvalidOperationExceptionAsync()
+        public async Task SetValueAsync_MonikerDoesNotExist_ThrowsInvalidOperationExceptionAsync()
         {
             // Arrange
             VSSettings vsSettings = _vsSettings;
@@ -85,7 +93,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         }
 
         [Fact]
-        public virtual async Task GetMessageTextAsync_Always_ThrowsNotImplementedExceptionAsync()
+        public async Task GetMessageTextAsync_Always_ThrowsNotImplementedExceptionAsync()
         {
             // Arrange
             VSSettings vsSettings = _vsSettings;

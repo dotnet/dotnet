@@ -159,7 +159,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             }
         }
 
-        [Theory]
+        [Theory(Skip = "https://github.com/NuGet/Home/issues/10212")]
         [InlineData(false)]
         [InlineData(true)]
         public async Task PreviewInstallPackage_VersionNotInRange_RaiseTelemetryEventsWithErrorCodeNU1102(bool errorCodeExistsInJson)
@@ -323,7 +323,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task PreviewInstallPackage_BuildIntegrated_RaiseTelemetryEventsWithDupedWarningCodes()
         {
             // Arrange
@@ -513,7 +513,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task ExecuteNuGetProjectActions_BuildIntegrated_RaiseTelemetryEvents()
         {
             // Arrange

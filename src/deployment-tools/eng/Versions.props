@@ -1,9 +1,10 @@
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <PropertyGroup>
     <!-- The .NET product branding version -->
-    <ProductVersion>9.0.0</ProductVersion>
+    <ProductVersion>10.0.0</ProductVersion>
     <!-- File version numbers -->
-    <MajorVersion>9</MajorVersion>
+    <MajorVersion>10</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>

@@ -17,15 +17,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- MSBuild dependencies -->
-    <MicrosoftBuildVersion>17.15.0-preview-25375-119</MicrosoftBuildVersion>
-    <MicrosoftBuildUtilitiesCoreVersion>17.15.0-preview-25375-119</MicrosoftBuildUtilitiesCoreVersion>
+    <MicrosoftBuildVersion>17.15.0-preview-25377-103</MicrosoftBuildVersion>
+    <MicrosoftBuildUtilitiesCoreVersion>17.15.0-preview-25377-103</MicrosoftBuildUtilitiesCoreVersion>
     <!-- NuGet dependencies -->
     <NuGetPackagingVersion>6.11.0</NuGetPackagingVersion>
     <!-- Runtime dependencies -->
-    <MicrosoftNETCoreILAsmVersion>10.0.0-preview.7.25375.119</MicrosoftNETCoreILAsmVersion>
-    <MicrosoftNETCoreILDAsmVersion>10.0.0-preview.7.25375.119</MicrosoftNETCoreILDAsmVersion>
+    <MicrosoftNETCoreILAsmVersion>10.0.0-preview.7.25377.103</MicrosoftNETCoreILAsmVersion>
+    <MicrosoftNETCoreILDAsmVersion>10.0.0-preview.7.25377.103</MicrosoftNETCoreILDAsmVersion>
     <!-- SDK dependencies -->
-    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25375.119</MicrosoftDotNetGenAPITaskPackageVersion>
+    <MicrosoftDotNetGenAPITaskPackageVersion>10.0.100-preview.7.25377.103</MicrosoftDotNetGenAPITaskPackageVersion>
     <!-- xUnit dependencies -->
     <XunitSkippableFactVersion>1.4.13</XunitSkippableFactVersion>
   </PropertyGroup>

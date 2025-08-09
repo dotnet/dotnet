@@ -77,29 +77,35 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.NotNullOrEmpty(projectContextInfos);
             Assumes.NotNullOrEmpty(packageSources);
             Assumes.NotNull(searchFilter);
+            try
+            {
+                bool recommendPackages = false;
+                IReadOnlyCollection<SourceRepository> sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
+                IPackageFeed? packageFeed = await CreatePackageFeedAsync(
+                    projectContextInfos,
+                    targetFrameworks,
+                    itemFilter,
+                    isSolution,
+                    recommendPackages,
+                    sourceRepositories,
+                    cancellationToken);
+                Assumes.NotNull(packageFeed);
 
-            bool recommendPackages = false;
-            IReadOnlyCollection<SourceRepository> sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
-            IPackageFeed? packageFeed = await CreatePackageFeedAsync(
-                projectContextInfos,
-                targetFrameworks,
-                itemFilter,
-                isSolution,
-                recommendPackages,
-                sourceRepositories,
-                cancellationToken);
-            Assumes.NotNull(packageFeed);
+                SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
+                IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
+                var metadataProvider = new MultiSourcePackageMetadataProvider(
+                    sourceRepositories,
+                    packagesFolderSourceRepository,
+                    globalPackageFolderRepositories,
+                    new VisualStudioActivityLogger());
 
-            SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
-            IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
-            var metadataProvider = new MultiSourcePackageMetadataProvider(
-                sourceRepositories,
-                packagesFolderSourceRepository,
-                globalPackageFolderRepositories,
-                new VisualStudioActivityLogger());
-
-            var searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, PackageSearchMetadataMemoryCache);
-            return await searchObject.GetAllPackagesAsync(searchFilter, cancellationToken);
+                var searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, PackageSearchMetadataMemoryCache);
+                return await searchObject.GetAllPackagesAsync(searchFilter, cancellationToken);
+            }
+            catch (FatalProtocolException ex)
+            {
+                throw new FatalProtocolException(ExceptionUtilities.DisplayMessage(ex));
+            }
         }
 
         public async ValueTask<(PackageSearchMetadataContextInfo, PackageDeprecationMetadataContextInfo?)> GetPackageMetadataAsync(
@@ -238,13 +244,27 @@ namespace NuGet.PackageManagement.VisualStudio
         public async ValueTask<SearchResultContextInfo> RefreshSearchAsync(CancellationToken cancellationToken)
         {
             Assumes.NotNull(_searchObject);
-            return await _searchObject.RefreshSearchAsync(cancellationToken);
+            try
+            {
+                return await _searchObject.RefreshSearchAsync(cancellationToken);
+            }
+            catch (FatalProtocolException ex)
+            {
+                throw new FatalProtocolException(ExceptionUtilities.DisplayMessage(ex));
+            }
         }
 
         public async ValueTask<SearchResultContextInfo> ContinueSearchAsync(CancellationToken cancellationToken)
         {
             Assumes.NotNull(_searchObject);
-            return await _searchObject.ContinueSearchAsync(cancellationToken);
+            try
+            {
+                return await _searchObject.ContinueSearchAsync(cancellationToken);
+            }
+            catch (FatalProtocolException ex)
+            {
+                throw new FatalProtocolException(ExceptionUtilities.DisplayMessage(ex));
+            }
         }
 
         public async ValueTask<SearchResultContextInfo> SearchAsync(
@@ -262,27 +282,34 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.NotNullOrEmpty(packageSources);
             Assumes.NotNull(searchFilter);
 
-            IReadOnlyCollection<SourceRepository>? sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
-            IPackageFeed? packageFeed = await CreatePackageFeedAsync(
-                projectContextInfos,
-                targetFrameworks,
-                itemFilter,
-                isSolution,
-                useRecommender,
-                sourceRepositories,
-                cancellationToken);
-            Assumes.NotNull(packageFeed);
+            try
+            {
+                IReadOnlyCollection<SourceRepository>? sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
+                IPackageFeed? packageFeed = await CreatePackageFeedAsync(
+                    projectContextInfos,
+                    targetFrameworks,
+                    itemFilter,
+                    isSolution,
+                    useRecommender,
+                    sourceRepositories,
+                    cancellationToken);
+                Assumes.NotNull(packageFeed);
 
-            SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
-            IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
-            var metadataProvider = new MultiSourcePackageMetadataProvider(
-                sourceRepositories,
-                packagesFolderSourceRepository,
-                globalPackageFolderRepositories,
-                new VisualStudioActivityLogger());
+                SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
+                IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
+                var metadataProvider = new MultiSourcePackageMetadataProvider(
+                    sourceRepositories,
+                    packagesFolderSourceRepository,
+                    globalPackageFolderRepositories,
+                    new VisualStudioActivityLogger());
 
-            _searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, PackageSearchMetadataMemoryCache);
-            return await _searchObject.SearchAsync(searchText, searchFilter, useRecommender, cancellationToken);
+                _searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, PackageSearchMetadataMemoryCache);
+                return await _searchObject.SearchAsync(searchText, searchFilter, useRecommender, cancellationToken);
+            }
+            catch (FatalProtocolException ex)
+            {
+                throw new FatalProtocolException(ExceptionUtilities.DisplayMessage(ex));
+            }
         }
 
         public async ValueTask<int> GetTotalCountAsync(
@@ -299,20 +326,27 @@ namespace NuGet.PackageManagement.VisualStudio
             Assumes.NotNullOrEmpty(packageSources);
             Assumes.NotNull(searchFilter);
 
-            IReadOnlyCollection<SourceRepository>? sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
-            IPackageFeed? packageFeed = await CreatePackageFeedAsync(projectContextInfos, targetFrameworks, itemFilter, isSolution, recommendPackages: false, sourceRepositories, cancellationToken);
-            Assumes.NotNull(packageFeed);
+            try
+            {
+                IReadOnlyCollection<SourceRepository>? sourceRepositories = await _sharedServiceState.GetRepositoriesAsync(packageSources, cancellationToken);
+                IPackageFeed? packageFeed = await CreatePackageFeedAsync(projectContextInfos, targetFrameworks, itemFilter, isSolution, recommendPackages: false, sourceRepositories, cancellationToken);
+                Assumes.NotNull(packageFeed);
 
-            SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
-            IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
-            var metadataProvider = new MultiSourcePackageMetadataProvider(
-                sourceRepositories,
-                packagesFolderSourceRepository,
-                globalPackageFolderRepositories,
-                new VisualStudioActivityLogger());
+                SourceRepository packagesFolderSourceRepository = await _packagesFolderLocalRepositoryLazy.GetValueAsync(cancellationToken);
+                IEnumerable<SourceRepository> globalPackageFolderRepositories = await GetAllPackageFoldersAsync(projectContextInfos, cancellationToken);
+                var metadataProvider = new MultiSourcePackageMetadataProvider(
+                    sourceRepositories,
+                    packagesFolderSourceRepository,
+                    globalPackageFolderRepositories,
+                    new VisualStudioActivityLogger());
 
-            var searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, searchCache: null);
-            return await searchObject.GetTotalCountAsync(maxCount, searchFilter, cancellationToken);
+                var searchObject = new SearchObject(packageFeed, metadataProvider, packageSources, searchCache: null);
+                return await searchObject.GetTotalCountAsync(maxCount, searchFilter, cancellationToken);
+            }
+            catch (FatalProtocolException ex)
+            {
+                throw new FatalProtocolException(ExceptionUtilities.DisplayMessage(ex));
+            }
         }
 
         public void Dispose()

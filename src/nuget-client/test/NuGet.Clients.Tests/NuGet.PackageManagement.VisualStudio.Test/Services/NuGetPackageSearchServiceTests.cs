@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -183,6 +184,25 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     CancellationToken.None);
 
                 Assert.Equal(1, allPackages.Count);
+            }
+        }
+
+        [Fact]
+        public async Task GetAllPackagesAsync_WhenExceptionCaught_ExposesInnerExceptionMessage()
+        {
+            // Arrange
+            using (NuGetPackageSearchService searchService = SetupSearchServiceThatThrowsAnException())
+            {
+                var ex = await Assert.ThrowsAsync<FatalProtocolException>(() => searchService.GetAllPackagesAsync(
+                    _projects,
+                    new List<PackageSourceContextInfo> { PackageSourceContextInfo.Create(_sourceRepository.PackageSource) },
+                    targetFrameworks: new List<string>() { "net45", "net5.0" },
+                    new SearchFilter(includePrerelease: true),
+                    NuGet.VisualStudio.Internal.Contracts.ItemFilter.All,
+                    It.IsAny<bool>(),
+                    CancellationToken.None).AsTask());
+
+                ex.Message.Should().Contain("Simulated HTTP source failure");
             }
         }
 
@@ -437,16 +457,39 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             Assert.IsNotType<RecommenderPackageFeed>(packageFeed);
         }
 
-        private NuGetPackageSearchService SetupSearchService()
+        private ISourceRepositoryProvider SetupSourceRepositoryProvider()
         {
-            ClearSearchCache();
-
             var packageSourceProvider = new Mock<IPackageSourceProvider>();
             packageSourceProvider.Setup(x => x.LoadPackageSources()).Returns(new List<PackageSource> { _sourceRepository.PackageSource });
             var sourceRepositoryProvider = new Mock<ISourceRepositoryProvider>();
             sourceRepositoryProvider.Setup(x => x.CreateRepository(It.IsAny<PackageSource>())).Returns(_sourceRepository);
             sourceRepositoryProvider.Setup(x => x.CreateRepository(It.IsAny<PackageSource>(), It.IsAny<FeedType>())).Returns(_sourceRepository);
             sourceRepositoryProvider.SetupGet(x => x.PackageSourceProvider).Returns(packageSourceProvider.Object);
+            return sourceRepositoryProvider.Object;
+        }
+
+        private NuGetPackageSearchService SetupSearchService()
+        {
+            ISourceRepositoryProvider sourceRepositoryProvider = SetupSourceRepositoryProvider();
+            var sharedState = new SharedServiceState(sourceRepositoryProvider);
+            return SetupSearchServiceCore(sharedState, sourceRepositoryProvider);
+        }
+
+        private NuGetPackageSearchService SetupSearchServiceThatThrowsAnException()
+        {
+            var sharedServiceStateMock = new Mock<ISharedServiceState>();
+            sharedServiceStateMock.Setup(x => x.GetRepositoriesAsync(It.IsAny<IReadOnlyCollection<PackageSourceContextInfo>>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new FatalProtocolException(
+                "Fatal protocol error",
+                new HttpSourceException("Simulated HTTP source failure")
+            ));
+            return SetupSearchServiceCore(sharedServiceStateMock.Object, SetupSourceRepositoryProvider());
+        }
+
+        private NuGetPackageSearchService SetupSearchServiceCore(ISharedServiceState sharedState, ISourceRepositoryProvider sourceRepositoryProvider)
+        {
+            ClearSearchCache();
+
             var solutionManager = new Mock<IVsSolutionManager>();
             solutionManager.SetupGet(x => x.SolutionDirectory).Returns("z:\\SomeRandomPath");
             var settings = new Mock<ISettings>();
@@ -456,7 +499,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             _componentModel.Setup(x => x.GetService<IVsSolutionManager>()).Returns(solutionManager.Object);
             _componentModel.Setup(x => x.GetService<ISolutionManager>()).Returns(solutionManager.Object);
             _componentModel.Setup(x => x.GetService<ISettings>()).Returns(settings.Object);
-            _componentModel.Setup(x => x.GetService<ISourceRepositoryProvider>()).Returns(sourceRepositoryProvider.Object);
+            _componentModel.Setup(x => x.GetService<ISourceRepositoryProvider>()).Returns(sourceRepositoryProvider);
             _componentModel.Setup(x => x.GetService<INuGetProjectContext>()).Returns(new Mock<INuGetProjectContext>().Object);
             _componentModel.Setup(x => x.GetService<IRestoreProgressReporter>()).Returns(new Mock<IRestoreProgressReporter>().Object);
 
@@ -466,8 +509,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             var serviceActivationOptions = default(ServiceActivationOptions);
             var serviceBroker = new Mock<IServiceBroker>();
             var authorizationService = new AuthorizationServiceClient(Mock.Of<IAuthorizationService>());
-
-            var sharedState = new SharedServiceState(sourceRepositoryProvider.Object);
 
             var projectManagerService = new Mock<INuGetProjectManagerService>();
 

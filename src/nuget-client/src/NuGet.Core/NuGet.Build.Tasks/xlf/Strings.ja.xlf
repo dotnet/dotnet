@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Strings.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引数を null または空にすることはできません</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CreatedDependencyGraphSpec">
+        <source>Created DependencyGraphSpec in {0:D2}ms.</source>
+        <target state="translated">DependencyGraphSpec が {0:D2} ミリ秒で作成されました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeterminingProjectsToRestore">
+        <source>Determining projects to restore...</source>
+        <target state="translated">復元対象のプロジェクトを決定しています...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DgSpecGenerationFailed">
+        <source>Cannot write the dependency graph spec because the generation failed.</source>
+        <target state="translated">生成に失敗したため、依存関係グラフの仕様を書き込めません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_DuplicateItems">
+        <source>Duplicate '{0}' items found. Remove the duplicate items or use the Update functionality to ensure a consistent restore behavior. The duplicate '{0}' items are: {1}.</source>
+        <target state="translated">重複する '{0}' 項目が見つかりました。重複項目を削除するか、更新機能を使用して復元動作が一貫するようにします。重複する '{0}' 項目: {1}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MissingRestoreGraphOutputPath">
+        <source>Cannot write the dependency graph spec because the `RestoreGraphOutputPath` is missing.</source>
+        <target state="translated">'RestoreGraphOutputPath' が指定されていないため、依存関係グラフの仕様を書き込めません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">パッケージ '{0}{1}' に '[1.0.0]' のような正確なバージョンがありません。PackageDownload では、正確なバージョンのみが許可されます。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackagesConfigParseError">
+        <source>Error parsing packages.config file at {0}: {1}</source>
+        <target state="translated">packages.config ファイルの解析で、{0} でエラーが発生しました: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphNonZeroExitCode">
+        <source>Static graph-based restore failed with exit code '{0}' but did not log an error. Please file an issue at https://github.com/NuGet/Home.</source>
+        <target state="translated">静的グラフ ベースの復元は終了コード '{0}' で失敗しましたが、エラーはログに記録されませんでした。https://github.com/NuGet/Home で問題を提出してください。</target>
+        <note>0 - the exit code of the process</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentParsingFailedInvalidNumberOfArguments">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as there was an unexpected number of arguments, {0}. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">予期しない数の引数があったため、静的グラフ ベースの復元でコマンド ライン引数の解析中にエラーが発生しました。{0}。https://github.com/NuGet/Home で問題を提出してください</target>
+        <note>0 - The number of arguments</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedEndOfStream">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as end of the standard input stream was unexpectedly encountered. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">標準入力ストリームの予期しない終了が検出されたため、静的グラフベースの復元でコマンド ライン引数の解析中にエラーが発生しました。https://github.com/NuGet/Home で問題を提出してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
+{1}</source>
+        <target state="translated">標準入力ストリームの読み取り中に例外が発生したため、静的グラフ ベースの復元でコマンド ライン引数の解析中にエラーが発生しました。{0} https://github.com/NuGet/Home で問題を提出してください
+{1}</target>
+        <note>0 - The exception message
+1 - The string representation of the exception</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedUnexpectedIntegerValue">
+        <source>An error occurred parsing command-line arguments in static graph-based restore as the first integer read, {0}, is not an allowable value. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">読み取られた最初の整数 {0} が許可された値ではないため、静的グラフベースの復元でコマンドライン引数の解析中にエラーが発生しました。https://github.com/NuGet/Home で問題を提出してください</target>
+        <note>0 - The value of the first integer read from the stream</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphRestoreFailedToStart">
+        <source>An error occurred starting static graph-based restore. {0}. Please file an issue at https://github.com/NuGet/Home</source>
+        <target state="translated">静的グラフ ベースの復元の開始中にエラーが発生しました。{0}。https://github.com/NuGet/Home で問題を提出してください</target>
+        <note>0 - The exception message</note>
+      </trans-unit>
+      <trans-unit id="Error_StaticGraphUnhandledException">
+        <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
+{0}</source>
+        <target state="translated">静的グラフ ベースの復元でハンドルされない例外が発生しました。https://github.com/NuGet/Home で問題を提出してください。 例外は次のとおりです:
+{0}</target>
+        <note>0 - The exception as a string.</note>
+      </trans-unit>
+      <trans-unit id="ImportsFallbackWarning">
+        <source>ProjectReference '{0}' was resolved using '{1}' instead of the project target framework '{2}'. This project may not be fully compatible with your project.</source>
+        <target state="translated">ProjectReference '{0}' は、プロジェクトのターゲット フレームワーク '{2}' ではなく、'{1}' を使用して解決されました。このプロジェクトは、ご自身のプロジェクトとの完全な互換性がない可能性があります。</target>
+        <note>0 - referenced project path
+1 - resolved tfm
+2 - project tfm</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandNothingToInstall">
+        <source>All packages listed in {0} are already installed.</source>
+        <target state="translated">{0} に一覧表示されているすべてのパッケージは既にインストールされています。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_NoProjectsForRestore">
+        <source>The solution did not have any projects to restore, ensure that all projects are known to be MSBuild and that the projects exist.</source>
+        <target state="translated">ソリューションには復元するプロジェクトがありませんでした。すべてのプロジェクトが MSBuild として認識されていることと、プロジェクトが存在することをご確認ください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectsInSolutionNotKnowntoMSBuild">
+        <source>The solution contains '{0}' project(s) '{1}' that are not known to MSBuild. Ensure that all projects are known to be MSBuild before running restore on the solution.</source>
+        <target state="translated">ソリューションには、MSBuild で認識されない '{0}' プロジェクト '{1}' が含まれています。ソリューションで復元を実行する前に、すべてのプロジェクトが MSBuild として認識されていることをご確認ください。</target>
+        <note>0 - number of projects not known to msbuild
+1 - list of projects</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoCacheInformation">
+        <source>RestoreNoCache is deprecated and has been renamed to RestoreNoHttpCache. Please use RestoreNoHttpCache instead.</source>
+        <target state="translated">RestoreNoCache は非推奨となり、RestoreNoHttpCache に名前が変更されました。代わりに RestoreNoHttpCache を使用してください。</target>
+        <note>Do not translate RestoreNoCache and RestoreNoHttpCache</note>
+      </trans-unit>
+      <trans-unit id="Log_RunningStaticGraphRestoreCommand">
+        <source>Running command: '{0}' {1}</source>
+        <target state="translated">コマンドを実行しています: '{0}' {1}</target>
+        <note>0 - the path to the EXE being launched
+1 - The command-line arguments</note>
+      </trans-unit>
+      <trans-unit id="NoCompatibleTargetFramework">
+        <source>Project '{0}' targets '{2}'. It cannot be referenced by a project that targets '{1}'.</source>
+        <target state="translated">プロジェクト '{0}' は '{2}' を対象にしています。'{1}' を対象とするプロジェクトからは参照できません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsProvidedToTask">
+        <source>Unable to find a project to restore!</source>
+        <target state="translated">復元するプロジェクトが見つかりません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoProjectsToRestore">
+        <source>Nothing to do. None of the projects specified contain packages to restore.</source>
+        <target state="translated">操作の必要はありません。指定したいずれのプロジェクトにも修復するパッケージは含まれていません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProjectEvaluationSummary">
+        <source>Evaluated {0} project(s) in {1:D2}ms ({2} builds, {3} failures).</source>
+        <target state="translated">{0} 個のプロジェクトが {1:D2} ミリ秒で評価されました ({2} 個のビルド、{3} 件のエラー)。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCanceled">
+        <source>Restore canceled!</source>
+        <target state="translated">復元がキャンセルされました!</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreNoSolutionFound">
+        <source>No solution found. Restore against a solution or pass in /p:SolutionDir</source>
+        <target state="translated">ソリューションが見つかりませんでした。ソリューションに対して復元するか、/p: SolutionDir を渡してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedFallbackFramework">
+        <source>The project fallback framework '{0}' is not a supported target framework.</source>
+        <target state="translated">プロジェクトのフォールバック フレームワーク '{0}' はサポートされているターゲット フレームワークではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UnsupportedTargetFramework">
+        <source>The project target framework '{0}' is not a supported target framework.</source>
+        <target state="translated">プロジェクトのターゲット フレームワーク '{0}' はサポートされているターゲット フレームワークではありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_InvalidPackageSaveMode">
+        <source>Invalid PackageSaveMode value '{0}'.</source>
+        <target state="translated">PackageSaveMode の値 '{0}' が無効です。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

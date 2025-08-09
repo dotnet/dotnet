@@ -486,18 +486,6 @@ namespace NuGet.Configuration
             }
         }
 
-        [Obsolete("DisablePackageSource(PackageSource source) is deprecated. Please use DisablePackageSource(string name) instead.")]
-        public void DisablePackageSource(PackageSource source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            var isDirty = false;
-            AddDisabledSource(source.Name, shouldSkipSave: false, isDirty: ref isDirty);
-        }
-
         public void DisablePackageSource(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -906,17 +894,6 @@ namespace NuGet.Configuration
             // It doesn't matter what value it is.
             // As long as the package source name is persisted in the <disabledPackageSources> section, the source is disabled.
             return value == null;
-        }
-
-        [Obsolete("IsPackageSourceEnabled(PackageSource source) is deprecated. Please use IsPackageSourceEnabled(string name) instead.")]
-        public bool IsPackageSourceEnabled(PackageSource source)
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            return IsPackageSourceEnabled(source.Name);
         }
 
         /// <summary>
