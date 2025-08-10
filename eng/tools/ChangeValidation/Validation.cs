@@ -107,13 +107,10 @@ internal static class Validation
 
         var prHead = (await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]));
 
-        Console.WriteLine($"Merge base commit is {prHead.StandardOutput}");
-        Console.WriteLine($"Merge base error? {prHead.StandardError}");
-
         baseBranch = "origin/" + baseBranch;
         targetBranch = "origin/" + targetBranch;
 
-        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", prHead.StandardOutput, targetBranch]));
+        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch]));
 
         Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
         Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
