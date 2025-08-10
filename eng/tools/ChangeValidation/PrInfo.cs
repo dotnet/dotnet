@@ -8,6 +8,5 @@ using System.Linq;
 namespace ChangeValidation;
 
 internal record PrInfo(
-    string BaseBranch,
     string TargetBranch, 
     ImmutableList<string> ChangedFiles);

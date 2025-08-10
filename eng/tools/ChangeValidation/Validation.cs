@@ -85,49 +85,27 @@ internal static class Validation
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        string? baseBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
-        string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
-        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
-
-        Console.WriteLine($"Base branch is {baseBranch}");
-        Console.WriteLine($"Target branch is {targetBranch}");
+        string? targetBranch = $"origin/{Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH")}" ?? "origin/main";
+        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER") ?? "1270";
 
         if (string.IsNullOrEmpty(targetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
-        if (string.IsNullOrEmpty(baseBranch))
-        {
-            throw new ArgumentException("Cannot determine PR source branch.");
-        }
+        // Create a git reference to the PR head commit
+        await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]);
 
-        await pm.ExecuteGit(repoPath, ["fetch", "origin", targetBranch]);
-        await pm.ExecuteGit(repoPath, ["fetch", "origin", baseBranch]);
+        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch])).StandardOutput.Trim();
 
-        var prHead = (await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]));
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "pr-head"])).StandardOutput.Trim();
 
-        baseBranch = "origin/" + baseBranch;
-        targetBranch = "origin/" + targetBranch;
-
-        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch]));
-
-        Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
-        Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
-
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase.StandardOutput.Trim(), "pr-head"]));
-
-        Console.WriteLine($"Diff output error? {diffOutput.StandardError}");
-        Console.WriteLine($"Diff output: {diffOutput.StandardOutput}");
-
-        var changedFiles = diffOutput.StandardOutput
+        var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine($"Changed files: {string.Join("\n", changedFiles)}");
-
-        return new PrInfo(baseBranch, targetBranch, changedFiles);
+        return new PrInfo(targetBranch, changedFiles);
     }
 
     private static IServiceProvider RegisterServices(string repoRoot)
