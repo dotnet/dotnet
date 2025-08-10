@@ -109,9 +109,14 @@ internal static class Validation
 
         string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", targetBranch, baseBranch])).StandardOutput.Trim();
 
-        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch])).StandardOutput;
+        Console.WriteLine($"Merge base commit is {mergeBase}");
 
-        var changedFiles = diffOutput
+        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch]));
+
+        Console.WriteLine($"Diff output error? {diffOutput.StandardError}");
+        Console.WriteLine($"Diff output: {diffOutput.StandardOutput}");
+
+        var changedFiles = diffOutput.StandardOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
