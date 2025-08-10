@@ -85,8 +85,8 @@ internal static class Validation
 
     private static async Task<PrInfo> SetupPrInfo(IProcessManager pm, string repoPath)
     {
-        string? targetBranch = $"origin/{Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH")}" ?? "origin/main";
-        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER") ?? "1270";
+        string? targetBranch = $"origin/{Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH")}";
+        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
 
         if (string.IsNullOrEmpty(targetBranch))
         {
