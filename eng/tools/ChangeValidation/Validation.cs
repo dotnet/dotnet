@@ -89,7 +89,7 @@ internal static class Validation
         string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
 
         Console.WriteLine($"Base branch is {baseBranch}");
-        Console.WriteLine($"Base branch is {targetBranch}");
+        Console.WriteLine($"Target branch is {targetBranch}");
 
         if (string.IsNullOrEmpty(targetBranch))
         {
@@ -104,8 +104,12 @@ internal static class Validation
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {baseBranch}"]);
 
-        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", $"origin/{targetBranch}", $"origin/{baseBranch}" ])).StandardOutput.Trim();
-        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "HEAD" ])).StandardOutput;
+        baseBranch = "origin/" + baseBranch;
+        targetBranch = "origin/" + targetBranch;
+
+        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", targetBranch, baseBranch])).StandardOutput.Trim();
+
+        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch])).StandardOutput;
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
