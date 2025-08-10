@@ -1,0 +1,99 @@
+parameters:
+- name: configuration
+  type: string
+
+- name: artifactsDir
+  type: string
+
+- name: logsDir
+  type: string
+
+steps:
+- script: |
+    output_file="$(Build.SourcesDirectory)/eng/empty.proj"
+
+    echo '<Project>' > "$output_file"
+    echo '  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />' >> "$output_file"
+    echo '  <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />' >> "$output_file"
+    echo '</Project>' >> "$output_file"
+
+    echo "##vso[task.setvariable variable=EmptyProjectPath;isOutput=true]$output_file"
+  displayName: Create an empty project
+  name: CreateEmptyProject
+
+- script: |
+    temp_file=$(mktemp)
+
+    # If you are changing these patterns, you must also change the patterns used
+    # in VMR signing validation in the ../steps/vmr-validation.yml file.
+    patterns="**/Private.SourceBuilt.Artifacts.*.tar.gz **/dotnet-sdk-*.tar.gz"
+
+    for pattern in $patterns; do
+      if [[ "$pattern" == *"/"* ]]; then
+        find "${{ parameters.artifactsDir }}" -type f -wholename "$pattern" >> "$temp_file"
+      else
+        find "${{ parameters.artifactsDir }}" -type f -name "$pattern" >> "$temp_file"
+      fi
+    done
+
+    sorted_unique=$(sort -u "$temp_file")
+
+    if [ -z "$sorted_unique" ]; then
+      echo "No files found matching the patterns: $patterns"
+      exit 1
+    fi
+
+    signing_props_file="$(Build.SourcesDirectory)/eng/Signing.props"
+
+    echo '<Project>' > "$signing_props_file"
+
+    echo '  <PropertyGroup>' >> "$signing_props_file"
+    echo '    <ExternalCertificateId>3PartySHA2</ExternalCertificateId>' >> "$signing_props_file"
+    echo '    <UseDotNetCertificate>true</UseDotNetCertificate>' >> "$signing_props_file"
+    echo '  </PropertyGroup>' >> "$signing_props_file"
+
+    echo '  <ItemGroup>' >> "$signing_props_file"
+    echo '    <ItemsToSign Remove="@(ItemsToSign)" />' >> "$signing_props_file"
+    echo '  </ItemGroup>' >> "$signing_props_file"
+
+    echo '  <ItemGroup>' >> "$signing_props_file"
+    while IFS= read -r file; do
+      echo "    <ItemsToSign Include=\"$file\" />" >> "$signing_props_file"
+    done <<< "$sorted_unique"
+    echo '  </ItemGroup>' >> "$signing_props_file"
+
+    echo '  <ItemGroup>' >> "$signing_props_file"
+    # We don't need to code sign .js files because they are not used in Windows Script Host
+    echo '    <FileExtensionSignInfo Update=".js" CertificateName="None" />' >> "$signing_props_file"
+
+    # Sign 3rd party files that end up in the artifacts
+    echo '    <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+    echo '    <FileSignInfo Include="Mono.Cecil.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+    echo '    <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+    echo '    <FileSignInfo Include="Mono.Cecil.Pdb.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+    echo '    <FileSignInfo Include="Mono.Cecil.Rocks.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+    echo '    <FileSignInfo Include="Valleysoft.DockerCredsProvider.dll" CertificateName="$(ExternalCertificateId)" />' >> "$signing_props_file"
+
+    # Skip signing files that are marked as 3rd party but have .NET copyright:
+    # "Copyright © .NET Foundation and Contributors" or ".NET Foundation and Contributors"
+    echo '    <ItemsToSkip3rdPartyCheck Include="Humanizer.dll" />' >> "$signing_props_file"
+    echo '    <ItemsToSkip3rdPartyCheck Include="mscorlib.dll" />' >> "$signing_props_file"
+    echo '    <ItemsToSkip3rdPartyCheck Include="netstandard.dll" />' >> "$signing_props_file"
+    echo '  </ItemGroup>' >> "$signing_props_file"
+
+    echo '</Project>' >> "$signing_props_file"
+  displayName: Create Signing.props
+
+- script: |
+    ./eng/common/build.sh \
+      --ci \
+      --configuration ${{ parameters.configuration }} \
+      --restore \
+      --projects $(CreateEmptyProject.EmptyProjectPath) \
+      --excludecibinarylog \
+      /bl:${{ parameters.logsDir }}/sign-source-built-artifacts.binlog \
+      $(signArguments) \
+      $(signProperties) \
+      $(_SignDiagnosticFilesArgs)
+  displayName: Sign Source-Built Artifacts
+  workingDirectory: $(Build.SourcesDirectory)

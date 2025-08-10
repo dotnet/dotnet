@@ -53,6 +53,8 @@ stages:
       # to determine which variable to use for determining the various parameter values which are based on variables.
       #
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
+      # Changing the `allowedSigning` parameter requires adding or removing the build name and source-built artifact
+      # patterns in the ../steps/vmr-validation.yml file.
       legs:
 
         ### Source-build verification legs ###
@@ -67,6 +69,7 @@ stages:
           useMonoRuntime: false              # 🚫
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
+          sign: true                         # ✅
 
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
@@ -79,6 +82,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
             reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
 
         ### Additional legs for full build ###
@@ -94,6 +98,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_PreviousSourceBuiltSdk'
             distro: centos
@@ -104,6 +109,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
             distro: almalinux
@@ -114,6 +120,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
             distro: alpine
@@ -124,6 +131,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
             distro: centos
@@ -134,6 +142,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Online_PreviousSourceBuiltSdk'
             distro: centos
@@ -144,6 +153,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Mono_Offline_MsftSdk'
             distro: centos
@@ -154,6 +164,7 @@ stages:
             useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_MsftSdk'
             distro: fedora
@@ -165,6 +176,7 @@ stages:
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
             enableCoreDumpGeneration: true     # ✅
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
             distro: ubuntu
@@ -175,6 +187,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
 
           - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
             distro: fedora
@@ -186,6 +199,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             enableCoreDumpGeneration: true     # ✅
+            sign: false                        # 🚫
             reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
 
           - buildNameFormat: '{0}_Mono_Offline_CurrentSourceBuiltSdk'
@@ -197,4 +211,5 @@ stages:
             useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            sign: false                        # 🚫
             reuseBuildArtifactsFrom: '{0}_Mono_Offline_MsftSdk_x64'
