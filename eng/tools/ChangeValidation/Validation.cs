@@ -87,7 +87,10 @@ internal static class Validation
     {
         string? baseBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
         string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
-        
+
+        Console.WriteLine($"Base branch is {baseBranch}");
+        Console.WriteLine($"Base branch is {targetBranch}");
+
         if (string.IsNullOrEmpty(targetBranch))
         {
             throw new ArgumentException("Cannot determine PR target branch.");
@@ -108,6 +111,8 @@ internal static class Validation
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
+
+        Console.WriteLine($"Changed files: {string.Join("\n", changedFiles)}");
 
         return new PrInfo("origin/" + baseBranch, "origin/" + targetBranch, changedFiles);
     }
