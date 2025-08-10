@@ -44,9 +44,7 @@ internal class ExclusionFileValidation : IValidationStep
     {
         ILocalGitRepo vmr = _localGitRepoFactory.Create(_vmrInfo.VmrPath);
 
-        await vmr.CheckoutAsync(prInfo.BaseBranch);
-
-        var newExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.BaseBranch);
+        var newExclusionRules = await GetExclusionPatterns(); // We are already checked to the PR Head commit, just parse exclusions from file
         var originalExclusionRules = await GetExclusionPatternsFromBranch(vmr, prInfo.TargetBranch);
 
         var newExcludedFiles = FindMatchingFiles(newExclusionRules);
@@ -94,21 +92,29 @@ internal class ExclusionFileValidation : IValidationStep
         string originalRef = await vmr.GetCheckedOutBranchAsync();
         try
         {
+            LogInfo($"Checking out branch {branchName} to get exclusion patterns.");
             await vmr.CheckoutAsync(branchName);
-            await _dependencyTracker.RefreshMetadata();
-
-            var sourceMappings = _dependencyTracker.Mappings;
-
-            var exclusionPatterns =  sourceMappings.SelectMany(mapping => mapping.Exclude)
-                .Distinct()
-                .ToList();
-            LogInfo($"Exclusion patterns from branch {branchName}: {string.Join(", ", exclusionPatterns)}");
-            return exclusionPatterns;
+            return await GetExclusionPatternsFromBranch();
         }
         finally
         {
             await vmr.CheckoutAsync(originalRef);
         }
+    }
+
+    private async Task<List<string>> GetExclusionPatterns()
+    {
+        await _dependencyTracker.RefreshMetadata();
+
+        var sourceMappings = _dependencyTracker.Mappings;
+
+        var exclusionPatterns = sourceMappings.SelectMany(mapping => mapping.Exclude)
+            .Distinct()
+            .ToList();
+
+        LogInfo($"Successfully parsed exclusion patterns: {string.Join(", ", exclusionPatterns)}");
+
+        return exclusionPatterns;
     }
     
     private HashSet<string> FindMatchingFiles(List<string> globPatterns)
