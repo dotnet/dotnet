@@ -111,7 +111,7 @@ internal static class Validation
 
         Console.WriteLine($"Merge base commit is {mergeBase}");
 
-        string diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch]));
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch]));
 
         Console.WriteLine($"Diff output error? {diffOutput.StandardError}");
         Console.WriteLine($"Diff output: {diffOutput.StandardOutput}");
