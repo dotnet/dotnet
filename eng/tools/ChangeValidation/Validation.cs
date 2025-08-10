@@ -103,15 +103,21 @@ internal static class Validation
 
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {baseBranch}"]);
+        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "origin/" + targetBranch, "origin/" + baseBranch]));
+
+        Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
+        Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
+
+        var mergeBaseLocal = (await pm.ExecuteGit(repoPath, ["merge-base", targetBranch, baseBranch]));
+
+        Console.WriteLine($"Merge base commit is {mergeBaseLocal.StandardOutput}");
+        Console.WriteLine($"Merge base error? {mergeBaseLocal.StandardError}");
 
         baseBranch = "origin/" + baseBranch;
         targetBranch = "origin/" + targetBranch;
 
-        string mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", targetBranch, baseBranch])).StandardOutput.Trim();
 
-        Console.WriteLine($"Merge base commit is {mergeBase}");
-
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, baseBranch]));
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase.StandardOutput, baseBranch]));
 
         Console.WriteLine($"Diff output error? {diffOutput.StandardError}");
         Console.WriteLine($"Diff output: {diffOutput.StandardOutput}");
