@@ -87,6 +87,7 @@ internal static class Validation
     {
         string? baseBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_SOURCEBRANCH");
         string? targetBranch = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_TARGETBRANCH");
+        string? prNumber = Environment.GetEnvironmentVariable("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER");
 
         Console.WriteLine($"Base branch is {baseBranch}");
         Console.WriteLine($"Target branch is {targetBranch}");
@@ -103,19 +104,19 @@ internal static class Validation
 
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
         await pm.ExecuteGit(repoPath, ["fetch", $"origin {baseBranch}"]);
-        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "origin/" + targetBranch, "origin/" + baseBranch]));
 
-        Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
-        Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
+        var prHead = (await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]));
 
-        var mergeBaseLocal = (await pm.ExecuteGit(repoPath, ["merge-base", targetBranch, baseBranch]));
-
-        Console.WriteLine($"Merge base commit is {mergeBaseLocal.StandardOutput}");
-        Console.WriteLine($"Merge base error? {mergeBaseLocal.StandardError}");
+        Console.WriteLine($"Merge base commit is {prHead.StandardOutput}");
+        Console.WriteLine($"Merge base error? {prHead.StandardError}");
 
         baseBranch = "origin/" + baseBranch;
         targetBranch = "origin/" + targetBranch;
 
+        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", prHead.StandardOutput, targetBranch]));
+
+        Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
+        Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
 
         var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase.StandardOutput, baseBranch]));
 

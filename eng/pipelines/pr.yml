@@ -78,3 +78,5 @@ stages:
       env:
         SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
         SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
+        SYSTEM_PULLREQUEST_PULLREQUESTNUMBER: $(System.PullRequest.PullRequestNumber)
+
