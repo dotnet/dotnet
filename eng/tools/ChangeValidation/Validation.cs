@@ -102,8 +102,8 @@ internal static class Validation
             throw new ArgumentException("Cannot determine PR source branch.");
         }
 
-        await pm.ExecuteGit(repoPath, ["fetch", $"origin {targetBranch}"]);
-        await pm.ExecuteGit(repoPath, ["fetch", $"origin {baseBranch}"]);
+        await pm.ExecuteGit(repoPath, ["fetch", "origin", targetBranch]);
+        await pm.ExecuteGit(repoPath, ["fetch", "origin", baseBranch]);
 
         var prHead = (await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]));
 
@@ -115,7 +115,7 @@ internal static class Validation
         Console.WriteLine($"Merge base commit is {mergeBase.StandardOutput}");
         Console.WriteLine($"Merge base error? {mergeBase.StandardError}");
 
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase.StandardOutput, baseBranch]));
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase.StandardOutput.Trim(), "pr-head"]));
 
         Console.WriteLine($"Diff output error? {diffOutput.StandardError}");
         Console.WriteLine($"Diff output: {diffOutput.StandardOutput}");
@@ -127,7 +127,7 @@ internal static class Validation
 
         Console.WriteLine($"Changed files: {string.Join("\n", changedFiles)}");
 
-        return new PrInfo("origin/" + baseBranch, "origin/" + targetBranch, changedFiles);
+        return new PrInfo(baseBranch, targetBranch, changedFiles);
     }
 
     private static IServiceProvider RegisterServices(string repoRoot)
