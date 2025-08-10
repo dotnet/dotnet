@@ -94,7 +94,7 @@ internal class ExclusionFileValidation : IValidationStep
         {
             LogInfo($"Checking out branch {branchName} to get exclusion patterns.");
             await vmr.CheckoutAsync(branchName);
-            return await GetExclusionPatternsFromBranch();
+            return await GetExclusionPatterns();
         }
         finally
         {
