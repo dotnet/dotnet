@@ -3,6 +3,7 @@
     <File Path="eng/dogfood.cmd" />
     <File Path="eng/dogfood.sh" />
     <File Path="eng/Versions.props" />
+    <File Path="eng/Version.Details.props" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
@@ -50,9 +51,9 @@
     <Project Path="src/BuiltInTools/HotReloadAgent.Data/Microsoft.DotNet.HotReload.Agent.Data.shproj" />
     <Project Path="src/BuiltInTools/HotReloadAgent.PipeRpc/Microsoft.DotNet.HotReload.Agent.PipeRpc.Package.csproj" />
     <Project Path="src/BuiltInTools/HotReloadAgent.PipeRpc/Microsoft.DotNet.HotReload.Agent.PipeRpc.shproj" />
+    <Project Path="src/BuiltInTools/HotReloadAgent.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.csproj" />
     <Project Path="src/BuiltInTools/HotReloadAgent/Microsoft.DotNet.HotReload.Agent.Package.csproj" />
     <Project Path="src/BuiltInTools/HotReloadAgent/Microsoft.DotNet.HotReload.Agent.shproj" />
-    <Project Path="src/BuiltInTools/HotReloadAgent.WebAssembly.Browser/Microsoft.DotNet.HotReload.WebAssembly.Browser.csproj" />
   </Folder>
   <Folder Name="/src/Cli/">
     <Project Path="src/Cli/dotnet/dotnet.csproj" />

@@ -55,6 +55,7 @@
     public System.Void SetAction(System.Func<ParseResult,System.Int32> action)
     public System.Void SetAction(System.Func<ParseResult,System.Threading.CancellationToken,System.Threading.Tasks.Task> action)
     public System.Void SetAction(System.Func<ParseResult,System.Threading.Tasks.Task> action)
+    public System.Void SetAction(System.Func<ParseResult,System.Threading.Tasks.Task<System.Int32>> action)
     public System.Void SetAction(System.Func<ParseResult,System.Threading.CancellationToken,System.Threading.Tasks.Task<System.Int32>> action)
   public static class CompletionSourceExtensions
     public static System.Void Add(this System.Collections.Generic.List<System.Func<System.CommandLine.Completions.CompletionContext,System.Collections.Generic.IEnumerable<System.CommandLine.Completions.CompletionItem>>> completionSources, System.Func<System.CommandLine.Completions.CompletionContext,System.Collections.Generic.IEnumerable<System.String>> completionsDelegate)
@@ -178,6 +179,7 @@ System.CommandLine.Completions
 System.CommandLine.Help
   public class HelpAction : System.CommandLine.Invocation.SynchronousCommandLineAction
     .ctor()
+    public System.Boolean ClearsParseErrors { get; }
     public System.Int32 MaxWidth { get; set; }
     public System.Int32 Invoke(System.CommandLine.ParseResult parseResult)
   public class HelpOption : System.CommandLine.Option
@@ -189,6 +191,7 @@ System.CommandLine.Invocation
   public abstract class AsynchronousCommandLineAction : CommandLineAction
     public System.Threading.Tasks.Task<System.Int32> InvokeAsync(System.CommandLine.ParseResult parseResult, System.Threading.CancellationToken cancellationToken = null)
   public abstract class CommandLineAction
+    public System.Boolean ClearsParseErrors { get; }
     public System.Boolean Terminating { get; }
     protected System.Void set_Terminating(System.Boolean value)
   public class ParseErrorAction : SynchronousCommandLineAction

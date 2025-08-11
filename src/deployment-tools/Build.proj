@@ -37,4 +37,14 @@
                       BuildInParallel="true" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="src/DotNetRuntimeValidation/DotNetRuntimeValidation.csproj"
+                      Pack="false"
+                      Publish="true"
+                      Test="false"
+                      BuildInParallel="false"
+                      Condition="'$(TargetOS)' == 'windows'">
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

@@ -9,24 +9,44 @@
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.MarkAndCatalogPackages" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="PoisonPrebuiltPackages"
+  <Target Name="PoisonPackages"
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)PoisonPrebuiltPackages.complete">
-    <PropertyGroup>
-      <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
-      <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
-    </PropertyGroup>
+          Outputs="$(BaseIntermediateOutputPath)PoisonPackages.complete">
 
     <ItemGroup>
       <PrebuiltPackages Include="$(PrebuiltPackagesPath)**/*.nupkg" />
       <PreviouslySourceBuiltPackages Include="$(PreviouslySourceBuiltPackagesPath)**/*.nupkg" />
     </ItemGroup>
 
+    <Error Condition="'@(PreviouslySourceBuiltPackages)' == ''"
+           Text="Expected NuGet packages to be present within the path '$(PreviouslySourceBuiltPackagesPath)'." />
+
+    <!-- Get the packages that come from the tooling repos in the shared components. Only those packages should be marked for poisoning.
+         The packages from the runtime-related components should not be marked for poisoning as it is intentional for them to be
+         redistributed in the SDK. -->
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="GetFilteredSharedComponentPackages"
+             Condition="Exists('$(SharedComponentsArtifactsPath)') and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))"
+             Properties="IncludeOnlyToolingComponents=true">
+      <Output TaskParameter="TargetOutputs" ItemName="_FilteredSharedComponentPackages" />
+    </MSBuild>
+
+    <Error Condition="Exists('$(SharedComponentsArtifactsPath)') and '@(_FilteredSharedComponentPackages)' == ''"
+           Text="Expected NuGet packages to be present from shared components artifacts." />
+
+    <ItemGroup>
+      <_SharedToolingComponentFilenames Include="@(_FilteredSharedComponentPackages)">
+        <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>
+      </_SharedToolingComponentFilenames>
+      <SharedComponentPackagesToPoison Include="@(_SharedToolingComponentFilenames->'%(PackagePath)')" />
+    </ItemGroup>
+
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />
 
-    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PoisonReportDataFile)" MarkerFileName="$(PoisonMarkerFile)" />
-    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PrebuiltPoisonReportDataFile)" MarkerFileName="$(PrebuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages)" CatalogOutputFilePath="$(PreviouslySourceBuiltPoisonReportDataFile)" MarkerFileName="$(PreviouslySourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SharedComponentPoisonReportDataFile)" MarkerFileName="$(SharedComponentPoisonMarkerFile)" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />
 

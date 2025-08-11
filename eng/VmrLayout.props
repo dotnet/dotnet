@@ -65,8 +65,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
-    <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
-    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
+    <PrebuiltPoisonMarkerFile>.prebuilt.xml</PrebuiltPoisonMarkerFile>
+    <PrebuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-prebuilt-catalog.xml</PrebuiltPoisonReportDataFile>
+    <PreviouslySourceBuiltPoisonMarkerFile>.previously-source-built.xml</PreviouslySourceBuiltPoisonMarkerFile>
+    <PreviouslySourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-previously-source-built-catalog.xml</PreviouslySourceBuiltPoisonReportDataFile>
+    <SharedComponentPoisonMarkerFile>.shared-component.xml</SharedComponentPoisonMarkerFile>
+    <SharedComponentPoisonReportDataFile>$(ArtifactsLogDir)poison-shared-component-catalog.xml</SharedComponentPoisonReportDataFile>
     <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
     <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>
@@ -91,6 +95,24 @@
   <ItemGroup>
     <DefaultPackageVersionPropertySuffixes Include="$(PackageVersionPropertySuffix);$(PackageVersionPropertyAlternateSuffix)" />
     <PreviousPackageVersionPropertySuffixes Include="@(DefaultPackageVersionPropertySuffixes);$(PackagePreviousVersionPropertySuffix)" />
+  </ItemGroup>
+
+  <!-- Shared repository references. These repositories are excluded from the build when we're not building shared components. -->
+  <ItemGroup>
+    <SharedRepositoryReference Include="aspnetcore" />
+    <SharedRepositoryReference Include="cecil" />
+    <SharedRepositoryReference Include="command-line-api" />
+    <SharedRepositoryReference Include="deployment-tools" />
+    <SharedRepositoryReference Include="diagnostics" />
+    <SharedRepositoryReference Include="efcore" />
+    <SharedRepositoryReference Include="emsdk" />
+    <SharedRepositoryReference Include="runtime" />
+    <SharedRepositoryReference Include="sourcelink" />
+    <SharedRepositoryReference Include="symreader" />
+    <SharedRepositoryReference Include="windowsdesktop" />
+    <SharedRepositoryReference Include="winforms" />
+    <SharedRepositoryReference Include="wpf" />
+    <SharedRepositoryReference Include="xdt" />
   </ItemGroup>
 
 </Project>

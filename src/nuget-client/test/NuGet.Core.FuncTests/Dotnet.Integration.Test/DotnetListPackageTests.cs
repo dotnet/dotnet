@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages.ChildProcess;
+using Newtonsoft.Json.Linq;
+using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Frameworks;
 using NuGet.Packaging;
@@ -1051,6 +1053,43 @@ namespace Dotnet.Integration.Test
             {
                 lines.Should().NotContain(TransitiveHeading);
             }
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void SolutionFilter_DoesNotOutputExcludedProject(bool useSlnx)
+        {
+            // Arrange
+            var pathContext = new SimpleTestPathContext();
+
+            var projectA = SimpleTestProjectContext.CreateNETCore("ProjectA", pathContext.SolutionRoot, FrameworkConstants.CommonFrameworks.Net90);
+            var projectB = SimpleTestProjectContext.CreateNETCore("ProjectB", pathContext.SolutionRoot, FrameworkConstants.CommonFrameworks.Net90);
+
+            var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot, useSlnx, projectA, projectB);
+            solution.Create();
+
+            string slnfContents = $$"""
+                {
+                    "solution": {
+                        "path": "solution.{{(useSlnx ? "slnx" : "sln")}}",
+                        "projects": [
+                            "ProjectA\\ProjectA.csproj"
+                        ]
+                    }
+                }
+                """;
+            string slnfPath = Path.Combine(pathContext.SolutionRoot, "filter.slnf");
+            File.WriteAllText(slnfPath, slnfContents);
+
+            // Act
+            var result = _fixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"package list --project {slnfPath} --format json");
+
+            // Assert
+            var json = JObject.Parse(result.AllOutput);
+            var projects = (JArray)json.SelectToken("$.projects");
+            projects.Count.Should().Be(1);
+            projects[0]["path"].ToString().Should().Be(PathUtility.GetPathWithForwardSlashes(projectA.ProjectPath));
         }
 
         private static string CollapseSpaces(string input)

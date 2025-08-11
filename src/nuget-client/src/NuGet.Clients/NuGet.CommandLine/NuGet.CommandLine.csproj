@@ -22,7 +22,6 @@
     <DevelopmentDependency>true</DevelopmentDependency>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
-    <GetSigningInputsDependsOn>GetSigningInputsCustom</GetSigningInputsDependsOn>
     <GetSymbolsToIndexDependsOn>GetSymbolsToIndexCustom</GetSymbolsToIndexDependsOn>
 </PropertyGroup>
 
@@ -70,6 +69,7 @@
 
   <ItemGroup>
     <PackageReference Include="ILMerge" PrivateAssets="All" />
+    <PackageReference Include="System.Memory" />
     <None Include="$(BuildCommonDirectory)\NOTICES.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
@@ -151,15 +151,6 @@
   <Target Name="ClearFrameworkAssemblyReferences" BeforeTargets="GenerateNuspec" DependsOnTargets="$(GenerateNuspecDependsOn)">
     <ItemGroup>
       <_FrameworkAssemblyReferences Remove="@(_FrameworkAssemblyReferences)" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetSigningInputsCustom" Returns="@(DllsToSign)">
-    <ItemGroup>
-      <DllsToSign Include="$(ArtifactsDirectory)$(VsixOutputDirName)\NuGet.exe">
-        <StrongName>MsSharedLib72</StrongName>
-        <Authenticode>Microsoft400</Authenticode>
-      </DllsToSign>
     </ItemGroup>
   </Target>
 

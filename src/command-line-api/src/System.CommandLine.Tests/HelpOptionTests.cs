@@ -6,6 +6,7 @@ using System.CommandLine.Help;
 using System.CommandLine.Invocation;
 using System.CommandLine.Tests.Utility;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -239,9 +240,9 @@ public class HelpOptionTests
 
         RootCommand rootCommand = new(description);
         rootCommand.Options.Clear();
-        rootCommand.Options.Add(new HelpOption()
+        rootCommand.Options.Add(new HelpOption
         {
-            Action = new HelpAction()
+            Action = new HelpAction
             {
                 MaxWidth = 2 /* each line starts with two spaces */ + description.Length / 2
             }
@@ -253,6 +254,111 @@ public class HelpOptionTests
         output.ToString().Should().NotContain(description);
         output.ToString().Should().Contain($"  {firstPart}{Environment.NewLine}");
         output.ToString().Should().Contain($"  {secondPart}{Environment.NewLine}");
+    }
+
+    [Fact] // https://github.com/dotnet/command-line-api/issues/2640
+    public void DefaultValueFactory_does_not_throw_when_help_is_invoked()
+    {
+        var invocationConfiguration = new InvocationConfiguration
+        {
+            Output = new StringWriter(),
+            Error = new StringWriter()
+        };
+
+        Command subcommand = new("do")
+        {
+            new Option<DirectoryInfo>("-x")
+            {
+                DefaultValueFactory = result =>
+                {
+                    result.AddError("Oops!");
+                    return null;
+                }
+            }
+        };
+        subcommand.SetAction(_ => { });
+        RootCommand rootCommand = new()
+        {
+            subcommand
+        };
+
+        rootCommand.Parse("do --help").Invoke(invocationConfiguration);
+
+        invocationConfiguration.Error.ToString().Should().Be("");
+    }
+
+    [Fact] // https://github.com/dotnet/command-line-api/issues/2589
+    public void Help_and_version_options_are_displayed_after_other_options_on_root_command()
+    {
+        var command = new RootCommand
+        {
+            Subcommands =
+            {
+                new Command("subcommand")
+                {
+                    Description = "The subcommand"
+                }
+            },
+            Options =
+            {
+                new Option<int>("-i")
+                {
+                    Description = "The option"
+                }
+            }
+        };
+
+        var output = new StringWriter();
+
+
+        command.Parse("-h").Invoke(new() { Output = output });
+
+        output.ToString()
+              .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+              .Select(line => line.Trim())
+              .Should()
+              .ContainInOrder([
+                  "Options:",
+                  "-i              The option",
+                  "-?, -h, --help  Show help and usage information",
+                  "--version       Show version information",
+                  "Commands:"
+              ]);
+    }
+
+    [Fact] // https://github.com/dotnet/command-line-api/issues/2589
+    public void Help_and_version_options_are_displayed_after_other_options_on_subcommand()
+    {
+        var command = new RootCommand
+        {
+            Subcommands =
+            {
+                new Command("subcommand")
+                {
+                    Description = "The subcommand", Options =
+                    {
+                        new Option<int>("-i")
+                        {
+                            Description = "The option"
+                        }
+                    }
+                }
+            }
+        };
+
+        var output = new StringWriter();
+
+        command.Parse("subcommand -h").Invoke(new() { Output = output });
+
+        output.ToString()
+              .Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries)
+              .Select(line => line.Trim())
+              .Should()
+              .ContainInOrder([
+                  "Options:",
+                  "-i              The option",
+                  "-?, -h, --help  Show help and usage information",
+              ]);
     }
 
     private sealed class CustomizedHelpAction : SynchronousCommandLineAction

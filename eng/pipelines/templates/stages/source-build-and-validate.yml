@@ -53,6 +53,7 @@ stages:
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.fedoraName) }}
+          enableCoreDumpGeneration: ${{ leg.enableCoreDumpGeneration }}
         # Ubuntu
         ${{ elseif eq(leg.distro, 'ubuntu') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}

@@ -27,12 +27,22 @@
       <PoisonFileToCheck Include="@(SbrpPackageToCheck)" />
     </ItemGroup>
 
+    <!-- Check for prebuilt and source-built packages. -->
+    <ItemGroup>
+      <PoisonReportDataFile Include="$(PrebuiltPoisonReportDataFile)" />
+      <PoisonReportDataFile Include="$(PreviouslySourceBuiltPoisonReportDataFile)" />
+      <PoisonReportDataFile Include="$(SharedComponentPoisonReportDataFile)" />
+      <PoisonMarkerFile Include="$(PrebuiltPoisonMarkerFile)" />
+      <PoisonMarkerFile Include="$(PreviouslySourceBuiltPoisonMarkerFile)" />
+      <PoisonMarkerFile Include="$(SharedComponentPoisonMarkerFile)" />
+    </ItemGroup>
+
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Checking @(PoisonFileToCheck) for poisoned files." />
 
     <CheckForPoison FilesToCheck="@(PoisonFileToCheck)"
                     ProjectDirPath="$(RepoRoot)"
-                    HashCatalogFilePath="$(PoisonReportDataFile)"
-                    MarkerFileName="$(PoisonMarkerFile)"
+                    HashCatalogFilePaths="@(PoisonReportDataFile)"
+                    MarkerFileNames="@(PoisonMarkerFile)"
                     PoisonReportOutputFilePath="$(PoisonUsageReportFile)" />
 
     <MakeDir Directories="$(ArtifactsPublishStagingDir)/log" />

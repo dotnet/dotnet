@@ -48,8 +48,19 @@ parameters:
   type: boolean
   default: false
 
+- name: signType
+  displayName: Signing type
+  type: string
+  default: ''
+
 - name: signDac
   displayName: True when the diagnostic files should be signed
+  type: boolean
+  default: false
+
+  # Remove with https://github.com/dotnet/source-build/issues/5288
+- name: enableCoreDumpGeneration
+  displayName: True when core dump generation should be enabled
   type: boolean
   default: false
 
@@ -220,14 +231,15 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    ${{ if eq(parameters.targetOS, 'windows') }}:
-      # Don't clean while building on Windows as the pool's disk space is sufficient.
-      ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-        value: ''
-      ${{ else }}:
-        value: $(commandPrefix)cleanWhileBuilding
+    # Don't clean-while-building on OSs that have enough disk space to keep
+    # intermediates for compliance scanners.
+    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+      value: ''
     ${{ else }}:
-      value: $(commandPrefix)clean-while-building
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)cleanWhileBuilding
+      ${{ else }}:
+        value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
@@ -268,7 +280,7 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
+    - ${{ if eq(parameters.signType, 'DryRun') }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -276,9 +288,9 @@ jobs:
         value: /p:ForceDryRunSigning=true
     - ${{ else }}:
       - name: _SignType
-        value: real
+        value: ${{ parameters.signType }}
       - name: signProperties
-        value: /p:DotNetSignType=real /p:TeamName=$(_TeamName)
+        value: /p:DotNetSignType=${{ parameters.signType }} /p:TeamName=$(_TeamName)
   - ${{ else }}:
     - name: signArguments
       value: ''
@@ -418,11 +430,18 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.buildSourceOnly, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
+  # https://github.com/dotnet/dotnet/issues/1758
+  # After a re-boostrap:
+  # - Uncomment the line below, replacing the one after it.
+  # - Uncomment the two parameter lines at the end of the template parameters.
+  # - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
+        # ${{ if ne(parameters.signType, 'Real') }}:
+        #   microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -561,6 +580,12 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
+          fi
+
+          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
+          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
+            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
+            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
