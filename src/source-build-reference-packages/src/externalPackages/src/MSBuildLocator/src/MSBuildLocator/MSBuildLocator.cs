@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +11,8 @@ using System.Text;
 
 #if NETCOREAPP
 using System.Runtime.Loader;
+#else
+using System.Diagnostics;
 #endif
 
 namespace Microsoft.Build.Locator
@@ -42,6 +43,22 @@ namespace Microsoft.Build.Locator
         ///     Gets a value indicating whether an instance of MSBuild is currently registered.
         /// </summary>
         public static bool IsRegistered => s_registeredHandler != null;
+
+        /// <summary>
+        ///     Allow discovery of .NET SDK versions that are unlikely to be successfully loaded in the current process.
+        /// </summary>
+        /// <remarks>
+        ///     Defaults to <see langword="false"/>. Set this to <see langword="true"/> only if your application has special logic to handle loading an incompatible SDK, such as launching a new process with the target SDK's runtime.
+        /// </remarks.
+        public static bool AllowQueryAllRuntimeVersions { get; set; } = false;
+
+        /// <summary>
+        ///     Allow discovery of .NET SDK versions from all discovered dotnet install locations.
+        /// </summary>
+        /// <remarks>
+        ///     Defaults to <see langword="false"/>. Set this to <see langword="true"/> only if you do not mind behaving differently than the dotnet muxer.
+        /// </remarks.
+        public static bool AllowQueryAllDotnetLocations { get; set; } = false;
 
         /// <summary>
         ///     Gets a value indicating whether an instance of MSBuild can be registered.
@@ -131,17 +148,16 @@ namespace Microsoft.Build.Locator
             string nugetPath = Path.GetFullPath(Path.Combine(instance.MSBuildPath, "..", "..", "..", "Common7", "IDE", "CommonExtensions", "Microsoft", "NuGet"));
             if (Directory.Exists(nugetPath))
             {
-                RegisterMSBuildPath(new string[] { instance.MSBuildPath, nugetPath });
+                RegisterMSBuildPathsInternally(new string[] { instance.MSBuildPath, nugetPath });
             }
             else
             {
-                RegisterMSBuildPath(instance.MSBuildPath);
+                RegisterMSBuildPathsInternally(new string[] { instance.MSBuildPath });
             }
         }
 
         /// <summary>
-        ///     Add assembly resolution for Microsoft.Build core dlls in the current AppDomain from the specified
-        ///     path.
+        ///     Add assembly resolution for Microsoft.Build core dlls in the current AppDomain from the specified path and register environment variables for it.
         /// </summary>
         /// <param name="msbuildPath">
         ///     Path to the directory containing a deployment of MSBuild binaries.
@@ -152,12 +168,15 @@ namespace Microsoft.Build.Locator
         /// </param>
         public static void RegisterMSBuildPath(string msbuildPath)
         {
-            RegisterMSBuildPath(new string[] { msbuildPath });
+#if NETCOREAPP
+            ApplyDotNetSdkEnvironmentVariables(msbuildPath);
+#endif
+            RegisterMSBuildPathsInternally(new string[] { msbuildPath });
         }
 
         /// <summary>
         ///     Add assembly resolution for Microsoft.Build core dlls in the current AppDomain from the specified
-        ///     path.
+        ///     paths and register environment variables for the first path.
         /// </summary>
         /// <param name="msbuildSearchPaths">
         ///     Paths to directories containing a deployment of MSBuild binaries.
@@ -167,6 +186,17 @@ namespace Microsoft.Build.Locator
         ///     Such deployments can be found in installations such as Visual Studio or dotnet CLI.
         /// </param>
         public static void RegisterMSBuildPath(string[] msbuildSearchPaths)
+        {
+#if NETCOREAPP
+            if (msbuildSearchPaths.Any())
+            {
+                ApplyDotNetSdkEnvironmentVariables(msbuildSearchPaths.FirstOrDefault());
+            }
+#endif
+            RegisterMSBuildPathsInternally(msbuildSearchPaths);
+        }
+
+        private static void RegisterMSBuildPathsInternally(string[] msbuildSearchPaths)
         {
             if (msbuildSearchPaths.Length < 1)
             {
@@ -178,7 +208,7 @@ namespace Microsoft.Build.Locator
             {
                 if (string.IsNullOrWhiteSpace(msbuildSearchPaths[i]))
                 {
-                    nullOrWhiteSpaceExceptions.Add(new ArgumentException($"Value at position {i+1} may not be null or whitespace", nameof(msbuildSearchPaths)));
+                    nullOrWhiteSpaceExceptions.Add(new ArgumentException($"Value at position {i + 1} may not be null or whitespace", nameof(msbuildSearchPaths)));
                 }
             }
             if (nullOrWhiteSpaceExceptions.Count > 0)
@@ -200,7 +230,7 @@ namespace Microsoft.Build.Locator
                     Environment.NewLine +
                     $"Ensure that {nameof(RegisterInstance)} is called before any method that directly references types in the Microsoft.Build namespace has been called." +
                     Environment.NewLine +
-                    "This dependency arises from when a method is just-in-time compiled, so if it breaks even if the reference to a Microsoft.Build type has not been executed." +
+                    "This dependency arises from when a method is just-in-time compiled, so it breaks even if the reference to a Microsoft.Build type has not been executed." +
                     Environment.NewLine +
                     "For more details, see aka.ms/RegisterMSBuildLocator" +
                     Environment.NewLine +
@@ -239,13 +269,12 @@ namespace Microsoft.Build.Locator
 #if NET46
             s_registeredHandler = (_, eventArgs) =>
             {
-                var assemblyName = new AssemblyName(eventArgs.Name);
                 return TryLoadAssembly(new AssemblyName(eventArgs.Name));
             };
 
             AppDomain.CurrentDomain.AssemblyResolve += s_registeredHandler;
 #else
-            s_registeredHandler = (_, assemblyName) => 
+            s_registeredHandler = (_, assemblyName) =>
             {
                 return TryLoadAssembly(assemblyName);
             };
@@ -347,14 +376,17 @@ namespace Microsoft.Build.Locator
             if (devConsole != null)
                 yield return devConsole;
 
-    #if FEATURE_VISUALSTUDIOSETUP
+#if FEATURE_VISUALSTUDIOSETUP
             foreach (var instance in VisualStudioLocationHelper.GetInstances())
                 yield return instance;
-    #endif
+#endif
 #endif
 
 #if NETCOREAPP
-            foreach (var dotnetSdk in DotNetSdkLocationHelper.GetInstances(options.WorkingDirectory))
+            // AllowAllRuntimeVersions was added to VisualStudioInstanceQueryOptions for fulfilling Roslyn's needs. One of the properties will be removed in v2.0.
+            bool allowAllRuntimeVersions = AllowQueryAllRuntimeVersions || options.AllowAllRuntimeVersions;
+            bool allowAllDotnetLocations = AllowQueryAllDotnetLocations || options.AllowAllDotnetLocations;
+            foreach (var dotnetSdk in DotNetSdkLocationHelper.GetInstances(options.WorkingDirectory, allowAllRuntimeVersions, allowAllDotnetLocations))
                 yield return dotnetSdk;
 #endif
         }
@@ -381,7 +413,7 @@ namespace Microsoft.Build.Locator
                     Version.TryParse(versionString, out version);
                 }
 
-                if(version != null)
+                if (version != null)
                 {
                     return new VisualStudioInstance("DEVCONSOLE", path, version, DiscoveryType.DeveloperConsole);
                 }
