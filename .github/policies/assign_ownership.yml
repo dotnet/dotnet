@@ -9,7 +9,7 @@ configuration:
       if:
       - payloadType: Pull_Request
       - filesMatchPattern:
-          pattern: src/arcade/*
+          pattern: src/arcade/.*
       then:
       - requestReview:
           teamReviewer: dnceng
