@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">参数不能为 null 或空</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ErrorOccurredRestoringPackages">
+        <source>Error occurred while restoring NuGet packages: {0}</source>
+        <target state="translated">还原 NuGet 程序包时出错: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">包“{0}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">包“{0} {1}”不是类似 "[1.0.0]" 的精确版本。仅可对 PackageDownload 使用精确版本。</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="InfoBar_HyperlinkMessage">
+        <source>Manage NuGet Packages</source>
+        <target state="translated">管理 NuGet 程序包</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InfoBar_TextMessage">
+        <source>This solution contains packages with vulnerabilities.</source>
+        <target state="translated">此解决方案包含具有漏洞的包。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ItemValuesAreDifferentAcrossTargetFrameworks">
+        <source>'{0}' items do not have the same value(s) across all target frameworks. Remove any condition from MSBuild files for '{0}' items.</source>
+        <target state="translated">“{0}”项未在所有目标框架中具有相同的值。请从 MSBuild 文件中移除针对“{0}”项的所有条件。</target>
+        <note>{0} - MSBuild item type. For example, NuGetAuditSuppress</note>
+      </trans-unit>
+      <trans-unit id="NU1105">
+        <source>Unable to read project information for '{0}': {1}</source>
+        <target state="translated">无法读取“{0}”的项目信息: {1}</target>
+        <note>0 - The name of the project with the error.
+1 - Message explaining what couldn't be read. Typically an exception's message</note>
+      </trans-unit>
+      <trans-unit id="NothingToRestore">
+        <source>All packages are already installed and there is nothing to restore.</source>
+        <target state="translated">所有程序包均已安装，并且没有要还原的内容。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_Finished">
+        <source>========== Finished ==========</source>
+        <target state="translated">========== 已完成 ==========</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Operation_TotalTime">
+        <source>Time Elapsed: {0}</source>
+        <target state="translated">已用时间: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageNotRestoredBecauseOfNoConsent">
+        <source>One or more NuGet packages need to be restored but couldn't be because consent has not been granted. To give consent, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also give consent by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.
+
+Missing packages: {0}</source>
+        <target state="translated">需要还原一个或多个 NuGet 程序包，但是无法还原，因为尚未授予许可。若要授予许可，请打开 Visual Studio 的“选项”对话框，单击“NuGet 程序包管理器”节点，然后选中“允许 NuGet 在生成期间下载缺少的程序包”。你还可以将环境变量 "EnableNuGetPackageRestore" 设置为 "true" 以授予许可。
+
+缺少的程序包: {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRefNotRestoredBecauseOfNoConsent">
+        <source>NuGet restore is currently disabled. To enable it, open the Visual Studio Options dialog, click on the NuGet Package Manager node and check 'Allow NuGet to download missing packages during build.' You can also enable it by setting the environment variable 'EnableNuGetPackageRestore' to 'true'.</source>
+        <target state="translated">当前已禁用 NuGet 还原。若要启用，请打开 Visual Studio 的“选项”对话框，单击“NuGet 程序包管理器”节点，然后选中“允许 NuGet 在生成期间下载缺少的程序包”。你还可以将环境变量 "EnableNuGetPackageRestore" 设置为 "true" 来启用它。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreCanceled">
+        <source>NuGet package restore canceled.</source>
+        <target state="translated">NuGet 程序包还原已取消。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFailedForProject">
+        <source>NuGet Package restore failed for project {0}: {1}. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">项目 {0} 的 NuGet 包还原失败: {1}。请查看“错误列表”窗口了解详细警告和错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinished">
+        <source>NuGet package restore finished.</source>
+        <target state="translated">NuGet 程序包还原已完成。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedForProject">
+        <source>NuGet Package restore finished for project '{0}'.</source>
+        <target state="translated">项目“{0}”的 NuGet 包还原已完成。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreFinishedWithError">
+        <source>NuGet package restore failed. Please see Error List window for detailed warnings and errors.</source>
+        <target state="translated">NuGet 包还原失败。请查看“错误列表”窗口了解详细警告和错误。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageRestoreOptOutMessage">
+        <source>Restoring NuGet packages...
+To prevent NuGet from restoring packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck 'Allow NuGet to download missing packages during build.'</source>
+        <target state="translated">正在还原 NuGet 程序包...
+若要阻止 NuGet 在生成期间还原程序包，请打开 Visual Studio 的“选项”对话框，单击“NuGet 程序包管理器”节点，然后取消选中“允许 NuGet 在生成期间下载缺少的程序包”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyDoesNotHaveSingleValue">
+        <source>The property {0} was expected to have a single value across all target frameworks, but instead had the following values: {1}</source>
+        <target state="translated">属性 {0} 应在所有目标框架中具有单个值，但却具有以下值: {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RelativeGlobalPackagesFolder">
+        <source>'globalPackagesFolder' from nuget.config file or the environment variable is '{0}', a relative path and the solution is not saved. Please save your solution or configure a 'globalPackagesFolder' which is a full path.</source>
+        <target state="translated">来自 nuget.config 文件或环境变量的 "globalPackagesFolder" 为“{0}”(相对路径)，该解决方案未保存。请保存你的解决方案或配置作为完整路径的 "globalPackagesFolder".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoredPackage">
+        <source>Restored NuGet package {0}.</source>
+        <target state="translated">已还原 NuGet 程序包 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoringPackages">
+        <source>Restoring NuGet packages...</source>
+        <target state="translated">正在还原 NuGet 程序包...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SolutionIsNotSaved">
+        <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
+        <target state="translated">解决方案未保存。请先保存你的解决方案，然后再管理 NuGet 程序包。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

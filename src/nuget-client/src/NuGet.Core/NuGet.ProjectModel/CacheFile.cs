@@ -34,17 +34,6 @@ namespace NuGet.ProjectModel
         [JsonPropertyName("expectedPackageFiles")]
         public IList<string> ExpectedPackageFilePaths { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating if one or more of the expected files are missing.
-        /// </summary>
-        [JsonIgnore]
-        [Obsolete("File existence checks are a function of time not the cache file content.")]
-        public bool HasAnyMissingPackageFiles
-        {
-            get => throw new NotImplementedException("This API is no longer support");
-            set => throw new NotImplementedException("This API is no longer support");
-        }
-
         [JsonPropertyName("logs")]
         public IList<IAssetsLogMessage> LogMessages { get; set; }
 

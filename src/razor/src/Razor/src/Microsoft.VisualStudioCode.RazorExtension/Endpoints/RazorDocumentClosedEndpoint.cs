@@ -30,7 +30,7 @@ internal class RazorDocumentClosedEndpoint(IHtmlDocumentSynchronizer htmlDocumen
 
     protected override Task<VoidResult> HandleRequestAsync(TextDocumentIdentifier textDocument, RazorCohostRequestContext requestContext, CancellationToken cancellationToken)
     {
-        _htmlDocumentSynchronizer.DocumentRemoved(requestContext.DocumentUri.AssumeNotNull().GetRequiredParsedUri(), cancellationToken);
+        _htmlDocumentSynchronizer.DocumentRemoved(textDocument.DocumentUri.GetRequiredParsedUri(), cancellationToken);
         return SpecializedTasks.Default<VoidResult>();
     }
 }

@@ -752,8 +752,6 @@ namespace NuGet.DependencyResolver.Tests
         }
 
         [Theory]
-        [InlineData("3.0", "3.0")]
-        [InlineData("3.0", "3.0.0")]
         [InlineData("3.1", "3.0.0")]
         [InlineData("3.1.2", "3.1.1")]
         [InlineData("3.1.2-beta", "3.1.2-alpha")]
@@ -763,17 +761,14 @@ namespace NuGet.DependencyResolver.Tests
         [InlineData("3.1.2-beta-*", "3.1.2-alpha-*")]
         [InlineData("3.1.*", "3.1.2-alpha-*")]
         [InlineData("*", "3.1.2-alpha-*")]
-        [InlineData("*", "*")]
         [InlineData("1.*", "1.1.*")]
         [InlineData("1.*", "1.3.*")]
         [InlineData("1.8.*", "1.8.3.*")]
         [InlineData("1.8.3.5*", "1.8.3.4-*")]
         [InlineData("1.8.3.*", "1.8.3.4-*")]
-        [InlineData("1.8.3.4-alphabeta-*", "1.8.3.4-alpha*")]
         [InlineData("1.8.5.4-alpha-*", "1.8.3.4-gamma*")]
         [InlineData("1.8.3.6-alpha-*", "1.8.3.4-gamma*")]
         [InlineData("1.8.3-*", "1.8.3-alpha*")]
-        [InlineData("1.8.3-*", "1.8.3-*")]
         [InlineData("1.8.4-*", "1.8.3-*")]
         [InlineData("2.8.1-*", "1.8.3-*")]
         [InlineData("3.2.0-*", "3.1.0-beta-234")]
@@ -785,6 +780,7 @@ namespace NuGet.DependencyResolver.Tests
         [InlineData("3.*-preview.*", "3.0.1")]
         [InlineData("3.0.*-preview.*", "3.0.1")]
         [InlineData("3.0.1.*-preview.*", "3.0.1")]
+        [InlineData("1.8.3.4-alpha3", "1.8.3.4-alpha.*")]
         public void IsGreaterThanEqualTo_ReturnsTrue_IfRightVersionIsSmallerThanLeft(string leftVersionString, string rightVersionString)
         {
             // Arrange
@@ -793,9 +789,11 @@ namespace NuGet.DependencyResolver.Tests
 
             // Act
             var isGreater = RemoteDependencyWalker.IsGreaterThanOrEqualTo(leftVersion, rightVersion);
+            var isSmaller = RemoteDependencyWalker.IsGreaterThanOrEqualTo(rightVersion, leftVersion);
 
             // Assert
             Assert.True(isGreater);
+            Assert.False(isSmaller);
         }
 
         [Theory]
@@ -815,13 +813,15 @@ namespace NuGet.DependencyResolver.Tests
         [InlineData("3.1.0-beta-234", "3.2.0-*")]
         [InlineData("3.0.0-*", "3.1.0-beta-234")]
         [InlineData("6.8.0", "*-*")]
-        //[InlineData("3.0.0-preview.1", "3.0.0-preview.*")] // TODO: https://github.com/NuGet/Home/issues/13833
+        [InlineData("3.0.0-preview.1", "3.0.0-preview.*")]
         [InlineData("3.0.1", "3.0.*")]
         [InlineData("3.0.1", "*-preview.*")]
         [InlineData("3.0.1", "3.*-preview.*")]
         [InlineData("3.0.1", "3.0.*-preview.*")]
         [InlineData("3.0.1", "3.0.1.*-preview.*")]
-
+        [InlineData("99.*", "*-*")]
+        [InlineData("*-preview.*", "*-*")]
+        [InlineData("1.8.3.4-alphabeta-*", "1.8.3.4-alpha*")]
         public void IsGreaterThanEqualTo_ReturnsFalse_IfRightVersionIsLargerThanLeft(string leftVersionString, string rightVersionString)
         {
             // Arrange
@@ -830,9 +830,31 @@ namespace NuGet.DependencyResolver.Tests
 
             // Act
             var isGreater = RemoteDependencyWalker.IsGreaterThanOrEqualTo(leftVersion, rightVersion);
+            var isSmaller = RemoteDependencyWalker.IsGreaterThanOrEqualTo(rightVersion, leftVersion);
 
             // Assert
             Assert.False(isGreater);
+            Assert.True(isSmaller);
+        }
+
+        [Theory]
+        [InlineData("*", "*")]
+        [InlineData("3.0", "3.0")]
+        [InlineData("3.0", "3.0.0")]
+        [InlineData("1.8.3-*", "1.8.3-*")]
+        public void IsGreaterThanEqualTo_ReturnsTrue_IfRightVersionAndLeftVersionAreEquivalent(string leftVersionString, string rightVersionString)
+        {
+            // Arrange
+            var leftVersion = VersionRange.Parse(leftVersionString);
+            var rightVersion = VersionRange.Parse(rightVersionString);
+
+            // Act
+            var left = RemoteDependencyWalker.IsGreaterThanOrEqualTo(leftVersion, rightVersion);
+            var right = RemoteDependencyWalker.IsGreaterThanOrEqualTo(rightVersion, leftVersion);
+
+            // Assert
+            Assert.True(left);
+            Assert.True(right);
         }
 
         [Fact]

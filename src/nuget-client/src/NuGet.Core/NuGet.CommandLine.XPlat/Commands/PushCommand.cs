@@ -31,6 +31,11 @@ namespace NuGet.CommandLine.XPlat
                     Strings.Source_Description,
                     CommandOptionType.SingleValue);
 
+                var allowInsecureConnections = push.Option(
+                    "--allow-insecure-connections",
+                    Strings.AllowInsecureConnections_Description,
+                    CommandOptionType.NoValue);
+
                 var symbolSource = push.Option(
                     "-ss|--symbol-source <source>",
                     Strings.SymbolSource_Description,
@@ -102,6 +107,7 @@ namespace NuGet.CommandLine.XPlat
                     bool noSymbolsValue = noSymbols.HasValue();
                     bool noServiceEndpoint = noServiceEndpointDescription.HasValue();
                     bool skipDuplicateValue = skipDuplicate.HasValue();
+                    bool allowInsecureConnectionsValue = allowInsecureConnections.HasValue();
                     int timeoutSeconds = 0;
 
                     if (timeout.HasValue() && !int.TryParse(timeout.Value(), out timeoutSeconds))
@@ -116,6 +122,7 @@ namespace NuGet.CommandLine.XPlat
                     try
                     {
                         DefaultCredentialServiceUtility.SetupDefaultCredentialService(getLogger(), !interactive.HasValue());
+
                         await PushRunner.Run(
                             sourceProvider.Settings,
                             sourceProvider,
@@ -129,6 +136,7 @@ namespace NuGet.CommandLine.XPlat
                             noSymbolsValue,
                             noServiceEndpoint,
                             skipDuplicateValue,
+                            allowInsecureConnectionsValue,
                             getLogger());
                     }
                     catch (TaskCanceledException ex)

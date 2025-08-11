@@ -131,14 +131,22 @@ namespace NuGet.Commands
 
         public void ConvertLockFileToOriginalCase(LockFile lockFile)
         {
-            var packageLibraries = lockFile
-                .Libraries
-                .Where(library => library.Type == LibraryType.Package);
-
-            foreach (var library in packageLibraries)
+            for (var i = 0; i < lockFile.Libraries.Count; i++)
             {
-                var path = _pathResolver.GetPackageDirectory(library.Name, library.Version);
-                library.Path = PathUtility.GetPathWithForwardSlashes(path);
+                var library = lockFile.Libraries[i];
+
+                // If the library is a package, convert its path to original case.
+                if (library.Type == LibraryType.Package)
+                {
+                    var path = _pathResolver.GetPackageDirectory(library.Name, library.Version);
+                    var forwardSlashPath = PathUtility.GetPathWithForwardSlashes(path);
+
+                    if (forwardSlashPath != library.Path)
+                    {
+                        // Update the path to the original case.
+                        lockFile.Libraries[i] = library with { Path = forwardSlashPath };
+                    }
+                }
             }
         }
 

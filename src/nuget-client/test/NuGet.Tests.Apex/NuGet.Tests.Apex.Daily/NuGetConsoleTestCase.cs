@@ -72,7 +72,6 @@ namespace NuGet.Tests.Apex.Daily
 
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
                 {
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     var nugetConsole = GetConsole(testContext.Project);
 
                     // Act
@@ -119,7 +118,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
 
                     // Act
@@ -157,7 +155,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
 
                     // Act
@@ -197,7 +194,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
                     testContext.NuGetApexTestService.WaitForAutoRestore();
 
@@ -235,7 +231,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
 
                     // Act
@@ -270,7 +265,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
 
                     // Act
@@ -306,7 +300,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, simpleTestPathContext: simpleTestPathContext))
                 {
                     VisualStudio.AssertNoErrors();
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     testContext.SolutionService.Build();
 
                     // Act
@@ -342,7 +335,6 @@ namespace NuGet.Tests.Apex.Daily
 
                 using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
                 {
-                    var solutionService = VisualStudio.Get<SolutionService>();
                     var nugetConsole = GetConsole(testContext.Project);
 
                     // Act
@@ -373,7 +365,6 @@ namespace NuGet.Tests.Apex.Daily
             using (var testContext = new ApexTestContext(VisualStudio, projectTemplate, Logger))
             {
                 // Arrange
-                SolutionService solutionService = VisualStudio.Get<SolutionService>();
                 var nugetConsole = GetConsole(testContext.Project);
                 var source = NuGetConstants.V3FeedUrl;
 
@@ -414,7 +405,6 @@ namespace NuGet.Tests.Apex.Daily
 
                 using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
                 {
-                    SolutionService solutionService = VisualStudio.Get<SolutionService>();
                     var nugetConsole = GetConsole(testContext.Project);
 
                     // Act
@@ -444,7 +434,6 @@ namespace NuGet.Tests.Apex.Daily
                 using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.NetCoreConsoleApp, Logger, addNetStandardFeeds: true, simpleTestPathContext: simpleTestPathContext))
                 {
                     // Arrange
-                    SolutionService solutionService = VisualStudio.Get<SolutionService>();
                     var nugetConsole = GetConsole(testContext.Project);
 
                     nugetConsole.InstallPackageFromPMC(packageName, v100);
@@ -469,7 +458,6 @@ namespace NuGet.Tests.Apex.Daily
             using (var testContext = new ApexTestContext(VisualStudio, ProjectTemplate.ClassLibrary, Logger))
             {
                 // Arrange
-                SolutionService solutionService = VisualStudio.Get<SolutionService>();
                 var nugetConsole = GetConsole(testContext.Project);
 
                 //Act

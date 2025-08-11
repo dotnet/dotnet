@@ -938,6 +938,10 @@ nuget client-certs List</value>
     <value>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</value>
   </data>
   <data name="SignCommandInvalidCertificateFingerprint" xml:space="preserve">
-    <value>Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
+    <value>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</value>
+    <comment>{0} - error code</comment>
+  </data>
+  <data name="PushCommandAllowInsecureConnectionsDescription" xml:space="preserve">
+    <value>Allow pushing to HTTP sources (insecure).</value>
   </data>
 </root>

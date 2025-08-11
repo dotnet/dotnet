@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../SR.resx">
+    <body>
+      <trans-unit id="Argument_InvalidOidValue">
+        <source>The OID value was invalid.</source>
+        <target state="translated">OID 값이 잘못되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cryptography_Der_Invalid_Encoding">
+        <source>ASN1 corrupted data.</source>
+        <target state="translated">ASN1 손상된 데이터입니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Cryptography_Invalid_IA5String">
+        <source>The string contains a character not in the 7 bit ASCII character set.</source>
+        <target state="translated">7비트 ASCII 문자 집합에 없는 문자가 문자열에 포함되어 있습니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

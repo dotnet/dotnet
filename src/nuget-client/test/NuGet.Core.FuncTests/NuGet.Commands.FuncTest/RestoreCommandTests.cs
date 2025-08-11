@@ -19,12 +19,14 @@ using NuGet.LibraryModel;
 using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
+using NuGet.ProjectManagement;
 using NuGet.ProjectModel;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Test;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
+using Test.Utility;
 using Xunit;
 
 namespace NuGet.Commands.FuncTest
@@ -3838,8 +3840,6 @@ namespace NuGet.Commands.FuncTest
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
-            var packageA = new SimpleTestPackageContext("a", "1.0.0");
-            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
             string httpSourceUrl = "http://unit.test/index.json";
             string httpsSourceUrl = "https://unit.test/index.json";
             pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
@@ -3867,8 +3867,6 @@ namespace NuGet.Commands.FuncTest
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
-            var packageA = new SimpleTestPackageContext("a", "1.0.0");
-            await SimpleTestPackageUtility.CreateFolderFeedV3Async(pathContext.PackageSource, packageA);
             string httpSourceUrl = "http://unit.test/index.json";
             string httpsSourceUrl = "https://unit.test/index.json";
             pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
@@ -3885,9 +3883,49 @@ namespace NuGet.Commands.FuncTest
             var result = await command.ExecuteAsync();
 
             // Assert
+            result.Success.Should().BeTrue();
             result.LockFile.LogMessages.Should().HaveCount(1);
             IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
             logMessage.Code.Should().Be(NuGetLogCode.NU1803);
+            logMessage.Level.Should().Be(LogLevel.Warning);
+            Assert.Contains(httpSourceUrl, logMessage.Message);
+        }
+
+
+        [Fact]
+        public async Task Restore_WithHttpSourceSdkAnalysisLevelLowerThan90100WarningAsError_Errors()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            string httpSourceUrl = "http://unit.test/index.json";
+            pathContext.Settings.AddSource("http-feed", httpSourceUrl, "False");
+
+            var logger = new TestLogger();
+            ISettings settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var projectPath = Path.Combine(pathContext.SolutionRoot, "my.csproj");
+            var packageSpecFactory = new TestPackageSpecFactory(projectPath, builder =>
+            {
+                builder.WithProperty(ProjectBuildProperties.TargetFramework, "net9.0")
+                       .WithProperty(ProjectBuildProperties.SdkAnalysisLevel, "8.0.400")
+                       .WithProperty(ProjectBuildProperties.TreatWarningsAsErrors, "true")
+                       .WithItem(ProjectItems.PackageReference, "SomePackage", [new("Version", "1.0.0")]);
+            });
+            PackageSpec project1Spec = packageSpecFactory.Build(settings);
+
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            result.Success.Should().BeFalse();
+            // Source has invalid URL, so we would expect protocol errors if graph resolver is run.
+            // But if graph resolver is not run, we expect only the insecure http message.
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            IAssetsLogMessage logMessage = result.LockFile.LogMessages[0];
+            logMessage.Code.Should().Be(NuGetLogCode.NU1803);
+            logMessage.Level.Should().Be(LogLevel.Error);
             Assert.Contains(httpSourceUrl, logMessage.Message);
         }
 
@@ -4079,6 +4117,91 @@ namespace NuGet.Commands.FuncTest
             // Assert
             result.Success.Should().BeTrue();
             command._enableNewDependencyResolver.Should().Be(useNewResolver);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithCustomIncludeAssets_WhenDirectPackageAppearsInTransitiveGraph_DirectIncludeAssetsTakePrecedence()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                new SimpleTestPackageContext("packageA", "1.0.0")
+                {
+                    Dependencies = [new SimpleTestPackageContext("packageB", "1.0.0")],
+                },
+                new SimpleTestPackageContext("packageB", "1.0.0"));
+
+            var leafProject = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                        ""packageB"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                            ""include"": ""Runtime, Compile"",
+                        },
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, leafProject);
+
+            // Act & Assert
+            var result = await RunRestoreAsync(pathContext, projectSpec);
+            result.Success.Should().BeTrue();
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+            result.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+            result.LockFile.Targets[0].Libraries[0].CompileTimeAssemblies.Should().BeEquivalentTo([new LockFileItem("lib/net45/a.dll")]);
+            result.LockFile.Targets[0].Libraries[0].RuntimeAssemblies.Should().BeEquivalentTo([new LockFileItem("lib/net45/a.dll")]);
+            result.LockFile.Targets[0].Libraries[0].ContentFiles.Should().HaveCount(2);
+            result.LockFile.Targets[0].Libraries[0].RuntimeTargets.Should().ContainSingle(e => e.Path == "runtimes/any/native/a.dll");
+            result.LockFile.Targets[0].Libraries[0].Build.Should().BeEquivalentTo([new LockFileItem("build/net45/packageA.targets")]);
+            result.LockFile.Targets[0].Libraries[1].Name.Should().Be("packageB");
+            result.LockFile.Targets[0].Libraries[1].CompileTimeAssemblies.Should().BeEquivalentTo([new LockFileItem("lib/net45/a.dll")]);
+            result.LockFile.Targets[0].Libraries[1].RuntimeAssemblies.Should().BeEquivalentTo([new LockFileItem("lib/net45/a.dll")]);
+            result.LockFile.Targets[0].Libraries[1].ContentFiles.Should().ContainSingle(e => e.Path == "contentFiles/any/any/_._");
+            result.LockFile.Targets[0].Libraries[1].RuntimeTargets.Should().ContainSingle(e => e.Path == "runtimes/any/native/_._");
+            result.LockFile.Targets[0].Libraries[1].Build.Should().BeEquivalentTo([new LockFileItem("build/net45/_._")]);
+        }
+
+        [Fact]
+        public async Task Restore_WithHttpsSourceIndexJsonReturningHttpResources_LogsNU1303()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+
+            // Start HTTPS mock server with index.json returning HTTP resources
+            using var server = new SelfSignedHttpsServerWithHttpResources();
+            var serverTask = server.StartServerAsync();
+
+            var httpsSource = server.URI + "v3/index.json";
+            var logger = new TestLogger();
+            pathContext.Settings.AddSource("https-feed", httpsSource, "disableTLSCertificateValidation", "true");
+            var settings = Settings.LoadDefaultSettings(pathContext.SolutionRoot);
+            var project1Spec = ProjectTestHelpers.GetPackageSpec(settings, "Project1", pathContext.SolutionRoot, framework: "net5.0");
+            AddDependency(project1Spec, "SomePackage", "1.0.0");
+
+            var request = ProjectTestHelpers.CreateRestoreRequest(pathContext, logger, project1Spec);
+            var command = new RestoreCommand(request);
+
+            // Act
+            var result = await command.ExecuteAsync();
+
+            // Assert
+            server.StopServer();
+            result.Success.Should().BeFalse(because: logger.ShowMessages());
+            result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains("http://"));
         }
 
         private static void CreateFakeProjectFile(PackageSpec project2spec)

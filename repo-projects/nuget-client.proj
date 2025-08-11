@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <NuGetKeyFilePath>$(KeysDir)NuGet.Client.snk</NuGetKeyFilePath>
-
     <!-- Don't pass any build actions because the repo doesn't support them. -->
     <BuildActions></BuildActions>
     <!-- Call into a custom build script as nuget-client doesn't use Arcade infra. -->
     <BuildScript>$([MSBuild]::NormalizePath('$(ProjectDirectory)', 'eng', 'dotnet-build', 'build$(ShellExtension)'))</BuildScript>
     <!-- Passed for compatibility with new P4 SDK. -->
     <BuildArgs>$(BuildArgs) /p:GenerateResourceUsePreserializedResources=true</BuildArgs>
-    <!-- Avoid passing -dotnetEngine msbuild switch, which nuget doesn't recognize. -->
-    <ForceDotNetMSBuildEngine>false</ForceDotNetMSBuildEngine>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +18,6 @@
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
     <RepositoryReference Include="xdt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EnvironmentVariables Include="MS_PFX_PATH=$(NuGetKeyFilePath)" />
-    <EnvironmentVariables Include="NUGET_PFX_PATH=$(NuGetKeyFilePath)" />
   </ItemGroup>
 
 </Project>
