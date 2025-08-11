@@ -88,7 +88,6 @@ stages:
 - ${{ if and(notin(parameters.scope, 'scout'), or(and(eq(variables['Build.Reason'], 'PullRequest'), containsValue(parameters.verifications, 'unified-build-linux-buildtests')), and(ne(variables['Build.Reason'], 'PullRequest'), ne(variables['System.TeamProject'], 'internal'), containsValue(parameters.verifications, 'unified-build-windows-buildtests')))) }}:
   - stage: VMR_Vertical_Build_Validation
     displayName: VMR Vertical Build Validation
-    condition: false
     templateContext:
       validationOnly: true
     dependsOn: []
