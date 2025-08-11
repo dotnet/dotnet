@@ -22,14 +22,15 @@
     "mappings": [
         {
             "name": "arcade",
-            "defaultRemote": "https://github.com/dotnet/arcade",
-            "exclude": [
-                "eng/tools/ChangeValidation/**"
-            ]
+            "defaultRemote": "https://github.com/dotnet/arcade"
         },
         {
             "name": "aspnetcore",
-            "defaultRemote": "https://github.com/dotnet/aspnetcore"
+            "defaultRemote": "https://github.com/dotnet/aspnetcore",
+            "exclude": [
+              "src/submodules/googletest/**",
+              "src/Analyzers/Microsoft.AspNetCore.Analyzer.Testing/**"
+            ]
         },
         {
             "name": "cecil",

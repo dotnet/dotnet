@@ -108,15 +108,21 @@ internal class ExclusionFileValidation : IValidationStep
 
         var sourceMappings = _dependencyTracker.Mappings;
 
-        var exclusionPatterns = sourceMappings.SelectMany(mapping => mapping.Exclude)
+        var exclusionPatterns = sourceMappings.SelectMany(mapping => GetVmrGlobFromSourceMapping(mapping))
             .Distinct()
             .ToList();
 
-        LogInfo($"Successfully parsed exclusion patterns: {string.Join(", ", exclusionPatterns)}");
+        LogInfo("Successfully parsed exclusion patterns...");
+        LogInfo(string.Join(Environment.NewLine, exclusionPatterns));
 
         return exclusionPatterns;
     }
     
+    private List<string> GetVmrGlobFromSourceMapping(SourceMapping mapping)
+    {
+        return mapping.Exclude.Select(exclusion => "src/" + mapping.Name + "/" + NormalizePath(exclusion)).ToList();
+    }
+
     private HashSet<string> FindMatchingFiles(List<string> globPatterns)
     {
         var matcher = new Matcher();
@@ -130,9 +136,11 @@ internal class ExclusionFileValidation : IValidationStep
         var directoryWrapper = new DirectoryInfoWrapper(directoryInfo);
         var result = matcher.Execute(directoryWrapper);
 
-        return result.Files
+        var res = result.Files
             .Select(file => file.Path)
             .ToHashSet();
+
+        return res;
     }
     
     internal static string NormalizePath(string path)
