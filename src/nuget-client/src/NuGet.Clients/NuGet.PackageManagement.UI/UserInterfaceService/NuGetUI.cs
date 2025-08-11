@@ -129,6 +129,7 @@ namespace NuGet.PackageManagement.UI
                 deleteOnRestartManager,
                 lockService,
                 restoreProgressReporter,
+                nuGetTelemetryProvider,
                 cancellationToken);
 
             nuGetUi.UIContext.Projects = projects;

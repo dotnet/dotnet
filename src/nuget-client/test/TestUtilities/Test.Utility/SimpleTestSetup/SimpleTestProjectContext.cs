@@ -263,7 +263,17 @@ namespace NuGet.Test.Utility
                 _packageSpec.RestoreMetadata.OutputPath = ProjectExtensionsPath;
                 _packageSpec.RestoreMetadata.OriginalTargetFrameworks = _packageSpec.TargetFrameworks.Select(e => e.TargetAlias).ToList();
                 _packageSpec.RestoreMetadata.TargetFrameworks = Frameworks
-                    .Select(f => new ProjectRestoreMetadataFrameworkInfo(f.Framework))
+                    .Select(f => new ProjectRestoreMetadataFrameworkInfo(f.Framework)
+                    {
+                        ProjectReferences = f.ProjectReferences.Select(p => new ProjectRestoreReference()
+                        {
+                            ProjectUniqueName = p.ProjectName,
+                            ProjectPath = p.ProjectPath,
+                            ExcludeAssets = LibraryIncludeFlagUtils.GetFlags(MSBuildStringUtility.Split(p.ExcludeAssets)),
+                            IncludeAssets = LibraryIncludeFlagUtils.GetFlags(MSBuildStringUtility.Split(p.IncludeAssets)),
+                            PrivateAssets = LibraryIncludeFlagUtils.GetFlags(MSBuildStringUtility.Split(p.PrivateAssets))
+                        }).ToList(),
+                    })
                     .ToList();
                 _packageSpec.RestoreMetadata.Sources = Sources?.ToList();
                 _packageSpec.RestoreMetadata.PackagesPath = GlobalPackagesFolder;

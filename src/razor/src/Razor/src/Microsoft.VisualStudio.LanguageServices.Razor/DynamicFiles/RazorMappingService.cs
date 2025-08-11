@@ -8,11 +8,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
-using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
@@ -47,7 +45,7 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
 
         foreach (var span in spans)
         {
-            if (TryGetMappedSpans(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
+            if (RazorEditHelper.TryGetMappedSpans(span, source, csharpDocument, out var linePositionSpan, out var mappedSpan))
             {
                 results.Add(new(filePath, linePositionSpan, mappedSpan));
             }
@@ -104,37 +102,6 @@ internal class RazorMappingService(IDocumentSnapshot document, ITelemetryReporte
                         Environment.NewLine,
                         changes.Select(e => $"{e.Span} => '{e.NewText}'"));
         }
-    }
-
-    // Internal for testing.
-    internal static bool TryGetMappedSpans(TextSpan span, SourceText source, RazorCSharpDocument output, out LinePositionSpan linePositionSpan, out TextSpan mappedSpan)
-    {
-        foreach (var mapping in output.SourceMappings)
-        {
-            var original = mapping.OriginalSpan.AsTextSpan();
-            var generated = mapping.GeneratedSpan.AsTextSpan();
-
-            if (!generated.Contains(span))
-            {
-                // If the search span isn't contained within the generated span, it is not a match.
-                // A C# identifier won't cover multiple generated spans.
-                continue;
-            }
-
-            var leftOffset = span.Start - generated.Start;
-            var rightOffset = span.End - generated.End;
-            if (leftOffset >= 0 && rightOffset <= 0)
-            {
-                // This span mapping contains the span.
-                mappedSpan = new TextSpan(original.Start + leftOffset, (original.End + rightOffset) - (original.Start + leftOffset));
-                linePositionSpan = source.GetLinePositionSpan(mappedSpan);
-                return true;
-            }
-        }
-
-        mappedSpan = default;
-        linePositionSpan = default;
-        return false;
     }
 
     private class DocumentMappingService(ILoggerFactory loggerFactory) : AbstractDocumentMappingService(loggerFactory.GetOrCreateLogger<DocumentMappingService>())

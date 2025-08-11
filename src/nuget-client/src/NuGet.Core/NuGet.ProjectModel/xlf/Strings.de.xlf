@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="de" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="translated">Das Argument darf nicht NULL oder leer sein.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidDependencyTarget">
+        <source>Invalid dependency target value '{0}'.</source>
+        <target state="translated">Ungültiger Abhängigkeitszielwert "{0}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidPackageType">
+        <source>The pack options package type must be a string or array of strings in '{0}'.</source>
+        <target state="translated">Der Pakettyp der Paketoptionen muss eine Zeichenfolge oder ein Array aus Zeichenfolgen in "{0}" sein.</target>
+        <note>{0} is the project.json file name.</note>
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">Der {0}-Wert „{1}“ ist ungültig. Gültiges Beispiel: „{2}“</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingLockFile">
+        <source>Error loading lock file '{0}' : {1}</source>
+        <target state="translated">Fehler beim Laden der Sperrdatei "{0}" : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJson">
+        <source>Error reading '{0}' : {1}</source>
+        <target state="translated">Fehler beim Lesen von "{0}" : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ErrorReadingProjectJsonWithLocation">
+        <source>Error reading '{0}' at line {1} column {2} : {3}</source>
+        <target state="translated">Fehler beim Lesen von "{0}" in Zeile {1}, Spalte {2} : {3}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InvalidImportFramework">
+        <source>Imports contains an invalid framework: '{0}' in '{1}'.</source>
+        <target state="translated">Der Import enthält ein ungültiges Framework: "{0}" in "{1}".</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProblemReadingCacheFile">
+        <source>Problem reading the cache file {0} : {1}</source>
+        <target state="translated">Problem beim Lesen der Cachedatei "{0}": {1}</target>
+        <note>{0} is the file path, {1} is the exception message</note>
+      </trans-unit>
+      <trans-unit id="MissingVersionOnDependency">
+        <source>Package dependencies must specify a version range.</source>
+        <target state="translated">Die Paketabhängigkeiten müssen einen Versionsbereich angeben.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingVersionOnTool">
+        <source>Tools must specify a version range.</source>
+        <target state="translated">Die Tools müssen einen Versionsbereich angeben.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="None">
+        <source>None</source>
+        <target state="translated">Keine</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_CentralPackageVersionRemoved">
+        <source>Central package management file(s) doesn't contain version range for {0} package which is specified as CentralTransitive dependency in the lock file.</source>
+        <target state="translated">Die Dateien der zentralen Paketverwaltung enthalten keinen Versionsbereich für das Paket "{0}", das als CentralTransitive-Abhängigkeit in der Sperrdatei angegeben ist.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_IncompatibleLockFileVersion">
+        <source>Version specified in the packages.lock.json file is incompatible. Current tooling supports version {0} and previous formats.</source>
+        <target state="translated">Die in der Datei "packages.lock.json" angegebene Version ist nicht kompatibel. Aktuelle Tools unterstützen Version {0} und frühere Formate.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_MismatchedTargetFrameworks">
+        <source>The project target frameworks are different than the lock file's target frameworks. Lock file target frameworks: {0}. Project target frameworks {1}.</source>
+        <target state="translated">Die Zielframeworks des Projekts unterscheiden sich von den Zielframeworks der Sperrdatei. Zielframeworks der Sperrdatei: {0}. Zielframeworks des Projekts: {1}.</target>
+        <note>0 - Semicolon delimited list of lock file target frameworks, 1 - semicolon delimited list of lock file target frameworks</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_NewTargetFramework">
+        <source>The project target framework {0} was not found in the lock file.</source>
+        <target state="translated">Das Projektzielframework "{0}" wurde in der Sperrdatei nicht gefunden.</target>
+        <note>0 - project target framework</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceAdded">
+        <source>A new package reference was found {0} for the project target framework {1}.</source>
+        <target state="translated">Ein neuer Paketverweis wurde {0} für das Projektzielframework "{1}" gefunden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferenceVersionChanged">
+        <source>The package reference {0} version has changed from {1} to {2}.</source>
+        <target state="translated">Die Version des Paketverweises "{0}" wurde von {1} in {2} geändert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_PackageReferencesHaveChanged">
+        <source>The package references have changed for {0}. Lock file's package references: {1}, project's package references: {2}.</source>
+        <target state="translated">Die Paketverweise für "{0}" wurden geändert. Paketverweise der Sperrdatei: {1}, Projektpaketverweise: {2}.</target>
+        <note>0 - tfm, 1 - lock file package references, 2 - project package references</note>
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceAdded">
+        <source>A new project reference to {0} was found for {1} target framework.</source>
+        <target state="translated">Für das Zielframework "{1}" wurde ein neuer Projektverweis auf "{0}" gefunden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceDependenciesHasChanged">
+        <source>The project references {0} whose dependencies has changed.</source>
+        <target state="translated">Das Projekt verweist auf "{0}", deren Abhängigkeiten geändert wurden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferenceHasNoCompatibleTargetFramework">
+        <source>The project {0} has no compatible target framework. </source>
+        <target state="translated">Das Projekt "{0}" weist kein kompatibles Zielframework auf. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectReferencesHasChange">
+        <source>The project reference {0} has changed. Current dependencies: {1} lock file's dependencies: {2}.</source>
+        <target state="translated">Der Projektverweis "{0}" wurde geändert. Aktuelle Abhängigkeiten: {1}. Abhängigkeiten der Sperrdatei: {2}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyChanged">
+        <source>Transitive dependency {0} moved to be centraly managed invalidated the lock file.</source>
+        <target state="translated">Die transitive Abhängigkeit "{0}" wurde zur zentralen Verwaltung verschoben. Die Sperrdatei ist nicht mehr gültig.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_ProjectTransitiveDependencyVersionChanged">
+        <source>Mistmatch between the requestedVersion of a lock file dependency marked as CentralTransitive and the the version specified in the central package management file. Lock file version {0}, central package management version {1}.</source>
+        <target state="translated">Konflikt zwischen der requestedVersion einer Sperrdateiabhängigkeit, die als "CentralTransitive" gekennzeichnet ist, und der Version, die in der Datei der zentralen Paketverwaltung angegeben wurde. Version der Sperrdatei: {0}, Version der zentralen Paketverwaltung: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RestoreMetadataMissingTfms">
+        <source>Restore metadata is mising the required target frameworks list. Please file a bug with repro steps on NuGet/Home if seen.</source>
+        <target state="translated">In den Wiederherstellungsmetadaten fehlt die Liste erforderlicher Zielframeworks. Wenn ein Fehler auftritt, erstellen Sie ein Issue mit Schritten zur Reproduktion in NuGet/Home.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_RuntimeIdentifiersChanged">
+        <source>The project's runtime identifiers have changed from. Project's runtime identifiers: {0}, lock file's runtime identifiers {1}.</source>
+        <target state="translated">Die Runtimebezeichner des Projekts wurden geändert. Runtimebezeichner des Projekts: {0}, Runtimebezeichner der Sperrdatei: {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackagesLockFile_UnableToLoadPackagespec">
+        <source>Unable to load package spec for {0} project.</source>
+        <target state="translated">Für das Projekt "{0}" kann die Paketspezifikation nicht geladen werden.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

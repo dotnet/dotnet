@@ -1,0 +1,1340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="pl" original="../NuGetCommand.resx">
+    <body>
+      <trans-unit id="AddCommandDescription">
+        <source>Adds the given package to a hierarchical source. http sources are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#add-command.</source>
+        <target state="translated">Dodaje dany pakiet do źródła hierarchicznego. źródła http nie są obsługiwane. Aby uzyskać więcej informacji, przejdź do strony https://docs.nuget.org/consume/command-line-reference#add-command.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandSourceDescription">
+        <source>Specifies the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</source>
+        <target state="translated">Określa źródło pakietu, czyli folder lub udział UNC, do którego zostanie dodany plik nupkg. Źródła HTTP nie są obsługiwane.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageDescription">
+        <source>Specifies the path to the package to be added and the package source, which is a folder or UNC share, to which the nupkg will be added. Http sources are not supported.</source>
+        <target state="translated">Określa ścieżkę do pakietu do dodania oraz źródło pakietu, czyli folder lub udział UNC, do którego zostanie dodany plik nupkg. Źródła HTTP nie są obsługiwane.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageExamples">
+        <source>nuget add foo.nupkg  -Source c:\bar\
+
+nuget add foo.nupkg -Source \\bar\packages\</source>
+        <target state="translated">nuget add foo.nupkg -Source c:\bar\
+
+nuget dodaj foo.nupkg -Source \\bar\packages\</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddCommandUsageSummary">
+        <source>&lt;packagePath&gt; -Source &lt;folderBasedPackageSource&gt; [options]</source>
+        <target state="translated">&lt;packagePath&gt; -Source &lt;folderBasedPackageSource&gt; [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFilePathDescription">
+        <source>Path to certificate file.</source>
+        <target state="translated">Ścieżka do pliku certyfikatu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFindByDescription">
+        <source>Search method to find certificate in certificate store (see docs).</source>
+        <target state="translated">Metoda wyszukiwania używana do znajdowania certyfikatu w magazynie certyfikatów (zobacz dokumenty).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandFindValueDescription">
+        <source>Search the certificate store for the supplied value. Used with FindValue (see docs).</source>
+        <target state="translated">Wyszukaj podaną wartość w magazynie certyfikatów. Używane z elementem FindValue (zobacz dokumenty).</target>
+        <note>Don't translate FindValue</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandForceDescription">
+        <source>Skip certificate validation.</source>
+        <target state="translated">Pomiń sprawdzanie poprawności certyfikatu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandPackageSourceDescription">
+        <source>Package source name.</source>
+        <target state="translated">Nazwa źródła pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandPasswordDescription">
+        <source>Password for the certificate, if needed.</source>
+        <target state="translated">Hasło do certyfikatu, jeśli jest potrzebne.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStoreLocationDescription">
+        <source>Certificate store location (see docs).</source>
+        <target state="translated">Lokalizacja magazynu certyfikatów (zobacz dokumenty).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStoreNameDescription">
+        <source>Certificate store name (see docs).</source>
+        <target state="translated">Nazwa magazynu certyfikatów (zobacz dokumenty).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandStorePasswordInClearTextDescription">
+        <source>Enables storing portable certificate password by disabling password encryption.</source>
+        <target state="translated">Umożliwia przechowywanie przenośnego hasła certyfikatu przez wyłączenie szyfrowania haseł.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandUsageExamples">
+        <source>nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
+
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Remove -PackageSource certificateName
+
+nuget client-certs
+
+nuget client-certs List</source>
+        <target state="translated">Nuget client-certs Add -PackageSource Foo -Path .\MyCertificate.pfx
+
+nuget client-certs Add -PackageSource Contoso -Path c:\MyCertificate.pfx -Password 42
+
+nuget client-certs Add -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b6b89c54bf4341 e755
+
+nuget client-certs Add -PackageSource Contoso -StoreLocation LocalMachine -StoreName My -FindBy Thumbprint -FindValue ca4e7b265780fc87f3cb90b6b6b89c54bf4341e755
+
+nuget client-certs Update -PackageSource Foo -FindValue ca4e7b265780fc87f3cb90b6b89c54bf4341e755
+
+nuget client-certs Remove -PackageSource certificateName
+
+nuget client-certs
+
+nuget client-certs List</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesCommandUsageSummary">
+        <source>&lt;List|Add|Update|Remove&gt; [options]</source>
+        <target state="translated">&lt;List|Add|Update|Remove&gt; [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificatesDescription">
+        <source>Provides the ability to manage list of client certificates located in NuGet.config files</source>
+        <target state="translated">Umożliwia zarządzanie listą certyfikatów klienta znajdujących się w plikach NuGet.config</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandApiKey">
+        <source>The API key for the server.</source>
+        <target state="translated">Klucz interfejsu API dla serwera.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandDirectDownload">
+        <source>Download directly without populating any caches with metadata or binaries.</source>
+        <target state="translated">Pobierz bezpośrednio bez wypełniania pamięci podręcznych metadanymi lub plikami binarnymi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandDisableParallelProcessing">
+        <source>Disable parallel processing of packages for this command.</source>
+        <target state="translated">Wyłącz przetwarzanie równoległe pakietów dla tego polecenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandFallbackSourceDescription">
+        <source>A list of package sources to use as fallbacks for this command.</source>
+        <target state="translated">Lista źródeł pakietów, które mają być używane jako rezerwowe dla tego polecenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandInvalidArgumentException">
+        <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Podano nieprawidłową wartość dla elementu „{0}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="CommandMSBuildPath">
+        <source>Specifies the path of MSBuild to be used with this command. This command will takes precedence over MSbuildVersion, nuget will always pick MSbuild from this specified path.</source>
+        <target state="translated">Określa ścieżkę programu MSBuild, która ma być używana z tym poleceniem. To polecenie będzie mieć pierwszeństwo przed MSbuildVersion, nuget zawsze wybierze MSbuild z tej określonej ścieżki.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandMSBuildVersion">
+        <source>Specifies the version of MSBuild to be used with this command. Supported values are 4, 12, 14, 15.1, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0. By default the MSBuild in your path is picked, otherwise it defaults to the highest installed version of MSBuild.</source>
+        <target state="translated">Określa wersję programu MSBuild do użycia z tym poleceniem. Obsługiwane wartości to 4, 12, 14, 15.1, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0. Domyślnie wybierany jest program MSBuild w Twojej ścieżce, a jeśli to się nie uda, wybierana jest najwyższa zainstalowana wersja programu MSBuild.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoCache">
+        <source>Disable using the machine cache as the first package source.</source>
+        <target state="translated">Wyłącz używanie pamięci podręcznej maszyny jako pierwszego źródła pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoHttpCache">
+        <source>Disable the use of the HTTP cache and contact all configured package sources for live information.</source>
+        <target state="translated">Wyłącz korzystanie z pamięci podręcznej HTTP i skontaktuj się ze wszystkimi skonfigurowanymi źródłami pakietów, aby uzyskać informacje na żywo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandNoServiceEndpointDescription">
+        <source>Does not append "api/v2/packages" to the source URL.</source>
+        <target state="translated">Nie dołącza ciągu „api/v2/package” do źródłowego adresu URL.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandPackageSaveMode">
+        <source>Specifies types of files to save after package installation: nuspec, nupkg, nuspec;nupkg.</source>
+        <target state="translated">Określa typy plików do zapisania po instalacji pakietu: nuspec, nupkg, nuspec;nupkg.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CommandSourceDescription">
+        <source>A list of packages sources to use for this command.</source>
+        <target state="translated">Lista źródeł pakietów do użycia dla tego polecenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandAsPathDesc">
+        <source>Returns the config value as a path. This option is ignored when -Set is specified.</source>
+        <target state="translated">Zwraca wartość konfiguracji jako ścieżkę. Ta opcja jest ignorowana, gdy określono parametr -Set.</target>
+        <note>Pease don't localize "-Set"</note>
+      </trans-unit>
+      <trans-unit id="ConfigCommandDesc">
+        <source>Gets or sets NuGet config values.</source>
+        <target state="translated">Pobiera lub ustawia wartości konfiguracji NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandExamples">
+        <source>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
+nuget config HTTP_PROXY</source>
+        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Ustaw HTTP_PROXY. USER=domain\user
+nuget config HTTP_PROXY</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="ConfigCommandSetDesc">
+        <source>One on more key-value pairs to be set in config.</source>
+        <target state="translated">Jedna na więcej par klucz-wartość do ustawienia w konfiguracji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandSummary">
+        <source>&lt;-Set name=value | name&gt;</source>
+        <target state="translated">&lt;-Set name=value | name&gt;</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="DefaultConfigDescription">
+        <source>NuGet's default configuration is obtained by loading %AppData%\NuGet\NuGet.config, then loading any nuget.config or .nuget\nuget.config starting from root of drive and ending in current directory.</source>
+        <target state="translated">Domyślna konfiguracja pakietu NuGet jest uzyskiwana przez załadowanie pliku %AppData%\NuGet\NuGet.config, a następnie załadowanie dowolnego pliku nuget.config lub nuget\nuget.config rozpoczynającego się od katalogu głównego dysku i kończącego się na bieżącym katalogu.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "nuget.config", ".nuget\nuget.config"</note>
+      </trans-unit>
+      <trans-unit id="DeleteCommandDescription">
+        <source>Deletes a package from the server.</source>
+        <target state="translated">Usuwa pakiet z serwera.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandNoPromptDescription">
+        <source>Do not prompt when deleting.</source>
+        <target state="translated">Nie monituj o usunięcie.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandSourceDescription">
+        <source>Package source (URL, UNC/folder path or package source name) to delete from. Defaults to DefaultPushSource if specified in NuGet.Config.</source>
+        <target state="translated">Źródło pakietu (adres URL, ścieżka UNC/folderu lub nazwa źródła pakietu) do usunięcia. Domyślnie wartość to DefaultPushSource, jeśli określono ją w pliku NuGet.Config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageDescription">
+        <source>Specify the Id and version of the package to delete from the server.</source>
+        <target state="translated">Określ identyfikator i wersję pakietu do usunięcia z serwera.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageExamples">
+        <source>nuget delete MyPackage 1.0
+    
+nuget delete MyPackage 1.0 -NoPrompt</source>
+        <target state="translated">nuget delete MyPackage 1.0
+    
+nuget delete MyPackage 1.0 -NoPrompt</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="DeleteCommandUsageSummary">
+        <source>&lt;package Id&gt; &lt;package version&gt; [API Key] [options]</source>
+        <target state="translated">&lt;package Id&gt; &lt;package version&gt; [Klucz interfejsu API][opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EulaDescription">
+        <source>Display NuGet.exe's End User Liscence Agreement (EULA)</source>
+        <target state="translated">Wyświetl umowę licencyjną użytkownika końcowego (EULA) narzędzia NuGet.exe</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExpandDescription">
+        <source>If provided, a package added to offline feed is also expanded.</source>
+        <target state="translated">W przypadku udostępnienia pakiet dodany do kanału informacyjnego w trybie offline również zostanie rozwinięty.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ForceRestoreCommand">
+        <source>Forces all dependencies to be resolved even if the last restore was successful. This is equivalent to deleting project.assets.json. (Does not apply to packages.config)</source>
+        <target state="translated">Wymuś rozstrzygnięcie wszystkich zależności nawet w przypadku, gdy ostatnie przywracanie się powiodło.Jest to równoważne usunięciu pliku project.assets.json. (Nie dotyczy pliku packages.config)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandAll">
+        <source>Print detailed help for all available commands.</source>
+        <target state="translated">Wydrukuj szczegółową pomoc dotyczącą wszystkich dostępnych poleceń.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandDescription">
+        <source>Displays general help information and help information about other commands.</source>
+        <target state="translated">Wyświetla ogólne informacje pomocy i informacje o pomocy dotyczące innych poleceń.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandMarkdown">
+        <source>Print detailed all help in markdown format.</source>
+        <target state="translated">Drukuj szczegółową pomoc w formacie języka markdown.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageDescription">
+        <source>Pass a command name to display help information for that command.</source>
+        <target state="translated">Przekaż nazwę polecenia, aby wyświetlić informacje pomocy dla tego polecenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageExamples">
+        <source>nuget help
+
+nuget help push
+
+nuget ?
+
+nuget push -?</source>
+        <target state="translated">nuget help
+
+nuget help push
+
+nuget ?
+
+nuget push -?</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="HelpCommandUsageSummary">
+        <source>[command]</source>
+        <target state="translated">[polecenie]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Alias">
+        <source>alias: {0}</source>
+        <target state="translated">alias: {0}</target>
+        <note>{0} - short command name (not localizable)</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_AltText">
+        <source> ({0})</source>
+        <target state="translated"> ({0})</target>
+        <note>{0} - command alternative name (not localizable); do not localize this string</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_AvailableCommands">
+        <source>Available commands:</source>
+        <target state="translated">Dostępne polecenia:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Examples">
+        <source>examples:</source>
+        <target state="translated">przykłady:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Options">
+        <source>options:</source>
+        <target state="translated">opcje:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HelpCommand_Suggestion">
+        <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
+        <target state="translated">Wpisz „{0} pomoc &lt;command&gt;”, aby uzyskać pomoc dotyczącą określonego polecenia.</target>
+        <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_Title">
+        <source>{0} Command</source>
+        <target state="translated">{0} Polecenia</target>
+        <note>{0} - command name (not localizable)</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_Usage">
+        <source>usage: {0} &lt;command&gt; [args] [options]</source>
+        <target state="translated">użycie: {0} &lt;command&gt; [argumenty] [opcje]</target>
+        <note>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</note>
+      </trans-unit>
+      <trans-unit id="HelpCommand_UsageDetail">
+        <source>usage: {0} {1} {2}</source>
+        <target state="translated">użycie: {0} {1} {2}</target>
+        <note>{0} - executable name: nuget.exe; {1} - command name (not localizable); {2} - command summary description</note>
+      </trans-unit>
+      <trans-unit id="InitCommandDescription">
+        <source>Adds all the packages from the &lt;srcPackageSourcePath&gt; to the hierarchical &lt;destPackageSourcePath&gt;. http feeds are not supported. For more info, goto https://docs.nuget.org/consume/command-line-reference#init-command.</source>
+        <target state="translated">Dodaje wszystkie pakiety ze ścieżki &lt;srcPackageSourcePath&gt; do hierarchicznej ścieżki &lt;destPackageSourcePath&gt;. Kanały informacyjne HTTP nie są obsługiwane. Aby uzyskać więcej informacji, przejdź do https://docs.nuget.org/consume/command-line-reference#init-command.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageDescription">
+        <source>Specify the path to source package source to be copied from and the path to the destination package source to be copied to.</source>
+        <target state="translated">Określ ścieżkę do źródłowego źródła pakietu do skopiowania oraz ścieżkę do źródła pakietu docelowego, do który ma zostać skopiowany.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageExamples">
+        <source>nuget init c:\foo c:\bar
+
+nuget init \\foo\packages \\bar\packages</source>
+        <target state="translated">nuget init c:\foo c:\bar
+
+nuget init \\foo\packages \\bar\packages</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InitCommandUsageSummary">
+        <source>&lt;srcPackageSourcePath&gt; &lt;destPackageSourcePath&gt; [options]</source>
+        <target state="translated">&lt;srcPackageSourcePath&gt; &lt;destPackageSourcePath&gt; [options]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandDependencyVersion">
+        <source>Overrides the default dependency resolution behavior.</source>
+        <target state="translated">Przesłania domyślne zachowanie rozpoznawania zależności.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandDescription">
+        <source>Installs a package using the specified sources. If no sources are specified, all sources defined in the NuGet configuration file are used. If the configuration file specifies no sources, uses the default NuGet feed.</source>
+        <target state="translated">Instaluje pakiet przy użyciu określonych źródeł. Jeśli nie określono żadnych źródeł, zostaną użyte wszystkie źródła zdefiniowane w pliku konfiguracji NuGet. Jeśli plik konfiguracji nie określa żadnych źródeł, używa domyślnego źródła danych NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandExcludeVersionDescription">
+        <source>If set, the destination folder will contain only the package name, not the version number</source>
+        <target state="translated">Jeśli zostanie ustawiona, folder docelowy będzie zawierać tylko nazwę pakietu, a nie numer wersji</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandFrameworkDescription">
+        <source>Target framework used for selecting dependencies. Defaults to 'Any' if not specified.</source>
+        <target state="translated">Platforma docelowa używana do wybierania zależności. Wartość domyślna to „Any”, jeśli nie zostanie określona.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandOutputDirDescription">
+        <source>Specifies the directory in which packages will be installed. If none specified, uses the current directory.</source>
+        <target state="translated">Określa katalog, w którym zostaną zainstalowane pakiety. Jeśli nie określono żadnego, używa bieżącego katalogu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandPrerelease">
+        <source>Allows prerelease packages to be installed. This flag is not required when restoring packages by installing from packages.config.</source>
+        <target state="translated">Zezwala na instalowanie pakietów wstępnych. Ta flaga nie jest wymagana podczas przywracania pakietów przez instalację z pliku packages.config.</target>
+        <note>Please don't localize "packages.config".</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandRequireConsent">
+        <source>Checks if package restore consent is granted before installing a package.</source>
+        <target state="translated">Sprawdza, czy zgoda na przywracanie pakietu została udzielona przed zainstalowaniem pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandSolutionDirectory">
+        <source>Solution root for package restore.</source>
+        <target state="translated">Katalog główny rozwiązania na potrzeby przywracania pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageDescription">
+        <source>Specify the id and optionally the version of the package to install. If a path to a packages.config file is used instead of an id, all the packages it contains are installed.</source>
+        <target state="translated">Określ identyfikator i opcjonalnie wersję pakietu do zainstalowania. Jeśli ścieżka do pliku packages.config jest używana zamiast identyfikatora, instalowane są wszystkie zawarte w nim pakiety.</target>
+        <note>Please don't localize "packages.config".</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageExamples">
+        <source>nuget install elmah
+
+nuget install packages.config
+
+nuget install ninject -o c:\foo</source>
+        <target state="translated">instalacja nuget elmah
+
+nuget zainstaluj plik packages.config
+
+nuget install ninject -o c:\foo</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="InstallCommandUsageSummary">
+        <source>packageId|pathToPackagesConfig [options]</source>
+        <target state="translated">packageId|pathToPackagesConfig [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InstallCommandVersionDescription">
+        <source>The version of the package to install.</source>
+        <target state="translated">Wersja pakietu do dodania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandAllVersionsDescription">
+        <source>List all versions of a package. By default, only the latest package version is displayed.</source>
+        <target state="translated">Wyświetl listę wszystkich wersji pakietu. Domyślnie jest wyświetlana tylko najnowsza wersja pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandDescription">
+        <source>Displays a list of packages from a given source. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used. If NuGet.config specifies no sources, uses the default NuGet feed.</source>
+        <target state="translated">Wyświetla listę pakietów z danego źródła. Jeśli nie określono żadnych źródeł, zostaną użyte wszystkie źródła zdefiniowane w pliku %AppData%\NuGet\NuGet.config. Jeśli plik NuGet.config nie określa żadnych źródeł, używa domyślnego źródła danych NuGet.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</note>
+      </trans-unit>
+      <trans-unit id="ListCommandIncludeDelisted">
+        <source>Allow unlisted packages to be shown.</source>
+        <target state="translated">Zezwalaj na pokazywanie pakietów spoza listy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandPrerelease">
+        <source>Allow prerelease packages to be shown.</source>
+        <target state="translated">Zezwalaj na pokazywanie pakietów wstępnych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandSourceDescription">
+        <source>A list of packages sources to search.</source>
+        <target state="translated">Lista źródeł pakietów do przeszukania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandUsageDescription">
+        <source>Specify optional search terms.</source>
+        <target state="translated">Określ opcjonalne terminy wyszukiwania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandUsageExamples">
+        <source>nuget list
+
+nuget list -verbose -allversions</source>
+        <target state="translated">lista nuget
+
+nuget list -verbose -allversions</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="ListCommandUsageSummary">
+        <source>[search terms] [options]</source>
+        <target state="translated">[wyszukiwane terminy] [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListCommandVerboseListDescription">
+        <source>Displays a detailed list of information for each package.</source>
+        <target state="translated">Wyświetla szczegółową listę informacji dla każdego pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandClearDescription">
+        <source>Clear the selected local resources or cache location(s).</source>
+        <target state="translated">Wyczyść wybrane zasoby lokalne lub lokalizacje pamięci podręcznej.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandDescription">
+        <source>Clears or lists local NuGet resources such as http requests cache, temp cache or machine-wide global packages folder.</source>
+        <target state="translated">Czyści lub wyświetla lokalne zasoby NuGet, takie jak pamięć podręczna żądań http, pamięć podręczną pakietów lub globalny dla maszyny folder pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandExamples">
+        <source>nuget locals all -clear
+
+nuget locals http-cache -clear
+
+nuget locals temp -list
+
+nuget locals global-packages -list</source>
+        <target state="translated">nuget locals all -clear
+
+nuget zmiennych lokalnych http-cache -clear
+
+nuget zmiennych lokalnych temp -list
+
+nuget locals global-packages -list</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommandListDescription">
+        <source>List the selected local resources or cache location(s).</source>
+        <target state="translated">Wyświetla wybrane zasoby lokalne lub lokalizacje pamięci podręcznej.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommandSummary">
+        <source>&lt;all | http-cache | global-packages | temp | plugins-cache&gt; [-clear | -list]</source>
+        <target state="translated">&lt;all | http-cache | global-packages | temp | plugins-cache&gt; [-clear | -list]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoCacheInformation">
+        <source>NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead.</source>
+        <target state="translated">Element NoCache jest przestarzały i jego nazwa została zmieniona na NoHttpCache. Zamiast tego użyj elementu NoHttpCache.</target>
+        <note>Do not translate NoCache and NoHttpCache</note>
+      </trans-unit>
+      <trans-unit id="Option_ConfigFile">
+        <source>The NuGet configuration file. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. To learn more about NuGet configuration go to https://docs.microsoft.com/en-us/nuget/consume-packages/configuring-nuget-behavior.</source>
+        <target state="translated">Plik konfiguracyjny pakietu NuGet. Jeśli jest określony, używane będą tylko ustawienia z tego pliku. Jeśli nie jest określony, używana będzie hierarchia plików konfiguracyjnych z bieżącego katalogu. Aby dowiedzieć się więcej o konfiguracji pakietu NuGet, przejdź na stronę https://docs.microsoft.com/pl-pl/nuget/consume-packages/configuring-nuget-behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_ForceEnglishOutput">
+        <source>Forces the application to run using an invariant, English-based culture.</source>
+        <target state="translated">Wymusza na aplikacji uruchomienie za pomocą kultury niezmiennej, bazującej na języku angielskim.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Help">
+        <source>Show command help and usage information.</source>
+        <target state="translated">Pokaż pomoc dotyczącą poleceń i informacje o użyciu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_NonInteractive">
+        <source>Do not prompt for user input or confirmations.</source>
+        <target state="translated">Nie pytaj użytkownika o dane ani potwierdzenia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Verbosity">
+        <source>Display this amount of details in the output: normal, quiet, detailed.</source>
+        <target state="translated">Wyświetl tę ilość szczegółów w danych wyjściowych: normalny, cichy, szczegółowy.</target>
+        <note>Please don't localize "normal", "quiet", "detailed"</note>
+      </trans-unit>
+      <trans-unit id="PackCommandUsageExamples">
+        <source>nuget pack
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec -Version 2.1.0</source>
+        <target state="translated">pakiet nuget
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.cspro -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec —wersja 2.1.0</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandBasePathDescription">
+        <source>The base path of the files defined in the nuspec file.</source>
+        <target state="translated">Podstawowa ścieżka plików zdefiniowana w pliku nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandBuildDescription">
+        <source>Determines if the project should be built before building the package.</source>
+        <target state="translated">Określa, czy projekt powinien zostać skompilowany przed skompilowaniem pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandConfigFile">
+        <source>Specify the configuration file for the pack command.</source>
+        <target state="translated">Określ plik konfiguracji dla polecenia pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandDescription">
+        <source>Creates a NuGet package based on the specified nuspec or project file.</source>
+        <target state="translated">Tworzy pakiet NuGet na podstawie określonego pliku nuspec lub pliku projektu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandDeterministic">
+        <source>Specify if the command should create a deterministic package. Multiple invocations of the pack command will create the exact same package.</source>
+        <target state="translated">Określ, czy polecenie powinno utworzyć pakiet deterministyczny. Wiele wywołań polecenia pakietu spowoduje utworzenie dokładnie tego samego pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandExcludeDescription">
+        <source>Specifies one or more wildcard patterns to exclude when creating a package.</source>
+        <target state="translated">Określa co najmniej jeden wzorzec symboli wieloznacznych do wykluczenia podczas tworzenia pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandExcludeEmptyDirectories">
+        <source>Prevent inclusion of empty directories when building the package.</source>
+        <target state="translated">Zapobiegaj uwzględnianiu pustych katalogów podczas kompilowania pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandIncludeReferencedProjects">
+        <source>Include referenced projects either as dependencies or as part of the package.</source>
+        <target state="translated">Uwzględnij przywoływane projekty jako zależności lub jako część pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandInstallPackageToOutputPath">
+        <source>Specify if the command should prepare the package output directory to support share as feed.</source>
+        <target state="translated">Określ, czy polecenie ma przygotować katalog wyjściowy pakietu do obsługi udziału jako kanału informacyjnego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandMinClientVersion">
+        <source>Set the minClientVersion attribute for the created package.</source>
+        <target state="translated">Ustawia atrybut minClientVersion dla utworzonego pakietu.</target>
+        <note>Please don't localize "minClientVersion"</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandNoDefaultExcludes">
+        <source>Prevent default exclusion of NuGet package files and files and folders starting with a dot e.g. .svn.</source>
+        <target state="translated">Zapobiegaj domyślnemu wykluczaniu plików pakietów NuGet oraz plików i folderów zaczynających się kropką, np. .svn.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandNoRunAnalysis">
+        <source>Specify if the command should not run package analysis after building the package.</source>
+        <target state="translated">Określ, czy po kompilacji pakietu polecenie nie powinno uruchamiać analizy pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandOutputDirDescription">
+        <source>Specifies the directory for the created NuGet package file. If not specified, uses the current directory.</source>
+        <target state="translated">Określa katalog dla tworzonego pliku pakietu NuGet. Jeśli ten parametr nie zostanie określony, używany będzie bieżący katalog.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandOutputFileNamesWithoutVersion">
+        <source>Specify if the command should prepare the package output name without the version.</source>
+        <target state="translated">Określ, czy polecenie ma przygotować nazwę wyjściową pakietu bez wersji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPackagesDirectory">
+        <source>Specifies the packages folder.</source>
+        <target state="translated">Określa folder pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandPropertiesDescription">
+        <source>Provides the ability to specify a semicolon ";" delimited list of properties when creating a package.</source>
+        <target state="translated">Umożliwia określenie rozdzielanej średnikami listy właściwości podczas tworzenia pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSolutionDirectory">
+        <source>Specifies the solution directory.</source>
+        <target state="translated">Określa katalog rozwiązania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSuffixDescription">
+        <source>Appends a pre-release suffix to the internally generated version number.</source>
+        <target state="translated">Dołącza sufiks wersji wstępnej do wewnętrznie wygenerowanego numeru wersji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandSymbolPackageFormat">
+        <source>When creating a symbols package, allows to choose between the 'snupkg' and 'symbols.nupkg' format.</source>
+        <target state="translated">Podczas tworzenia pakietu symboli można wybrać między formatami „snupkg” i „symbols.nupkg”.</target>
+        <note>Do not localize snupkg and symbols.nupkg</note>
+      </trans-unit>
+      <trans-unit id="PackageCommandSymbolsDescription">
+        <source>Determines if a package containing sources and symbols should be created. When specified with a nuspec, creates a regular NuGet package file and the corresponding symbols package.</source>
+        <target state="translated">Określa, czy powinien zostać utworzony pakiet zawierający źródła i symbole. W przypadku określenia z plikiem nuspec tworzy zwykły plik pakietu NuGet i odpowiadający mu pakiet symboli.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandToolDescription">
+        <source>Determines if the output files of the project should be in the tool folder. </source>
+        <target state="translated">Określa, czy pliki wyjściowe projektu powinny znajdować się w folderze narzędzia. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandUsageDescription">
+        <source>Specify the location of the nuspec or project file to create a package.</source>
+        <target state="translated">Określ lokalizację pliku nuspec lub pliku projektu w celu utworzenia pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandUsageSummary">
+        <source>&lt;nuspec | project&gt; [options]</source>
+        <target state="translated">&lt;nuspec | project&gt; [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandVerboseDescription">
+        <source>Shows verbose output for package building.</source>
+        <target state="translated">Pokazuje pełne dane wyjściowe dla kompilowania pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageCommandVersionDescription">
+        <source>Overrides the version number from the nuspec file.</source>
+        <target state="translated">Przesłania numer wersji z pliku nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandDescription">
+        <source>Pushes a package to the server and publishes it.</source>
+        <target state="translated">Wypycha pakiet na serwer i publikuje go.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandDisableBufferingDescription">
+        <source>Disable buffering when pushing to an HTTP(S) server to decrease memory usage. Note that when this option is enabled, integrated windows authentication might not work.</source>
+        <target state="translated">Wyłącz buforowanie podczas wypychania do serwera HTTP(S), aby zmniejszyć użycie pamięci. Pamiętaj, że jeśli ta opcja jest włączona, zintegrowane uwierzytelnianie systemu Windows może nie działać.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandNoSymbolsDescription">
+        <source>If a symbols package exists, it will not be pushed to a symbol server.</source>
+        <target state="translated">Jeśli pakiet symboli istnieje, nie zostanie wypchnięty na serwer symboli.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateDescription">
+        <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
+        <target state="translated">Jeśli pakiet i wersja już istnieje, pomiń to i kontynuuj przy użyciu następnego pakietu w ramach wypchnięcia, jeśli istnieje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandSourceDescription">
+        <source>Package source (URL, UNC/folder path or package source name) to push to. Defaults to DefaultPushSource if specified in NuGet.Config.</source>
+        <target state="translated">Źródło pakietu (adres URL, ścieżka UNC/folderu lub nazwa źródła pakietu) do wypchania. Domyślnie wartość to DefaultPushSource, jeśli określono ją w pliku NuGet.Config.</target>
+        <note>Please don't localize "DefaultPushSource"</note>
+      </trans-unit>
+      <trans-unit id="PushCommandSymbolSourceDescription">
+        <source>Symbol server URL to push to.</source>
+        <target state="translated">Adres URL serwera symboli do wypchnięcia.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandTimeoutDescription">
+        <source>Timeout for pushing to a server in seconds. Defaults to 300 seconds (5 minutes).</source>
+        <target state="translated">Limit czasu (w sekundach) na potrzeby wypychania na serwer. Wartość domyślna to 300 sekund (5 minut).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandUsageDescription">
+        <source>Specify the path to the package and your API key to push the package to the server.</source>
+        <target state="translated">Określ ścieżkę do pakietu i swój klucz interfejsu API w celu wypchnięcia pakietu na serwer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PushCommandUsageExamples">
+        <source>nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -src http://customsource/
+
+nuget push foo.nupkg
+
+nuget push foo.nupkg.symbols
+
+nuget push foo.nupkg -Timeout 360</source>
+        <target state="translated">nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget push foo.nupkg 4003d786-cc37-4004-bfdf-c4f3e8ef9b3 a -src http://customsource/
+
+nuget push foo.nupkg
+
+nuget push foo.nupkg.symbols
+
+nuget push foo.nupkg -Timeout 360</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="PushCommandUsageSummary">
+        <source>&lt;package path&gt; [API key] [options]</source>
+        <target state="translated">&lt;package path&gt; [Klucz interfejsu API] [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandDescription">
+        <source>Restores NuGet packages.</source>
+        <target state="translated">Przywraca pakiety NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandForceEvaluate">
+        <source>Forces restore to reevaluate all dependencies even if a lock file already exists.</source>
+        <target state="translated">Wymusza przywrócenie w celu ponownego obliczenia wszystkich zależności, nawet jeśli plik blokady już istnieje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandLockFilePath">
+        <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
+        <target state="translated">Lokalizacja danych wyjściowych, w której zapisywany jest plik blokady projektu. Domyślnie jest to „PROJECT_ROOT\packages.lock.json”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandLockedMode">
+        <source>Don't allow updating project lock file.</source>
+        <target state="translated">Nie zezwalaj na aktualizowanie pliku blokady projektu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandP2PTimeOut">
+        <source>Timeout in seconds for resolving project to project references.</source>
+        <target state="translated">Limit czasu (w sekundach) rozpoznawania odwołań projektu do projektu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandPackagesDirectory">
+        <source>Specifies the packages folder.</source>
+        <target state="translated">Określa folder pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRecursive">
+        <source>Restore all referenced projects for UWP and NETCore projects. This does not include packages.config projects.</source>
+        <target state="translated">Przywróć wszystkie przywoływane projekty dla projektów na platformach UWP i NETCore. Nie obejmuje to projektów packages.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandRequireConsent">
+        <source>Checks if package restore consent is granted before installing a package.</source>
+        <target state="translated">Sprawdza, czy zgoda na przywracanie pakietu została udzielona przed zainstalowaniem pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandSolutionDirectory">
+        <source>Specifies the solution directory. Not valid when restoring packages for a solution.</source>
+        <target state="translated">Określa katalog rozwiązania. Nieprawidłowe podczas przywracania pakietów dla rozwiązania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageDescription">
+        <source>If a solution is specified, this command restores NuGet packages that are installed in the solution and in projects contained in the solution. Otherwise, the command restores packages listed in the specified packages.config file, Microsoft Build project, or project.json file.</source>
+        <target state="translated">Jeśli określono rozwiązanie, to polecenie przywraca pakiety NuGet zainstalowane w rozwiązaniu i w projektach zawartych w rozwiązaniu. W przeciwnym razie polecenie przywraca pakiety wymienione w określonym pliku packages.config, projekcie Microsoft Build lub pliku project.json.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageExamples">
+        <source>nuget restore MySolution.sln</source>
+        <target state="translated">przywracanie pakietu nuget MySolution.sln</target>
+        <note>command line example, do not localize</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandUsageSummary">
+        <source>[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [options]</source>
+        <target state="translated">[&lt;solution&gt; | &lt;packages.config file&gt; | &lt;Microsoft Build project&gt;] [opcje]</target>
+        <note>Please don't localize "packages.config"</note>
+      </trans-unit>
+      <trans-unit id="RestoreCommandUseLockFile">
+        <source>Enables project lock file to be generated and used with restore.</source>
+        <target state="translated">Umożliwia generowanie pliku blokady projektu i używanie go przy przywracaniu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandDescription">
+        <source>Searches a given source using the query string provided. If no sources are specified, all sources defined in %AppData%\NuGet\NuGet.config are used.</source>
+        <target state="translated">Wyszukuje dane źródło przy użyciu podanego ciągu zapytania. Jeśli nie określono żadnych źródeł, zostaną użyte wszystkie źródła zdefiniowane w pliku %AppData%\NuGet\NuGet.config.</target>
+        <note>Please don't localize "%AppData%\NuGet\NuGet.config", "NuGet.config".</note>
+      </trans-unit>
+      <trans-unit id="SearchCommandPreRelease">
+        <source>Include prerelease packages.</source>
+        <target state="translated">Uwzględnij pakiety wersji wstępnej.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandSourceDescription">
+        <source>The package source to search. You can pass multiple -Source options to search multiple package sources.</source>
+        <target state="translated">Źródło pakietu do wyszukania. Możesz przekazać wiele opcji -Source, aby przeszukać wiele źródeł pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandTake">
+        <source>The number of results to return. The default value is 20.</source>
+        <target state="translated">Liczba wyników do zwrócenia. Wartość domyślna to 20.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageDescription">
+        <source>Specify search terms.</source>
+        <target state="translated">Określ wyszukiwane terminy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageExamples">
+        <source>nuget search foo
+
+nuget search foo -Verbosity detailed
+
+nuget search foo -PreRelease -Take 5</source>
+        <target state="translated">nuget search foo
+
+nuget search foo -Verbosity — szczegółowe
+
+wyszukiwanie nuget foo -PreRelease -Take 5</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SearchCommandUsageSummary">
+        <source>[search terms] [options]</source>
+        <target state="translated">[wyszukiwane terminy] [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandDescription">
+        <source>Saves an API key for a given server URL. When no URL is provided API key is saved for the NuGet gallery.</source>
+        <target state="translated">Zapisuje klucz interfejsu API dla danego adresu URL serwera. Jeśli nie podano adresu URL, klucz interfejsu API jest zapisywany dla galerii NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandSourceDescription">
+        <source>Server URL where the API key is valid.</source>
+        <target state="translated">Adres URL serwera, pod którym klucz interfejsu API jest prawidłowy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageDescription">
+        <source>Specify the API key to save and an optional URL to the server that provided the API key.</source>
+        <target state="translated">Określ klucz interfejsu API do zapisania oraz opcjonalny adres URL serwera, który dostarczył klucz interfejsu API.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageExamples">
+        <source>nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/nugetfeed</source>
+        <target state="translated">nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a
+
+nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/nugetfeed</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SetApiKeyCommandUsageSummary">
+        <source>&lt;API key&gt; [options]</source>
+        <target state="translated">&lt;API key&gt; [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFingerprintDescription">
+        <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
+        <target state="translated">Odcisk cyfrowy certyfikatu SHA-256, SHA-384 lub SHA-512 używany do przeszukiwania lokalnego magazynu certyfikatów w zakresie danego certyfikatu.
+Magazyn certyfikatów można określić za pomocą opcji -CertificateStoreName i -CertificateStoreLocation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePasswordDescription">
+        <source>Password for the certificate, if needed.
+This option can be used to specify the password for the certificate. If no password is provided, the command will prompt for a password at run time, unless the -NonInteractive option is passed.</source>
+        <target state="translated">Hasło certyfikatu, jeśli jest potrzebne.
+Tej opcji można użyć do określenia hasła certyfikatu. Jeśli hasło nie zostanie podane, polecenie wyświetli monit o podanie hasła w czasie wykonywania, chyba że zostanie przekazana opcja -NonInteractive.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePathDescription">
+        <source>File path to the certificate to be used while signing the package.</source>
+        <target state="translated">Ścieżka do pliku z certyfikatem, który ma zostać użyty podczas podpisywania pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreLocationDescription">
+        <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
+        <target state="translated">Nazwa magazynu certyfikatów X.509, który będzie używany do wyszukiwania certyfikatów. Domyślnie jest to „CurrentUser”, czyli magazyn certyfikatów X.509 używany przez bieżącego użytkownika.
+Opcja ta powinna być używana w przypadku, gdy certyfikat został określony przez opcje --certificate-subject-name lub --certificate-fingerprint.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNameDescription">
+        <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
+This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
+        <target state="translated">Nazwa magazynu certyfikatów X.509, który będzie używany do wyszukiwania certyfikatów. Domyślnie jest to „Mój”, czyli magazyn certyfikatów X.509 dla certyfikatów osobistych.
+Opcja ta powinna być używana w przypadku, gdy certyfikat został określony przez opcje --certificate-subject-name lub --certificate-fingerprint.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateSubjectNameDescription">
+        <source>Subject name of the certificate used to search a local certificate store for the certificate. 
+The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
+The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
+        <target state="translated">Nazwa podmiotu certyfikatu używanego do wyszukiwania certyfikatu w lokalnym magazynie certyfikatów. 
+Wyszukiwanie jest porównaniem ciągów bez uwzględniania wielkości liter przy użyciu podanej wartości, które znajdą wszystkie certyfikaty z nazwą podmiotu zawierającą ten ciąg, niezależnie od innych wartości podmiotu.
+Magazyn certyfikatów można określić za pomocą opcji -CertificateStoreName i -CertificateStoreLocation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDescription">
+        <source>Signs a NuGet package with the specified certificate.</source>
+        <target state="translated">Podpisuje pakiet NuGet przy użyciu określonego certyfikatu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandExamples">
+        <source>nuget sign MyPackage.nupkg -CertificatePath C:\certificate.pfx
+nuget sign MyPackage.nupkg -CertificatePath \\path\to\certificate.pfx
+nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -OutputDirectory .\signed\</source>
+        <target state="translated">podpis nuget MyPackage.nupkg -CertificatePath C:\certificate.pfx
+nuget podpisu MyPackage.nupkg -CertificatePath \\%1\path\to\certificate.pfx
+nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -OutputDirectory .\signed\</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SignCommandHashAlgorithmDescription">
+        <source>Hash algorithm to be used to sign the package. Defaults to SHA256.</source>
+        <target state="translated">Algorytm haszujący, który ma być używany do podpisywania pakietu. Wartość domyślna to SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertificateFingerprint">
+        <source>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
+        <target state="translated">{0}: Nieprawidłowa wartość opcji „CertificateFingerprint”. Wartość musi być odciskiem cyfrowym certyfikatu SHA-256, SHA-384 lub SHA-512 (w systemie szesnastkowym).</target>
+        <note>{0} - error code</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMissingArgumentException">
+        <source>No value provided for '{0}', which is needed when using the '{1}' option. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nie podano wartości dla elementu „{0}”, która jest wymagana w przypadku używania opcji „{1}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>0 - primary param name
+1 - other param name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertificateException">
+        <source>Multiple options were used to specify a certificate. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Do określenia certyfikatu użyto wielu opcji. Aby uzyskać listę akceptowanych sposobów dostarczenia certyfikatu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoArgumentException">
+        <source>No value provided for '{0}'. For a list of accepted values, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Brak podanej wartości dla „{0}”. Aby uzyskać listę akceptowanych wartości, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertificateException">
+        <source>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nie podano certyfikatu. Aby uzyskać listę akceptowanych sposobów dostarczenia certyfikatu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoPackageException">
+        <source>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nie dostarczono żadnego pakietu. Aby uzyskać listę akceptowanych sposobów dostarczenia pakietu, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoTimestamperWarning">
+        <source>The '-Timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nie podano opcji „-Timestamper”. Podpisany pakiet nie zostanie oznaczony sygnaturą czasową. Aby dowiedzieć się więcej o tej opcji, odwiedź stronę https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOutputDirectoryDescription">
+        <source>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</source>
+        <target state="translated">Katalog, w którym ma zostać zapisany podpisany pakiet. Domyślnie oryginalny pakiet jest zastępowany podpisanym pakietem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOverwriteDescription">
+        <source>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</source>
+        <target state="translated">Przełącz, aby wskazać, czy bieżący podpis ma być zastąpiony. Domyślnie polecenie nie powiedzie się, jeżeli pakiet zawiera już podpis.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandSummary">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">Podpisuje pakiet NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandTimestampHashAlgorithmDescription">
+        <source>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</source>
+        <target state="translated">Algorytm wyznaczania wartości skrótu do użycia przez serwer znaczników czasu RFC 3161. Wartość domyślna to SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandTimestamperDescription">
+        <source>URL to an RFC 3161 timestamping server.</source>
+        <target state="translated">Adres URL do serwera znaczników czasu RFC 3161.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandUsageDescription">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">Podpisuje pakiet NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandUsageExamples">
+        <source>nuget sign MyPackage.nupkg -Timestamper https://foo.bar
+
+nuget sign .\..\MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\..\Signed
+</source>
+        <target state="translated">podpis nuget MyPackage.nupkg -Timestamper https://foo.bar
+
+nuget sign .\.. \MyPackage.nupkg -Timestamper https://foo.bar -OutputDirectory .\.. \Signed
+</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; [-CertificatePath &lt;certificate_path&gt; | [ -CertificateStoreName &lt;certificate_store_name&gt; -CertificateStoreLocation &lt;certificate_store_location&gt; [-CertificateSubjectName &lt;certificate_subject_name&gt; | -CertificateFingerprint &lt;certificate_fingerprint&gt;]]] [options]</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; Ścieżka certyfikatu [-CertificatePath &lt;certificate_path&gt; | [ -CertificateStoreName &lt;certificate_store_name&gt; -CertificateStoreLocation &lt;certificate_store_location&gt; [-CertificateSubjectName &lt;certificate_subject_name&gt; | -CertificateFingerprint &lt;certificate_fingerprint&gt;]]] [opcje]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
+        <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Zezwala na połączenia HTTP na potrzeby dodawania lub aktualizowania pakietów. Uwaga: ta metoda nie jest bezpieczna. Aby uzyskać więcej informacji na temat bezpiecznych opcji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandDescription">
+        <source>Provides the ability to manage list of sources located in NuGet.config files.</source>
+        <target state="translated">Zapewnia możliwość zarządzania listą źródeł znajdujących się w plikach NuGet.config.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandFormatDescription">
+        <source>Applies to the list action. Accepts two values: Detailed (the default) and Short.</source>
+        <target state="translated">Dotyczy akcji listy. Akceptuje dwie wartości: Detailed (wartość domyślna) i Short.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNameDescription">
+        <source>Name of the source.</source>
+        <target state="translated">Nazwa źródła.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandPasswordDescription">
+        <source>Password to be used when connecting to an authenticated source.</source>
+        <target state="translated">Hasło, które zostanie użyte podczas nawiązywania połączenia z uwierzytelnionym źródłem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandProtocolVersionDescription">
+        <source>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</source>
+        <target state="translated">Wersja protokołu serwera NuGet do użycia. Obecnie obsługiwane wersje to 2 i 3. Zobacz stronę https://learn.microsoft.com/nuget/api/overview, aby uzyskać informacje o protokole w wersji 3. Wartość domyślna to 2, jeśli nie zostanie określona.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDescription">
+        <source>Path to the package(s) source.</source>
+        <target state="translated">Ścieżka do źródeł pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandStorePasswordInClearTextDescription">
+        <source>Enables storing portable package source credentials by disabling password encryption.</source>
+        <target state="translated">Umożliwia przechowywanie poświadczeń przenośnego źródła pakietu przez wyłączenie szyfrowania haseł.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandTrustDescription">
+        <source>Make a source a trusted repository for repository signature verification.</source>
+        <target state="translated">Ustaw źródło jako zaufane repozytorium na potrzeby weryfikacji podpisu repozytorium.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUsageSummary">
+        <source>&lt;List|Add|Remove|Enable|Disable|Update&gt; -Name [name] -Source [source]</source>
+        <target state="translated">&lt;List|Add|Remove|Enable|Disable|Update&gt; -Name [nazwa] -Source [źródło]</target>
+        <note>Only localize "[name]" and "[source]"</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandUserNameDescription">
+        <source>Username to be used when connecting to an authenticated source.</source>
+        <target state="translated">Nazwa użytkownika, która zostanie użyta podczas nawiązywania połączenia z uwierzytelnionym źródłem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidAuthenticationTypesDescription">
+        <source>Comma-separated list of valid authentication types for this source. By default, all authentication types are valid. Example: basic,negotiate</source>
+        <target state="translated">Rozdzielana przecinkami lista prawidłowych typów uwierzytelniania dla tego źródła. Domyślnie wszystkie typy uwierzytelniania są prawidłowe. Przykład: basic,negotiate</target>
+        <note>Please don't localize "basic,negotiate"</note>
+      </trans-unit>
+      <trans-unit id="SpecCommandAssemblyPathDescription">
+        <source>Assembly to use for metadata.</source>
+        <target state="translated">Zestaw do użycia na potrzeby metadanych.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandDescription">
+        <source>Generates a nuspec for a new package. If this command is run in the same folder as a project file (.csproj, .vbproj, .fsproj), it will create a tokenized nuspec file.</source>
+        <target state="translated">Generuje specyfikację nuspec dla nowego pakietu. Jeśli to polecenie zostanie uruchomione w tym samym folderze co plik projektu (csproj, vbproj, fsproj), zostanie utworzony tokenizowany plik nuspec.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandForceDescription">
+        <source>Overwrite nuspec file if it exists.</source>
+        <target state="translated">Zastąp plik nuspec, jeśli istnieje.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecCommandUsageExamples">
+        <source>nuget spec
+
+nuget spec MyPackage
+
+nuget spec -a MyAssembly.dll</source>
+        <target state="translated">nuget spec
+
+nuget spec MyPackage
+
+nuget spec -a MyAssembly.dll</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="SpecCommandUsageSummary">
+        <source>[package id]</source>
+        <target state="translated">[identyfikator pakietu]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolApiKey">
+        <source>The API key for the symbol server.</source>
+        <target state="translated">Klucz interfejsu API dla serwera symboli.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandAllowUntrustedRootDescription">
+        <source>Set allowUntrustedRoot to true for the trusted signer's certificate to be added.</source>
+        <target state="translated">Ustaw wartość parametru allowUntrustedRoot na wartość true dla certyfikatu zaufanego podpisującego, który ma zostać dodany.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandAuthorDescription">
+        <source>Add the author signature of the package as a trusted author.</source>
+        <target state="translated">Dodaj podpis autora pakietu jako zaufanego autora.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandCertificateFingerprintDescription">
+        <source>Fingerprint of the certificate to trust.</source>
+        <target state="translated">Odcisk palca certyfikatu do zaufania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandDescription">
+        <source>Provides the ability to manage the list of trusted signers.</source>
+        <target state="translated">Umożliwia zarządzanie listą zaufanych osób podpisujących.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandFingerprintAlgorithmDescription">
+        <source>Hash algorithm used to calculate the certificate fingerprint. Defaults to SHA256.</source>
+        <target state="translated">Algorytm wyznaczania wartości skrótu używany do obliczania odcisku palca certyfikatu. Wartość domyślna to SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandNameDescription">
+        <source>Name of the trusted signer.</source>
+        <target state="translated">Nazwa zaufanego podpisującego.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandOwnersDescription">
+        <source>List of owners allowed for a package signed with the trusted repository.</source>
+        <target state="translated">Lista właścicieli dozwolonych dla pakietu podpisanego przy użyciu zaufanego repozytorium.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandRepositoryDescription">
+        <source>Add the repository signature or countersignature of the package as a trusted repository.</source>
+        <target state="translated">Dodaj podpis repozytorium lub kontrasygnaturę pakietu jako zaufane repozytorium.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandServiceIndexDescription">
+        <source>Service index for a repository to be trusted.</source>
+        <target state="translated">Indeks usługi dla repozytorium, które ma być zaufane.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandUsageExamples">
+        <source>nuget trusted-signers
+
+nuget trusted-signers Add -Name existingSource
+
+nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.test/v3ServiceIndex
+
+nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
+
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
+
+nuget trusted-signers Remove -Name TrustedRepo</source>
+        <target state="translated">nuget trusted-signers
+
+nuget trusted-signers Add -Name existingSource
+
+nuget trusted-signers Add -Name trustedRepo -ServiceIndex https://trustedRepo.test/v3ServiceIndex
+
+nuget trusted-signers Add -Name author1 -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039 -FingerprintAlgorithm SHA256
+
+nuget trusted-signers Add -Repository .\..\MyRepositorySignedPackage.nupkg -Name TrustedRepo
+
+nuget trusted-signers Remove -Name TrustedRepo</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignersCommandUsageSummary">
+        <source>&lt;List|Add|Remove|Sync&gt; [options]</source>
+        <target state="translated">&lt;List|Add|Remove|Sync&gt; [opcje]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandDependencyVersion">
+        <source>Overrides the default dependency resolution behavior.</source>
+        <target state="translated">Przesłania domyślne zachowanie rozpoznawania zależności.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandDescription">
+        <source>Update packages to latest available versions. This command also updates NuGet.exe itself.</source>
+        <target state="translated">Zaktualizuj pakiety do najnowszych dostępnych wersji. To polecenie aktualizuje również sam program NuGet.exe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandFileConflictAction">
+        <source>Set default action when a file from a package already exists in the target project. Set to Overwrite to always overwrite files. Set to Ignore to skip files. If not specified, it will prompt for each conflicting file.</source>
+        <target state="translated">Ustaw akcję domyślną, gdy plik z pakietu już istnieje w projekcie docelowym. Ustaw na zastępowanie, aby zawsze zastępować pliki. Ustaw wartość Ignoruj, aby pominąć pliki. Jeśli plik nie zostanie określony, zostanie wyświetlony monit o podanie każdego pliku powodującego konflikt.</target>
+        <note>Please don't localize "Overwrite", "Ignore".</note>
+      </trans-unit>
+      <trans-unit id="UpdateCommandIdDescription">
+        <source>Package ids to update.</source>
+        <target state="translated">Identyfikatory pakietów do zaktualizowania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandPrerelease">
+        <source>Allows updating to prerelease versions. This flag is not required when updating prerelease packages that are already installed.</source>
+        <target state="translated">Umożliwia aktualizowanie do wersji wstępnych. Ta flaga nie jest wymagana podczas aktualizowania pakietów wstępnych, które są już zainstalowane.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandRepositoryPathDescription">
+        <source>Path to the local packages folder (location where packages are installed).</source>
+        <target state="translated">Ścieżka do folderu pakietów lokalnych (lokalizacja, w której są instalowane pakiety).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSafeDescription">
+        <source>Looks for updates with the highest version available within the same major and minor version as the installed package.</source>
+        <target state="translated">Wyszukuje aktualizacje z najwyższą wersją dostępną w tej samej wersji głównej i pomocniczej co zainstalowany pakiet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSelfDescription">
+        <source>Update the running NuGet.exe to the newest version available from the server.</source>
+        <target state="translated">Zaktualizuj uruchomiony plik NuGet.exe do najnowszej wersji dostępnej z serwera.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandSourceDescription">
+        <source>A list of package sources to search for updates.</source>
+        <target state="translated">Lista źródeł pakietów do wyszukiwania aktualizacji.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandUsageExamples">
+        <source>nuget update
+    
+nuget update -Safe
+
+nuget update -Self</source>
+        <target state="translated">aktualizacja nuget
+ 
+nuget update -Safe
+
+nuget update -Self</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="UpdateCommandVerboseDescription">
+        <source>Show verbose output while updating.</source>
+        <target state="translated">Pokaż pełne dane wyjściowe podczas aktualizowania.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateCommandVersionDescription">
+        <source>Updates the package in -Id to the version indicated.  Requires -Id to contain exactly one package id.</source>
+        <target state="translated">Aktualizuje pakiet w -Id do wskazanej wersji.  Wymaga parametru -Id, aby zawierał dokładnie jeden identyfikator pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandAllDescription">
+        <source>Specifies that all verifications possible should be performed to the package(s).</source>
+        <target state="translated">Określa, że wszystkie możliwe weryfikacje powinny zostać wykonane względem pakietów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandCertificateFingerprintDescription">
+        <source>Verify that the signer certificate matches with one of the specified SHA256 fingerprints. A certificate SHA256 fingerprint is a SHA256 hash of the certificate used to identify the certificate. Multiple inputs should be semicolon separated.</source>
+        <target state="translated">Sprawdź, czy certyfikat osoby podpisującej jest zgodny z jednym z podanych odcisków palców SHA256. Odcisk palca SHA256 certyfikatu to skrót SHA256 certyfikatu używany do identyfikowania certyfikatu. Wiele danych wejściowych należy rozdzielić spacjami.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandDescription">
+        <source>Verifies a signed NuGet package.</source>
+        <target state="translated">Weryfikuje podpisany pakiet NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandSignaturesDescription">
+        <source>Specifies that package signature verification should be performed.</source>
+        <target state="translated">Określa, że należy przeprowadzić weryfikację podpisu pakietu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandUsageExamples">
+        <source>nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+
+nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
+
+nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
+
+nuget verify -Signatures .\*.nupkg</source>
+        <target state="translated">nuget verify -Signatures .\..\MyPackage.nupkg -CertificateFingerprint "CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039;5F874AAF47BCB268A19357364E7FBB09D6BF9E8A93E1229909AC5CAC865802E2" -Verbosity detailed
+
+nuget verify -Signatures C:\packages\MyPackage.nupkg -CertificateFingerprint CE40881FF5F0AD3E58965DA20A9F571EF1651A56933748E1BF1C99E537C4E039
+
+nuget verify -Signatures MyPackage.nupkg -Verbosity quiet
+
+nuget verify -Signatures .\*.nupkg</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommandUsageSummary">
+        <source>&lt;verification_type&gt; &lt;package_path&gt;  [options]</source>
+        <target state="translated">&lt;verification_type&gt; &lt;package_path&gt;  [opcje]</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

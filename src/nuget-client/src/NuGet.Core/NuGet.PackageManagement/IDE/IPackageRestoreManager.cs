@@ -80,19 +80,6 @@ namespace NuGet.PackageManagement
             CancellationToken token);
 
         /// <summary>
-        /// Restores the missing packages for the current solution.
-        /// </summary>
-        /// <remarks>
-        /// Best use case is the restore button that shows up in the UI or powershell when certain packages
-        /// are missing
-        /// </remarks>
-        /// <returns>Returns true if atleast one package was restored.</returns>
-        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
-        Task<PackageRestoreResult> RestoreMissingPackagesInSolutionAsync(string solutionDirectory,
-            INuGetProjectContext nuGetProjectContext,
-            CancellationToken token);
-
-        /// <summary>
         /// Restores the package references if they are missing
         /// </summary>
         /// <param name="packages">
@@ -113,29 +100,6 @@ namespace NuGet.PackageManagement
             INuGetProjectContext nuGetProjectContext,
             PackageDownloadContext downloadContext,
             ILogger logger,
-            CancellationToken token);
-
-        /// <summary>
-        /// Restores the package references if they are missing
-        /// </summary>
-        /// <param name="packages">
-        /// This parameter is the list of package referneces mapped to the list of
-        /// project names a package is installed on. This is most likely obtained by calling
-        /// GetPackagesInSolutionAsync
-        /// </param>
-        /// <remarks>
-        /// Best use case is when GetPackagesInSolutionAsync was already called, the result can be used
-        /// in this method
-        /// </remarks>
-        /// <returns>
-        /// Returns true if at least one package is restored. Raised package restored failed event with the
-        /// list of project names.
-        /// </returns>
-        [Obsolete("This method is deprecated to reduce complexity, please use one of the other RestoreMissingPackagesAsync methods.")]
-        Task<PackageRestoreResult> RestoreMissingPackagesAsync(string solutionDirectory,
-            IEnumerable<PackageRestoreData> packages,
-            INuGetProjectContext nuGetProjectContext,
-            PackageDownloadContext downloadContext,
             CancellationToken token);
     }
 

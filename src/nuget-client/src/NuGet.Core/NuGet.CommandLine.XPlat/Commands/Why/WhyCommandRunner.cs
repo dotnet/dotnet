@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Evaluation;
 using NuGet.ProjectModel;
@@ -23,20 +21,20 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
         /// Executes the 'why' command.
         /// </summary>
         /// <param name="whyCommandArgs">CLI arguments for the 'why' command.</param>
-        public static async Task<int> ExecuteCommand(WhyCommandArgs whyCommandArgs)
+        public static Task<int> ExecuteCommand(WhyCommandArgs whyCommandArgs)
         {
             bool validArgumentsUsed = ValidatePathArgument(whyCommandArgs.Path, whyCommandArgs.Logger)
                                         && ValidatePackageArgument(whyCommandArgs.Package, whyCommandArgs.Logger);
             if (!validArgumentsUsed)
             {
-                return ExitCodes.InvalidArguments;
+                return Task.FromResult(ExitCodes.InvalidArguments);
             }
 
             string targetPackage = whyCommandArgs.Package;
-            IAsyncEnumerable<(string assetsFilePath, string? projectPath)> assetsFiles;
+            IEnumerable<(string assetsFilePath, string? projectPath)> assetsFiles;
             try
             {
-                assetsFiles = FindAssetsFilesAsync(whyCommandArgs.Path, whyCommandArgs.Logger, whyCommandArgs.CancellationToken);
+                assetsFiles = FindAssetsFiles(whyCommandArgs.Path, whyCommandArgs.Logger);
             }
             catch (ArgumentException ex)
             {
@@ -46,11 +44,11 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                         Strings.WhyCommand_Error_ArgumentExceptionThrown,
                         ex.Message));
 
-                return ExitCodes.InvalidArguments;
+                return Task.FromResult(ExitCodes.InvalidArguments);
             }
 
             bool anyErrors = false;
-            await foreach ((string assetsFilePath, string? projectPath) in assetsFiles)
+            foreach ((string assetsFilePath, string? projectPath) in assetsFiles)
             {
                 LockFile? assetsFile = GetProjectAssetsFile(assetsFilePath, projectPath, whyCommandArgs.Logger);
 
@@ -88,10 +86,10 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 }
             }
 
-            return anyErrors ? ExitCodes.Error : ExitCodes.Success;
+            return Task.FromResult(anyErrors ? ExitCodes.Error : ExitCodes.Success);
         }
 
-        private static async IAsyncEnumerable<(string assetsFilePath, string? projectPath)> FindAssetsFilesAsync(string path, ILoggerWithColor logger, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        private static IEnumerable<(string assetsFilePath, string? projectPath)> FindAssetsFiles(string path, ILoggerWithColor logger)
         {
             if (XPlatUtility.IsJsonFile(path))
             {
@@ -99,7 +97,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Why
                 yield break;
             }
 
-            var projectPaths = await MSBuildAPIUtility.GetListOfProjectsFromPathArgumentAsync(path, cancellationToken);
+            var projectPaths = MSBuildAPIUtility.GetListOfProjectsFromPathArgument(path);
             foreach (string projectPath in projectPaths.NoAllocEnumerate())
             {
                 Project project = MSBuildAPIUtility.GetProject(projectPath);
