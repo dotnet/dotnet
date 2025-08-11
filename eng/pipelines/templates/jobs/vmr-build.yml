@@ -733,6 +733,9 @@ jobs:
       artifact: $(successfulJobArtifactName)
       displayName: Publish Artifacts (On Success)
       condition: succeeded()
+      contents: |
+        **/*
+        !**/**/Private.SourceBuilt.Artifacts.*.tar.gz
       continueOnError: true
 
     - publish:  $(artifactsPrepublishDir)
