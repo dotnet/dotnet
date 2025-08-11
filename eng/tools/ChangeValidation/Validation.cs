@@ -96,14 +96,20 @@ internal static class Validation
         // Create a git reference to the PR head commit
         await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]);
 
-        var mergeBase = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch])).StandardOutput.Trim();
+        string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch])).StandardOutput.Trim();
 
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBase, "pr-head"])).StandardOutput.Trim();
+        Console.WriteLine($"merge base commit: {mergeBaseCommit}");
+
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBaseCommit, "HEAD"])).StandardOutput.Trim();
+
+        Console.WriteLine($"Diff output: {diffOutput}");
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
+
+        Console.WriteLine($"changed files: " +  changedFiles.Count);
 
         return new PrInfo(targetBranch, changedFiles);
     }

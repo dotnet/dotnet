@@ -23,6 +23,9 @@ internal class SubmoduleValidation : IValidationStep
 
     public string DisplayName => "Submodule Validation";
 
+    private static string ConvertSubmodulePathToVmrGlob(string submodulePath) =>
+        "src/" + submodulePath.Replace('\\', '/').TrimStart('/').TrimEnd('/') + "/**";
+
     public SubmoduleValidation(
         IVmrDependencyTracker vmrDependencyTracker,
         IProcessManager processManager)
@@ -35,9 +38,14 @@ internal class SubmoduleValidation : IValidationStep
     {
         var repoRoot = _processManager.FindGitRoot(AppContext.BaseDirectory);
         var sourceManifest = await GetSourceManifestFromBranch("HEAD", repoRoot);
+
+        LogInfo("Reading submodule paths and converting to glob patterns...");
+
         var submoduleGlobPatterns = sourceManifest.Submodules.Select(submodule => submodule.Path)
-            .Select(pattern => pattern.TrimStart('/')) // Remove leading slashes for globbing
+            .Select(pattern => ConvertSubmodulePathToVmrGlob(pattern))
             .ToList();
+
+        LogInfo(string.Join(Environment.NewLine, submoduleGlobPatterns));
 
         var matcher = new Matcher();
         foreach (var pattern in submoduleGlobPatterns)
@@ -45,7 +53,7 @@ internal class SubmoduleValidation : IValidationStep
             matcher.AddInclude(pattern);
         }
 
-        var directory = new InMemoryDirectoryInfo(repoRoot, prInfo.ChangedFiles);
+        var directory = new InMemoryDirectoryInfo("/", prInfo.ChangedFiles);
 
         var result = matcher.Execute(directory);
 
