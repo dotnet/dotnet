@@ -151,6 +151,7 @@ namespace NuGet.SolutionRestoreManager
             public string ProjectUniqueName { get; set; }
         }
 
+        [Obsolete]
         Task<bool> IVsSolutionRestoreService.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo projectRestoreInfo, CancellationToken token)
         {
             const string eventName = nameof(IVsSolutionRestoreService) + "." + nameof(NominateProjectAsync);
@@ -160,11 +161,10 @@ namespace NuGet.SolutionRestoreManager
             };
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName, eventData);
 
-            var projectRestoreInfoAdapter = ProjectRestoreInfo3Adapter.Create(projectRestoreInfo);
-
-            return NominateProjectAsync(projectUniqueName, projectRestoreInfoAdapter, token);
+            throw new NotSupportedException("This API is deprecated but has not been removed to maintain COM compatibility");
         }
 
+        [Obsolete]
         Task<bool> IVsSolutionRestoreService3.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo2 projectRestoreInfo, CancellationToken token)
         {
             const string eventName = nameof(IVsSolutionRestoreService3) + "." + nameof(NominateProjectAsync);
@@ -174,9 +174,7 @@ namespace NuGet.SolutionRestoreManager
             };
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName, eventData);
 
-            var projectRestoreInfoAdapter = ProjectRestoreInfo3Adapter.Create(projectRestoreInfo);
-
-            return NominateProjectAsync(projectUniqueName, projectRestoreInfoAdapter, token);
+            throw new NotSupportedException("This API is deprecated but has not been removed to maintain COM compatibility");
         }
 
         Task<bool> IVsSolutionRestoreService5.NominateProjectAsync(string projectUniqueName, IVsProjectRestoreInfo3 projectRestoreInfo, CancellationToken token)

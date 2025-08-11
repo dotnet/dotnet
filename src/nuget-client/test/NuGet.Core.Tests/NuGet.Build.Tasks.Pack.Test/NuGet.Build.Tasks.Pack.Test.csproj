@@ -14,7 +14,7 @@
     <ProjectReference Include="..\..\..\src\NuGet.Core\NuGet.Build.Tasks.Pack\NuGet.Build.Tasks.Pack.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" PrivateAssets="All" />
@@ -23,5 +23,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">
     <Reference Include="System.IO.Compression" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <!-- <Reference Include="Microsoft.Build.Framework" /> -->
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ namespace NuGet.CommandLine.XPlat {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Strings {
@@ -201,6 +201,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string AddSourceCommandDescription {
             get {
                 return ResourceManager.GetString("AddSourceCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow pushing to HTTP sources (insecure)..
+        /// </summary>
+        internal static string AllowInsecureConnections_Description {
+            get {
+                return ResourceManager.GetString("AllowInsecureConnections_Description", resourceCulture);
             }
         }
         
@@ -502,6 +511,24 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to add a PackageReference for &apos;{0}&apos;. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project..
+        /// </summary>
+        internal static string Error_AddPkgProjectReference {
+            get {
+                return ResourceManager.GetString("Error_AddPkgProjectReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find a resolved package for &apos;{0}&apos;. This is a tooling error. Please file an issue at https://github.com/NuGet/Home..
+        /// </summary>
+        internal static string Error_AddPkgUnresolved {
+            get {
+                return ResourceManager.GetString("Error_AddPkgUnresolved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No assets file was found for `{0}`. Please run restore before running this command..
         /// </summary>
         internal static string Error_AssetsFileNotFound {
@@ -625,6 +652,24 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Error_InvalidSource {
             get {
                 return ResourceManager.GetString("Error_InvalidSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid version range &apos;{0}&apos;.
+        /// </summary>
+        internal static string Error_InvalidVersionRange {
+            get {
+                return ResourceManager.GetString("Error_InvalidVersionRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing version from {0}.
+        /// </summary>
+        internal static string Error_MissingVersion {
+            get {
+                return ResourceManager.GetString("Error_MissingVersion", resourceCulture);
             }
         }
         
@@ -1527,11 +1572,74 @@ namespace NuGet.CommandLine.XPlat {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated {0} packages in {1} scanned packages..
+        /// </summary>
+        internal static string PackageUpdate_FinalSummary {
+            get {
+                return ResourceManager.GetString("PackageUpdate_FinalSummary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finding versions of packages to update..
+        /// </summary>
+        internal static string PackageUpdate_FindingUpdateVersions {
+            get {
+                return ResourceManager.GetString("PackageUpdate_FindingUpdateVersions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading Project(s)..
+        /// </summary>
+        internal static string PackageUpdate_LoadingDGSpec {
+            get {
+                return ResourceManager.GetString("PackageUpdate_LoadingDGSpec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package reference in the form of a package identifier like &apos;Newtonsoft.Json&apos; or package identifier and version separated by &apos;@&apos; like &apos;Newtonsoft.Json@13.0.3&apos;..
+        /// </summary>
+        internal static string PackageUpdate_PackageArgumentDescription {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PackageArgumentDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running preview restore to check package compatibility..
+        /// </summary>
+        internal static string PackageUpdate_PreviewRestore {
+            get {
+                return ResourceManager.GetString("PackageUpdate_PreviewRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview restore with updated packages was not successful. Force mode is not yet available..
         /// </summary>
         internal static string PackageUpdate_PreviewRestoreFailed {
             get {
                 return ResourceManager.GetString("PackageUpdate_PreviewRestoreFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updated {0} {1} to {2}..
+        /// </summary>
+        internal static string PackageUpdate_UpdatedMessage {
+            get {
+                return ResourceManager.GetString("PackageUpdate_UpdatedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating outdated packages in {0}..
+        /// </summary>
+        internal static string PackageUpdate_UpdatingOutdatedPackages {
+            get {
+                return ResourceManager.GetString("PackageUpdate_UpdatingOutdatedPackages", resourceCulture);
             }
         }
         
@@ -2346,6 +2454,15 @@ namespace NuGet.CommandLine.XPlat {
         internal static string Warning_AlreadyHighestVersion {
             get {
                 return ResourceManager.GetString("Warning_AlreadyHighestVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package {0} is already referencing version {1}.
+        /// </summary>
+        internal static string Warning_AlreadyUsingSameVersion {
+            get {
+                return ResourceManager.GetString("Warning_AlreadyUsingSameVersion", resourceCulture);
             }
         }
         

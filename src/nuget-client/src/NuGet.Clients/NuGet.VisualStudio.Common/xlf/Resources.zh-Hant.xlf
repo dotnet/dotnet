@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../Resources.resx">
+    <body>
+      <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
+        <source>Argument cannot be null or empty</source>
+        <target state="translated">引數不能為 Null 或空白</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Invalid_GUID">
+        <source>The argument is not a valid GUID.</source>
+        <target state="translated">引數不是有效的 GUID。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
+        <source>Value must be greater than or equal to {0}.</source>
+        <target state="translated">值必須大於或等於 {0}。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExperimentVariableOverrideLogText">
+        <source>Experiment flight '{0}' evaluation overridden by environment variable '{1}' set to '{2}'</source>
+        <target state="translated">實驗正式發行前小眾測試版 '{0}'評估已由設定為 '{1}' 的環境變數覆寫 '{2}'</target>
+        <note>{0} is a flight name, {1} is a variable name, {2} is a string value of the variable</note>
+      </trans-unit>
+      <trans-unit id="Finished">
+        <source>========== Finished ==========</source>
+        <target state="translated">========== 已完成 ==========</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatSelection">
+        <source>Select the NuGet package manager format for {0}</source>
+        <target state="translated">選取 {0} 的 NuGet 套件管理員格式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Text_PackageFormatSelection_Solution">
+        <source>Select the NuGet package manager format for this Solution</source>
+        <target state="translated">選取此 Solution 的 NuGet 套件管理員格式</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

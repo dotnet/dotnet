@@ -143,8 +143,6 @@ namespace NuGet.Commands
             var projectReferences = rootProject.RestoreMetadata?.TargetFrameworks.SelectMany(e => e.ProjectReferences)
                 ?? new List<ProjectRestoreReference>();
 
-            var type = rootProject.RestoreMetadata?.ProjectStyle ?? ProjectStyle.Unknown;
-
             var uniqueReferences = projectReferences
                 .Select(p => p.ProjectUniqueName)
                 .Distinct(StringComparer.OrdinalIgnoreCase);

@@ -1,0 +1,1461 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="tr" original="../Strings.resx">
+    <body>
+      <trans-unit id="AddClientCertCommandDescription">
+        <source>Adds a client certificate configuration that matches the given package source name.</source>
+        <target state="translated">Belirtilen paket kaynak adı ile eşleşen bir istemci sertifikası yapılandırması ekler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_All">
+        <source>all</source>
+        <target state="new">all</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_Description">
+        <source>Adds a package reference to a project.</source>
+        <target state="translated">Bir projeye paket başvurusu ekler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_DgFileDescription">
+        <source>Path to the dependency graph file to be used to restore preview and compatibility check.</source>
+        <target state="translated">Önizleme ve uyumluluk denetimini geri yüklemek için kullanılacak bağımlılık grafı dosyasının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_FrameworksDescription">
+        <source>Frameworks for which the package reference should be added.</source>
+        <target state="translated">Paket başvurusunun eklenmesi gereken çerçeveler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_InteractiveDescription">
+        <source>Allow the command to block and require manual action for operations like authentication.</source>
+        <target state="translated">Komutun kimlik doğrulaması gibi işlemleri engellemesine ve bunlar için el ile gerçekleştirilen eylem istemesine izin verin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_NoRestoreDescription">
+        <source>Do not perform restore preview and compatibility check. The added package reference will be unconditional.</source>
+        <target state="translated">Geri yükleme önizlemesi ve uyumluluk denetimi gerçekleştirmeyin. Eklenen paket başvurusu koşulsuz olur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_PackageDirectoryDescription">
+        <source>Directory to restore packages in.</source>
+        <target state="translated">Paketlerin geri yükleneceği dizin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_PackageIdDescription">
+        <source>Id of the package to be added.</source>
+        <target state="translated">Eklenecek paketin kimliği.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_PackagePrerelease">
+        <source>Allows prerelease packages to be installed.</source>
+        <target state="translated">Ön sürüm paketlerinin yüklenmesini sağlar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_PackageVersionDescription">
+        <source>Version of the package to be added.</source>
+        <target state="translated">Eklenecek paket sürümü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_ProjectPathDescription">
+        <source>Path to the project file.</source>
+        <target state="translated">Proje dosyasının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_SourcesDescription">
+        <source>Specifies NuGet package sources to use during the restore.</source>
+        <target state="translated">Geri yükleme sırasında kullanılacak NuGet paket kaynaklarını belirtir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddPkg_UserSpecified">
+        <source>user specified</source>
+        <target state="translated">kullanıcı tarafından belirtilen</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AddSourceCommandDescription">
+        <source>Add a NuGet source.</source>
+        <target state="translated">NuGet kaynağı ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Add_Description">
+        <source>Add a NuGet source.</source>
+        <target state="translated">NuGet kaynağı ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AllowInsecureConnections_Description">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApiKey_Description">
+        <source>The API key for the server.</source>
+        <target state="translated">Sunucunun API anahtarı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="App_FullName">
+        <source>NuGet Command Line</source>
+        <target state="translated">NuGet Command Line</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigCommandKeyNotFound">
+        <source>Key '{0}' not found.</source>
+        <target state="translated">'{0}' anahtarı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigGetAllOrConfigKeyDescription">
+        <source>ALL: Get all merged NuGet configuration settings from multiple NuGet configuration files that will be applied, when invoking NuGet command from the working directory path.  CONFIG_KEY: Get the effective value of the specified configuration settings of the config section.</source>
+        <target state="translated">ALL: Çalışma dizini yolundan NuGet komutu çağrılırken uygulanacak birden fazla NuGet yapılandırma dosyasından birleştirilmiş tüm NuGet yapılandırma ayarlarını alın.  CONFIG_KEY: Yapılandırma bölümünün belirtilen yapılandırma ayarlarının etkin değerini alın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigGetCommandDescription">
+        <source>Gets the NuGet configuration settings that will be applied.</source>
+        <target state="translated">Uygulanacak NuGet yapılandırma ayarlarını alır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigGetShowPathDescription">
+        <source>Indicate that the NuGet configuration file path will be shown beside the configuration settings.</source>
+        <target state="translated">NuGet yapılandırma dosyası yolunun yapılandırma ayarlarının yanında gösterileceğini belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigPathsCommandDescription">
+        <source>Lists the paths to all NuGet configuration files that will be applied when invoking NuGet command in a specific directory</source>
+        <target state="translated">Belirli bir dizinde NuGet komutu çağrılırken uygulanacak tüm NuGet yapılandırma dosyalarının yollarını listeler</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigPathsWorkingDirectoryDescription">
+        <source>Specifies the directory to start from when listing configuration files. If not specified, the current directory is used.</source>
+        <target state="translated">Yapılandırma dosyalarını listelerken başlanacak dizini belirtir. Belirtilmezse, geçerli dizin kullanılır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigSetCommandDescription">
+        <source>Set the value of a specified NuGet configuration setting.</source>
+        <target state="translated">Belirtilen NuGet yapılandırma ayarının değerini ayarlayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigSetConfigKeyDescription">
+        <source>The key of the settings that are to be set.</source>
+        <target state="translated">Ayarlanacak ayarların anahtarı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigSetConfigValueDescription">
+        <source>The value of the settings that are to be set.</source>
+        <target state="translated">Ayarlanacak ayarların değeri.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigUnsetCommandDescription">
+        <source>Removes the key-value pair from a specified NuGet configuration setting.</source>
+        <target state="translated">Belirtilen NuGet yapılandırma ayarından anahtar-değer çiftini kaldırır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigUnsetConfigKeyDescription">
+        <source>The key of the settings that are to be removed.</source>
+        <target state="translated">Kaldırılacak ayarların anahtarı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConfigUnsetNonExistingKey">
+        <source>The key "{0}" could not be found in config section, so it could not be unset.</source>
+        <target state="translated">Yapılandırma bölümünde "{0}" anahtarı bulunamadı, bu nedenle ayarı kaldırılamadı.</target>
+        <note>0 - The config key</note>
+      </trans-unit>
+      <trans-unit id="Config_Description">
+        <source>NuGet configuration CLI</source>
+        <target state="translated">NuGet yapılandırma CLI'sı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessage">
+        <source>{0} (y/N)</source>
+        <target state="translated">{0} (y/N) </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ConsoleConfirmMessageAccept">
+        <source>y</source>
+        <target state="translated">y</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Debug_CurrentUICulture">
+        <source>DefaultThreadCurrentUICulture value: {0}</source>
+        <target state="translated">DefaultThreadCurrentUICulture değeri: {0}</target>
+        <note>0 - Value of CultureInfo.DefaultThreadCurrentUICulture</note>
+      </trans-unit>
+      <trans-unit id="Delete_Description">
+        <source>Deletes a package from the server.</source>
+        <target state="translated">Bir paketi sunucudan siler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Delete_MissingArguments">
+        <source>Please provide arguments for package id and package version.</source>
+        <target state="translated">Lütfen paket kimliği ve paket sürümü için bağımsız değişkenler sağlayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Delete_PackageIdAndVersion_Description">
+        <source>The Package Id and version.</source>
+        <target state="translated">Paket kimliği ve sürümü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisableBuffering_Description">
+        <source>Disable buffering when pushing to an HTTP(S) server to decrease memory usage.</source>
+        <target state="translated">Bir HTTP(S) sunucusuna gönderilirken bellek kullanımını azaltmak için arabelleğe almayı devre dışı bırakın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisableSourceCommandDescription">
+        <source>Disable a NuGet source.</source>
+        <target state="translated">NuGet kaynağını devre dışı bırakın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Disable_Description">
+        <source>Disable a NuGet source.</source>
+        <target state="translated">NuGet kaynağını devre dışı bırakın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="EnableSourceCommandDescription">
+        <source>Enable a NuGet source.</source>
+        <target state="translated">NuGet kaynağını etkinleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Enable_Description">
+        <source>Enable a NuGet source.</source>
+        <target state="translated">NuGet kaynağını etkinleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Err_InvalidValue">
+        <source>Invalid value provided for '{0}'. The accepted values are {1}.</source>
+        <target state="translated">'{0}' için sağlanan değer geçersiz. Kabul edilen değerler: {1}.</target>
+        <note>{0} - argument name in SignCommand. e.g. certificate storeName, certificate storelocation, hashAlgorithmName  {1} - the possible values of the argument.</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkgErrorStringForImportedEdit">
+        <source>Item '{0}' for '{1}' in Imported file '{2}'.</source>
+        <target state="translated">İçeri aktarılan '{2}' dosyasında '{1}' için '{0}' öğesi.</target>
+        <note>{0} - ItemType
+{1} - Package Id
+{2} - Imported File Path</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkgFailOnImportEdit">
+        <source>Error while performing {0} for package '{1}'. Cannot edit items in imported files - {2}{3}</source>
+        <target state="translated">'{1}' paketi için {0} işlemi gerçekleştirilirken hata oluştu. İçeri aktarılan dosyalardaki öğeler düzenlenemiyor - {2}{3}</target>
+        <note>{0} - Operation Name
+{1} - packageId
+{2} - New line (this is just to hold a new line between sentences. does not need any translation)
+{3} - Error string</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkgIncompatibleWithAllFrameworks">
+        <source>Package '{0}' is incompatible with '{1}' frameworks in project '{2}'.</source>
+        <target state="translated">'{0}' paketi, '{2}' projesindeki '{1}' çerçeve ile uyumsuz.</target>
+        <note>{0} - Package Id
+{1} - all / user specified
+{2} - Project Path</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkgProjectReference">
+        <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
+        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <note>{0} - PackageId</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkgUnresolved">
+        <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
+        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <note>{0} Package Id</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
+        <source>VersionOverride for package '{0}' should not be empty.</source>
+        <target state="translated">'{0}' paketi için VersionOverride boş olmamalıdır.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkg_CentralPackageVersions_PackageReference_WrongLocation">
+        <source>Package reference for package '{0}' defined in incorrect location, PackageReference should be defined in project file.</source>
+        <target state="translated">'{0}' paketi için paket başvurusu yanlış konumda tanımlanmış, PackageReference proje dosyasında tanımlanmalıdır.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Error_AddPkg_CentralPackageVersions_PackageVersion_WrongLocation">
+        <source>PackageVersion for package '{0}' defined in incorrect location, PackageVersion should be defined in Directory.Package.props.</source>
+        <target state="translated">'{0}' paketi için paket referansı yanlış konumda tanımlanmış, PackageReference proje dosyasında tanımlanmalıdır.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Error_AssetsFileNotFound">
+        <source>No assets file was found for `{0}`. Please run restore before running this command.</source>
+        <target state="translated">`{0}` için varlık dosyası bulunamadı. Lütfen bu komutu çalıştırmadan önce geri yüklemeyi çalıştırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotObtainSearchSource">
+        <source>Failed to obtain a search resource.</source>
+        <target state="translated">Arama kaynağı alınamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
+        <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
+        <target state="translated">{0} paketlerine örtük olarak başvurulur. Genellikle bunlara projenizden veya merkezi paket sürümü yönetim dosyanızda başvurmanız gerekmez. Daha fazla bilgi için bkz. https://aka.ms/sdkimplicitrefs</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageVersions_FloatingVersionsAreNotAllowed">
+        <source>Centrally defined floating package versions are not allowed.</source>
+        <target state="translated">Merkezi olarak tanımlanan kayan paket sürümleri kullanılamaz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageVersions_MissingPackageVersion">
+        <source>The PackageReference items {0} do not have corresponding PackageVersion.</source>
+        <target state="translated">{0} PackageReference öğelerine karşılık gelen PackageVersion yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageVersions_VersionOverrideDisabled">
+        <source>The package reference {0} specifies a VersionOverride but the ability to override a centrally defined version is currently disabled.</source>
+        <target state="translated">{0} paket başvurusu VersionOverride belirtiyor ancak merkezi olarak tanımlanmış bir sürümü geçersiz kılma özelliği şu anda devre dışı.</target>
+        <note>0 - packagereference name</note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageVersions_VersionsNotAllowed">
+        <source>Projects that use central package version management should not define the version on the PackageReference items but on the PackageVersion items: {0}</source>
+        <target state="translated">Merkezi paket sürüm yönetimi kullanan projeler, PackageReference öğelerindeki sürümü değil PackageVersion öğelerindeki sürümü tanımlamalıdır: {0}.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Error_ConfigSetInvalidKey">
+        <source>'{0}' is not a valid config key in config section.</source>
+        <target state="translated">'{0}', yapılandırma bölümünde geçerli bir yapılandırma anahtarı değil.</target>
+        <note>0 - The config key</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotFindPackageVersionForCpmPackage">
+        <source>Central Package Management configuration error: Could not find PackageVersion for package {0}</source>
+        <target state="translated">Merkezi Paket Yönetimi yapılandırma hatası: {0} paketi için PackageVersion bulunamadı</target>
+        <note>0 - a package name
+Do not translate "PackageVersion"</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'{0}' işlemini bir '{1}' 'HTTP' kaynağı ile çalıştırıyorsunuz. NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server uri.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpServerUsage_MultipleSources">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}
+NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">'{0}' işlemini {1}]D; 'HTTP' kaynakları ile çalıştırıyorsunuz.
+NuGet için HTTPS kaynakları gereklidir. HTTP kaynaklarını kullanmak için NuGet.Config dosyanızda 'allowInsecureConnections' ayarını açıkça “true” olarak ayarlamanız gerekir. Daha fazla bilgi için şuraya başvurun: https://aka.ms/nuget-https-everywhere.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidCultureInfo">
+        <source>Invalid culture identifier in {0} environment variable. Value read is '{1}'</source>
+        <target state="translated">{0} ortam değişkeninde geçersiz kültür tanımlayıcısı. Okunan değer '{1}'</target>
+        <note>0 - Environment variable name, 1 - value set in environment variable</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidOptionValue">
+        <source>Invalid value `{0}` for option {1}.</source>
+        <target state="translated">{0} seçeneği için geçersiz değer: “{1}”.</target>
+        <note>0 - The invalid value. 1 - the option.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidSource">
+        <source>The specified source '{0}' is invalid. Provide a valid source.</source>
+        <target state="translated">Belirtilen '{0}' kaynağı geçersiz. Geçerli bir kaynak belirtin.</target>
+        <note>0 - The invalid source.</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidVersionRange">
+        <source>Invalid version range '{0}'</source>
+        <target state="translated">Geçersiz sürüm aralığı '{0}'</target>
+        <note>0 - string provided by customer</note>
+      </trans-unit>
+      <trans-unit id="Error_MissingVersion">
+        <source>Missing version from {0}</source>
+        <target state="translated">{0} sürüm eksik</target>
+        <note>0 - package id </note>
+      </trans-unit>
+      <trans-unit id="Error_MsBuildUnableToOpenProject">
+        <source>MsBuild was unable to open Project '{0}'.</source>
+        <target state="translated">MsBuild, '{0}' Projesini açamadı.</target>
+        <note>{0} - Project/csproj path</note>
+      </trans-unit>
+      <trans-unit id="Error_MultipleProjectOrSolutionFilesInDirectory">
+        <source>The directory '{0}' contains multiple project or solution files. Please specify which project or solution file to use.</source>
+        <target state="translated">'{0}' dizini birden çok proje veya çözüm dosyası içeriyor. Lütfen kullanılacak proje veya çözüm dosyasını belirtin.</target>
+        <note>{0} - Directory</note>
+      </trans-unit>
+      <trans-unit id="Error_NoDgSpec">
+        <source>None or invalid DgSpec was passed to NuGet add package command.</source>
+        <target state="translated">NuGet add package komutuna DgSpec geçirilmedi veya yanlış DgSpec geçirildi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoProjectOrSolutionFilesInDirectory">
+        <source>The directory '{0}' does not contain any project or solution files.</source>
+        <target state="translated">'{0}' dizini proje veya çözüm dosyası içermiyor.</target>
+        <note>{0} - Directory</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSource">
+        <source>No package sources found.</source>
+        <target state="translated">Paket kaynağı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoVersionsAvailable">
+        <source>There are no versions available for the package '{0}'.</source>
+        <target state="translated">'{0}' paketi için kullanılabilir sürüm yok.</target>
+        <note>{0} - PackageID</note>
+      </trans-unit>
+      <trans-unit id="Error_NotPRProject">
+        <source>The project `{0}` uses package.config for NuGet packages, while the command works only with package reference projects.</source>
+        <target state="translated">`{0}` projesi, NuGuet paketleri için package.config dosyasını kullanıyor fakat komut yalnızca paket başvurusu projeleriyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageNotReferenced">
+        <source>The package {0} is not referenced by project {1}</source>
+        <target state="translated">{0} paketine {1} projesi tarafından başvurulmuyor</target>
+        <note>0 - The package ID
+1 - The project path</note>
+      </trans-unit>
+      <trans-unit id="Error_PathIsMissingOrInvalid">
+        <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
+        <target state="translated">'{0}' yolu eksik veya geçersiz. Bir projeye, çözüm dosyasına veya dizine giden yolu sağlayın.</target>
+        <note>{0} - Input path argument</note>
+      </trans-unit>
+      <trans-unit id="Error_PathNotFound">
+        <source>The specified path '{0}' does not exist.</source>
+        <target state="translated">Belirtilen yol ('{0}') yok.</target>
+        <note>0 - path</note>
+      </trans-unit>
+      <trans-unit id="Error_PkgMissingArgument">
+        <source>Unable to {0} package. Argument '{1}' not provided.</source>
+        <target state="translated">Pakete {0} işlemi uygulanamıyor. '{1}' bağımsız değişkeni sağlanmadı.</target>
+        <note>{0} - Operation Name
+{1} - Argument which was not provided</note>
+      </trans-unit>
+      <trans-unit id="Error_PkgMissingOrInvalidProjectFile">
+        <source>Unable to {0} package. Missing or Invalid project file '{1}'.</source>
+        <target state="translated">Pakete {0} işlemi uygulanamıyor. '{1}' proje dosyası eksik veya geçersiz.</target>
+        <note>{0} - Operation Name
+{1} - project file path</note>
+      </trans-unit>
+      <trans-unit id="Error_PrereleaseWhenVersionSpecified">
+        <source>The --prerelease and --version options are not supported in the same command.</source>
+        <target state="translated">--prerelease ve --version seçenekleri aynı komutta desteklenmez.</target>
+        <note>Please don't localize "prerelease" and "version"</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectAssetsFilePropertyNotFound">
+        <source>Project '{0}' does not have MSBuild property ProjectAssetsFile defined. This may indicate that this project does not support NuGet PackageReference, or that project customization has prevented the .NET SDK setting default values.</source>
+        <target state="translated">'{0}' projesinin MSBuild özelliği ProjectAssetsFile’ı tanımlı değil. Bu, bu projenin NuGet PackageReference'i desteklemediğini veya proje özelleştirmesinin .NET SDK ayarı varsayılan değerlerini engellediğini gösterebilir.</target>
+        <note>{0} - Path to the project with the error</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustFingerPrintAlreadyExist">
+        <source>The certificate finger you're trying to add is already in the certificate fingerprint list.</source>
+        <target state="translated">Eklemeye çalıştığınız sertifika parmak izi zaten sertifika parmak izi listesinde var.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepoAlreadyExists">
+        <source>A trusted repository with the service index '{0}' already exists.</source>
+        <target state="translated">'{0}' hizmet dizinine sahip güvenilen bir depo zaten var.</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedSignerAlreadyExists">
+        <source>A trusted signer '{0}' already exists.</source>
+        <target state="translated">'{0}' adlı güvenilen bir imzalayan zaten mevcut.</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedProject">
+        <source>Error while adding package '{0}' to project '{1}'. The project does not support adding package references through the add package command.</source>
+        <target state="translated">'{0}' paketi, '{1}' projesine eklenirken hata oluştu. Proje, proje paketi ekle komutu aracılığıyla paket başvuruları ekleme işlemini desteklemez.</target>
+        <note>{0} - Package Id
+{1} - Project path</note>
+      </trans-unit>
+      <trans-unit id="Error_UpdatePkgNoSuchPackage">
+        <source>Project '{0}' does not contain any PackageReference '{1}' to {2}.</source>
+        <target state="translated">'{0}' projesi {2} için PackageReference '{1}' içermiyor.</target>
+        <note>{0} - project path
+{1} - package id
+{2} - operation name</note>
+      </trans-unit>
+      <trans-unit id="ForceEnglishOutput_Description">
+        <source>Forces the application to run using an invariant, English-based culture.</source>
+        <target state="translated">Uygulamayı sabit, İngilizce tabanlı bir kültür kullanarak çalışmaya zorlar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Info_AddPkgAdded">
+        <source>PackageReference for package '{0}' version '{1}' added to file '{2}'.</source>
+        <target state="translated">'{0}' paketi sürüm '{1}' için PackageReference, '{2}' dosyasına eklendi.</target>
+        <note>{0} - Package Id
+{1} - package version
+{2} - project file path</note>
+      </trans-unit>
+      <trans-unit id="Info_AddPkgAddingReference">
+        <source>Adding PackageReference for package '{0}' into project '{1}'.</source>
+        <target state="translated">'{1}' projesine '{0}' paketi için PackageReference ekleniyor.</target>
+        <note>{0} - Package Id
+{1} - Project Path</note>
+      </trans-unit>
+      <trans-unit id="Info_AddPkgCPM">
+        <source>PackageReference for package '{0}' added to '{1}' and PackageVersion added to central package management file '{2}'.</source>
+        <target state="translated">Paket '{0}' için PackageReference, '{1}' öğesine eklendi ve PackageVersion, merkezi '{2}' paket yönetim dosyasına eklendi.</target>
+        <note>0 - The package ID. 1 - Project file path. 2 - Directory.Packages.props.</note>
+      </trans-unit>
+      <trans-unit id="Info_AddPkgCompatibleWithAllFrameworks">
+        <source>Package '{0}' is compatible with all the specified frameworks in project '{1}'.</source>
+        <target state="translated">'{0}' paketi, '{1}' projesinde belirtilen tüm çerçeveler ile uyumlu.</target>
+        <note>{0} - Package Id
+{1} - Project Path</note>
+      </trans-unit>
+      <trans-unit id="Info_AddPkgCompatibleWithSubsetFrameworks">
+        <source>Package '{0}' is compatible with a subset of the specified frameworks in project '{1}'.</source>
+        <target state="translated">'{0}' paketi, '{1}' projesinde belirtilen çerçevelerin bir alt kümesi ile uyumlu.</target>
+        <note>{0} - Package Id
+{1} - Project Path</note>
+      </trans-unit>
+      <trans-unit id="Info_AddPkgUpdated">
+        <source>PackageReference for package '{0}' version '{1}' updated in file '{2}'.</source>
+        <target state="translated">'{0}' paketi sürüm '{1}' için PackageReference, '{2}' dosyasında güncelleştirildi.</target>
+        <note>{0} - Package Id
+{1} - package version
+{2} - project file path</note>
+      </trans-unit>
+      <trans-unit id="Info_RemovePkgRemovingReference">
+        <source>Removing PackageReference for package '{0}' from project '{1}'.</source>
+        <target state="translated">'{0}' paketi için PackageReference, '{1}' projesinden kaldırılıyor.</target>
+        <note>{0} - Package Id
+{1} - Project Path</note>
+      </trans-unit>
+      <trans-unit id="ListClientCertCommandDescription">
+        <source>Lists all the client certificates in the configuration.</source>
+        <target state="translated">Yapılandırmadaki tüm istemci sertifikalarını listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_AutoReferenceDescription">
+        <source>(A) : Auto-referenced package.</source>
+        <target state="translated">(A): Otomatik olarak başvurulan paket.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ConfigDescription">
+        <source>A path to a config file to specify sources. Works only with `--outdated`.</source>
+        <target state="translated">Kaynakları belirten yapılandırma dosyasının yolu. Yalnızca '--outdated' seçeneğiyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_DeprecatedDescription">
+        <source>Displays only the packages marked deprecated by the authors.</source>
+        <target state="translated">Yalnızca yazarlar tarafından kullanım dışı olarak işaretlenmiş paketleri görüntüler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_DeprecationAlternative">
+        <source>Alternative</source>
+        <target state="translated">Alternatif</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_DeprecationReasons">
+        <source>Reason(s)</source>
+        <target state="translated">Nedenler</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_Description">
+        <source>Lists all the packages used by the current project(s).</source>
+        <target state="translated">Geçerli projeler tarafından kullanılan tüm paketleri listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ErrorFileNotFound">
+        <source>The given file `{0}` was not found</source>
+        <target state="translated">Belirtilen `{0}` dosyası bulunamadı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ErrorReadingAssetsFile">
+        <source>Unable to read the assets file `{0}`. Please make sure the file has the write format.</source>
+        <target state="translated">`{0}` varlık dosyası okunamıyor. Lütfen dosyanın yazma biçimine sahip olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ErrorReadingReferenceFromProject">
+        <source>Unable to read a package reference from the project `{0}`. Please make sure that your project file and project.assets.json file are in sync by running restore.</source>
+        <target state="translated">`{0}` projesindeki bir paket başvurusu okunamıyor. Geri yüklemeyi çalıştırarak proje dosyanızın ve project.assets.json dosyasının eşitlenmiş olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_FrameworkDescription">
+        <source>Specifies the target framework for which the packages will be listed.</source>
+        <target state="translated">Paketlerin listeleneceği hedef çerçeveyi belirtir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_HighestMinorDescription">
+        <source>Considers only the versions with matching major. Works only with `--outdated`.</source>
+        <target state="translated">Yalnızca eşleşen ana sürümlere sahip olan sürümleri dikkate alır. Yalnızca '--outdated' seçeneğiyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_HighestPatchDescription">
+        <source>Considers only the versions with matching minor and major. Works only with `--outdated`.</source>
+        <target state="translated">Yalnızca eşleşen alt ve ana sürümlere sahip olan sürümleri dikkate alır. Yalnızca '--outdated' seçeneğiyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_InvalidFramework">
+        <source>Failed to parse one of the given frameworks. Please make sure the given frameworks are valid.</source>
+        <target state="translated">Verilen çerçevelerden biri ayrıştırılamadı. Lütfen verilen çerçevelerin geçerli olduğundan emin olun.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_InvalidOptions">
+        <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
+        <target state="translated">'--outdated', '--deprecated' ve '--vulnerable' seçenekleri birleştirilemez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_InvalidOutputFormat">
+        <source>Invalid value {0} provided for output format. The accepted values are {1}.</source>
+        <target state="translated">Çıktı formatı için geçersiz {0} değeri sağlandı. Kabul edilen değerler {1}.</target>
+        <note>{0} - argument name in format option {1} - the possible values of the argument.</note>
+      </trans-unit>
+      <trans-unit id="ListPkg_InvalidOutputVersion">
+        <source>Unsupported output format version {0} was requested.  The accepted format version value is {1}.</source>
+        <target state="translated">Desteklenmeyen çıktı biçimi {0} sürümü istendi. Kabul edilen biçim sürüm değeri {1}.</target>
+        <note>{0} - argument name in version option {1} - the possible value of the argument.</note>
+      </trans-unit>
+      <trans-unit id="ListPkg_Latest">
+        <source>Latest</source>
+        <target state="translated">En son</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoDeprecatedPackagesForProject">
+        <source>The given project `{0}` has no deprecated packages given the current sources.</source>
+        <target state="translated">Belirtilen `{0}` projesinin geçerli kaynaklarda kullanım dışı paketi yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoDeprecationsForFramework">
+        <source>No deprecated packages for this framework.</source>
+        <target state="translated">Bu çerçeve için kullanım dışı paket yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoPackagesForFramework">
+        <source>No packages were found for this framework.</source>
+        <target state="translated">Bu çerçeve için paket bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoPackagesFoundForFrameworks">
+        <source>No packages were found for the project `{0}` given the specified frameworks.</source>
+        <target state="translated">Belirtilen çerçevelerde `{0}` projesi için paket bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoUpdatesForFramework">
+        <source>No package updates available for this framework.</source>
+        <target state="translated">Bu çerçeve için kullanılabilir paket güncelleştirmesi yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoUpdatesForProject">
+        <source>The given project `{0}` has no updates given the current sources.</source>
+        <target state="translated">Belirtilen `{0}` projesinin geçerli kaynaklarda güncelleştirmesi yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoVulnerabilitiesForFramework">
+        <source>No vulnerable packages for this framework.</source>
+        <target state="translated">Bu çerçeve için güvenlik açığı olan paket yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NoVulnerablePackagesForProject">
+        <source>The given project `{0}` has no vulnerable packages given the current sources.</source>
+        <target state="translated">Belirtilen `{0}` projesinin geçerli kaynaklarda güvenlik açığı olan paketi yok.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_NotFoundAtSources">
+        <source>Not found at the sources</source>
+        <target state="translated">Kaynaklarda bulunamadı</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_OutdatedDescription">
+        <source>Displays only the packages that need updates with the latest version from the sources.</source>
+        <target state="translated">Yalnızca kaynaklarından en son sürüme güncelleştirilmeleri gereken paketleri görüntüler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_OutputFormatDescription">
+        <source>Set the report output format.</source>
+        <target state="translated">Rapor çıktı biçimini ayarlayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_OutputVersionDescription">
+        <source>The version of report output.</source>
+        <target state="translated">Rapor çıktısının sürümü.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_OutputVersionNotApplicable">
+        <source>'--output-version' option not applicable for console output, it can only be used together with `--format json` option.</source>
+        <target state="translated">'--output-version' seçeneği konsol çıkışı için geçerli değil, yalnızca `--format json` seçeneğiyle birlikte kullanılabilir.</target>
+        <note>Don't localize '--output-version' and `--format json`</note>
+      </trans-unit>
+      <trans-unit id="ListPkg_PathDescription">
+        <source>A path to a project, solution file or directory.</source>
+        <target state="translated">Bir projeye, çözüm dosyasına veya dizine giden yol.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_PrereleaseDescription">
+        <source>Considers prerelease versions when looking for latest. Works only with `--outdated`.</source>
+        <target state="translated">En son sürümü ararken yayın öncesi sürümleri de dikkate alır. Yalnızca '--outdated' seçeneğiyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ProjectDeprecationsHeaderLog">
+        <source>Project `{0}` has the following deprecated packages</source>
+        <target state="translated">`{0}` projesi şu kullanım dışı paketlere sahip:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ProjectHeaderLog">
+        <source>Project '{0}' has the following package references</source>
+        <target state="translated">'{0}' projesi aşağıdaki paket başvurularına sahip</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ProjectUpdatesHeaderLog">
+        <source>Project `{0}` has the following updates to its packages</source>
+        <target state="translated">`{0}` projesinin paketleri için aşağıdaki güncelleştirmeler var</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_ProjectVulnerabilitiesHeaderLog">
+        <source>Project `{0}` has the following vulnerable packages</source>
+        <target state="translated">`{0}` projesi şu güvenlik açığı olan paketlere sahip:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_Requested">
+        <source>Requested</source>
+        <target state="translated">İstendi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_Resolved">
+        <source>Resolved</source>
+        <target state="translated">Çözümlendi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_SourceDescription">
+        <source>Sources to lookup for latest versions. Works only with `--outdated`.</source>
+        <target state="translated">En son sürümlerin aranacağı kaynaklar. Yalnızca `--outdated` seçeneğiyle çalışır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_SourcesUsedDescription">
+        <source>The following sources were used:</source>
+        <target state="translated">Şu kaynaklar kullanıldı:</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_TopLevelHeader">
+        <source>Top-level Package</source>
+        <target state="translated">Üst Düzey Paket</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_TransitiveDescription">
+        <source>Includes transitive packages too in the result.</source>
+        <target state="translated">Sonuca geçişli paketleri de dahil eder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_TransitiveHeader">
+        <source>Transitive Package</source>
+        <target state="translated">Geçişli Paket</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_VulnerabilityAdvisoryUrl">
+        <source>Advisory URL</source>
+        <target state="translated">Bildirim URL'si</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_VulnerabilitySeverity">
+        <source>Severity</source>
+        <target state="translated">Önem Derecesi</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_VulnerableDescription">
+        <source>Displays only the packages flagged as vulnerable.</source>
+        <target state="translated">Yalnızca güvenlik açığına sahip olarak işaretlenmiş paketleri görüntüler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListPkg_VulnerableIgnoredOptions">
+        <source>The command option(s) '--include-prerelease', '--highest-minor', and '--highest-patch' are ignored by this command.</source>
+        <target state="translated">'--include-prerelease', '--highest-minor' ve '--highest-patch' komut seçenekleri bu komut tarafından yoksayılır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ListSourceCommandDescription">
+        <source>Lists all configured NuGet sources.</source>
+        <target state="translated">Yapılandırılan tüm NuGet kaynaklarını listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="List_Description">
+        <source>List configured NuGet sources.</source>
+        <target state="translated">Yapılandırılan NuGet kaynaklarını listeleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ArgumentDescription">
+        <source>Specifies the cache location(s) to list or clear.
+&lt;all | http-cache | global-packages | temp&gt;</source>
+        <target state="translated">Listelenecek veya temizlenecek önbellek konumlarını belirtir.
+&lt;all | http-cache | global-packages | temp&gt;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearDescription">
+        <source>Clear the selected local resources or cache location(s).</source>
+        <target state="translated">Seçili yerel kaynaklar veya önbellek konumlarını temizleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_Description">
+        <source>Clears or lists local NuGet resources such as http requests cache, packages folder, plugin operations cache  or machine-wide global packages folder.</source>
+        <target state="translated">Yerel NuGet kaynaklarını (http istekleri önbelleği, paketler klasörü, eklenti işlemleri önbelleği veya makine çapında genel paketler klasörü gibi) temizler veya listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ListDescription">
+        <source>List the selected local resources or cache location(s).</source>
+        <target state="translated">Seçili yerel kaynakları veya önbellek konumlarını listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_MultipleOperations">
+        <source>Both operations, --list and --clear, are not supported in the same command. Please specify only one operation.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">--list ve --clear işlemleri aynı komutta desteklenmez. Lütfen yalnızca bir işlem belirtin.
+kullanım: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_NoArguments">
+        <source>No Cache Type was specified.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Önbellek Türü belirtilmedi.
+kullanım: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_NoOperation">
+        <source>Please specify an operation i.e. --list or --clear.
+usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Lütfen bir işlem belirtin, örneğin: --list veya --clear.
+kullanım: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Daha fazla bilgi için bkz. https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoServiceEndpoint_Description">
+        <source>Does not append "api/v2/package" to the source URL.</source>
+        <target state="translated">Kaynak URL'ye "api/v2/package" ifadesini eklemez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoSymbols_Description">
+        <source>If a symbols package exists, it will not be pushed to a symbols server.</source>
+        <target state="translated">Bir sembol paketi varsa paket bir sembol sunucusuna gönderilmez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NonInteractive_Description">
+        <source>Do not prompt for user input or confirmations.</source>
+        <target state="translated">Kullanıcı girişi veya onayı isteminde bulunmayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NuGetXplatCommand_Interactive">
+        <source>Allow the command to block and require manual action for operations like authentication.</source>
+        <target state="translated">Komutun kimlik doğrulaması gibi işlemleri engellemesine ve bunlar için el ile gerçekleştirilen eylem istemesine izin verin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_ConfigFile">
+        <source>The NuGet configuration file. If specified, only the settings from this file will be used. If not specified, the hierarchy of configuration files from the current directory will be used. For more information, see https://docs.microsoft.com/nuget/consume-packages/configuring-nuget-behavior.</source>
+        <target state="translated">NuGet yapılandırma dosyası. Belirtilirse, yalnızca bu dosyadaki ayarlar kullanılır. Belirtilmezse, geçerli dizindeki yapılandırma dosyaları hiyerarşisi kullanılır. Daha fazla bilgi için bkz. https://docs.microsoft.com/nuget/consume-packages/configuring-nuget-behavior.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_FindBy">
+        <source>Search method to find certificate in certificate store (see docs).</source>
+        <target state="translated">Sertifika depolama alanında sertifika bulmak için arama yöntemi (bkz. belgeler).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_FindValue">
+        <source>Search the certificate store for the supplied value. Used with FindValue (see docs).</source>
+        <target state="translated">Belirtilen değer için sertifika depolama alanında arama yapın. FindValue ile kullanılır (bkz. belgeler).</target>
+        <note>Don't translate FindValue</note>
+      </trans-unit>
+      <trans-unit id="Option_Force">
+        <source>Skip certificate validation.</source>
+        <target state="translated">Sertifika doğrulamasını atlayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_PackageSource">
+        <source>Package source name.</source>
+        <target state="translated">Paket kaynağı adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Password">
+        <source>Password for the certificate, if needed.</source>
+        <target state="translated">Gerekliyse, sertifikanın parolası.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_Path">
+        <source>Path to certificate file.</source>
+        <target state="translated">Sertifika dosyasının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_StoreLocation">
+        <source>Certificate store location (see docs).</source>
+        <target state="translated">Sertifika depolama alanı konumu (bkz. belgeler).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_StoreName">
+        <source>Certificate store name (see docs).</source>
+        <target state="translated">Sertifika depolama alanı adı (bkz. belgeler).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Option_StorePasswordInClearText">
+        <source>Enables storing password for the certificate by disabling password encryption.</source>
+        <target state="translated">Parola şifrelemesini devre dışı bırakarak sertifika için parola depolamayı etkinleştirir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OutputNuGetVersion">
+        <source>{0} Version: {1}</source>
+        <target state="translated">{0} Sürümü: {1}</target>
+        <note>{0}: App full name
+{1}: App version</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdateCommand_Description">
+        <source>Update referenced packages in a project or solution.</source>
+        <target state="translated">Bir projede veya çözümde başvurulan paketleri güncelleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdateCommand_ProjectOptionDescription">
+        <source>Path to a project or solution file, or a directory.</source>
+        <target state="translated">Bir proje veya çözüm dosyasına ya da dizine giden yol.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_FinalSummary">
+        <source>Updated {0} packages in {1} scanned packages.</source>
+        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <note>{0}: Number of packages updated
+{1}: Package checked for updated versions</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_FindingUpdateVersions">
+        <source>Finding versions of packages to update.</source>
+        <target state="new">Finding versions of packages to update.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_LoadingDGSpec">
+        <source>Loading Project(s).</source>
+        <target state="new">Loading Project(s).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_PackageArgumentDescription">
+        <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
+        <target state="translated">'Newtonsoft.Json' gibi bir paket tanımlayıcısı veya 'Newtonsoft.Json@13.0.3' gibi '@' ile ayrılmış paket tanımlayıcısı ve sürümü şeklinde paket referansı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_PreviewRestore">
+        <source>Running preview restore to check package compatibility.</source>
+        <target state="new">Running preview restore to check package compatibility.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_PreviewRestoreFailed">
+        <source>Preview restore with updated packages was not successful. Force mode is not yet available.</source>
+        <target state="translated">Güncelleştirilmiş paketlerle önizleme geri yükleme işlemi başarılı olmadı. Zorlama modu henüz kullanılamıyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatedMessage">
+        <source>Updated {0} {1} to {2}.</source>
+        <target state="new">Updated {0} {1} to {2}.</target>
+        <note>{0}: package id
+{1}: existing version
+{2}: new version</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
+        <source>Updating outdated packages in {0}.</source>
+        <target state="new">Updating outdated packages in {0}.</target>
+        <note>{0}: the project or solution that is being updated</note>
+      </trans-unit>
+      <trans-unit id="PrereleaseVersionsAvailable">
+        <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>
+        <target state="translated">Kullanılabilir kararlı bir sürüm olmadığından {0} en iyi seçenektir. --prerelease seçeneğini eklemeyi göz önünde bulundurun</target>
+        <note>{0} - Package Version</note>
+      </trans-unit>
+      <trans-unit id="PushCommandSkipDuplicateDescription">
+        <source>If a package and version already exists, skip it and continue with the next package in the push, if any.</source>
+        <target state="translated">Paket ve sürüm zaten mevcutsa bu paketi atlayın ve varsa gönderimde bulunan bir sonraki paketle devam edin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_Description">
+        <source>Pushes a package to the server and publishes it.</source>
+        <target state="translated">Bir paketi sunucuya gönderir ve yayımlar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_InvalidTimeout">
+        <source>Invalid timeout parameter value.</source>
+        <target state="translated">Geçersiz zaman aşımı parametre değeri.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_MissingArguments">
+        <source>Please specify the path to the package.</source>
+        <target state="translated">Lütfen paketin yolunu belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_Package_ApiKey_Description">
+        <source>Specify the path to the package and your API key to push the package to the server.</source>
+        <target state="translated">Paketi sunucuya göndermek için paketin ve API anahtarınızın yolunu belirtin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_Timeout_Description">
+        <source>Timeout for pushing to a server in seconds. Defaults to 300 seconds (5 minutes).</source>
+        <target state="translated">Bir sunucuya gönderme için zaman aşımını saniye cinsinden belirtir. Varsayılan değer 300 saniyedir (5 dakika).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Push_Timeout_Error">
+        <source>Pushing took too long. You can change the default timeout of 300 seconds by using the --timeout &lt;seconds&gt; option with the push command.</source>
+        <target state="translated">Gönderme çok uzun sürdü. Gönderme komutu ile --timeout &lt;seconds&gt; seçeneğini kullanarak 300 saniyelik varsayılan zaman aşımını değiştirebilirsiniz.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveClientCertCommandDescription">
+        <source>Removes the client certificate configuration that matches the given package source name.</source>
+        <target state="translated">Belirtilen paket kaynak adı ile eşleşen istemci sertifikası yapılandırmasını kaldırır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovePkg_Description">
+        <source>Removes a package reference from a project.</source>
+        <target state="translated">Paket başvurusunu projeden kaldırır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovePkg_PackageIdDescription">
+        <source>Id of the package to be removed.</source>
+        <target state="translated">Kaldırılacak paketin kimliği.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemovePkg_ProjectPathDescription">
+        <source>Path to the project file.</source>
+        <target state="translated">Proje dosyasının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RemoveSourceCommandDescription">
+        <source>Remove a NuGet source.</source>
+        <target state="translated">NuGet kaynağını kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Remove_Description">
+        <source>Remove a NuGet source.</source>
+        <target state="translated">NuGet kaynağını kaldırın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFingerprintDescription">
+        <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</source>
+        <target state="translated">Sertifika için yerel sertifika deposunda arama yapmak üzere kullanılan sertifikanın SHA-256, SHA-384 veya SHA-512 parmak izi. Sertifika deposu, --certificate-store-name ve --certificate-store-location seçenekleri ile belirtilebilir.</target>
+        <note>Please don't localize '--certificate-store-name' and '--certificate-store-location'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePasswordDescription">
+        <source>Password for the certificate, if needed.
+This option can be used to specify the password for the certificate. The command will throw an error message if certificate is password protected but password is not provided as input.</source>
+        <target state="translated">Sertifikanın parolası (gerekliyse).
+Bu seçenek, sertifikanın parolasını belirtmek için kullanılabilir. Sertifika parola ile korunuyorsa ancak parola giriş olarak sağlanmadıysa komut bir hata iletisi oluşturur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificatePathDescription">
+        <source>File path to the certificate to be used while signing the package.</source>
+        <target state="translated">Paketi imzalarken kullanılacak sertifikanın dosya yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreLocationDescription">
+        <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
+This option should be used when specifying the certificate via --certificate-subject-name or --certificate-fingerprint options.</source>
+        <target state="translated">Sertifikayı aramak için kullanılacak X.509 sertifika deposunun adı. Varsayılan olarak, geçerli kullanıcı tarafından kullanılan X.509 sertifika deposu olan "CurrentUser" ayarlanır.
+Bu seçenek, sertifika --certificate-subject-name veya --certificate-fingerprint seçenekleri aracılığıyla belirtildiğinde kullanılmalıdır.</target>
+        <note>Please don't localize '--certificate-subject-name' and '--certificate-fingerprint'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNameDescription">
+        <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
+This option should be used when specifying the certificate via --certificate-subject-name or --certificate-fingerprint options.</source>
+        <target state="translated">Sertifikayı aramak için kullanılacak X.509 sertifika deposunun adı. Varsayılan olarak, kişisel sertifikalara yönelik X.509 sertifika deposu olan "My" ayarlanır.
+Bu seçenek, sertifika --certificate-subject-name veya --certificate-fingerprint seçenekleri aracılığıyla belirtildiğinde kullanılmalıdır.</target>
+        <note>Please don't localize '--certificate-subject-name' and '--certificate-fingerprint'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateSubjectNameDescription">
+        <source>Subject name of the certificate used to search a local certificate store for the certificate.
+The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</source>
+        <target state="translated">Sertifika için yerel bir sertifika deposunda arama yapmak için kullanılan sertifikanın konu adı.
+Arama, sağlanan değeri kullanan büyük/küçük harfe duyarsız bir dize karşılaştırmasıdır. Bu arama sayesinde diğer konu değerlerinden bağımsız olarak, o dizeyi içeren konu adına sahip tüm sertifikalar bulunabilir. Sertifika deposu --certificate-store-name ve --certificate-store-location seçenekleriyle belirtilebilir.</target>
+        <note>Please don't localize '--certificate-store-name' and '--certificate-store-location'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandDescription">
+        <source>Signs NuGet package(s) at &lt;package-paths&gt; with the specified certificate.</source>
+        <target state="translated">Belirtilen sertifikayla şuradaki NuGet paketlerini imzalar: &lt;paket-yolları&gt;.</target>
+        <note>Please don't localize '&lt;package-paths&gt;'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandHashAlgorithmDescription">
+        <source>Hash algorithm to be used to sign the package. Defaults to SHA256.</source>
+        <target state="translated">Paketi imzalamak için kullanılacak karma algoritması. Varsayılan olarak SHA256 kullanılır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertificateFingerprint">
+        <source>{0}: Invalid value for '--certificate-fingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
+        <target state="translated">{0}: '--certificate-fingerprint' seçeneği için geçersiz değer. Değer bir SHA-256, SHA-384 veya SHA-512 sertifikası parmak izi (onaltılık düzende) olmalıdır.</target>
+        <note>{0} - error code</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertificateException">
+        <source>Multiple options were used to specify a certificate.</source>
+        <target state="translated">Sertifika belirtmek için birden fazla seçenek kullanıldı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertificateException">
+        <source>No certificate was provided.</source>
+        <target state="translated">Sertifika sağlanmadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandNoTimestamperWarning">
+        <source>The '--timestamper' option was not provided. The signed package will not be timestamped. To learn more about this option, please visit https://docs.microsoft.com/dotnet/core/tools</source>
+        <target state="translated">'-timestamper' seçeneği sağlanmadı. İmzalı pakete zaman damgası uygulanmayacak. Bu seçenek hakkında daha fazla bilgi için lütfen https://docs.microsoft.com/dotnet/core/tools adresini ziyaret edin</target>
+        <note>Please don't localize '--timestamper'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandOutputDirectoryDescription">
+        <source>Directory where the signed package(s) should be saved. By default the original package is overwritten by the signed package.</source>
+        <target state="translated">İmzalı paketlerin kaydedileceği dizin. Varsayılan olarak, imzalı paket özgün paketin üzerine yazar.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOverwriteDescription">
+        <source>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</source>
+        <target state="translated">Geçerli imzanın üzerine yazılıp yazılmayacağını belirtmek için değiştirin. Varsayılan ayar olarak, paketin imzası zaten varsa komut başarısız olur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandPackagePathDescription">
+        <source>Signs NuGet packages at &lt;package-paths&gt; with the specified certificate.</source>
+        <target state="translated">Belirtilen sertifikayla şuradaki NuGet paketlerini imzalar: &lt;paket-yolları&gt;.</target>
+        <note>Please don't localize '&lt;package-paths&gt;'</note>
+      </trans-unit>
+      <trans-unit id="SignCommandTimestampHashAlgorithmDescription">
+        <source>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</source>
+        <target state="translated">RFC 3161 zaman damgası sunucusu tarafından kullanılacak karma algoritması. Varsayılan değeri: SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandTimestamperDescription">
+        <source>URL to an RFC 3161 timestamping server.</source>
+        <target state="translated">RFC 3161 zaman damgası sunucusunun URL'si.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_Description">
+        <source>Package source (URL, UNC/folder path or package source name) to use. Defaults to DefaultPushSource if specified in NuGet.Config.</source>
+        <target state="translated">Kullanılacak paket kaynağı (URL, UNC/klasör yolu veya paket kaynağı adı). NuGet. config dosyasında belirtilmişse DefaultPushSource varsayılan değeri olur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
+        <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Paket eklemek veya paketleri güncelleştirmek için HTTP bağlantılarına izin verir. Not: Bu yöntem güvenli değildir. Güvenli seçenekler hakkında daha fazla bilgi için https://aka.ms/nuget-https-everywhere sayfasına bakın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandFormatDescription">
+        <source>The format of the list command output: `Detailed` (the default) and `Short`.</source>
+        <target state="translated">Liste komutu çıkışının biçimi: `Detailed` (varsayılan) ve `Short`.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNameDescription">
+        <source>Name of the source.</source>
+        <target state="translated">Kaynağın adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandPasswordDescription">
+        <source>Password to be used when connecting to an authenticated source.</source>
+        <target state="translated">Kimliği doğrulanmış bir kaynağa bağlanılırken kullanılacak parola.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandProtocolVersionDescription">
+        <source>The NuGet server protocol version to be used. Currently supported versions are 2 and 3. See https://learn.microsoft.com/nuget/api/overview for information about the version 3 protocol. Defaults to 2 if not specified.</source>
+        <target state="translated">Kullanılacak NuGet sunucu protokolü sürümü. Şu anda desteklenen sürümler 2 ve 3'tür. Sürüm 3 protokolü hakkında bilgi için https://learn.microsoft.com/nuget/api/overview adresine bakın. Belirtilmemişse varsayılan olarak 2'dir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDescription">
+        <source>Path to the package source.</source>
+        <target state="translated">Paket kaynağının yolu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandStorePasswordInClearTextDescription">
+        <source>Enables storing portable package source credentials by disabling password encryption.</source>
+        <target state="translated">Parola şifrelemesini devre dışı bırakarak taşınabilir paket kaynağı kimlik bilgilerini depolamayı etkinleştirir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUsernameDescription">
+        <source>Username to be used when connecting to an authenticated source.</source>
+        <target state="translated">Kimliği doğrulanmış bir kaynağa bağlanılırken kullanılacak kullanıcı adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidAuthenticationTypesDescription">
+        <source>Comma-separated list of valid authentication types for this source. Set this to basic if the server advertises NTLM or Negotiate and your credentials must be sent using the Basic mechanism, for instance when using a PAT with on-premises Azure DevOps Server. Other valid values include negotiate, kerberos, ntlm, and digest, but these values are unlikely to be useful.</source>
+        <target state="translated">Bu kaynak için geçerli kimlik doğrulama türlerinin virgülle ayrılmış listesi. Sunucu, NTLM veya Negotiate sunuyorsa ve kimlik bilgilerinizin Temel mekanizma kullanılarak gönderilmesi gerekiyorsa (ör. şirket içi Azure DevOps Server ile PAT kullanılırken) bunu temel olarak ayarlayın. Diğer geçerli değerler negotiate, kerberos, ntlm ve digest değerleridir ancak bu değerlerin işe yarayacağı kesin değildir.</target>
+        <note>Please don't localize "basic, NTLM, Negotiate, kerberos, ntlm, digest"</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidProtocolVersion">
+        <source>The protocol version specified is invalid. Provide a valid protocol version.</source>
+        <target state="translated">Belirtilen protokol sürümü geçersiz. Geçerli bir protokol sürümü sağlayın.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Sources_Redirect">
+        <source>The proper command is '{0}'.</source>
+        <target state="translated">Uygun komut: '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolApiKey_Description">
+        <source>The API key for the symbol server.</source>
+        <target state="translated">Sembol sunucusunun API anahtarı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SymbolSource_Description">
+        <source>Symbol server URL to use.</source>
+        <target state="translated">Kullanılacak sembol sunucusu URL 'SI.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustAuthorCommandDescription">
+        <source>Adds a trusted signer with the given name, based on the author signature of the package.</source>
+        <target state="translated">Paketin yazar imzasına göre belirtilen ada sahip bir güvenilen imzalayan ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustCertificateFingerprint">
+        <source>The fingerprint of the certificate.</source>
+        <target state="translated">Sertifikanın parmak izi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustCommandAlgorithm">
+        <source>Specifies the hash algorithm used to calculate the certificate fingerprint. Defaults to SHA256. Values supported are SHA256, SHA384 and SHA512.</source>
+        <target state="translated">Sertifika parmak izini hesaplamak için kullanılan karma algoritmayı belirtir. Varsayılan değer: SHA256. Desteklenen değerler: SHA256, SHA384 ve SHA512.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustCommandAllowUntrustedRoot">
+        <source>Specifies if the certificate for the trusted signer should be allowed to chain to an untrusted root. This is not recommended.</source>
+        <target state="translated">Güvenilen imzalayana ait sertifikanın güvenilmeyen bir köke zincirlenmesine izin verilip verilmeyeceğini belirtir. Bu önerilmez.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustCommandDescription">
+        <source>Manage the trusted signers.</source>
+        <target state="translated">Güvenilen imzalayanları yönetin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustCommandOwners">
+        <source>Semi-colon separated list of trusted owners to further restrict the trust of a repository.</source>
+        <target state="translated">Bir deponun güvenilirliğini daha fazla kısıtlamak için güvenilen sahiplerin noktalı virgülle ayrılmış listesi.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustListCommandDescription">
+        <source>Lists all the trusted signers in the configuration.</source>
+        <target state="translated">Yapılandırmadaki tüm güvenilen imzalayanları listeler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustLocalSignedNupkgPath">
+        <source>The given package should be a local path to the signed .nupkg file.</source>
+        <target state="translated">Belirtilen paket, imzalı .nupkg dosyasının yerel yolu olmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustRemoveCommandDescription">
+        <source>Removes any trusted signers that match the given name.</source>
+        <target state="translated">Belirtilen adla eşleşen tüm güvenilen imzalayanları kaldırır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustRepositoryCommandDescription">
+        <source>Adds a trusted signer with the given name, based on the repository signature or countersignature of a signed package.</source>
+        <target state="translated">İmzalı paketin depo veya onay imzasına göre belirtilen ada sahip bir güvenilen imzalayan ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustSourceCommandDescription">
+        <source>Adds a trusted signer based on a given package source.</source>
+        <target state="translated">Belirli bir paket kaynağına göre güvenilen imzalayan ekleyin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustSourceSignerName">
+        <source>"The name of the trusted signer to add. If only &lt;NAME&gt; is provided without --&lt;source-url&gt;, the package source from your NuGet configuration files with the same name is added to the trusted list. If &lt;NAME&gt; already exists in the configuration, the package source is appended to it."</source>
+        <target state="translated">"Eklenecek güvenilen imzalayanın adı. --&lt;source-url&gt; olmadan yalnızca &lt;NAME&gt; sağlanırsa NuGet yapılandırma dosyalarınızdaki aynı ada sahip paket kaynağı güvenilenler listesine eklenir. Yapılandırmada &lt;NAME&gt; varsa paket kaynağı bu öğeye eklenir."</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustSourceUrl">
+        <source>If a source-url is provided, it must be a v3 package source URL (like https://api.nuget.org/v3/index.json). Other package source types are not supported.</source>
+        <target state="translated">Kaynak-URL sağlanırsa sağlanan URL v3 paketi kaynak URL'si olmalıdır (ör. https://api.nuget.org/v3/index.json). Diğer paket kaynak türleri desteklenmiyor.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustSyncCommandDescription">
+        <source>Deletes the current list of certificates and replaces them with an up-to-date list from the repository.</source>
+        <target state="translated">Geçerli sertifika listesini siler ve listeyi depodaki güncel bir listeyle değiştirir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedCertificateSignerNameToAdd">
+        <source>The name of the trusted signer to add. If a trusted signer with the given name already exists, the certificate item is added to that signer. Otherwise a trusted author is created with a certificate item from the given certificate information.</source>
+        <target state="translated">Eklenecek güvenilen imzalayanın adı. Verilen ada sahip güvenilen imzalayan zaten varsa sertifika öğesi bu imzalayana eklenir. Aksi takdirde, belirtilen sertifika bilgilerindeki sertifika öğesiyle bir güvenilen yazar oluşturulur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerNameExists">
+        <source>The name of the existing trusted signer to sync.</source>
+        <target state="translated">Eşitlenecek mevcut güvenilen imzalayanın adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerNameToAdd">
+        <source>The name of the trusted signer to add. If name already exists in the configuration, the signature is appended.</source>
+        <target state="translated">Eklenecek güvenilen imzalayanın adı. Ad yapılandırmada zaten varsa imza eklenir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerNameToRemove">
+        <source>The name of the existing trusted signer to remove.</source>
+        <target state="translated">Kaldırılacak mevcut güvenilen imzalayanın adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_MoreThanOnePackage">
+        <source>Unsupported: Updating more than one package is not yet supported</source>
+        <target state="translated">Desteklenmiyor: Birden fazla paketin güncelleştirilmesi henüz desteklenmiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_PackageSourceMapping">
+        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
+        <target state="translated">Desteklenmiyor: Paket Kaynağı Eşlemesi özelliğini kullanan projeler henüz desteklenmiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
+        <source>The package {0} references different versions of the package for different target frameworks. This is not supported by this command. Please edit the project file directly. ({1})</source>
+        <target state="translated">{0} paketi farklı hedef çerçeveler için paketin farklı sürümlerine başvuruyor. Bu işlem, bu komut tarafından desteklenmiyor. Lütfen proje dosyasını doğrudan düzenleyin. ({1})</target>
+        <note>0 - The package id
+1 - The project path</note>
+      </trans-unit>
+      <trans-unit id="Unsupported_UpdatingMoreThanOneProject">
+        <source>Unsupported: Updating more than one project is not yet supported</source>
+        <target state="translated">Desteklenmiyor: Birden fazla projenin güncelleştirilmesi henüz desteklenmiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Unsupported_UpgradeAllPackages">
+        <source>Unsupported: Upgrading all packages in a project is not yet supported</source>
+        <target state="translated">Desteklenmiyor: Bir projedeki tüm paketlerin yükseltilmesi henüz desteklenmiyor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateClientCertCommandDescription">
+        <source>Updates the client certificate configuration that matches the given package source name.</source>
+        <target state="translated">Belirtilen paket kaynak adı ile eşleşen istemci sertifikası yapılandırmasını güncelleştirir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UpdateSourceCommandDescription">
+        <source>Update a NuGet source.</source>
+        <target state="translated">NuGet kaynağını güncelleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Update_Description">
+        <source>Update a NuGet source.</source>
+        <target state="translated">NuGet kaynağını güncelleştirin.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Verbosity_Description">
+        <source>Set the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].</source>
+        <target state="translated">Komutun ayrıntı düzeyini ayarlayın. İzin verilen değerler şunlardır: q[uiet], m[inimal], n[ormal], d[etailed] ve diag[nostic].</target>
+        <note>Please don't localize "q[uiet]", "m[inimal]", "n[ormal]", "d[etailed]", or "diag[nostic]"</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommandAllDescription">
+        <source>Specifies that all verifications possible should be performed to the package(s).</source>
+        <target state="translated">Mümkün olan tüm doğrulamaların paketlerde gerçekleştirilmesi gerektiğini belirtir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandCertificateFingerprintDescription">
+        <source>Verify that the signer certificate matches with one of the specified SHA256 fingerprints. A certificate SHA256 fingerprint is a SHA256 hash of the certificate used to identify the certificate. Multiple inputs should be separated by space.</source>
+        <target state="translated">İmzalayan sertifikasının, belirtilen SHA256 parmak izlerinden biriyle eşleştiğini doğrulayın. Sertifika SHA256 parmak izi, sertifikayı tanımlamak için kullanılan sertifikanın bir SHA256 karmasıdır. Birden çok giriş boşlukla ayrılmalıdır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandDescription">
+        <source>Verifies a signed NuGet package.</source>
+        <target state="translated">İmzalı bir NuGet paketini doğrular.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommandPackagePathDescription">
+        <source>Specify the path to the package</source>
+        <target state="translated">Paketin yolunu belirtin</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warn_AddPkgWithoutRestore">
+        <source>--no-restore|-n flag was used. No compatibility check will be done and the added package reference will be unconditional.</source>
+        <target state="translated">--no-restore|-n bayrağı kullanıldı. Uyumluluk denetimi yapılmayacak ve eklenen paket başvurusu koşulsuz olacak.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_AlreadyHighestVersion">
+        <source>The package {0} is already referencing the highest version {1} in project {2}</source>
+        <target state="translated">{0} paketi zaten {2} projesinde içinde en yüksek {1} sürümüne başvuruyor</target>
+        <note>0 - package id
+1 - version string
+2 - project path</note>
+      </trans-unit>
+      <trans-unit id="Warning_AlreadyUsingSameVersion">
+        <source>Package {0} is already referencing version {1}</source>
+        <target state="translated">{0} paket zaten {1} sürümüyle referans alıyor</target>
+        <note>0 - package id
+1 - version string</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">'{0}' güvenlik kaynağı hassasiyet verisi sağlamadı.</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Description">
+        <source>Shows the dependency graph for a particular package for a given project or solution.</source>
+        <target state="translated">Belirli bir proje veya çözüm için belirli bir paketin bağımlılık grafiğini gösterir.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_ArgumentCannotBeEmpty">
+        <source>Unable to run 'dotnet nuget why'. The '{0}' argument cannot be empty.</source>
+        <target state="translated">'Dotnet nuget why' çalıştırılamıyor. '{0}' bağımsız değişkeni boş olamaz.</target>
+        <note>{0} - Argument that was not provided</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_ArgumentExceptionThrown">
+        <source>Unable to run 'dotnet nuget why'. {0}</source>
+        <target state="translated">'Dotnet nuget why' çalıştırılamıyor. {0}</target>
+        <note>{0} - Exception mssage</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithProject">
+        <source>The file '{0}' does not appear to be a NuGet assets file. Please run restore for project '{1}' before running this command.</source>
+        <target state="translated">'{0}' dosyası NuGet varlıkları dosyası gibi görünmüyor. Lütfen bu komutu çalıştırmadan önce '{1}' projesi için geri yüklemeyi çalıştırın.</target>
+        <note>{0} - Assets file path, {1} - Project name</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Error_InvalidAssetsFile_WithoutProject">
+        <source>The file '{0}' does not appear to be a NuGet assets file. For more information, see https://aka.ms/dotnet/nuget/why#older-project-format</source>
+        <target state="translated">'{0}' dosyası NuGet varlıkları dosyası gibi görünmüyor. Daha fazla bilgi için bkz. https://aka.ms/dotnet/nuget/why#older-project-format</target>
+        <note>{0} - Assets file path</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_FrameworksOption_Description">
+        <source>The target framework(s) for which dependency graphs are shown.</source>
+        <target state="translated">Bağımlılık graflarının gösterildiği hedef çerçeveler.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_Message_DependencyGraphsFoundInProject">
+        <source>Project '{0}' has the following dependency graph(s) for '{1}':</source>
+        <target state="translated">'{0}' projesi '{1}' için aşağıdaki bağımlılık grafiğine/grafiklerine sahiptir:</target>
+        <note>{0} - Project name, {1} - Target package</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Message_NoDependencyGraphsFoundForFramework">
+        <source>No dependency graph(s) found for this target framework.</source>
+        <target state="translated">Bu hedef Framework için bağımlılık grafı bulunamadı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_Message_NoDependencyGraphsFoundInProject">
+        <source>Project '{0}' does not have a dependency on '{1}'.</source>
+        <target state="translated">'{0}' projesinin '{1}'ye bağımlılığı yok.</target>
+        <note>{0} - Project name, {1} - Target package</note>
+      </trans-unit>
+      <trans-unit id="WhyCommand_Message_NonSDKStyleProjectsAreNotSupported">
+        <source>Unable to run 'dotnet nuget why' for project '{0}'. See https://aka.ms/dotnet/nuget/why#older-project-format</source>
+        <target state="translated">'{0}' projesi için 'dotnet nuget why' çalıştırılamıyor. Bkz. https://aka.ms/dotnet/nuget/why#older-project-format</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_PackageArgument_Description">
+        <source>The package name to lookup in the dependency graph.</source>
+        <target state="translated">Bağımlılık grafında aranacak paket adı.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_PathArgument_Description">
+        <source>A path to a project, solution file, or directory.</source>
+        <target state="translated">Bir projeye, çözüm dosyasına veya dizine giden yol.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="WhyCommand_Warning_AssetsFileDoesNotContainSpecifiedTarget">
+        <source>The assets file '{0}' for project '{1}' does not contain a target for the specified input framework '{2}'.</source>
+        <target state="translated">'{1}' projesinin '{0}' varlık dosyası, belirtilen '{2}' giriş çerçevesi için bir hedef içermiyor.</target>
+        <note>{0} - Assets file path, {1} - Project name, {2} - Framework</note>
+      </trans-unit>
+      <trans-unit id="pkgSearch_Description">
+        <source>Searches one or more package sources for packages that match a search term. If no sources are specified, all sources defined in the NuGet.Config are used.</source>
+        <target state="translated">Bir arama terimiyle eşleşen paketler için bir veya daha fazla paket kaynağı arar. Kaynak belirtilmezse NuGet.Config’de tanımlanan tüm kaynaklar kullanılır.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_ExactMatchDescription">
+        <source>Require that the search term exactly match the name of the package. Causes `--take` and `--skip` options to be ignored.</source>
+        <target state="translated">Arama teriminin, paketin adıyla tam olarak eşleşmesini gerektir. “--take” ve “--skip” seçeneklerinin yoksayılmasına neden olur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_FormatDescription">
+        <source>Format the output accordingly. Either `table`, or `json`. The default value is `table`.</source>
+        <target state="translated">Çıkışı uygun şekilde biçimlendir. “Tablo” veya “json”. Varsayılan değer: “tablo”.</target>
+        <note>Please don't translate `table`, `json`.</note>
+      </trans-unit>
+      <trans-unit id="pkgSearch_InteractiveDescription">
+        <source>Stop and wait for user input or action (for example to complete authentication).</source>
+        <target state="translated">Dur ve kullanıcı girişini veya eylemini (örneğin, kimlik doğrulamasının tamamlanmasını) bekle.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_PrereleaseDescription">
+        <source>Include prerelease packages.</source>
+        <target state="translated">Ön sürüm paketlerini dahil et.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_SkipDescription">
+        <source>Number of results to skip, to allow pagination. Default 0.</source>
+        <target state="translated">Sayfalandırmaya izin vermek için atlanacak sonuç sayısı. Varsayılan: 0.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_SourceDescription">
+        <source>Package source to search. You can pass multiple `--source` options to search multiple package sources. Example: `--source https://api.nuget.org/v3/index.json`.</source>
+        <target state="translated">Aranacak paket kaynağı. Birden çok paket kaynağı aramak için birden çok “--source” seçeneğini geçirebilirsiniz. Örnek: “--source https://api.nuget.org/v3/index.json”.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_TakeDescription">
+        <source>Number of results to return. Default 20.</source>
+        <target state="translated">Döndürülecek sonuç sayısı. Varsayılan: 20.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="pkgSearch_VerbosityDescription">
+        <source>Display this amount of details in the output: `normal`, `minimal`, `detailed`. The default is `normal`.</source>
+        <target state="translated">Çıkışta şu miktarda ayrıntı görüntüle: “normal”, “minimal”, “ayrıntılı”. Varsayılan: “normal”.</target>
+        <note>Please don't translate `minimal`, `normal`, `detailed`</note>
+      </trans-unit>
+      <trans-unit id="pkgSearch_termDescription">
+        <source>Search term to filter package names, descriptions, and tags. Used as a literal value. Example: `dotnet package search some.package`. See also `--exact-match`.</source>
+        <target state="translated">Paket adlarını, açıklamalarını ve etiketlerini filtrelemek için arama terimi. Değişmez değer olarak kullanılır. Örnek: “dotnet paketi araması some.package”. Ayrıca bkz. “--exact-match”.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
