@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <!-- Repo Version Information -->
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
@@ -26,8 +27,6 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.100-preview.7.25380.108</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.7.25380.108</PrivateSourceBuiltArtifactsVersion>
-    <!-- arcade dependencies -->
-    <MicrosoftDotNetBuildManifestVersion>10.0.0-beta.25380.108</MicrosoftDotNetBuildManifestVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->

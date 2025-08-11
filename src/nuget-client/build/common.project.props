@@ -18,7 +18,7 @@
     <!-- Target frameworks for class libraries-->
     <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
-    <TargetFrameworksLibrary Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
 
     <!-- Target frameworks for class libraries which require signing APIs which need to target NET 5.0 -->
     <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
@@ -26,12 +26,11 @@
 
     <!-- Target framework for runnable apps -->
     <TargetFrameworksExe>$(NETCoreTargetFramework)</TargetFrameworksExe>
-    <TargetFrameworksExe Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
+    <TargetFrameworksExe Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
 
     <!-- Target frameworks for unit tests -->
     <TargetFrameworksUnitTest>$(NETCoreTargetFramework)</TargetFrameworksUnitTest>
-    <TargetFrameworksUnitTest Condition="'$(IsXPlat)' != 'true' And '$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
-
+    <TargetFrameworksUnitTest Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
   </PropertyGroup>
 
   <!-- Common -->

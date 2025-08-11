@@ -25,7 +25,7 @@ internal abstract class CohostDocumentPullDiagnosticsEndpointBase<TRequest, TRes
     IHtmlRequestInvoker requestInvoker,
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
-    ILoggerFactory loggerFactory)
+    ILogger logger)
     : AbstractCohostDocumentEndpoint<TRequest, TResponse>(incompatibleProjectService)
     where TRequest : notnull
 {
@@ -33,7 +33,7 @@ internal abstract class CohostDocumentPullDiagnosticsEndpointBase<TRequest, TRes
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
-    private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostDocumentPullDiagnosticsEndpointBase<TRequest, TResponse>>();
+    private readonly ILogger _logger = logger;
 
     protected override bool MutatesSolutionState => false;
 

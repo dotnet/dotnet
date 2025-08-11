@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 namespace Microsoft.CodeAnalysis;
 
@@ -117,7 +116,7 @@ internal static class ProjectExtensions
 
         var identity = RazorUri.GetIdentityOfGeneratedDocument(project.Solution, generatedDocumentUri);
 
-        if (identity.GeneratorTypeName != typeof(RazorSourceGenerator).FullName)
+        if (!identity.IsRazorSourceGeneratedDocument())
         {
             // This is not a Razor source generated document, so we don't know the hint name.
             hintName = null;

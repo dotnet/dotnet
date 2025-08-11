@@ -31,7 +31,13 @@ internal sealed class DocumentPullDiagnosticsEndpoint(
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : CohostDocumentPullDiagnosticsEndpointBase<DocumentDiagnosticParams, FullDocumentDiagnosticReport?>(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientCapabilitiesService, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
+    : CohostDocumentPullDiagnosticsEndpointBase<DocumentDiagnosticParams, FullDocumentDiagnosticReport?>(
+        incompatibleProjectService,
+        remoteServiceInvoker,
+        requestInvoker,
+        clientCapabilitiesService,
+        telemetryReporter,
+        loggerFactory.GetOrCreateLogger<DocumentPullDiagnosticsEndpoint>()), IDynamicRegistrationProvider
 {
     protected override string LspMethodName => Methods.TextDocumentDiagnosticName;
     protected override bool SupportsHtmlDiagnostics => false;

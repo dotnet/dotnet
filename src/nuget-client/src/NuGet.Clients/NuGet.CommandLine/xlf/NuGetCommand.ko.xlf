@@ -701,6 +701,11 @@ nuget pack foo.nuspec -Version 2.1.0</target>
         <target state="translated">nuspec 파일의 버전 번호를 재정의합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
+        <source>Allow pushing to HTTP sources (insecure).</source>
+        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PushCommandDescription">
         <source>Pushes a package to the server and publishes it.</source>
         <target state="translated">패키지를 서버로 푸시하고 게시합니다.</target>

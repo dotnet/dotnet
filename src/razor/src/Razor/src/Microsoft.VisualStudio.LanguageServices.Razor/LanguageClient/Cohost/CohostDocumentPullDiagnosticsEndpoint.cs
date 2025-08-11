@@ -33,7 +33,13 @@ internal sealed class CohostDocumentPullDiagnosticsEndpoint(
     IClientCapabilitiesService clientCapabilitiesService,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : CohostDocumentPullDiagnosticsEndpointBase<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(incompatibleProjectService, remoteServiceInvoker, requestInvoker, clientCapabilitiesService, telemetryReporter, loggerFactory), IDynamicRegistrationProvider
+    : CohostDocumentPullDiagnosticsEndpointBase<VSInternalDocumentDiagnosticsParams, VSInternalDiagnosticReport[]>(
+        incompatibleProjectService,
+        remoteServiceInvoker,
+        requestInvoker,
+        clientCapabilitiesService,
+        telemetryReporter,
+        loggerFactory.GetOrCreateLogger<CohostDocumentPullDiagnosticsEndpoint>()), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
