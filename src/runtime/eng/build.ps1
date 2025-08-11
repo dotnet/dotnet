@@ -369,9 +369,22 @@ if ($bootstrap -eq $True) {
     $bootstrapArguments = $arguments
   }
 
+  if ($configuration.Count -gt 1) {
+    Write-Error "Building the bootstrap build does not support multiple configurations. Please specify a single configuration using -configuration."
+    exit 1
+  }
+
+  if ($arch.Count -gt 1) {
+    Write-Error "Building the bootstrap build does not support multiple architectures. Please specify a single architecture using -arch."
+    exit 1
+  }
+
+  $bootstrapArguments += " /p:TargetArchitecture=$($arch[0])"
+  $bootstrapArguments += " -configuration $((Get-Culture).TextInfo.ToTitleCase($config))"
+
   $bootstrapArguments += " /p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
   Invoke-Expression "& `"$PSScriptRoot/common/build.ps1`" $bootstrapArguments"
-  
+
   # Remove artifacts from the bootstrap build so the product build is a "clean" build.
   Write-Host "Cleaning up artifacts from bootstrap build..."
   Remove-Item -Recurse "$PSScriptRoot/../artifacts/bin"
