@@ -83,15 +83,11 @@
         },
         {
             "name": "scenario-tests",
-            "defaultRemote": "https://github.com/dotnet/scenario-tests",
+            "defaultRemote": "https://github.com/dotnet/scenario-tests"
         },
         {
             "name": "sdk",
-            "defaultRemote": "https://github.com/dotnet/sdk",
-            "exclude": [
-              // Exclude the VMR content as this is copied to the root of VMR via the synchronization process.
-              "src/SourceBuild/content/**/*"
-            ]
+            "defaultRemote": "https://github.com/dotnet/sdk"
         },
         {
             "name": "source-build-reference-packages",
@@ -99,7 +95,7 @@
         },
         {
             "name": "sourcelink",
-            "defaultRemote": "https://github.com/dotnet/sourcelink",
+            "defaultRemote": "https://github.com/dotnet/sourcelink"
         },
         {
             "name": "symreader",
