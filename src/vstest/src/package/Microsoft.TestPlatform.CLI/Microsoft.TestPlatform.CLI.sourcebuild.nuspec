@@ -102,10 +102,25 @@
     <file src="$SourceBuildTfmCurrent$\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
 
     <!-- Resources -->
-    <file src="$SourceBuildTfmPrevious$\**\Microsoft.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" />
-    <file src="$SourceBuildTfmCurrent$\**\Microsoft.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
-    <file src="$SourceBuildTfmPrevious$\**\Microsoft.VisualStudio.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" />
-    <file src="$SourceBuildTfmCurrent$\**\Microsoft.VisualStudio.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
+    <!-- Copy all, except the excluded, because those belong to Extensions folder. -->
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" exclude="**.TestHostRuntimeProvider**;**BlameDataCollector**" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" exclude="**.TestHostRuntimeProvider**;**BlameDataCollector**" />
+
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.TestPlatform.TestHostRuntimeProvider.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.TestPlatform.Extensions.BlameDataCollector.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    
+    <!-- Copy all, except the excluded, because those belong to Extensions folder. -->
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.VisualStudio.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" exclude="**Html**;**Trx**" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.VisualStudio.TestPlatform.*.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" exclude="**Html**;**Trx**" />
+
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.VisualStudio.TestPlatform.Extensions.Html.TestLogger.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+    <file src="$SourceBuildTfmPrevious$\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$\Extensions" />
+    <file src="$SourceBuildTfmCurrent$\**\Microsoft.VisualStudio.TestPlatform.Extensions.Trx.TestLogger.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$\Extensions" />
+
+
     <file src="$SourceBuildTfmPrevious$\**\vstest.console.resources.dll" target="contentFiles\any\$SourceBuildTfmPrevious$" />
     <file src="$SourceBuildTfmCurrent$\**\vstest.console.resources.dll" target="contentFiles\any\$SourceBuildTfmCurrent$" />
   </files>
