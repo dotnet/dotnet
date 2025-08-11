@@ -17,8 +17,9 @@
       <_CommonProperties Include="DotNetBuildSourceOnly=$(DotNetBuildSourceOnly)" Condition="'$(DotNetBuildSourceOnly)' != ''" />
 
       <!-- NuGet uses a pre-release string that is dependent on the build revision. This is normally set via their
-           YAML. Set based on the parsed version information. -->
-      <_CommonProperties Include="BuildNumber=$(VersionSuffixBuildOfTheDay)" Condition="'$(VersionSuffixBuildOfTheDay)' != ''" />
+           YAML. Set based on the parsed version information + AzDO's counter functionality. The version is not that
+           important as long as it doesn't cause overlapping package IDs. -->
+      <_CommonProperties Include="BuildNumber=$(VersionSuffixDateStamp)$(VersionSuffixBuildOfTheDay)" Condition="'$(VersionSuffixBuildOfTheDay)' != '' and '$(VersionSuffixDateStamp)' != ''" />
     </ItemGroup>
 
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
