@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <PropertyGroup>
     <!-- This repo version -->
     <!-- We need to modify the version here manually everytime the version changes from the upstream branch jbevain/cecil -->
