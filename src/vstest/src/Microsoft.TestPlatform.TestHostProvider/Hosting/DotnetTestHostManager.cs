@@ -569,8 +569,12 @@ public class DotnetTestHostManager : ITestRuntimeProvider2
                     }
                     else
                     {
-                        // Set the architecture specific variable to the environment of the process so it is picked up.
-                        startInfo.EnvironmentVariables.Add(environmentVariableName, dotnetRootPath);
+                        var architectureFromEnv = (Architecture)Enum.Parse(typeof(Architecture), dotnetRootArchitecture, ignoreCase: true);
+                        if (architectureFromEnv == _architecture)
+                        {
+                            // Set the architecture specific variable to the environment of the process so it is picked up.
+                            startInfo.EnvironmentVariables.Add(environmentVariableName, dotnetRootPath);
+                        }
                     }
                 }
                 else
