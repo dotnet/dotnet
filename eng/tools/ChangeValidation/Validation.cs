@@ -105,6 +105,7 @@ internal static class Validation
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
+        Console.WriteLine($"Merge base commit is {mergeBaseCommit}");
         Console.WriteLine($"Found modifications to {changedFiles.Count} file(s) in PR base branch");
 
         return new PrInfo(targetBranch, changedFiles);
