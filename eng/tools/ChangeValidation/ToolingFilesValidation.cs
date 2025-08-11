@@ -35,7 +35,7 @@ internal class ToolingFilesValidation : IValidationStep
         {
             foreach (var file in syncToolingChanges)
             {
-                LogError($"The file {file} is a tooling file reserved for automated processes. Modifying this file is not permitted.");
+                LogError($"The file `{file}` is a tooling file reserved for automated processes. Modifying this file is not permitted.");
             }
             return Task.FromResult(false);
         }
