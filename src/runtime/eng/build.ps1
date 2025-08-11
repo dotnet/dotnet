@@ -380,7 +380,7 @@ if ($bootstrap -eq $True) {
   }
 
   $bootstrapArguments += " /p:TargetArchitecture=$($arch[0])"
-  $bootstrapArguments += " -configuration $((Get-Culture).TextInfo.ToTitleCase($config))"
+  $bootstrapArguments += " -configuration $((Get-Culture).TextInfo.ToTitleCase($configuration[0]))"
 
   $bootstrapArguments += " /p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
   Invoke-Expression "& `"$PSScriptRoot/common/build.ps1`" $bootstrapArguments"
