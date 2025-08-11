@@ -74,10 +74,11 @@ stages:
         - powershell: |
             . "$(Build.SourcesDirectory)\eng\common\tools.ps1"
             InitializeDotNetCli -install $true
+            Write-Host "##vso[task.setvariable variable=DOTNET_INSTALL_DIR]$env:DOTNET_INSTALL_DIR"
           displayName: Initialize .NET CLI
 
         - powershell: |
-            & "$env:DOTNET_INSTALL_DIR\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
+            & "$(DOTNET_INSTALL_DIR)\dotnet.exe" run --project eng/tools/ChangeValidation/ChangeValidation.csproj
           displayName: Run ChangeValidation tool
           env:
             SYSTEM_PULLREQUEST_TARGETBRANCH: $(System.PullRequest.TargetBranch)
