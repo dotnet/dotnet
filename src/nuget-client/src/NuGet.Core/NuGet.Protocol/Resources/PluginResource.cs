@@ -66,8 +66,6 @@ namespace NuGet.Protocol.Core.Types
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var messages = new List<string>();
-
             foreach (var result in _pluginCreationResults)
             {
                 if (!string.IsNullOrEmpty(result.Message))

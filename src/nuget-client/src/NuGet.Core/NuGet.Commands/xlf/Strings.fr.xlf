@@ -1,0 +1,1507 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="fr" original="../Strings.resx">
+    <body>
+      <trans-unit id="ArgumentCannotBeNullOrEmpty">
+        <source>The argument cannot be null or empty.</source>
+        <target state="translated">L'argument ne peut pas être null ou vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CannotBeUsedWithOtherValues">
+        <source>'{0}' cannot be used in conjunction with other values.</source>
+        <target state="translated">Impossible d'utiliser '{0}' avec d'autres valeurs.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyAdded">
+        <source>Client certificate configured for the package source '{0}' was successfully added.</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' a été correctement ajouté.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyRemoved">
+        <source>Client certificate configured for the package source '{0}' was successfully removed.</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' a été correctement supprimé.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificateSuccessfullyUpdated">
+        <source>Client certificate configured for the package source '{0}' was successfully updated.</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' a été correctement mis à jour.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertFilePath">
+        <source>{0}File path: {1}</source>
+        <target state="translated">{0}Chemin du fichier : {1}</target>
+        <note>0 - default indentation
+    1 - file path</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertNoPassword">
+        <source>{0}Password: -</source>
+        <target state="translated">{0}Mot de passe : -</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesFileCertWithPassword">
+        <source>{0}Password: ****</source>
+        <target state="translated">{0}Mot de passe : ****</target>
+        <note>0 - default indentation</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateError">
+        <source>{0}Certificates status: {1}</source>
+        <target state="translated">{0}État des certificats : {1}</target>
+        <note>0 - default indentation
+    1 - error message</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesItemCertificateMessage">
+        <source>{0}Certificate: {1}</source>
+        <target state="translated">{0}Certificat : {1}</target>
+        <note>0 - default indentation
+    1 - certificate hash string
+</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesLogTitle">
+        <source>{0}{1} [{2}]</source>
+        <target state="translated">{0}{1} [{2}]</target>
+        <note>0 - default indentation
+    1 - package source name
+    2 - client certificate source type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindBy">
+        <source>{0}Find by: {1}</source>
+        <target state="translated">{0}Rechercher par : {1}</target>
+        <note>0 - default indentation
+    1 - find type</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertFindValue">
+        <source>{0}Find value: {1}</source>
+        <target state="translated">{0}Rechercher la valeur : {1}</target>
+        <note>0 - default indentation
+    1 - find value</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreLocation">
+        <source>{0}Store location: {1}</source>
+        <target state="translated">{0}Emplacement du magasin : {1}</target>
+        <note>0 - default indentation
+    1 - store location</note>
+      </trans-unit>
+      <trans-unit id="ClientCertificatesStoreCertStoreName">
+        <source>{0}Store name: {1}</source>
+        <target state="translated">{0}Nom du magasin : {1}</target>
+        <note>0 - default indentation
+    1 - store name
+</note>
+      </trans-unit>
+      <trans-unit id="Error_AuthorTrustExpectedAuthorSignature">
+        <source>Unable to add trusted author. The package is not author signed.</source>
+        <target state="translated">Impossible d'ajouter un auteur approuvé. Le package n'est pas signé par l'auteur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotFindMsbuild">
+        <source>Cannot find version of msbuild.</source>
+        <target state="translated">La version de msbuild est introuvable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CannotTrustOwnersForAuthor">
+        <source>Trusted owners are not supported in trusted author items.</source>
+        <target state="translated">Les propriétaires approuvés ne sont pas pris en charge dans les éléments d'auteurs approuvés.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_FloatingVersionsNotAllowed">
+        <source>The following PackageVersion items cannot specify a floating version: {0}. For more information on how to enable this functionality for projects using Central Package Management, visit https://aka.ms/nu1011</source>
+        <target state="translated">Les éléments PackageVersion suivants ne peuvent pas spécifier de version flottante : {0}. Pour plus d’informations sur l’activation de cette fonctionnalité pour les projets utilisant Package Management central, visitez https://aka.ms/nu1011</target>
+        <note>
+      0 - The comma delimited list of package names that specified a floating version.
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_ImplicitPackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items are implicitly defined and cannot define a PackageVersion item: {0}. Projects using Central Package Management require that implicit package versions be specified by the PackageReference item. For more information, visit https://aka.ms/sdkimplicitrefs</source>
+        <target state="translated">Les éléments PackageReference suivants sont implicitement définis et ne peuvent pas définir d’élément PackageVersion : {0}. Les projets utilisant Package Management central nécessitent que les versions de package implicites soient spécifiées par l’élément PackageReference. Pour plus d'informations, visitez : https://aka.ms/sdkimplicitrefs</target>
+        <note>
+      0 - Comma delimited list of the package IDs that were implicitly defined and should not have a PackageVersion item
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+  </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_MissingPackageVersion">
+        <source>The following PackageReference items do not define a corresponding PackageVersion item: {0}. Projects using Central Package Management must declare PackageReference and PackageVersion items with matching names. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">Les éléments PackageReference suivants ne définissent pas d’élément PackageVersion correspondant : {0}. Les projets utilisant Package Management central doivent déclarer des éléments PackageReference et PackageVersion avec des noms correspondants. Pour plus d’informations, visitez https://aka.ms/nuget/cpm/gettingstarted</target>
+        <note>
+      0 - The comma delimited list of package names that did not have a version specified.
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_PackageReferenceWithVersionNotAllowed">
+        <source>The following PackageReference items cannot define a value for Version: {0}. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted</source>
+        <target state="translated">Les éléments PackageReference suivants ne peuvent pas définir de valeur pour la version : {0}. Les projets utilisant Package Management central doivent définir une valeur de version sur un élément PackageVersion. Pour plus d’informations, visitez https://aka.ms/nuget/cpm/gettingstarted</target>
+        <note>
+      0 - Comma delimited list of the package IDs that specified a Version
+      Do not localize `PackageReference`
+      Do not localize `PackageVersion`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_CentralPackageManagement_VersionOverrideNotAllowed">
+        <source>The following PackageReference items cannot specify a value for VersionOverride: {0}.  Projects using Central Package Management are currently configured to disable this functionality. For more information, visit https://aka.ms/nuget/cpm/versionoverride</source>
+        <target state="translated">Les éléments PackageReference suivants ne peuvent pas spécifier de valeur pour VersionOverride : {0}.  Les projets utilisant Package Management central sont actuellement configurés pour désactiver cette fonctionnalité. Pour plus d’informations, visitez https://aka.ms/nuget/cpm/versionoverride</target>
+        <note>
+      0 - The comma delimited list of package names that specified a value for VersionOverride.
+      Do not localize `PackageReference`
+      Do not localize `VersionOverride`
+    </note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateAlreadyExist">
+        <source>Client certificate configured for the package source '{0}' already exists.</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' existe déjà.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateNotExist">
+        <source>Client certificate configured for the package source '{0}' does not exist</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' n'existe pas</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificateTypeMismatch">
+        <source>Client certificate configured for the package source '{0}' cannot be modified due to a type mismatch.</source>
+        <target state="translated">Le certificat client configuré pour la source de package '{0}' ne peut pas être modifié en raison d'une incompatibilité de type.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="Error_ClientCertificatesNotFound">
+        <source>Client certificates were not found.</source>
+        <target state="translated">Les certificats clients sont introuvables.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_CouldNotAdd">
+        <source>Could not add the trusted signer: {0}</source>
+        <target state="translated">Impossible d'ajouter le signataire approuvé : {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotList">
+        <source>Could not list the trusted signers: {0}</source>
+        <target state="translated">Impossible de lister les signataires approuvés : {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotRemove">
+        <source>Could not remove the trusted signer: {0}</source>
+        <target state="translated">Impossible de supprimer le signataire approuvé : {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotSync">
+        <source>Could not sync the trusted repository: {0}</source>
+        <target state="translated">Impossible de synchroniser le dépôt approuvé : {0}</target>
+        <note>0 - Reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateClientCertificate">
+        <source>Could not update the client certificate: {0}</source>
+        <target state="translated">Impossible de mettre à jour le certificat client : {0}</target>
+        <note>0 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_CouldNotUpdateMetadataLastAccessTime">
+        <source>Updating last access time on file {0} failed with {1}</source>
+        <target state="translated">Échec de la mise à jour de l’heure du dernier accès sur le fichier {0} avec {1}</target>
+        <note>0 - file path
+    1 - reason</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptyCertificateListInRepository">
+        <source>The repository with the service index '{0}' does not list any trusted certificates.</source>
+        <target state="translated">Le dépôt avec l'index de service '{0}' ne liste aucun certificat approuvé.</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFilePath">
+        <source>A source file was added with an empty path.</source>
+        <target state="translated">Un fichier source a été ajouté avec un chemin vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_EmptySourceFileProjectDirectory">
+        <source>The project directory for the source file '{0}' could not be found.</source>
+        <target state="translated">Le répertoire du projet pour le fichier source '{0}' est introuvable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser une source HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSource_Single_Short">
+        <source>You are running the '{0}' operation with an 'HTTP' source: {1}. NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Vous exécutez l’opération « {0} » avec une source « HTTP » : {1}. NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Error_HttpSources_Multiple">
+        <source>You are running the '{0}' operation with 'HTTP' sources: {1}. NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Vous exécutez l’opération « {0} » avec des sources « HTTP » : {1}. NuGet exige des sources HTTPS. Pour utiliser des sources HTTP, vous devez explicitement définir « allowInsecureConnections » sur la valeur true dans votre fichier NuGet.Config. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Error_IncompatiblePackageType">
+        <source>The package {0} {1} has a package type {2} that is incompatible with this project.</source>
+        <target state="translated">Le package {0} {1} a un type de package {2} incompatible avec ce projet.</target>
+        <note>0 - package id, 1 - version, 2 - package type</note>
+      </trans-unit>
+      <trans-unit id="Error_InputFileNotSpecified">
+        <source>Specify a nuspec, project.json, or project file to use</source>
+        <target state="translated">Spécifiez un fichier nuspec, un fichier project.json ou un fichier projet à utiliser</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidATF">
+        <source>PackageTargetFallback and AssetTargetFallback cannot be used together. Remove PackageTargetFallback(deprecated) references from the project environment.</source>
+        <target state="translated">Impossible d'utiliser PackageTargetFallback et AssetTargetFallback conjointement. Supprimez les références PackageTargetFallback (dépréciées) de l'environnement du projet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCertificateInformationFromServer">
+        <source>Invalid certificate information from the service index '{0}'.</source>
+        <target state="translated">Informations de certificat non valides à partir de l'index de service '{0}'.</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidCombinationOfArguments">
+        <source>Invalid combination of arguments.</source>
+        <target state="translated">Combinaison d'arguments non valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInput">
+        <source>Invalid input '{0}'. The file type was not recognized.</source>
+        <target state="translated">Entrée '{0}' non valide. Le type de fichier n'est pas reconnu.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputConfig">
+        <source>Invalid input '{0}'. Valid file names are 'packages.config' or 'packages.*.config'.</source>
+        <target state="translated">Entrée non valide '{0}'. Les noms de fichiers valides sont 'packages.config' ou 'packages.*.config'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidCommandLineInputJson">
+        <source>Invalid input '{0}'. Valid file names are 'project.json' or '*.project.json'.</source>
+        <target state="translated">Entrée non valide '{0}'. Les noms de fichiers valides sont 'project.json' ou '*.project.json'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidDependencyVersionConstraints">
+        <source>Package version constraints for '{0}' return a version range that is empty.</source>
+        <target state="translated">Les contraintes de version de package pour '{0}' retournent une plage de versions vide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidLockFileInput">
+        <source>Invalid restore input where RestorePackagesWithLockFile property is set to false but a packages lock file exists at {0}.</source>
+        <target state="translated">Entrée de restauration non valide où la propriété RestorePackagesWithLockFile a la valeur false, alors qu'un fichier de verrouillage des packages est présent sur {0}.</target>
+        <note>{0} - packages lock file path</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditLevelValue">
+        <source>Invalid NuGetAuditLevel value '{0}'. Valid values: {1}</source>
+        <target state="translated">Valeur NuGetAuditLevel non valide '{0}'. Valeurs valides : {1}</target>
+        <note>Don't translate 'NuGetAuditLevel'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "low, moderate, high, critical" (these should not be translated either)</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditModeValue">
+        <source>Invalid NuGetAuditMode value '{0}'. Valid values: {1}</source>
+        <target state="translated">Valeur NuGetAuditMode non valide '{0}'. Valeurs valides : {1}</target>
+        <note>Don't translate 'NuGetAuditMode'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "direct, all"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidNuGetAuditValue">
+        <source>Invalid NuGetAudit value '{0}'. Valid values: {1}</source>
+        <target state="translated">Valeur NuGetAudit non valide '{0}'. Valeurs valides : {1}</target>
+        <note>Don't translate 'NuGetAudit'
+{0} - is the value from the customer's project file
+{1} is the list of valid values "true, false"</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidProjectPackageCombo">
+        <source>Invalid project-package combination for {0} {1}. DotnetToolReference project style can only contain references of the DotnetTool type</source>
+        <target state="translated">Combinaison projet-package non valide pour {0} {1}. Le style de projet DotnetToolReference peut contenir uniquement des références au type DotnetTool</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidSymbolPackageFormat">
+        <source>The provided SymbolPackageFormat value {0} is invalid. Allowed values : 'snupkg', 'symbols.nupkg'.</source>
+        <target state="translated">La valeur SymbolPackageFormat fournie {0} n'est pas valide. Valeurs autorisées : 'snupkg', 'symbols.nupkg'.</target>
+        <note>Do not localize snupkg and symbols.nupkg</note>
+      </trans-unit>
+      <trans-unit id="Error_InvalidTargetFramework">
+        <source>Failed to build package because of an unsupported targetFramework value on '{0}'.</source>
+        <target state="translated">Échec de la génération du package en raison d'une valeur targetFramework non prise en charge '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_InvalidWindowsTargetPlatformMinVersion">
+        <source>Invalid value for WindowsTargetPlatformMinVersion: {0}</source>
+        <target state="translated">Valeur non valide pour WindowsTargetPlatformMinVersion : {0}</target>
+        <note>{0} is the value supplied </note>
+      </trans-unit>
+      <trans-unit id="Error_MissingSourceParameter">
+        <source>Source parameter was not specified.</source>
+        <target state="translated">Le paramètre source n'a pas été spécifié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_MultiplePackagePaths">
+        <source>{0} contains more than one path</source>
+        <target state="translated">{0} contient plusieurs chemins</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoClientAllowList">
+        <source>signatureValidationMode is set to require, so packages are allowed only if signed by trusted signers; however, no trusted signers were specified.</source>
+        <target state="translated">Dans la mesure où signatureValidationMode a la valeur require, les packages sont autorisés uniquement s'ils sont signés par des signataires approuvés. Toutefois, aucun signataire approuvé n'a été spécifié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingCertificate">
+        <source>The package signature did not match any of the allowed certificate fingerprints.</source>
+        <target state="translated">La signature de package ne correspond à aucune des empreintes digitales de certificat autorisées.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoMatchingClientCertificate">
+        <source>This package is signed but not by a trusted signer.</source>
+        <target state="translated">Ce package est signé mais pas par un signataire approuvé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExist">
+        <source>Unable to find package {0}. No packages exist with this id in source(s): {1}</source>
+        <target state="translated">Package {0} introuvable. Aucun package associé à cet ID n'existe dans la ou les sources suivantes : {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoPackageVersionsExistInRange">
+        <source>Unable to find package {0} with version {1}</source>
+        <target state="translated">Package {0} avec la version {1} introuvable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoSignatureTrustedForPackage">
+        <source>No signature to be trusted was specified for the package '{0}'. Specify either Author or Repository.</source>
+        <target state="translated">Aucune signature à approuver n'a été spécifiée pour le package '{0}'. Spécifiez l'auteur ou le dépôt.</target>
+        <note>0 - Package path</note>
+      </trans-unit>
+      <trans-unit id="Error_NoSourcesInformation">
+        <source>Unable to get package sources information.</source>
+        <target state="translated">Impossible d'obtenir les informations sur les sources de package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NoStablePackageVersionsExist">
+        <source>Unable to find a stable package {0} with version {1}</source>
+        <target state="translated">Package stable {0} avec la version {1} introuvable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_NotSupportedHashAlgorithm">
+        <source>'{0}' is not a supported hash algorithm.</source>
+        <target state="translated">'{0}' n'est pas un algorithme de hachage pris en charge.</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="Error_PackFailed">
+        <source>Failed to build package. {0}</source>
+        <target state="translated">Échec de la génération du package. {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForLibPackage">
+        <source>Failed to build package. Ensure '{0}' includes assembly files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Échec de la génération du package. Vérifiez que '{0}' inclut les fichiers d'assembly. Pour obtenir de l'aide sur la génération d'un package de symboles, consultez {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageCommandNoFilesForSymbolsPackage">
+        <source>Failed to build package. Ensure '{0}' includes source and symbol files. For help on building symbols package, visit {1}.</source>
+        <target state="translated">Échec de la génération du package. Vérifiez que '{0}' inclut les fichiers sources et les fichiers de symboles. Pour obtenir de l'aide sur la génération d'un package de symboles, consultez {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_NoVersion">
+        <source>Package '{0}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">Le paquet '{0}' n'a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
+        <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
+        <target state="translated">Le paquet '{0}' {1} n'a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
+        <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageNotSigned">
+        <source>The package is not signed.</source>
+        <target state="translated">Le package n'est pas signé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PackageReference_NoVersion">
+        <source>The following PackageReference item(s) do not have a version specified: {0}</source>
+        <target state="translated">Les éléments PackageReference suivants n'ont pas de version spécifiée : {0}</target>
+        <note>0 - List of package names</note>
+      </trans-unit>
+      <trans-unit id="Error_PackageValidationFailed">
+        <source>Package content hash validation failed for {0}. The package is different than the last restore.</source>
+        <target state="translated">La validation du code de hachage de contenu de package a échoué pour {0}. Le package est différent de celui de la dernière restauration.</target>
+        <note>{0} - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_PlatformVersionNotPresent">
+        <source>Platform version is not present for one or more target frameworks, even though they have specified a platform: {0}</source>
+        <target state="translated">La version de la plateforme n'est pas présente pour un ou plusieurs frameworks cibles, même s'ils ont spécifié une plateforme : {0}</target>
+        <note>0 - comma-separated list of TFMs missing a platform version</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectDoesNotExist">
+        <source>Unable to find project '{0}'. Check that the project reference is valid and that the project file exists.</source>
+        <target state="translated">Projet '{0}' introuvable. Vérifiez que la référence de projet est valide et que le fichier projet existe.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectJson_Deprecated">
+        <source>Managing packages with project.json is deprecated. Migrate to PackageReference.</source>
+        <target state="translated">La gestion des packages avec project.json est déconseillée. Migrez vers PackageReference.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonIsUnreadable">
+        <source>The runtime.json specified in the project '{0}' could not be parsed. {1}</source>
+        <target state="translated">Impossible d'analyser le fichier runtime.json spécifié dans le projet '{0}'. {1}</target>
+        <note>0 - runtime.json path, 1 - Additional Message, Please do not localize 'runtime.json'.</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectRuntimeJsonNotFound">
+        <source>The runtime.json specified in the project '{0}' could not be found.</source>
+        <target state="translated">Le fichier runtime.json spécifié dans le projet '{0}' est introuvable.</target>
+        <note>0 - runtime.json path, Please do not localize 'runtime.json'</note>
+      </trans-unit>
+      <trans-unit id="Error_ProjectWithIncorrectDependenciesCount">
+        <source>Project {0} must have a single package reference(s).</source>
+        <target state="translated">Le projet {0} doit avoir une seule référence de package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_PropertyCannotBeNullOrEmpty">
+        <source>Property '{0}' should not be null or empty.</source>
+        <target state="translated">La propriété '{0}' ne doit pas avoir une valeur null ou être vide.</target>
+        <note>0 - property name</note>
+      </trans-unit>
+      <trans-unit id="Error_RepoTrustExpectedRepoSignature">
+        <source>Unable to add trusted repository. The package is not repository signed or countersigned.</source>
+        <target state="translated">Impossible d'ajouter un dépôt approuvé. Le package n'est pas signé ou contresigné par le dépôt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestoreInLockedMode">
+        <source>The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to update the lock file.</source>
+        <target state="translated">Le fichier de verrouillage des packages n'est pas cohérent avec les dépendances de projet, la restauration ne peut donc pas être exécutée en mode verrouillé. Désactivez la propriété MSBuild RestoreLockedMode, ou passez l'option explicite --force-evaluate pour exécuter la restauration et mettre à jour le fichier de verrouillage.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningDirectPackageReference">
+        <source>PackageReference {0} will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.</source>
+        <target state="translated">Le {0} PackageReference ne sera pas supprimé. Supprimez ce package de vos dépendances, car il est probablement inutile.</target>
+        <note>0 - package id and version</note>
+      </trans-unit>
+      <trans-unit id="Error_RestorePruningProjectReference">
+        <source>A ProjectReference cannot be pruned, {0}.</source>
+        <target state="translated">Impossible de nettoyer projectReference, {0}.</target>
+        <note>0 - project reference</note>
+      </trans-unit>
+      <trans-unit id="Error_ServiceIndexShouldBeHttps">
+        <source>The repository service index '{0}' is not a valid HTTPS url.</source>
+        <target state="translated">L'index de service de dépôt '{0}' n'est pas une URL HTTPS valide.</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="Error_ToolsPackageWithExtraPackageTypes">
+        <source>Invalid tools package {0} {1}. Tools packages cannot contain more than one PackageType.</source>
+        <target state="translated">Package d'outils non valide {0} {1}. Les packages d'outils ne peuvent pas contenir plusieurs PackageType.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedAuthorNoOwners">
+        <source>A trusted author cannot have owners.</source>
+        <target state="translated">Un auteur approuvé ne peut pas avoir de propriétaires.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepoAlreadyExists">
+        <source>A trusted repository with the service index '{0}' already exists.</source>
+        <target state="translated">Un dépôt approuvé avec l'index de service '{0}' existe déjà.</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedRepositoryDoesNotExist">
+        <source>A trusted repository '{0}' does not exist.</source>
+        <target state="translated">Le dépôt approuvé '{0}' n'existe pas.</target>
+        <note>0 - trusted repository name</note>
+      </trans-unit>
+      <trans-unit id="Error_TrustedSignerAlreadyExists">
+        <source>A trusted signer '{0}' already exists.</source>
+        <target state="translated">Le signataire approuvé '{0}' existe déjà.</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToFindProjectInfo">
+        <source>Unable to find project information for '{0}'. If you are using Visual Studio, this may be because the project is unloaded or not part of the current solution so run a restore from the command-line. Otherwise, the project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">Les informations relatives au projet sont introuvables pour '{0}'. Si vous utilisez Visual Studio, cela peut être dû au fait que le projet est déchargé ou qu'il ne fait pas partie de la solution actuelle. Dans ce cas, exécutez une restauration à partir de la ligne de commande. Sinon, il est possible que le fichier projet soit non valide ou que des cibles nécessaires à la restauration soient manquantes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateBuildOutput">
+        <source>No build found in {0}. Use the -Build option or build the project.</source>
+        <target state="translated">Aucune build dans {0}. Utilisez l'option -Build ou générez le projet.</target>
+        <note>{0} is the project output directory</note>
+      </trans-unit>
+      <trans-unit id="Error_UnableToLocateRestoreTarget">
+        <source>The folder '{0}' does not contain a project to restore.</source>
+        <target state="translated">Le dossier '{0}' ne contient pas de projet à restaurer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnableToSignPackage">
+        <source>Unable to sign package.</source>
+        <target state="translated">Impossible de signer le package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnavailableSource">
+        <source>Source '{0}' does not exist or cannot be retrived.</source>
+        <target state="translated">La source '{0}' n'existe pas ou ne peut pas être récupérée.</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownBuildAction">
+        <source>Package '{0}' specifies an invalid build action '{1}' for file '{2}'.</source>
+        <target state="translated">Le package '{0}' spécifie une action de build non valide '{1}' pour le fichier '{2}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificateStoreType">
+        <source>Cannot determine client certificate store type</source>
+        <target state="translated">Impossible de déterminer le type de magasin de certificats clients</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesFindBy">
+        <source>The find by search type '{0}' is not recognized.</source>
+        <target state="translated">Le type de recherche Rechercher par '{0}' n'est pas reconnu.</target>
+        <note>0 - find type</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreLocation">
+        <source>The store location '{0}' is not recognized.</source>
+        <target state="translated">L'emplacement de magasin '{0}' n'est pas reconnu.</target>
+        <note>0 - store location</note>
+      </trans-unit>
+      <trans-unit id="Error_UnknownClientCertificatesStoreName">
+        <source>The source name '{0}' is not recognized.</source>
+        <target state="translated">Le nom source '{0}' n'est pas reconnu.</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Error_UnsupportedTrustTarget">
+        <source>The trust target '{0}' is unsupported.</source>
+        <target state="translated">La cible approuvée '{0}' n'est pas prise en charge.</target>
+        <note>0 - VerificationTarget</note>
+      </trans-unit>
+      <trans-unit id="Error_VulnerabilityDataFetch">
+        <source>Error occurred while getting package vulnerability data: {0}</source>
+        <target state="translated">Une erreur s’est produite lors de l’obtention des données de vulnérabilité du package : {0}</target>
+        <note>{0} is an error message</note>
+      </trans-unit>
+      <trans-unit id="Error_WriteResolvedNuSpecOverwriteOriginal">
+        <source>Unable to output resolved nuspec file because it would overwrite the original at '{0}'</source>
+        <target state="translated">Impossible de générer le fichier nuspec résolu, car il remplace l'original dans « {0} »</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Error_XPROJNotAllowed">
+        <source>Invalid input '{0}'. XProj support has been removed. Support for XProj and standalone project.json files has been removed, to continue working with legacy projects use NuGet 3.5.x from https://nuget.org/downloads</source>
+        <target state="translated">Entrée '{0}' non valide. La prise en charge de XProj a été supprimée. La prise en charge de XProj et des fichiers project.json autonomes a été supprimée, pour continuer à utiliser les projets hérités, utiliser NuGet 3.5.x à partir de https://nuget.org/downloads</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FailedToBuildProject">
+        <source>Failed to build '{0}'.</source>
+        <target state="translated">Échec de la génération de '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FileNotAddedToPackage">
+        <source>File '{0}' is not added because the package already contains file '{1}'</source>
+        <target state="translated">Le fichier '{0}' n'a pas été ajouté, car le package contient déjà un fichier '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSource">
+        <source>Found {0} version(s) in {1} [ Nearest version: {2} ]</source>
+        <target state="translated">Version(s) {0} trouvée(s) dans {1} [version la plus proche : {2}]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="FoundVersionsInSourceWithoutMatch">
+        <source>Found {0} version(s) in {1}</source>
+        <target state="translated">Version(s) {0} trouvée(s) dans {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInput">
+        <source>Invalid restore input. {0}</source>
+        <target state="translated">Entrée de restauration non valide. {0}</target>
+        <note>0 is an error message specific to the validation failure.</note>
+      </trans-unit>
+      <trans-unit id="InvalidRestoreInputWithFiles">
+        <source>Invalid restore input. {0} Input files: {1}.</source>
+        <target state="translated">Entrée de restauration non valide. {0} Fichiers d'entrée : {1}.</target>
+        <note>0 is an error message specific to the validation failure. 1 is a list of file paths.</note>
+      </trans-unit>
+      <trans-unit id="InvalidSource">
+        <source>The specified source '{0}' is invalid. Provide a valid source.</source>
+        <target state="translated">La source spécifiée '{0}' est non valide. Indiquez une source valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Invalid_AttributeValue">
+        <source>The {0} value: `{1}` is invalid. Valid example: `{2}`</source>
+        <target state="translated">La valeur {0} : `{1}` n’est pas valide. Exemple valide : `{2}`</target>
+        <note>{0} - is the attribute
+{1} is the invalid value of the attribute.
+{2} a valid attriibute value example</note>
+      </trans-unit>
+      <trans-unit id="Invalid_Framework">
+        <source>One or more invalid frameworks were detected.</source>
+        <target state="translated">Un ou plusieurs infrastructures invalides ont été détectées.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearFailed">
+        <source>Clearing local resources failed: Unable to delete one or more files.</source>
+        <target state="translated">Échec de l'effacement des ressources locales : impossible de supprimer un ou plusieurs fichiers.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearedSuccessful">
+        <source>Local resources cleared.</source>
+        <target state="translated">Ressources locales effacées.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetGlobalPackagesFolder">
+        <source>Clearing NuGet global packages folder: {0}</source>
+        <target state="translated">Effacement du dossier des packages globaux NuGet : {0}</target>
+        <note>{0} : Global packages cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetHttpCache">
+        <source>Clearing NuGet HTTP cache: {0}</source>
+        <target state="translated">Effacement du cache HTTP NuGet : {0}</target>
+        <note>{0} : Http cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetPluginsCache">
+        <source>Clearing NuGet plugins cache: {0}</source>
+        <target state="translated">Effacement du cache des plug-ins NuGet : {0}</target>
+        <note>{0}: Plugins cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_ClearingNuGetTempCache">
+        <source>Clearing NuGet Temp cache: {0}</source>
+        <target state="translated">Effacement du cache temporaire NuGet : {0}</target>
+        <note>{0} : Temp cache path</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_FailedToDeletePath">
+        <source>Failed to delete '{0}'.</source>
+        <target state="translated">Échec de la suppression de '{0}'.</target>
+        <note>{0} : Path to be deleted</note>
+      </trans-unit>
+      <trans-unit id="LocalsCommand_Help">
+        <source>usage: NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">utilisation : NuGet locals &lt;all | http-cache | global-packages | temp | plugins-cache&gt; [--clear | -c | --list | -l]
+Pour plus d'informations, visitez https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_InvalidLocalResourceName">
+        <source>An invalid local resource name was provided. Provide one of the following values: http-cache, temp, global-packages, all.</source>
+        <target state="translated">Un nom de ressource locale non valide a été fourni. Indiquez l'une des valeurs suivantes : http-cache, temp, global-packages, all.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalResourcePathNotSet">
+        <source>The location of local resource '{0}' is undefined.</source>
+        <target state="translated">L'emplacement de la ressource locale '{0}' n'est pas défini.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LocalsCommand_LocalsPartiallyCleared">
+        <source>Local resources partially cleared.</source>
+        <target state="translated">Ressources locales partiellement effacées.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AllProjectsUpToDate">
+        <source>All projects are up-to-date for restore.</source>
+        <target state="translated">Tous les projets sont à jour pour la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_AssetsFileNotOnDisk">
+        <source>The expected assets file for {0} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">No-op impossible, car le fichier d'actifs attendu pour {0} n'existe pas. Poursuite de la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_CPVM_DowngradeError">
+        <source>Detected package downgrade: {0} from {1} to centrally defined {2}. Update the centrally managed package version to a higher version.</source>
+        <target state="translated">Détection du passage à une version antérieure d'un package {0} de {1} vers {2} (défini de manière centralisée). Mettez à jour la version de package managée de manière centralisée vers une version supérieure.</target>
+        <note>{0} is package id, {1} is the package version, {2} is the downgraded package version.</note>
+      </trans-unit>
+      <trans-unit id="Log_Committing">
+        <source>Committing restore...</source>
+        <target state="translated">Validation de la restauration...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConfigFileSummary">
+        <source>NuGet Config files used:</source>
+        <target state="translated">Fichiers de configuration NuGet utilisés :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ConvertedPackageToOriginalCase">
+        <source>The package {0} was converted to original case in the packages directory.</source>
+        <target state="translated">Le package {0} a été converti en casse d'origine dans le répertoire de packages.</target>
+        <note>{0} is the package identity.</note>
+      </trans-unit>
+      <trans-unit id="Log_CycleDetected">
+        <source>Cycle detected.</source>
+        <target state="translated">Cycle détecté.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DependencyBumpedUp">
+        <source>Dependency specified was {0} {1} but ended up with {2} {3}.</source>
+        <target state="translated">La dépendance spécifiée était {0} {1}, mais se terminait par {2} {3}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_DowngradeWarning">
+        <source>Detected package downgrade: {0} from {1} to {2}. Reference the package directly from the project to select a different version.</source>
+        <target state="translated">Passage à une version antérieure du package détecté : {0} de {1} à {2}. Référencez le package directement à partir du projet pour sélectionner une version différente.</target>
+        <note>{0}: package id
+{1}: requested version
+{2}: resolved version</note>
+      </trans-unit>
+      <trans-unit id="Log_ErrorSummary">
+        <source>Errors in {0}</source>
+        <target state="translated">Erreurs dans {0}</target>
+        <note>0 - project name/type</note>
+      </trans-unit>
+      <trans-unit id="Log_FeedsUsedSummary">
+        <source>Feeds used:</source>
+        <target state="translated">Flux utilisés :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_FrameworkDisplay">
+        <source>{0} ({1})</source>
+        <target state="translated">{0} ({1})</target>
+        <note>0 - framework short name, 1 - System.FrameworkName</note>
+      </trans-unit>
+      <trans-unit id="Log_FrameworkRIDDisplay">
+        <source>{0} ({1}) / {2}</source>
+        <target state="translated">{0} ({1}) / {2}</target>
+        <note>0 - framework short name, 1 - System.FrameworkName, 2 - Runtime ID</note>
+      </trans-unit>
+      <trans-unit id="Log_GeneratingMsBuildFile">
+        <source>Generating MSBuild file {0}.</source>
+        <target state="translated">Génération du fichier MSBuild {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ImportsFallbackWarning">
+        <source>Package '{0}' was restored using '{1}' instead of the project target framework '{2}'. This package may not be fully compatible with your project.</source>
+        <target state="translated">Le package '{0}' a été restauré en utilisant '{1}' au lieu du framework cible du projet '{2}'. Ce package n'est peut-être pas totalement compatible avec votre projet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummary">
+        <source>Installed:</source>
+        <target state="translated">Installé :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_InstalledSummaryCount">
+        <source>{0} package(s) to {1}</source>
+        <target state="translated">{0} package(s) sur {1}</target>
+        <note>0 - installed package count
+1 - folder path</note>
+      </trans-unit>
+      <trans-unit id="Log_LockFileNotOnDisk">
+        <source>The lock file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">Opération no-op impossible, car le fichier de verrouillage pour {0} n'existe pas à l'emplacement {1}. Poursuite de la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MergingRuntimes">
+        <source>Merging in runtimes defined in {0}.</source>
+        <target state="translated">Fusion dans les runtimes définie par {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFx">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no compatible run-time assembly.</source>
+        <target state="translated">{0} {1} fournit un assembly de références résolues à la compilation pour {2} sur {3}, mais il n'existe pas d'assembly compatible au moment de l'exécution.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingImplementationFxRuntime">
+        <source>{0} {1} provides a compile-time reference assembly for {2} on {3}, but there is no run-time assembly compatible with {4}.</source>
+        <target state="translated">{0} {1} fournit un assembly de références résolues à la compilation pour {2} sur {3}, mais il n'existe pas d'assembly au moment de l'exécution compatible avec {4}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_MissingPackagesOnDisk">
+        <source>Not all packages are on disk for: {0}</source>
+        <target state="translated">Tous les packages ne sont pas sur le disque pour : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAddedFile">
+        <source>Added file '{0}'.</source>
+        <target state="translated">Ficher '{0}' ajouté.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandAttemptingToBuildSymbolsPackage">
+        <source>Attempting to build symbols package for '{0}'.</source>
+        <target state="translated">Tentative de génération du package de symboles pour '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandInstallPackageToOutputPath">
+        <source>Install {0} to output path '{1}'</source>
+        <target state="translated">Installer {0} dans le chemin de sortie « {1} »</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageCommandSuccess">
+        <source>Successfully created package '{0}'.</source>
+        <target state="translated">Création réussie du package '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageContentHashValidationFailed">
+        <source>Package content hash validation failed for {0}. Expected: {1} Actual: {2}</source>
+        <target state="translated">La validation du code de hachage de contenu de package a échoué pour {0}. Attendu : {1} réel : {2}</target>
+        <note>0 - package ID, 1 - expected Sha, 2 - actual sha</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx">
+        <source>Package {0} {1} is not compatible with {2}.</source>
+        <target state="translated">Le package {0} {1} n'est pas compatible avec {2}.</target>
+        <note>0 - package id, 1 - version, 2 - target framework</note>
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_NoSupports">
+        <source>Package {0} {1} does not support any target frameworks.</source>
+        <target state="translated">Le package {0} {1} ne prend pas en charge les versions cibles du .NET Framework.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_PackageNotCompatibleWithFx_Supports">
+        <source>Package {0} {1} supports:</source>
+        <target state="translated">Le package {0} {1} prend en charge :</target>
+        <note>0 - package id, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="Log_PackagesAndProjectsAreCompatible">
+        <source>All packages and projects are compatible with {0}.</source>
+        <target state="translated">Tous les packages et projets sont compatibles avec {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectDoesNotSpecifyTargetFrameworks">
+        <source>The project {0} does not specify any target frameworks in {1}.</source>
+        <target state="translated">Le projet '{0}' ne spécifie aucune version cible du .NET Framework dans {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx">
+        <source>Project {0} is not compatible with {1}.</source>
+        <target state="translated">Le projet {0} n'est pas compatible avec {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_NoSupports">
+        <source>Project {0} does not support any target frameworks.</source>
+        <target state="translated">Le projet {0} ne prend pas en charge les versions cibles du .NET Framework.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectNotCompatibleWithFx_Supports">
+        <source>Project {0} supports:</source>
+        <target state="translated">Le projet {0} prend en charge :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ProjectUpToDateSummary">
+        <source>{0} of {1} projects are up-to-date for restore.</source>
+        <target state="translated">Sur l'ensemble des projets, {0} sur {1} sont à jour pour la restauration.</target>
+        <note>0 - number of projects that were up-to-date
+1 - Total number of projects</note>
+      </trans-unit>
+      <trans-unit id="Log_PropsFileNotOnDisk">
+        <source>The props file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">No-op impossible, car le fichier props pour {0} à l'emplacement {1} n'existe pas. Poursuite de la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ReadingProject">
+        <source>Reading project file {0}.</source>
+        <target state="translated">Lecture du fichier projet {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ResolverConflict">
+        <source>Unable to satisfy conflicting requests for '{0}': {1} Framework: {2}</source>
+        <target state="translated">Impossible de satisfaire les requêtes en conflit pour '{0}' : {1} Framework : {2}</target>
+        <note>0 - package id, 1 - comma delimited list of conflicts, 2 - framework</note>
+      </trans-unit>
+      <trans-unit id="Log_ResolvingConflicts">
+        <source>Resolving conflicts for {0}...</source>
+        <target state="translated">Résolution des conflits pour {0}...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreComplete">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">Restauration effectuée de {0} (en {1}).</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreCompleteDotnetTool">
+        <source>Restored {0} (in {1}).</source>
+        <target state="translated">Restauration effectuée de {0} (en {1}).</target>
+        <note>{0} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailed">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">Échec de la restauration de {0} (en {1}).</target>
+        <note>{0} is the path to the project file.
+    {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreFailedDotnetTool">
+        <source>Failed to restore {0} (in {1}).</source>
+        <target state="translated">Échec de la restauration de {0} (en {1}).</target>
+        <note>{0} is the path to the project file. {1} is the restore duration.</note>
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpDGChanged">
+        <source>The restore inputs for '{0}' have changed. Continuing restore.</source>
+        <target state="translated">Les entrées de restauration pour '{0}' ont changé. Poursuite de la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoreNoOpFinish">
+        <source>The restore inputs for '{0}' have not changed. No further actions are required to complete the restore.</source>
+        <target state="translated">Les entrées de restauration pour '{0}' n'ont pas changé. Aucune autre action n'est nécessaire pour effectuer la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RestoringPackages">
+        <source>Restoring packages for {0}...</source>
+        <target state="translated">Restauration des packages pour {0}...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningNonParallelRestore">
+        <source>Running non-parallel restore.</source>
+        <target state="translated">Exécution d'une restauration non parallèle.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_RunningParallelRestore">
+        <source>Running restore with {0} concurrent jobs.</source>
+        <target state="translated">Exécution d'une restauration avec {0} travaux simultanés.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ScanningForRuntimeJson">
+        <source>Scanning packages for runtime.json files...</source>
+        <target state="translated">Analyse des fichiers runtime.json dans les packages...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingAssetsFile">
+        <source>Assets file has not changed. Skipping assets file writing. Path: {0}</source>
+        <target state="translated">Le fichier d'actifs n'a pas changé. Écriture du fichier d'actifs ignorée. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SkippingCacheFile">
+        <source>No-Op restore. The cache will not be updated. Path: {0}</source>
+        <target state="translated">Restauration no-op. Le cache ne sera pas mis à jour. Chemin : {0}</target>
+        <note>{0}: Path to cache file</note>
+      </trans-unit>
+      <trans-unit id="Log_SkippingPackagesLockFileGeneration">
+        <source>Skipping the lock file regeneration for '{0}'.</source>
+        <target state="translated">La regénération du fichier de verrouillage pour '{0}' est ignorée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_SourceMappingEnabledNoMatchingPackageSources">
+        <source>PackageSourceMapping is enabled, the following source(s) were not considered: {0}.</source>
+        <target state="translated">PackageSourceMapping est activé, les sources suivantes n'ont pas été prises en compte : {0}.</target>
+        <note>Please do not localize `PackageSourceMapping`. 0 - package source names list.</note>
+      </trans-unit>
+      <trans-unit id="Log_TargetsFileNotOnDisk">
+        <source>The targets file for {0} at location {1} does not exist, no-op is not possible. Continuing restore.</source>
+        <target state="translated">No-op impossible, car le fichier de cibles pour {0} à l'emplacement {1} n'existe pas. Poursuite de la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolSkippingAssetsFile">
+        <source>Tool assets file has not changed. Skipping assets file write. Path: {0}</source>
+        <target state="translated">Le fichier d'actifs de l'outil n'a pas changé. Écriture du fichier d'actifs ignorée. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingAssetsFile">
+        <source>Writing tool assets file to disk. Path: {0}</source>
+        <target state="translated">Écriture du fichier des composants de l'outil sur le disque. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_ToolWritingCacheFile">
+        <source>Writing tool cache file to disk. Path: {0}</source>
+        <target state="translated">Écriture du fichier cache de l'outil sur le disque. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnknownCompatibilityProfile">
+        <source>Unknown Compatibility Profile: {0}</source>
+        <target state="translated">Profil de compatibilité inconnu : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_UnresolvedDependency">
+        <source>Unable to resolve '{0}' for '{1}'.</source>
+        <target state="translated">Impossible de résoudre '{0}' pour '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_VersionConflict">
+        <source>Version conflict detected for {0}. Install/reference {1} directly to project {2} to resolve this issue.</source>
+        <target state="translated">Conflit de version détecté pour {0}. Installez/référencez {1} directement au projet {2} pour résoudre ce problème.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingAssetsFile">
+        <source>Writing assets file to disk. Path: {0}</source>
+        <target state="translated">Écriture du fichier des composants sur le disque. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingCacheFile">
+        <source>Writing cache file to disk. Path: {0}</source>
+        <target state="translated">Écriture du fichier cache sur le disque. Chemin : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Log_WritingPackagesLockFile">
+        <source>Writing packages lock file at disk. Path: {0}</source>
+        <target state="translated">Écriture du fichier de verrouillage des packages sur le disque. Chemin : {0}</target>
+        <note>{0} - Path to packages lock file</note>
+      </trans-unit>
+      <trans-unit id="MSBuildWarning_MultiTarget">
+        <source>Packages containing MSBuild targets and props files cannot be fully installed in projects targeting multiple frameworks. The MSBuild targets and props files have been ignored.</source>
+        <target state="translated">Les packages contenant des cibles et des fichiers de propriétés MSBuild ne peuvent pas être installés complètement dans des projets ciblant plusieurs frameworks. Les cibles et les fichiers de propriétés MSBuild ont été ignorés.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredProperty">
+        <source>Missing required property '{0}'.</source>
+        <target state="translated">La propriété obligatoire '{0}' est manquante.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissingRequiredPropertyForProjectType">
+        <source>Missing required property '{0}' for project type '{1}'.</source>
+        <target state="translated">La propriété obligatoire '{0}' est manquante pour le type de projet '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Multiple_Nupkgs_Detected">
+        <source>Multiple nupkg files detected on '{0}' path to trust, only 1 is allowed.</source>
+        <target state="translated">Plusieurs fichiers nupkg détectés sur le chemin de « {0} » à approuver, seul 1 est autorisé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificates">
+        <source>There are no client certificates.</source>
+        <target state="translated">Il n'existe aucun certificat client.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoClientCertificatesMatching">
+        <source>There are no client certificates configured for the package source '{0}'.</source>
+        <target state="translated">Il n'existe aucun certificat client configuré pour la source de package '{0}'.</target>
+        <note>0 - package source name</note>
+      </trans-unit>
+      <trans-unit id="NoTrustedSigners">
+        <source>There are no trusted signers.</source>
+        <target state="translated">Il n'existe aucun signataire approuvé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="NoTrustedSignersMatching">
+        <source>No trusted signers with the name: '{0}' were found.</source>
+        <target state="translated">Aucun signataire approuvé nommé '{0}' n'a été localisé.</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="NonMatchingProperties">
+        <source>Properties '{0}':'{1}' and '{2}':'{3}' do not match.</source>
+        <target state="translated">Les Propriétés {0}':'{1}' et '{2}':'{3}' ne correspondent pas.</target>
+        <note>0 - first property name
+1 - first property value
+2 - second property name
+3 - second property value</note>
+      </trans-unit>
+      <trans-unit id="NuGetDocs">
+        <source>https://docs.nuget.org/</source>
+        <target state="translated">https://docs.nuget.org/</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowed">
+        <source>Invalid input combination. Property '{0}' is not allowed.</source>
+        <target state="translated">Combinaison d'entrées non valide. La propriété '{0}' n'est pas autorisée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PropertyNotAllowedForProjectType">
+        <source>Invalid input combination. Property '{0}' is not allowed for project type '{1}'.</source>
+        <target state="translated">Combinaison d'entrées non valide. La propriété '{0}' n'est pas autorisée pour le type de projet '{1}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredClientCertificates">
+        <source>Registered client certificates:</source>
+        <target state="translated">Certificats clients inscrits :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RegsiteredTrustedSigners">
+        <source>Registered trusted signers:</source>
+        <target state="translated">Signataires approuvés inscrits :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReservedPackageNameAll">
+        <source>All</source>
+        <target state="translated">Tout</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ResolverRequest_ToStringFormat">
+        <source>{0} (via {1})</source>
+        <target state="translated">{0} (via {1})</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RestoreDebugPruningPackageReference">
+        <source>Pruning the package '{0}' as a dependency of '{1}'. The maximum prunable version is '{2}'</source>
+        <target state="translated">Le nettoyage du package '{0}' en tant que dépendance de '{1}'. La version de nettoyage maximale est '{2}'</target>
+        <note>0 - package id and version, 1 - version</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateFileNotFound">
+        <source>Certificate file '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Le fichier de certificat '{0}' est introuvable. Pour obtenir la liste des méthodes acceptées d'émission de certificats, accédez à https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} is the certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandCertificateStoreNotFound">
+        <source>Certificate store '{0}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Le magasin de certificats '{0}' est introuvable. Pour obtenir la liste des méthodes acceptées d'émission de certificats, accédez à https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>{0} is the certificate store name</note>
+      </trans-unit>
+      <trans-unit id="SignCommandDialogMessage">
+        <source>Select a valid certificate</source>
+        <target state="translated">Sélectionner un certificat valide</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDialogTitle">
+        <source>NuGet Sign Certificate Selection</source>
+        <target state="translated">Sélection de certificat de signature NuGet</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayCertificate">
+        <source>Signing package(s) with certificate:</source>
+        <target state="translated">Signer le ou les packages avec un certificat :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandDisplayTimestamper">
+        <source>Timestamping package(s) with:</source>
+        <target state="translated">Horodatage du ou des packages avec :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidCertException">
+        <source>Certificate file '{0}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Le fichier de certificat '{0}' est non valide. Pour obtenir la liste des méthodes acceptées d'émission de certificats, accédez à https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note>0 - certificate file path</note>
+      </trans-unit>
+      <trans-unit id="SignCommandInvalidPasswordException">
+        <source>Invalid password was provided for the certificate file '{0}'. Provide a valid password using the '-{1}' option</source>
+        <target state="translated">Un mot de passe non valide a été fourni pour le fichier de certificat '{0}'. Indiquez un mot de passe valide à l'aide de l'option '-{1}'</target>
+        <note>0 - certificate file path
+1 - certificate password option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandMultipleCertException">
+        <source>Multiple certificates were found that meet all the given criteria. Use the '-{0}' option with the hash of the desired certificate.</source>
+        <target state="translated">Plusieurs certificats répondent à tous les critères indiqués. Utilisez l'option « -{0} » avec la valeur de hachage du certificat souhaité.</target>
+        <note>0 - CertificateFingerprint option</note>
+      </trans-unit>
+      <trans-unit id="SignCommandNoCertException">
+        <source>No certificates were found that meet all the given criteria. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Aucun certificat ne correspond à l'ensemble des critères spécifiés. Pour obtenir la liste des méthodes acceptées d'émission de certificats, accédez à https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandOutputPath">
+        <source>Signed package(s) output path:</source>
+        <target state="translated">Chemin de sortie du ou des packages signés :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SignCommandSuccess">
+        <source>Package(s) signed successfully.</source>
+        <target state="translated">Le ou les packages ont été signés.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourceNotConsidered">
+        <source>Versions from {0} were not considered</source>
+        <target state="translated">Les versions de {0} n'ont pas été prises en compte</target>
+        <note>0 - source name</note>
+      </trans-unit>
+      <trans-unit id="Source_DefaultNamePrefix">
+        <source>Package source </source>
+        <target state="translated">Source du paquet </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Source_InvalidFormatValue">
+        <source>invalid value for --format: {0}. Allowed values: 'detailed' or 'short'</source>
+        <target state="translated">valeur non valide pour --format : {0}. Valeurs autorisées : 'detailed' ou 'short'</target>
+        <note>don't localize 'format', 'detailed' or 'short'</note>
+      </trans-unit>
+      <trans-unit id="SourcesCommandAllNameIsReserved">
+        <source>Package source name 'All' is a reserved name.</source>
+        <target state="translated">Le nom de source de package 'All' est un nom réservé.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandClearingExistingAuthTypes">
+        <source>Clearing existing authentication types settings for package source '{0}'.</source>
+        <target state="translated">Effacement des paramètres relatifs aux types d'authentification existants pour la source de package '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequired">
+        <source>Both UserName and Password must be specified.</source>
+        <target state="translated">Vous devez spécifier UserName et Password.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandCredentialsRequiredWithAuthTypes">
+        <source>Both UserName and Password must be specified if ValidAuthenticationTypes is specified.</source>
+        <target state="translated">Vous devez spécifier UserName et Password si ValidAuthenticationTypes est spécifié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandDisabled">
+        <source>Disabled</source>
+        <target state="translated">Désactivé</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandEnabled">
+        <source>Enabled</source>
+        <target state="translated">Activé</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandInvalidSource">
+        <source>The source specified is invalid. Provide a valid source.</source>
+        <target state="translated">La source spécifiée est non valide. Indiquez une source valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoMatchingSourcesFound">
+        <source>Unable to find any package source(s) matching name: {0}.</source>
+        <target state="translated">Impossible de localiser la ou les sources de package correspondant au nom suivant : {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandNoSources">
+        <source>No sources found.</source>
+        <target state="translated">Source introuvable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandRegisteredSources">
+        <source>Registered Sources:</source>
+        <target state="translated">Sources inscrites :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceAddedSuccessfully">
+        <source>Package source with Name: {0} added successfully.</source>
+        <target state="translated">La source de package nommée {0} a été correctement ajoutée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceDisabledSuccessfully">
+        <source>Package source with Name: {0} disabled successfully.</source>
+        <target state="translated">La source de package nommée {0} a été correctement désactivée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceEnabledSuccessfully">
+        <source>Package source with Name: {0} enabled successfully.</source>
+        <target state="translated">La source de package nommée {0} a été correctement activée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandSourceRemovedSuccessfully">
+        <source>Package source with Name: {0} removed successfully.</source>
+        <target state="translated">La source de package nommée {0} a été correctement supprimée.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueName">
+        <source>The name specified has already been added to the list of available package sources. Provide a unique name.</source>
+        <target state="translated">Le nom spécifié a déjà été ajouté à la liste des sources de package disponibles. Indiquez un nom unique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUniqueSource">
+        <source>The source specified has already been added to the list of available package sources. Provide a unique source.</source>
+        <target state="translated">La source spécifiée a déjà été ajoutée à la liste des sources de package disponibles. Indiquez une source unique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandUpdateSuccessful">
+        <source>Package source "{0}" was successfully updated.</source>
+        <target state="translated">La source de package "{0}" a été correctement mise à jour.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SourcesCommandValidProtocolVersion">
+        <source>The protocol version specified is invalid. Valid protocol versions are from {0} to {1}.</source>
+        <target state="translated">La version de protocole spécifiée n’est pas valide. Les versions de protocole valides sont comprises entre {0} et {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationDuplicateFrameworks">
+        <source>Duplicate frameworks found: '{0}'.</source>
+        <target state="translated">Frameworks dupliqués trouvés : '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationInvalidFramework">
+        <source>Invalid target framework '{0}'.</source>
+        <target state="translated">Framework cible '{0}' non valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationMissingProject">
+        <source>Missing project '{0}'.</source>
+        <target state="translated">Projet manquant '{0}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationNoFrameworks">
+        <source>No target frameworks specified.</source>
+        <target state="translated">Aucun framework cible spécifié.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationUAPSingleFramework">
+        <source>UAP projects must contain exactly one target framework.</source>
+        <target state="translated">Les projets UAP doivent contenir exactement un framework cible.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidationZeroRestoreRequests">
+        <source>Restore request does not contain any projects to restore.</source>
+        <target state="translated">La demande de restauration ne contient pas de projet à restaurer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SpecValidation_OriginalTargetFrameworksMustMatchAliases">
+        <source>The original target frameworks value must match the aliases. Original target frameworks: {0}, aliases: {1}.</source>
+        <target state="translated">La valeur des frameworks cibles d'origine doit correspondre aux alias. Frameworks cibles d'origine : {0}, alias : {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SuccessfullUpdatedTrustedSigner">
+        <source>Successfully updated the trusted signer '{0}'.</source>
+        <target state="translated">Mise à jour réussie du signataire approuvé '{0}'.</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedAuthor">
+        <source>Successfully added a trusted author '{0}'.</source>
+        <target state="translated">Ajout réussi de l'auteur approuvé '{0}'.</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyAddedTrustedRepository">
+        <source>Successfully added a trusted repository '{0}'.</source>
+        <target state="translated">Ajout réussi du dépôt approuvé '{0}'.</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullyRemovedTrustedSigner">
+        <source>Successfully removed the trusted signer '{0}'.</source>
+        <target state="translated">Suppression réussie du signataire approuvé '{0}'.</target>
+        <note>0 - trusted signer name</note>
+      </trans-unit>
+      <trans-unit id="SuccessfullySynchronizedTrustedRepository">
+        <source>Successfully synchronized the trusted repository '{0}'.</source>
+        <target state="translated">Synchronisation réussie du dépôt approuvé '{0}'.</target>
+        <note>0 - name</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryAllowUntrustedRoot">
+        <source>[U] {0} - {1}</source>
+        <target state="translated">[U] {0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificateSummaryUnallowUntrustedRoot">
+        <source>{0} - {1}</source>
+        <target state="translated">{0} - {1}</target>
+        <note>Do not localize
+
+0 - fingerprint algorithm
+1 - fingerprint</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogCertificates">
+        <source>Certificate fingerprint(s):</source>
+        <target state="translated">Empreinte(s) digitale(s) du certificat :</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogOwners">
+        <source>Trusted owners: {0}</source>
+        <target state="translated">Propriétaires approuvés : {0}</target>
+        <note>0 - semi-colon separated owners list</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogServiceIndex">
+        <source>Service Index: {0}</source>
+        <target state="translated">Index de service : {0}</target>
+        <note>0 - service index</note>
+      </trans-unit>
+      <trans-unit id="TrustedSignerLogTitle">
+        <source>{0} [{1}]</source>
+        <target state="translated">{0} [{1}]</target>
+        <note>0 - signer name
+1 - signer type
+</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedHashAlgorithm">
+        <source>The hash algorithm is unsupported:  '{0}'.</source>
+        <target state="translated">L'algorithme de hachage n'est pas pris en charge : '{0}'.</target>
+        <note>0 - hash algorithm</note>
+      </trans-unit>
+      <trans-unit id="UnsupportedProject">
+        <source>Skipping restore for project '{0}'. The project file may be invalid or missing targets required for restore.</source>
+        <target state="translated">Ignorer la restauration du projet '{0}'. Il est possible que le fichier projet ne soit pas valide ou qu'il ne contienne pas toutes les cibles nécessaires à la restauration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_ContentHash">
+        <source>Content hash: {0}</source>
+        <target state="translated">Hachage du contenu : {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Failed">
+        <source>Package signature validation failed.</source>
+        <target state="translated">Échec de la validation de la signature de package.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_FinishedWithErrors">
+        <source>Finished with {0} errors and {1} warnings.</source>
+        <target state="translated">Terminé avec {0} erreurs et {1} avertissements.</target>
+        <note>{0} is the number of errors produced and {1} is the number of warnings.</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_NotSupported">
+        <source>Package signature validation command is not supported on this platform.</source>
+        <target state="translated">La commande de validation de signature de package n’est pas prise en charge sur cette plateforme.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_PackageIsNotValid">
+        <source>'{0}' is not a valid package file.</source>
+        <target state="translated">« {0} » n'est pas un fichier de package valide.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_Success">
+        <source>Successfully verified package '{0}'.</source>
+        <target state="translated">Le package '{0}' a été vérifié.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerificationTypeNotSupported">
+        <source>Verification type not supported. Use only one of the following supported types: -All, -Signatures</source>
+        <target state="translated">Type de vérification non pris en charge. Utilisez uniquement l'un des types pris en charge suivants : -All, -Signatures</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="VerifyCommand_VerifyingPackage">
+        <source>Verifying {0}</source>
+        <target state="translated">Vérification de {0}</target>
+        <note>{0} should be the package identity of the package to verify</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Critical">
+        <source>critical</source>
+        <target state="translated">critique</target>
+        <note>As in "This package has a critical severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_High">
+        <source>high</source>
+        <target state="translated">élevé(e)</target>
+        <note>As in "This package has a high severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Low">
+        <source>low</source>
+        <target state="translated">faible</target>
+        <note>As in "This package has a low severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_Moderate">
+        <source>moderate</source>
+        <target state="translated">moyenne</target>
+        <note>As in "This package has a moderate severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="Vulnerability_Severity_unknown">
+        <source>unknown</source>
+        <target state="translated">Inconnu</target>
+        <note>As in "This package has a unknown severity vulnerability"</note>
+      </trans-unit>
+      <trans-unit id="WarningAsError">
+        <source>Warning As Error: {0}</source>
+        <target state="translated">Avertissement comme erreur : {0}</target>
+        <note>{0} is a warning message</note>
+      </trans-unit>
+      <trans-unit id="Warning_AuditSourceWithoutVulnerabilityData">
+        <source>Audit source '{0}' did not provide any vulnerability data.</source>
+        <target state="translated">La source d’audit « {0} » n’a fourni aucune donnée de vulnérabilité.</target>
+        <note>{0} is the source name</note>
+      </trans-unit>
+      <trans-unit id="Warning_CentralPackageManagement_MultipleSourcesWithoutPackageSourceMapping">
+        <source>There are {0} package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: {1}</source>
+        <target state="translated">Des sources de packages sont {0} définies dans votre configuration. Lorsque vous utilisez la gestion centrale des packages, veuillez mapper vos sources de package avec le mappage de source de package (https://aka.ms/nuget-package-source-mapping) ou spécifier une seule source de package. Les sources suivantes sont définies : {1}</target>
+        <note>0 - The number of package sources, 1 - The URL of the package sources, comma separated.</note>
+      </trans-unit>
+      <trans-unit id="Warning_DuplicatePropertyKey">
+        <source>'{0}' key already exists in Properties collection. Overriding value.</source>
+        <target state="translated">La clé '{0}' existe déjà dans la collection Properties. Substitution de la valeur.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_FileExcludedByDefault">
+        <source>File '{0}' was not added to the package. Files and folders starting with '.' or ending with '.nupkg' are excluded by default. To include this file, use -NoDefaultExcludes from the commandline</source>
+        <target state="translated">Le fichier '{0}' n’a pas été ajouté au package. Les fichiers et dossiers commençant par '.' ou se terminant par '.nupkg' sont exclus par défaut. Pour inclure ce fichier, utilisez - NoDefaultExcludes à partir de la ligne de commande</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_HttpServerUsage">
+        <source>You are running the '{0}' operation with an 'HTTP' source, '{1}'. Non-HTTPS access will be removed in a future version. Consider migrating to an 'HTTPS' source.</source>
+        <target state="translated">Vous exécutez l’opération '{0}' avec une source « HTTP », '{1}'. L’accès non-HTTPS sera supprimé dans une future version. Envisagez de migrer vers une source « HTTPS ».</target>
+        <note>0 - The command name. Ex. Push/Delete. 1 - server URI.</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSource">
+        <source>The following is a 'Non-HTTPS' source: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Voici une source « Non-HTTPS » : {0}
+NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_List_HttpSources">
+        <source>The following are 'Non-HTTPS' sources: {0}
+NuGet requires HTTPS sources. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
+        <target state="translated">Les sources « Non-HTTPS » sont les suivantes : {0}
+NuGet exige des sources HTTPS. Référez-vous à https://aka.ms/nuget-https-everywhere pour plus d’informations.</target>
+        <note>{0} - list of server URIs</note>
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionDoesNotExist">
+        <source>{0} depends on {1} but {2} was not found. {3} was resolved instead.</source>
+        <target state="translated">{0} dépend de {1} mais {2} est introuvable. {3} a été résolu à la place.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_MinVersionNonInclusive">
+        <source>{0} does not provide an inclusive lower bound for dependency {1}. {2} was resolved instead.</source>
+        <target state="translated">{0} ne fournit pas de limite inférieure inclusive pour la dépendance {1}. {2} a été résolu à la place.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_PackageWithKnownVulnerability">
+        <source>Package '{0}' {1} has a known {2} severity vulnerability, {3}</source>
+        <target state="translated">Le package '{0}' {1} présente une vulnérabilité de gravité {2} connue, {3}.</target>
+        <note>{0} - package id
+{1} - package version
+{2} - severity, for example low, moderate, high, or critical
+{3} - URL for more info on the known vulnerability</note>
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingLowerBound">
+        <source>Project dependency {0} does not contain an inclusive lower bound. Include a lower bound in the dependency version to ensure consistent restore results.</source>
+        <target state="translated">La dépendance du projet {0} ne contient pas de limite inférieure inclusive. Incluez une limite inférieure dans la version de dépendance pour assurer des résultats de restauration cohérents.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Warning_ProjectDependencyMissingVersion">
+        <source>Project dependency '{0}' does not specify a version. Include a version for the dependency to ensure consistent restore results.</source>
+        <target state="translated">Le '{0}' de dépendance du projet ne spécifie pas de version. Incluez une version de la dépendance pour garantir des résultats de restauration cohérents.</target>
+        <note>0 - package id</note>
+      </trans-unit>
+      <trans-unit id="Warning_VersionAboveUpperBound">
+        <source>Detected package version outside of dependency constraint: {0} requires {1} but version {2} was resolved.</source>
+        <target state="translated">Version du package détectée en dehors de la contrainte de dépendance : {0} nécessite {1} alors que la version {2} a été résolue.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

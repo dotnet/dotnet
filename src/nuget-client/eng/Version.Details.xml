@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="85778473549347b3e4bad3ea009e9438df7b11bb" BarId="267776" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="nuget-client" Sha="8b29a1682219da555ee27e4fdda55dc3884b316f" BarId="277635" />
   <!--
     Currently this file is required to publish builds to .NET build asset registry.
     See https://github.com/dotnet/arcade/issues/2396 for details.
@@ -26,9 +26,9 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>8470979eb44c2218025515234d3e01138bd74afb</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Web.Xdt" Version="3.0.0">
-      <Uri>https://github.com/aspnet/xdt</Uri>
-      <Sha>d4d088b6a9c793525b1a27a119cb66ba4587bb39</Sha>
+    <Dependency Name="Microsoft.Web.Xdt" Version="3.2.0">
+      <Uri>https://github.com/dotnet/xdt</Uri>
+      <Sha>dea0a90f9a8f54babf081db780922a00a1ecc32c</Sha>
     </Dependency>
     <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25208.1">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
@@ -42,6 +42,10 @@
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>e37fab9fc9f7bce120a7165491ed392a73f8ab51</Sha>
     </Dependency>
+    <Dependency Name="System.Security.Cryptography.ProtectedData" Version="9.0.6">
+      <Uri>https://github.com/dotnet/runtime</Uri>
+      <Sha>2aade6beb02ea367fd97c4070a4198802fe61c03</Sha>
+    </Dependency>
     <Dependency Name="System.Security.Cryptography.Xml" Version="6.0.1">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>55fb7ef977e7d120dc12f0960edcff0739d7ee0e</Sha>
@@ -52,9 +56,13 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25260.104">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25401.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>85778473549347b3e4bad3ea009e9438df7b11bb</Sha>
+      <Sha>8b29a1682219da555ee27e4fdda55dc3884b316f</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.XliffTasks" Version="10.0.0-beta.25401.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>8b29a1682219da555ee27e4fdda55dc3884b316f</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

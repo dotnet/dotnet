@@ -1501,10 +1501,15 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             logMessages.Should().HaveCount(1);
             logMessages[0].Code.Should().Be(NuGetLogCode.NU1603);
 
+            string oldLockFile = File.ReadAllText(project.AssetsFileOutputPath);
+
             // Act
             result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore /p:RestoreForce=true {project.ProjectPath}", testOutputHelper: _testOutputHelper);
 
             // Assert
+            string newLockFile = File.ReadAllText(project.AssetsFileOutputPath);
+
+            newLockFile.Should().Be(oldLockFile);
             var currentWriteTime = GetFileLastWriteTime(project.AssetsFileOutputPath);
             currentWriteTime.Should().Be(assetsFileWriteTime);
 

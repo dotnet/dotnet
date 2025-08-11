@@ -25,15 +25,6 @@ namespace NuGet.Protocol
         /// <summary>
         /// Download packages using the download url found in the registration resource.
         /// </summary>
-        [Obsolete("Use constructor with source parameter")]
-        public DownloadResourceV3(HttpSource client, RegistrationResourceV3 regResource)
-            : this(source: null, client, regResource)
-        {
-        }
-
-        /// <summary>
-        /// Download packages using the download url found in the registration resource.
-        /// </summary>
         public DownloadResourceV3(string source, HttpSource client, RegistrationResourceV3 regResource)
             : this(client)
         {
@@ -44,15 +35,6 @@ namespace NuGet.Protocol
 
             _source = source;
             _regResource = regResource;
-        }
-
-        /// <summary>
-        /// Download packages using the package base address container resource.
-        /// </summary>
-        [Obsolete("Use constructor with source parameter")]
-        public DownloadResourceV3(HttpSource client, string packageBaseAddress)
-            : this(source: null, client, packageBaseAddress)
-        {
         }
 
         /// <summary>

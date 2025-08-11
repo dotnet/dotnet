@@ -35,7 +35,14 @@ parameters:
   displayName: Run static analysis
   type: boolean
   default: false
-  
+- name: SigningType
+  displayName: Type of signing to use
+  type: string
+  default: Real
+  values:
+  - Real
+  - Test
+
 resources:
   repositories:
   - repository: MicroBuildTemplate
@@ -95,3 +102,4 @@ extends:
         RunTestsOnMac: ${{parameters.RunTestsOnMac}}
         RunMonoTestsOnMac: ${{parameters.RunMonoTestsOnMac}}
         RunStaticAnalysis: ${{parameters.RunStaticAnalysis}}
+        SigningType: ${{ parameters.SigningType }}
