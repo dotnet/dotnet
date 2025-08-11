@@ -10,6 +10,7 @@
   <ItemGroup>
     <!-- Arcade dependencies -->
     <PackageVersion Include="Microsoft.DotNet.Build.Manifest" Version="$(MicrosoftDotNetBuildManifestVersion)" />
+    <!-- Arcade-services dependencies -->
     <PackageVersion Include="Microsoft.DotNet.DarcLib" Version="$(MicrosoftDotNetDarcLibVersion)" />
     <!-- Command-line-api dependencies -->
     <PackageVersion Include="System.CommandLine" Version="$(SystemCommandLineVersion)" />
@@ -23,6 +24,7 @@
     <PackageVersion Include="Microsoft.Extensions.FileSystemGlobbing" Version="$(MicrosoftExtensionsFileSystemGlobbingVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="$(MicrosoftExtensionsLoggingConsoleVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsHostingVersion)" />
   </ItemGroup>
 
   <!-- External dependencies -->
@@ -31,7 +33,6 @@
     <PackageVersion Include="xunit.extensibility.core" Version="$(XUnitVersion)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="$(XUnitVersion)" />
     <PackageVersion Include="Octokit" Version="$(OctokitVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsHostingVersion)" />
   </ItemGroup>
 
 </Project>

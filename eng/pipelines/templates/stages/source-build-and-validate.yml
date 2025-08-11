@@ -24,7 +24,6 @@ stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
   dependsOn: []
-  condition: false
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
