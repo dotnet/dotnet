@@ -12,8 +12,9 @@ namespace Microsoft.DotNet.SignTool
         public readonly string PublicKeyToken;
         public readonly string TargetFramework;
         public readonly string CollisionPriorityId;
+        public readonly ExecutableType ExecutableType;
 
-        public ExplicitCertificateKey(string fileName, string publicKeyToken = null, string targetFramework = null, string collisionPriorityId = null)
+        public ExplicitCertificateKey(string fileName, string publicKeyToken = null, string targetFramework = null, string collisionPriorityId = null, ExecutableType executableType = ExecutableType.None)
         {
             Debug.Assert(fileName != null);
 
@@ -21,19 +22,35 @@ namespace Microsoft.DotNet.SignTool
             PublicKeyToken = publicKeyToken ?? "";
             TargetFramework = targetFramework ?? "";
             CollisionPriorityId = collisionPriorityId ?? "";
+            ExecutableType = executableType;
+        }
+
+        private static ExecutableType ParseExecutableType(string executableType)
+        {
+            if (string.IsNullOrEmpty(executableType))
+                return ExecutableType.None;
+
+            return executableType switch
+            {
+                "PE" => ExecutableType.PE,
+                "MachO" => ExecutableType.MachO,
+                "ELF" => ExecutableType.ELF,
+                _ => ExecutableType.None
+            };
         }
 
         public override bool Equals(object obj)
             => obj is ExplicitCertificateKey key && Equals(key);
 
         public override int GetHashCode()
-            => Hash.Combine(Hash.Combine(FileName.GetHashCode(), PublicKeyToken.GetHashCode()), TargetFramework.GetHashCode());
+            => Hash.Combine(Hash.Combine(FileName.GetHashCode(), PublicKeyToken.GetHashCode()), Hash.Combine(TargetFramework.GetHashCode(), ExecutableType.GetHashCode()));
 
         bool IEquatable<ExplicitCertificateKey>.Equals(ExplicitCertificateKey other)
             => FileName == other.FileName && 
             CollisionPriorityId == other.CollisionPriorityId &&
             string.Equals(PublicKeyToken, other.PublicKeyToken, StringComparison.OrdinalIgnoreCase) && 
-            TargetFramework == other.TargetFramework;
+            TargetFramework == other.TargetFramework &&
+            ExecutableType == other.ExecutableType;
 
         public static bool operator ==(ExplicitCertificateKey key1, ExplicitCertificateKey key2) 
             => key1.Equals(key2);

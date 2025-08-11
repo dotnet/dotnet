@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document describes the problematics of managing multiple .NET SDK bands and discusses how we propose to solve this in the Unified Build world during the .NET 9 timeframe using the new build methodology and the full VMR. The document first gives context and explains how we do it today. Then there are two possible solutions discussed and compared.
+This document describes how multiple .NET SDK bands are managed in the Unified Build world using the VMR (Virtual Monolithic Repository). This approach allows us to maintain multiple SDK versions that share common components while keeping band-specific components separate.
 
 ## Terminology
 
@@ -24,6 +24,31 @@ This section presents more precise definitions of common terms used in this docu
 ## SDK bands
 
 To align with new Visual Studio releases, .NET SDK updates sometimes include new features or new versions of components such as Roslyn or MSBuild. These new features or components may be incompatible with the versions that shipped in previous SDK updates for the same major or minor version. To differentiate such updates, the .NET SDK uses the concept of feature bands. While these bands differ in their feature set they share some common parts such as the .NET runtime.
+
+### VMR Layout
+
+The VMR uses SDK branches to manage different bands, similar to how individual repositories work today. Each SDK branch contains the appropriate sources for that band:
+
+```sh
+# release/9.0.1xx branch (100th band)
+└── src
+    ├── arcade
+    ├── roslyn
+    ├── runtime
+    └── sdk
+
+# release/9.0.2xx and other branches (non-100th bands)
+└── src
+    ├── roslyn # references the runtime and arcade build output packages instead of sources
+    └── sdk # references the runtime and arcade build output packages instead of sources
+```
+
+**Key characteristics:**
+- VMR has SDK branches, e.g. `release/9.0.1xx` and `release/9.0.2xx`
+- Each repository is a folder under `src/` in the 1xx branch of the VMR
+- Each non-1xx branch contains only band-specific repositories (e.g., roslyn, sdk)
+- Shared components (runtime, arcade) exist as sources only in the 1xx branch
+- Non-1xx branches reference shared components as build output packages from the 1xx branch
 
 ### Shared vs band-specific components
 
@@ -202,34 +227,63 @@ flowchart TD
 
 This setup makes sure that the latest version of each shared component (e.g., runtime) eventually flows to all SDK products. Over time, the SDK products become coherent. **We call the SDK bands coherent when the versions of all shared components of each band are the same**.
 
-### Band lifecycle
+## Band lifecycle
 
-As described above, the band lifecycle is tightly coupled with the releases of Visual Studio. The exception is 100th band that ships on .NET's annual schedule and VS snaps to it. For repositories that target the VS-centric bands, the `main` branch usually targets the next VS version which is in preview. Once a version of VS is released (is GA-ed), we create a new branch named `dev/XX.Y` where `XX.Y` is the version of the released VS. The `main` branch then targets the next VS version in preview
+The band lifecycle is tightly coupled with the releases of Visual Studio. The exception is the 100th band that ships on .NET's annual schedule and VS snaps to it. For repositories that target the VS-centric bands, the `main` branch usually targets the next VS version which is in preview. Once a version of VS is released (is GA-ed), we create a new branch named `dev/XX.Y` where `XX.Y` is the version of the released VS. The `main` branch then targets the next VS version in preview.
+
+### Band phases
+
+- **Product preview time**: The preview time is when most development happens and the VMR contains a single band only (the 1xx branch). Everything works the same way as with a single version.
+
+- **Band preview time**: The band that is created latest and is to be released next is called the preview band. Except for the 1xx band, each preview band is locked down to use the latest released version of the shared components during development. Since non-1xx branches don't contain sources of shared components, it's clear that dependencies come from packages.
+
+- **Band servicing**: Once a band is released, it moves into servicing mode where it receives updates from the shared component channels (like `.NET 9.0` channel) for runtime updates.
+
+### Band snapping process
+
+To create a new band, the snap is performed in the VMR and then flowed to individual repositories:
+
+1. **Create the new branch** based off the current preview band
+   - E.g., branch `release/9.0.3xx` from `release/9.0.2xx`
+
+2. **Remove shared component sources** in the new branch
+   - Remove sources of shared components (runtime, arcade, etc.)
+   - Adjust package versions to point to build output packages from the last release
+
+3. **Configure Maestro subscriptions** between new VMR bands and their individual repository counterparts
+
+4. **Configure package flow** (when there are at least 3 bands)
+   - Configure subscriptions for the currently released band to consume build output packages from the 1xx band
+
+5. **Flow changes to individual repositories**
+   - Maestro flows the changes from VMR and creates appropriate branches in individual repositories
+
+This ensures that the new (preview) band is locked to use the latest released shared components and that newly released bands will start getting the newest shared components built in the 1xx branch.
+
+### Example lifecycle
 
 As an example, let's say we have the following setup:
-- VS `17.1` is the latest stable version of VS and is associated with the `7.0.1xx` band.
-- VS `17.2` is in preview and is associated with the `7.0.2xx` band.
-- VS-centric repositories would have a `dev/17.1` branch targeting the `17.1` channel and a `main` branch targeting `17.2`.
-- The `17.1` channel would then flow into the `7.0.1xx` branches and the `17.2` channel would flow into the `7.0.2xx`.
-- The `7.0.1xx` branches would then flow into the `7.0.1xx` SDK channel and the `7.0.2xx` branches would flow into the `7.0.2xx` SDK channel.
-- The `7.0` channels would collect builds of shared repositories and flow into `7.0.Yxx` branches that are currently in servicing.
-- The `7.0 Eng` channels would collect builds of shared eng repositories and flow into their respective all `7.0.Yxx` branches, including previews.
+- VS `17.1` is the latest stable version of VS and is associated with the `9.0.1xx` band
+- VS `17.2` is in preview and is associated with the `9.0.2xx` band
+- VS-centric repositories would have a `dev/17.1` branch targeting the `17.1` channel and a `main` branch targeting `17.2`
+- The `17.1` channel would then flow into the `9.0.1xx` branches and the `17.2` channel would flow into the `9.0.2xx`
+- The `9.0.1xx` branches would then flow into the `9.0.1xx` SDK channel and the `9.0.2xx` branches would flow into the `9.0.2xx` SDK channel
+- The `9.0` channels would collect builds of shared repositories and flow into `9.0.Yxx` branches that are currently in servicing
+- The `9.0 Eng` channels would collect builds of shared eng repositories and flow into their respective all `9.0.Yxx` branches, including previews
 
-For this setup, we'd say the 100th band is in **servicing** and the 200th band is in **preview**. It is important to also note that **while a band is in preview, it uses the most recently released .NET runtime** while **the servicing band revs with the `7.0` channel**.
+For this setup, we'd say the 100th band is in **servicing** and the 200th band is in **preview**. It is important to note that **while a band is in preview, it uses the most recently released .NET runtime** while **the servicing band revs with the `9.0` channel**.
 
 When we would be ready to release VS `17.2`, we'd flow the latest shared components into the 200th band branches so that it becomes coherent with the 100th band. Then we'd release the coherent bands and after we would do the following:
 
-- We'd create the `dev/17.2` branch in VS-centric repositories, point it to the `17.2` channel and retarget `main` to `dev/17.3`.
-- We'd snap branches of SDK repositories by branching `7.0.3xx` from `7.0.2xx`. While doing that, we'd update the runtime version of `7.0.3xx` to the just released version.
-- We would set up the `7.0` shared channels to start flowing into the `7.0.2xx` branches as the runtime there would start revving.
+- Create the `dev/17.2` branch in VS-centric repositories, point it to the `17.2` channel and retarget `main` to `dev/17.3`
+- Snap branches of SDK repositories by branching `9.0.3xx` from `9.0.2xx`. While doing that, we'd update the runtime version of `9.0.3xx` to the just released version
+- Set up the `9.0` shared channels to start flowing into the `9.0.2xx` branches as the runtime there would start revving
 
-Technically, the steps above could happen in a different order based on repository needs. The important part is the alignment of repository's development branches with the Maestro channels.
+The important part is the alignment of repository's development branches with the Maestro channels.
 
-### Full code backflow and Maestro
+## Code flow with VMR backflow
 
-Currently, the [VMR is synchronized](./VMR-Design-And-Operation.md#source-synchronization-process) based on the `dotnet/installer` repository mapping its commits 1:1 with `dotnet/installer`. This will have to change once we switch over to the full code backflow model.
-
-To re-iterate what the planned code flow looks like for .NET 9 (with full VMR back flow) – the individual repositories only receive and send updates from/to the VMR and not between each other, so the situation looks like this (see [VMR Code and Build Workflow](./VMR-Code-And-Build-Workflow.md) for details):
+With the full VMR backflow model, individual repositories only receive and send updates from/to the VMR and not between each other, so the situation looks like this:
 
 ```mermaid
 flowchart TD
@@ -252,296 +306,125 @@ flowchart TD
     VMR-->other
 ```
 
-The updates of the VMR will no longer happen when `dotnet/installer` is updated but rather whenever a new build appears in one of the channels. The information making the builds of the `dev/17.4` branch of `dotnet/roslyn` end up in the `7.0.3xx` SDK band is stored in the configuration of Maestro subscriptions between those branches. The Maestro service will have to follow this configuration and update the corresponding sources (the right folder of the right branch) of the VMR accordingly. It will also have to flow changes the other way too when a change is made in the VMR or when VMR produces a new build output package. **This is all new functionality that Maestro will have to implement.** That being said, both proposed solutions seem orthogonal to this and the impact on the Maestro changes needed should be minimal.
+### Regular forward flow
 
-### Release process
+A regular forward flow with changes going to the VMR only would look like this:
 
-The dependency flow eventually flows all the bits into the `dotnet/installer` repository which also uses the SDK branching. Each of those branches then produces an official build – so one build per band – and we release those. The exact process is that a dedicated person selects all the right official builds which are coherent on the shared bits (so each has the same of the runtime for instance) and inputs the IDs of these builds into the staging pipeline called `Stage-DotNet`. **During this process, it is important that the shared bits are only built once officially and then re-used in the respective band builds.**
+```mermaid
+sequenceDiagram
+    autonumber
 
-The long-term plan is to transition to building and releasing using the Virtual Monolithic Repository which is a repository where each commit denotes a full set of sources needed for building .NET. The sources of this repository are synchronized from the individual repositories based on the contents of the `dotnet/installer` repository. The goal of this document is to discuss how this will be done with regards to both the different bands as well as the shared components.
+    participant runtime as dotnet/runtime<br />release/9.0
+    participant SDK_1xx as dotnet/sdk<br />release/9.0.1xx
+    participant SDK_2xx as dotnet/sdk<br />release/9.0.2xx
+    participant VMR_1xx as VMR<br />release/9.0.1xx
+    participant VMR_2xx as VMR<br />release/9.0.2xx
 
-## Proposed solutions
+    runtime->>runtime: New change ➡️ RUN_2
 
-Currently, we end up with SDK branches in the `dotnet/installer` repository and the release process makes sure to package those into the final product. With releasing from the VMR, we have two ways we can approach this:
+    runtime->>VMR_1xx: Flow of 📄 RUN_2
+    Note over VMR_1xx: 📦 VMR_2 build output packages are built
+    VMR_1xx->>VMR_2xx: Flow of 📦 VMR_2<br />(runtime build output packages)
+    Note over VMR_2xx: 📦 VMR_3 build output packages are built
 
-- **SDK branches** - [📄 Detailed description of the proposal](./VMR-Managing-SDK-Bands-SDK-branches.md)  
-    Keep using SDK branches in the VMR the same way we have them today. This is, in fact, what we’re currently already doing with today’s read-only VMR-lite where we synchronize the SDK branches of `dotnet/installer`. Each branch/commit of the VMR would then keep producing a single SDK. However, we need to make sure the shared bits are the same in each released SDK branch – we’d say the SDK branches would be coherent then. We also need to make sure that changes made to the shared components in VMR’s SDK branches are flown everywhere appropriately.
+    Note over VMR_2xx: ✅ Coherent state<br />VMR 1xx and 2xx have 📄 RUN_2
 
-- **Side-by-Side folders in the VMR** - [📄 Detailed description of the proposal](./VMR-Managing-SDK-Bands-Side-by-Side-folders.md)  
-    The second proposed solution would be to take the inverse approach and, instead of having SDK branches, we’d organize VMR’s branches based on the shared bits (e.g. `release/9.0`) and place the different bands of the SDK components side by side in the VMR, e.g. `src/sdk/9.0.1xx`. This makes sure that the shared bits exist only once and each commit of the VMR contains all bands which are coherent.
+    par Parallel backflow of build output packages
+        VMR_1xx->>SDK_1xx: Backflow of 📦 VMR_2
+    and
+        VMR_2xx->>SDK_2xx: Backflow of 📦 VMR_3
+    end
+```
 
-## Proposal comparison
+### Breaking changes flow
 
-To compare the two proposals, we identified several areas which might be impacted by the selected architecture:
+For breaking changes, the situation becomes more complex. Let's imagine a situation where a change is needed in one of the bands that requires a breaking change in a shared component:
 
-- **Build** – what would build of a single and of multiple bands look like with regards to Source Build
-- **Code flow** – what does a breaking change mean; how do we (back-)flow the code between the VMR and the individual repositories
-- **Developer experience** – impact on developer lives and how they work with the VMR; their options for making changes that span multiple repositories
-- **Release** – how do we compile the final Microsoft release
-- **Validation** – what do we validate (build/test) and when
-- **VMR size & performance** – impact of selected architecture on the git repository
-- **Community, 3rd parties & upstream/downstream story** – what does it mean for partners to build their own SDK(s)
-- **Implementation and maintenance complexity** – risks and costs associated with the future
+```mermaid
+sequenceDiagram
+    autonumber
 
-### Build
+    participant runtime as dotnet/runtime<br />release/9.0
+    participant SDK_1xx as dotnet/sdk<br />release/9.0.1xx
+    participant SDK_2xx as dotnet/sdk<br />release/9.0.2xx
+    participant VMR_1xx as VMR<br />release/9.0.1xx
+    participant VMR_2xx as VMR<br />release/9.0.2xx
 
-The current (Microsoft) way of building the SDKs is based on re-using previously built artifacts which come into the build as NuGet packages. The components are flown as already compiled packages. This means that when building each SDK band, we only restore the shared components which were built only once at some point in the past during the official build of their source repository.  
-In .NET 9.0, when the full VMR code flow is in place (see [VMR Code and Build Workflow](./VMR-Code-And-Build-Workflow.md) for details), we’ll be building the individual repositories on more occasions:
+    runtime->>runtime: Change in runtime ➡️ RUN_2
 
-- During the rolling build of their source repository – this will use other repo’s build output packages whenever they depend on another repo as if they were just built from source.
-- During the official build of the VMR – when we build the whole product from source. This will end up producing an build output package per each individual repository built as part of the whole build.
+    runtime->>VMR_1xx: PR with source change to 📄 RUN_2 is opened
+    activate VMR_1xx
+    Note over VMR_1xx: ❌ Requires a change in SDK
+    VMR_1xx->>VMR_1xx: Change needed in src/sdk<br />Creating 📄 SDK_1.2
+    deactivate VMR_1xx
+    Note over VMR_1xx: 📦 VMR_2 build output packages are built
 
-This means that in several places, we’ll be building both the shared components and the SDK band components from source where their dependencies will be either freshly built or restored in a local NuGet cache.  
-Regardless of how this will happen, there’s no real difference whether we’d build the SDK bands from folders which are side by side in a folder of a checked-out branch or which are checkouts of different SDK branches.
+    VMR_1xx->>SDK_1xx: Flow of 📄 SDK_1.2, 📦 VMR_2
 
-The various situations can be summarized as follows:
-- For individual repository builds, the build process will restore the dependencies from build output packages.
-- For the VMR build shared components are built with the first band and put in a local NuGet feed. Other bands restore shared components from the feed.
+    VMR_1xx->>VMR_2xx: Flow of 📦 VMR_2
+    activate VMR_2xx
+    Note over VMR_2xx: ❌ Requires a change in SDK
+    VMR_2xx->>VMR_2xx: Change needed in src/sdk<br />Creating 📄 SDK_2.2
+    deactivate VMR_2xx
+    Note over VMR_2xx: 📦 VMR_3 build output packages are built
+    VMR_2xx->>SDK_2xx: Flow of 📄 SDK_2.2, 📦 VMR_3
 
-Upon inspection of the proposals, the above seems to work for both proposals as we'd be able to supply all of the sources. However, the difference lies in the build process itself.  
-For SDK branches, this does not really differ as the layout stays roughly the same. For side-by-side folders, the build would get more complicated than today as each component would have to know which SDK folder of its dependency it should use. It seems quite error prone and difficult to figure out where dependencies came from once we have built everything.  
-For this reason, the SDK branches solution wins but the impact on the final architecture is not as big as this would be a one-time cost.
+    Note over VMR_2xx: ✅ Coherent state<br />VMR 1xx and 2xx both use 📄 RUN_2
+```
 
-### Code flow
+This flow ensures that after breaking changes, all SDK bands become coherent by using the same version of shared components.
 
-Code flow is where the two approaches differ dramatically. The biggest difference is during breaking changes in shared components and how/when these get resolved. For a simple forward flow where a shared component is changed, the code flow needed to update all branches does not differ much as shown in the detailed designs of each of the proposals.
+## Working with the code
 
-The situation gets more interesting for breaking changes. However, that does not happen often once we have multiple bands out already. This would mean API changes which does not really happen or rarely when dependencies EOL or infrastructural changes are needed. Regardless, the side-by-side solution shows much more resiliency to breaking changes as those need to be dealt with immediately when we do the initial shared component change. The VMR won’t ever get into an inconsistent state as the bands live within a single commit. Whereas in the SDK branch solution, the breaking change is created and is dealt with in a follow-up step once code flows to the branch of the other band.
+The proposed layout has some problematic implications. Let's consider the following scenarios:
 
-Other difference is in the number of steps in the flow to reach a coherent state. This is lower for side-by-side as incoherency is impossible from the start and the system does not need to deal with it. The number of changes needed is not that much higher though as we still need to flow changes to the same number of branches of all individual repositories that are part of the change. This does not differ much whether we flow folders from one or more branches.
+1. A developer needs to make sure a cross-repo change to `src/runtime` and `src/sdk` in the `3xx` band.
+2. A distro maintainer needs to build the `3xx` band from source.
 
-### Developer experience
+We need to make sure both of these scenarios are easy to do but the layout of the sources doesn't allow that out of the box.
 
-Important area to consider is how the day-to-day interactions of .NET developers with the VMR would look like. We identified the following key actions the developers are interested in:
+It seems that to make this work, we'd need to be able to tell Source Build to easily swap between using the sources and the build output packages of the shared components.
+When someone would be interested in these flows, we should have a mechanism to also checkout the sources and reference them during the build. There are couple of possibilities:
 
-- **Working with sources** – working with the source files such as searching, usual investigations such as checking file history & looking for symbols, and finally code editing and building itself
-- **Git operation complexity** – actions such as checking file history, diffing bands, backporting changes between bands..
-- **Git operation performance** – duration of operations such as `git status`. This area is considered separately [later in the document](#vmr-size--performance).
+1. The `src/` folder of non-1xx branches would contain submodules pointing to the original individual repositories. These would not be used in most flows but could be activated. When we'd be flowing changes from the 1xx branch, we could also change where the submodule points.
+2. Have a script that would check the components out into `src/` onto the same location where they are placed in the 1xx branch. It would also create some dummy file to signal that Source Build should ignore `Version.Details.xml` when restoring the build output packages but rather build the sources. The `src/` locations and the signal file would be ".gitignored". The dev would then have to backport their changes from withing the folders to either the 1xx branch or the individual repositories.
+3. We could just expect the individual repositories to be checked out somewhere else on developer's disk (e.g. next to the VMR itself) and Source Build would know to find and build those instead (again through an invisible signal file for instance).
 
-**_That said, it’s important to realize that most of the work and the VMR is the most active in the preview time where we only have one SDK band._**
+The first option seems quite straightforward but the individual repository doesn't necessarily have to have the same contents as its counterpart in the VMR which might be problematic.  
+The second flow solves the scenario of .NET distro maintainers fully as we'd easily create a source tarball that would match the layout of the 1xx branch. It doesn't work well for the developer scenario though.  
+The third option seems to be the best for the developer but doesn't solve the distro maintainer scenario fully.
 
-It is obvious that the SDK branch proposal wins in most of these categories. It stays more true to git by using commits/branches for file versioning rather than folders with version using in their name as it is with the side-by-side layout. This works well with all kinds of tooling and workflows:
+It seems that we could have a mixture of `2.` and `3.` where Source Build would have a feature of "know to look elsewhere" and distro maintainers would build from a tarball assembled as described in `2.` and developers would have the option to use the sources from their local individual repositories as shown in `3.`.
 
-- File history breaks with side-by-side folders once we snap the bands as files are copied in a new path.
-- File and symbol search might be confusing when going through almost identical side-by-side folders.
-- Backporting a change between bands sounds less error prone with SDK branches as it’s just porting commits. Making a change in several bands at once can lead to omitting a change in one of the bands, harder-to-review pull requests and overall it seems to be easier to transfer changes between bands using git-native approaches. Of course it’s possible to utilize patches but once a change is up for review, making sure all bands stay in sync might be problematic.
-- Diffing bands sounds easier to do with SDK branches as well as you don’t need to worry which all components are shared and which are not – diffing side-by-side folders might become tedious once we need to compare several repositories at once.
+### Building from source
 
-Some points of interest are rather a matter of personal preference – is it better for a developer to make a change in one SDK branch, open a PR and then backport to other branches, or is it better to do everything at once and build/validate it together? Over all it seems that storing code based on how we work with it rather than how we release it sounds better and the SDK branches proposal seems as the superior approach in this area since it optimizes for development rather than bend the layout to how we release the product.
+For distro maintainers who need to build from source:
 
-### Release
+- **1xx band builds**: Contain all necessary sources and can be built directly
+- **Non-1xx band builds**: Require assembling sources from the 1xx branch for shared components or using the mechanisms described above to swap from packages to sources
 
-There are few key parts of the release process:
+## Release process
 
-- **Figuring out what to release** - we need to flow dependencies to the right places and determine which sources are coherent enough to be released.
-- **Compiling the binary release** - we need to be able to build all the sources in such a way that shared components do not get built more than once.
-- **Publishing and communicating the release of the sources** - publishing of sources so they are easily consumed by 3rd party partners.
+The release process has three main phases:
 
-#### Figuring out what to release
+### 1. Figuring out what to release
 
-For side-by-side, we only need to identify a single commit which is easier than SDK branches, for which we need to identify a commit per each band where also the commits of the non-1xx band reference the build output packages of the 1xx band commit.
+We need to ensure SDK branches are coherent, meaning all bands use the same versions of shared components. This requires:
+- The latest published build output packages from the 1xx branch have flowed to all other SDK band branches
+- Enabling package flow for the preview band to consume the newest bits
+- Validating everything works together
 
-#### Compiling the binary release
+### 2. Compiling the binary release
 
-For the release, we'd just collect outputs of the official VMR build(s) so it's quite similar to today's staging pipeline behavior which does that for `dotnet/installer` builds already. This also makes sure we only build the shared components once and we have tested those exact binaries already.
+Since shared components are built only once and stored in build output packages, we can assemble packages from all band branches and release them together, similar to how we do it today. The staging pipeline assembles build products from official builds of each band.
 
-It seems that both proposals would mean we have an official VMR build to take the products from. We currently don't have the build infrastructure to build several bands together but that would happen for both proposals.
+### 3. Publishing and communicating the release of sources
 
-#### Publishing and communicating the release of the sources
+Publishing sources for consumption by 3rd party partners differs based on consumer needs:
 
-Last part of the release would be the so-called Source Build release where we'd need to collect and publish the sources representing the release for the .NET distro maintainers. The side-by-side proposal would contain all of the sources within one commit which makes things easier. However, for anyone who only cares about a single band, we'd need to be able to provide some trimmed version of this commit.  
-For SDK branches, the situation is a bit more complicated. For a single SDK band release, only the 1xx band branch would contain the sources in such a way that you could build directly. The non-1xx band branches do not contain the source code of the shared components and only reference them as build output packages. This means that we'd need to compile the sources by restoring them from the 1xx band branch. For releases of multiple SDKs together, we'd also need to compile the full set of sources by bringing the branches together.
+- **Single SDK band release**: Only the 1xx band branch contains sources that can be built directly. Non-1xx band branches don't contain source code of shared components and only reference them as build output packages. We need to compile sources by restoring them from the 1xx band branch.
 
-It seems that while the SDK branches approach brings a bit more complexity, we'll have to create new processes of how to get the sources to our partners for both approaches.
+- **Multiple SDK release**: We need to compile the full set of sources by bringing the branches together, ensuring shared components appear only once.
 
-#### Mean time to release
+The release process ensures that shared components are built once officially and reused across all band builds, maintaining coherency while optimizing build times.
 
-There is one more metric important to consider connected to releases and that is *mean time to release*. This says how long it takes from making an arbitrary change in the product to releasing it. This is very important is it says how reactive we might be in situations like security fixes.
-
-The side-by-side solution needs fewer steps to flow a change between the VMR and the individual repositories but this difference is not dramatic. The flow still needs to happen to/from the same amount of individual repository branches. It only happens for one VMR branch as opposed to all SDK band branches as with the SDK branches proposal.  
-The key improvement that Unified Build brings is flattening the dependency graph which will have a big impact and improve this metric regardless of what we choose here.
-
-### Validation
-
-By validation we mean the process of running some set of tests over a changed code. For individual repositories, there is no change compared to today. There is a difference though for changes made directly in the VMR as we need to specify what needs to be built and validated.
-
-It is unclear what the validation story should be when we have all SDKs in folders side-by-side and how it would impact developers. On one hand, validating a shared component change in all SDK branches adds up to more compute time as the shared components will get re-built in each branch. On the other hand, building all non-shared components always impacts every build and that might have negative impact on developer productivity.
-
-<table>
-
-<tr>
-<th> SDK branches </th>
-<th> Side-by-Side folders </th>
-</tr>
-
-<tr>
-<th colspan=2> SDK-band-specific component changed </th>
-</tr>
-
-<tr>
-  <td>We only rebuild 1 band/branch where the change happens. Change is flown to source repo and re-validated there.</td>
-  <td>We’d need to detect that we don’t need to build all bands. Change is flown to source repo and re-validated there.</td>
-</tr>
-<tr>
-<th colspan=2> Shared component changed </th>
-</tr>
-
-<tr>
-  <td>We only rebuild 1 band – the branch this happened. Possible breaking changes with other bands which are detected after we try to flow the change back.</td>
-  <td>We’d need to detect that and build/test all bands, validating the change.</td>
-</tr>
-</table>
-
-### VMR size & performance
-
-By size and performance we mean the implications of each proposed repository layout onto these metrics onto few key metrics that affect common operations we do with the VMR.
-
-#### Git repository size
-
-The expectation is that the size of the overall repository won’t differ much between the two proposed layouts. This is due to the mechanism of how git stores data internally. For illustration of this expectation, imagine a situation where we have two SDK bands which differ in one file only – `src/sdk/foo/bar.txt`. Let’s look at what is inside of the git object database:
-
-- For SDK branches, we have the two commits that describe the two branches. These are equal at first, when we freshly snap the band branches.
-- For side-by-side folders, the situation isn’t much different with the two git trees for each of the band folders – `src/sdk/9.0.1xx` and `src/sdk/9.0.2xx`. These are also the same at first – only the parent tree representing the sdk folder is an object created after the snap.
-- Once we change `bar.txt`, we’d get a new object for the file itself and then some other:
-
-- For SDK branches, we have the new git trees that describe the parent folders of the changed file leading up to the root of the repository (`/` → `src` → `sdk` → `foo`).
-- For side-by-side folders, the situation is again not much different – we get a new set of git trees describing the path from foo through the new `src/sdk/9.0.2xx`.
-
-Looking at this simple example, it hints that whatever solution we pick, the number of git objects we’ll create to capture the changes are around the same.
-
-#### Single SDK source tarball size
-
-Another interesting metric is the archive of sources needed to build a single SDK. It seems that when 3rd parties that only care about one SDK band would be downloading sources of VMR commits, the side-by-side layout incurs quite a big toll on the overall size as we’d need to download the sources of all bands always. The release process might be customized, and we could omit other bands from the tarball.
-
-#### Release source tarball size
-
-By release source tarball we mean an archive of all sources needed to build a whole release containing several SDK bands.
-For side-by-side folders, this would simply equal to a VMR commit. For SDK branches, we’d have to do something about compiling the release archive as the shared components need to appear in the tarball just once. For that, we'd have to specify what such a layout would look like and how we would build that as there is no immediate plan for that in the SDK branches proposal.
-
-> 🚧 TODO: It’s a question whether there would be a thing such as “tarball for the whole release with all bands” and what the flow for distro maintaners would be. If there wasn't a need for this, the SDK branch proposal would benefit from this but it would still need a story for assembling sources of a single non-1xx band.
-
-> 🚧 TODO: Resiliency to band explosion – keeping bands in branches seems more resilient to outer requirements such as a sudden increase in the number of bands due to Visual Studio speeding up its release cycle.
-
-#### Git operation performance
-
-We care about the duration of common git operation duration such as checkout or status. We also need to consider scenarios in which we use the VMR – do we care about more bands than one?
-
-SDK branches seem to have the innate benefit of not having to check out all the bands always. This seems like a big win for scenarios where we for instance make changes to one band only. Checking out mostly the same versions of the same files but in few copies will take its toll on the performance of git operations.
-
-#### Summary
-
-From the analysis above, it seems that to declare a winner, we need to consider how often we deal with a single vs multiple bands. Both solutions are a good fit for one or the other, never both.
-
-<table>
-
-<tr>
-<th> SDK branches </th>
-<th> Side-by-Side folders </th>
-</tr>
-
-<tr>
-<th colspan=2> Git repository size </th>
-</tr>
-
-<tr>
-  <td colspan=2>Roughly the same overhead</td>
-</tr>
-
-<tr>
-<th colspan=2> Single SDK source tarball size </th>
-</tr>
-<tr>
-  <td>Each VMR commit gives us this.</td>
-  <td>Release process would have to be customized and other bands omitted.</td>
-</tr>
-
-<tr>
-<th colspan=2> Release source tarball size </th>
-</tr>
-
-<tr>
-  <td>Release process would have to be customized and shared components included just once.</td>
-  <td>Each VMR commit gives us this.</td>
-</tr>
-
-<tr>
-<th colspan=2> Git operation performance </th>
-</tr>
-
-<tr>
-  <td>Ideal for scenarios concerning 1 band. Worse off for multi-band scenarios.</td>
-  <td>Ideal for scenarios concerning multiple bands. Worse off for single-band scenarios.</td>
-</tr>
-
-</table>
-
-### Community, 3rd parties & upstream/downstream story
-
-There are quite big implications of how we lay the bands out in the VMR on the outside world. 3rd parties consuming .NET might or might not care about building multiple bands. Overall, the fact that we even need to have different SDK bands is native to Microsoft’s rhythm and way of bundling releases. It is a question whether we will impose more pain on 3rd parties by having to build multiple band branches or by having to deal with the side-by-side layout.
-
-For SDK branches, nothing really changes in this regard as you can keep building the branch as you were doing until now and get the SDK you care about.  
-For side-by-side, the situation is quite different. We’re suddenly influencing everyone’s experience with the VMR by projecting how we bundle releases into the layout of the code. This has negative implications such as having to check out all the bands always which would for instance prolong all repo operations.
-
-Additionally, both proposals have the problem of locking the preview band on the latest runtime. The SDK branch proposal is more intuitive in this as the SDK branch of the preview band doesn't contain code for shared components. This is better than the side-by-side design which has the sources laid out but they are not used as the preview band will restore them from an build output package. This will cause confusion.
-
-Regardless of the chosen solution, we must be clear on how to interact with the VMR/repositories (e.g. where do we expect the community to upstream their changes to) and we must have communicate it well.
-
-### Implementation and maintenance complexity
-
-There will be several areas where we’ll need to implement new functionality to make the above work:
-
-- **Code/dependency flow** - changes required to flow the code and the build output packages between the VMR and the individual repositories.
-- **Source Build** - tooling and infrastructure to build either one or multiple bands from the new layout of the sources.
-- **Product lifecycle processes** - tooling connected to processes such as branching, band snapping, servicing, etc.
-
-#### Code/dependency flow
-
-Both solutions will require us to extend the Maestro service so that it understands flowing both sources and build output package versions between the VMR and the individual repositories. Most of the work will be captured in extending the configuration of Maestro subscriptions and working through the problems of the backflow process itself.
-For the side-by-side solution, we’ll need to further implement a new code flow model which will allow us to target specific folders within the VMR. This will also slightly complicate several aspects such as configuration of the source mappings in the VMR and how we keep track of which sources are presently in the VMR.
-
-#### Source Build
-
-Both solutions will require us to implement new behaviours into the Source Build infrastructure that will allow us:
-- Build one or multiple bands from the new layout.
-- Swap between restoring shared components from an build output package and building them from source.
-
-The SDK branch solution is closer to what we have today as the layout of files would stay the same while switching between restoring and building shared components would be common for both proposals. It is also already partially implemented.
-
-#### Product lifecycle processes
-
-Both solutions will require us to define, document and support processes such as snapping the bands. It doesn't look like these would differ much between the two.
-
-#### Maintenance
-
-Both solutions will require the Maestro dependency (back-)flow system to work. The solution will not differ much between the two as we'll be synchronizing code into the VMR and back based on some rules. It's a detail whether those are folders in one branch or multiple.
-
-#### Summary
-
-The SDK folder solution is much closer to where we are these days as the layout of the VMR won't really change. That being said, the complexity of the implementation should not have a high priority when making the decision as it is a one-time cost.
-
-### Comparison summary
-
-|                       Comparison area                       |     Preferred solution      | Impact on decision |
-|-------------------------------------------------------------|:---------------------------:|:------------------:|
-|     Build                                                   |         SDK branches        |        low         |
-|     Code flow                                               |         Side-by-side        |    low/medium\*    |
-|     Developer experience                                    |         SDK branches        |      **high**      |
-|     Community, 3rd parties & upstream/downstream story      |         SDK branches        |      **high**      |
-|     Release                                                 |         Side-by-side        |       medium       |
-|     Validation                                              |             tie             |       medium       |
-|     VMR size & performance                                  |         SDK branches        |   **medium/high**  |
-|     Implementation and maintenance complexity               |         SDK branches        |        low\*\*     |
-
-> \* The impact of code flow may be low, given that most changes in shared components that require changes in the SDK happen when the 1xx band is the only band. So the code flow is not really affected by this edge case. Over all the simplification we are getting with using the VMR is massive regardless of the chosen solution.  
-> \*\* The implementation complexity is a one-time cost (but much lower for SDK branches). Maintenance seems to be similar for both.solutions.
-
-## Comparison evaluation
-
-Both approaches seem to have pros and cons. To choose the best approach, we should assign importance to the evaluation areas on which we were comparing these and see which approach seems better.
-
-When doing so, we should take into account the product lifecycle. At first, the most active busy development happens in the preview time (on main branches). Only after the release, we move into servicing and only after then we branch out and snap the bands. We expect the servicing period to last very long but with less activity. During active development, we should prioritize **developer experience** and **code flow** as that has impact on product construction.  
-During servicing we need the system to be as frictionless as possible so that we’re able to react to external impulses fast and release fixes fast which hints at prioritizing **code flow**, **release**, and **maintenance complexity**. Some areas should be important in both periods such as **community impact**.
-
-## Conclusion
-
-From the above, it seems that the SDK branches proposal brings more flexibility and benefits over the side-by-side folders. It will mean much easier development experience for the developers and the community. It will also mean that we can keep the VMR size and performance better in check. The only area where the side-by-side folders seem to be better is the release process but that is not a high priority area. The implementation complexity for both code flow infrastructure as well as Source Build is much lower with SDK branches even though this is a one-time cost.
