@@ -106,6 +106,24 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A package pattern must be provided..
+        /// </summary>
+        internal static string Error_PackageSourceMappingPattern_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceMappingPattern_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one source must be selected..
+        /// </summary>
+        internal static string Error_PackageSourceMappingSource_Missing {
+            get {
+                return ResourceManager.GetString("Error_PackageSourceMappingSource_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A name must be provided..
         /// </summary>
         internal static string Error_PackageSourceName_Missing {
@@ -313,6 +331,15 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Insecure Connections.
+        /// </summary>
+        internal static string Text_AllowInsecureConnections_Header {
+            get {
+                return ResourceManager.GetString("Text_AllowInsecureConnections_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Common NuGet configurations: [How settings are applied](https://aka.ms/nuget/how-settings-are-applied/).
         /// </summary>
         internal static string Text_ConfigurationFiles_CommonLink {
@@ -340,7 +367,16 @@ namespace NuGetVSExtension {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are attempting to add an HTTP source, which is insecure..
+        ///   Looks up a localized string similar to NuGet requires HTTPS sources. To use an HTTP source, you must explicitly set &apos;allowInsecureConnections&apos; to true in your NuGet.Config file. Refer to [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere) for more information..
+        /// </summary>
+        internal static string Text_HttpSource_Error {
+            get {
+                return ResourceManager.GetString("Text_HttpSource_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HTTP sources are insecure. Consider using HTTPS instead. &apos;AllowInsecureConnections&apos; is enabled, permitting HTTP access. For more secure options, see [https://aka.ms/nuget-https-everywhere](https://aka.ms/nuget-https-everywhere)..
         /// </summary>
         internal static string Text_HttpSource_Warning {
             get {
@@ -354,6 +390,15 @@ namespace NuGetVSExtension {
         internal static string Text_PackageSourceEnabled_Header {
             get {
                 return ResourceManager.GetString("Text_PackageSourceEnabled_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Package pattern.
+        /// </summary>
+        internal static string Text_PackageSourceMappingPattern_Header {
+            get {
+                return ResourceManager.GetString("Text_PackageSourceMappingPattern_Header", resourceCulture);
             }
         }
         
@@ -390,6 +435,15 @@ namespace NuGetVSExtension {
         internal static string Text_PackageSourceUrl_Header {
             get {
                 return ResourceManager.GetString("Text_PackageSourceUrl_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contoso.Contracts or System.*.
+        /// </summary>
+        internal static string Text_Watermark_ExamplePackageIdPattern {
+            get {
+                return ResourceManager.GetString("Text_Watermark_ExamplePackageIdPattern", resourceCulture);
             }
         }
     }

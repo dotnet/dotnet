@@ -237,8 +237,10 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         {
             // Arrange
             string name = "TestSource3";
+            string lookupName = name;
             string source = "https://testsource3.com";
             bool isEnabled = true;
+            bool allowInsecureConnections = false;
 
             var packageSources = new List<PackageSource>
             {
@@ -247,7 +249,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             };
 
             // Act
-            PackageSource result = PackageSourceValidator.FindExistingOrCreate(source, name, isEnabled, packageSources);
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
 
             // Assert
             result.Should().NotBeNull();
@@ -256,11 +264,14 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             result.IsEnabled.Should().Be(isEnabled);
         }
 
-        [Fact]
-        public void FindExistingOrCreate_NewHttpSource_CreatesNewSource_WithAllowInsecureConnectionsSetToTrue()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void FindExistingOrCreate_NewHttpSource_CreatesNewSource_WithAllowInsecureConnectionsSet(bool allowInsecureConnections)
         {
             // Arrange
             string name = "TestSource3";
+            string lookupName = name;
             string source = "http://testsource3.com";
             bool isEnabled = true;
 
@@ -271,23 +282,28 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             };
 
             // Act
-            PackageSource result = PackageSourceValidator.FindExistingOrCreate(source, name, isEnabled, packageSources);
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
 
             // Assert
             result.Should().NotBeNull();
             result.Name.Should().Be(name);
             result.Source.Should().Be(source);
             result.IsEnabled.Should().Be(isEnabled);
-            result.AllowInsecureConnections
-                .Should()
-                .BeTrue(because: "New HTTP sources should allow insecure connections by default.");
+            result.AllowInsecureConnections.Should().Be(allowInsecureConnections);
         }
 
         [Fact]
-        public void FindExistingOrCreate_FoundExistingBySource_UpdatesName()
+        public void FindExistingOrCreate_FoundExistingById_UpdatesName()
         {
             // Arrange
             string originalName = "TestSource1";
+            string lookupName = originalName;
             string originalSource = "http://testsource1.com";
 
             string name = "TestSource2";
@@ -309,7 +325,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             };
 
             // Act
-            PackageSource result = PackageSourceValidator.FindExistingOrCreate(source, name, isEnabled, packageSources);
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                originalAllowInsecureConnections,
+                packageSources);
 
             // Assert
             result.Should().NotBeNull();
@@ -327,16 +349,53 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void FindExistingOrCreate_NullOrEmptyName_ThrowsArgumentException(string invalidName)
+        public void FindExistingOrCreate_NullOrEmptyId_ThrowsArgumentException(string? invalidId)
         {
             // Arrange
+            string name = "TestSource1";
             string source = "http://testsource1.com";
             bool isEnabled = true;
+            bool allowInsecureConnections = false;
 
             List<PackageSource> packageSources = new List<PackageSource>();
 
             // Act
-            Action act = () => PackageSourceValidator.FindExistingOrCreate(source, invalidName, isEnabled, packageSources);
+            Action act = () => PackageSourceValidator.FindExistingOrCreate(
+                invalidId!,
+                source,
+                name,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
+
+            // Assert
+            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            exception.Message.Should().Contain(Strings.Argument_Cannot_Be_Null_Or_Empty);
+            exception.ParamName.Should().Be("lookupName");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void FindExistingOrCreate_NullOrEmptyName_ThrowsArgumentException(string? invalidName)
+        {
+            // Arrange
+            string lookupName = "TestSource1";
+            string source = "http://testsource1.com";
+            bool isEnabled = true;
+            bool allowInsecureConnections = false;
+
+            List<PackageSource> packageSources = new List<PackageSource>();
+
+            // Act
+            Action act = () => PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                invalidName!,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
 
             // Assert
             ArgumentException exception = Assert.Throws<ArgumentException>(act);
@@ -348,16 +407,24 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void FindExistingOrCreate_NullOrEmptySource_ThrowsArgumentException(string invalidSource)
+        public void FindExistingOrCreate_NullOrEmptySource_ThrowsArgumentException(string? invalidSource)
         {
             // Arrange
             string name = "TestSource1";
+            string lookupName = name;
             bool isEnabled = true;
+            bool allowInsecureConnections = false;
 
             List<PackageSource> packageSources = new List<PackageSource>();
 
             // Act
-            Action act = () => PackageSourceValidator.FindExistingOrCreate(invalidSource, name, isEnabled, packageSources);
+            Action act = () => PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                invalidSource!,
+                name,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
 
             // Assert
             ArgumentException exception = Assert.Throws<ArgumentException>(act);
@@ -366,18 +433,19 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         }
 
         [Fact]
-        public void FindExistingOrCreate_FoundExistingByName_UpdatesSource()
+        public void FindExistingOrCreate_FoundExistingById_UpdatesSource()
         {
             // Arrange
             string originalName = "TestSource1";
+            string lookupName = originalName;
             string originalSource = "http://testsource1.com";
-
-            string name = originalName;
-            string source = "https://testsource2.com";
-            bool isEnabled = true;
-
             bool originalAllowInsecureConnections = true;
             bool originalDisableTLSCertificateValidation = true;
+
+            string name = originalName;
+            string source = "http://testsource2.com";
+            bool isEnabled = true;
+
             PackageSourceCredential originalCredential = GetTestPackageSourceCredential(name);
 
             var packageSources = new List<PackageSource>
@@ -391,7 +459,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             };
 
             // Act
-            PackageSource result = PackageSourceValidator.FindExistingOrCreate(source, name, isEnabled, packageSources);
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                originalAllowInsecureConnections,
+                packageSources);
 
             // Assert
             result.Should().NotBeNull();
@@ -408,10 +482,57 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
+        public void FindExistingOrCreate_FoundExistingByNameAndSource_UpdatesAllowInsecureConnections(bool originalAllowInsecureConnections)
+        {
+            // Arrange
+            string name = "TestSource1";
+            string lookupName = name;
+            string source = "http://testsource1.com";
+            bool isEnabled = true;
+            bool allowInsecureConnections = !originalAllowInsecureConnections; // Toggle allowInsecureConnections state
+
+            bool originalDisableTLSCertificateValidation = true;
+            PackageSourceCredential originalCredential = GetTestPackageSourceCredential(name);
+
+            var packageSources = new List<PackageSource>
+            {
+                new PackageSource(source, name, originalAllowInsecureConnections)
+                {
+                    AllowInsecureConnections = originalAllowInsecureConnections,
+                    DisableTLSCertificateValidation = originalDisableTLSCertificateValidation,
+                    Credentials = originalCredential
+                }
+            };
+
+            // Act
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                allowInsecureConnections,
+                packageSources);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.AllowInsecureConnections.Should().Be(allowInsecureConnections, because: "The AllowInsecureConnections state should have been toggled.");
+
+            // Verify unchanged properties.
+            result.Name.Should().Be(name, because: "Only AllowInsecureConnections should have changed.");
+            result.Source.Should().Be(source, because: "Only AllowInsecureConnections should have changed.");
+            result.DisableTLSCertificateValidation.Should().Be(originalDisableTLSCertificateValidation, because: "Only AllowInsecureConnections should have changed.");
+            result.Credentials.Should().BeEquivalentTo(originalCredential, because: "Only AllowInsecureConnections should have changed.");
+            result.IsEnabled.Should().Be(isEnabled, because: "Only AllowInsecureConnections should have changed.");
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
         public void FindExistingOrCreate_FoundExistingByNameAndSource_UpdatesIsEnabled(bool originalIsEnabled)
         {
             // Arrange
             string name = "TestSource1";
+            string lookupName = name;
             string source = "http://testsource1.com";
             bool isEnabled = !originalIsEnabled; // Toggle the enabled state
 
@@ -430,7 +551,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             };
 
             // Act
-            PackageSource result = PackageSourceValidator.FindExistingOrCreate(source, name, isEnabled, packageSources);
+            PackageSource result = PackageSourceValidator.FindExistingOrCreate(
+                lookupName,
+                source,
+                name,
+                isEnabled,
+                originalAllowInsecureConnections,
+                packageSources);
 
             // Assert
             result.Should().NotBeNull();

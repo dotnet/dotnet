@@ -8,12 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NuGet.Common;
-using NuGet.Frameworks;
-using NuGet.LibraryModel;
 using NuGet.RuntimeModel;
-using NuGet.Versioning;
 
 namespace NuGet.ProjectModel
 {
@@ -86,68 +82,16 @@ namespace NuGet.ProjectModel
             return Read(stream, NullLogger.Instance, path);
         }
 
+#pragma warning disable CA1822 // Mark members as static - public API
         public LockFile Read(Stream stream, ILogger log, string path)
+#pragma warning restore CA1822 // Mark members as static
         {
-            return Read(stream, log, path, EnvironmentVariableWrapper.Instance, flags: LockFileReadFlags.All);
+            return Read(stream, log, path, flags: LockFileReadFlags.All);
         }
 
-        internal LockFile Read(Stream stream, ILogger log, string path, LockFileReadFlags flags)
+        internal static LockFile Read(Stream stream, ILogger log, string path, LockFileReadFlags flags)
         {
-            return Read(stream, log, path, EnvironmentVariableWrapper.Instance, flags: flags);
-        }
-
-        internal LockFile Read(Stream stream, ILogger log, string path, IEnvironmentVariableReader environmentVariableReader, bool bypassCache = false, LockFileReadFlags flags = LockFileReadFlags.All)
-        {
-            if (!JsonUtility.UseNewtonsoftJsonForParsing(environmentVariableReader, bypassCache))
-            {
-                return Utf8JsonRead(stream, log, path, flags);
-            }
-            else
-            {
-                using (var reader = new StreamReader(stream))
-                {
-#pragma warning disable CS0618 // Type or member is obsolete
-                    return Read(reader, log, path, flags);
-#pragma warning restore CS0618 // Type or member is obsolete
-                }
-            }
-        }
-
-        [Obsolete("This method is deprecated. Use Read(Stream, string) instead.")]
-        public LockFile Read(TextReader reader, string path)
-        {
-            return Read(reader, NullLogger.Instance, path, LockFileReadFlags.All);
-        }
-
-        [Obsolete("This method is deprecated. Use Read(Stream, ILogger, string) instead.")]
-        public LockFile Read(TextReader reader, ILogger log, string path)
-        {
-            return Read(reader, log, path, LockFileReadFlags.All);
-        }
-
-        [Obsolete("This method is deprecated. Use Read(Stream, string) instead.")]
-        internal LockFile Read(TextReader reader, ILogger log, string path, LockFileReadFlags flags)
-        {
-            try
-            {
-                var json = JsonUtility.LoadJson(reader);
-                var lockFile = ReadLockFile(json, path, flags);
-                lockFile.Path = path;
-                return lockFile;
-            }
-            catch (Exception ex)
-            {
-                log.LogError(string.Format(CultureInfo.CurrentCulture,
-                    Strings.Log_ErrorReadingLockFile,
-                    path, ex.Message));
-
-                // Ran into parsing errors, mark it as unlocked and out-of-date
-                return new LockFile
-                {
-                    Version = int.MinValue,
-                    Path = path
-                };
-            }
+            return Utf8JsonRead(stream, log, path, flags);
         }
 
         public void Write(string filePath, LockFile lockFile)
@@ -217,53 +161,6 @@ namespace NuGet.ProjectModel
             }
         }
 
-        [Obsolete]
-        private static LockFile ReadLockFile(JObject cursor, string path, LockFileReadFlags flags)
-        {
-            var libraries = (flags & LockFileReadFlags.Libraries) == LockFileReadFlags.Libraries
-                ? JsonUtility.ReadObject(cursor[LibrariesProperty] as JObject, ReadLibrary)
-                : Array.Empty<LockFileLibrary>();
-
-            var targets = (flags & LockFileReadFlags.Targets) == LockFileReadFlags.Targets
-                ? JsonUtility.ReadObject(cursor[TargetsProperty] as JObject, ReadTarget)
-                : Array.Empty<LockFileTarget>();
-
-            var projectFileDependencyGroups = (flags & LockFileReadFlags.ProjectFileDependencyGroups) == LockFileReadFlags.ProjectFileDependencyGroups
-                ? JsonUtility.ReadObject(cursor[ProjectFileDependencyGroupsProperty] as JObject, ReadProjectFileDependencyGroup)
-                : Array.Empty<ProjectFileDependencyGroup>();
-
-            var packageFolders = (flags & LockFileReadFlags.PackageFolders) == LockFileReadFlags.PackageFolders
-                ? JsonUtility.ReadObject(cursor[PackageFoldersProperty] as JObject, ReadFileItem)
-                : Array.Empty<LockFileItem>();
-
-            var packagesSpec = (flags & LockFileReadFlags.PackageSpec) == LockFileReadFlags.PackageSpec
-                ? ReadPackageSpec(cursor[PackageSpecProperty] as JObject)
-                : new PackageSpec(Array.Empty<TargetFrameworkInformation>());
-
-            var centralTransitiveDependencyGroups = (flags & LockFileReadFlags.CentralTransitiveDependencyGroups) == LockFileReadFlags.CentralTransitiveDependencyGroups
-                ? ReadProjectFileTransitiveDependencyGroup(cursor[CentralTransitiveDependencyGroupsProperty] as JObject, path)
-                : new List<CentralTransitiveDependencyGroup>();
-
-            var logMessage = (flags & LockFileReadFlags.LogMessages) == LockFileReadFlags.LogMessages
-                ? ReadLogMessageArray(cursor[LogsProperty] as JArray, packagesSpec?.RestoreMetadata?.ProjectPath)
-                : Array.Empty<IAssetsLogMessage>();
-
-            var lockFile = new LockFile()
-            {
-                Version = JsonUtility.ReadInt(cursor, VersionProperty, defaultValue: int.MinValue),
-                Libraries = libraries,
-                Targets = targets,
-                ProjectFileDependencyGroups = projectFileDependencyGroups,
-                PackageFolders = packageFolders,
-                PackageSpec = packagesSpec,
-                CentralTransitiveDependencyGroups = centralTransitiveDependencyGroups
-            };
-
-            lockFile.LogMessages = logMessage;
-
-            return lockFile;
-        }
-
         private static void WriteLockFile(JsonWriter writer, IObjectWriter jsonObjectWriter, LockFile lockFile)
         {
             writer.WriteStartObject();
@@ -319,31 +216,6 @@ namespace NuGet.ProjectModel
             writer.WriteEndObject();
         }
 
-        private static LockFileLibrary ReadLibrary(string property, JToken json)
-        {
-            var library = new LockFileLibrary();
-            var parts = property.Split(new[] { '/' }, 2);
-            library.Name = parts[0];
-            if (parts.Length == 2)
-            {
-                library.Version = NuGetVersion.Parse(parts[1]);
-            }
-
-            library.Type = ReadString(json[TypeProperty]);
-
-            var jObject = json as JObject;
-
-            library.Path = JsonUtility.ReadProperty<string>(jObject, PathProperty);
-            library.MSBuildProject = JsonUtility.ReadProperty<string>(jObject, MSBuildProjectProperty);
-            library.Sha512 = JsonUtility.ReadProperty<string>(jObject, Sha512Property);
-
-            library.IsServiceable = ReadBool(json, ServicableProperty, defaultValue: false);
-            library.Files = ReadPathArray(json[FilesProperty] as JArray);
-
-            library.HasTools = ReadBool(json, HasToolsProperty, defaultValue: false);
-            return library;
-        }
-
         private static void WriteLibrary(JsonWriter writer, LockFileLibrary library)
         {
             writer.WritePropertyName(library.Name + "/" + library.Version.ToNormalizedString());
@@ -395,21 +267,6 @@ namespace NuGet.ProjectModel
             writer.WritePropertyName(key);
 
             JsonUtility.WriteObject(writer, target.Libraries, WriteTargetLibrary);
-        }
-
-        private static LockFileTarget ReadTarget(string property, JToken json)
-        {
-            var target = new LockFileTarget();
-            var parts = property.Split(JsonUtility.PathSplitChars, 2);
-            target.TargetFramework = NuGetFramework.Parse(parts[0]);
-            if (parts.Length == 2)
-            {
-                target.RuntimeIdentifier = parts[1];
-            }
-
-            target.Libraries = JsonUtility.ReadObject(json as JObject, ReadTargetLibrary);
-
-            return target;
         }
 
         /// <summary>
@@ -488,96 +345,6 @@ namespace NuGet.ProjectModel
             writer.WriteEndObject();
         }
 
-        /// <summary>
-        /// Converts an <code>JObject</code> into an <code>IAssetsLogMessage</code>.
-        /// </summary>
-        /// <param name="json"><code>JObject</code> containg the json representation of the log message.</param>
-        /// <returns><code>IAssetsLogMessage</code> representing the log message.</returns>
-        private static IAssetsLogMessage ReadLogMessage(JObject json, string projectPath)
-        {
-            AssetsLogMessage assetsLogMessage = null;
-
-            if (json != null)
-            {
-
-                var levelJson = json[LogMessageProperties.LEVEL];
-                var codeJson = json[LogMessageProperties.CODE];
-                var warningLevelJson = json[LogMessageProperties.WARNING_LEVEL];
-                var filePathJson = json[LogMessageProperties.FILE_PATH];
-                var startLineNumberJson = json[LogMessageProperties.START_LINE_NUMBER];
-                var startColumnNumberJson = json[LogMessageProperties.START_COLUMN_NUMBER];
-                var endLineNumberJson = json[LogMessageProperties.END_LINE_NUMBER];
-                var endColumnNumberJson = json[LogMessageProperties.END_COLUMN_NUMBER];
-                var messageJson = json[LogMessageProperties.MESSAGE];
-                var libraryIdJson = json[LogMessageProperties.LIBRARY_ID];
-
-                var isValid = true;
-
-                isValid &= Enum.TryParse(levelJson.Value<string>(), out LogLevel level);
-                isValid &= Enum.TryParse(codeJson.Value<string>(), out NuGetLogCode code);
-
-                if (isValid)
-                {
-                    assetsLogMessage = new AssetsLogMessage(level, code, messageJson.Value<string>())
-                    {
-                        TargetGraphs = (IReadOnlyList<string>)ReadArray(json[LogMessageProperties.TARGET_GRAPHS] as JArray, ReadString)
-                    };
-
-                    if (level == LogLevel.Warning && warningLevelJson != null)
-                    {
-                        assetsLogMessage.WarningLevel = (WarningLevel)Enum.ToObject(typeof(WarningLevel), warningLevelJson.Value<int>());
-                    }
-
-                    assetsLogMessage.ProjectPath = projectPath;
-
-                    if (filePathJson != null)
-                    {
-                        assetsLogMessage.FilePath = filePathJson.Value<string>();
-                    }
-                    else
-                    {
-                        assetsLogMessage.FilePath = projectPath;
-                    }
-
-                    if (startLineNumberJson != null)
-                    {
-                        assetsLogMessage.StartLineNumber = startLineNumberJson.Value<int>();
-                    }
-
-                    if (startColumnNumberJson != null)
-                    {
-                        assetsLogMessage.StartColumnNumber = startColumnNumberJson.Value<int>();
-                    }
-
-                    if (endLineNumberJson != null)
-                    {
-                        assetsLogMessage.EndLineNumber = endLineNumberJson.Value<int>();
-                    }
-
-                    if (endColumnNumberJson != null)
-                    {
-                        assetsLogMessage.EndColumnNumber = endColumnNumberJson.Value<int>();
-                    }
-
-                    if (libraryIdJson != null)
-                    {
-                        assetsLogMessage.LibraryId = libraryIdJson.Value<string>();
-                    }
-                }
-            }
-
-            return assetsLogMessage;
-        }
-
-        internal static JArray WriteLogMessages(IEnumerable<IAssetsLogMessage> logMessages, string projectPath)
-        {
-            using var writer = new JTokenWriter();
-
-            WriteLogMessages(writer, logMessages, projectPath);
-
-            return (JArray)writer.Token;
-        }
-
         internal static void WriteLogMessages(JsonWriter writer, IEnumerable<IAssetsLogMessage> logMessages, string projectPath)
         {
             writer.WriteStartArray();
@@ -588,97 +355,6 @@ namespace NuGet.ProjectModel
             }
 
             writer.WriteEndArray();
-        }
-
-        private static LockFileTargetLibrary ReadTargetLibrary(string property, JToken json)
-        {
-            var library = new LockFileTargetLibrary();
-
-#pragma warning disable CA1307 // Specify StringComparison
-            int slashIndex = property.IndexOf('/');
-#pragma warning restore CA1307 // Specify StringComparison
-            if (slashIndex == -1)
-            {
-                library.Name = property;
-            }
-            else
-            {
-                library.Name = property.Substring(0, slashIndex);
-                library.Version = NuGetVersion.Parse(property.Substring(slashIndex + 1));
-            }
-
-            var jObject = json as JObject;
-            library.Type = JsonUtility.ReadProperty<string>(jObject, TypeProperty);
-            library.Framework = JsonUtility.ReadProperty<string>(jObject, FrameworkProperty);
-
-            if (JsonUtility.ReadObject(json[DependenciesProperty] as JObject, JsonUtility.ReadPackageDependency) is { Count: not 0 } dependencies)
-            {
-                library.Dependencies = dependencies;
-            }
-
-            if (ReadArray(json[FrameworkAssembliesProperty] as JArray, ReadString) is { Count: not 0 } frameworkAssemblies)
-            {
-                library.FrameworkAssemblies = frameworkAssemblies;
-            }
-
-            if (JsonUtility.ReadObject(json[RuntimeProperty] as JObject, ReadFileItem) is { Count: not 0 } runtimeAssemblies)
-            {
-                library.RuntimeAssemblies = runtimeAssemblies;
-            }
-
-            if (JsonUtility.ReadObject(json[CompileProperty] as JObject, ReadFileItem) is { Count: not 0 } compileTimeAssemblies)
-            {
-                library.CompileTimeAssemblies = compileTimeAssemblies;
-            }
-
-            if (JsonUtility.ReadObject(json[ResourceProperty] as JObject, ReadFileItem) is { Count: not 0 } resourceAssemblies)
-            {
-                library.ResourceAssemblies = resourceAssemblies;
-            }
-
-            if (JsonUtility.ReadObject(json[NativeProperty] as JObject, ReadFileItem) is { Count: not 0 } nativeLibraries)
-            {
-                library.NativeLibraries = nativeLibraries;
-            }
-
-            if (JsonUtility.ReadObject(json[BuildProperty] as JObject, ReadFileItem) is { Count: not 0 } build)
-            {
-                library.Build = build;
-            }
-
-            if (JsonUtility.ReadObject(json[BuildMultiTargetingProperty] as JObject, ReadFileItem) is { Count: not 0 } buildMultiTargeting)
-            {
-                library.BuildMultiTargeting = buildMultiTargeting;
-            }
-
-            if (JsonUtility.ReadObject(json[ContentFilesProperty] as JObject, ReadContentFile) is { Count: not 0 } contentFiles)
-            {
-                library.ContentFiles = contentFiles;
-            }
-
-            if (JsonUtility.ReadObject(json[RuntimeTargetsProperty] as JObject, ReadRuntimeTarget) is { Count: not 0 } runtimeTargets)
-            {
-                library.RuntimeTargets = runtimeTargets;
-            }
-
-            if (JsonUtility.ReadObject(json[ToolsProperty] as JObject, ReadFileItem) is { Count: not 0 } toolsAssemblies)
-            {
-                library.ToolsAssemblies = toolsAssemblies;
-            }
-
-            if (JsonUtility.ReadObject(json[EmbedProperty] as JObject, ReadFileItem) is { Count: not 0 } embedAssemblies)
-            {
-                library.EmbedAssemblies = embedAssemblies;
-            }
-
-            if (ReadArray(json[FrameworkReferencesProperty] as JArray, ReadString) is { Count: not 0 } frameworkReferences)
-            {
-                library.FrameworkReferences = frameworkReferences;
-            }
-
-            library.Freeze();
-
-            return library;
         }
 
         private static void WriteTargetLibrary(JsonWriter writer, LockFileTargetLibrary library)
@@ -806,58 +482,10 @@ namespace NuGet.ProjectModel
             writer.WriteEndObject();
         }
 
-        private static LockFileRuntimeTarget ReadRuntimeTarget(string property, JToken json)
-        {
-            return ReadFileItem(property, json, path => new LockFileRuntimeTarget(path));
-        }
-
-        private static LockFileContentFile ReadContentFile(string property, JToken json)
-        {
-            return ReadFileItem(property, json, path => new LockFileContentFile(path));
-        }
-
-        private static ProjectFileDependencyGroup ReadProjectFileDependencyGroup(string property, JToken json)
-        {
-            return new ProjectFileDependencyGroup(
-                property,
-                ReadArray(json as JArray, ReadString));
-        }
-
-        private static PackageSpec ReadPackageSpec(JObject json)
-        {
-            if (json == null)
-            {
-                return null;
-            }
-
-#pragma warning disable CS0618
-            return JsonPackageSpecReader.GetPackageSpec(
-                json,
-                name: null,
-                packageSpecPath: null,
-                snapshotValue: null);
-#pragma warning restore CS0618
-        }
-
         private static void WriteProjectFileDependencyGroup(JsonWriter writer, ProjectFileDependencyGroup frameworkInfo)
         {
             writer.WritePropertyName(frameworkInfo.FrameworkName);
             WriteArray(writer, frameworkInfo.Dependencies);
-        }
-
-        private static LockFileItem ReadFileItem(string property, JToken json)
-        {
-            return ReadFileItem(property, json, path => new LockFileItem(path));
-        }
-
-        private static T ReadFileItem<T>(string property, JToken json, Func<string, T> factory) where T : LockFileItem
-        {
-            var item = factory(property);
-            foreach (var subProperty in json.OfType<JProperty>())
-            {
-                item.Properties[subProperty.Name] = subProperty.Value.Value<string>();
-            }
-            return item;
         }
 
         private static void WriteFileItem(JsonWriter writer, LockFileItem item)
@@ -887,48 +515,6 @@ namespace NuGet.ProjectModel
             writer.WriteEndObject();
         }
 
-        private static IList<TItem> ReadArray<TItem>(JArray json, Func<JToken, TItem> readItem)
-        {
-            if (json == null)
-            {
-                return new List<TItem>(0);
-            }
-            var items = new List<TItem>(json.Count);
-            foreach (var child in json)
-            {
-                var item = readItem(child);
-                if (item != null)
-                {
-                    items.Add(item);
-                }
-            }
-            return items;
-        }
-
-        internal static IList<IAssetsLogMessage> ReadLogMessageArray(JArray json, string projectPath)
-        {
-            if (json == null)
-            {
-                return new List<IAssetsLogMessage>();
-            }
-
-            var items = new List<IAssetsLogMessage>(json.Count);
-            foreach (var child in json)
-            {
-                var logMessage = ReadLogMessage(child as JObject, projectPath);
-                if (logMessage != null)
-                {
-                    items.Add(logMessage);
-                }
-            }
-            return items;
-        }
-
-        private static IList<string> ReadPathArray(JArray json)
-        {
-            return ReadArray(json, f => GetPathWithForwardSlashes(ReadString(f)));
-        }
-
         private static void WritePathArray(JsonWriter writer, string property, IEnumerable<string> items)
         {
             using var itemsEnumerator = items.NoAllocEnumerate().GetEnumerator();
@@ -953,21 +539,6 @@ namespace NuGet.ProjectModel
             writer.WriteEndArray();
         }
 
-        private static bool ReadBool(JToken cursor, string property, bool defaultValue)
-        {
-            var valueToken = cursor[property];
-            if (valueToken == null)
-            {
-                return defaultValue;
-            }
-            return valueToken.Value<bool>();
-        }
-
-        private static string ReadString(JToken json)
-        {
-            return json.Value<string>();
-        }
-
         private static string GetPathWithForwardSlashes(string path)
         {
             return path.Replace('\\', '/');
@@ -983,34 +554,6 @@ namespace NuGet.ProjectModel
             }
 
             writer.WriteObjectEnd();
-        }
-
-        [Obsolete]
-        private static List<CentralTransitiveDependencyGroup> ReadProjectFileTransitiveDependencyGroup(JObject json, string path)
-        {
-            var results = new List<CentralTransitiveDependencyGroup>();
-
-            if (json == null)
-            {
-                return results;
-            }
-
-            using (var stringReader = new StringReader(json.ToString()))
-            using (var jsonReader = new JsonTextReader(stringReader))
-            {
-                jsonReader.ReadObject(frameworkPropertyName =>
-                {
-                    NuGetFramework framework = NuGetFramework.Parse(frameworkPropertyName);
-                    var dependencies = new List<LibraryDependency>();
-
-                    JsonPackageSpecReader.ReadCentralTransitiveDependencyGroup(
-                        jsonReader: jsonReader,
-                        results: dependencies,
-                        packageSpecPath: path);
-                    results.Add(new CentralTransitiveDependencyGroup(framework, dependencies));
-                });
-            }
-            return results;
         }
     }
 }

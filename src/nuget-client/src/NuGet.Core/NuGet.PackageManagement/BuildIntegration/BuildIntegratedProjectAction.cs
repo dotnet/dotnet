@@ -37,35 +37,9 @@ namespace NuGet.PackageManagement
         /// </summary>
         public IReadOnlyList<SourceRepository> Sources { get; }
 
-        /// <summary>
-        /// Original user actions.
-        /// </summary>
-        [Obsolete("The internal ActionAndContextList property should be used.")]
-        public IReadOnlyList<NuGetProjectAction> OriginalActions { get; }
-
-        /// <summary>
-        /// The context necessary for installing a package.
-        /// </summary>
-        [Obsolete("The internal ActionAndContextList property should be used.")]
-        public BuildIntegratedInstallationContext InstallationContext { get; }
-
         internal IReadOnlyList<(NuGetProjectAction, BuildIntegratedInstallationContext)> ActionAndContextList { get; }
 
-        [Obsolete("This type is not expected to be created externally.")]
-        public BuildIntegratedProjectAction(NuGetProject project,
-            PackageIdentity packageIdentity,
-            NuGetProjectActionType nuGetProjectActionType,
-            LockFile originalLockFile,
-            RestoreResultPair restoreResultPair,
-            IReadOnlyList<SourceRepository> sources,
-            IReadOnlyList<NuGetProjectAction> originalActions,
-            BuildIntegratedInstallationContext installationContext)
-            : this(project, packageIdentity, nuGetProjectActionType, originalLockFile, restoreResultPair, sources, originalActions, installationContext, versionRange: null)
-        {
-        }
-
-        [Obsolete("This type is not expected to be created externally.")]
-        public BuildIntegratedProjectAction(NuGetProject project,
+        internal BuildIntegratedProjectAction(NuGetProject project,
             PackageIdentity packageIdentity,
             NuGetProjectActionType nuGetProjectActionType,
             LockFile originalLockFile,
@@ -115,8 +89,6 @@ namespace NuGet.PackageManagement
             RestoreResult = restoreResultPair.Result;
             RestoreResultPair = restoreResultPair;
             Sources = sources;
-            OriginalActions = originalActions;
-            InstallationContext = installationContext;
             ActionAndContextList = originalActions.Select(e => (e, installationContext)).ToList();
         }
 
@@ -170,10 +142,6 @@ namespace NuGet.PackageManagement
             RestoreResultPair = restoreResultPair;
             Sources = sources;
             ActionAndContextList = originalActionsAndInstallationContexts;
-#pragma warning disable CS0618 // Type or member is obsolete
-            OriginalActions = originalActionsAndInstallationContexts.Select(e => e.Item1).ToList();
-            InstallationContext = originalActionsAndInstallationContexts[0].Item2;
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public IReadOnlyList<NuGetProjectAction> GetProjectActions()

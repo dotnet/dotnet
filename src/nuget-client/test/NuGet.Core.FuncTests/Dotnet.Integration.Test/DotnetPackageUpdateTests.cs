@@ -22,7 +22,6 @@ namespace Dotnet.Integration.Test
     {
         private readonly DotnetIntegrationTestFixture _testFixture;
         private readonly ITestOutputHelper _testOutputHelper;
-        private readonly string _xplatCli;
         private readonly IReadOnlyDictionary<string, string> _envVars;
 
         // The .NET SDK downloads reference assembly packages for target frameworks it can't find ref assemblies for
@@ -46,7 +45,6 @@ namespace Dotnet.Integration.Test
             _testFixture = testFixture;
             _testOutputHelper = testOutputHelper;
 
-            _xplatCli = Path.Combine(_testFixture.SdkDirectory.FullName, "NuGet.CommandLine.XPlat.dll");
             _envVars = new Dictionary<string, string>()
             {
                 ["DOTNET_HOST_PATH"] = _testFixture.TestDotnetCli
@@ -82,7 +80,7 @@ namespace Dotnet.Integration.Test
             // Act
             var result = _testFixture.RunDotnetExpectSuccess(
                 workingDirectory: testContext.SolutionRoot,
-                args: $"{_xplatCli} package update NuGet.Internal.Test.a",
+                args: $"package update NuGet.Internal.Test.a",
                 testOutputHelper: _testOutputHelper,
                 environmentVariables: _envVars);
 
@@ -124,7 +122,7 @@ namespace Dotnet.Integration.Test
             // Act
             var result = _testFixture.RunDotnetExpectSuccess(
                 workingDirectory: testContext.SolutionRoot,
-                args: $"{_xplatCli} package update NuGet.Internal.Test.a",
+                args: $"package update NuGet.Internal.Test.a",
                 testOutputHelper: _testOutputHelper,
                 environmentVariables: _envVars);
 
@@ -166,7 +164,7 @@ namespace Dotnet.Integration.Test
             // Act
             var result = _testFixture.RunDotnetExpectSuccess(
                 workingDirectory: testContext.SolutionRoot,
-                args: $"{_xplatCli} package update NuGet.Internal.Test.a",
+                args: $"package update NuGet.Internal.Test.a",
                 testOutputHelper: _testOutputHelper,
                 environmentVariables: _envVars);
 
@@ -209,7 +207,7 @@ namespace Dotnet.Integration.Test
             // Act
             var result = _testFixture.RunDotnetExpectSuccess(
                 workingDirectory: testContext.SolutionRoot,
-                args: $"{_xplatCli} package update NuGet.Internal.Test.a",
+                args: $"package update NuGet.Internal.Test.a",
                 testOutputHelper: _testOutputHelper,
                 environmentVariables: _envVars);
 
@@ -235,7 +233,7 @@ namespace Dotnet.Integration.Test
             // Act
             var result = _testFixture.RunDotnetExpectFailure(
                 workingDirectory: testContext.SolutionRoot,
-                args: $"{_xplatCli} package update NuGet.Internal.Test.a",
+                args: $"package update NuGet.Internal.Test.a",
                 testOutputHelper: _testOutputHelper,
                 environmentVariables: _envVars);
 

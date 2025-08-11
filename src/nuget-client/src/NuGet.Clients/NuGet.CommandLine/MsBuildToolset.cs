@@ -38,16 +38,18 @@ namespace NuGet.CommandLine
             Path = GetMsBuildDirFromVsDir(sxsToolset.GetInstallationPath());
             Version = GetMsBuildVersionFromMsBuildDir(Path);
             InstallDate = ConvertFILETIMEToDateTime(sxsToolset.GetInstallDate());
+            InstallationName = sxsToolset.GetInstallationName();
         }
 
         /// <summary>
         /// This constructor is for testing purposes only
         /// </summary>
-        public MsBuildToolset(string version, string path, DateTime installDate)
+        public MsBuildToolset(string version, string path, DateTime installDate, string installationName)
         {
             Version = version;
             Path = path;
             InstallDate = installDate;
+            InstallationName = installationName;
         }
 
         public Version ParsedVersion
@@ -66,11 +68,13 @@ namespace NuGet.CommandLine
             }
         }
 
-        public bool IsValid => Path != null;
+        public bool IsValid => Path != null && (InstallationName is null || InstallationName.StartsWith("VisualStudio", StringComparison.Ordinal));
 
         public string Version { get; private set; }
 
         public string Path { get; private set; }
+
+        public string InstallationName { get; private set; }
 
         public DateTime InstallDate { get; private set; } = DateTime.MinValue;
 

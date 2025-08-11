@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../Resources.resx">
+    <body>
+      <trans-unit id="PluginException_Abort_Format">
+        <source>Credential plugin {0} handles this request, but is unable to provide credentials. {1}</source>
+        <target state="translated">자격 증명 플러그 인 {0}에서 이 요청을 처리하지만 자격 증명을 제공할 수 없습니다. {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Exception_Format">
+        <source>Credential plugin {0} encountered exception {1}.</source>
+        <target state="translated">자격 증명 플러그 인 {0}에서 {1} 예외가 발생했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_InvalidResponse_Format">
+        <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
+        <target state="translated">자격 증명 플러그 인 {0}에서 {1}을(를) 반환했지만 페이로드가 잘못되었습니다(사용자 이름 = {2}, 암호 = {3}, authTypes = {4}, 메시지 = {5}).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_NotStarted_Format">
+        <source>Credential plugin {0} failed to start.</source>
+        <target state="translated">자격 증명 플러그 인 {0}을(를) 시작할 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_PathNotFound_Format">
+        <source>Credential plugin {0} not found at any of the following locations {1}.</source>
+        <target state="translated">다음 위치 {1}에서 자격 증명 플러그 인 {0}을(를) 찾을 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Timeout_Format">
+        <source>Credential plugin {0} timed out after {1} seconds.</source>
+        <target state="translated">자격 증명 플러그 인 {0}이(가) {1}초 후 시간 초과되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnexpectedStatus_Format">
+        <source>Credential plugin {0} exited with unexpected error {1}.</source>
+        <target state="translated">자격 증명 플러그 인 {0}이(가) 예기치 않은 오류 {1}(으)로 인해 종료되었습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnreadableResponse_Format">
+        <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
+        <target state="translated">자격 증명 플러그 인 {0}이(가) 읽을 수 없는 페이로드가 포함된 {1}을(를) 반환했습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
+        <source>The credential plugin model used by '{0}' is deprecated. Please contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
+        <target state="translated">'{0}'에 사용된 자격 증명 플러그 인이 사용되지 않습니다. 대체 방법에 대해 플러그 인 공급자에게 문의하세요. 권장 플러그 인 모델에 대한 자세한 내용은 '{1}'에서 찾을 수 있습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_InvalidCredentialResponse">
+        <source>Could not create credential response object because the response was invalid.</source>
+        <target state="translated">응답이 잘못되었으므로 자격 증명 응답 개체를 만들 수 없습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_MalformedResponse">
+        <source>Credential provider gave an invalid response.</source>
+        <target state="translated">자격 증명 공급자가 잘못된 응답을 제공하였습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
+        <source>Using {0} as a credential provider plugin.</source>
+        <target state="translated">자격 증명 공급자 플러그 인으로 {0}을(를) 사용하는 중입니다.</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
+      <trans-unit id="SecurePluginWarning_UseInteractiveOption">
+        <source>The plugin credential provider could not acquire credentials. Authentication may require manual action. Consider re-running the command with --interactive for `dotnet`, /p:NuGetInteractive="true" for MSBuild or removing the -NonInteractive switch for `NuGet`</source>
+        <target state="translated">플러그 인 자격 증명 공급자가 자격 증명을 가져올 수 없습니다. 인증에 수동 작업이 필요할 수 있습니다. `dotnet`에 대해 --interactive, MSBuild에 대해 /p:NuGetInteractive="true"를 사용하는 명령을 다시 실행해 보거나 `NuGet`에 대해 -NonInteractive 스위치를 제거해 보세요.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

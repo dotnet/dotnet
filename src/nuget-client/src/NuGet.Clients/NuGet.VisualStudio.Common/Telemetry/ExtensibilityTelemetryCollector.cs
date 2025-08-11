@@ -61,9 +61,6 @@ namespace NuGet.VisualStudio.Telemetry
                 // IVsFrameworkParser2
                 [nameof(IVsFrameworkParser2) + "." + nameof(IVsFrameworkParser2.TryParse)] = new Count(),
 
-                // IVsGlobalPackagesInitScriptExecutor
-                [nameof(IVsGlobalPackagesInitScriptExecutor) + "." + nameof(IVsGlobalPackagesInitScriptExecutor.ExecuteInitScriptAsync)] = new Count(),
-
                 // IVsNuGetProjectUpdateEvents
                 [nameof(IVsNuGetProjectUpdateEvents) + "." + nameof(IVsNuGetProjectUpdateEvents.SolutionRestoreStarted)] = new Count(),
                 [nameof(IVsNuGetProjectUpdateEvents) + "." + nameof(IVsNuGetProjectUpdateEvents.SolutionRestoreFinished)] = new Count(),

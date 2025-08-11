@@ -29,6 +29,118 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: "");
     }
 
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task RoslynFormatSpaceAfterDot()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div>
+
+                @DateTime.Now.ToString()
+
+                </div>
+                """,
+            expected: """
+                <div>
+                
+                    @DateTime.Now.ToString()
+                
+                </div>
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                Spacing = RazorSpacePlacement.AfterDot
+            });
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task RoslynFormatSpaceAfterMethodCall()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <h1>count is @counter</h1>
+
+                @GetCount()
+
+                @code {
+                private int counter;
+
+                class Goo
+                {
+                    public int GetCount()
+                    {
+                        return counter++;
+                    }
+                }
+                }
+                """,
+            expected: """
+                <h1>count is @counter</h1>
+                
+                @GetCount()
+                
+                @code {
+                    private int counter;
+                
+                    class Goo
+                    {
+                        public int GetCount()
+                        {
+                            return counter++;
+                        }
+                    }
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                Spacing = RazorSpacePlacement.AfterMethodCallName
+            });
+    }
+
+    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    public async Task RoslynFormatSpaceAfterMethodCallAndDecl()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <h1>count is @counter</h1>
+
+                @GetCount()
+
+                @code {
+                private int counter;
+
+                class Goo
+                {
+                    public int GetCount()
+                    {
+                        return counter++;
+                    }
+                }
+                }
+                """,
+            expected: """
+                <h1>count is @counter</h1>
+                
+                @GetCount()
+                
+                @code {
+                    private int counter;
+                
+                    class Goo
+                    {
+                        public int GetCount ()
+                        {
+                            return counter++;
+                        }
+                    }
+                }
+                """,
+            csharpSyntaxFormattingOptions: RazorCSharpSyntaxFormattingOptions.Default with
+            {
+                Spacing = RazorSpacePlacement.AfterMethodCallName | RazorSpacePlacement.AfterMethodDeclarationName
+            });
+    }
+
     [FormattingTestFact]
     public async Task RoslynFormatBracesAsKandR()
     {

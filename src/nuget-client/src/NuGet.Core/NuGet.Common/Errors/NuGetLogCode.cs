@@ -43,7 +43,7 @@ namespace NuGet.Common
     /// </para>
     ///
     /// <para>
-    /// All new codes need a corresponding MarkDown file under https://github.com/NuGet/docs.microsoft.com-nuget/tree/master/docs/reference/errors-and-warnings.
+    /// All new codes need a corresponding MarkDown file under https://github.com/NuGet/docs.microsoft.com-nuget/tree/main/docs/reference/errors-and-warnings.
     /// </para>
     /// </remarks>
     public enum NuGetLogCode
@@ -132,6 +132,11 @@ namespace NuGet.Common
         /// PackageReference without a version.
         /// </summary>
         NU1015 = 1015,
+
+        /// <summary>
+        /// The project.json project type is not supported.
+        /// </summary>
+        NU1016 = 1016,
 
         /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.

@@ -12,8 +12,8 @@
   <PropertyGroup>
     <!-- **  Change for each new version -->
     <!-- when changing any of the NuGetVersion props below, run tools-local\ship-public-apis -->
-    <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">6</MajorNuGetVersion>
-    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">15</MinorNuGetVersion>
+    <MajorNuGetVersion Condition="'$(MajorNuGetVersion)' == ''">7</MajorNuGetVersion>
+    <MinorNuGetVersion Condition="'$(MinorNuGetVersion)' == ''">0</MinorNuGetVersion>
     <PatchNuGetVersion Condition="'$(PatchNuGetVersion)' == ''">0</PatchNuGetVersion>
     <SemanticVersion Condition=" '$(SemanticVersion)' == '' ">$(MajorNuGetVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</SemanticVersion>
 
@@ -25,13 +25,13 @@
     <IsEscrowMode Condition="'$(IsEscrowMode)' == ''">false</IsEscrowMode>
 
     <!-- Visual Studio Insertion Logic -->
-    <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">$([MSBuild]::Add(12, $(MajorNuGetVersion)))</VsTargetMajorVersion>
+    <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
     <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' != 'true'">main</VsTargetBranch>
     <VsTargetChannel Condition="'$(VsTargetChannel)' == '' And '$(IsEscrowMode)' != 'true'">int.$(VsTargetBranch)</VsTargetChannel>
     <VsTargetChannelForTests Condition="'$(VsTargetChannelForTests)' == ''">int.$(VsTargetBranch)</VsTargetChannelForTests>
 
     <!-- NuGet SDK VS package Semantic Version -->
-    <NuGetSdkVsSemanticVersion>$([MSBuild]::Add(11, $(MajorNuGetVersion))).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
+    <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>
 
     <!-- This branches are used for creating insertion PRs -->
     <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' == 'true'">rel/d$(VsTargetMajorVersion).$(MinorNuGetVersion)</VsTargetBranch>
@@ -47,6 +47,8 @@
   <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
   <PropertyGroup Condition="'$(BuildNumber)' != ''">
     <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
+    <!-- Add 500 to the revision number to avoid clashing with the existing msft official build. -->
+    <PreReleaseVersion Condition="'$(DotNetBuildFromVMR)' == 'true'">$([MSBuild]::Add($(BuildNumber), 500))</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the product information for Beta builds-->
