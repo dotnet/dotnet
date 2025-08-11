@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
@@ -22,8 +23,6 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CSharpFormattingPass>();
     private readonly IHostServicesProvider _hostServicesProvider = hostServicesProvider;
 
-    private RazorCSharpSyntaxFormattingOptions? _csharpSyntaxFormattingOptionsOverride;
-
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
     {
         // Process changes from previous passes
@@ -36,7 +35,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
         var generatedCSharpText = generatedDocument.SourceText;
         _logger.LogTestOnly($"Generated C# document:\r\n{generatedCSharpText}");
-        var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options.ToIndentationOptions(), cancellationToken).ConfigureAwait(false);
+        var formattedCSharpText = await FormatCSharpAsync(generatedCSharpText, context.Options, cancellationToken).ConfigureAwait(false);
         _logger.LogTestOnly($"Formatted generated C# document:\r\n{formattedCSharpText}");
 
         // We now have a formatted C# document, and an original document, but we can't just apply the changes to the original
@@ -217,13 +216,36 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         return changedText.GetTextChangesArray(context.SourceText);
     }
 
-    private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorIndentationOptions options, CancellationToken cancellationToken)
+    private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorFormattingOptions options, CancellationToken cancellationToken)
     {
         using var helper = new RoslynWorkspaceHelper(_hostServicesProvider);
 
         var tree = CSharpSyntaxTree.ParseText(generatedCSharpText, cancellationToken: cancellationToken);
         var csharpRoot = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options, _csharpSyntaxFormattingOptionsOverride, cancellationToken);
+        var csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions.AssumeNotNull();
+
+        // Roslyn can be configured to insert a space after a method call, or a dot, but that can break Razor. eg:
+        //
+        // <div>@PrintHello()</div>
+        // @DateTime.Now.ToString()
+        //
+        // Would become:
+        //
+        // <div>@PrintHello ()</div>
+        // @DateTime. Now. ToString()
+        //
+        // In Razor, that's not a method call, its a method group (ie C# compile error) followed by Html, and
+        // the dot after DateTime is also just Html, as is the rest of the line.
+        // We're not smart enough (yet?) to ignore this change when its inline in Razor, but allow it when
+        // in a code block, so we just force these options to off.
+        csharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions with
+        {
+            Spacing = csharpSyntaxFormattingOptions.Spacing
+                & ~RazorSpacePlacement.AfterMethodCallName
+                & ~RazorSpacePlacement.AfterDot
+        };
+
+        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options.ToIndentationOptions(), csharpSyntaxFormattingOptions, cancellationToken);
 
         return generatedCSharpText.WithChanges(csharpChanges);
     }
@@ -231,14 +253,4 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
     [Obsolete("Only for the syntax visualizer, do not call")]
     internal static string GetFormattingDocumentContentsForSyntaxVisualizer(RazorCodeDocument codeDocument)
         => CSharpDocumentGenerator.Generate(codeDocument, new()).SourceText.ToString();
-
-    internal TestAccessor GetTestAccessor() => new TestAccessor(this);
-
-    internal readonly struct TestAccessor(CSharpFormattingPass instance)
-    {
-        public void SetCSharpSyntaxFormattingOptionsOverride(RazorCSharpSyntaxFormattingOptions? optionsOverride)
-        {
-            instance._csharpSyntaxFormattingOptionsOverride = optionsOverride;
-        }
-    }
 }

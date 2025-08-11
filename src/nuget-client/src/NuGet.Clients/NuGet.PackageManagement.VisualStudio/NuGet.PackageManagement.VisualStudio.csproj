@@ -24,7 +24,6 @@
     <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="Runtime" PrivateAssets="All" />
     <PackageReference Include="Microsoft.DataAI.NuGetRecommender.Contracts" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" />
-    <PackageReference Include="Microsoft.VisualStudio.VCProjectEngine" />
     <PackageReference Include="Microsoft.VisualStudio.Sdk" />
     <PackageReference Include="VsWebSite.Interop" />
   </ItemGroup>

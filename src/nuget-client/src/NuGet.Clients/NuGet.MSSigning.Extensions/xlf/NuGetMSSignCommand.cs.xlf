@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../NuGetMSSignCommand.resx">
+    <body>
+      <trans-unit id="MSSignCommandCSPNameDescription">
+        <source>Name of the cryptographic service provider which contains the private key container.</source>
+        <target state="translated">Název zprostředkovatele kryptografických služeb, který obsahuje kontejner privátního klíče</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandCertificateFileDescription">
+        <source>File path to the p7b file to be used while signing the package.</source>
+        <target state="translated">Cesta k souboru p7b, která se použije při podepisování balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandCertificateFingerprintDescription">
+        <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a p7b file for the certificate.</source>
+        <target state="translated">Kryptografický otisk SHA-256, SHA-384 nebo SHA-512 certifikátu, pomocí kterého se pro daný certifikát hledá soubor p7b</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandDescription">
+        <source>Signs a NuGet package with the specified p7b file.</source>
+        <target state="translated">Podepíše balíček NuGet zadaným souborem p7b.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandHashAlgorithmDescription">
+        <source>Hash algorithm to be used while generating the package manifest file. Defaults to SHA256.</source>
+        <target state="translated">Hashovací algoritmus, který se použije při generování souboru manifestu balíčku. Výchozí je SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidArgumentException">
+        <source>Invalid value provided for '{0}'. For a list of accepted values, please visit https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</source>
+        <target state="translated">Zadala se neplatná hodnota pro {0}. Seznam akceptovaných hodnot najdete na https://learn.microsoft.com/nuget/reference/cli-reference/cli-ref-sign</target>
+        <note>{0} - argument name</note>
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidCertificateFingerprint">
+        <source>{0}: Invalid value for 'CertificateFingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
+        <target state="translated">{0}: Neplatná hodnota pro parametr CertificateFingerprint. Hodnotou musí být otisk certifikátu SHA-256, SHA-384 nebo SHA-512 (v šestnáctkovém tvaru).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandInvalidCngKeyException">
+        <source>Cng Key is not an RSA key.</source>
+        <target state="translated">Klíč CNG není klíčem RSA.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandKeyContainerDescription">
+        <source>Name of the key container which has the private key.</source>
+        <target state="translated">Název kontejneru klíčů, který obsahuje privátní klíč</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoCertException">
+        <source>Can't find specified certificate.</source>
+        <target state="translated">Zadaný certifikát se nedá najít.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoCngKeyException">
+        <source>Can't find cng key.</source>
+        <target state="translated">Klíč CNG se nedá najít.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoPackageException">
+        <source>No package was provided. For a list of accepted ways to provide a package, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nezadal se žádný balíček. Seznam přijatelných způsobů, jak balíček zadat, najdete tady: https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoTimestamperWarning">
+        <source>No '-Timestamper' option was provided the signed package will not be timestamped. To learn more about this option, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
+        <target state="translated">Nezadala se žádná možnost -Timestamper, podepsaný balíček tedy nebude mít časové razítko. Další informace o této možnosti najdete tady: https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandNoValidCertificateFileException">
+        <source>No CertificateFile provided or provided file is not a p7b file.</source>
+        <target state="translated">Nezadal se žádný soubor certifikátu, nebo poskytnutý soubor není soubor p7b.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandOutputDirectoryDescription">
+        <source>Directory where the signed package should be saved. By default the original package is overwritten by the signed package.</source>
+        <target state="translated">Adresář, do kterého se má uložit podepsaný balíček. Ve výchozím nastavení se původní balíček přepíše podepsaným balíčkem.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandOverwriteDescription">
+        <source>Switch to indicate if the current signature should be overwritten. By default the command will fail if the package already has a signature.</source>
+        <target state="translated">Přepínač, který určuje, jestli se má přepsat aktuální podpis. Pokud balíček už bude obsahovat podpis, příkaz se ve výchozím nastavení neprovede úspěšně.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandTimestampHashAlgorithmDescription">
+        <source>Hash algorithm to be used by the RFC 3161 timestamp server. Defaults to SHA256.</source>
+        <target state="translated">Hashovací algoritmus používaný serverem časového razítka podle standardu RFC 3161. Výchozí je SHA256.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandTimestamperDescription">
+        <source>URL to an RFC 3161 timestamping server.</source>
+        <target state="translated">Adresa URL serveru časového razítka podle standardu RFC 3161</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageDescription">
+        <source>Signs a NuGet package.</source>
+        <target state="translated">Podepíše balíček NuGet.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageExamples">
+        <source>nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</source>
+        <target state="translated">nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="MSSignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</target>
+        <note>Please don't localize this string</note>
+      </trans-unit>
+      <trans-unit id="RepoSignCommandDescription">
+        <source>Sign a NuGet package by adding repository signature with specified p7b file.</source>
+        <target state="translated">Podepište balíček NuGet tak, že do zadaného souboru p7b přidáte podpis úložiště.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandPackageOwnersDescription">
+        <source>Semicolon-separated list of package owners.</source>
+        <target state="translated">Středníkem oddělený seznam vlastníků balíčku</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageDescription">
+        <source>Sign a NuGet package with repository signature.</source>
+        <target state="translated">Podepište balíček NuGet podpisem úložiště.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageExamples">
+        <source>nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</source>
+        <target state="translated">nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandUsageSummary">
+        <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</source>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service_provider_name&gt; -KeyContainer &lt;key_container_guid&gt; -CertificateFingerprint &lt;certificate_fingerprint&gt; -PackageOwners &lt;package_owners&gt; -V3ServiceIndexUrl &lt;v3_service_index_url&gt;</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="RepoSignCommandV3ServiceIndexUrlDescription">
+        <source>Repository V3 service index URL.</source>
+        <target state="translated">Adresa URL indexu služby úložiště V3</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

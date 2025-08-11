@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ja" original="../Resources.resx">
+    <body>
+      <trans-unit id="PluginException_Abort_Format">
+        <source>Credential plugin {0} handles this request, but is unable to provide credentials. {1}</source>
+        <target state="translated">資格情報のプラグイン {0} はこの要求を処理しますが、資格情報を入力することはできません。 {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Exception_Format">
+        <source>Credential plugin {0} encountered exception {1}.</source>
+        <target state="translated">資格情報のプラグイン {0} で例外 {1} が発生しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_InvalidResponse_Format">
+        <source>Credential plugin {0} returned {1}, but the payload was not valid (username = {2}, password = {3}, authTypes = {4}, message = {5}).</source>
+        <target state="translated">資格情報のプラグイン {0} は {1} を返しましたが、ペイロードが無効でした (ユーザー名 = {2}、パスワード = {3}、authTypes = {4}、メッセージ = {5})。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_NotStarted_Format">
+        <source>Credential plugin {0} failed to start.</source>
+        <target state="translated">資格情報のプラグイン {0} を開始できませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_PathNotFound_Format">
+        <source>Credential plugin {0} not found at any of the following locations {1}.</source>
+        <target state="translated">資格情報のプラグイン {0} が次の場所 {1} のどこにも見つかりませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_Timeout_Format">
+        <source>Credential plugin {0} timed out after {1} seconds.</source>
+        <target state="translated">資格情報のプラグイン {0} は、{1} 秒後にタイムアウトしました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnexpectedStatus_Format">
+        <source>Credential plugin {0} exited with unexpected error {1}.</source>
+        <target state="translated">資格情報のプラグイン {0} は、予期しないエラー {1} により終了しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginException_UnreadableResponse_Format">
+        <source>Credential plugin {0} returned {1} with an unreadable payload.</source>
+        <target state="translated">資格情報のプラグイン {0} は、読み取り不可のペイロードにより {1} を返しました。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PluginWarning_PluginIsBeingDeprecated">
+        <source>The credential plugin model used by '{0}' is deprecated. Please contact the provider of the plugin for an alternative. More information about the recommended plugin model can be found at '{1}'.</source>
+        <target state="translated">'{0}' で使用されている資格情報プラグイン モデルは非推奨です。代替手段については、プラグインのプロバイダーにお問い合わせください。推奨されるプラグイン モデルの詳細については、'{1}' を参照してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_InvalidCredentialResponse">
+        <source>Could not create credential response object because the response was invalid.</source>
+        <target state="translated">資格情報の応答オブジェクトは、応答が無効なため作成できませんでした。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ProviderException_MalformedResponse">
+        <source>Credential provider gave an invalid response.</source>
+        <target state="translated">資格情報プロバイダーの応答が正しくありません。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SecurePluginNotice_UsingPluginAsProvider">
+        <source>Using {0} as a credential provider plugin.</source>
+        <target state="translated">資格情報プロバイダーのプラグインとして {0} を使用しています。</target>
+        <note>{0} - plugin path</note>
+      </trans-unit>
+      <trans-unit id="SecurePluginWarning_UseInteractiveOption">
+        <source>The plugin credential provider could not acquire credentials. Authentication may require manual action. Consider re-running the command with --interactive for `dotnet`, /p:NuGetInteractive="true" for MSBuild or removing the -NonInteractive switch for `NuGet`</source>
+        <target state="translated">プラグインの資格情報プロバイダーは資格情報を取得できませんでした。認証は手動アクションを必要とする可能性があります。'dotnet' に --interactive を指定してコマンドを再実行することを検討してください。その際、MSBuild に対して /p:NuGetInteractive ="true"とするか、'NuGet' について -NonInteractive スイッチを削除します。</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

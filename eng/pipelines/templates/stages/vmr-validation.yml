@@ -3,6 +3,10 @@ parameters:
   type: string
   default: ''
 
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
 - name: desiredIbc
   type: string
   default: ''
@@ -53,6 +57,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredIbc: ${{ parameters.desiredIbc }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   - group: Release-Pipeline

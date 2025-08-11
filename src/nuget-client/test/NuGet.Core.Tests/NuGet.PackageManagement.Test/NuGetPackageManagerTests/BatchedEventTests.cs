@@ -684,7 +684,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "https://github.com/NuGet/Home/issues/10212")]
         public async Task InstallPackage_BuildIntegratedProject_BatchEvent_NotRaised()
         {
             // Arrange

@@ -22,10 +22,6 @@ namespace NuGet.PackageManagement.VisualStudio
         public bool NominatesOnSolutionLoad => false;
 
         #region INuGetProjectServices
-
-        [Obsolete]
-        public IProjectBuildProperties BuildProperties => throw new NotImplementedException();
-
         public IProjectSystemCapabilities Capabilities => this;
 
         public IProjectSystemReferencesReader ReferencesReader { get; }

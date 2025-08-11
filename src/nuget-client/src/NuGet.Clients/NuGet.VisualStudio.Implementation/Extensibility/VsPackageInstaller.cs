@@ -278,13 +278,7 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             const string eventName = nameof(IVsPackageInstaller) + "." + nameof(InstallPackagesFromVSExtensionRepository) + ".1";
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
 
-            InstallPackagesFromVSExtensionRepositoryImpl(
-                extensionId,
-                isPreUnzipped,
-                skipAssemblyReferences,
-                ignoreDependencies: true,
-                project: project,
-                packageVersions: packageVersions);
+            throw new NotSupportedException();
         }
 
         public void InstallPackagesFromVSExtensionRepository(string extensionId, bool isPreUnzipped, bool skipAssemblyReferences, bool ignoreDependencies, Project project, IDictionary<string, string> packageVersions)

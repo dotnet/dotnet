@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <!-- Repo Version Information -->
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
@@ -24,10 +25,8 @@
       of a .NET major or minor release, prebuilts may be needed. When the release is mature, prebuilts
       are not necessary, and this property is removed from the file.
     -->
-    <PrivateSourceBuiltSdkVersion>10.0.100-preview.7.25322.101</PrivateSourceBuiltSdkVersion>
-    <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.7.25322.101-1</PrivateSourceBuiltArtifactsVersion>
-    <!-- arcade dependencies -->
-    <MicrosoftDotNetBuildManifestVersion>10.0.0-beta.25322.101</MicrosoftDotNetBuildManifestVersion>
+    <PrivateSourceBuiltSdkVersion>10.0.100-preview.7.25372.107</PrivateSourceBuiltSdkVersion>
+    <PrivateSourceBuiltArtifactsVersion>10.0.100-preview.7.25372.107</PrivateSourceBuiltArtifactsVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->

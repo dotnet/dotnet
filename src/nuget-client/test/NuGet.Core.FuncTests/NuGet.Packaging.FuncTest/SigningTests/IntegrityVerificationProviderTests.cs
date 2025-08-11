@@ -228,7 +228,7 @@ namespace NuGet.Packaging.FuncTest
                 using (var zip = new ZipArchive(stream, ZipArchiveMode.Update))
                 using (var entryStream = zip.Entries.First().Open())
                 {
-                    entryStream.SetLength(entryStream.Length - 1);
+                    entryStream.SetLength(entryStream.Length + 1);
                 }
 
                 var verifier = new PackageSignatureVerifier(_trustProviders);
