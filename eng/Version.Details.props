@@ -7,8 +7,8 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25372.107</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25372.107</MicrosoftDotNetBuildManifestPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25380.108</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25380.108</MicrosoftDotNetBuildManifestPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
