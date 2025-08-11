@@ -98,18 +98,14 @@ internal static class Validation
 
         string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch])).StandardOutput.Trim();
 
-        Console.WriteLine($"merge base commit: {mergeBaseCommit}");
-
         var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBaseCommit, "HEAD"])).StandardOutput.Trim();
-
-        Console.WriteLine($"Diff output: {diffOutput}");
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine($"changed files: " +  changedFiles.Count);
+        Console.WriteLine($"Found modifications to {changedFiles.Count} file(s) in PR base branch");
 
         return new PrInfo(targetBranch, changedFiles);
     }

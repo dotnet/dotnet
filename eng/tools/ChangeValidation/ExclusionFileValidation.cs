@@ -68,7 +68,7 @@ internal class ExclusionFileValidation : IValidationStep
         if (excludedFilesInPr.Count > maxDisplayedFiles)
         {
             LogError($"... {excludedFilesInPr.Count - maxDisplayedFiles} more excluded files detected" +
-                $" in the PR. Only showing the first {maxDisplayedFiles} files.");
+                $" in the PR (only showing the first {maxDisplayedFiles} files).");
         }
 
         foreach (var file in filesMatchingNewExclusionRules.Take(maxDisplayedFiles).ToList())
@@ -81,7 +81,8 @@ internal class ExclusionFileValidation : IValidationStep
         if (filesMatchingNewExclusionRules.Count > maxDisplayedFiles)
         {
             LogError($"... {filesMatchingNewExclusionRules.Count - maxDisplayedFiles} more VMR files " +
-                $"match the new exclusion rules. Only showing the first {maxDisplayedFiles} files.");
+                $"match the new exclusion rules (only showing the first {maxDisplayedFiles} files). " +
+                "Please review the modifications made to exclusion rules");
         }
 
         return !excludedFilesInPr.Any() && !filesMatchingNewExclusionRules.Any();
