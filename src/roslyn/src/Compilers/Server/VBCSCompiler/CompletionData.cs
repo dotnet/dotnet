@@ -35,9 +35,9 @@ namespace Microsoft.CodeAnalysis.CompilerServer
     {
         internal CompletionReason Reason { get; }
         internal TimeSpan? NewKeepAlive { get; }
-        internal bool ShutdownRequest { get; }
+        internal string? ShutdownRequest { get; }
 
-        internal CompletionData(CompletionReason reason, TimeSpan? newKeepAlive = null, bool shutdownRequested = false)
+        internal CompletionData(CompletionReason reason, TimeSpan? newKeepAlive = null, string? shutdownRequested = null)
         {
             Reason = reason;
             NewKeepAlive = newKeepAlive;

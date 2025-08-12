@@ -84,6 +84,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>6a953e76162f3f079405f80e28664fa51b136740</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Net.BuildServerUtils" Version="5.0.0-2.25377.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>6a953e76162f3f079405f80e28664fa51b136740</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="5.0.0-2.25377.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>6a953e76162f3f079405f80e28664fa51b136740</Sha>
