@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: 
-      - master
+      - main
       - 'release/**'
 
 jobs:
@@ -22,22 +22,23 @@ jobs:
       with:
         dotnet-version: |
           6.0.x
+          8.0.x
     - name: Restore
-      run: dotnet restore -bl:restore.binlog
+      run: dotnet restore -bl:LocatorRestore.binlog
     - name: Build
       run: dotnet build --no-restore -bl:MSBuildLocator.binlog
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack --no-build
+      run: dotnet pack --no-build --configuration Debug -bl:LocatorPack.binlog
     - name: Upload Packages
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: package
         path: '**/*.*nupkg'
         if-no-files-found: error
     - name: Upload logs
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: ${{ always() }}
       with:
         name: logs
