@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.43-preview-25404-04",
+      "packageVersion": "17.12.44-preview-25411-07",
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "481b855f7315f967f9c14b83d4391ae05b7be1af"
+      "commitSha": "db5c766a7b07e0d1bb073757f8893c4e02200644"
     },
     {
       "packageVersion": "6.12.4",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "08212c61679069173cc97f714d13cd26da6302e9"
+      "commitSha": "4cb5e21a4176d71e53095eb7879837938a971cb2"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
