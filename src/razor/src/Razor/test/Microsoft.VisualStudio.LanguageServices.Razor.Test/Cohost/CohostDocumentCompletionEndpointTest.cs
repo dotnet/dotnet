@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -29,8 +30,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [Fact]
-    public async Task CSharpInEmptyExplicitStatement()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpInEmptyExplicitStatement(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -47,11 +49,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["var", "char", "DateTime", "Exception"]);
+            expectedItemLabels: ["var", "char", "DateTime", "Exception"],
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task CSharpClassesAtTransition()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpClassesAtTransition(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -69,11 +73,43 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: ["char", "DateTime", "Exception"],
             itemToResolve: "DateTime",
-            expectedResolvedItemDescription: "readonly struct System.DateTime");
+            expectedResolvedItemDescription: "readonly struct System.DateTime",
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task CSharpClassMembersAtProvisionalCompletion()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpClassesBeforeTag(bool supportsVisualStudioExtensions)
+    {
+        await VerifyCompletionListAsync(
+            input: """
+                @page
+                @model IndexModel
+                @{
+                    ViewData["Title"] = "Home page";
+                }
+                @da$$
+                <div class="text-center">
+                    <h1 class="display-4">Welcome</h1>
+                    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+                </div>
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "@",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            },
+            expectedItemLabels: ["char", "DateTime", "Exception"],
+            itemToResolve: "DateTime",
+            expectedResolvedItemDescription: "readonly struct System.DateTime",
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions,
+            fileKind: RazorFileKind.Legacy);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpClassMembersAtProvisionalCompletion(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -89,11 +125,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = ".",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"],
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task CSharpClassesInCodeBlock()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpClassesInCodeBlock(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -111,11 +149,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = null,
                 TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["char", "DateTime", "Exception"]);
+            expectedItemLabels: ["char", "DateTime", "Exception"],
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task CSharpClassMembersInCodeBlock()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpClassMembersInCodeBlock(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -138,52 +178,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = ".",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"],
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task CSharpOverrideMethods()
-    {
-        await VerifyCompletionListAsync(
-            input: """
-                This is a Razor document.
-
-                <div></div>
-
-                @code {
-                    public override $$
-                }
-
-                The end.
-                """,
-            expected: """
-                @using System.Threading.Tasks
-                This is a Razor document.
-            
-                <div></div>
-            
-                @code {
-                    public override Task SetParametersAsync(ParameterView parameters)
-                    {
-                        return base.SetParametersAsync(parameters);
-                    }
-                }
-            
-                The end.
-                """,
-            completionContext: new VSInternalCompletionContext()
-            {
-                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
-                TriggerCharacter = null,
-                TriggerKind = CompletionTriggerKind.Invoked
-            },
-            expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"],
-            itemToResolve: "SetParametersAsync(ParameterView parameters)",
-            expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)");
-    }
-
-    [Fact]
-    public async Task CSharpOverrideMethods_VSCode()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpOverrideMethods(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -221,12 +222,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"],
             itemToResolve: "SetParametersAsync(ParameterView parameters)",
             expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)",
-            supportsVisualStudioExtensions: false);
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
     // Tests MarkupTransitionCompletionItemProvider
-    [Fact]
-    public async Task CSharpMarkupTransitionAndTagHelpersInCodeBlock()
+    [Theory]
+    [CombinatorialData]
+    public async Task CSharpMarkupTransitionAndTagHelpersInCodeBlock(bool supportsVisualStudioExtensions)
     {
         await VerifyCompletionListAsync(
             input: """
@@ -250,11 +252,13 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["text", "EditForm", "InputDate", "div"],
-            htmlItemLabels: ["div"]);
+            htmlItemLabels: ["div"],
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
-    [Fact]
-    public async Task RazorDirectives()
+    [Theory]
+    [CombinatorialData]
+    public async Task RazorDirectives(bool supportsVisualStudioExtensions)
     {
         var expectedDirectiveLabels = new string[]
             {
@@ -292,7 +296,8 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: expectedLabels,
             itemToResolve: "page",
-            expectedResolvedItemDescription: "Mark the page as a routable component.");
+            expectedResolvedItemDescription: "Mark the page as a routable component.",
+            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
     }
 
     [Fact]
@@ -709,7 +714,8 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
-        bool supportsVisualStudioExtensions = true)
+        bool supportsVisualStudioExtensions = true,
+        RazorFileKind? fileKind = null)
     {
         UpdateClientLSPInitializationOptions(c =>
         {
@@ -717,7 +723,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             return c;
         });
 
-        var document = CreateProjectAndRazorDocument(input.Text);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);
