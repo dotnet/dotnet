@@ -21,7 +21,7 @@
            important as long as it can be used as part of the assembly version, and does not overlap with NuGet's existing packages or assemblies.
            One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
            See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
-      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(VersionSuffixBuildOfTheDay)' != '' and '$(VersionSuffixDateStamp)' != ''" />
+      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(_PatchNumber)' != ''" />
     </ItemGroup>
 
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
