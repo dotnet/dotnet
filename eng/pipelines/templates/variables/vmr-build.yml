@@ -86,6 +86,9 @@ variables:
   - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: signDacEnabled
       value: true
+  - ${{ else }}:
+    - name: signDacEnabled
+      value: false
 - ${{ elseif eq(parameters.desiredSigning, 'Signed (Test)') }}:
   - name: signEnabled
     value: true
@@ -282,3 +285,4 @@ variables:
     value: macos-latest-internal
   - name: poolImage_Windows
     value: windows.vs2022preview.amd64
+
