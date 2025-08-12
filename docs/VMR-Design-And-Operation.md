@@ -17,20 +17,11 @@ Rather than building as a set of independent repositories and flowing dependenci
   - [Examples](#examples)
   - [Layout](#layout)
   - [Repository Source Inclusion](#repository-source-inclusion)
-  - [Repository Source Mappings](#repository-source-mappings)
-    - [Mapping Defaults](#mapping-defaults)
-    - [Repo-level Overrides for Ex/inclusions](#repo-level-overrides-for-exinclusions)
 - [Moving Code and Dependencies between the VMR and Development Repos](#moving-code-and-dependencies-between-the-vmr-and-development-repos)
   - [Forward Flow](#forward-flow)
     - [Dealing with Conflicts](#dealing-with-conflicts)
   - [Back Flow](#back-flow)
   - [Automation](#automation)
-- [Source Synchronization Process](#source-synchronization-process)
-  - [Synchronizing Submodules](#synchronizing-submodules)
-  - [Tracking Sources](#tracking-sources)
-    - [Source Manifest](#source-manifest)
-    - [Commit Messages](#commit-messages)
-    - [Component List in VMR's README](#component-list-in-vmrs-readme)
 
 ## Structure
 
