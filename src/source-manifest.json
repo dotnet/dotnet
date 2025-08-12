@@ -127,10 +127,10 @@
       "commitSha": "b67630f060f02a6f5ef7cfcea731dce0d13e1ad6"
     },
     {
-      "barId": 278491,
+      "barId": 278691,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "d9e6ea3247d11e5f2ee088cabdcd988eec2906ed"
+      "commitSha": "829937612b95e623785d2e0bb970395676d22b4d"
     },
     {
       "barId": 278644,
@@ -145,10 +145,10 @@
       "commitSha": "be7c32600c9fb8c17bab33729161ebe9c82643a1"
     },
     {
-      "barId": 277390,
+      "barId": 278671,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "4bd646467b69e97898fd126772d9dcdb8b1ed314"
+      "commitSha": "bd4acbb15005fba63640b3bd494ac37f8680a9ed"
     },
     {
       "barId": 278018,
