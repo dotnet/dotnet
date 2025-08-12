@@ -19,8 +19,9 @@
       <!-- NuGet typically uses an auto-incremented AzDO variable to set the preview iteration version on its builds. (e.g. 7.0.0-preview.20, where 20 is the
            number. This is not an approach that .NET uses for its builds, which use a date-varying number. However, the exact suffix is not that
            important as long as it can be used as part of the assembly version, and does not overlap with NuGet's existing packages or assemblies.
-           One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions. -->
-      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 5000))" Condition="'$(VersionSuffixBuildOfTheDay)' != '' and '$(VersionSuffixDateStamp)' != ''" />
+           One way we can achieve this is to intake .NET's normal version properties, and apply a bit of math to mimic how .NET would calculate assembly versions.
+           See https://github.com/dotnet/arcade/blob/d27184f7cb92b4abb4b20e91ecb5c43bc43de65b/src/Microsoft.DotNet.Arcade.Sdk/src/CalculateAssemblyAndFileVersions.cs#L65 -->
+      <_CommonProperties Include="BuildNumber=$([MSBuild]::Modulo($(_PatchNumber), 50000))" Condition="'$(VersionSuffixBuildOfTheDay)' != '' and '$(VersionSuffixDateStamp)' != ''" />
     </ItemGroup>
 
     <!-- Pass _ImportOrUseTooling = false to avoid attempting to restore unneeded packages in Tools.proj.
