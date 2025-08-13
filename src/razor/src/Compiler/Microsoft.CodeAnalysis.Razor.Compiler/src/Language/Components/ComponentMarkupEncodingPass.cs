@@ -88,7 +88,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
             for (var i = 0; i < node.Children.Count; i++)
             {
                 var child = node.Children[i];
-                if (!(child is IntermediateToken token) || !token.IsHtml || string.IsNullOrEmpty(token.Content))
+                if (child is not HtmlIntermediateToken token || string.IsNullOrEmpty(token.Content))
                 {
                     // We only care about Html tokens.
                     continue;
@@ -112,7 +112,7 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
             for (var i = 0; i < node.Children.Count; i++)
             {
                 var child = node.Children[i];
-                if (!(child is IntermediateToken token) || !token.IsHtml || string.IsNullOrEmpty(token.Content))
+                if (child is not HtmlIntermediateToken token || string.IsNullOrEmpty(token.Content))
                 {
                     // We only care about Html tokens.
                     continue;
@@ -134,13 +134,13 @@ internal class ComponentMarkupEncodingPass : ComponentIntermediateNodePassBase, 
             for (var i = 0; i < node.Children.Count; i++)
             {
                 var child = node.Children[i];
-                if (!(child is IntermediateToken token) || !token.IsHtml || string.IsNullOrEmpty(token.Content))
+                if (child is not IntermediateToken token || string.IsNullOrEmpty(token.Content))
                 {
                     // We only care about Html tokens.
                     continue;
                 }
 
-                token.Content = decodedContent[i];
+                token.UpdateContent(decodedContent[i]);
             }
         }
 

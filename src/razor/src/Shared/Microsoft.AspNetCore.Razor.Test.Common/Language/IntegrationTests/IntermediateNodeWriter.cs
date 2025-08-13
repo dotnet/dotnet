@@ -21,7 +21,6 @@ public class IntermediateNodeWriter :
     IntermediateNodeVisitor,
     IExtensionIntermediateNodeVisitor<SectionIntermediateNode>,
     IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>
-
 {
     private readonly TextWriter _writer;
 
@@ -68,7 +67,14 @@ public class IntermediateNodeWriter :
 
     public override void VisitToken(IntermediateToken node)
     {
-        WriteContentNode(node, node.Kind.ToString(), node.Content);
+        var kind = node switch
+        {
+            CSharpIntermediateToken => "CSharp",
+            HtmlIntermediateToken => "Html",
+            _ => "Unknown"
+        };
+
+        WriteContentNode(node, kind, node.Content);
     }
 
     public override void VisitMalformedDirective(MalformedDirectiveIntermediateNode node)
@@ -284,9 +290,14 @@ public class IntermediateNodeWriter :
     protected void WriteName(IntermediateNode node)
     {
         var typeName = node.GetType().Name;
+
         if (typeName.EndsWith("IntermediateNode", StringComparison.Ordinal))
         {
             _writer.Write(typeName[..^"IntermediateNode".Length]);
+        }
+        else if (node is IntermediateToken token)
+        {
+            _writer.Write(token.IsLazy ? "LazyIntermediateToken" : "IntermediateToken");
         }
         else
         {
