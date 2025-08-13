@@ -93,7 +93,13 @@ extends:
         tsaEnabled: true
       binskim:
         enabled: true
-        analyzeTargetGlob: +:f|eng\**\*.props;+:f|**\artifacts\bin\**\*.dll;+:f|**\artifacts\bin\**\*.exe;-:f|**\artifacts\bin\**\msdia140.dll;-:f|**\artifacts\bin\**\pgort140.dll;-:f|**\artifacts\bin\*Tests\**;-:f|**\Microsoft.NET.Runtime.Emscripten**\tools\**;-:f|**\CodeCoverage\**;-:f|**\artifacts\bin\**\capstone.dll;
+        # This may need to be updated to exclude files we don't want scanned.
+        # This pattern was pulled from dotnet/sdk, with the ESRPClient added.
+        # When binskim supports scanning of archive contents, this can be removed altogether.
+        # This is of the form: <pattern>;<pattern>
+        # +:f| - Include glob
+        # -:f| - Exclude glob
+        analyzeTargetGlob: +:f|eng\**\*.props;+:f|**\artifacts\bin\**\*.dll;+:f|**\artifacts\bin\**\*.exe;-:f|**\artifacts\bin\**\msdia140.dll;-:f|**\artifacts\bin\**\pgort140.dll;-:f|**\artifacts\bin\*Tests\**;-:f|**\Microsoft.NET.Runtime.Emscripten**\tools\**;-:f|**\CodeCoverage\**;-:f|**\artifacts\bin\**\capstone.dll;-:f|**\Microsoft.EsrpClient\**;
       policheck:
         enabled: true
       tsa:
