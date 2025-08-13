@@ -232,7 +232,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return poisons;
         }
 
-        private static PoisonedFileEntry CheckSingleFile(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate)
+        private PoisonedFileEntry CheckSingleFile(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate)
         {
             // skip some common files that get copied verbatim from nupkgs - LICENSE, _._, etc as well as
             // file types that we never care about - text files, .gitconfig, etc.
@@ -272,7 +272,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                     var match = new PoisonMatch
                     {
                         File = matchingCatalogedFile.Path,
-                        Package = p.Path,
+                        Package = Utility.MakeRelativePath(p.Path, ProjectDirPath),
                         PackageId = p.Id,
                         PackageVersion = p.Version,
                     };
