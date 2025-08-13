@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <Import Project="Version.Details.props" Condition="Exists('Version.Details.props')" />
   <PropertyGroup Label="Version settings">
     <!-- This repo version -->
     <!--
@@ -48,11 +49,7 @@
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>3.3.4</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeCoverageIOVersion>17.7.0</MicrosoftCodeCoverageIOVersion>
-    <MicrosoftDiagnosticsNETCoreClientVersion>0.2.0-preview.25377.103</MicrosoftDiagnosticsNETCoreClientVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingVersion>6.0.0</MicrosoftExtensionsFileSystemGlobbingVersion>
     <MicrosoftFakesVersion>18.0.0-beta.25364.2</MicrosoftFakesVersion>
-    <MicrosoftInternalCodeCoverageVersion>17.15.0-preview.25354.5</MicrosoftInternalCodeCoverageVersion>
     <!--
       Make sure you are taking a version from a release branch (rel/d*) in VS. Otherwise there won't be symbols for the dlls in package,
       a and it will create a symcheck bug on re-insertion into VS.
@@ -66,7 +63,6 @@
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
-    <SystemComponentModelCompositionVersion>8.0.0</SystemComponentModelCompositionVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.0.0-preview-1-10811-208</TestPlatformExternalsVersion>
