@@ -97,3 +97,5 @@ steps:
       $(_SignDiagnosticFilesArgs)
   displayName: Sign Source-Built Artifacts
   workingDirectory: $(Build.SourcesDirectory)
+  env:
+      OPENSSL_ENABLE_SHA1_SIGNATURES: 1
