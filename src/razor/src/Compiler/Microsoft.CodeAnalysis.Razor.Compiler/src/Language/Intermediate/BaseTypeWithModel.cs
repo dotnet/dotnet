@@ -3,7 +3,7 @@
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
-public sealed class BaseTypeWithModel 
+public sealed class BaseTypeWithModel
 {
     const string ModelGenericParameter = "<TModel>";
 
@@ -11,10 +11,10 @@ public sealed class BaseTypeWithModel
     {
         if (baseType.EndsWith(ModelGenericParameter, System.StringComparison.Ordinal))
         {
-            BaseType = IntermediateToken.CreateCSharpToken(baseType[0..^ModelGenericParameter.Length]);
-            GreaterThan = IntermediateToken.CreateCSharpToken("<");
-            ModelType = IntermediateToken.CreateCSharpToken("TModel");
-            LessThan = IntermediateToken.CreateCSharpToken(">");
+            BaseType = IntermediateNodeFactory.CSharpToken(baseType[0..^ModelGenericParameter.Length]);
+            GreaterThan = IntermediateNodeFactory.CSharpToken("<");
+            ModelType = IntermediateNodeFactory.CSharpToken("TModel");
+            LessThan = IntermediateNodeFactory.CSharpToken(">");
 
             if (location.HasValue)
             {
@@ -27,7 +27,7 @@ public sealed class BaseTypeWithModel
         }
         else
         {
-            BaseType = IntermediateToken.CreateCSharpToken(baseType, location);  
+            BaseType = IntermediateNodeFactory.CSharpToken(baseType, location);
         }
     }
 
