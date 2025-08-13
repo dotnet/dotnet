@@ -11,66 +11,6 @@
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="build/NativeAOT.natvis" />
   </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libaotminipal.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libaotminipal.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libaotminipal.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libbootstrapper.o">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbootstrapper.o" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libbootstrapper.o" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libbootstrapperdll.o">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbootstrapperdll.o" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libbootstrapperdll.o" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libbrotlicommon.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlicommon.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlicommon.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libbrotlidec.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlidec.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlidec.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libbrotlienc.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlienc.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlienc.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libeventpipe-disabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libeventpipe-disabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libeventpipe-disabled.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libRuntime.VxsortDisabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libRuntime.VxsortDisabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libRuntime.VxsortDisabled.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libRuntime.VxsortEnabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libRuntime.VxsortEnabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libRuntime.VxsortEnabled.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libstdc++compat.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libstdc++compat.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libstdc++compat.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libSystem.Net.Security.Native.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libSystem.Net.Security.Native.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libSystem.Net.Security.Native.a" />
-  </File>
-  <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid/x.y.z/runtimes/banana-rid/native/libz.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libz.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libz.a" />
-  </File>
   <File Path="artifacts/assets/Release/Sdk/x.y.z/dotnet-sdk-x.y.z/packs/NETStandard.Library.Ref/x.y.z/ref/netstandard2.1/Microsoft.Win32.Primitives.dll">
     <Type>SourceBuildReferenceAssembly</Type>
   </File>
@@ -3393,8 +3333,8 @@
   </File>
   <File Path="artifacts/packages/Release/Shipping/aspnetcore/Microsoft.DotNet.Web.Client.ItemTemplates.x.y.z/Less/styleSheet1.less">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.DotNet.Web.Client.ItemTemplates.x.y.z.nupkg" PackageId="Microsoft.DotNet.Web.Client.ItemTemplates" PackageVersion="x.y.z" File="Scss/styleSheet1.scss" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.DotNet.Web.Client.ItemTemplates.x.y.z.nupkg" PackageId="Microsoft.DotNet.Web.Client.ItemTemplates" PackageVersion="x.y.z" File="Less/styleSheet1.less" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.DotNet.Web.Client.ItemTemplates.x.y.z.nupkg" PackageId="Microsoft.DotNet.Web.Client.ItemTemplates" PackageVersion="x.y.z" File="Scss/styleSheet1.scss" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/aspnetcore/Microsoft.DotNet.Web.ProjectTemplates.x.y.z/ComponentsWebAssembly-CSharp/wwwroot/manifest.webmanifest">
     <Type>Hash</Type>
@@ -3411,56 +3351,56 @@
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/content/dotnet-suggest-shim.bash">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.bash" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.bash" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/content/dotnet-suggest-shim.ps1">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.ps1" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.ps1" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/content/dotnet-suggest-shim.zsh">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.zsh" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.zsh" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/contentFiles/any/netx.y/dotnet-suggest-shim.bash">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.bash" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.bash" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/contentFiles/any/netx.y/dotnet-suggest-shim.ps1">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.ps1" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.ps1" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/contentFiles/any/netx.y/dotnet-suggest-shim.zsh">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.zsh" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.zsh" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/tools/netx.y/any/dotnet-suggest-shim.bash">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.bash" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.bash" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.bash" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/tools/netx.y/any/dotnet-suggest-shim.ps1">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.ps1" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.ps1" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.ps1" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/command-line-api/dotnet-suggest.x.y.z/tools/netx.y/any/dotnet-suggest-shim.zsh">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="content/dotnet-suggest-shim.zsh" />
-    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
     <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="contentFiles/any/netx.y/dotnet-suggest-shim.zsh" />
+    <Match Package="prereqs/packages/previously-source-built/dotnet-suggest.x.y.z.nupkg" PackageId="dotnet-suggest" PackageVersion="x.y.z" File="tools/netx.y/any/dotnet-suggest-shim.zsh" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/msbuild/Microsoft.Build.Runtime.x.y.z/contentFiles/any/netx.y/Microsoft.Common.overridetasks">
     <Type>Hash</Type>
@@ -5922,66 +5862,6 @@
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="build/NativeAOT.natvis" />
   </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libaotminipal.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libaotminipal.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libaotminipal.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libbootstrapper.o">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbootstrapper.o" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libbootstrapper.o" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libbootstrapperdll.o">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbootstrapperdll.o" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libbootstrapperdll.o" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libbrotlicommon.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlicommon.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlicommon.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libbrotlidec.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlidec.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlidec.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libbrotlienc.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libbrotlienc.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libbrotlienc.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libeventpipe-disabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libeventpipe-disabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libeventpipe-disabled.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libRuntime.VxsortDisabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libRuntime.VxsortDisabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libRuntime.VxsortDisabled.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libRuntime.VxsortEnabled.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libRuntime.VxsortEnabled.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libRuntime.VxsortEnabled.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libstdc++compat.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libstdc++compat.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="sdk/libstdc++compat.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libSystem.Net.Security.Native.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libSystem.Net.Security.Native.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libSystem.Net.Security.Native.a" />
-  </File>
-  <File Path="artifacts/packages/Release/Shipping/runtime/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z/runtimes/banana-rid/native/libz.a">
-    <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid.x.y.z.nupkg" PackageId="Microsoft.NETCore.App.Runtime.NativeAOT.banana-rid" PackageVersion="x.y.z" File="runtimes/banana-rid/native/libz.a" />
-    <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="framework/libz.a" />
-  </File>
   <File Path="artifacts/packages/Release/Shipping/runtime/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z/native/src/libs/build-local.sh">
     <Type>Hash</Type>
     <Match Package="prereqs/packages/previously-source-built/runtime.banana-rid.Microsoft.DotNet.ILCompiler.x.y.z.nupkg" PackageId="runtime.banana-rid.Microsoft.DotNet.ILCompiler" PackageVersion="x.y.z" File="native/src/libs/build-local.sh" />
@@ -6367,143 +6247,143 @@
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/Strings.resx">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/Strings.resx" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/Strings.resx" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/Strings.resx" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.cs.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.cs.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.cs.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.cs.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.de.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.de.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.de.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.de.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.es.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.es.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.es.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.es.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.fr.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.fr.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.fr.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.fr.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.it.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.it.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.it.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.it.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ja.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ja.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ja.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ja.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ko.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ko.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ko.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ko.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pl.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pl.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pl.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pl.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pt-BR.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pt-BR.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pt-BR.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pt-BR.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ru.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ru.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ru.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ru.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.tr.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.tr.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.tr.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.tr.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hans.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hans.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hans.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hans.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hant.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hant.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hant.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hant.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/Strings.resx">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/Strings.resx" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/Strings.resx" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/Strings.resx" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.cs.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.cs.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.cs.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.cs.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.de.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.de.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.de.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.de.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.es.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.es.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.es.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.es.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.fr.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.fr.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.fr.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.fr.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.it.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.it.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.it.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.it.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ja.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ja.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ja.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ja.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ko.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ko.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ko.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ko.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pl.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pl.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pl.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pl.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pt-BR.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pt-BR.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.pt-BR.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.pt-BR.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ru.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ru.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.ru.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.ru.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.tr.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.tr.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.tr.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.tr.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hans.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hans.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hans.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hans.xlf" />
   </File>
   <File Path="artifacts/packages/Release/Shipping/source-build-reference-packages/Microsoft.CodeAnalysis.Collections.x.y.z/contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hant.xlf">
     <Type>Hash</Type>
-    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hant.xlf" />
     <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netcoreapp3.1/Internal/xlf/Strings.zh-Hant.xlf" />
+    <Match Package="prereqs/packages/previously-source-built/Microsoft.CodeAnalysis.Collections.x.y.z.nupkg" PackageId="Microsoft.CodeAnalysis.Collections" PackageVersion="x.y.z" File="contentFiles/cs/netstandard2.0/Internal/xlf/Strings.zh-Hant.xlf" />
   </File>
   <File Path="prereqs/packages/reference/NuGet.Common.x.y.z/lib/netstandard2.0/NuGet.Common.dll">
     <Type>Hash</Type>

@@ -47,16 +47,16 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
         public string PoisonReportOutputFilePath { get; set; }
 
         /// <summary>
-        /// The path of a previously-generated file hash catalog, if
+        /// The paths of previously-generated file hash catalogs, if
         /// hash checked is desired.  If not, only assembly attributes
-        /// and package marker file checked will be done.
+        /// and package marker files checks will be done.
         /// </summary>
-        public string HashCatalogFilePath { get; set; }
+        public ITaskItem[] HashCatalogFilePaths { get; set; }
 
         /// <summary>
-        /// The marker file name to check for in poisoned nupkg files.
+        /// The marker file names to check for in poisoned nupkg files.
         /// </summary>
-        public string MarkerFileName { get; set; }
+        public ITaskItem[] MarkerFileNames { get; set; }
 
         /// <summary>
         /// If true, fails the build if any poisoned files are found.
@@ -156,7 +156,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 
         public override bool Execute()
         {
-            IEnumerable<PoisonedFileEntry> poisons = GetPoisonedFiles(FilesToCheck, HashCatalogFilePath, MarkerFileName);
+            IEnumerable<PoisonedFileEntry> poisons = GetPoisonedFiles(FilesToCheck, HashCatalogFilePaths, MarkerFileNames);
 
             // if we should write out the poison report, do that
             if (!string.IsNullOrWhiteSpace(PoisonReportOutputFilePath))
@@ -181,12 +181,12 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
         /// Internal helper to allow other tasks to check for poisoned files.
         /// </summary>
         /// <param name="initialCandidates">Initial queue of candidate files (will be cleared when done)</param>
-        /// <param name="catalogedPackagesFilePath">File path to the file hash catalog</param>
-        /// <param name="markerFileName">Marker file name to check for in poisoned nupkgs</param>
+        /// <param name="catalogedPackagesFilePaths">File paths to the file hash catalog</param>
+        /// <param name="markerFileNames">Marker file names to check for in poisoned nupkgs</param>
         /// <returns>List of poisoned packages and files found and reasons for each</returns>
-        internal IEnumerable<PoisonedFileEntry> GetPoisonedFiles(IEnumerable<ITaskItem> initialCandidates, string catalogedPackagesFilePath, string markerFileName)
+        internal IEnumerable<PoisonedFileEntry> GetPoisonedFiles(IEnumerable<ITaskItem> initialCandidates, IEnumerable<ITaskItem> catalogedPackagesFilePaths, IEnumerable<ITaskItem> markerFileNames)
         {
-            IEnumerable<CatalogPackageEntry> catalogedPackages = ReadCatalog(catalogedPackagesFilePath);
+            IEnumerable<CatalogPackageEntry> catalogedPackages = catalogedPackagesFilePaths.SelectMany(file => ReadCatalog(file.ItemSpec));
             var poisons = new List<PoisonedFileEntry>();
             var candidateQueue = new Queue<CandidateFileEntry>(initialCandidates.Select(candidate =>
                 new CandidateFileEntry(candidate.ItemSpec,
@@ -211,7 +211,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                     Log.LogMessage($"Zip or NuPkg file to check: {candidate.ExtractedPath}");
 
                     var tempCheckingDir = Path.Combine(tempDir.FullName, Path.GetFileNameWithoutExtension(candidate.ExtractedPath));
-                    PoisonedFileEntry result = ExtractAndCheckZipFileOnly(catalogedPackages, candidate, markerFileName, tempCheckingDir, candidateQueue);
+                    PoisonedFileEntry result = ExtractAndCheckZipFileOnly(catalogedPackages, candidate, markerFileNames, tempCheckingDir, candidateQueue);
                     if (result != null)
                     {
                         poisons.Add(result);
@@ -373,7 +373,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return false;
         }
 
-        private static PoisonedFileEntry ExtractAndCheckZipFileOnly(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate, string markerFileName, string tempDir, Queue<CandidateFileEntry> futureFilesToCheck)
+        private static PoisonedFileEntry ExtractAndCheckZipFileOnly(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate, IEnumerable<ITaskItem> markerFileNames, string tempDir, Queue<CandidateFileEntry> futureFilesToCheck)
         {
             var poisonEntry = new PoisonedFileEntry();
             var zipToCheck = candidate.ExtractedPath;
@@ -422,7 +422,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 throw new ArgumentOutOfRangeException($"Don't know how to decompress {zipToCheck}");
             }
 
-            if (!string.IsNullOrWhiteSpace(markerFileName) && File.Exists(Path.Combine(tempDir, markerFileName)))
+            if (markerFileNames.Any(markerFileName => HasMarkerFile(tempDir, markerFileName.ItemSpec)))
             {
                 poisonEntry.Type |= PoisonType.NupkgFile;
             }
@@ -476,5 +476,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             }
             return packages;
         }
+
+        private static bool HasMarkerFile(string nugetPackageDir, string markerFileName)
+            => !string.IsNullOrWhiteSpace(markerFileName) && File.Exists(Path.Combine(nugetPackageDir, markerFileName));
     }
 }
