@@ -255,7 +255,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
                 _foundNonHtml = true;
             }
 
-            if (node.IsCSharp)
+            if (node is CSharpIntermediateToken)
             {
                 _foundNonHtml = true;
             }
