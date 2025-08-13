@@ -85,10 +85,10 @@
       "commitSha": "d45048f958379c63acfc716136a5e2466f21c5d4"
     },
     {
-      "barId": 278788,
+      "barId": 279011,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "b267b85fd0ad76c74548757bd2bb96a4497ff2de"
+      "commitSha": "cc1bffe454aa50c500cbfba40ca83d2d1ab78b88"
     },
     {
       "barId": 277711,
@@ -127,10 +127,10 @@
       "commitSha": "b67630f060f02a6f5ef7cfcea731dce0d13e1ad6"
     },
     {
-      "barId": 278691,
+      "barId": 278912,
       "path": "vstest",
       "remoteUri": "https://github.com/microsoft/vstest",
-      "commitSha": "829937612b95e623785d2e0bb970395676d22b4d"
+      "commitSha": "4d2e4b05ee14d1b06d0029c97c1109ba8d09e93a"
     },
     {
       "barId": 278644,
