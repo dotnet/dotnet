@@ -337,18 +337,13 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
             var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
 
-            if (clientCapabilities.SupportsVisualStudioExtensions && !item.VsResolveTextEditOnCommit)
-            {
-                // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
-                return item;
-            }
-
             item = await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
                 item,
                 context,
                 formattingOptions,
                 _formattingService,
                 _documentMappingService,
+                clientCapabilities.SupportsVisualStudioExtensions,
                 Logger,
                 cancellationToken).ConfigureAwait(false);
 
