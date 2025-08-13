@@ -103,7 +103,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
     {
         for (var i = 0; i < children.Count; i++)
         {
-            if (children[i] is IntermediateToken token && token.IsCSharp)
+            if (children[i] is CSharpIntermediateToken token)
             {
                 using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
                 {
@@ -167,7 +167,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         // Write content
         for (var i = 0; i < node.Children.Count; i++)
         {
-            if (node.Children[i] is IntermediateToken token && token.IsHtml)
+            if (node.Children[i] is HtmlIntermediateToken token)
             {
                 context.CodeWriter.WriteStringLiteral(token.Content);
             }
@@ -256,7 +256,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         var length = 0;
         foreach (var child in node.Children)
         {
-            if (child is IntermediateToken token && token.IsHtml)
+            if (child is HtmlIntermediateToken token)
             {
                 var htmlContent = token.Content.AsMemory();
 
