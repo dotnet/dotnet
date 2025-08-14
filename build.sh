@@ -395,50 +395,59 @@ if [[ "$sourceOnly" == "true" ]]; then
     }
 
     GIT_DIR="$scriptroot/.git"
+    fake_git=false
+    # Check if exist .git directory or file
     if [ -f "$GIT_DIR" ]; then
-      if ! grep -i '^gitdir: ' "$GIT_DIR"; then
-        echo "ERROR: $scriptroot is not a git worktree."
-        exit 1
-      fi
-    else
-      if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
+      if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
+        rm -rf "$GIT_DIR"
+        fake_git=true
+      else
         if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
           echo "ERROR: Source Link arguments cannot be used in a git repository"
           exit 1
         fi
-      else
-        if [ -z "$releaseManifest" ]; then
-          if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
-            echo "ERROR: $scriptroot is not a git repository, either --release-manifest or --source-repository and --source-version must be specified"
-            exit 1
-          fi
-        else
-          if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ]; then
-            echo "ERROR: --release-manifest cannot be specified together with --source-repository and --source-version"
-            exit 1
-          fi
+      fi
+    elif [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
+      if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
+        echo "ERROR: Source Link arguments cannot be used in a git repository"
+        exit 1
+      fi
+    else
+      fake_git=true
+    fi
 
-          sourceRepository=$(get_property "$releaseManifest" sourceRepository) \
-            || (echo "ERROR: Failed to find sourceRepository in $releaseManifest" && exit 1)
-          sourceVersion=$(get_property "$releaseManifest" sourceVersion) \
-            || (echo "ERROR: Failed to find sourceVersion in $releaseManifest" && exit 1)
-
-          if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
-            echo "ERROR: sourceRepository and sourceVersion must be specified in $releaseManifest"
-            exit 1
-          fi
-        fi
-
-        # We need to add "fake" .git/ files when not building from a git repository
-        mkdir -p "$GIT_DIR"
-        echo '[remote "origin"]' > "$GIT_DIR/config"
-        echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
-        echo "$sourceVersion" > "$GIT_DIR/HEAD"
-
-        if [ ! -d "$scriptroot/.git" ]; then
-          echo "ERROR: $scriptroot is not a git repository."
+    if [[ "$fake_git" == true ]]; then
+      if [ -z "$releaseManifest" ]; then
+        if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
+          echo "ERROR: $scriptroot is not a git repository, either --release-manifest or --source-repository and --source-version must be specified"
           exit 1
         fi
+      else
+        if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ]; then
+          echo "ERROR: --release-manifest cannot be specified together with --source-repository and --source-version"
+          exit 1
+        fi
+
+        sourceRepository=$(get_property "$releaseManifest" sourceRepository) \
+          || (echo "ERROR: Failed to find sourceRepository in $releaseManifest" && exit 1)
+        sourceVersion=$(get_property "$releaseManifest" sourceVersion) \
+          || (echo "ERROR: Failed to find sourceVersion in $releaseManifest" && exit 1)
+
+        if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
+          echo "ERROR: sourceRepository and sourceVersion must be specified in $releaseManifest"
+          exit 1
+        fi
+      fi
+
+      # We need to add "fake" .git/ files when not building from a git repository
+      mkdir -p "$GIT_DIR"
+      echo '[remote "origin"]' > "$GIT_DIR/config"
+      echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
+      echo "$sourceVersion" > "$GIT_DIR/HEAD"
+
+      if [ ! -d "$scriptroot/.git" ]; then
+        echo "ERROR: $scriptroot is not a git repository."
+        exit 1
       fi
     fi
 
