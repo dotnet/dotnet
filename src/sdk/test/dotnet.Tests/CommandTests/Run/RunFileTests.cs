@@ -150,7 +150,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     /// <summary>
     /// <c>dotnet file.cs</c> is equivalent to <c>dotnet run file.cs</c>.
     /// </summary>
-    [Fact(Skip = "Waiting for VMR codeflow from runtime: https://github.com/dotnet/dotnet/pull/1563")]
+    [Fact]
     public void FilePath_WithoutRun()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
@@ -225,16 +225,6 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 Hello from Program
                 Release config
                 """);
-
-        new DotnetCommand(Log, "Program.cs", "arg1", "arg2")
-            .WithWorkingDirectory(testInstance.Path)
-            .Execute()
-            .Should().Pass()
-            .And.HaveStdOut("""
-                echo args:arg1;arg2
-                Hello from Program
-                Release config
-                """);
     }
 
     /// <summary>
@@ -302,7 +292,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     /// <summary>
     /// Even if there is a file-based app <c>./build</c>, <c>dotnet build</c> should not execute that.
     /// </summary>
-    [Theory(Skip="Waiting for VMR codeflow from runtime: https://github.com/dotnet/dotnet/pull/1563")]
+    [Theory]
     // error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
     [InlineData("build", "MSB1003")]
     // dotnet watch: Could not find a MSBuild project file in '...'. Specify which project to use with the --project option.
@@ -373,7 +363,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 
     //  https://github.com/dotnet/sdk/issues/49665
     //  Failed to load /private/tmp/helix/working/B3F609DC/p/d/shared/Microsoft.NETCore.App/9.0.0/libhostpolicy.dylib, error: dlopen(/private/tmp/helix/working/B3F609DC/p/d/shared/Microsoft.NETCore.App/9.0.0/libhostpolicy.dylib, 0x0001): tried: '/private/tmp/helix/working/B3F609DC/p/d/shared/Microsoft.NETCore.App/9.0.0/libhostpolicy.dylib' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/private/tmp/helix/working/B3F609DC/p/d/shared/Microsoft.NETCore.App/9.0.0/libhostpolicy.dylib' (no such file), '/private/tmp/helix/working/B3F609DC/p/d/shared/Microsoft.NETCore.App/9.0.0/libhostpolicy.dylib' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64'))
-    [PlatformSpecificFact(TestPlatforms.Any & ~TestPlatforms.OSX, Skip = " Waiting for VMR codeflow from runtime: https://github.com/dotnet/dotnet/pull/1563")]
+    [PlatformSpecificFact(TestPlatforms.Any & ~TestPlatforms.OSX)]
     public void Precedence_NuGetTool()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
@@ -532,7 +522,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 """);
     }
 
-    [Fact(Skip = " Waiting for VMR codeflow from runtime: https://github.com/dotnet/dotnet/pull/1563")]
+    [Fact]
     public void ProjectInCurrentDirectory_NoRunVerb()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
@@ -1607,7 +1597,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 Message: ''
                 """);
 
-        new DotnetCommand(Log, "run", "Program.cs")
+        // quiet runs here so that launch-profile useage messages don't impact test assertions
+        new DotnetCommand(Log, "run", "-v", "q", "Program.cs")
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()
@@ -1617,7 +1608,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 Message: 'PropertiesLaunchSettingsJson1'
                 """);
 
-        new DotnetCommand(Log, "run", "-lp", "TestProfile2", "Program.cs")
+        new DotnetCommand(Log, "run", "-v", "q", "-lp", "TestProfile2", "Program.cs")
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()
@@ -1644,7 +1635,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         File.WriteAllText(Path.Join(testInstance.Path, "Second.cs"), source);
         File.WriteAllText(Path.Join(testInstance.Path, "Second.run.json"), s_launchSettings.Replace("TestProfileMessage", "Second"));
 
-        new DotnetCommand(Log, "run", "First.cs")
+        // do these runs with quiet verbosity so that default run output doesn't impact the tests
+        new DotnetCommand(Log, "run", "-v", "q", "First.cs")
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()
@@ -1653,7 +1645,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 Message: 'First1'
                 """);
 
-        new DotnetCommand(Log, "run", "Second.cs")
+        new DotnetCommand(Log, "run", "-v", "q",  "Second.cs")
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()

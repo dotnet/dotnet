@@ -58,9 +58,9 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
                 context.CodeWriter.WritePadding(offset, node.Source, context);
                 context.CodeWriter.WriteStartAssignment(DesignTimeDirectivePass.DesignTimeVariable);
 
-                for (var i = 0; i < node.Children.Count; i++)
+                foreach (var child in node.Children)
                 {
-                    if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+                    if (child is CSharpIntermediateToken token)
                     {
                         context.AddSourceMappingFor(token);
                         context.CodeWriter.Write(token.Content);
@@ -68,7 +68,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
                     else
                     {
                         // There may be something else inside the expression like a Template or another extension node.
-                        context.RenderNode(node.Children[i]);
+                        context.RenderNode(child);
                     }
                 }
 
@@ -78,18 +78,20 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
         else
         {
             context.CodeWriter.WriteStartAssignment(DesignTimeDirectivePass.DesignTimeVariable);
-            for (var i = 0; i < node.Children.Count; i++)
+
+            foreach (var child in node.Children)
             {
-                if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+                if (child is CSharpIntermediateToken token)
                 {
                     context.CodeWriter.Write(token.Content);
                 }
                 else
                 {
                     // There may be something else inside the expression like a Template or another extension node.
-                    context.RenderNode(node.Children[i]);
+                    context.RenderNode(child);
                 }
             }
+
             context.CodeWriter.WriteLine(";");
         }
     }
@@ -104,9 +106,9 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
             context.CodeWriter.WritePadding(0, node.Source.Value, context);
         }
 
-        for (var i = 0; i < node.Children.Count; i++)
+        foreach (var child in node.Children)
         {
-            if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+            if (child is CSharpIntermediateToken token)
             {
                 context.AddSourceMappingFor(token);
                 context.CodeWriter.Write(token.Content);
@@ -114,7 +116,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
             else
             {
                 // There may be something else inside the statement like an extension node.
-                context.RenderNode(node.Children[i]);
+                context.RenderNode(child);
             }
         }
 
@@ -164,9 +166,9 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
                 context.CodeWriter.WritePadding(offset, firstChild.Source, context);
                 context.CodeWriter.WriteStartAssignment(DesignTimeDirectivePass.DesignTimeVariable);
 
-                for (var i = 0; i < node.Children.Count; i++)
+                foreach (var child in node.Children)
                 {
-                    if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+                    if (child is CSharpIntermediateToken token)
                     {
                         context.AddSourceMappingFor(token);
                         context.CodeWriter.Write(token.Content);
@@ -174,7 +176,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
                     else
                     {
                         // There may be something else inside the expression like a Template or another extension node.
-                        context.RenderNode(node.Children[i]);
+                        context.RenderNode(child);
                     }
                 }
 
@@ -186,7 +188,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
             context.CodeWriter.WriteStartAssignment(DesignTimeDirectivePass.DesignTimeVariable);
             for (var i = 0; i < node.Children.Count; i++)
             {
-                if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+                if (node.Children[i] is CSharpIntermediateToken token)
                 {
                     if (token.Source != null)
                     {
@@ -207,9 +209,9 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteCSharpCodeAttributeValue(CodeRenderingContext context, CSharpCodeAttributeValueIntermediateNode node)
     {
-        for (var i = 0; i < node.Children.Count; i++)
+        foreach (var child in node.Children)
         {
-            if (node.Children[i] is IntermediateToken token && token.IsCSharp)
+            if (child is CSharpIntermediateToken token)
             {
                 IDisposable linePragmaScope = null;
                 var isWhitespaceStatement = string.IsNullOrWhiteSpace(token.Content);
@@ -244,7 +246,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
             else
             {
                 // There may be something else inside the statement like an extension node.
-                context.RenderNode(node.Children[i]);
+                context.RenderNode(child);
             }
         }
     }

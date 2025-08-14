@@ -23,11 +23,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
 
         builder.Push(new HtmlContentIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.Html
-        });
+        builder.Add(IntermediateNodeFactory.HtmlToken("Hi"));
 
         builder.Pop();
 
@@ -54,12 +50,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
             Source = CreateSource(1),
         });
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.Html,
-            Source = CreateSource(1)
-        });
+        builder.Add(IntermediateNodeFactory.HtmlToken("Hi", CreateSource(1)));
 
         builder.Pop();
 
@@ -85,11 +76,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
 
         builder.Push(new HtmlContentIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.Html
-        });
+        builder.Add(IntermediateNodeFactory.HtmlToken("Hi"));
 
         builder.Pop();
 
@@ -116,11 +103,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
             Source = CreateSource(2),
         });
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("Hi"));
 
         // Act
         ProjectEngine.ExecutePass<InstrumentationPass>(codeDocument, documentNode);
@@ -144,11 +127,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
 
         builder.Push(new CSharpExpressionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("Hi"));
 
         // Act
         ProjectEngine.ExecutePass<InstrumentationPass>(codeDocument, documentNode);
@@ -177,11 +156,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
             Source = CreateSource(5)
         });
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("Hi"));
 
         // Act
         ProjectEngine.ExecutePass<InstrumentationPass>(codeDocument, documentNode);
@@ -222,11 +197,7 @@ public class InstrumentationPassTest : RazorProjectEngineTestBase
             Source = CreateSource(5)
         });
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "Hi",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("Hi"));
 
         // Act
         ProjectEngine.ExecutePass<InstrumentationPass>(codeDocument, documentNode);
