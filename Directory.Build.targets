@@ -81,13 +81,13 @@
     <!-- Non-tooling-and-bootstrap mode: Keep non-tooling components and bootstrap arcade repos -->
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'NonToolingAndBootstrapOnly'">
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
-                      Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
+                      Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Tooling-only mode: Keep only tooling components that are not bootstrap arcade repos -->
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'ToolingOnly'">
       <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
-                      Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
+                      Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Bootstrap-only mode: Keep only packages from bootstrap arcade repos -->
