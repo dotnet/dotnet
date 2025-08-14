@@ -256,7 +256,8 @@ jobs:
 
   - name: useSystemLibrariesArgument
     ${{ if eq(parameters.useSystemLibraries, 'true') }}:
-      value: $(commandPrefix)with-system-libs all
+      # Do not use all (or include libunwind) because of the issues described in https://github.com/dotnet/source-build/issues/5288
+      value: $(commandPrefix)with-system-libs brotli+rapidjson+zlib
     ${{ else }}:
       value: ''
 
