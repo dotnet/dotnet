@@ -37,30 +37,18 @@
   </Target>
 
   <Target Name="DetermineSourceBuiltRuntimeVersion">
-    <PropertyGroup>
-      <RuntimeFilenamePrefix>dotnet-runtime-</RuntimeFilenamePrefix>
-    </PropertyGroup>
+    <!-- We can't rely on there being a runtime artifact in the assets directory because this may be a non-1xx branch
+         that doesn't produce any runtime artifacts. So instead, we determine the runtime version by examining the
+         directory structure of the shared runtime within the SDK. -->
+
+    <Error Text="Didn't find extracted SDK directory at '$(DotNetSdkExtractDir)'." Condition="!Exists('$(DotNetSdkExtractDir)')" />
 
     <ItemGroup>
-      <RuntimeArchiveItem Include="$(ArtifactsAssetsDir)Runtime/**/$(RuntimeFilenamePrefix)*$(ArchiveExtension)"
-                          Exclude="$(ArtifactsAssetsDir)Runtime/**/$(RuntimeFilenamePrefix)*.wixpack.zip" />
+      <RuntimeVersionFile Include="$(DotNetSdkExtractDir)shared\Microsoft.NETCore.App\*\.version" />
     </ItemGroup>
 
-    <Error Text="Didn't find a runtime archive." Condition="'@(RuntimeArchiveItem)' == ''" />
-    <Error Text="Found more than one runtime archive." Condition="@(RuntimeArchiveItem->Count()) &gt; 1" />
-
-    <!--
-      Extract runtime version from the dotnet-runtime archive filename.
-      Keep in sync with dotnet-runtime's archive location and filename.
-
-      Example:
-      artifacts\assets\<config>\Runtime\9.0.100-alpha.1.24057.1\dotnet-runtime-9.0.100-alpha.1.24057.1-fedora.38-x64.tar.gz
-      artifacts\assets\<config>\Runtime\<RuntimeVersion>\dotnet-runtime-<RuntimeVersion>-<TargetRid><ArchiveExtension>
-    -->
     <PropertyGroup>
-      <RuntimeFilename>%(RuntimeArchiveItem.Filename)%(RuntimeArchiveItem.Extension)</RuntimeFilename>
-      <RuntimeArchivePath>%(RuntimeArchiveItem.Identity)</RuntimeArchivePath>
-      <SourceBuiltRuntimeVersion>$(RuntimeFilename.Replace('$(RuntimeFilenamePrefix)','').Replace('-$(TargetRid)$(ArchiveExtension)',''))</SourceBuiltRuntimeVersion>
+      <SourceBuiltRuntimeVersion>$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName('%(RuntimeVersionFile.Identity)'))))</SourceBuiltRuntimeVersion>
     </PropertyGroup>
   </Target>
 
