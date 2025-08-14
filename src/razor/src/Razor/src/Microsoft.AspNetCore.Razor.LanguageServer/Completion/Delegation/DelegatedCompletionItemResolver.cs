@@ -101,6 +101,14 @@ internal class DelegatedCompletionItemResolver(
 
         var options = RazorFormattingOptions.From(formattingOptions, _optionsMonitor.CurrentValue.CodeBlockBraceOnNextLine);
 
-        return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(resolvedCompletionItem, documentContext, options, _formattingService, _documentMappingService, _logger, cancellationToken).ConfigureAwait(false);
+        return await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
+            resolvedCompletionItem,
+            documentContext,
+            options,
+            _formattingService,
+            _documentMappingService,
+            clientCapabilities.SupportsVisualStudioExtensions,
+            _logger,
+            cancellationToken).ConfigureAwait(false);
     }
 }

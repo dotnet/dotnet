@@ -54,20 +54,6 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => GetString("CannotChangeWhenOpen");
 
         /// <summary>
-        ///     Comparing complex types to null is not supported.
-        /// </summary>
-        public static string CannotCompareComplexTypeToNull
-            => GetString("CannotCompareComplexTypeToNull");
-
-        /// <summary>
-        ///     You are attempting to project out complex type '{complexType}' via an optional navigation; that is currently not supported. Either project out the complex type in a non-optional context, or project the containing entity type along with the complex type.
-        /// </summary>
-        public static string CannotProjectNullableComplexType(object? complexType)
-            => string.Format(
-                GetString("CannotProjectNullableComplexType", nameof(complexType)),
-                complexType);
-
-        /// <summary>
         ///     Join expressions have no aliases; set the alias on the enclosed table expression.
         /// </summary>
         public static string CannotSetAliasOnJoin
@@ -142,6 +128,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ComputedColumnSqlUnspecified", nameof(table), nameof(column)),
                 table, column);
+
+        /// <summary>
+        ///     The property '{property}' on '{type}' is configured as a concurrency token, but the type is mapped to JSON. Concurrency tokens are not supported on JSON-mapped types.
+        /// </summary>
+        public static string ConcurrencyTokenOnJsonMappedProperty(object? property, object? type)
+            => string.Format(
+                GetString("ConcurrencyTokenOnJsonMappedProperty", nameof(property), nameof(type)),
+                property, type);
 
         /// <summary>
         ///     An ambient transaction has been detected. The ambient transaction needs to be completed before starting a new transaction on this connection.
@@ -1480,6 +1474,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 propertyType, type, property);
 
         /// <summary>
+        ///     Complex property '{complexProperty}' is mapped to JSON but its containing type '{containingType}' is not. Map the root complex type to JSON. See https://github.com/dotnet/efcore/issues/36558
+        /// </summary>
+        public static string NestedComplexPropertyJsonWithTableSharing(object? complexProperty, object? containingType)
+            => string.Format(
+                GetString("NestedComplexPropertyJsonWithTableSharing", nameof(complexProperty), nameof(containingType)),
+                complexProperty, containingType);
+
+        /// <summary>
         ///     The connection does not have any active transactions.
         /// </summary>
         public static string NoActiveTransaction
@@ -2198,6 +2200,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("UnsupportedDataOperationStoreType", nameof(type), nameof(column)),
                 type, column);
+
+        /// <summary>
+        ///     The store type '{storeType}' specified for JSON column '{columnName}' in table '{tableName}' is not supported by the current provider. JSON columns require a provider-specific JSON store type.
+        /// </summary>
+        public static string UnsupportedJsonColumnType(object? storeType, object? columnName, object? tableName)
+            => string.Format(
+                GetString("UnsupportedJsonColumnType", nameof(storeType), nameof(columnName), nameof(tableName)),
+                storeType, columnName, tableName);
 
         /// <summary>
         ///     Unsupported operator '{nodeType}' specified for expression of type '{expressionType}'.

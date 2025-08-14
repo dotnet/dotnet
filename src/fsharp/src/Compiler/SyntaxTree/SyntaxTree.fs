@@ -718,15 +718,12 @@ type SynExpr =
 
     | YieldOrReturnFrom of flags: (bool * bool) * expr: SynExpr * range: range * trivia: SynExprYieldOrReturnFromTrivia
 
-    | LetOrUse of isRecursive: bool * isUse: bool * bindings: SynBinding list * body: SynExpr * range: range * trivia: SynExprLetOrUseTrivia
-
-    | LetOrUseBang of
-        bindDebugPoint: DebugPointAtBinding *
+    | LetOrUse of
+        isRecursive: bool *
         isUse: bool *
         isFromSource: bool *
-        pat: SynPat *
-        rhs: SynExpr *
-        andBangs: SynBinding list *
+        isBang: bool *
+        bindings: SynBinding list *
         body: SynExpr *
         range: range *
         trivia: SynExprLetOrUseTrivia
@@ -775,10 +772,7 @@ type SynExpr =
 
     member e.Range =
         match e with
-        | SynExpr.Paren(_, leftParenRange, rightParenRange, r) ->
-            match rightParenRange with
-            | Some rightParenRange when leftParenRange.FileIndex <> rightParenRange.FileIndex -> leftParenRange
-            | _ -> r
+        | SynExpr.Paren(range = m)
         | SynExpr.Quote(range = m)
         | SynExpr.Const(range = m)
         | SynExpr.Typed(range = m)
@@ -838,7 +832,6 @@ type SynExpr =
         | SynExpr.ImplicitZero(range = m)
         | SynExpr.YieldOrReturn(range = m)
         | SynExpr.YieldOrReturnFrom(range = m)
-        | SynExpr.LetOrUseBang(range = m)
         | SynExpr.MatchBang(range = m)
         | SynExpr.DoBang(range = m)
         | SynExpr.WhileBang(range = m)

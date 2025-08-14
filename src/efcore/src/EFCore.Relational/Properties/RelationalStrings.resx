@@ -130,12 +130,6 @@
   <data name="CannotChangeWhenOpen" xml:space="preserve">
     <value>The instance of DbConnection is currently in use. The connection can only be changed when the existing connection is not being used.</value>
   </data>
-  <data name="CannotCompareComplexTypeToNull" xml:space="preserve">
-    <value>Comparing complex types to null is not supported.</value>
-  </data>
-  <data name="CannotProjectNullableComplexType" xml:space="preserve">
-    <value>You are attempting to project out complex type '{complexType}' via an optional navigation; that is currently not supported. Either project out the complex type in a non-optional context, or project the containing entity type along with the complex type.</value>
-  </data>
   <data name="CannotSetAliasOnJoin" xml:space="preserve">
     <value>Join expressions have no aliases; set the alias on the enclosed table expression.</value>
   </data>
@@ -165,6 +159,9 @@
   </data>
   <data name="ComputedColumnSqlUnspecified" xml:space="preserve">
     <value>The computed column SQL has not been specified for the column '{table}.{column}'. Specify the SQL before using Entity Framework to create the database schema.</value>
+  </data>
+  <data name="ConcurrencyTokenOnJsonMappedProperty" xml:space="preserve">
+    <value>The property '{property}' on '{type}' is configured as a concurrency token, but the type is mapped to JSON. Concurrency tokens are not supported on JSON-mapped types.</value>
   </data>
   <data name="ConflictingAmbientTransaction" xml:space="preserve">
     <value>An ambient transaction has been detected. The ambient transaction needs to be completed before starting a new transaction on this connection.</value>
@@ -1009,6 +1006,9 @@
   <data name="NestedCollectionsNotSupported" xml:space="preserve">
     <value>The property '{propertyType} {type}.{property}' is a primitive collection of a primitive collection. Nested primitive collections are not yet supported with relational database providers.</value>
   </data>
+  <data name="NestedComplexPropertyJsonWithTableSharing" xml:space="preserve">
+    <value>Complex property '{complexProperty}' is mapped to JSON but its containing type '{containingType}' is not. Map the root complex type to JSON. See https://github.com/dotnet/efcore/issues/36558</value>
+  </data>
   <data name="NoActiveTransaction" xml:space="preserve">
     <value>The connection does not have any active transactions.</value>
   </data>
@@ -1290,6 +1290,9 @@
   </data>
   <data name="UnsupportedDataOperationStoreType" xml:space="preserve">
     <value>The store type '{type}' used for the column '{column}' in a migration data operation is not supported by the current provider.</value>
+  </data>
+  <data name="UnsupportedJsonColumnType" xml:space="preserve">
+    <value>The store type '{storeType}' specified for JSON column '{columnName}' in table '{tableName}' is not supported by the current provider. JSON columns require a provider-specific JSON store type.</value>
   </data>
   <data name="UnsupportedOperatorForSqlExpression" xml:space="preserve">
     <value>Unsupported operator '{nodeType}' specified for expression of type '{expressionType}'.</value>

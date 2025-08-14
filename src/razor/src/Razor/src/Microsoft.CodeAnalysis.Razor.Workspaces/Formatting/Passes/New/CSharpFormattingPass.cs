@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
@@ -220,7 +221,33 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
         var tree = CSharpSyntaxTree.ParseText(generatedCSharpText, cancellationToken: cancellationToken);
         var csharpRoot = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options.ToIndentationOptions(), options.CSharpSyntaxFormattingOptions, cancellationToken);
+        var csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions;
+
+        if (csharpSyntaxFormattingOptions is not null)
+        {
+            // Roslyn can be configured to insert a space after a method call, or a dot, but that can break Razor. eg:
+            //
+            // <div>@PrintHello()</div>
+            // @DateTime.Now.ToString()
+            //
+            // Would become:
+            //
+            // <div>@PrintHello ()</div>
+            // @DateTime. Now. ToString()
+            //
+            // In Razor, that's not a method call, its a method group (ie C# compile error) followed by Html, and
+            // the dot after DateTime is also just Html, as is the rest of the line.
+            // We're not smart enough (yet?) to ignore this change when its inline in Razor, but allow it when
+            // in a code block, so we just force these options to off.
+            csharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions with
+            {
+                Spacing = csharpSyntaxFormattingOptions.Spacing
+                    & ~RazorSpacePlacement.AfterMethodCallName
+                    & ~RazorSpacePlacement.AfterDot
+            };
+        }
+
+        var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options.ToIndentationOptions(), csharpSyntaxFormattingOptions, cancellationToken);
 
         return generatedCSharpText.WithChanges(csharpChanges);
     }
