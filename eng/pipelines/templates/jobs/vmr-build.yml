@@ -430,7 +430,7 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
