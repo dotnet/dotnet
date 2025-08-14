@@ -482,8 +482,11 @@ jobs:
         ${{ parameters.extraProperties }}
       displayName: Build
       workingDirectory: ${{ variables.sourcesPath }}
-      env:
-        ESRP_TOKEN: $(System.AccessToken)
+      ${{ if eq(parameters.sign, 'true') }}:
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+          ${{ if eq(parameters.signDac, 'true') }}:
+            ESRP_TOKEN: $(System.AccessToken)
 
     - ${{ if eq(parameters.runTests, 'True') }}:
       - script: build.cmd
@@ -598,6 +601,9 @@ jobs:
           $customPreBuildArgs ./build.sh $buildArgs
         displayName: Build
         workingDirectory: $(sourcesPath)
+        ${{ if eq(parameters.sign, 'true') }}:
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
