@@ -280,7 +280,9 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if eq(parameters.signType, 'DryRun') }}:
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
