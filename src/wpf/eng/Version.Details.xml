@@ -101,5 +101,9 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>e9f665e52848a3615736c099e5631af531b66a5c</Sha>
     </Dependency>
+    <Dependency Name="System.Private.Windows.Core.TestUtilities" Version="10.0.0-rc.1.25411.109">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>520c71b5277fc1f72dbec14da03ca55205d6c8e5</Sha>
+    </Dependency>
   </ToolsetDependencies>
 </Dependencies>
