@@ -284,9 +284,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             return true;
         }
 
-        private string GetContent(ComponentAttributeIntermediateNode node)
+        private static string GetContent(ComponentAttributeIntermediateNode node)
         {
-            return string.Join(string.Empty, node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp).Select(t => t.Content));
+            return string.Join(string.Empty, node.FindDescendantNodes<CSharpIntermediateToken>().Select(t => t.Content));
         }
 
         private static bool ValidateTypeArguments(ComponentIntermediateNode node, Dictionary<string, Binding> bindings)
