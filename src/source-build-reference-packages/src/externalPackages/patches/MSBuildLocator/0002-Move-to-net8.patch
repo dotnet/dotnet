@@ -1,33 +1,36 @@
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Matt Thalman <mthalman@microsoft.com>
-Date: Mon, 11 Sep 2023 16:23:30 -0500
-Subject: [PATCH] Update TFMs
+From 762b92d0d2cf90fe7990a0f5b9c2629bc402176f Mon Sep 17 00:00:00 2001
+From: Tanner Gooding <tagoo@outlook.com>
+Date: Mon, 11 Aug 2025 17:24:17 +0000
+Subject: [PATCH] Move to net8
 
 ---
  src/MSBuildLocator/Microsoft.Build.Locator.csproj | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/src/MSBuildLocator/Microsoft.Build.Locator.csproj b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
-index 056f7ca..67f18e4 100644
+index 2df3750..c5b8125 100644
 --- a/src/MSBuildLocator/Microsoft.Build.Locator.csproj
 +++ b/src/MSBuildLocator/Microsoft.Build.Locator.csproj
 @@ -2,7 +2,7 @@
- 
+
    <PropertyGroup>
      <OutputType>Library</OutputType>
 -    <TargetFrameworks>net46;net6.0</TargetFrameworks>
-+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
++    <TargetFrameworks>net7;net8</TargetFrameworks>
      <DebugType>full</DebugType>
- 
+
      <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-@@ -20,6 +20,10 @@
+@@ -24,6 +24,10 @@
      <DefineConstants>$(DefineConstants);FEATURE_VISUALSTUDIOSETUP</DefineConstants>
    </PropertyGroup>
- 
+
 +  <ItemGroup>
 +    <FrameworkReference Update="Microsoft.NETCore.App" TargetingPackVersion="7.0.0" />
 +  </ItemGroup>
 +
    <ItemGroup Condition="'$(TargetFramework)'=='net46'">
-     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.7.2175" PrivateAssets="all" />
+     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.12.2149" PrivateAssets="all" />
      <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" PrivateAssets="all" />
+--
+2.43.0
+

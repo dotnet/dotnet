@@ -13,7 +13,7 @@
     <AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>8.0.1</AzureActiveDirectoryIdentityModelExtensionsForDotNetReleaseVersion>
     <CssParserReleaseVersionSuffix>20230414.1</CssParserReleaseVersionSuffix>
     <HumanizerReleaseVersion>2.14.1</HumanizerReleaseVersion>
-    <MSBuildLocatorReleaseVersion>1.6.10</MSBuildLocatorReleaseVersion>
+    <MSBuildLocatorReleaseVersion>1.8.1</MSBuildLocatorReleaseVersion>
     <SolutionPersistenceVersion>1.0.52</SolutionPersistenceVersion>
   </PropertyGroup>
   <PropertyGroup>
