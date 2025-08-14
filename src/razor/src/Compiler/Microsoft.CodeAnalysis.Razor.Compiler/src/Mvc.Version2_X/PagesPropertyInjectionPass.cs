@@ -25,19 +25,12 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
 
         var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType}>";
         var vddProperty = new CSharpCodeIntermediateNode();
-        vddProperty.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = $"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData;",
-        });
+        vddProperty.Children.Add(
+            IntermediateNodeFactory.CSharpToken($"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData;"));
         @class.Children.Add(vddProperty);
 
         var modelProperty = new CSharpCodeIntermediateNode();
-        modelProperty.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = $"public {modelType} Model => ViewData.Model;",
-        });
+        modelProperty.Children.Add(IntermediateNodeFactory.CSharpToken($"public {modelType} Model => ViewData.Model;"));
         @class.Children.Add(modelProperty);
     }
 
