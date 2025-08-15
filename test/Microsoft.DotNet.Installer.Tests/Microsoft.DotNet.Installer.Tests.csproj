@@ -44,6 +44,12 @@
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).KeepDockerImages">
         <Value>$(KeepDockerImages)</Value>
       </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).DotNetBuildSharedComponents">
+        <Value>$(DotNetBuildSharedComponents)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).Sdk1xxVersion">
+        <Value>$(MicrosoftNETSdkVersion)</Value>
+      </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>
 
