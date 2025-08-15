@@ -64,7 +64,11 @@ partial interface IRuntimeTypeSystem : IContract
     public ushort GetNumInstanceFields(TypeHandle typeHandle);
     public ushort GetNumStaticFields(TypeHandle typeHandle);
     public ushort GetNumThreadStaticFields(TypeHandle typeHandle);
+    public TargetPointer GetGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr);
+    public TargetPointer GetNonGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr);
     public TargetPointer GetFieldDescList(TypeHandle typeHandle);
+    public TargetPointer GetGCStaticsBasePointer(TypeHandle typeHandle);
+    public TargetPointer GetNonGCStaticsBasePointer(TypeHandle typeHandle);
     public virtual ReadOnlySpan<TypeHandle> GetInstantiation(TypeHandle typeHandle);
     public virtual bool IsGenericTypeDefinition(TypeHandle typeHandle);
 
@@ -335,6 +339,7 @@ The contract depends on the following globals
 | Global name | Meaning |
 | --- | --- |
 | `FreeObjectMethodTablePointer` | A pointer to the address of a `MethodTable` used by the GC to indicate reclaimed memory
+| `StaticsPointerMask` | For masking out a bit of DynamicStaticsInfo pointer fields
 
 The contract additionally depends on these data descriptors
 
@@ -349,6 +354,12 @@ The contract additionally depends on these data descriptors
 | `MethodTable` | `NumInterfaces` | Number of interfaces of `MethodTable` |
 | `MethodTable` | `NumVirtuals` | Number of virtual methods in `MethodTable` |
 | `MethodTable` | `PerInstInfo` | Either the array element type, or pointer to generic information for `MethodTable` |
+| `MethodTable` | `AuxiliaryData` | Pointer to the AuxiliaryData of a method table |
+| `DynamicStaticsInfo` | `NonGCStatics` | Pointer to non-GC statics |
+| `DynamicStaticsInfo` | `GCStatics` | Pointer to the GC statics |
+| `DynamicStaticsInfo` | `Size` | Size of the data |
+| `ThreadStaticsInfo` | `GCTlsIndex` | Pointer to GC thread local storage index |
+| `ThreadStaticsInfo` | `NonGCTlsIndex` | Pointer to non-GC thread local storage index |
 | `EEClass` | `InternalCorElementType` | An InternalCorElementType uses the enum values of a CorElementType to indicate some of the information about the type of the type which uses the EEClass In particular, all reference types are CorElementType.Class, Enums are the element type of their underlying type and ValueTypes which can exactly be represented as an element type are represented as such, all other values types are represented as CorElementType.ValueType. |
 | `EEClass` | `MethodTable` | Pointer to the canonical MethodTable of this type |
 | `EEClass` | `MethodDescChunk` | Pointer to the first MethodDescChunk of the EEClass |
@@ -369,6 +380,11 @@ The contract additionally depends on these data descriptors
 | `FnPtrTypeDesc` | `RetAndArgTypes` | Pointer to an array of TypeHandle addresses. This length of this is 1 more than `NumArgs` |
 | `GenericsDictInfo` | `NumDicts` | Number of instantiation dictionaries, including inherited ones, in this `GenericsDictInfo` |
 | `GenericsDictInfo` | `NumTypeArgs` | Number of type arguments in the type or method instantiation described by this `GenericsDictInfo` |
+
+Contracts used:
+| Contract Name |
+| --- |
+| `Thread` |
 
 
 ```csharp
@@ -462,6 +478,62 @@ The contract additionally depends on these data descriptors
     public ushort GetNumThreadStaticFields(TypeHandle typeHandle) => !typeHandle.IsMethodTable() ? (ushort)0 : GetClassData(typeHandle).NumThreadStaticFields;
 
     public TargetPointer GetFieldDescList(TypeHandle typeHandle) => !typeHandle.IsMethodTable() ? TargetPointer.Null : GetClassData(typeHandle).FieldDescList;
+
+    public TargetPointer GetGCStaticsBasePointer(TypeHandle typeHandle)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+
+        MethodTable methodTable = _methodTables[typeHandle.Address];
+        if (!methodTable.Flags.IsDynamicStatics)
+            return TargetPointer.Null;
+        TargetPointer dynamicStaticsInfoSize = target.GetTypeInfo(DataType.DynamicStaticsInfo).Size!.Value;
+        TargetPointer mask = target.ReadGlobalPointer("StaticsPointerMask");
+
+        TargetPointer dynamicStaticsInfo = methodTable.AuxiliaryData - dynamicStaticsInfoSize;
+        return (target.ReadPointer(dynamicStaticsInfo + /* DynamicStaticsInfo::GCStatics offset */) & (ulong)mask);
+    }
+
+    public TargetPointer GetNonGCStaticsBasePointer(TypeHandle typeHandle)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+
+        MethodTable methodTable = _methodTables[typeHandle.Address];
+        if (!methodTable.Flags.IsDynamicStatics)
+            return TargetPointer.Null;
+        TargetPointer dynamicStaticsInfoSize = target.GetTypeInfo(DataType.DynamicStaticsInfo).Size!.Value;
+        TargetPointer mask = target.ReadGlobalPointer("StaticsPointerMask");
+
+        TargetPointer dynamicStaticsInfo = methodTable.AuxiliaryData - dynamicStaticsInfoSize;
+        return (target.ReadPointer(dynamicStaticsInfo + /* DynamicStaticsInfo::NonGCStatics offset */) & (ulong)mask);
+    }
+
+    public TargetPointer GetGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+        MethodTable_1 methodTable = _methodTables[typeHandle.Address];
+        TargetPointer threadStaticsInfoSize = target.GetTypeInfo(DataType.ThreadStaticsInfo).Size;
+        TargetPointer threadStaticsInfoAddr = methodTable.AuxiliaryData - threadStaticsInfoSize;
+
+        TargetPointer tlsIndexAddr = threadStaticsInfoAddr + /* ThreadStaticsInfo::GCTlsIndex offset */;
+        Contracts.IThread threadContract = target.Contracts.Thread;
+        return threadContract.GetThreadLocalStaticBase(threadPtr, tlsIndexAddr);
+    }
+
+    public TargetPointer GetNonGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+        MethodTable_1 methodTable = _methodTables[typeHandle.Address];
+        TargetPointer threadStaticsInfoSize = target.GetTypeInfo(DataType.ThreadStaticsInfo).Size;
+        TargetPointer threadStaticsInfoAddr = methodTable.AuxiliaryData - threadStaticsInfoSize;
+
+        TargetPointer tlsIndexAddr = threadStaticsInfoAddr + /* ThreadStaticsInfo::NonGCTlsIndex offset */;
+        Contracts.IThread threadContract = target.Contracts.Thread;
+        return threadContract.GetThreadLocalStaticBase(threadPtr, tlsIndexAddr);
+    }
 
     public ReadOnlySpan<TypeHandle> GetInstantiation(TypeHandle TypeHandle)
     {
@@ -883,7 +955,7 @@ And the various apis are implemented with the following algorithms
 
         ushort FlagsAndTokenRange = // Read FlagsAndTokenRange field from MethodDescChunk contract using address methodDescChunk
 
-        int tokenRemainderBitCount = _target.ReadGlobal<byte>(Constants.Globals.MethodDescTokenRemainderBitCount);
+        int tokenRemainderBitCount = _target.ReadGlobal<byte>("MethodDescTokenRemainderBitCount");
         int tokenRangeBitCount = 24 - tokenRemainderBitCount;
         uint allRidBitsSet = 0xFFFFFF;
         uint tokenRemainderMask = allRidBitsSet >> tokenRangeBitCount;
