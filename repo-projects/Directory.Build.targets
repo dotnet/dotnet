@@ -731,6 +731,9 @@
   <Target Name="MoveDotNetBuildLogs" Condition="'$(IsUtilityProject)' != 'true'">
     <ItemGroup>
       <LogFilesToMove Include="$(RepoArtifactsDir)log\$(Configuration)\**\*" />
+      <LogFilesToMove Include="$(RepoArtifactsDir)log\\**\*"
+                      Exclude="@(LogFilesToMove)"
+                      Condition="'$(MoveNoConfigLogs)' == 'true'" />
     </ItemGroup>
 
     <!-- Move the build logs -->
