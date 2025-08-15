@@ -410,7 +410,63 @@ internal partial struct RuntimeTypeSystem_1 : IRuntimeTypeSystem
     public ushort GetNumStaticFields(TypeHandle typeHandle) => !typeHandle.IsMethodTable() ? (ushort)0 : GetClassData(typeHandle).NumStaticFields;
     public ushort GetNumThreadStaticFields(TypeHandle typeHandle) => !typeHandle.IsMethodTable() ? (ushort)0 : GetClassData(typeHandle).NumThreadStaticFields;
     public TargetPointer GetFieldDescList(TypeHandle typeHandle) => !typeHandle.IsMethodTable() ? TargetPointer.Null : GetClassData(typeHandle).FieldDescList;
+    private TargetPointer GetDynamicStaticsInfo(TypeHandle typeHandle)
+    {
+        if (!typeHandle.IsMethodTable())
+            return default;
 
+        MethodTable methodTable = _methodTables[typeHandle.Address];
+        if (!methodTable.Flags.IsDynamicStatics)
+            return default;
+        TargetPointer dynamicStaticsInfoSize = _target.GetTypeInfo(DataType.DynamicStaticsInfo).Size!.Value;
+        TargetPointer dynamicStaticsInfoAddr = methodTable.AuxiliaryData - dynamicStaticsInfoSize;
+        return dynamicStaticsInfoAddr;
+    }
+
+    private Data.ThreadStaticsInfo GetThreadStaticsInfo(TypeHandle typeHandle)
+    {
+        MethodTable methodTable = _methodTables[typeHandle.Address];
+        TargetPointer threadStaticsInfoSize = _target.GetTypeInfo(DataType.ThreadStaticsInfo).Size!.Value;
+        TargetPointer threadStaticsInfoAddr = methodTable.AuxiliaryData - threadStaticsInfoSize;
+        Data.ThreadStaticsInfo threadStaticsInfo = _target.ProcessedData.GetOrAdd<Data.ThreadStaticsInfo>(threadStaticsInfoAddr);
+        return threadStaticsInfo;
+    }
+
+    public TargetPointer GetGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+        TargetPointer tlsIndexPtr = GetThreadStaticsInfo(typeHandle).GCTlsIndex;
+        Contracts.IThread threadContract = _target.Contracts.Thread;
+        return threadContract.GetThreadLocalStaticBase(threadPtr, tlsIndexPtr);
+    }
+
+    public TargetPointer GetNonGCThreadStaticsBasePointer(TypeHandle typeHandle, TargetPointer threadPtr)
+    {
+        if (!typeHandle.IsMethodTable())
+            return TargetPointer.Null;
+        TargetPointer tlsIndexPtr = GetThreadStaticsInfo(typeHandle).NonGCTlsIndex;
+        Contracts.IThread threadContract = _target.Contracts.Thread;
+        return threadContract.GetThreadLocalStaticBase(threadPtr, tlsIndexPtr);
+    }
+
+    public TargetPointer GetGCStaticsBasePointer(TypeHandle typeHandle)
+    {
+        TargetPointer dynamicStaticsInfoAddr = GetDynamicStaticsInfo(typeHandle);
+        if (dynamicStaticsInfoAddr == TargetPointer.Null)
+            return TargetPointer.Null;
+        Data.DynamicStaticsInfo dynamicStaticsInfo = _target.ProcessedData.GetOrAdd<Data.DynamicStaticsInfo>(dynamicStaticsInfoAddr);
+        return dynamicStaticsInfo.GCStatics;
+    }
+
+    public TargetPointer GetNonGCStaticsBasePointer(TypeHandle typeHandle)
+    {
+        TargetPointer dynamicStaticsInfoAddr = GetDynamicStaticsInfo(typeHandle);
+        if (dynamicStaticsInfoAddr == TargetPointer.Null)
+            return TargetPointer.Null;
+        Data.DynamicStaticsInfo dynamicStaticsInfo = _target.ProcessedData.GetOrAdd<Data.DynamicStaticsInfo>(dynamicStaticsInfoAddr);
+        return dynamicStaticsInfo.NonGCStatics;
+    }
 
     public ReadOnlySpan<TypeHandle> GetInstantiation(TypeHandle typeHandle)
     {
