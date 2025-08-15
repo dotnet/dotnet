@@ -395,12 +395,28 @@ if [[ "$sourceOnly" == "true" ]]; then
     }
 
     GIT_DIR="$scriptroot/.git"
-    if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
+    fake_git=false
+    # Check if exist .git directory or file
+    if [ -f "$GIT_DIR" ]; then
+      if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
+        rm -rf "$GIT_DIR"
+        fake_git=true
+      else
+        if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
+          echo "ERROR: Source Link arguments cannot be used in a git repository"
+          exit 1
+        fi
+      fi
+    elif [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
       if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
         echo "ERROR: Source Link arguments cannot be used in a git repository"
         exit 1
       fi
     else
+      fake_git=true
+    fi
+
+    if [[ "$fake_git" == true ]]; then
       if [ -z "$releaseManifest" ]; then
         if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
           echo "ERROR: $scriptroot is not a git repository, either --release-manifest or --source-repository and --source-version must be specified"
@@ -428,6 +444,11 @@ if [[ "$sourceOnly" == "true" ]]; then
       echo '[remote "origin"]' > "$GIT_DIR/config"
       echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
       echo "$sourceVersion" > "$GIT_DIR/HEAD"
+
+      if [ ! -d "$scriptroot/.git" ]; then
+        echo "ERROR: $scriptroot is not a git repository."
+        exit 1
+      fi
     fi
 
     # If the release manifest is provided
@@ -455,11 +476,6 @@ if [[ "$sourceOnly" == "true" ]]; then
     else
       properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$CUSTOM_PACKAGES_DIR" )
     fi
-  fi
-
-  if [ ! -d "$scriptroot/.git" ]; then
-    echo "ERROR: $scriptroot is not a git repository."
-    exit 1
   fi
 
   # Allow a custom SDK directory to be specified
