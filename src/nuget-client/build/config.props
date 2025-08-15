@@ -41,7 +41,9 @@
   </PropertyGroup>
 
  <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">
-    <PreReleaseVersion>32767</PreReleaseVersion>
+    <!-- This number is chosen to be higher than the assembly versions that the VMR-built NuGet uses, so that a dev build of NuGet can be patched over
+         the VMR build. -->
+    <PreReleaseVersion>65534</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
