@@ -9,10 +9,14 @@
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.MarkAndCatalogPackages" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="PoisonPackages"
+  <Target Name="PoisonPrebuiltPackages"
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)PoisonPackages.complete">
+          Outputs="$(BaseIntermediateOutputPath)PoisonPrebuiltPackages.complete">
+    <PropertyGroup>
+      <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
+      <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
+    </PropertyGroup>
 
     <ItemGroup>
       <PrebuiltPackages Include="$(PrebuiltPackagesPath)**/*.nupkg" />
@@ -44,9 +48,10 @@
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />
 
-    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PrebuiltPoisonReportDataFile)" MarkerFileName="$(PrebuiltPoisonMarkerFile)" />
-    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages)" CatalogOutputFilePath="$(PreviouslySourceBuiltPoisonReportDataFile)" MarkerFileName="$(PreviouslySourceBuiltPoisonMarkerFile)" />
-    <MarkAndCatalogPackages PackagesToMark="@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SharedComponentPoisonReportDataFile)" MarkerFileName="$(SharedComponentPoisonMarkerFile)" />
+    <!-- There's an issue where the outputs of these tasks are not being fed into the poison check
+         See https://github.com/dotnet/source-build/issues/5297 -->
+    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PoisonReportDataFile)" MarkerFileName="$(PoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages);@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />
 
