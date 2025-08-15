@@ -38,6 +38,8 @@ steps:
       **AzureLinux*_Artifacts/**
       **OSX_*_Artifacts/**
       **Windows_*_Artifacts/**
+      **CentOSStream*_Online_MsftSdk_x64_Artifacts/**/dotnet-sdk-*.tar.gz
+      **CentOSStream*_Online_MsftSdk_x64_Artifacts/**/Private.SourceBuilt.Artifacts.*.tar.gz
     downloadPath: '${{ parameters.signCheckFilesDirectory }}'
 
 # This is necessary whenever we want to publish/restore to an AzDO private feed

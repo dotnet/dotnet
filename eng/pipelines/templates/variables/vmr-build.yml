@@ -75,10 +75,7 @@ variables:
   - name: officialBuildProperties
     value: ''
 
-- ${{ if eq(parameters.buildSourceOnly, true) }}:
-  - name: signEnabled
-    value: false
-- ${{ elseif eq(parameters.desiredSigning, 'Signed (Real)') }}:
+- ${{ if eq(parameters.desiredSigning, 'Signed (Real)') }}:
   - name: signEnabled
     value: true
   - name: signType
