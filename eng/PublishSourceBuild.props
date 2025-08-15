@@ -88,9 +88,14 @@
           Inputs="@(PackageToPublish);$(SourceBuiltVersionInputName);$(AssetManifestFilePath)"
           Outputs="$(SourceBuiltTarballName);$(SourceBuiltVersionName);$(AllPackageVersionsPropsName);$(SourceBuiltMergedAssetManifestName)"
           Condition="'$(IsPublishPass2)' != 'true'">
+    <ItemGroup>
+      <PackageToPublish>
+        <IncludeInSBTarball Condition="'%(PackageToPublish.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
+      </PackageToPublish>
+    </ItemGroup>
     <!-- Copy packages to layout directory. Since there are a large number of files,
           this will use symlinks instead of copying files to make this execute quickly. -->
-    <Copy SourceFiles="@(PackageToPublish)"
+    <Copy SourceFiles="@(PackageToPublish->WithMetadataValue('IncludeInSBTarball','true'))"
           DestinationFolder="$(SourceBuiltLayoutDir)"
           UseSymbolicLinksIfPossible="true" />
 
@@ -117,7 +122,7 @@
           UseSymbolicLinksIfPossible="true" />
 
     <!-- Create a PackageVersions.props file that includes entries for all packages. -->
-    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->Metadata('PackageId'))"
+    <WritePackageVersionsProps KnownPackages="@(ProducedPackage->WithMetadataValue('IncludeInSBTarball','true')->Metadata('PackageId'))"
                                ExtraProperties="@(ExtraPackageVersionPropsPackageInfo)"
                                VersionPropsFlowType="AllPackages"
                                OutputPath="$(AllPackageVersionsPropsName)"
