@@ -100,7 +100,7 @@ stages:
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
-    ${{ if and(ne(variables['Build.SourceBranch'], 'refs/head/main'), not(contains(variables['Build.SourceBranch'], '.1xx'))) }}:
+    ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(contains(variables['Build.SourceBranch'], '.1xx'))) }}:
       excludeRuntimeDependentJobs: true
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
