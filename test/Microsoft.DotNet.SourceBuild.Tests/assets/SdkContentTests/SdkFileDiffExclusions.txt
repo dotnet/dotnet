@@ -44,10 +44,7 @@
 ./sdk/x.y.z/Extensions/Microsoft.TestPlatform.Extensions.EventLogCollector.dll|msft
 ./sdk/x.y.z/Extensions/*/Microsoft.TestPlatform.Extensions.EventLogCollector.resources.dll|msft
 
-# nuget localization is not available for Linux builds - https://github.com/NuGet/Home/issues/12440
-./sdk/x.y.z/*/NuGet.*.resources.dll|msft
-
-# ILMerge is not supported in Linux builds - excluding the whole NuGet.Build.Tasks.Pack directory, to avoid a noisy diff
+# nuget has multiple copies and inconsistencies between MSFT and SB - https://github.com/dotnet/sdk/issues/50218
 ./sdk/x.y.z/Sdks/NuGet.Build.Tasks.Pack/
 
 # missing workload manifests - https://github.com/dotnet/source-build/issues/3242
