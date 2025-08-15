@@ -39,6 +39,7 @@
       <CoreSetupRid Condition="'$(CoreSetupRid)' == ''">$(HostRid)</CoreSetupRid>
       <CoreSetupRid Condition=" ('$(OSName)' == 'win' or '$(OSName)' == 'osx' or '$(OSName)' == 'freebsd') and '$(DotNetBuildFromSource)' != 'true' ">$(OSName)-$(Architecture)</CoreSetupRid>
       <CoreSetupRid Condition="$(HostRid.StartsWith('mariner.2.0'))">$(HostRid.Replace('mariner.2.0', 'cm.2'))</CoreSetupRid>
+      <CoreSetupRid Condition="$(HostRid.StartsWith('azurelinux.3.0'))">$(HostRid.Replace('azurelinux.3.0', 'cm.2'))</CoreSetupRid>
 
       <!-- only the runtime OSX .pkgs have a `-internal` suffix -->
       <InstallerStartSuffix Condition="$([MSBuild]::IsOSPlatform('OSX'))">-internal</InstallerStartSuffix>
