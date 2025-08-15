@@ -10052,6 +10052,51 @@ namespace Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact, WorkItem("https://github.com/dotnet/razor/issues/12043")]
+    public void Component_WithRef_NamespaceConflict()
+    {
+        AdditionalSyntaxTrees.Add(Parse("""
+            using Microsoft.AspNetCore.Components;
+
+            namespace Y
+            {
+                public class MyComponent : ComponentBase;
+            }
+
+            namespace X.Y
+            {
+                public static class E
+                {
+                    public static int M() => 123;
+                }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            @using global::Y
+            @using global::X.Y
+            @namespace X
+
+            @E.M()
+            <MyComponent @ref="comp" />
+
+            @code {
+                private MyComponent comp;
+            }
+            """);
+
+        var expectedDiagnostics = DesignTime
+            ? new[]
+            {
+                // x:\dir\subdir\Test\TestComponent.cshtml(9,25): warning CS0414: The field 'TestComponent.comp' is assigned but its value is never used
+                //     private MyComponent comp;
+                Diagnostic(ErrorCode.WRN_UnreferencedFieldAssg, "comp").WithArguments("X.TestComponent.comp"),
+            }
+            : [];
+
+        CompileToAssembly(generated, expectedDiagnostics);
+    }
+
     #endregion
 
     #region Templates
