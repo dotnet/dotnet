@@ -92,6 +92,9 @@
       <PackageToPublish>
         <IncludeInSBTarball Condition="'%(PackageToPublish.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
       </PackageToPublish>
+      <ProducedPackage>
+        <IncludeInSBTarball Condition="'%(PackageToPublish.Visibility)' != 'Vertical'">true</IncludeInSBTarball>
+      </ProducedPackage>
     </ItemGroup>
     <!-- Copy packages to layout directory. Since there are a large number of files,
           this will use symlinks instead of copying files to make this execute quickly. -->
