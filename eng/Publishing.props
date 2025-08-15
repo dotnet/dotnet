@@ -116,7 +116,7 @@
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
         <Kind>Blob</Kind>
-        <RelativeBlobPath>source-build/%(Filename)%(Extension)</RelativeBlobPath>
+        <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
 
