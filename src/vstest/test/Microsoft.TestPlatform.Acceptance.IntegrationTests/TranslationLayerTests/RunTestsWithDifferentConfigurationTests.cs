@@ -188,12 +188,10 @@ public class RunTestsWithDifferentConfigurationTests : AcceptanceTestBase
         InvokeVsTestForExecution(source, null, runnerInfo.TargetFramework, runSettings: testsettingsFile, null);
 
         // Assert
-        // Ensure that we are actually running via TPv0 provider.
-        StringAssert.Contains(StdOutWithWhiteSpace, "The test execution was delegated to legacy TestPlatform runner");
+        // Ensure that we are trying to run via tpv0 and failing because that is no longer allowed.
+        StringAssert.Contains(StdErrWithWhiteSpace, "An exception occurred while invoking executor 'executor://mstestadapter/v1': MSTest v1 run was offloaded to legacy TestPlatform runner");
 
-        ValidateSummaryStatus(2, 2, 1);
         ExitCodeEquals(1); // failing tests
-        StdErrHasTestRunFailedMessageButNoOtherError();
     }
 
     [TestMethod]

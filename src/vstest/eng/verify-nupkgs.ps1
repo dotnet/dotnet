@@ -17,18 +17,19 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Verify-Nuget-Packages {
     Write-Host "Starting Verify-Nuget-Packages."
     $expectedNumOfFiles = @{
-        "Microsoft.CodeCoverage"                      = 75;
-        "Microsoft.NET.Test.Sdk"                      = 25;
-        "Microsoft.TestPlatform"                      = 601;
-        "Microsoft.TestPlatform.Build"                = 20;
-        "Microsoft.TestPlatform.CLI"                  = 481;
-        "Microsoft.TestPlatform.Extensions.TrxLogger" = 34;
-        "Microsoft.TestPlatform.ObjectModel"          = 92;
-        "Microsoft.TestPlatform.AdapterUtilities"     = 61;
-        "Microsoft.TestPlatform.Portable"             = 608;
-        "Microsoft.TestPlatform.TestHost"             = 63;
-        "Microsoft.TestPlatform.TranslationLayer"     = 122;
-        "Microsoft.TestPlatform.Internal.Uwp"         = 38;
+        "Microsoft.CodeCoverage"                      = 75
+        "Microsoft.NET.Test.Sdk"                      = 25
+        "Microsoft.TestPlatform"                      = 538
+        "Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI" = 380
+        "Microsoft.TestPlatform.Build"                = 20
+        "Microsoft.TestPlatform.CLI"                  = 481
+        "Microsoft.TestPlatform.Extensions.TrxLogger" = 34
+        "Microsoft.TestPlatform.ObjectModel"          = 92
+        "Microsoft.TestPlatform.AdapterUtilities"     = 61
+        "Microsoft.TestPlatform.Portable"             = 608
+        "Microsoft.TestPlatform.TestHost"             = 63
+        "Microsoft.TestPlatform.TranslationLayer"     = 122
+        "Microsoft.TestPlatform.Internal.Uwp"         = 38
     }
 
     $packageDirectory = Resolve-Path "$PSScriptRoot/../artifacts/packages/$configuration"
@@ -63,6 +64,9 @@ function Verify-Nuget-Packages {
 
 
     Write-Host "Found $(@($nugetPackages).Count) nuget packages:`n    $($nugetPackages.FullName -join "`n    ")"
+    
+    $nugetPackages += Get-Item "$PSScriptRoot/../artifacts/VSSetup/$configuration/Insertion/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.vsix"
+
     Write-Host "Unzipping NuGet packages to '$tmpDirectory'."
     $unzipNugetPackageDirs = @()
     foreach ($nugetPackage in $nugetPackages) {
@@ -178,14 +182,6 @@ function Verify-NugetPackageExe {
         "TestPlatform\SettingsMigrator.exe"            = "x86"
 
         "dump\DumpMinitool.exe"                        = "x86-64"
-
-        "QTAgent32.exe"                                = "x86"
-        "QTAgent32_35.exe"                             = "x86"
-        "QTAgent32_40.exe"                             = "x86"
-        "QTDCAgent32.exe"                              = "x86"
-
-        "V1\VSTestVideoRecorder.exe"                   = "x86"
-        "VideoRecorder\VSTestVideoRecorder.exe"        = "x86"
     }
 
     $errs = @()
