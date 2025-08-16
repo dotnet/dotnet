@@ -230,12 +230,10 @@ function DownloadArchive {
   fi
 
   local archiveUrl
-  if [[ "$propertyName" == "MicrosoftNETSdkVersion" ]]; then
+  if [[ "$propertyName" == "MicrosoftNETSdkVersion" || "$propertyName" == *Artifacts* ]]; then
     archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
   elif [[ "$propertyName" == *Prebuilts* ]]; then
     archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Artifacts* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
   else
     echo "  ERROR: Unknown archive property name: $propertyName"
     exit 1
@@ -312,11 +310,7 @@ if [ "$downloadPsbArtifacts" == true ]; then
 fi
 
 if [ "$downloadSharedComponentsArtifacts" == true ]; then
-  source $REPO_ROOT/eng/common/native/init-os-and-arch.sh
-  source $REPO_ROOT/eng/common/native/init-distro-rid.sh
-  initDistroRidGlobal "$os" "$arch" ""
-
-  DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "$__DistroRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName"
+  DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "$artifactsRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName"
 fi
 
 if [ "$downloadPrebuilts" == true ]; then
