@@ -1604,7 +1604,7 @@ MAIN_LOOP:
                     ip += 4;
                     break;
                 case INTOP_CGT_UN_I8:
-                    LOCAL_VAR(ip[1], int32_t) = LOCAL_VAR(ip[2], uint32_t) > LOCAL_VAR(ip[3], uint32_t);
+                    LOCAL_VAR(ip[1], int32_t) = LOCAL_VAR(ip[2], uint64_t) > LOCAL_VAR(ip[3], uint64_t);
                     ip += 4;
                     break;
                 case INTOP_CGT_UN_R4:
@@ -2084,7 +2084,7 @@ CALL_INTERP_METHOD:
                 {
                     void* dst = LOCAL_VAR(ip[1], void*);
                     void* src = LOCAL_VAR(ip[2], void*);
-                    size_t size = LOCAL_VAR(ip[3], size_t);
+                    uint32_t size = LOCAL_VAR(ip[3], uint32_t);
                     if (size && (!dst || !src))
                         COMPlusThrow(kNullReferenceException);
                     else

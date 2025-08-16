@@ -6,6 +6,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <Description>NuGet localization package for dotnet CLI.</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <XPLATProject>true</XPLATProject>
     <UsePublicApiAnalyzer>false</UsePublicApiAnalyzer>
     <LocalizationOutputDirectory>$(ArtifactsDirectory)LocalizedFiles</LocalizationOutputDirectory>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);CreateNupkg</TargetsForTfmSpecificContentInPackage>
