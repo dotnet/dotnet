@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
+public class DefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
     // PREAMBLE: Right now these tests are about ensuring we don't accidentally introduce a future bug
     //           in the generated document handling code in the RazorComponentDefinitionService in OOP.
@@ -23,8 +23,8 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
     //           "Single Server Mode" is off, which is currently only VS Code. When cohosting comes to
     //           VS Code, that will no longer be true, and VS Code will use the same code paths as VS,
     //           even then these tests will be exercising uncalled code.
-    //           The tests, and the "ignoreAttributes" parameter in the call to GetDefinitionAsync, should
-    //           be deleted entirely at that point. "ignoreAttributes" will essentially always be true,
+    //           The tests, and the "ignoreComponentAttributes" parameter in the call to GetDefinitionAsync, should
+    //           be deleted entirely at that point. "ignoreComponentAttributes" will essentially always be true,
     //           as directly calling Roslyn provides better results.
 
     [Fact]
@@ -63,7 +63,7 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
     {
         var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles);
 
-        var service = OOPExportProvider.GetExportedValue<IRazorComponentDefinitionService>();
+        var service = OOPExportProvider.GetExportedValue<IDefinitionService>();
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();
         var documentMappingService = OOPExportProvider.GetExportedValue<IDocumentMappingService>();
 
@@ -75,7 +75,8 @@ public class RazorComponentDefinitionServiceTest(ITestOutputHelper testOutputHel
             documentSnapshot,
             positionInfo,
             solutionQueryOperations: documentSnapshot.ProjectSnapshot.SolutionSnapshot,
-            ignoreAttributes: false,
+            ignoreComponentAttributes: false,
+            includeMvcTagHelpers: true,
             DisposalToken);
 
         Assert.NotNull(location);
