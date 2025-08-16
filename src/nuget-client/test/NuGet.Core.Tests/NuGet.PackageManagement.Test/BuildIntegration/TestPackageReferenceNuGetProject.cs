@@ -42,17 +42,17 @@ namespace NuGet.Test
 
         public IProjectScriptHostService ScriptService => this;
 
-        public override string ProjectName => PackageSpec.Name;
+        public override string ProjectName => _packageSpec.Name;
 
-        public override string MSBuildProjectPath => PackageSpec.FilePath;
+        public override string MSBuildProjectPath => _packageSpec.FilePath;
 
-        private PackageSpec PackageSpec { get; set; }
+        private PackageSpec _packageSpec;
 
         public TestPackageReferenceNuGetProject(
             PackageSpec packageSpec,
             IMSBuildProjectSystem msbuildProjectSystem)
         {
-            PackageSpec = packageSpec ?? throw new ArgumentNullException(nameof(packageSpec));
+            _packageSpec = packageSpec ?? throw new ArgumentNullException(nameof(packageSpec));
             if (packageSpec.TargetFrameworks.Count != 1)
             {
                 throw new ArgumentException("The package spec needs exactly 1 target framework");
@@ -66,12 +66,12 @@ namespace NuGet.Test
 
         public void AddProjectReference(TestPackageReferenceNuGetProject project)
         {
-            PackageSpec = PackageSpec.WithTestProjectReference(project.PackageSpec);
+            _packageSpec = _packageSpec.WithTestProjectReference(project._packageSpec);
         }
 
         public void AddProjectReference(PackageSpec project)
         {
-            PackageSpec = PackageSpec.WithTestProjectReference(project);
+            _packageSpec = _packageSpec.WithTestProjectReference(project);
         }
 
         public override Task<IReadOnlyList<PackageSpec>> GetPackageSpecsAsync(DependencyGraphCacheContext context)
@@ -84,7 +84,7 @@ namespace NuGet.Test
                 }
             }
 
-            return Task.FromResult<IReadOnlyList<PackageSpec>>([PackageSpec]);
+            return Task.FromResult<IReadOnlyList<PackageSpec>>([_packageSpec]);
         }
 
         public T GetGlobalService<T>() where T : class
@@ -111,7 +111,7 @@ namespace NuGet.Test
 
         public Task<IEnumerable<ProjectRestoreReference>> GetProjectReferencesAsync(ILogger logger, CancellationToken token)
         {
-            return Task.FromResult<IEnumerable<ProjectRestoreReference>>(PackageSpec.RestoreMetadata.TargetFrameworks[0].ProjectReferences);
+            return Task.FromResult<IEnumerable<ProjectRestoreReference>>(_packageSpec.RestoreMetadata.TargetFrameworks[0].ProjectReferences);
         }
 
         public Task<IReadOnlyList<(string id, string[] metadata)>> GetItemsAsync(string itemTypeName, params string[] metadataNames)
@@ -121,17 +121,17 @@ namespace NuGet.Test
 
         public override Task<string> GetAssetsFilePathAsync()
         {
-            return Task.FromResult(Path.Combine(PackageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+            return Task.FromResult(Path.Combine(_packageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
         }
 
         public override Task<string> GetCacheFilePathAsync()
         {
-            return Task.FromResult(NoOpRestoreUtilities.GetProjectCacheFilePath(PackageSpec.RestoreMetadata.OutputPath));
+            return Task.FromResult(NoOpRestoreUtilities.GetProjectCacheFilePath(_packageSpec.RestoreMetadata.OutputPath));
         }
 
         public override Task<string> GetAssetsFilePathOrNullAsync()
         {
-            return Task.FromResult(Path.Combine(PackageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
+            return Task.FromResult(Path.Combine(_packageSpec.RestoreMetadata.OutputPath, LockFileFormat.AssetsFileName));
         }
 
         public override Task AddFileToProjectAsync(string filePath)
@@ -141,30 +141,30 @@ namespace NuGet.Test
 
         public override Task<(IReadOnlyList<PackageSpec> dgSpecs, IReadOnlyList<IAssetsLogMessage> additionalMessages)> GetPackageSpecsAndAdditionalMessagesAsync(DependencyGraphCacheContext context)
         {
-            return Task.FromResult<(IReadOnlyList<PackageSpec>, IReadOnlyList<IAssetsLogMessage>)>(([PackageSpec], []));
+            return Task.FromResult<(IReadOnlyList<PackageSpec>, IReadOnlyList<IAssetsLogMessage>)>(([_packageSpec], []));
         }
 
         public override Task<bool> InstallPackageAsync(string packageId, VersionRange range, INuGetProjectContext nuGetProjectContext, BuildIntegratedInstallationContext installationContext, CancellationToken token)
         {
-            PackageSpecOperations.AddOrUpdateDependency(PackageSpec, new PackageDependency(packageId, range));
+            PackageSpecOperations.AddOrUpdateDependency(_packageSpec, new PackageDependency(packageId, range));
             return Task.FromResult(true);
         }
 
         public override Task<bool> UninstallPackageAsync(string packageId, BuildIntegratedInstallationContext installationContext, CancellationToken token)
         {
-            PackageSpecOperations.RemoveDependency(PackageSpec, packageId);
+            PackageSpecOperations.RemoveDependency(_packageSpec, packageId);
             return Task.FromResult(true);
         }
 
         public override Task<bool> UninstallPackageAsync(PackageIdentity packageIdentity, INuGetProjectContext nuGetProjectContext, CancellationToken token)
         {
-            PackageSpecOperations.RemoveDependency(PackageSpec, packageIdentity.Id);
+            PackageSpecOperations.RemoveDependency(_packageSpec, packageIdentity.Id);
             return Task.FromResult(true);
         }
 
         public override Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(CancellationToken token)
         {
-            return Task.FromResult<IEnumerable<PackageReference>>([.. PackageSpec.TargetFrameworks.SelectMany(
+            return Task.FromResult<IEnumerable<PackageReference>>([.. _packageSpec.TargetFrameworks.SelectMany(
                 e => e.Dependencies.Select(p =>
                 new PackageReference(
                     new PackageIdentity(p.Name, p.LibraryRange.VersionRange.MinVersion),

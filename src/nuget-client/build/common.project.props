@@ -13,16 +13,11 @@
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
     <NETCoreTargetFramework>net9.0</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
-    <NETCoreLegacyTargetFrameworkForSigning>net8.0</NETCoreLegacyTargetFrameworkForSigning>
 
     <!-- Target frameworks for class libraries-->
-    <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary>$(NETCoreTargetFramework)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
-
-    <!-- Target frameworks for class libraries which require signing APIs which need to target NET 5.0 -->
-    <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(TargetFrameworksLibraryForSigning);$(NETCoreLegacyTargetFrameworkForSigning)</TargetFrameworksLibraryForSigning>
 
     <!-- Target framework for runnable apps -->
     <TargetFrameworksExe>$(NETCoreTargetFramework)</TargetFrameworksExe>
