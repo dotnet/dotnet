@@ -13,6 +13,20 @@ namespace Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities;
 
 public static partial class ManagedNameHelper
 {
+    private readonly struct AssemblyNameCache
+    {
+        public AssemblyNameCache(Assembly? assembly, string simpleName)
+        {
+            Assembly = assembly;
+            SimpleName = simpleName;
+        }
+
+        public Assembly? Assembly { get; }
+        public string SimpleName { get; }
+    }
+
+    private static AssemblyNameCache? s_lastAssemblyNameCache;
+
     /// <summary>
     /// Gets fully qualified managed type and method name from given <see href="MethodBase" /> instance.
     /// </summary>
@@ -80,8 +94,18 @@ public static partial class ManagedNameHelper
     /// </remarks>
     public static void GetManagedName(MethodBase method, out string managedTypeName, out string managedMethodName, out string?[] hierarchyValues)
     {
-        GetManagedName(method, out managedTypeName, out managedMethodName);
-        GetManagedNameAndHierarchy(method, true, out _, out _, out hierarchyValues);
+        if (!method.IsGenericMethod && ReflectionHelpers.GetReflectedType(method) is { } semanticType && !ReflectionHelpers.IsGenericType(semanticType))
+        {
+            // We are dealing with non-generic method in non-generic type.
+            // So, it doesn't matter what we pass as "useClosedTypes".
+            // Instead of calling GetManagedNameAndHierarchy that does repeated work, we call it only once.
+            GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out hierarchyValues);
+        }
+        else
+        {
+            GetManagedNameAndHierarchy(method, false, out managedTypeName, out managedMethodName, out _);
+            GetManagedNameAndHierarchy(method, true, out _, out _, out hierarchyValues);
+        }
     }
 
     /// <summary>
@@ -201,7 +225,19 @@ public static partial class ManagedNameHelper
             hierarchyValues[HierarchyConstants.Levels.ClassIndex] = managedTypeName.Substring(hierarchyPos[1] + 1, hierarchyPos[2] - hierarchyPos[1] - 1);
             hierarchyValues[HierarchyConstants.Levels.NamespaceIndex] = managedTypeName.Substring(hierarchyPos[0], hierarchyPos[1] - hierarchyPos[0]);
         }
-        hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = method.DeclaringType?.Assembly?.GetName()?.Name ?? string.Empty;
+
+        var assembly = method.DeclaringType?.Assembly;
+        if (s_lastAssemblyNameCache is { } cache &&
+            cache.Assembly == assembly)
+        {
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = cache.SimpleName;
+        }
+        else
+        {
+            var assemblyName = assembly?.GetName()?.Name ?? string.Empty;
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = assemblyName;
+            s_lastAssemblyNameCache = new AssemblyNameCache(assembly, assemblyName);
+        }
     }
 
     /// <summary>
@@ -344,7 +380,7 @@ public static partial class ManagedNameHelper
                 hierarchies[1] = hierarchies[0];
             }
 
-            AppendNestedTypeName(b, type, closedType);
+            AppendNestedTypeName(b, type);
             if (closedType)
             {
                 AppendGenericTypeParameters(b, type);
@@ -456,7 +492,7 @@ public static partial class ManagedNameHelper
         b.Append('\'');
     }
 
-    private static int AppendNestedTypeName(StringBuilder b, Type? type, bool closedType)
+    private static int AppendNestedTypeName(StringBuilder b, Type? type)
     {
         if (type is null)
         {
@@ -466,7 +502,7 @@ public static partial class ManagedNameHelper
         var outerArity = 0;
         if (type.IsNested)
         {
-            outerArity = AppendNestedTypeName(b, type.DeclaringType, closedType);
+            outerArity = AppendNestedTypeName(b, type.DeclaringType);
             b.Append('+');
         }
 

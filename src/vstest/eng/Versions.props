@@ -65,8 +65,8 @@
     <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
     <SystemMemoryVersion>4.5.5</SystemMemoryVersion>
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
-    <TestPlatformExternalsVersion>18.0.0-preview-1-10811-208</TestPlatformExternalsVersion>
-    <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10811-208</MicrosoftInternalTestPlatformExtensions>
+    <TestPlatformExternalsVersion>18.0.0-preview-1-10911-061</TestPlatformExternalsVersion>
+    <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10911-061</MicrosoftInternalTestPlatformExtensions>
     <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>

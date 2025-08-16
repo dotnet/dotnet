@@ -35,61 +35,23 @@ internal class Program
 
         var thisAssemblyPath = Assembly.GetEntryAssembly()!.Location;
         var here = Path.GetDirectoryName(thisAssemblyPath)!;
-        var playground = Path.GetFullPath(Path.Combine(here, "..", "..", "..", ".."));
 
         var console = Path.Combine(here, "vstest.console", "netfx", "vstest.console.exe");
 
         var sourceSettings = $$$"""
             <RunSettings>
-                <RunConfiguration>
-
-                    <!-- <MaxCpuCount>1</MaxCpuCount> -->
-                    <!-- <DisableParallelization>True<DisableParallelization> -->
-                    <!-- <TargetPlatform>x86</TargetPlatform> -->
-                    <!-- <TargetFrameworkVersion>net472</TargetFrameworkVersion> -->
-
-                    <!-- Per test coverage support -->
-                    <!--
-                    <MaxCpuCount>0</MaxCpuCount>
-                    <ForceOneTestAtTimePerTestHost>True</ForceOneTestAtTimePerTestHost>
-                    <TargetFrameworkTestHostDemultiplexer>4</TargetFrameworkTestHostDemultiplexer>
-                    -->
-
-                    <!-- The settings below are what VS sends by default. -->
-                    <CollectSourceInformation>False</CollectSourceInformation>
-                    <DesignMode>True</DesignMode>
-                </RunConfiguration>
-                <BoostTestInternalSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                    <VSProcessId>999999</VSProcessId>
-                </BoostTestInternalSettings>
-                <GoogleTestAdapterSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <SolutionSettings>
-                  <Settings />
-                </SolutionSettings>
-                <ProjectSettings />
-                </GoogleTestAdapterSettings>
-
-                <!-- Blame hang -->
-                <!-- <LoggerRunSettings>
-                  <Loggers>
-                    <Logger friendlyName="blame" enabled="True" />
-                  </Loggers>
-                </LoggerRunSettings>
-                <DataCollectionRunSettings>
-                  <DataCollectors>
-                    <DataCollector friendlyName="blame" enabled="True">
-                      <Configuration>
-                        <CollectDumpOnTestSessionHang TestTimeout="10s" HangDumpType="Full" />
-                      </Configuration>
-                    </DataCollector>
-                  </DataCollectors>
-                </DataCollectionRunSettings> -->
-            </RunSettings>
+                                                <MSTest>
+                                                <ForcedLegacyMode>true</ForcedLegacyMode>
+                                                </MSTest>
+                                                <LegacySettings>
+                                                  <Execution hostProcessPlatform="x64">
+                                                  </Execution>
+                                                </LegacySettings>
+                                               </RunSettings>
             """;
 
         var sources = new[] {
-            Path.Combine(playground, "bin", "MSTest1", "Debug", "net472", "MSTest1.dll"),
-            Path.Combine(playground, "bin", "MSTest2", "Debug", "net472", "MSTest2.dll"),
+           @"S:\t\UnitTestProject14\UnitTestProject14\bin\Debug\UnitTestProject14.dll"
             // The built in .NET projects don't now work right now in Playground, there is some conflict with Arcade.
             // But if you create one outside of Playground it will work. 
             //Path.Combine(playground, "bin", "MSTest1", "Debug", "net7.0", "MSTest1.dll"),
