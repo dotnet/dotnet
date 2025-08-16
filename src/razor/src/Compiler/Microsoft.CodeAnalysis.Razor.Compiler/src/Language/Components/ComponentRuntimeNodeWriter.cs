@@ -990,7 +990,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         const string refCaptureParamName = "__value";
         using (var lambdaScope = context.CodeWriter.BuildLambda(refCaptureParamName))
         {
-            var typecastIfNeeded = shouldTypeCheck && node.IsComponentCapture ? $"({node.ComponentCaptureTypeName})" : string.Empty;
+            var typecastIfNeeded = shouldTypeCheck && node.IsComponentCapture ? $"({node.FieldTypeName})" : string.Empty;
             WriteCSharpCode(context, new CSharpCodeIntermediateNode
             {
                 Source = node.Source,
