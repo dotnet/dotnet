@@ -71,7 +71,7 @@ __o = typeof(global::Test.TemplatedComponent);
 #nullable disable
 #nullable restore
 #line 13 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                      myElementReference = default(Microsoft.AspNetCore.Components.ElementReference)!;
+                                      myElementReference = default(global::Microsoft.AspNetCore.Components.ElementReference)!;
 
 #line default
 #line hidden
