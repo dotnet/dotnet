@@ -21,30 +21,30 @@
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop</Uri>
       <Sha>c0b240c049009c7056ade8a451821fbb9bfe3cd9</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.20-servicing.25412.10" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.NetCore.SharedFramework.x64.8.0" Version="8.0.20-servicing.25415.11" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
       <SourceBuild RepoName="runtime" ManagedOnly="false" />
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
-    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.20-servicing.25412.10" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="VS.Redist.Common.NetCore.TargetingPack.x64.8.0" Version="8.0.20-servicing.25415.11" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Host.win-x64" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.DotNetHostResolver" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <!-- Change blob version in GenerateLayout.targets if this is unpinned to service targeting pack -->
     <!-- No new netstandard.library planned for 3.1 timeframe at this time. -->
@@ -52,9 +52,9 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.20-servicing.25412.10" CoherentParentDependency="Microsoft.NET.Sdk">
+    <Dependency Name="Microsoft.NETCore.Platforms" Version="8.0.20-servicing.25415.11" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <Dependency Name="Microsoft.AspNetCore.App.Ref" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore</Uri>
@@ -87,20 +87,20 @@
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Common.ItemTemplates" Version="8.0.120">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>8bf6feecf0b6b2c90831f87b6100e2386816769d</Sha>
+      <Sha>9d5b2b2dc45032621f10b8e672ba30d4de8c0f05</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.120-servicing.25413.32">
+    <Dependency Name="Microsoft.TemplateEngine.Cli" Version="8.0.120-servicing.25415.17">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>8bf6feecf0b6b2c90831f87b6100e2386816769d</Sha>
+      <Sha>9d5b2b2dc45032621f10b8e672ba30d4de8c0f05</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.120-servicing.25413.32">
+    <Dependency Name="Microsoft.NET.Sdk" Version="8.0.120-servicing.25415.17">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>8bf6feecf0b6b2c90831f87b6100e2386816769d</Sha>
+      <Sha>9d5b2b2dc45032621f10b8e672ba30d4de8c0f05</Sha>
       <SourceBuild RepoName="sdk" ManagedOnly="true" />
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.120-servicing.25413.32">
+    <Dependency Name="Microsoft.DotNet.MSBuildSdkResolver" Version="8.0.120-servicing.25415.17">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-sdk</Uri>
-      <Sha>8bf6feecf0b6b2c90831f87b6100e2386816769d</Sha>
+      <Sha>9d5b2b2dc45032621f10b8e672ba30d4de8c0f05</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.Test.ProjectTemplates.2.1" Version="1.0.2-beta4.22406.1">
       <Uri>https://github.com/dotnet/test-templates</Uri>
@@ -148,7 +148,7 @@
     </Dependency>
     <Dependency Name="Microsoft.NET.ILLink.Tasks" Version="8.0.20" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</Sha>
+      <Sha>dd6010a8a425962e7793cc741e1f79f8681e4882</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers.Toolset" Version="4.8.0-7.25056.18" CoherentParentDependency="Microsoft.NET.Sdk">
       <Uri>https://github.com/dotnet/roslyn</Uri>
