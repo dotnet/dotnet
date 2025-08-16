@@ -21,7 +21,7 @@
     <formatOutputPackageVersion>8.1.631205</formatOutputPackageVersion>
     <fsharpGitCommitHash>fc5e9eda234e2b69aa479f4f83faddc31fdd4da7</fsharpGitCommitHash>
     <fsharpOutputPackageVersion>8.0.102-beta.24081.2</fsharpOutputPackageVersion>
-    <installerGitCommitHash>e39aa4cc8087ccc62679df4731adfb330d963c5c</installerGitCommitHash>
+    <installerGitCommitHash>c0b64ed26af3387c2b0e3257f06036501c489a71</installerGitCommitHash>
     <installerOutputPackageVersion>8.0.100</installerOutputPackageVersion>
     <msbuildGitCommitHash>fe4b4c2c710f9ffdc4db980d1a2a4cb62fdd3c67</msbuildGitCommitHash>
     <msbuildOutputPackageVersion>17.8.35-servicing-25407-06</msbuildOutputPackageVersion>
@@ -33,10 +33,10 @@
     <roslynanalyzersOutputPackageVersion>3.11.0-beta1.25074.1</roslynanalyzersOutputPackageVersion>
     <roslynGitCommitHash>a77b6e41d030878096fa496e00e4c0dffe5af9f0</roslynGitCommitHash>
     <roslynOutputPackageVersion>4.8.0-7.25056.18</roslynOutputPackageVersion>
-    <runtimeGitCommitHash>6b12df1a810008460d16ef9bfd2cecb1a9a8c29f</runtimeGitCommitHash>
-    <runtimeOutputPackageVersion>8.0.20-servicing.25412.10</runtimeOutputPackageVersion>
-    <sdkGitCommitHash>8bf6feecf0b6b2c90831f87b6100e2386816769d</sdkGitCommitHash>
-    <sdkOutputPackageVersion>8.0.120-servicing.25413.32</sdkOutputPackageVersion>
+    <runtimeGitCommitHash>dd6010a8a425962e7793cc741e1f79f8681e4882</runtimeGitCommitHash>
+    <runtimeOutputPackageVersion>8.0.20-servicing.25415.11</runtimeOutputPackageVersion>
+    <sdkGitCommitHash>9d5b2b2dc45032621f10b8e672ba30d4de8c0f05</sdkGitCommitHash>
+    <sdkOutputPackageVersion>8.0.120-servicing.25415.17</sdkOutputPackageVersion>
     <sourcebuildexternalsGitCommitHash>16bcad1c13be082bd52ce178896d1119a73081a9</sourcebuildexternalsGitCommitHash>
     <sourcebuildexternalsOutputPackageVersion>8.0.0-alpha.1.25202.2</sourcebuildexternalsOutputPackageVersion>
     <sourcebuildreferencepackagesGitCommitHash>3827e68e002064268d4be4b2d1d96048f9794808</sourcebuildreferencepackagesGitCommitHash>
