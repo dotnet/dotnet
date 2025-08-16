@@ -9,12 +9,13 @@ using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.GoToDefinition;
 
-[Export(typeof(IRazorComponentDefinitionService)), Shared]
+[Export(typeof(IDefinitionService)), Shared]
 [method: ImportingConstructor]
-internal sealed class RazorComponentDefinitionService(
+internal sealed class DefinitionService(
     IRazorComponentSearchEngine componentSearchEngine,
     IDocumentMappingService documentMappingService,
+    ITagHelperSearchEngine tagHelperSearchEngine,
     ILoggerFactory loggerFactory)
-    : AbstractRazorComponentDefinitionService(componentSearchEngine, documentMappingService, loggerFactory.GetOrCreateLogger<RazorComponentDefinitionService>())
+    : AbstractDefinitionService(componentSearchEngine, tagHelperSearchEngine, documentMappingService, loggerFactory.GetOrCreateLogger<DefinitionService>())
 {
 }
