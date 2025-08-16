@@ -26,7 +26,7 @@ myComponent
 #line default
 #line hidden
 #nullable disable
-                 = (Test.TestComponent)__value;
+                 = (global::Test.TestComponent)__value;
             }
             );
             __builder.CloseComponent();
