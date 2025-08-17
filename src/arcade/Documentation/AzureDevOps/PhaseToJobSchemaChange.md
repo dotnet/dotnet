@@ -188,7 +188,7 @@ phases:
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs to VSTS
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)'
         PublishLocation: Container
         ArtifactName: $(Agent.Os)_$(Agent.JobName)
       continueOnError: true
@@ -276,7 +276,7 @@ phases:
     - task: PublishBuildArtifacts@1
       displayName: Publish Logs to VSTS
       inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)'
         PublishLocation: Container
         ArtifactName: $(Agent.Os)_$(Agent.JobName)
       continueOnError: true
