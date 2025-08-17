@@ -70,6 +70,8 @@ namespace NuGet.Protocol
         /// </summary>
         private async Task<Uri> GetDownloadUrl(PackageIdentity identity, ILogger log, CancellationToken token)
         {
+            PackageIdValidator.Validate(identity.Id);
+
             Uri downloadUri = null;
             var sourcePackage = identity as SourcePackageDependencyInfo;
 

@@ -131,10 +131,6 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 Assert.True(pkgSourcesSorted.First().IsAggregateSource); // First package source is an Aggreage Source
                 Assert.All(pkgSourcesWithoutFirst, pkgSrc => Assert.False(pkgSrc.IsAggregateSource)); // others are not aggregate sources
             }
-            catch
-            {
-                throw; // Report any errors to test runner
-            }
             finally
             {
                 Strings.Culture = currentCulture; // Set it back to its original state

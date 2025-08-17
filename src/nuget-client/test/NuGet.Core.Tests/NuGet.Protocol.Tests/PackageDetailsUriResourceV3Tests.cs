@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using FluentAssertions;
 using NuGet.Versioning;
 using Xunit;
 
@@ -22,6 +23,24 @@ namespace NuGet.Protocol.Tests
             var actual = resource.GetUri("Test", NuGetVersion.Parse("1.0.0.0-ALPHA+git"));
 
             Assert.Equal(expected, actual.ToString());
+        }
+
+        [Theory]
+        [InlineData("https://ex/packages/{id}/{version}")]
+        [InlineData("HTTPS://EX/packages/{id}/{version}")]
+        [InlineData("https://ex/packages/{id}")]
+        [InlineData("https://ex/packages/{version}")]
+        [InlineData("https://ex/packages")]
+        [InlineData("https://ex")]
+        public void GetUri_InvalidPackageID_Throws(string template)
+        {
+            // Arrange
+            string id = "../contoso";
+            var resource = PackageDetailsUriResourceV3.CreateOrNull(template);
+
+            // Act & Assert
+            var exception = Assert.Throws<Packaging.InvalidPackageIdException>(() => resource.GetUri(id, NuGetVersion.Parse("1.0.0.0-ALPHA+git")));
+            exception.Message.Should().Contain(string.Format(Strings.Error_Invalid_package_id, id));
         }
 
         [Theory]
