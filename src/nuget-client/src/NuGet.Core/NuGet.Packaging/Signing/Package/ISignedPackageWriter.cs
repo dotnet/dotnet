@@ -1,12 +1,10 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-#endif
 
 namespace NuGet.Packaging.Signing
 {
@@ -15,7 +13,6 @@ namespace NuGet.Packaging.Signing
     /// </summary>
     public interface ISignedPackageWriter
     {
-#if IS_SIGNING_SUPPORTED
         /// <summary>
         /// Removes a signature if it exists.
         /// </summary>
@@ -40,6 +37,5 @@ namespace NuGet.Packaging.Signing
         /// <exception cref="OperationCanceledException">Thrown if <paramref name="token" />
         /// is cancelled.</exception>
         Task<bool> IsZip64Async(CancellationToken token);
-#endif
     }
 }

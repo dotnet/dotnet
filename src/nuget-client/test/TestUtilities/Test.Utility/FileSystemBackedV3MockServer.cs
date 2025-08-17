@@ -75,118 +75,101 @@ namespace Test.Utility
 
         private Action<HttpListenerResponse> ServerHandlerV3(HttpListenerRequest request)
         {
-            try
+            var path = GetRequestUrlAbsolutePath(request);
+            var parts = request.Url.AbsolutePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (path.StartsWith("/flat/") && path.EndsWith("/index.json"))
             {
-                var path = GetRequestUrlAbsolutePath(request);
-                var parts = request.Url.AbsolutePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (path.StartsWith("/flat/") && path.EndsWith("/index.json"))
+                return new Action<HttpListenerResponse>(response =>
                 {
-                    return new Action<HttpListenerResponse>(response =>
-                    {
-                        response.ContentType = "application/javascript";
+                    response.ContentType = "application/javascript";
 
-                        var versionsJson = JObject.Parse(@"{ ""versions"": [] }");
-                        var array = versionsJson["versions"] as JArray;
+                    var versionsJson = JObject.Parse(@"{ ""versions"": [] }");
+                    var array = versionsJson["versions"] as JArray;
 
-                        var id = parts[parts.Length - 2];
-
-                        foreach (var pkg in LocalFolderUtility.GetPackagesV2(_packageDirectory, id, NullLogger.Instance))
-                        {
-                            array.Add(pkg.Identity.Version.ToNormalizedString());
-                        }
-
-                        SetResponseContent(response, versionsJson.ToString());
-                    });
-                }
-                else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
-                {
-                    var file = new FileInfo(Path.Combine(_packageDirectory, parts.Last()));
-
-                    if (file.Exists)
-                    {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.ContentType = "application/zip";
-                            using (var stream = file.OpenRead())
-                            {
-                                var content = stream.ReadAllBytes();
-                                SetResponseContent(response, content);
-                            }
-                        });
-                    }
-                    else
-                    {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.StatusCode = 404;
-                        });
-                    }
-                }
-                else if (path == "/nuget")
-                {
-                    return new Action<HttpListenerResponse>(response =>
-                    {
-                        response.StatusCode = 200;
-                    });
-                }
-                else if (path.StartsWith("/reg/") && path.EndsWith("/index.json"))
-                {
                     var id = parts[parts.Length - 2];
-                    var packages = LocalFolderUtility.GetPackagesV2(_packageDirectory, id, NullLogger.Instance);
 
-                    if (packages.Any())
+                    foreach (var pkg in LocalFolderUtility.GetPackagesV2(_packageDirectory, id, NullLogger.Instance))
                     {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.ContentType = "text/javascript";
-                            var packageToListedMapping = packages.Select(e => new KeyValuePair<PackageIdentity, bool>(e.Identity, !UnlistedPackages.Contains(e.Identity))).ToArray();
-                            MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages);
-                            SetResponseContent(response, mockResponse.Content);
-                        });
+                        array.Add(pkg.Identity.Version.ToNormalizedString());
                     }
-                    else
-                    {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.StatusCode = 404;
-                        });
-                    }
-                }
-                else if (path.StartsWith("/vulnerability/"))
+
+                    SetResponseContent(response, versionsJson.ToString());
+                });
+            }
+            else if (path.StartsWith("/flat/") && path.EndsWith(".nupkg"))
+            {
+                var file = new FileInfo(Path.Combine(_packageDirectory, parts.Last()));
+
+                if (file.Exists)
                 {
-                    if (path.EndsWith("index.json"))
+                    return new Action<HttpListenerResponse>(response =>
                     {
-                        return new Action<HttpListenerResponse>(response =>
+                        response.ContentType = "application/zip";
+                        using (var stream = file.OpenRead())
                         {
-                            response.ContentType = "application/json";
-                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilitiesJson(Uri + "vulnerability/vulnerability.json");
-                            SetResponseContent(response, vulnerabilityJson.ToString());
-                        });
-                    }
-                    else if (path.EndsWith("/vulnerability.json"))
+                            var content = stream.ReadAllBytes();
+                            SetResponseContent(response, content);
+                        }
+                    });
+                }
+                else
+                {
+                    return new Action<HttpListenerResponse>(response => { response.StatusCode = 404; });
+                }
+            }
+            else if (path == "/nuget")
+            {
+                return new Action<HttpListenerResponse>(response => { response.StatusCode = 200; });
+            }
+            else if (path.StartsWith("/reg/") && path.EndsWith("/index.json"))
+            {
+                var id = parts[parts.Length - 2];
+                var packages = LocalFolderUtility.GetPackagesV2(_packageDirectory, id, NullLogger.Instance);
+
+                if (packages.Any())
+                {
+                    return new Action<HttpListenerResponse>(response =>
                     {
-                        return new Action<HttpListenerResponse>(response =>
-                        {
-                            response.ContentType = "application/json";
-                            var vulnerabilityJson = FeedUtilities.CreateVulnerabilityForPackages(Vulnerabilities);
-                            SetResponseContent(response, vulnerabilityJson.ToString());
-                        });
-                    }
-                    else
+                        response.ContentType = "text/javascript";
+                        var packageToListedMapping = packages.Select(e => new KeyValuePair<PackageIdentity, bool>(e.Identity, !UnlistedPackages.Contains(e.Identity))).ToArray();
+                        MockResponse mockResponse = _builder.BuildRegistrationIndexResponse(Uri, packageToListedMapping, DeprecatedPackages);
+                        SetResponseContent(response, mockResponse.Content);
+                    });
+                }
+                else
+                {
+                    return new Action<HttpListenerResponse>(response => { response.StatusCode = 404; });
+                }
+            }
+            else if (path.StartsWith("/vulnerability/"))
+            {
+                if (path.EndsWith("index.json"))
+                {
+                    return new Action<HttpListenerResponse>(response =>
                     {
-                        throw new Exception("This test needs to be updated to support: " + path);
-                    }
+                        response.ContentType = "application/json";
+                        var vulnerabilityJson = FeedUtilities.CreateVulnerabilitiesJson(Uri + "vulnerability/vulnerability.json");
+                        SetResponseContent(response, vulnerabilityJson.ToString());
+                    });
+                }
+                else if (path.EndsWith("/vulnerability.json"))
+                {
+                    return new Action<HttpListenerResponse>(response =>
+                    {
+                        response.ContentType = "application/json";
+                        var vulnerabilityJson = FeedUtilities.CreateVulnerabilityForPackages(Vulnerabilities);
+                        SetResponseContent(response, vulnerabilityJson.ToString());
+                    });
                 }
                 else
                 {
                     throw new Exception("This test needs to be updated to support: " + path);
                 }
             }
-            catch (Exception)
+            else
             {
-                // Debug here
-                throw;
+                throw new Exception("This test needs to be updated to support: " + path);
             }
         }
     }

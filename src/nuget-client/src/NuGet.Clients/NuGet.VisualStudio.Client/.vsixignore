@@ -1,4 +1,4 @@
-# The VS SDK automatically includes alot of assemblies in the VSIX. This list represents
+# The VS SDK automatically includes a lot of assemblies in the VSIX. This list represents
 # assemblies that should be removed from the list but does not imply that the assembly is
 # completely left out of the VSIX.  NuGet.VisualStudio.Client.csproj will manually add
 # some of the assemblies itself, even if they are listed here
@@ -88,6 +88,8 @@ Microsoft.VisualStudio.ProjectSystem.Query.resources.dll
 Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.dll
 Microsoft.VisualStudio.Services.TestResults.WebApi.dll
 Microsoft.VisualStudio.Setup.Common.dll
+Microsoft.VisualStudio.Shell.Styles.dll
+Microsoft.VisualStudio.Shell.Styles.resources.dll
 System.Drawing.Common.dll
 System.IdentityModel.Tokens.Jwt.dll
 System.Management.Automation.dll
