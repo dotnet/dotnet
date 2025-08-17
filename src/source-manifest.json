@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "388fdc7b1d17a24a841ee5029302ec8d1a5ad7b6"
+      "commitSha": "137d370a4b322b1682379f84a9090b3c824959f0"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -154,7 +154,7 @@
       "packageVersion": "9.0.9",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "94ceefcec814c6a2111b867e40573b45e99c4086"
+      "commitSha": "6f83b16be99847f20ef8401745b698569d23d27a"
     },
     {
       "packageVersion": "9.0.9-servicing.25412.4",
