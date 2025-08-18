@@ -399,7 +399,7 @@ if [[ "$sourceOnly" == "true" ]]; then
     # Check if exist .git directory or file
     if [ -f "$GIT_DIR" ]; then
       if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
-        rm -rf "$GIT_DIR"
+        mv "$scriptroot/.git" "$scriptroot/.git.old"
         fake_git=true
       else
         if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
