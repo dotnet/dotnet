@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="8b29a1682219da555ee27e4fdda55dc3884b316f" BarId="277635" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="b7ad826c308d3b0376ed21450271439a97f77f02" BarId="278405" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
-    <!-- Needed for when this dependency gets updated in 
-         https://github.com/dotnet/source-build-externals, otherwise
-         a prebuilt will be introduced until the VMR is rebootstrapped. -->
-    <Dependency Name="Microsoft.ApplicationInsights" Version="2.23.0">
-      <Uri>https://github.com/microsoft/ApplicationInsights-dotnet</Uri>
-      <Sha>2faa7e8b157a431daa2e71785d68abd5fa817b53</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.CSharp" Version="4.8.0">
       <Uri>https://github.com/dotnet/roslyn</Uri>
       <Sha>e091728607ca0fc9efca55ccfb3e59259c6b5a0a</Sha>
@@ -108,13 +101,6 @@
     <Dependency Name="Microsoft.Extensions.Logging.Console" Version="9.0.0-rc.2.24473.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
       <Sha>990ebf52fc408ca45929fd176d2740675a67fab8</Sha>
-    </Dependency>
-    <!-- Needed for when this dependency gets updated in 
-         https://github.com/dotnet/source-build-externals, otherwise
-         a prebuilt will be introduced until the VMR is rebootstrapped. -->
-    <Dependency Name="Newtonsoft.Json" Version="13.0.3">
-      <Uri>https://github.com/JamesNK/Newtonsoft.Json</Uri>
-      <Sha>0a2e291c0d9c0c7675d445703e51750363a549ef</Sha>
     </Dependency>
     <Dependency Name="System.Text.Encodings.Web" Version="9.0.0-rc.2.24473.5">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
