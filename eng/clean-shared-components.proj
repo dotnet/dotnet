@@ -15,21 +15,17 @@
     <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
     <HasSharedComponents>false</HasSharedComponents>
     <HasSharedComponents Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">true</HasSharedComponents>
+    <SharedComponentFilterMode>BootstrapOnly</SharedComponentFilterMode>
   </PropertyGroup>
 
   <Target Name="CleanSharedComponentsArtifacts"
           BeforeTargets="Build"
+          DependsOnTargets="GetFilteredSharedComponentPackages"
           Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(HasSharedComponents)' == 'true'"
           Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
 
-    <MSBuild Projects="$(MSBuildProjectFullPath)"
-             Targets="GetFilteredSharedComponentPackages"
-             Properties="SharedComponentFilterMode=BootstrapOnly">
-      <Output TaskParameter="TargetOutputs" ItemName="_BootstrapPackages" />
-    </MSBuild>
-
     <ItemGroup>
-      <_BootstrapPackagesFilenames Include="@(_BootstrapPackages)">
+      <_BootstrapPackagesFilenames Include="@(SharedComponentFilteredPackages)">
         <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>
       </_BootstrapPackagesFilenames>
       <_BootstrapPackagesToDelete Include="@(_BootstrapPackagesFilenames->'%(PackagePath)')" />

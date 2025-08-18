@@ -53,7 +53,7 @@
   </Target>
 
   <Target Name="GetFilteredSharedComponentPackages"
-          Outputs="@(_SharedComponentFilteredPackages)">
+          Outputs="@(SharedComponentFilteredPackages)">
 
     <PropertyGroup>
       <_PreviouslySourceBuiltSharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</_PreviouslySourceBuiltSharedComponentAssetManifests>
@@ -63,24 +63,24 @@
 
     <GetKnownArtifactsFromAssetManifests AssetManifests="$(_PreviouslySourceBuiltSharedComponentAssetManifests)"
                                          Condition="Exists($(_PreviouslySourceBuiltSharedComponentAssetManifests))">
-      <Output TaskParameter="KnownPackages" ItemName="_SharedComponentFilteredPackages" />
+      <Output TaskParameter="KnownPackages" ItemName="SharedComponentFilteredPackages" />
     </GetKnownArtifactsFromAssetManifests>
 
     <!-- Non-tooling-and-bootstrap mode: Keep non-tooling components and bootstrap arcade repos -->
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'NonToolingAndBootstrapOnly'">
-      <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
+      <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Tooling-only mode: Keep only tooling components that are not bootstrap arcade repos -->
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'ToolingOnly'">
-      <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
+      <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="$(SharedRepositoryReferenceString.Contains(';%(RepoOrigin);')) or $([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
     
     <!-- Bootstrap-only mode: Keep only packages from bootstrap arcade repos -->
     <ItemGroup Condition="'$(SharedComponentFilterMode)' == 'BootstrapOnly'">
-      <_ItemsToRemove Include="@(_SharedComponentFilteredPackages)"
+      <_ItemsToRemove Include="@(SharedComponentFilteredPackages)"
                       Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';%(RepoOrigin);'))" />
     </ItemGroup>
 
@@ -90,7 +90,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <_SharedComponentFilteredPackages Remove="@(_SharedComponentFilteredPackages)" 
+      <SharedComponentFilteredPackages Remove="@(SharedComponentFilteredPackages)" 
                                         Condition="'@(_ItemsToRemove)' != '' and 
                                                    '$(_ItemsToRemoveString)' != '' and
                                                    $(_ItemsToRemoveString.Contains($([System.String]::Concat('%(Identity)', '::', '%(Version)'))))" />
