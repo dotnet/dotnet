@@ -126,4 +126,4 @@ extends:
           -TsaRepositoryName "Arcade"
           -TsaCodebaseName "Arcade"
           -TsaPublish $True
-          -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(Build.SourcesDirectory)/eng/PoliCheckExclusions.xml")'
+          -PoliCheckAdditionalRunConfigParams @("UserExclusionPath < $(System.DefaultWorkingDirectory)/eng/PoliCheckExclusions.xml")'
