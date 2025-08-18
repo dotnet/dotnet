@@ -17,7 +17,7 @@
     <HasSharedComponents Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' or '$(CustomSharedComponentsArtifactsPath)' != ''">true</HasSharedComponents>
   </PropertyGroup>
 
-  <Target Name="UpdateSharedComponentsArtifacts"
+  <Target Name="CleanSharedComponentsArtifacts"
           BeforeTargets="Build"
           Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(HasSharedComponents)' == 'true'"
           Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
