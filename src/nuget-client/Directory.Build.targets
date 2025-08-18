@@ -1,6 +1,11 @@
 <Project>
   <Import Project="build\common.targets" Condition="'$(IsCrossTargetingBuild)' == 'true' And '$(_WasCommonPropsImported)' != 'true'" />
 
+  <PropertyGroup>
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(SemanticVersion).0</AssemblyVersion>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(UsingToolXliff)' == 'true'">
     <!--
       Use Satellite assembly generation task from Microsoft.NET.Sdk even when building with
