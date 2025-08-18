@@ -17,10 +17,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 
-// TODO
-// rename PoisonPackages
-// Remove Matches
-
 namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 {
     public class MarkAndCatalogPackages : Task

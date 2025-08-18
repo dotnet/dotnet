@@ -68,16 +68,6 @@ stages:
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
 
-        - buildNameFormat: '{0}_Offline_PreviousSourceBuiltSdk'
-          distro: centos
-          targetArchitecture: x64
-          buildFromArchive: false            # 🚫
-          enablePoison: true                 # ✅
-          runOnline: false                   # 🚫
-          useMonoRuntime: false              # 🚫
-          useSystemLibraries: false          # 🚫
-          withPreviousSDK: true              # ✅
-
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
           - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
