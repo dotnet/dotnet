@@ -20,7 +20,7 @@
   <Target Name="UpdateSharedComponentsArtifacts"
           BeforeTargets="Build"
           Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(HasSharedComponents)' == 'true'"
-          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
+          Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
