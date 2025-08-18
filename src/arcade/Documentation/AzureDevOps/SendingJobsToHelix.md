@@ -100,7 +100,7 @@ The list of available Helix queues can be found on the [Helix homepage](https://
       # HelixConfiguration: '' -- any property that you would like to attached to a job
       # HelixPreCommands: '' -- any commands that you would like to run prior to running your job
       # HelixPostCommands: '' -- any commands that you would like to run after running your job
-      XUnitProjects: $(Build.SourcesDirectory)/HelloTests/HelloTests.csproj # specify your xUnit projects (semicolon delimited) here!
+      XUnitProjects: $(System.DefaultWorkingDirectory)/HelloTests/HelloTests.csproj # specify your xUnit projects (semicolon delimited) here!
       # XUnitWorkItemTimeout: '00:05:00' -- a timeout (specified as a System.TimeSpan string) for all work items created from XUnitProjects
       XUnitPublishTargetFramework: netcoreapp3.1 # specify your publish target framework here
       XUnitRuntimeTargetFramework: netcoreapp2.0 # specify the framework you want to use for the xUnit runner
