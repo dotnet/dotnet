@@ -17,7 +17,8 @@
     <!-- This needs to be executed before poisoning because it can end up deleting unneeded package
          files which we don't want to have poisoned; otherwise it would lead to errors when those files
          are found to be missing. -->
-    <ProjectReference Include="$(RepositoryEngineeringDir)prebuild.proj" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj"
+                      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
     
     <!-- Pre-build: Init tools-->
     <ProjectReference Include="$(RepositoryEngineeringDir)init-cross-build.proj"
