@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Microsoft.Azure.Cosmos.Scripts;
 using Microsoft.EntityFrameworkCore.Cosmos.Diagnostics.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.Cosmos.Internal;
@@ -321,19 +322,14 @@ public class CosmosClientWrapper : ICosmosClientWrapper
 
         if (vectorIndexes.Count != 0 || fullTextIndexPaths.Count != 0)
         {
-            containerProperties.IndexingPolicy = new IndexingPolicy
-            {
-                VectorIndexes = vectorIndexes,
-                FullTextIndexes = fullTextIndexPaths
-            };
+            containerProperties.IndexingPolicy = new IndexingPolicy { VectorIndexes = vectorIndexes, FullTextIndexes = fullTextIndexPaths };
         }
 
         if (fullTextPaths.Count != 0)
         {
             containerProperties.FullTextPolicy = new FullTextPolicy
             {
-                DefaultLanguage = parameters.DefaultFullTextLanguage,
-                FullTextPaths = fullTextPaths
+                DefaultLanguage = parameters.DefaultFullTextLanguage, FullTextPaths = fullTextPaths
             };
         }
 
@@ -354,16 +350,16 @@ public class CosmosClientWrapper : ICosmosClientWrapper
         if (entityType.IsOwned())
         {
             var ownership = entityType.FindOwnership()!;
-            var resultPath = GetPathFromRoot(ownership.PrincipalEntityType) + "/" + ownership.GetNavigation(pointsToPrincipal: false)!.TargetEntityType.GetContainingPropertyName();
+            var resultPath = GetPathFromRoot(ownership.PrincipalEntityType)
+                + "/"
+                + ownership.GetNavigation(pointsToPrincipal: false)!.TargetEntityType.GetContainingPropertyName();
 
             return !ownership.IsUnique
                 ? throw new NotSupportedException(CosmosStrings.CreatingContainerWithFullTextOrVectorOnCollectionNotSupported(resultPath))
                 : resultPath;
         }
-        else
-        {
-            return "";
-        }
+
+        return "";
     }
 
     /// <summary>
@@ -419,6 +415,21 @@ public class CosmosClientWrapper : ICosmosClientWrapper
         var container = wrapper.Client.GetDatabase(wrapper._databaseId).GetContainer(parameters.ContainerId);
         var itemRequestOptions = CreateItemRequestOptions(entry, wrapper._enableContentResponseOnWrite);
         var partitionKeyValue = ExtractPartitionKeyValue(entry);
+        var preTriggers = GetTriggers(entry, TriggerType.Pre, TriggerOperation.Create);
+        var postTriggers = GetTriggers(entry, TriggerType.Post, TriggerOperation.Create);
+        if (preTriggers != null || postTriggers != null)
+        {
+            itemRequestOptions ??= new ItemRequestOptions();
+            if (preTriggers != null)
+            {
+                itemRequestOptions.PreTriggers = preTriggers;
+            }
+
+            if (postTriggers != null)
+            {
+                itemRequestOptions.PostTriggers = postTriggers;
+            }
+        }
 
         var response = await container.CreateItemStreamAsync(
                 stream,
@@ -495,6 +506,21 @@ public class CosmosClientWrapper : ICosmosClientWrapper
         var container = wrapper.Client.GetDatabase(wrapper._databaseId).GetContainer(parameters.ContainerId);
         var itemRequestOptions = CreateItemRequestOptions(entry, wrapper._enableContentResponseOnWrite);
         var partitionKeyValue = ExtractPartitionKeyValue(entry);
+        var preTriggers = GetTriggers(entry, TriggerType.Pre, TriggerOperation.Replace);
+        var postTriggers = GetTriggers(entry, TriggerType.Post, TriggerOperation.Replace);
+        if (preTriggers != null || postTriggers != null)
+        {
+            itemRequestOptions ??= new ItemRequestOptions();
+            if (preTriggers != null)
+            {
+                itemRequestOptions.PreTriggers = preTriggers;
+            }
+
+            if (postTriggers != null)
+            {
+                itemRequestOptions.PostTriggers = postTriggers;
+            }
+        }
 
         using var response = await container.ReplaceItemStreamAsync(
                 stream,
@@ -562,6 +588,21 @@ public class CosmosClientWrapper : ICosmosClientWrapper
 
         var itemRequestOptions = CreateItemRequestOptions(entry, wrapper._enableContentResponseOnWrite);
         var partitionKeyValue = ExtractPartitionKeyValue(entry);
+        var preTriggers = GetTriggers(entry, TriggerType.Pre, TriggerOperation.Delete);
+        var postTriggers = GetTriggers(entry, TriggerType.Post, TriggerOperation.Delete);
+        if (preTriggers != null || postTriggers != null)
+        {
+            itemRequestOptions ??= new ItemRequestOptions();
+            if (preTriggers != null)
+            {
+                itemRequestOptions.PreTriggers = preTriggers;
+            }
+
+            if (postTriggers != null)
+            {
+                itemRequestOptions.PostTriggers = postTriggers;
+            }
+        }
 
         using var response = await items.DeleteItemStreamAsync(
                 parameters.ResourceId,
@@ -626,6 +667,22 @@ public class CosmosClientWrapper : ICosmosClientWrapper
         }
 
         return new ItemRequestOptions { IfMatchEtag = (string?)etag, EnableContentResponseOnWrite = enabledContentResponse };
+    }
+
+    private static IReadOnlyList<string>? GetTriggers(IUpdateEntry entry, TriggerType type, TriggerOperation operation)
+    {
+        var preTriggers = entry.EntityType.GetTriggers()
+            .Where(t => t.GetTriggerType() == type && ShouldExecuteTrigger(t, operation))
+            .Select(t => t.ModelName)
+            .ToList();
+
+        return preTriggers.Count > 0 ? preTriggers : null;
+    }
+
+    private static bool ShouldExecuteTrigger(ITrigger trigger, TriggerOperation currentOperation)
+    {
+        var triggerOperation = trigger.GetTriggerOperation();
+        return triggerOperation == null || triggerOperation == TriggerOperation.All || triggerOperation == currentOperation;
     }
 
     private static PartitionKey ExtractPartitionKeyValue(IUpdateEntry entry)

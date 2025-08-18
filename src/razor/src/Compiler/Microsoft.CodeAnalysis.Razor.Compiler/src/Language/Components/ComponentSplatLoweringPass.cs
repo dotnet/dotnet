@@ -35,7 +35,7 @@ internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, I
             Source = node.Source,
         };
 
-        result.Children.AddRange(node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp));
+        result.Children.AddRange(node.FindDescendantNodes<CSharpIntermediateToken>());
         result.AddDiagnosticsFromNode(node);
         return result;
     }

@@ -351,7 +351,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 entityType);
 
         /// <summary>
-        ///     Navigation '{1_entityType}.{0_navigationName}' was not found. Please add the navigation to the entity type before configuring it.
+        ///     Navigation '{1_entityType}.{0_navigationName}' was not found. Please add the navigation to the entity type using HasOne, HasMany, or OwnsOne/OwnsMany methods before configuring it.
         /// </summary>
         public static string CanOnlyConfigureExistingNavigations(object? navigationName, object? entityType)
             => string.Format(
@@ -711,6 +711,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 complexType, changeTrackingStrategy);
 
         /// <summary>
+        ///     The shadow property '{complexType}.{property}' cannot be configured on the complex type '{complexType}'. Shadow properties are not supported on complex types. See https://github.com/dotnet/efcore/issues/35613 for more information.
+        /// </summary>
+        public static string ComplexTypeShadowProperty(object? complexType, object? property)
+            => string.Format(
+                GetString("ComplexTypeShadowProperty", nameof(complexType), nameof(property)),
+                complexType, property);
+
+        /// <summary>
         ///     '{service}' doesn't currently support complex types.
         /// </summary>
         public static string ComplexTypesNotSupported(object? service)
@@ -1025,6 +1033,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("DiscriminatorPropertyMustBeOnRoot", nameof(entityType)),
                 entityType);
+
+        /// <summary>
+        ///     A discriminator property cannot be set for the type '{type}' because '{containingType}' is a complex collection.
+        /// </summary>
+        public static string DiscriminatorPropertyNotAllowedOnComplexCollection(object? type, object? containingType)
+            => string.Format(
+                GetString("DiscriminatorPropertyNotAllowedOnComplexCollection", nameof(type), nameof(containingType)),
+                type, containingType);
 
         /// <summary>
         ///     Unable to set property '{property}' as a discriminator for entity type '{entityType}' because it is not a property of '{entityType}'.
@@ -3728,23 +3744,23 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
         /// <summary>
         ///     The unchanged property '{typePath}.{property}' was detected as changed and will be marked as modified. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see property values.
         /// </summary>
-        public static EventDefinition<string, string> LogComplexTypePropertyChangeDetected(IDiagnosticsLogger logger)
+        public static EventDefinition<string, string> LogComplexElementPropertyChangeDetected(IDiagnosticsLogger logger)
         {
-            var definition = ((LoggingDefinitions)logger.Definitions).LogComplexTypePropertyChangeDetected;
+            var definition = ((LoggingDefinitions)logger.Definitions).LogComplexElementPropertyChangeDetected;
             if (definition == null)
             {
                 definition = NonCapturingLazyInitializer.EnsureInitialized(
-                    ref ((LoggingDefinitions)logger.Definitions).LogComplexTypePropertyChangeDetected,
+                    ref ((LoggingDefinitions)logger.Definitions).LogComplexElementPropertyChangeDetected,
                     logger,
                     static logger => new EventDefinition<string, string>(
                         logger.Options,
-                        CoreEventId.ComplexTypePropertyChangeDetected,
+                        CoreEventId.ComplexElementPropertyChangeDetected,
                         LogLevel.Debug,
-                        "CoreEventId.ComplexTypePropertyChangeDetected",
+                        "CoreEventId.ComplexElementPropertyChangeDetected",
                         level => LoggerMessage.Define<string, string>(
                             level,
-                            CoreEventId.ComplexTypePropertyChangeDetected,
-                            _resourceManager.GetString("LogComplexTypePropertyChangeDetected")!)));
+                            CoreEventId.ComplexElementPropertyChangeDetected,
+                            _resourceManager.GetString("LogComplexElementPropertyChangeDetected")!)));
             }
 
             return (EventDefinition<string, string>)definition;
@@ -3753,23 +3769,23 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics.Internal
         /// <summary>
         ///     The unchanged property '{typePath}.{property}' was detected as changed from '{oldValue}' to '{newValue}' and will be marked as modified for entity with key '{keyValues}'.
         /// </summary>
-        public static EventDefinition<string, string, object?, object?, string> LogComplexTypePropertyChangeDetectedSensitive(IDiagnosticsLogger logger)
+        public static EventDefinition<string, string, object?, object?, string> LogComplexElementPropertyChangeDetectedSensitive(IDiagnosticsLogger logger)
         {
-            var definition = ((LoggingDefinitions)logger.Definitions).LogComplexTypePropertyChangeDetectedSensitive;
+            var definition = ((LoggingDefinitions)logger.Definitions).LogComplexElementPropertyChangeDetectedSensitive;
             if (definition == null)
             {
                 definition = NonCapturingLazyInitializer.EnsureInitialized(
-                    ref ((LoggingDefinitions)logger.Definitions).LogComplexTypePropertyChangeDetectedSensitive,
+                    ref ((LoggingDefinitions)logger.Definitions).LogComplexElementPropertyChangeDetectedSensitive,
                     logger,
                     static logger => new EventDefinition<string, string, object?, object?, string>(
                         logger.Options,
-                        CoreEventId.ComplexTypePropertyChangeDetected,
+                        CoreEventId.ComplexElementPropertyChangeDetected,
                         LogLevel.Debug,
-                        "CoreEventId.ComplexTypePropertyChangeDetected",
+                        "CoreEventId.ComplexElementPropertyChangeDetected",
                         level => LoggerMessage.Define<string, string, object?, object?, string>(
                             level,
-                            CoreEventId.ComplexTypePropertyChangeDetected,
-                            _resourceManager.GetString("LogComplexTypePropertyChangeDetectedSensitive")!)));
+                            CoreEventId.ComplexElementPropertyChangeDetected,
+                            _resourceManager.GetString("LogComplexElementPropertyChangeDetectedSensitive")!)));
             }
 
             return (EventDefinition<string, string, object?, object?, string>)definition;
