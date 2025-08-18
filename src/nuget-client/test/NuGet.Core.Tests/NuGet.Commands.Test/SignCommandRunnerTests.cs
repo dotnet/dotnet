@@ -2,13 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
-#if IS_SIGNING_SUPPORTED
 using System.IO.Compression;
-#endif
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
 using NuGet.Common;
 using NuGet.Test.Utility;
@@ -35,11 +35,14 @@ namespace NuGet.Commands.Test
                 testContext.Args.CertificatePath = certificateFilePath;
 
                 await testContext.Runner.ExecuteCommandAsync(testContext.Args);
-
+#if IS_DESKTOP
                 var expectedMessage = $"Certificate file '{certificateFilePath}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference";
-
-                Assert.Equal(1, testContext.Logger.LogMessages.Count(
-                    message => message.Level == LogLevel.Error && message.Code == NuGetLogCode.NU3001 && message.Message.Equals(expectedMessage)));
+#else
+                var expectedMessage = $"Certificate file '{certificateFilePath}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference";
+#endif
+                List<ILogMessage> logMessages = testContext.Logger.LogMessages.Select(e => e).Where(e => e.Level == LogLevel.Error && e.Code == NuGetLogCode.NU3001).ToList();
+                logMessages.Should().HaveCount(1);
+                logMessages[0].Message.Should().Be(expectedMessage);
             }
         }
 
@@ -88,8 +91,6 @@ namespace NuGet.Commands.Test
             }
         }
 
-        // Skip the tests when signing is not supported.
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public async Task ExecuteCommandAsync_WithExistingCertificateFromPathAndNoPassword_Succeed()
         {
@@ -215,7 +216,6 @@ namespace NuGet.Commands.Test
                 }
             }
         }
-#endif
 
         [Fact]
         public async Task ExecuteCommandAsync_WithAmbiguousMatch_RaisesErrorsOnceAsync()
@@ -236,8 +236,6 @@ namespace NuGet.Commands.Test
             }
         }
 
-        //skip this test when signing is not supported.
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public async Task ExecuteCommandAsync_WithMultiplePackagesAndInvalidCertificate_RaisesErrorsOnceAsync()
         {
@@ -268,7 +266,6 @@ namespace NuGet.Commands.Test
                     message => message.Level == LogLevel.Warning && message.Code == NuGetLogCode.NU3018));
             }
         }
-#endif
 
         private static byte[] GetResource(string name)
         {

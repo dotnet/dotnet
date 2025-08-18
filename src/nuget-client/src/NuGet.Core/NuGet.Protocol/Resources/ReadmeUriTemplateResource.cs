@@ -37,6 +37,8 @@ namespace NuGet.Protocol
                 return string.Empty;
             }
 
+            PackageIdValidator.Validate(id);
+
             var uriString = _uriTemplate
 #if NETCOREAPP
                .Replace(LowerId, id.ToLowerInvariant(), StringComparison.OrdinalIgnoreCase)
