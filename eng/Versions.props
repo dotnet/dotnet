@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="Version.Details.props" />
   <PropertyGroup>
     <VersionSDKMinor>1</VersionSDKMinor>
@@ -36,6 +36,8 @@
     -->
     <PrivateSourceBuiltSdkVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltSdkVersion>
     <PrivateSourceBuiltArtifactsVersion>10.0.102-servicing.25612.105</PrivateSourceBuiltArtifactsVersion>
+    <!-- arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>1.1.0-beta.25404.1</MicrosoftDotNetDarcLibVersion>
     <!-- command-line-api dependencies -->
     <SystemCommandLineVersion>2.0.0-beta5.25208.1</SystemCommandLineVersion>
     <!-- msbuild dependencies -->
@@ -49,6 +51,6 @@
     <MicrosoftExtensionsLoggingVersion>9.0.0</MicrosoftExtensionsLoggingVersion>
     <!-- external dependencies -->
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
-    <OctokitVersion>10.0.0</OctokitVersion>
+    <OctokitVersion>13.0.1</OctokitVersion>
   </PropertyGroup>
 </Project>
