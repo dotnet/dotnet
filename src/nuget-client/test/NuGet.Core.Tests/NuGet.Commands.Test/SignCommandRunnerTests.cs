@@ -35,11 +35,7 @@ namespace NuGet.Commands.Test
                 testContext.Args.CertificatePath = certificateFilePath;
 
                 await testContext.Runner.ExecuteCommandAsync(testContext.Args);
-#if IS_DESKTOP
                 var expectedMessage = $"Certificate file '{certificateFilePath}' not found. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference";
-#else
-                var expectedMessage = $"Certificate file '{certificateFilePath}' is invalid. For a list of accepted ways to provide a certificate, visit https://docs.nuget.org/docs/reference/command-line-reference";
-#endif
                 List<ILogMessage> logMessages = testContext.Logger.LogMessages.Select(e => e).Where(e => e.Level == LogLevel.Error && e.Code == NuGetLogCode.NU3001).ToList();
                 logMessages.Should().HaveCount(1);
                 logMessages[0].Message.Should().Be(expectedMessage);
