@@ -90,6 +90,15 @@ parameters:
     demands: ImageOverride -equals $(poolImage_Linux)
     os: linux
 
+- name: featureBand
+  displayName: 'Target Feature Band'
+  type: string
+  default: 'Detect by Branch Name'
+  values:
+    - 'Detect by Branch Name'
+    - '1xx'
+    - '>= 2xx'
+
 stages:
 - template: vmr-verticals.yml
   parameters:
@@ -100,7 +109,11 @@ stages:
     isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
     scope: ${{ parameters.scope }}
     verifications: ${{ parameters.verifications }}
-    ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(contains(variables['Build.SourceBranch'], '.1xx'))) }}:
+    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+    # Will exclude runtime-dependent jobs when either of the following are true:
+    #   - 'Detect By Branch Name' was selected for the feature band: branch is not main and does not contain '.1xx' but does end with 'xx'.
+    #   - '>= 2xx' was selected for the feature band
+    ${{ if or(and(eq(parameters.featureBand, 'Detect by Branch Name'), ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(contains(variables['Build.SourceBranch'], '.1xx')), endsWith(variables['Build.SourceBranch'], 'xx')), eq(parameters.featureBand, '>= 2xx')) }}:
       excludeRuntimeDependentJobs: true
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
