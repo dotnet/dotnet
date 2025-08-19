@@ -1,8 +1,0 @@
-{
-  "files": [
-    {
-      "path": "src/Microsoft.CodeAnalysis.NetAnalyzers/src/assets/EULA.txt",
-      "detected_license_expression": "ms-net-library"
-    }
-  ]
-}
