@@ -197,8 +197,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 
             foreach (var p in catalogedPackages)
             {
-                // This hash can match either the original hash (we couldn't poison the file, or redownloaded it) or
-                // the poisoned hash (the obvious failure case of a poisoned file leaked).
                 foreach (var matchingCatalogedFile in p.Files.Where(f => f.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
                 {
                     poisonEntry.Type |= PoisonType.Hash;
@@ -318,9 +316,7 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 poisonEntry.Hash = sha.ComputeHash(stream);
             }
 
-            // first check for a matching poisoned or non-poisoned hash match:
-            // - non-poisoned is a potential error where the package was redownloaded.
-            // - poisoned is a use of a local package we were not expecting.
+            // first check for a matching hash match
             foreach (var matchingCatalogedPackage in catalogedPackages.Where(c => c.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
             {
                 poisonEntry.Type |= PoisonType.Hash;
