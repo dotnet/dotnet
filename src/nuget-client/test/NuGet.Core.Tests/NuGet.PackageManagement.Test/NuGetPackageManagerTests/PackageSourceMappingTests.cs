@@ -62,7 +62,7 @@ namespace NuGet.PackageManagement.Test.NuGetPackageManagerTests
             var nugetProjectContext = new TestNuGetProjectContext();
 
             // Create Package Manager
-            using var solutionManager = new TestSolutionManager();
+            using var solutionManager = new TestVSSolutionManager();
             using var settingsDir = TestDirectory.Create();
             var settings = new Settings(settingsDir);
 

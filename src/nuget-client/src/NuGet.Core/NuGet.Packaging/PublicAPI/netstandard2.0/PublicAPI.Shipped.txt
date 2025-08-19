@@ -1492,11 +1492,9 @@ static NuGet.ContentModel.PatternDefinition.implicit operator NuGet.ContentModel
 ~static NuGet.Packaging.MinClientVersionUtility.IsMinClientVersionCompatible(NuGet.Versioning.NuGetVersion packageMinClientVersion) -> bool
 ~static NuGet.Packaging.MinClientVersionUtility.VerifyMinClientVersion(NuGet.Packaging.Core.NuspecCoreReaderBase nuspecReader) -> void
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.Stream stream, NuGet.Common.ILogger log, string path) -> NuGet.Packaging.NupkgMetadataFile
-~static NuGet.Packaging.NupkgMetadataFileFormat.Read(System.IO.TextReader reader, NuGet.Common.ILogger log, string path) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Read(string filePath, NuGet.Common.ILogger log) -> NuGet.Packaging.NupkgMetadataFile
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.Stream stream, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
-~static NuGet.Packaging.NupkgMetadataFileFormat.Write(System.IO.TextWriter textWriter, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
 ~static NuGet.Packaging.NupkgMetadataFileFormat.Write(string filePath, NuGet.Packaging.NupkgMetadataFile hashFile) -> void
 ~static NuGet.Packaging.PackageBuilder.ValidateReferenceAssemblies(System.Collections.Generic.IEnumerable<NuGet.Packaging.IPackageFile> files, System.Collections.Generic.IEnumerable<NuGet.Packaging.PackageReferenceSet> packageAssemblyReferences) -> void
 static NuGet.Packaging.PackageExtraction.PackageExtractionBehavior.XmlDocFileSaveMode.get -> NuGet.Packaging.XmlDocFileSaveMode
