@@ -109,13 +109,13 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         {
             attribute.Name = "obj-attr";
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(PropertyName("ObjectAttribute"));
+            attribute.PropertyName("ObjectAttribute");
         });
         builder.BindAttribute(attribute =>
         {
             attribute.Name = "str-attr";
             attribute.TypeName = typeof(string).FullName;
-            attribute.SetMetadata(PropertyName("StringAttribute"));
+            attribute.PropertyName("StringAttribute");
         });
         var descriptors = new[] { builder.Build() };
         var projectEngine = CreateProjectEngine(tagHelpers: descriptors);
