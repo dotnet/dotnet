@@ -187,7 +187,7 @@
       "insertionTitlePrefix": "[Validation]",
       "insertionCreateDraftPR": true
     },
-    "community": {
+    "main": {
       "nugetKind": [
         "Shipping",
         "NonShipping"
@@ -196,7 +196,7 @@
       "insertionCreateDraftPR": true,
       "insertionTitlePrefix": "[Validation]"
     },
-    "main": {
+    "main-vs-deps": {
       "nugetKind": [
         "Shipping",
         "NonShipping"

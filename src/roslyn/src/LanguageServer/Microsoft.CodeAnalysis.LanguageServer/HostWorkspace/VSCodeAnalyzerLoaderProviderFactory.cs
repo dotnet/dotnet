@@ -11,15 +11,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.CodeAnalysis.LanguageServer.HostWorkspace;
 
-[ExportWorkspaceService(typeof(IAnalyzerAssemblyLoaderProvider), [WorkspaceKind.Host, WorkspaceKind.MiscellaneousFiles]), Shared]
+[ExportWorkspaceService(typeof(IAnalyzerAssemblyLoaderProvider), [WorkspaceKind.Host]), Shared]
 [method: ImportingConstructor]
 [method: Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
 internal sealed class VSCodeAnalyzerLoaderProviderFactory(
     ExtensionAssemblyManager extensionAssemblyManager,
     ILoggerFactory loggerFactory,
-    [ImportMany] IEnumerable<IAnalyzerAssemblyResolver> externalResolvers,
-    [ImportMany] IEnumerable<IAnalyzerPathResolver> assemblyPathResolvers)
-    : AbstractAnalyzerAssemblyLoaderProvider(externalResolvers, assemblyPathResolvers)
+    [ImportMany] IEnumerable<IAnalyzerAssemblyResolver> externalResolvers)
+    : AbstractAnalyzerAssemblyLoaderProvider(externalResolvers)
 {
     protected override IAnalyzerAssemblyLoaderInternal WrapLoader(IAnalyzerAssemblyLoaderInternal baseLoader)
         => new VSCodeExtensionAssemblyAnalyzerLoader(baseLoader, extensionAssemblyManager, loggerFactory.CreateLogger<VSCodeExtensionAssemblyAnalyzerLoader>());

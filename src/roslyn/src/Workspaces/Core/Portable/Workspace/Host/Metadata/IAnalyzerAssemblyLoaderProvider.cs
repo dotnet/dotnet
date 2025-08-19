@@ -38,13 +38,11 @@ internal abstract class AbstractAnalyzerAssemblyLoaderProvider : IAnalyzerAssemb
 #if NET
     private readonly Lazy<IAnalyzerAssemblyLoaderInternal> _shadowCopyLoader;
     private readonly ImmutableArray<IAnalyzerAssemblyResolver> _assemblyResolvers;
-    private readonly ImmutableArray<IAnalyzerPathResolver> _assemblyPathResolvers;
 
-    public AbstractAnalyzerAssemblyLoaderProvider(IEnumerable<IAnalyzerAssemblyResolver> assemblyResolvers, IEnumerable<IAnalyzerPathResolver> assemblyPathResolvers)
+    public AbstractAnalyzerAssemblyLoaderProvider(IEnumerable<IAnalyzerAssemblyResolver> assemblyResolvers)
     {
         _assemblyResolvers = [.. assemblyResolvers];
         _shadowCopyLoader = new(CreateNewShadowCopyLoader);
-        _assemblyPathResolvers = [.. assemblyPathResolvers];
     }
 
     public IAnalyzerAssemblyLoaderInternal SharedShadowCopyLoader
@@ -53,7 +51,7 @@ internal abstract class AbstractAnalyzerAssemblyLoaderProvider : IAnalyzerAssemb
     public IAnalyzerAssemblyLoaderInternal CreateNewShadowCopyLoader()
         => this.WrapLoader(AnalyzerAssemblyLoader.CreateNonLockingLoader(
                 Path.Combine(Path.GetTempPath(), nameof(Roslyn), "AnalyzerAssemblyLoader"),
-                _assemblyPathResolvers,
+                pathResolvers: default,
                 _assemblyResolvers));
 #else
     private readonly Lazy<IAnalyzerAssemblyLoaderInternal> _shadowCopyLoader;
@@ -82,8 +80,8 @@ internal sealed class DefaultAnalyzerAssemblyLoaderProvider : AbstractAnalyzerAs
 #if NET
     [ImportingConstructor]
     [Obsolete(MefConstruction.ImportingConstructorMessage, error: true)]
-    public DefaultAnalyzerAssemblyLoaderProvider([ImportMany] IEnumerable<IAnalyzerAssemblyResolver> assemblyResolvers, [ImportMany] IEnumerable<IAnalyzerPathResolver> assemblyPathResolvers)
-        : base(assemblyResolvers, assemblyPathResolvers)
+    public DefaultAnalyzerAssemblyLoaderProvider([ImportMany] IEnumerable<IAnalyzerAssemblyResolver> assemblyResolvers)
+        : base(assemblyResolvers)
     {
     }
 #else
