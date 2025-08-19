@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../Strings.resx">
     <body>
@@ -83,7 +83,7 @@
         <note />
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
-        <source>Allow pushing to HTTP sources (insecure).</source>
+        <source>Allows pushing to HTTP sources (insecure).</source>
         <target state="new">Allow pushing to HTTP sources (insecure).</target>
         <note />
       </trans-unit>
@@ -886,20 +886,25 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
         <target state="translated">Cesta k souboru projektu nebo řešení nebo k adresáři</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
+        <source>All packages are already up to date.</source>
+        <target state="new">All packages are already up to date.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
-        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <target state="translated">V(e) {0} zkontrolovaných balíčcích se aktualizoval tento počet balíčků: {1}.</target>
         <note>{0}: Number of packages updated
 {1}: Package checked for updated versions</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FindingUpdateVersions">
         <source>Finding versions of packages to update.</source>
-        <target state="new">Finding versions of packages to update.</target>
+        <target state="translated">Hledají se verze balíčků, které je třeba aktualizovat.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
-        <target state="new">Loading Project(s).</target>
+        <target state="translated">Načítají se projekty.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -909,7 +914,7 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
-        <target state="new">Running preview restore to check package compatibility.</target>
+        <target state="translated">Spouští se obnovení náhledu, aby se zkontrolovala kompatibilita balíčku.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestoreFailed">
@@ -919,14 +924,14 @@ Další informace najdete tady: https://docs.nuget.org/docs/reference/command-li
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updated {0} {1} to {2}.</source>
-        <target state="new">Updated {0} {1} to {2}.</target>
+        <target state="translated">Aktualizováno: {0} {1} na: {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
         <source>Updating outdated packages in {0}.</source>
-        <target state="new">Updating outdated packages in {0}.</target>
+        <target state="translated">Aktualizují se zastaralé balíčky v {0}.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1250,11 +1255,6 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">Jméno existující důvěryhodné podepisující osoby, která se má odebrat.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_MoreThanOnePackage">
-        <source>Unsupported: Updating more than one package is not yet supported</source>
-        <target state="translated">Nepodporováno: Aktualizace více než jednoho balíčku se zatím nepodporuje.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_PackageSourceMapping">

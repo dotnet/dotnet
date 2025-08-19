@@ -75,24 +75,17 @@ namespace NuGet.Packaging
                     var packageDirectoryInfo = Directory.CreateDirectory(installPath);
                     var packageDirectory = packageDirectoryInfo.FullName;
 
-                    try
-                    {
-                        telemetry.StartIntervalMeasure();
+                    telemetry.StartIntervalMeasure();
 
-                        await VerifyPackageSignatureAsync(
-                         source,
-                         telemetry.OperationId,
-                         packageIdentityFromNuspec,
-                         packageExtractionContext,
-                         packageReader,
-                         token);
+                    await VerifyPackageSignatureAsync(
+                        source,
+                        telemetry.OperationId,
+                        packageIdentityFromNuspec,
+                        packageExtractionContext,
+                        packageReader,
+                        token);
 
-                        telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                    }
-                    catch (SignatureException)
-                    {
-                        throw;
-                    }
+                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                     var packageFiles = await packageReader.GetPackageFilesAsync(packageSaveMode, token);
 
@@ -194,8 +187,6 @@ namespace NuGet.Packaging
             }
 
             var packageSaveMode = packageExtractionContext.PackageSaveMode;
-            var extractionId = Guid.NewGuid();
-            var nupkgStartPosition = packageStream.Position;
             var filesAdded = new List<string>();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.NuGetFolderProject);
@@ -204,24 +195,17 @@ namespace NuGet.Packaging
                 var packageIdentityFromNuspec = await packageReader.GetIdentityAsync(token);
                 packageExtractionTelemetryEvent.LogPackageIdentity(packageIdentityFromNuspec);
 
-                try
-                {
-                    telemetry.StartIntervalMeasure();
+                telemetry.StartIntervalMeasure();
 
-                    await VerifyPackageSignatureAsync(
-                         source,
-                         telemetry.OperationId,
-                         packageIdentityFromNuspec,
-                         packageExtractionContext,
-                         packageReader,
-                         token);
+                await VerifyPackageSignatureAsync(
+                    source,
+                    telemetry.OperationId,
+                    packageIdentityFromNuspec,
+                    packageExtractionContext,
+                    packageReader,
+                    token);
 
-                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                }
-                catch (SignatureException)
-                {
-                    throw;
-                }
+                telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                 var packageDirectoryInfo = Directory.CreateDirectory(packagePathResolver.GetInstallPath(packageIdentityFromNuspec));
                 var packageDirectory = packageDirectoryInfo.FullName;
@@ -309,7 +293,6 @@ namespace NuGet.Packaging
             token.ThrowIfCancellationRequested();
 
             var packageSaveMode = packageExtractionContext.PackageSaveMode;
-            var extractionId = Guid.NewGuid();
             var filesAdded = new List<string>();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.NuGetFolderProject);
@@ -318,24 +301,17 @@ namespace NuGet.Packaging
                 var packageIdentityFromNuspec = await packageReader.GetIdentityAsync(token);
                 packageExtractionTelemetryEvent.LogPackageIdentity(packageIdentityFromNuspec);
 
-                try
-                {
-                    telemetry.StartIntervalMeasure();
+                telemetry.StartIntervalMeasure();
 
-                    await VerifyPackageSignatureAsync(
-                        source,
-                        telemetry.OperationId,
-                        packageIdentityFromNuspec,
-                        packageExtractionContext,
-                        packageReader,
-                        token);
+                await VerifyPackageSignatureAsync(
+                    source,
+                    telemetry.OperationId,
+                    packageIdentityFromNuspec,
+                    packageExtractionContext,
+                    packageReader,
+                    token);
 
-                    telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
-                }
-                catch (SignatureException)
-                {
-                    throw;
-                }
+                telemetry.EndIntervalMeasure(PackagingConstants.PackageVerifyDurationName);
 
                 var packageDirectoryInfo = Directory.CreateDirectory(packagePathResolver.GetInstallPath(packageIdentityFromNuspec));
                 var packageDirectory = packageDirectoryInfo.FullName;
@@ -418,7 +394,6 @@ namespace NuGet.Packaging
             }
 
             var logger = packageExtractionContext.Logger;
-            var extractionId = Guid.NewGuid();
 
             var packageExtractionTelemetryEvent = new PackageExtractionTelemetryEvent(packageExtractionContext.PackageSaveMode, NuGetOperationStatus.Failed, ExtractionSource.DownloadResource, packageIdentity);
             using (var telemetry = TelemetryActivity.Create(parentId, packageExtractionTelemetryEvent))
@@ -514,8 +489,6 @@ namespace NuGet.Packaging
 
                                         if ((packageSaveMode & PackageSaveMode.Files) == PackageSaveMode.Files)
                                         {
-                                            var nupkgFileName = Path.GetFileName(targetNupkg);
-                                            var nuspecFileName = Path.GetFileName(targetNuspec);
                                             var hashFileName = Path.GetFileName(hashPath);
                                             var nupkgMetadataFileName = Path.GetFileName(nupkgMetadataFilePath);
                                             var packageFiles = packageReader.GetFiles()

@@ -21,8 +21,8 @@ namespace NuGet.PackageManagement.VisualStudio
         private static readonly XName DependentAssemblyName = AssemblyBinding.GetQualifiedName("dependentAssembly");
         private static readonly XName BindingRedirectName = AssemblyBinding.GetQualifiedName("bindingRedirect");
 
-        private string ConfigurationFile { get; set; }
-        private IMSBuildProjectSystem MSBuildNuGetProjectSystem { get; set; }
+        private readonly string _configurationFile;
+        private readonly IMSBuildProjectSystem _msBuildNuGetProjectSystem;
 
         public BindingRedirectManager(string configurationFile, IMSBuildProjectSystem msBuildNuGetProjectSystem)
         {
@@ -37,8 +37,8 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new ArgumentNullException(nameof(msBuildNuGetProjectSystem));
             }
 
-            ConfigurationFile = configurationFile;
-            MSBuildNuGetProjectSystem = msBuildNuGetProjectSystem;
+            _configurationFile = configurationFile;
+            _msBuildNuGetProjectSystem = msBuildNuGetProjectSystem;
         }
 
         public void AddBindingRedirects(IEnumerable<AssemblyBinding> bindingRedirects)
@@ -109,7 +109,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private string GetConfigurationFileFullPath()
         {
-            var fullPaths = MSBuildNuGetProjectSystem.GetFullPaths(ConfigurationFile);
+            var fullPaths = _msBuildNuGetProjectSystem.GetFullPaths(_configurationFile);
             if (fullPaths.Any())
             {
                 // if there are multiple configuration files in the project,
@@ -118,7 +118,7 @@ namespace NuGet.PackageManagement.VisualStudio
             }
             else
             {
-                return Path.Combine(MSBuildNuGetProjectSystem.ProjectFullPath, ConfigurationFile);
+                return Path.Combine(_msBuildNuGetProjectSystem.ProjectFullPath, _configurationFile);
             }
         }
 
@@ -203,14 +203,14 @@ namespace NuGet.PackageManagement.VisualStudio
                 // app.config in the project directory. In this case, only the file name is passed.
                 var path = configFileFullPath;
                 var defaultConfigFile = Path.Combine(
-                    MSBuildNuGetProjectSystem.ProjectFullPath,
-                    ConfigurationFile);
+                    _msBuildNuGetProjectSystem.ProjectFullPath,
+                    _configurationFile);
                 if (configFileFullPath.Equals(defaultConfigFile, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = ConfigurationFile;
+                    path = _configurationFile;
                 }
 
-                MSBuildNuGetProjectSystem.AddFile(path, memoryStream);
+                _msBuildNuGetProjectSystem.AddFile(path, memoryStream);
             }
         }
 
@@ -250,7 +250,7 @@ namespace NuGet.PackageManagement.VisualStudio
                     "configuration",
                     Path.GetDirectoryName(configFileFullPath),
                     Path.GetFileName(configFileFullPath),
-                    MSBuildNuGetProjectSystem.NuGetProjectContext);
+                    _msBuildNuGetProjectSystem.NuGetProjectContext);
             }
             catch (Exception ex)
             {
