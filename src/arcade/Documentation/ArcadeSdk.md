@@ -649,7 +649,7 @@ The following task restores tools that are only available from internal feeds.
       feedsToUse: config
       restoreSolution: 'eng\common\internal\Tools.csproj'
       nugetConfigPath: 'NuGet.config'
-      restoreDirectory: '$(Build.SourcesDirectory)\.packages'
+      restoreDirectory: '$(System.DefaultWorkingDirectory)\.packages'
 ```
 
 [The tools](https://github.com/dotnet/arcade/blob/master/eng/common/internal/Tools.csproj) are restored conditionally based on which Arcade SDK features the repository uses (these are specified via `UsingToolXxx` properties).
@@ -692,7 +692,7 @@ The Build Pipeline needs to link the following variable group:
 - task: PublishBuildArtifacts@1
     displayName: Publish Logs
     inputs:
-      PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(BuildConfiguration)'
+      PathtoPublish: '$(System.DefaultWorkingDirectory)\artifacts\log\$(BuildConfiguration)'
       ArtifactName: '$(OperatingSystemName) $(BuildConfiguration)'
     continueOnError: true
     condition: not(succeeded())
@@ -834,7 +834,7 @@ The following build definition steps are required for successful generation of a
     inputs:
       dropServiceURI: 'https://devdiv.artifacts.visualstudio.com'
       buildNumber: 'ProfilingInputs/DevDiv/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)'
-      sourcePath: '$(Build.SourcesDirectory)\artifacts\OptProf\$(BuildConfiguration)\Data'
+      sourcePath: '$(System.DefaultWorkingDirectory)\artifacts\OptProf\$(BuildConfiguration)\Data'
       toLowerCase: false
       usePat: false
     displayName: 'OptProf - Publish to Artifact Services - ProfilingInputs'
@@ -847,7 +847,7 @@ The following build definition steps are required for successful generation of a
       vsMajorVersion: $(VisualStudio.MajorVersion)
       channelName: $(VisualStudio.ChannelName)
       manifests: $(VisualStudio.SetupManifestList)
-      outputFolder: '$(Build.SourcesDirectory)\artifacts\VSSetup\$(BuildConfiguration)\Insertion'
+      outputFolder: '$(System.DefaultWorkingDirectory)\artifacts\VSSetup\$(BuildConfiguration)\Insertion'
     displayName: 'OptProf - Build VS bootstrapper'
     condition: succeeded()
 

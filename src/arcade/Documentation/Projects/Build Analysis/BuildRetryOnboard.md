@@ -19,7 +19,7 @@ Ex. \eng\BuildConfiguration\build-configuration.json
 
 	Ex.
 	``` 
-	- publish: $(Build.SourcesDirectory)\eng\BuildConfiguration
+	- publish: $(System.DefaultWorkingDirectory)\eng\BuildConfiguration
 	  artifact: BuildConfiguration
 	``` 
 
