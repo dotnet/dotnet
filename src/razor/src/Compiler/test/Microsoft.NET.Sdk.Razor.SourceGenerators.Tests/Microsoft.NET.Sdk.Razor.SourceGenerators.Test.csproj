@@ -52,11 +52,6 @@
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_win-x64)\runtimes\win-x64\lib\net8.0\*.dll" />
       </ItemGroup>
     </When>
-    <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'win-arm64'">
-      <ItemGroup>
-        <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_win-arm64)\runtimes\win-arm64\lib\net8.0\*.dll" />
-      </ItemGroup>
-    </When>
     <When Condition="$(NetCoreSDKRuntimeIdentifier) == 'linux-x64'">
       <ItemGroup>
         <Reference Include="$(PkgMicrosoft_AspNetCore_App_Runtime_linux-x64)\runtimes\linux-x64\lib\net8.0\*.dll" />
