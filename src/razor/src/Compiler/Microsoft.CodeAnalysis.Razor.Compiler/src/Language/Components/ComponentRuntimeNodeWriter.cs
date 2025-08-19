@@ -154,7 +154,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         context.CodeWriter
             .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddMarkupContent}")
-            .Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(_sourceSequence++)
             .WriteParameterSeparator()
             .WriteStringLiteral(node.Content)
             .WriteEndMethodInvocation();
@@ -174,7 +174,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         context.CodeWriter
             .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.OpenElement}")
-            .Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(_sourceSequence++)
             .WriteParameterSeparator()
             .WriteStringLiteral(node.TagName)
             .WriteEndMethodInvocation();
@@ -301,7 +301,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         context.CodeWriter
             .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{renderApi}")
-            .Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(_sourceSequence++)
             .WriteParameterSeparator()
             .WriteStringLiteral(content)
             .WriteEndMethodInvocation();
@@ -399,7 +399,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             }
 
             context.CodeWriter.Write(">(");
-            context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+            context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
             context.CodeWriter.Write(");");
             context.CodeWriter.WriteLine();
 
@@ -509,7 +509,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(_scopeStack.BuilderVarName);
             context.CodeWriter.Write(", ");
 
-            context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+            context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
 
             foreach (var parameter in parameters)
             {
@@ -517,7 +517,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
                 if (!string.IsNullOrEmpty(parameter.SeqName))
                 {
-                    context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+                    context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
                     context.CodeWriter.Write(", ");
                 }
 
@@ -615,7 +615,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.Write(".");
         context.CodeWriter.Write(addAttributeMethod);
         context.CodeWriter.Write("(");
-        context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+        context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
         context.CodeWriter.Write(", ");
 
         WriteComponentAttributeName(context, node);
@@ -783,7 +783,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         static bool NeedsTypeCheck(ComponentAttributeIntermediateNode n)
         {
-            return n.BoundAttribute != null && !n.BoundAttribute.IsWeaklyTyped();
+            return n.BoundAttribute != null && !n.BoundAttribute.IsWeaklyTyped;
         }
     }
 
@@ -913,7 +913,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         //
         // _builder.AddMultipleAttributes(2, ...);
         context.CodeWriter.WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddMultipleAttributes}");
-        context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+        context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
         context.CodeWriter.WriteParameterSeparator();
 
         WriteSplatInnards(context, node, canTypeCheck: true);
@@ -972,7 +972,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture;
         codeWriter
             .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{methodName}")
-            .Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(_sourceSequence++)
             .WriteParameterSeparator();
 
         WriteReferenceCaptureInnards(context, node, shouldTypeCheck: true);
@@ -1059,7 +1059,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
     {
         context.CodeWriter
             .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddAttribute}")
-            .Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(_sourceSequence++)
             .WriteParameterSeparator()
             .WriteStringLiteral(key);
     }
@@ -1067,7 +1067,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
     protected override void BeginWriteAttribute(CodeRenderingContext context, IntermediateNode nameExpression)
     {
         context.CodeWriter.WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddAttribute}");
-        context.CodeWriter.Write((_sourceSequence++).ToString(CultureInfo.InvariantCulture));
+        context.CodeWriter.WriteIntegerLiteral(_sourceSequence++);
         context.CodeWriter.WriteParameterSeparator();
 
         var tokens = GetCSharpTokens(nameExpression);
