@@ -226,7 +226,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     context.CodeWriter.Write(parameter.SeqName);
                     context.CodeWriter.Write(", ");
 
-                    var cast = capture.IsComponentCapture ? $"({capture.ComponentCaptureTypeName})" : string.Empty;
+                    var cast = capture.IsComponentCapture ? $"({capture.FieldTypeName})" : string.Empty;
                     context.CodeWriter.Write($"(__value) => {{ {parameter.ParameterName}({cast}__value); }}");
                     context.CodeWriter.WriteEndMethodInvocation();
                     break;
