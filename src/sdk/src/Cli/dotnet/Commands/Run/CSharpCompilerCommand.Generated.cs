@@ -199,7 +199,7 @@ partial class CSharpCompilerCommand
             "/warnaserror-",
             "/utf8output",
             "/deterministic+",
-            "/langversion:14.0",
+            "/langversion:13.0",
             "/features:FileBasedProgram",
             $"/analyzerconfig:{SdkPath}/Sdks/Microsoft.NET.Sdk/codestyle/cs/build/config/analysislevelstyle_default.globalconfig",
             $"/analyzerconfig:{objDir}/{fileNameWithoutExtension}.GeneratedMSBuildEditorConfig.editorconfig",
