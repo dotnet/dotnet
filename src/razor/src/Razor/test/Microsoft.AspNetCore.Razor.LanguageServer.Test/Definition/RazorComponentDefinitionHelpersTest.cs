@@ -197,7 +197,7 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
             }
             """;
 
-        VerifyTryGetBoundTagHelpers(content, ignoreAttributes: true);
+        VerifyTryGetBoundTagHelpers(content, ignoreComponentAttributes: true);
     }
 
     [Fact]
@@ -356,13 +356,13 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
         string? tagHelperDescriptorName = null,
         string? attributeDescriptorPropertyName = null,
         bool isRazorFile = true,
-        bool ignoreAttributes = false)
+        bool ignoreComponentAttributes= false)
     {
         TestFileMarkupParser.GetPosition(content, out content, out var position);
 
         var codeDocument = CreateCodeDocument(content, isRazorFile);
 
-        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, ignoreAttributes, Logger, out var boundTagHelper, out var boundAttribute);
+        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, ignoreComponentAttributes, Logger, out var boundTagHelper, out var boundAttribute);
 
         if (tagHelperDescriptorName is null)
         {
