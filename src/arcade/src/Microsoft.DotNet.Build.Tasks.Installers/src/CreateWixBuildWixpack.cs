@@ -515,7 +515,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                         ("MsiPackage", "Id", ["SourceFile"]),
                         ("ExePackage", "Id", ["SourceFile"]),
                         ("Payload", "Id", ["SourceFile"]),
-                        ("WixStandardBootstrapperApplication", "Id", ["LicenseFile", "LocalizationFile", "ThemeFile"]),
+                        ("WixStandardBootstrapperApplication", "Id", ["LicenseFile", "LocalizationFile", "ThemeFile", "LogoFile"]),
                         ("WixVariable", "Id", ["Value"]),
                         ("Icon", "Id", ["SourceFile"])
                     };
@@ -1010,15 +1010,23 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 string bindName = BindPaths[i].GetMetadata("BindName");
                 if (!string.IsNullOrEmpty(bindName))
                 {
+                    string wixpackSubfolder = Path.GetRandomFileName();
                     string bindPath = BindPaths[i].ItemSpec;
-                    if (!bindName.EndsWith(".dll"))
+
+                    foreach (string file in Directory.GetFiles(bindPath, "*", SearchOption.TopDirectoryOnly))
                     {
-                        bindName += ".dll"; // Ensure the bind name ends with .dll
+                        // Copy known usable files only
+                        // .dll, .exe, .msi
+                        if (file.EndsWith(".dll") ||
+                            file.EndsWith(".exe") ||
+                            file.EndsWith(".msi"))
+                        {
+                            CopySourceFile(wixpackSubfolder, file);
+                        }
                     }
-                    CopySourceFile(bindName, Path.Combine(bindPath, bindName));
 
                     // Update the bind path item spec to the new relative folder
-                    BindPaths[i].ItemSpec = bindName;
+                    BindPaths[i].ItemSpec = wixpackSubfolder;
                     continue;
                 }
             }
