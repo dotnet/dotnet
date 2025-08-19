@@ -9,14 +9,15 @@ using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 
 /// <summary>
-///  Go to Definition support for Razor components.
+///  Go to Definition support for Razor tag helpers (Mvc tag helpers and components).
 /// </summary>
-internal interface IRazorComponentDefinitionService
+internal interface IDefinitionService
 {
     Task<LspLocation?> GetDefinitionAsync(
         IDocumentSnapshot documentSnapshot,
         DocumentPositionInfo positionInfo,
         ISolutionQueryOperations solutionQueryOperations,
-        bool ignoreAttributes,
+        bool ignoreComponentAttributes,
+        bool includeMvcTagHelpers,
         CancellationToken cancellationToken);
 }
