@@ -2,7 +2,7 @@
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'README.md'))\build\common.props" />
 
   <PropertyGroup>
-    <MarkdownAssemblyPath>$(ArtifactsDirectory)doc.tasks\bin\$(Configuration)\$(NetStandardVersion)\doc.tasks.dll</MarkdownAssemblyPath>
+    <MarkdownAssemblyPath>$(ArtifactsDirectory)doc.tasks\bin\$(Configuration)\$(NETCoreTargetFramework)\doc.tasks.dll</MarkdownAssemblyPath>
     <DocTaskPath>$(RepositoryRootDirectory)\tools-local\doc.tasks\doc.tasks.csproj</DocTaskPath>
   </PropertyGroup>
 
