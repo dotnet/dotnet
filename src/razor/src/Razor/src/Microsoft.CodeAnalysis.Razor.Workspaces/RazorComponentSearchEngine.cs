@@ -44,6 +44,11 @@ internal class RazorComponentSearchEngine(ILoggerFactory loggerFactory) : IRazor
         ISolutionQueryOperations solutionQueryOperations,
         CancellationToken cancellationToken)
     {
+        if (!tagHelper.IsComponentTagHelper)
+        {
+            return null;
+        }
+
         var typeName = tagHelper.GetTypeNameIdentifier();
         var namespaceName = tagHelper.GetTypeNamespace();
         if (typeName == null || namespaceName == null)
