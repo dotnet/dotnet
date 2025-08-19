@@ -341,7 +341,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
         static string serializeTypeParameter(BoundAttributeDescriptor attribute)
         {
-            if (attribute.Metadata.TryGetValue(ComponentMetadata.Component.TypeParameterWithAttributesKey, out var withAttributes))
+            if (attribute.Metadata is TypeParameterMetadata { NameWithAttributes: string withAttributes })
             {
                 return withAttributes;
             }
