@@ -42,7 +42,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>5.0.0-2.25414.103</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
     <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-2.25414.103</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-2.25414.103</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.0-preview.25414.103</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>5.0.0-2.25414.103</MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>10.0.0-preview.25414.103</MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-2.25414.103</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
