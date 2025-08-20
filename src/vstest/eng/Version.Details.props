@@ -12,9 +12,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25413.101</MicrosoftDiagnosticsNETCoreClientPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsDependencyModelPackageVersion>6.0.2</MicrosoftExtensionsDependencyModelPackageVersion>
-    <SystemComponentModelCompositionPackageVersion>8.0.0</SystemComponentModelCompositionPackageVersion>
+    <SystemComponentModelCompositionPackageVersion>4.5.0</SystemComponentModelCompositionPackageVersion>
     <!-- dotnet/core-setup dependencies -->
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>6.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>2.0.0</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
     <!-- dotnet/arcade dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25408.3</MicrosoftDotNetArcadeSdkPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
