@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting.New;
@@ -30,7 +31,7 @@ internal sealed class HtmlFormattingPass(ILoggerFactory loggerFactory) : IFormat
             _logger.LogTestOnly($"After FilterIncomingChanges:\r\n{changedText}");
         }
 
-        return Task.FromResult(changedText.GetTextChangesArray(context.SourceText));
+        return Task.FromResult(SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char));
     }
 
     private static ImmutableArray<TextChange> FilterIncomingChanges(RazorSyntaxTree syntaxTree, ImmutableArray<TextChange> changes)
