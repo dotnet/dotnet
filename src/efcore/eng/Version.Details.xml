@@ -3,47 +3,47 @@
   <ProductDependencies>
     <Dependency Name="Microsoft.Extensions.Caching.Memory" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Json" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.DependencyInjection" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.DependencyModel" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.HostFactoryResolver.Sources" Version="9.0.9-servicing.25415.12">
+    <Dependency Name="Microsoft.Extensions.HostFactoryResolver.Sources" Version="9.0.9-servicing.25419.16">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Logging" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NETCore.App.Ref" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.BrowserDebugHost.Transport" Version="9.0.9-servicing.25415.12">
+    <Dependency Name="Microsoft.NETCore.BrowserDebugHost.Transport" Version="9.0.9-servicing.25419.16">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <!--
          Win-x64 is used here because we have picked an arbitrary runtime identifier to flow the version of the latest NETCore.App runtime.
@@ -51,33 +51,33 @@
     -->
     <Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="System.Text.Json" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="System.Text.Encodings.Web" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
     <Dependency Name="System.Formats.Asn1" Version="9.0.9">
       <Uri>https://dev.azure.com/dnceng/internal/_git/dotnet-runtime</Uri>
-      <Sha>9a939063580582345c2b6f843687faf4538f32fb</Sha>
+      <Sha>893c2ebbd49952ca49e93298148af2d95a61a0a4</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25407.2">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="9.0.0-beta.25415.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e29823691315ed6b3acff20d5bdf3b0be7628283</Sha>
+      <Sha>d87d66c43d0660e5c8e84e667c5c8a8140bce888</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="9.0.0-beta.25407.2">
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="9.0.0-beta.25415.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e29823691315ed6b3acff20d5bdf3b0be7628283</Sha>
+      <Sha>d87d66c43d0660e5c8e84e667c5c8a8140bce888</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.25407.2">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="9.0.0-beta.25415.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>e29823691315ed6b3acff20d5bdf3b0be7628283</Sha>
+      <Sha>d87d66c43d0660e5c8e84e667c5c8a8140bce888</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
