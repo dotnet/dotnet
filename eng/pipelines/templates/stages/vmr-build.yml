@@ -147,6 +147,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       scope: ${{ parameters.scope }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       verifications: ${{ parameters.verifications }}
       ${{ if ne(parameters.scope, 'full') }}:

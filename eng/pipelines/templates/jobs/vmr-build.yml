@@ -549,8 +549,15 @@ jobs:
 
           customEnvVars=""
           customPreBuildArgs=""
-          customBuildArgs="$(baseArguments) $(signArguments) $(_SignDiagnosticFilesArgs)"
-          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(signProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+          customBuildArgs="$(baseArguments)"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+
+          # We shouldn't pass signing arguments to the build script when building source-only
+          # because signing source-built artifacts happens post-build.
+          if [[ '${{ parameters.buildSourceOnly }}' != 'True' ]]; then
+            customBuildArgs="$customBuildArgs $(signArguments) $(_SignDiagnosticFilesArgs)"
+            extraBuildProperties="$extraBuildProperties $(signProperties)"
+          fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
@@ -657,11 +664,17 @@ jobs:
         displayName: Run Tests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.buildSourceOnly, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
-    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
-      parameters:
-        enableMicrobuild: true
-        enableMicrobuildForMacAndLinux: true
+  - ${{ if eq(parameters.sign, 'True') }}:
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          echo "Signing the Source-Built artifacts"
+        displayName: Sign Source-Built Artifacts
+
+    - ${{ if and(eq(parameters.sign, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
+      - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
+        parameters:
+          enableMicrobuild: true
+          enableMicrobuildForMacAndLinux: true
 
   - task: CopyFiles@2
     displayName: Prepare BuildLogs staging directory
