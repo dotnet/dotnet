@@ -395,20 +395,20 @@ if [[ "$sourceOnly" == "true" ]]; then
     }
 
     GIT_DIR="$scriptroot/.git"
+    fake_git=false
     # Check if exist .git directory or file
     if [ -f "$GIT_DIR" ]; then
       if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
-        if [ -z "$releaseManifest" ] && { [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; }; then
-            echo "ERROR: $scriptroot is not a git worktree, either --release-manifest or --source-repository and --source-version must be specified"
-            exit 1
-        fi
+        echo "ERROR: $GIT_DIR exist, but does not contain a valid 'gitdir:' pointer."
+        exit 1
       else
-        if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
-          echo "ERROR: Source Link arguments cannot be used in a git repository"
-          exit 1
-        fi
+        GIT_DIR=$(grep -oP '^gitdir: \K.*' "$GIT_DIR")
+        fake_git=true
       fi
     else
+      fake_git=true
+    fi
+    if [[ "$fake_git" == true ]]; then
       if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
         if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
           echo "ERROR: Source Link arguments cannot be used in a git repository"
@@ -444,8 +444,8 @@ if [[ "$sourceOnly" == "true" ]]; then
         echo "$sourceVersion" > "$GIT_DIR/HEAD"
       fi
 
-      if [ ! -d "$scriptroot/.git" ]; then
-        echo "ERROR: $scriptroot is not a git repository."
+      if [ ! -d "$GIT_DIR" ]; then
+        echo "ERROR: $GIT_DIR is not a git repository."
         exit 1
       fi
     fi
