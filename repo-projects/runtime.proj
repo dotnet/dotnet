@@ -17,9 +17,6 @@
 
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
-    
-    <!-- The bootstrapping build drops its log in the root artifacts/log folder for the repo build. -->
-    <MoveNoConfigLogs>true</MoveNoConfigLogs>
 
     <!--
       When building a vertical where we explicitly request using the Mono runtime, only build the Mono runtime.
