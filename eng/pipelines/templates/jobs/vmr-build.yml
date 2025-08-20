@@ -225,14 +225,14 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-  # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
-  ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-    value: ''
-  ${{ else }}:
-    ${{ if eq(parameters.targetOS, 'windows') }}:
-      value: $(commandPrefix)cleanWhileBuilding
+    # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      value: ''
     ${{ else }}:
-      value: $(commandPrefix)clean-while-building
+      ${{ if eq(parameters.targetOS, 'windows') }}:
+        value: $(commandPrefix)cleanWhileBuilding
+      ${{ else }}:
+        value: $(commandPrefix)clean-while-building
 
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
@@ -743,4 +743,5 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+
 
