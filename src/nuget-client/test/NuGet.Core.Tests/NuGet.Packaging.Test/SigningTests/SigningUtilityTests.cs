@@ -2,34 +2,26 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-#if IS_SIGNING_SUPPORTED
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
-#endif
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
-#if IS_SIGNING_SUPPORTED
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
-#endif
 using NuGet.Common;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
-#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
-#endif
 using Xunit;
 
 namespace NuGet.Packaging.Test
 {
-#if IS_SIGNING_SUPPORTED
     using HashAlgorithmName = Common.HashAlgorithmName;
-#endif
 
     [Collection(SigningTestsCollection.Name)]
     public class SigningUtilityTests
@@ -157,7 +149,6 @@ namespace NuGet.Packaging.Test
 
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public void CreateSignedAttributes_SignPackageRequest_WhenRequestNull_Throws()
         {
@@ -679,7 +670,6 @@ namespace NuGet.Packaging.Test
                     logger);
             }
         }
-#endif
 
         private static AuthorSignPackageRequest CreateRequest(X509Certificate2 certificate)
         {
@@ -688,7 +678,7 @@ namespace NuGet.Packaging.Test
                 Common.HashAlgorithmName.SHA256,
                 Common.HashAlgorithmName.SHA256);
         }
-#if IS_SIGNING_SUPPORTED
+
         private static RepositorySignPackageRequest CreateRequestRepository(
             X509Certificate2 certificate,
             Uri v3ServiceIndexUrl,
@@ -701,6 +691,5 @@ namespace NuGet.Packaging.Test
                 v3ServiceIndexUrl,
                 packageOwners);
         }
-#endif
     }
 }
