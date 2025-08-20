@@ -313,14 +313,6 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
                 {
                     return;
                 }
-
-                // If this is for previously-source-built and the package was already added to SBRP, skip this package pattern
-                if (sourceName.Equals(PreviouslySourceBuiltSourceName) &&
-                    allSourcesPackages.ContainsKey(SbrpCacheSourceName) &&
-                    allSourcesPackages[SbrpCacheSourceName].Contains(packagePattern))
-                {
-                    return;
-                }
             }
 
             pkgSrc.Add(new XElement("package", new XAttribute("pattern", packagePattern)));
