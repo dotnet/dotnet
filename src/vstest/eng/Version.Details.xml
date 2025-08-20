@@ -11,7 +11,7 @@
       <Sha>adfea8e331724cfd46007dfefec405b5e5faad1d</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="System.ComponentModel.Composition" Version="8.0.0">
+    <Dependency Name="System.ComponentModel.Composition" Version="4.5.0">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha>30ab651fcb4354552bd4891619a0bdd81e0ebdbf</Sha>
     </Dependency>
@@ -21,7 +21,7 @@
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="6.0.0">
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="2.0.0">
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>7d57652f33493fa022125b7f63aad0d70c52d810</Sha>
     </Dependency>

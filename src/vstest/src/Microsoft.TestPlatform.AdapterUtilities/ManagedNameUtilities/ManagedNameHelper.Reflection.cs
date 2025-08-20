@@ -13,6 +13,20 @@ namespace Microsoft.TestPlatform.AdapterUtilities.ManagedNameUtilities;
 
 public static partial class ManagedNameHelper
 {
+    private readonly struct AssemblyNameCache
+    {
+        public AssemblyNameCache(Assembly? assembly, string simpleName)
+        {
+            Assembly = assembly;
+            SimpleName = simpleName;
+        }
+
+        public Assembly? Assembly { get; }
+        public string SimpleName { get; }
+    }
+
+    private static AssemblyNameCache? s_lastAssemblyNameCache;
+
     /// <summary>
     /// Gets fully qualified managed type and method name from given <see href="MethodBase" /> instance.
     /// </summary>
@@ -211,7 +225,19 @@ public static partial class ManagedNameHelper
             hierarchyValues[HierarchyConstants.Levels.ClassIndex] = managedTypeName.Substring(hierarchyPos[1] + 1, hierarchyPos[2] - hierarchyPos[1] - 1);
             hierarchyValues[HierarchyConstants.Levels.NamespaceIndex] = managedTypeName.Substring(hierarchyPos[0], hierarchyPos[1] - hierarchyPos[0]);
         }
-        hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = method.DeclaringType?.Assembly?.GetName()?.Name ?? string.Empty;
+
+        var assembly = method.DeclaringType?.Assembly;
+        if (s_lastAssemblyNameCache is { } cache &&
+            cache.Assembly == assembly)
+        {
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = cache.SimpleName;
+        }
+        else
+        {
+            var assemblyName = assembly?.GetName()?.Name ?? string.Empty;
+            hierarchyValues[HierarchyConstants.Levels.ContainerIndex] = assemblyName;
+            s_lastAssemblyNameCache = new AssemblyNameCache(assembly, assemblyName);
+        }
     }
 
     /// <summary>
