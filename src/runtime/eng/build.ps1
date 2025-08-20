@@ -380,9 +380,10 @@ if ($bootstrap -eq $True) {
   }
 
   $bootstrapArguments += " /p:TargetArchitecture=$($arch[0])"
-  $bootstrapArguments += " -configuration $((Get-Culture).TextInfo.ToTitleCase($configuration[0]))"
+  $config = $((Get-Culture).TextInfo.ToTitleCase($configuration[0]))
+  $bootstrapArguments += " -configuration $config"
 
-  $bootstrapArguments += " /p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/bootstrap.binlog"
+  $bootstrapArguments += " /p:Subset=bootstrap /bl:$PSScriptRoot/../artifacts/log/$config/bootstrap.binlog"
   Invoke-Expression "& `"$PSScriptRoot/common/build.ps1`" $bootstrapArguments"
 
   # Remove artifacts from the bootstrap build so the product build is a "clean" build.
