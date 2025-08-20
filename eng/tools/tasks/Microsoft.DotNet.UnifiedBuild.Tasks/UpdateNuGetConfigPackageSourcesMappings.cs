@@ -299,7 +299,7 @@ namespace Microsoft.DotNet.UnifiedBuild.Tasks
             foreach (string version in packages[packagePattern])
             {
                 // If any package version is in current packages, skip this package pattern
-                if (currentPackages.ContainsKey(packagePattern))
+                if (currentPackages.ContainsKey(packagePattern) && currentPackages[packagePattern].Contains(version))
                 {
                     return;
                 }
