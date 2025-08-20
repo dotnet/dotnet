@@ -332,6 +332,16 @@ internal static class SourceTextExtensions
         return lfCount > crlfCount;
     }
 
+    /// <summary>
+    /// Wrapper for Roslyn's GetTextChanges method that returns an immutable array
+    /// </summary>
+    /// <remarks>
+    /// Roslyn has a ChangedText class, which doesn't realise changes to a SourceText, but instead just keeps track
+    /// of them. It also adds an optimization to the GetTextChanges method that means it will not necessarily compute changes
+    /// but rather re-use the existing tracked changes. Those things combined means the exact nature of individual changes
+    /// made to a SourceText can affect the output of this method. For consistent results across multiple systems, consider
+    /// calling our SourceTextDiffer instead.
+    /// </remarks>
     public static ImmutableArray<TextChange> GetTextChangesArray(this SourceText newText, SourceText oldText)
     {
         var list = newText.GetTextChanges(oldText);

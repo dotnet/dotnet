@@ -9,6 +9,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Utilities;
@@ -67,7 +68,6 @@ internal static class CodeWriterExtensions
 
         return ImmutableCollectionsMarshal.AsImmutableArray(array);
     }
-
 
     public static bool IsAtBeginningOfLine(this CodeWriter writer)
     {
@@ -362,6 +362,15 @@ internal static class CodeWriterExtensions
         return writer.Write("(");
     }
 
+    public static CodeWriter WriteStartMethodInvocation(
+        this CodeWriter writer,
+        [InterpolatedStringHandlerArgument(nameof(writer))] ref CodeWriter.WriteInterpolatedStringHandler handler)
+    {
+        writer.Write(ref handler);
+        
+        return writer.Write("(");
+    }
+
     public static CodeWriter WriteEndMethodInvocation(this CodeWriter writer)
     {
         return WriteEndMethodInvocation(writer, endLine: true);
@@ -586,28 +595,56 @@ internal static class CodeWriterExtensions
         return new CSharpCodeWritingScope(writer);
     }
 
-    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer, params string[] parameterNames)
+    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer)
+        => writer.WriteLambdaHeader().BuildScope();
+
+    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer, string parameterName)
+        => writer.WriteLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildLambda<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
+        => writer.WriteLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer)
+        => writer.WriteAsyncLambdaHeader().BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer, string parameterName)
+        => writer.WriteAsyncLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
+        => writer.WriteAsyncLambdaHeader(parameterName).BuildScope();
+
+    public static CodeWriter WriteLambdaHeader(this CodeWriter writer)
+        => writer.Write("() => ");
+
+    public static CodeWriter WriteLambdaHeader(this CodeWriter writer, string parameterName)
+        => writer.Write($"({parameterName}) => ");
+
+    public static CodeWriter WriteLambdaHeader<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
     {
-        return BuildLambda(writer, async: false, parameterNames: parameterNames);
+        writer.Write("(");
+        parameterName.WriteTo(writer);
+        writer.Write(") => ");
+
+        return writer;
     }
 
-    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer, params string[] parameterNames)
+    public static CodeWriter WriteAsyncLambdaHeader(this CodeWriter writer)
+        => writer.Write($"async() => ");
+
+    public static CodeWriter WriteAsyncLambdaHeader(this CodeWriter writer, string parameterName)
+        => writer.Write($"async({parameterName}) => ");
+
+    public static CodeWriter WriteAsyncLambdaHeader<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
     {
-        return BuildLambda(writer, async: true, parameterNames: parameterNames);
-    }
+        writer.Write("async(");
+        parameterName.WriteTo(writer);
+        writer.Write(") => ");
 
-    private static CSharpCodeWritingScope BuildLambda(CodeWriter writer, bool async, string[] parameterNames)
-    {
-        if (async)
-        {
-            writer.Write("async");
-        }
-
-        writer.Write("(").Write(string.Join(", ", parameterNames)).Write(") => ");
-
-        var scope = new CSharpCodeWritingScope(writer);
-
-        return scope;
+        return writer;
     }
 
 #nullable enable
@@ -934,6 +971,11 @@ internal static class CodeWriterExtensions
 
         public void Dispose()
         {
+            if (_writer is null)
+            {
+                return;
+            }
+
             WriteEndScope();
         }
 

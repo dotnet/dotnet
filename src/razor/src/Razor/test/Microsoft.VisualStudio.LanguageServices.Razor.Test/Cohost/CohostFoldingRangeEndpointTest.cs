@@ -17,8 +17,9 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [Fact]
-    public Task IfStatements()
+    [Theory]
+    [CombinatorialData]
+    public Task IfStatements(bool miscellaneousFile)
         => VerifyFoldingRangesAsync("""
             <div>
               @if (true) {[|
@@ -36,7 +37,8 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             |]
             @if (true) {[|
             }|]
-            """);
+            """,
+            miscellaneousFile: miscellaneousFile);
 
     [Fact]
     public Task LockStatement()
@@ -213,10 +215,10 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             }|]
             """);
 
-    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null)
+    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false)
     {
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
-        var document = CreateProjectAndRazorDocument(source, fileKind);
+        var document = CreateProjectAndRazorDocument(source, fileKind, miscellaneousFile: miscellaneousFile);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlSpans = spans.GetValueOrDefault("html").NullToEmpty();
