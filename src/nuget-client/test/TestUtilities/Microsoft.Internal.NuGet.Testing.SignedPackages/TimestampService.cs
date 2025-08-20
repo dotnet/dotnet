@@ -6,30 +6,22 @@
 
 using System;
 using System.Collections.Generic;
-#if IS_SIGNING_SUPPORTED
 using System.Formats.Asn1;
 using System.Net;
-#endif
 using System.Numerics;
 using System.Security.Cryptography;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.Pkcs;
-#endif
 using System.Security.Cryptography.X509Certificates;
 using NuGet.Packaging.Signing;
-#if IS_SIGNING_SUPPORTED
 using Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1;
-#endif
 
 namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 {
     // https://tools.ietf.org/html/rfc3161
     public sealed class TimestampService : HttpResponder
     {
-#if IS_SIGNING_SUPPORTED
         private const string RequestContentType = "application/timestamp-query";
         private const string ResponseContentType = "application/timestamp-response";
-#endif
         private readonly TimestampServiceOptions _options;
         private readonly HashSet<BigInteger> _serialNumbers;
         private BigInteger _nextSerialNumber;
@@ -128,7 +120,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
             return new TimestampService(certificateAuthority, certificate, uri, serviceOptions);
         }
 
-#if IS_SIGNING_SUPPORTED
         public override void Respond(HttpListenerContext context)
         {
             if (context == null)
@@ -272,6 +263,5 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 
             return new Asn1.Accuracy(seconds, milliseconds, microseconds);
         }
-#endif
     }
 }

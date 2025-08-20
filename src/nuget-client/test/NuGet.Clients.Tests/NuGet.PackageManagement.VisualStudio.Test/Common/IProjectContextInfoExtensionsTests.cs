@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.IsUpgradeableAsync(
-                    projectContextInfo: null,
+                    projectContextInfo: null!,
                     Mock.Of<IServiceBroker>(),
                     CancellationToken.None)
                 .AsTask());
@@ -35,7 +36,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.IsUpgradeableAsync(
                     Mock.Of<IProjectContextInfo>(),
-                    serviceBroker: null,
+                    serviceBroker: null!,
                     CancellationToken.None)
                 .AsTask());
         }
@@ -77,7 +78,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectUpgraderService>(projectUpgraderService.Object));
+                .Returns(new ValueTask<INuGetProjectUpgraderService?>(projectUpgraderService.Object));
 
             bool actualResult = await IProjectContextInfoExtensions.IsUpgradeableAsync(
                 project.Object,
@@ -92,7 +93,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetInstalledPackagesAsync(
-                    projectContextInfo: null,
+                    projectContextInfo: null!,
                     Mock.Of<IServiceBroker>(),
                     CancellationToken.None)
                 .AsTask());
@@ -104,7 +105,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetInstalledPackagesAsync(
                     Mock.Of<IProjectContextInfo>(),
-                    serviceBroker: null,
+                    serviceBroker: null!,
                     CancellationToken.None)
                 .AsTask());
         }
@@ -145,7 +146,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService.Object));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService.Object));
 
             IReadOnlyCollection<IPackageReferenceContextInfo> actualResult = await IProjectContextInfoExtensions.GetInstalledPackagesAsync(
                 project.Object,
@@ -160,7 +161,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetMetadataAsync(
-                    projectContextInfo: null,
+                    projectContextInfo: null!,
                     Mock.Of<IServiceBroker>(),
                     CancellationToken.None)
                 .AsTask());
@@ -172,7 +173,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetMetadataAsync(
                     Mock.Of<IProjectContextInfo>(),
-                    serviceBroker: null,
+                    serviceBroker: null!,
                     CancellationToken.None)
                 .AsTask());
         }
@@ -213,7 +214,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService.Object));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService.Object));
 
             IProjectMetadataContextInfo actualResult = await IProjectContextInfoExtensions.GetMetadataAsync(
                 project.Object,
@@ -228,7 +229,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetUniqueNameOrNameAsync(
-                    projectContextInfo: null,
+                    projectContextInfo: null!,
                     Mock.Of<IServiceBroker>(),
                     CancellationToken.None)
                 .AsTask());
@@ -240,7 +241,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.GetUniqueNameOrNameAsync(
                     Mock.Of<IProjectContextInfo>(),
-                    serviceBroker: null,
+                    serviceBroker: null!,
                     CancellationToken.None)
                 .AsTask());
         }
@@ -261,8 +262,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData(null, "name")]
         [InlineData("unique", "name")]
         public async Task GetUniqueNameOrNameAsync_WhenArgumentsAreValid_ReturnsString(
-            string uniqueName,
-            string name)
+            string? uniqueName,
+            string? name)
         {
             var serviceBroker = new Mock<IServiceBroker>();
             var projectManagerService = new Mock<INuGetProjectManagerService>();
@@ -276,7 +277,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             projectMetadata.SetupGet(x => x.UniqueName)
                 .Returns(uniqueName);
 
-            string expectedResult = uniqueName ?? name;
+            string expectedResult = (uniqueName ?? name)!;
 
             project.SetupGet(x => x.ProjectId)
                 .Returns(projectId);
@@ -294,9 +295,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService.Object));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService.Object));
 
-            string actualResult = await IProjectContextInfoExtensions.GetUniqueNameOrNameAsync(
+            string? actualResult = await IProjectContextInfoExtensions.GetUniqueNameOrNameAsync(
                 project.Object,
                 serviceBroker.Object,
                 CancellationToken.None);
@@ -319,7 +320,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.Is<ServiceRpcDescriptor>(descriptor => descriptor == NuGetServices.ProjectManagerService),
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService));
 
             Mock.Get(projectManagerService)
                 .Setup(prj => prj.GetPackageFoldersAsync(It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<CancellationToken>()))
@@ -336,7 +337,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.TryGetInstalledPackageFilePathAsync(
-                    projectContextInfo: null,
+                    projectContextInfo: null!,
                     Mock.Of<IServiceBroker>(),
                     PackageIdentity,
                     CancellationToken.None)
@@ -349,7 +350,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
             await VerifyMicrosoftAssumesExceptionAsync(
                 () => IProjectContextInfoExtensions.TryGetInstalledPackageFilePathAsync(
                     Mock.Of<IProjectContextInfo>(),
-                    serviceBroker: null,
+                    serviceBroker: null!,
                     PackageIdentity,
                     CancellationToken.None)
                 .AsTask());
@@ -362,7 +363,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                 () => IProjectContextInfoExtensions.TryGetInstalledPackageFilePathAsync(
                     Mock.Of<IProjectContextInfo>(),
                     Mock.Of<IServiceBroker>(),
-                    packageIdentity: null,
+                    packageIdentity: null!,
                     CancellationToken.None)
                 .AsTask());
         }
@@ -407,7 +408,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.Is<string>(id => string.Equals(projectId, id)),
                     It.Is<PackageIdentity>(pi => ReferenceEquals(PackageIdentity, pi)),
                     It.IsAny<CancellationToken>()))
-                .Returns(new ValueTask<(bool, string)>(expectedResult));
+                .Returns(new ValueTask<(bool, string?)>(expectedResult));
 
             serviceBroker.Setup(
 #pragma warning disable ISB001 // Dispose of proxies
@@ -416,9 +417,9 @@ namespace NuGet.PackageManagement.VisualStudio.Test
                     It.IsAny<ServiceActivationOptions>(),
                     It.IsAny<CancellationToken>()))
 #pragma warning restore ISB001 // Dispose of proxies
-                .Returns(new ValueTask<INuGetProjectManagerService>(projectManagerService.Object));
+                .Returns(new ValueTask<INuGetProjectManagerService?>(projectManagerService.Object));
 
-            (bool, string) actualResult = await IProjectContextInfoExtensions.TryGetInstalledPackageFilePathAsync(
+            (bool, string?) actualResult = await IProjectContextInfoExtensions.TryGetInstalledPackageFilePathAsync(
                 project.Object,
                 serviceBroker.Object,
                 PackageIdentity,

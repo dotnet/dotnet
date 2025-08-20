@@ -6,17 +6,18 @@
 
   <ItemGroup>
     <ProjectReference Include="$(TasksDir)Microsoft.DotNet.SourceBuild.Tasks.LeakDetection\Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.csproj" />
+    
+    <!-- This needs to be executed before poisoning because it can end up deleting unneeded package
+         files which we don't want to have poisoned; otherwise it would lead to errors when those files
+         are found to be missing. -->
+    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj" />
   </ItemGroup>
 
   <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.LeakDetection.MarkAndCatalogPackages" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksLeakDetectionAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="PoisonPrebuiltPackages"
+  <Target Name="PoisonPackages"
           BeforeTargets="Build"
           Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)PoisonPrebuiltPackages.complete">
-    <PropertyGroup>
-      <SourceBuiltPoisonMarkerFile>.source-built.xml</SourceBuiltPoisonMarkerFile>
-      <SourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-source-built-catalog.xml</SourceBuiltPoisonReportDataFile>
-    </PropertyGroup>
+          Outputs="$(BaseIntermediateOutputPath)PoisonPackages.complete">
 
     <ItemGroup>
       <PrebuiltPackages Include="$(PrebuiltPackagesPath)**/*.nupkg" />
@@ -32,7 +33,7 @@
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
              Condition="Exists('$(SharedComponentsArtifactsPath)') and !$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))"
-             Properties="IncludeOnlyToolingComponents=true">
+             Properties="SharedComponentFilterMode=ToolingOnly">
       <Output TaskParameter="TargetOutputs" ItemName="_FilteredSharedComponentPackages" />
     </MSBuild>
 
@@ -48,10 +49,9 @@
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />
 
-    <!-- There's an issue where the outputs of these tasks are not being fed into the poison check
-         See https://github.com/dotnet/source-build/issues/5297 -->
-    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PoisonReportDataFile)" MarkerFileName="$(PoisonMarkerFile)" />
-    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages);@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SourceBuiltPoisonReportDataFile)" MarkerFileName="$(SourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PrebuiltPackages)" CatalogOutputFilePath="$(PrebuiltPoisonReportDataFile)" MarkerFileName="$(PrebuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(PreviouslySourceBuiltPackages)" CatalogOutputFilePath="$(PreviouslySourceBuiltPoisonReportDataFile)" MarkerFileName="$(PreviouslySourceBuiltPoisonMarkerFile)" />
+    <MarkAndCatalogPackages PackagesToMark="@(SharedComponentPackagesToPoison)" CatalogOutputFilePath="$(SharedComponentPoisonReportDataFile)" MarkerFileName="$(SharedComponentPoisonMarkerFile)" />
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Done poisoning." />
 

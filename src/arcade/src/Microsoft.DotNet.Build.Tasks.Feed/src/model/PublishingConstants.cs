@@ -80,7 +80,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         public const string FeedStagingInternalForInstallers = "https://dotnetbuilds.blob.core.windows.net/internal";
         public const string FeedStagingInternalForChecksums = "https://dotnetbuilds.blob.core.windows.net/internal-checksums";
 
-        private const string FeedGeneralTesting = "https://pkgs.dev.azure.com/dnceng/public/_packaging/general-testing/nuget/v3/index.json";
+        public const string FeedDevForInstallers = "https://dotnetbuilds.blob.core.windows.net/dev";
+        public const string FeedDevInternalForInstallers = "https://dotnetbuilds.blob.core.windows.net/dev-internal";
+
+        private const string FeedDev = "https://pkgs.dev.azure.com/dnceng/public/_packaging/general-testing/nuget/v3/index.json";
 
         private const string FeedDotNetExperimental = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json";
 
@@ -149,22 +152,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         {
             (Packages, FeedDotNet6InternalShipping, AssetSelection.ShippingOnly),
             (Packages, FeedDotNet6InternalTransport, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingInternalForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
-        };
-
-        private static TargetFeedSpecification[] DotNet7Feeds =
-        {
-            (Packages, FeedDotNet7Shipping, AssetSelection.ShippingOnly),
-            (Packages, FeedDotNet7Transport, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
-        };
-
-        private static TargetFeedSpecification[] DotNet7InternalFeeds =
-        {
-            (Packages, FeedDotNet7InternalShipping, AssetSelection.ShippingOnly),
-            (Packages, FeedDotNet7InternalTransport, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingInternalForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
         };
@@ -331,18 +318,18 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private static TargetFeedSpecification[] GeneralTestingFeeds =
         {
-            (Packages, FeedGeneralTesting, AssetSelection.ShippingOnly),
-            (Packages, FeedGeneralTesting, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+            (Packages, FeedDev, AssetSelection.ShippingOnly),
+            (Packages, FeedDev, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedDevForInstallers),
+            (TargetFeedContentType.Checksum, FeedDevForInstallers),
         };
 
         private static TargetFeedSpecification[] GeneralTestingInternalFeeds =
         {
             (Packages, FeedGeneralTestingInternal, AssetSelection.ShippingOnly),
             (Packages, FeedGeneralTestingInternal, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingInternalForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
+            (InstallersAndSymbols, FeedDevInternalForInstallers),
+            (TargetFeedContentType.Checksum, FeedDevInternalForInstallers),
         };
         #endregion
 
@@ -1367,7 +1354,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: GeneralTestingFeeds,
-                symbolTargetType: SymbolPublishVisibility.Public),
+                symbolTargetType: SymbolPublishVisibility.Public,
+                isProduction: false),
 
             // General Testing Internal,
             new TargetChannelConfig(
@@ -1378,7 +1366,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: GeneralTestingInternalFeeds,
-                symbolTargetType: SymbolPublishVisibility.Internal),
+                symbolTargetType: SymbolPublishVisibility.Internal,
+                isProduction: false),
 
             // VS 16.6,
             new TargetChannelConfig(
