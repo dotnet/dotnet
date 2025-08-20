@@ -155,24 +155,24 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     protected TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
+        string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool createSeparateRemoteAndLocalWorkspaces = false,
-        bool inGlobalNamespace = false)
+        bool inGlobalNamespace = false,
+        bool miscellaneousFile = false)
     {
         // Using IsLegacy means null == component, so easier for test authors
         var isComponent = fileKind != RazorFileKind.Legacy;
 
-        var documentFilePath = isComponent
+        documentFilePath ??= isComponent
             ? TestProjectData.SomeProjectComponentFile1.FilePath
             : TestProjectData.SomeProjectFile1.FilePath;
 
-        var projectFilePath = TestProjectData.SomeProject.FilePath;
-        var projectName = Path.GetFileNameWithoutExtension(projectFilePath);
-        var projectId = ProjectId.CreateNewId(debugName: projectName);
+        var projectId = ProjectId.CreateNewId(debugName: TestProjectData.SomeProject.DisplayName);
         var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
 
         var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
-        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
 
         if (createSeparateRemoteAndLocalWorkspaces)
         {
@@ -184,7 +184,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             return CreateLocalProjectAndRazorDocument(
                 remoteDocument.Project.Solution,
                 projectId,
-                projectName,
+                miscellaneousFile,
                 documentId,
                 documentFilePath,
                 contents,
@@ -201,7 +201,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private TextDocument CreateLocalProjectAndRazorDocument(
         Solution remoteSolution,
         ProjectId projectId,
-        string projectName,
+        bool miscellaneousFile,
         DocumentId documentId,
         string documentFilePath,
         string contents,
@@ -221,7 +221,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(RoslynDevenvExportProvider);
         AddDisposable(workspace);
 
-        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
 
         // If we're creating remote and local workspaces, then we'll return the local document, and have to allow
         // the remote service invoker to map from the local solution to the remote one.
@@ -230,8 +230,12 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         return razorDocument;
     }
 
-    private TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    private TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
     {
+        // We simulate a miscellaneous file project by not having a project file path.
+        var projectFilePath = miscellaneousFile ? null : TestProjectData.SomeProject.FilePath;
+        var projectName = miscellaneousFile ? "" : Path.GetFileNameWithoutExtension(projectFilePath);
+
         var sgAssembly = typeof(RazorSourceGenerator).Assembly;
 
         var projectInfo = ProjectInfo
@@ -241,14 +245,15 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                 name: projectName,
                 assemblyName: projectName,
                 LanguageNames.CSharp,
-                documentFilePath,
+                projectFilePath,
                 compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .WithMetadataReferences(AspNet80.ReferenceInfos.All.Select(r => r.Reference))
-            .WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace)
-            // TODO: Can we just use an object reference? Trying to do so now results in a serialization error from Roslyn
+            .WithMetadataReferences(
+                miscellaneousFile
+                    ? Net461.ReferenceInfos.All.Select(r => r.Reference) // This isn't quite what Roslyn does, but its close enough for our tests
+                    : AspNet80.ReferenceInfos.All.Select(r => r.Reference))
             .WithAnalyzerReferences([new AnalyzerFileReference(sgAssembly.Location, TestAnalyzerAssemblyLoader.LoadFromFile)]);
 
-        if (!inGlobalNamespace)
+        if (!miscellaneousFile && !inGlobalNamespace)
         {
             projectInfo = projectInfo.WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace);
         }
@@ -260,38 +265,41 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                 documentId,
                 documentFilePath,
                 SourceText.From(contents),
-                filePath: documentFilePath)
-            .AddAdditionalDocument(
-                DocumentId.CreateNewId(projectId),
-                name: TestProjectData.SomeProjectComponentImportFile1.FilePath,
-                text: SourceText.From("""
+                filePath: documentFilePath);
+
+        if (!miscellaneousFile)
+        {
+            solution = solution.AddAdditionalDocument(
+                    DocumentId.CreateNewId(projectId),
+                    name: TestProjectData.SomeProjectComponentImportFile1.FilePath,
+                    text: SourceText.From("""
                     @using Microsoft.AspNetCore.Components
                     @using Microsoft.AspNetCore.Components.Authorization
                     @using Microsoft.AspNetCore.Components.Forms
                     @using Microsoft.AspNetCore.Components.Routing
                     @using Microsoft.AspNetCore.Components.Web
                     """),
-                filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath)
-            .AddAdditionalDocument(
-                DocumentId.CreateNewId(projectId),
-                name: "_ViewImports.cshtml",
-                text: SourceText.From("""
+                    filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath)
+                .AddAdditionalDocument(
+                    DocumentId.CreateNewId(projectId),
+                    name: "_ViewImports.cshtml",
+                    text: SourceText.From("""
                     @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
                     """),
-                filePath: TestProjectData.SomeProjectImportFile.FilePath);
+                    filePath: TestProjectData.SomeProjectImportFile.FilePath);
 
-        if (additionalFiles is not null)
-        {
-            foreach (var file in additionalFiles)
+            if (additionalFiles is not null)
             {
-                solution = Path.GetExtension(file.fileName) == ".cs"
-                    ? solution.AddDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName)
-                    : solution.AddAdditionalDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName);
+                foreach (var file in additionalFiles)
+                {
+                    solution = Path.GetExtension(file.fileName) == ".cs"
+                        ? solution.AddDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName)
+                        : solution.AddAdditionalDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName);
+                }
             }
-        }
 
-        var globalConfigContent = new StringBuilder();
-        globalConfigContent.AppendLine($"""
+            var globalConfigContent = new StringBuilder();
+            globalConfigContent.AppendLine($"""
                     is_global = true
 
                     build_property.RazorLangVersion = {FallbackRazorConfiguration.Latest.LanguageVersion}
@@ -299,27 +307,28 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
                     build_property.RootNamespace = {TestProjectData.SomeProject.RootNamespace}
                     """);
 
-        var projectBasePath = TestProjectData.SomeProjectPath;
-        // Normally MS Build targets do this for us, but we're on our own!
-        foreach (var razorDocument in solution.Projects.Single().AdditionalDocuments)
-        {
-            if (razorDocument.FilePath is not null &&
-                razorDocument.FilePath.StartsWith(projectBasePath))
+            var projectBasePath = Path.GetDirectoryName(projectFilePath);
+            // Normally MS Build targets do this for us, but we're on our own!
+            foreach (var razorDocument in solution.Projects.Single().AdditionalDocuments)
             {
-                var relativePath = razorDocument.FilePath[(projectBasePath.Length + 1)..];
-                globalConfigContent.AppendLine($"""
+                if (razorDocument.FilePath is not null &&
+                    razorDocument.FilePath.StartsWith(projectBasePath))
+                {
+                    var relativePath = razorDocument.FilePath[(projectBasePath.Length + 1)..];
+                    globalConfigContent.AppendLine($"""
 
                 [{razorDocument.FilePath.AssumeNotNull().Replace('\\', '/')}]
                 build_metadata.AdditionalFiles.TargetPath = {Convert.ToBase64String(Encoding.UTF8.GetBytes(relativePath))}
                 """);
+                }
             }
-        }
 
-        solution = solution.AddAnalyzerConfigDocument(
-                DocumentId.CreateNewId(projectId),
-                name: ".globalconfig",
-                text: SourceText.From(globalConfigContent.ToString()),
-                filePath: Path.Combine(TestProjectData.SomeProjectPath, ".globalconfig"));
+            solution = solution.AddAnalyzerConfigDocument(
+                    DocumentId.CreateNewId(projectId),
+                    name: ".globalconfig",
+                    text: SourceText.From(globalConfigContent.ToString()),
+                    filePath: Path.Combine(TestProjectData.SomeProjectPath, ".globalconfig"));
+        }
 
         return solution.GetAdditionalDocument(documentId).AssumeNotNull();
     }

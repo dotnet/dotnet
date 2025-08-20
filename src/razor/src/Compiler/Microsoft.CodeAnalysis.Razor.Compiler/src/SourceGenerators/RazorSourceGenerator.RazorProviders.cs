@@ -77,18 +77,28 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var (additionalText, globalOptions) = pair;
             var options = globalOptions.GetOptions(additionalText);
 
-            if (!options.TryGetValue("build_metadata.AdditionalFiles.TargetPath", out var encodedRelativePath) ||
-                string.IsNullOrWhiteSpace(encodedRelativePath))
+            string relativePath;
+            if (options.TryGetValue("build_metadata.AdditionalFiles.TargetPath", out var encodedRelativePath))
             {
-                var diagnostic = Diagnostic.Create(
-                    RazorDiagnostics.TargetPathNotProvided,
-                    Location.None,
-                    additionalText.Path);
-                return (null, diagnostic);
+                // TargetPath is optional, but must have a value if provided.
+                if (string.IsNullOrWhiteSpace(encodedRelativePath))
+                {
+                    var diagnostic = Diagnostic.Create(
+                        RazorDiagnostics.TargetPathNotProvided,
+                        Location.None,
+                        additionalText.Path);
+                    return (null, diagnostic);
+                }
+
+                relativePath = Encoding.UTF8.GetString(Convert.FromBase64String(encodedRelativePath));
+            }
+            else
+            {
+                // If the TargetPath is not provided, we effectively assume its in the root of the project.
+                relativePath = Path.GetFileName(additionalText.Path);
             }
 
             options.TryGetValue("build_metadata.AdditionalFiles.CssScope", out var cssScope);
-            var relativePath = Encoding.UTF8.GetString(Convert.FromBase64String(encodedRelativePath));
 
             var projectItem = new SourceGeneratorProjectItem(
                 basePath: "/",
