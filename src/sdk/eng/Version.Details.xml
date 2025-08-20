@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="sdk" Sha="8c7b3dcd2bd657c11b12973f1214e7c3c616b174" BarId="278647" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="sdk" Sha="520c71b5277fc1f72dbec14da03ca55205d6c8e5" BarId="278961" />
   <ProductDependencies>
     <Dependency Name="Microsoft.TemplateEngine.Abstractions" Version="10.0.100-rc.1.25410.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
@@ -383,10 +383,6 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>8c7b3dcd2bd657c11b12973f1214e7c3c616b174</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0-preview.25410.101">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>8c7b3dcd2bd657c11b12973f1214e7c3c616b174</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.0.0-2.25410.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>8c7b3dcd2bd657c11b12973f1214e7c3c616b174</Sha>
@@ -515,6 +511,10 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>8c7b3dcd2bd657c11b12973f1214e7c3c616b174</Sha>
     </Dependency>
+    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-preview.7.25377.103">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>87e4c823cc62a13a3e8afbddc78bf718971f376c</Sha>
+    </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25410.101">
@@ -553,13 +553,13 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>8c7b3dcd2bd657c11b12973f1214e7c3c616b174</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Testing.Platform" Version="1.9.0-preview.25408.2">
+    <Dependency Name="Microsoft.Testing.Platform" Version="1.9.0-preview.25414.4">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>a995127b79cb0691333b8ec172128ac5e7abb9b2</Sha>
+      <Sha>26e9583afe1c21c3d4fb89ca3628f80a298e8f30</Sha>
     </Dependency>
-    <Dependency Name="MSTest" Version="3.11.0-preview.25408.2">
+    <Dependency Name="MSTest" Version="3.11.0-preview.25414.4">
       <Uri>https://github.com/microsoft/testfx</Uri>
-      <Sha>a995127b79cb0691333b8ec172128ac5e7abb9b2</Sha>
+      <Sha>26e9583afe1c21c3d4fb89ca3628f80a298e8f30</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Extensions.Configuration.Ini" Version="10.0.0-rc.1.25410.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
