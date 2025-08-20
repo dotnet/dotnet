@@ -67,10 +67,10 @@
       "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
     },
     {
-      "barId": 279900,
+      "barId": 280088,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "69099863724823e4fb46f224acd9bc3b0e1ea24d"
+      "commitSha": "c8b7900c36c2dbc4b2b48f529fdbddaa0e15b156"
     },
     {
       "barId": 280095,
@@ -133,10 +133,10 @@
       "commitSha": "9cbffb03835ba1e99643da46f2fc2678a0c1b5f7"
     },
     {
-      "barId": 278644,
+      "barId": 280123,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "5cf429afe4ec59b46e8b792bb1aac1bdd5f2d235"
+      "commitSha": "5f60cbb87e95892053d698e9559c53cacb0871c0"
     },
     {
       "barId": 279470,

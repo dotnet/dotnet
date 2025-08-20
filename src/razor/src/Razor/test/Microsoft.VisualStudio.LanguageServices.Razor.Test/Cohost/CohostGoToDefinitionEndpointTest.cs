@@ -418,7 +418,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null,
         params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles: additionalFiles);
         return await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
     }
 
