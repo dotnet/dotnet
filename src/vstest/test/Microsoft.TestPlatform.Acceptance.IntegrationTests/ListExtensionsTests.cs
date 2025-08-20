@@ -20,19 +20,13 @@ public class ListExtensionsTests : AcceptanceTestBase
 
         if (IsDesktopRunner())
         {
-            StdOutputContains("executor://codedwebtestadapter/v1");
             StdOutputContains("executor://mstestadapter/v1");
-            StdOutputContains("executor://webtestadapter/v1");
-            StdOutputContains(".Webtest");
             StdOutputContains("executor://cppunittestexecutor/v1");
         }
         else
         {
             // There are no inbox adapters for dotnet core
-            StdOutputDoesNotContains("executor://codedwebtestadapter/v1");
             StdOutputDoesNotContains("executor://mstestadapter/v1");
-            StdOutputDoesNotContains("executor://webtestadapter/v1");
-            StdOutputDoesNotContains(".Webtest");
             StdOutputDoesNotContains("executor://cppunittestexecutor/v1");
         }
     }
@@ -47,18 +41,14 @@ public class ListExtensionsTests : AcceptanceTestBase
 
         if (IsDesktopRunner())
         {
-            StdOutputContains("executor://CodedWebTestAdapter/v1");
             StdOutputContains("executor://MSTestAdapter/v1");
-            StdOutputContains("executor://WebTestAdapter/v1");
             StdOutputContains("executor://CppUnitTestExecutor/v1");
             StdOutputContains("executor://UAPCppExecutorIdentifier");
         }
         else
         {
             // There are no inbox adapters for dotnet core
-            StdOutputDoesNotContains("executor://CodedWebTestAdapter/v1");
             StdOutputDoesNotContains("executor://MSTestAdapter/v1");
-            StdOutputDoesNotContains("executor://WebTestAdapter/v1");
             StdOutputDoesNotContains("executor://CppUnitTestExecutor/v1");
             StdOutputDoesNotContains("executor://UAPCppExecutorIdentifier");
         }
