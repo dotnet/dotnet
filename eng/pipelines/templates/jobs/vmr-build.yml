@@ -224,17 +224,6 @@ jobs:
       value: '--'
 
   ### Basic arguments
-  - name: cleanArgument
-    # Don't clean-while-building on OSs that have enough disk space to keep
-    # intermediates for compliance scanners.
-    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
-      value: ''
-    ${{ else }}:
-      ${{ if eq(parameters.targetOS, 'windows') }}:
-        value: $(commandPrefix)cleanWhileBuilding
-      ${{ else }}:
-        value: $(commandPrefix)clean-while-building
-
   - name: brandingArgument
     value: $(commandPrefix)branding $(brandingType)
 
@@ -256,7 +245,7 @@ jobs:
       value: ''
 
   - name: baseArguments
-    value: $(commandPrefix)ci $(cleanArgument) $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
+    value: $(commandPrefix)ci $(commandPrefix)prepareMachine -c ${{ parameters.configuration }} $(brandingArgument) $(useSystemLibrariesArgument) $(officialBuildArgument)
 
   - name: baseProperties
     value: $(officialBuildProperties) /p:VerticalName=$(Agent.JobName)
@@ -498,6 +487,9 @@ jobs:
 
   - ${{ else }}:
     - ${{ if eq(parameters.targetOS, 'osx') }}:
+      - script: |
+          xcrun simctl runtime delete all
+        displayName: Reclaim disk space from unused simulator runtimes
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies
