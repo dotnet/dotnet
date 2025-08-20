@@ -1120,9 +1120,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // The runtime node writer moves the call elsewhere. At design time we
             // just want sufficiently similar code that any unknown-identifier or type
             // errors will be equivalent
-            var captureTypeName = node.IsComponentCapture
-                ? TypeNameHelper.GetGloballyQualifiedNameIfNeeded(node.ComponentCaptureTypeName)
-                : ComponentsApi.ElementReference.FullTypeName;
             var nullSuppression = !context.Options.SuppressNullabilityEnforcement ? "!" : string.Empty;
             WriteCSharpCode(context, new CSharpCodeIntermediateNode
             {
@@ -1130,7 +1127,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 Children =
                 {
                     node.IdentifierToken,
-                    IntermediateNodeFactory.CSharpToken($" = default({captureTypeName}){nullSuppression};")
+                    IntermediateNodeFactory.CSharpToken($" = default({node.FieldTypeName}){nullSuppression};")
                 }
             });
         }

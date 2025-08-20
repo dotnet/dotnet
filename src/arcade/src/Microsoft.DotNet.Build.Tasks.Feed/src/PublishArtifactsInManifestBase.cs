@@ -22,13 +22,11 @@ using System.Threading.Tasks;
 using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
-#if !NET472_OR_GREATER
 using Azure.Identity;
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Internal.SymbolHelper;
 using Microsoft.DotNet.ArcadeAzureIntegration;
-#endif
 using Microsoft.DotNet.Build.Manifest;
 using Newtonsoft.Json;
 using NuGet.Versioning;
@@ -39,7 +37,6 @@ using MsBuildUtils = Microsoft.Build.Utilities;
 namespace Microsoft.DotNet.Build.Tasks.Feed
 {
 
-#if NET
     /// <summary>
     /// The intended use of this task is to push artifacts described in
     /// a build manifest to a static package feed.
@@ -47,6 +44,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
     public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities.Task
     {
         public AssetPublisherFactory AssetPublisherFactory { get; }
+
+        /// <summary>
+        /// Production channel validator for validating builds before publishing to production channels.
+        /// </summary>
+        public ITargetChannelValidator TargetChannelValidator { get; set; }
 
         /// <summary>
         /// Full path to the folder containing blob assets.
@@ -108,6 +110,14 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// currently reduced below optimal to prevent OOM.
         /// </summary>
         public int MaxClients { get { return UseStreamingPublishing ? StreamingPublishingMaxClients : NonStreamingPublishingMaxClients; } }
+
+        /// <summary>
+        /// Whether to enforce production channel validation rules.
+        /// If true, validation failures prevent builds from being published (Fail).
+        /// If false, validation failures are reported as warnings but builds are allowed to be published (AuditOnlyFailure).
+        /// Default: false (audit mode)
+        /// </summary>
+        public bool EnforceProduction { get; set; } = false;
 
         /// <summary>
         /// Whether this build is internal or not. If true, extra checks are done to avoid accidental
@@ -192,7 +202,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         private ConcurrentDictionary<string, IArtifactUrlHelper> _artifactUrlHelpers = new ConcurrentDictionary<string, IArtifactUrlHelper>();
 
         // Matches versions such as 1.0.0.1234
-        private static readonly string FourPartVersionPattern = @"\d+\.\d+\.\d+\.\d+";
+        private static readonly string FourPartVersionPattern = @"\d+\.\d+\.\d+\.\d+"; 
 
         private static Regex FourPartVersionRegex = new Regex(FourPartVersionPattern);
 
@@ -227,9 +237,11 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         private int TimeoutInSeconds = 300;
 
-        protected PublishArtifactsInManifestBase(AssetPublisherFactory assetPublisherFactory = null)
+        protected PublishArtifactsInManifestBase(AssetPublisherFactory assetPublisherFactory = null,
+                                                 ITargetChannelValidator targetChannelValidator = null)
         {
             AssetPublisherFactory = assetPublisherFactory ?? new AssetPublisherFactory(Log);
+            TargetChannelValidator = targetChannelValidator;
         }
 
         public override bool Execute()
@@ -238,6 +250,47 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
 
         public abstract Task<bool> ExecuteAsync();
+
+        /// <summary>
+        /// Validates whether the build can be published to a production channel.
+        /// This method uses the injected ITargetChannelValidator to perform the validation.
+        /// </summary>
+        /// <param name="build">The build information from BAR</param>
+        /// <param name="targetChannel">The target channel the build will be published to</param>
+        /// <returns>True if the build is allowed to be published to the target channel, false otherwise</returns>
+        protected async Task<bool> ValidateTargetChannelAsync(ProductConstructionService.Client.Models.Build build, TargetChannelConfig targetChannel)
+        {
+            if (targetChannel.IsProduction)
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Validating production channel {targetChannel.Id}");
+                var validationResult = await TargetChannelValidator.ValidateAsync(build, targetChannel);
+                
+                switch (validationResult)
+                {
+                    case TargetChannelValidationResult.Success:
+                        Log.LogMessage(MessageImportance.Normal, $"Build validation succeeded for production channel {targetChannel.Id}");
+                        return true;
+                    
+                    case TargetChannelValidationResult.AuditOnlyFailure:
+                        Log.LogWarning($"Build validation audit failure for production channel {targetChannel.Id}. This is currently treated as a warning.");
+                        return true; // For now, treat audit-only failures as success but log warning
+                    
+                    case TargetChannelValidationResult.Fail:
+                        Log.LogError($"Build validation failed for production channel {targetChannel.Id}");
+                        return false;
+                    
+                    default:
+                        Log.LogError($"Unknown validation result '{validationResult}' for production channel {targetChannel.Id}");
+                        return false;
+                }
+            }
+            else
+            {
+                Log.LogMessage(MessageImportance.Normal, $"Skipping validation for non-production channel {targetChannel.Id}");
+            }
+
+            return true;
+        }
 
         /// <summary>
         ///     Lookup an asset in the build asset dictionary by name and version
@@ -313,8 +366,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         /// <returns>True if that asset didn't have the informed location recorded already.</returns>
         private bool TryAddAssetLocation(string assetId, string assetVersion, ReadOnlyDictionary<string, Asset> buildAssets, TargetFeedConfig feedConfig, LocationType assetLocationType)
         {
-            Asset assetRecord = string.IsNullOrEmpty(assetVersion) ?
-                LookupAsset(assetId, buildAssets) :
+            Asset assetRecord = string.IsNullOrEmpty(assetVersion) ? 
+                LookupAsset(assetId, buildAssets) : 
                 LookupAsset(assetId, assetVersion, buildAssets);
 
             if (assetRecord == null)
@@ -1312,7 +1365,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             HashSet<T> packagesToPublish,
             TargetFeedConfig feedConfig,
             int maxClients,
-            Func<TargetFeedConfig, HttpClient, T, string, string, string, Task> packagePublishAction)
+            Func<TargetFeedConfig, HttpClient, T, string, String, String, Task> packagePublishAction)
         {
             if (!packagesToPublish.Any())
             {
@@ -1443,6 +1496,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             // Using these callbacks we can mock up functionality when testing.
             CompareLocalPackageToFeedPackageCallBack ??= CompareLocalPackageToFeedPackage;
             AttemptPushPackageCallback ??= NuGetFeedUploadPackageAsync;
+
             var packageStatus = PackageFeedStatus.Unknown;
 
             try
@@ -1761,7 +1815,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
 
         /// <summary>
-        /// Create Temporary directory if it does not exists.
+        /// Creates a temporary directory if it does not exists.
         /// </summary>
         /// <param name="temporaryLocation"></param>
         public void EnsureTemporaryDirectoryExists(string temporaryLocation)
@@ -1883,32 +1937,3 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
     }
 }
-#else
-    public abstract class PublishArtifactsInManifestBase : Microsoft.Build.Utilities.Task
-    {
-        public override bool Execute() => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-
-        public abstract Task<bool> ExecuteAsync();
-
-        public Task PushNugetPackagesAsync<T>(
-            HashSet<T> packagesToPublish,
-            TargetFeedConfig feedConfig,
-            int maxClients,
-            Func<TargetFeedConfig, HttpClient, T, string, string, string, Task> packagePublishAction)  
-            => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-
-        public Task PushNugetPackageAsync(
-            TargetFeedConfig feedConfig,
-            HttpClient client,
-            string localPackageLocation,
-            string id,
-            string version,
-            string feedAccount,
-            string feedVisibility,
-            string feedName,
-            Func<string, string, HttpClient, MsBuildUtils.TaskLoggingHelper, Task<PackageFeedStatus>> CompareLocalPackageToFeedPackageCallBack = null,
-            Func<string, string, Task<ProcessExecutionResult>> RunProcessAndGetOutputsCallBack = null
-            ) => throw new NotSupportedException("PublishArtifactsInManifestBase depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-    }
-}
-#endif

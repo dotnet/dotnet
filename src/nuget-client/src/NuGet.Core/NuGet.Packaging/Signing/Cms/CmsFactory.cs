@@ -3,10 +3,6 @@
 
 using System;
 
-#if IS_SIGNING_SUPPORTED && !IS_DESKTOP
-using System.Security.Cryptography.Pkcs;
-#endif
-
 namespace NuGet.Packaging.Signing
 {
     internal static class CmsFactory
@@ -17,19 +13,13 @@ namespace NuGet.Packaging.Signing
             {
                 throw new ArgumentNullException(nameof(cmsBytes));
             }
-#if IS_SIGNING_SUPPORTED
-            ICms cms = null;
 #if IS_DESKTOP
             NativeCms nativeCms = NativeCms.Decode(cmsBytes);
-            cms = new NativeCmsWrapper(nativeCms);
+            return new NativeCmsWrapper(nativeCms);
 #else
-            SignedCms signedCms = new SignedCms();
+            System.Security.Cryptography.Pkcs.SignedCms signedCms = new System.Security.Cryptography.Pkcs.SignedCms();
             signedCms.Decode(cmsBytes);
-            cms = new ManagedCmsWrapper(signedCms);
-#endif
-            return cms;
-#else
-            throw new NotSupportedException();
+            return new ManagedCmsWrapper(signedCms);
 #endif
         }
     }
