@@ -49,10 +49,10 @@
       "commitSha": "36cf4f90ba0d2d97d8dfb13394022289ddb7955e"
     },
     {
-      "packageVersion": "9.0.8-servicing.25353.1",
+      "packageVersion": "9.0.9-servicing.25418.4",
       "path": "emsdk",
       "remoteUri": "https://github.com/dotnet/emsdk",
-      "commitSha": "0bcc3e67026ea44a16fb018a50e4e134c06ab3d6"
+      "commitSha": "dc8e3478c4aa5f6a103329333c2bdbcd07a07741"
     },
     {
       "packageVersion": "9.0.101-beta.25070.7",
@@ -91,10 +91,10 @@
       "commitSha": "16865ea61910500f1022ad2b96c499e5df02c228"
     },
     {
-      "packageVersion": "9.0.9-servicing.25415.12",
+      "packageVersion": "9.0.9-servicing.25419.16",
       "path": "runtime",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-runtime",
-      "commitSha": "9a939063580582345c2b6f843687faf4538f32fb"
+      "commitSha": "893c2ebbd49952ca49e93298148af2d95a61a0a4"
     },
     {
       "packageVersion": "9.0.0-preview.25381.1",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "9771b7af43092b60133fa357667db6fd19009683"
+      "commitSha": "00e5d82937f208fcba8facffb3fbe7ef5129fe37"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
