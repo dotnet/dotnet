@@ -65,7 +65,11 @@ function Verify-Nuget-Packages {
 
     Write-Host "Found $(@($nugetPackages).Count) nuget packages:`n    $($nugetPackages.FullName -join "`n    ")"
     
-    $nugetPackages += Get-Item "$PSScriptRoot/../artifacts/VSSetup/$configuration/Insertion/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.vsix"
+    # In source build we don't build this.
+    $vsix = Get-Item "$PSScriptRoot/../artifacts/VSSetup/$configuration/Insertion/Microsoft.VisualStudio.TestTools.TestPlatform.V2.CLI.vsix" -ErrorAction Ignore
+    if ($vsix) {
+        $nugetPackages += $vsix
+    }
 
     Write-Host "Unzipping NuGet packages to '$tmpDirectory'."
     $unzipNugetPackageDirs = @()
