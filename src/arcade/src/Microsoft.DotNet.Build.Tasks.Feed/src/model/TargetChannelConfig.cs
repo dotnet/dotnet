@@ -47,6 +47,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         public bool IsInternal { get; }
 
+        /// <summary>
+        /// Whether this channel is a production channel vs. a non-production channel.
+        /// Non-production channels are typically used for testing purposes.
+        /// </summary>
+        public bool IsProduction { get; }
+
         public bool Flatten { get; }
 
         public TargetChannelConfig(
@@ -58,7 +64,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             ImmutableList<Regex> akaMSDoNotCreateLinkPatterns,
             IEnumerable<TargetFeedSpecification> targetFeeds,
             SymbolPublishVisibility symbolTargetType,
-            bool flatten = true)
+            bool flatten = true,
+            bool isProduction = true)
         {
 
             Id = id;
@@ -68,6 +75,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             TargetFeeds = targetFeeds.ToImmutableList();
             SymbolTargetType = symbolTargetType;
             Flatten = flatten;
+            IsProduction = isProduction;
             AkaMSCreateLinkPatterns = akaMSCreateLinkPatterns ?? ImmutableList<Regex>.Empty;
             AkaMSDoNotCreateLinkPatterns = akaMSDoNotCreateLinkPatterns ?? ImmutableList<Regex>.Empty;
         }
@@ -84,6 +92,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 $"\n  {string.Join("\n  ", TargetFeeds.Select(f => $"{string.Join(", ", f.ContentTypes)} -> {f.FeedUrl}"))}" +
                 $"\n SymbolTargetType: '{SymbolTargetType}' " +
                 $"\n IsInternal: '{IsInternal}'" +
+                $"\n IsProduction: '{IsProduction}'" +
                 $"\n Flatten: '{Flatten}'";
         }
 
@@ -97,6 +106,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 PublishingInfraVersion == config.PublishingInfraVersion &&
                 Id == config.Id &&
                 IsInternal == config.IsInternal &&
+                IsProduction == config.IsProduction &&
                 Flatten == config.Flatten)
             {
                 return true;
@@ -129,6 +139,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             hash.Add(PublishingInfraVersion);
             hash.Add(Id);
             hash.Add(IsInternal);
+            hash.Add(IsProduction);
             foreach(var akaMSChannelName in AkaMSChannelNames)
             {
                 hash.Add(akaMSChannelName);
