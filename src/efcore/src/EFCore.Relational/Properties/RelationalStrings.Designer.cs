@@ -114,7 +114,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 complexProperty);
 
         /// <summary>
-        ///     The optional complex property '{type}.{property}' is mapped to columns by flattening the contained properties, but it only contains optional properties. Add a required property or discriminator or map this complex property to a JSON column.
+        ///     The optional complex property '{type}.{property}' is mapped to columns by flattening the contained properties into its container's table; this mapping requires at least one required property - to allow distinguishing between null and empty values - but type '{complexType}' contains only optional properties. Configure the property with a shadow discriminator by adding a call to 'HasDiscriminator()` on the complex property configuration, or map this complex property to a JSON column instead.
         /// </summary>
         public static string ComplexPropertyOptionalTableSharing(object? type, object? property)
             => string.Format(
@@ -128,6 +128,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
             => string.Format(
                 GetString("ComputedColumnSqlUnspecified", nameof(table), nameof(column)),
                 table, column);
+
+        /// <summary>
+        ///     The property '{property}' on '{type}' is configured as a concurrency token, but the type is mapped to JSON. Concurrency tokens are not supported on JSON-mapped types.
+        /// </summary>
+        public static string ConcurrencyTokenOnJsonMappedProperty(object? property, object? type)
+            => string.Format(
+                GetString("ConcurrencyTokenOnJsonMappedProperty", nameof(property), nameof(type)),
+                property, type);
 
         /// <summary>
         ///     An ambient transaction has been detected. The ambient transaction needs to be completed before starting a new transaction on this connection.
@@ -1466,6 +1474,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 propertyType, type, property);
 
         /// <summary>
+        ///     Complex property '{complexProperty}' is mapped to JSON but its containing type '{containingType}' is not. Map the root complex type to JSON. See https://github.com/dotnet/efcore/issues/36558
+        /// </summary>
+        public static string NestedComplexPropertyJsonWithTableSharing(object? complexProperty, object? containingType)
+            => string.Format(
+                GetString("NestedComplexPropertyJsonWithTableSharing", nameof(complexProperty), nameof(containingType)),
+                complexProperty, containingType);
+
+        /// <summary>
         ///     The connection does not have any active transactions.
         /// </summary>
         public static string NoActiveTransaction
@@ -2186,6 +2202,14 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 type, column);
 
         /// <summary>
+        ///     The store type '{storeType}' specified for JSON column '{columnName}' in table '{tableName}' is not supported by the current provider. JSON columns require a provider-specific JSON store type.
+        /// </summary>
+        public static string UnsupportedJsonColumnType(object? storeType, object? columnName, object? tableName)
+            => string.Format(
+                GetString("UnsupportedJsonColumnType", nameof(storeType), nameof(columnName), nameof(tableName)),
+                storeType, columnName, tableName);
+
+        /// <summary>
         ///     Unsupported operator '{nodeType}' specified for expression of type '{expressionType}'.
         /// </summary>
         public static string UnsupportedOperatorForSqlExpression(object? nodeType, object? expressionType)
@@ -2194,7 +2218,7 @@ namespace Microsoft.EntityFrameworkCore.Diagnostics
                 nodeType, expressionType);
 
         /// <summary>
-        ///     No relational type mapping can be found for property '{entity}.{property}' and the current provider doesn't specify a default store type for the properties of type '{clrType}'. 
+        ///     No relational type mapping can be found for property '{entity}.{property}' and the current provider doesn't specify a default store type for the properties of type '{clrType}'.
         /// </summary>
         public static string UnsupportedPropertyType(object? entity, object? property, object? clrType)
             => string.Format(

@@ -143,7 +143,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             """;
 
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
-            (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
 
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
@@ -189,7 +189,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
             """;
 
         var result = await GetGoToDefinitionResultAsync(input, RazorFileKind.Component,
-            (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
+            additionalFiles: (FileName("SurveyPrompt.razor"), surveyPrompt.Text));
 
         Assert.NotNull(result.Value.Second);
         var locations = result.Value.Second;
@@ -229,6 +229,165 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
         await VerifyGoToDefinitionAsync(input, htmlResponse: htmlResponse);
     }
 
+    [Fact]
+    public async Task TagHelper()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <dw:abou$$t-box />
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                (FileName("AboutBoxTagHelper.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("dw:about-box")]
+                        public class [|AboutBoxTagHelper|] : TagHelper
+                        {
+                            public override void Process(TagHelperContext context, TagHelperOutput output)
+                            {
+                                output.TagName = "div";
+                                output.Attributes.SetAttribute("class", "about-box");
+                                output.Content.SetHtmlContent("<strong>About</strong>");
+                            }
+                        }
+                        """).Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AboutBoxTagHelper.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
+    }
+
+    [Fact]
+    public async Task TagHelper_Partial()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <dw:abou$$t-box />
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                [(FileName("AboutBoxTagHelper_1.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("dw:about-box")]
+                        public partial class [|AboutBoxTagHelper|] : TagHelper
+                        {
+                            public override void Process(TagHelperContext context, TagHelperOutput output)
+                            {
+                                output.TagName = "div";
+                                output.Attributes.SetAttribute("class", "about-box");
+                                output.Content.SetHtmlContent("<strong>About</strong>");
+                            }
+                        }
+                        """).Text),
+                (FileName("AboutBoxTagHelper_2.cs"),
+                    """
+                    using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                    public partial class AboutBoxTagHelper
+                    {
+                    }
+                    """)]);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AboutBoxTagHelper_1.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
+    }
+
+    [Fact]
+    public async Task TagHelper_Attribute()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <dw:about-box tit$$le="Dave" />
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                (FileName("AboutBoxTagHelper.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        [HtmlTargetElement("dw:about-box")]
+                        public class AboutBoxTagHelper : TagHelper
+                        {
+                            public string [|Title|] { get; set; }
+
+                            public override void Process(TagHelperContext context, TagHelperOutput output)
+                            {
+                                output.TagName = "div";
+                                output.Attributes.SetAttribute("class", "about-box");
+                                output.Content.SetHtmlContent("<strong>About</strong>");
+                            }
+                        }
+                        """).Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AboutBoxTagHelper.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
+    }
+
+    [Fact]
+    public async Task TagHelper_Attribute_Partial()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <dw:about-box tit$$le="Dave" />
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                [(FileName("AboutBoxTagHelper_1.cs"),
+                    """
+                    using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                    [HtmlTargetElement("dw:about-box")]
+                    public partial class AboutBoxTagHelper : TagHelper
+                    {
+                        public override void Process(TagHelperContext context, TagHelperOutput output)
+                        {
+                            output.TagName = "div";
+                            output.Attributes.SetAttribute("class", "about-box");
+                            output.Content.SetHtmlContent("<strong>About</strong>");
+                        }
+                    }
+                    """),
+                (FileName("AboutBoxTagHelper_2.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Razor.TagHelpers;
+
+                        public partial class AboutBoxTagHelper
+                        {
+                            public string [|Title|] { get; set; }
+                        }
+                        """).Text)]);
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AboutBoxTagHelper_2.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
+    }
+
     private static string FileName(string projectRelativeFileName)
         => Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName);
 
@@ -256,10 +415,11 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultAsync(
         TestCode input,
         RazorFileKind? fileKind = null,
+        SumType<LspLocation, LspLocation[], DocumentLink[]>? htmlResponse = null,
         params (string fileName, string contents)[]? additionalFiles)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind, additionalFiles);
-        return await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse: null);
+        return await GetGoToDefinitionResultCoreAsync(document, input, htmlResponse);
     }
 
     private async Task<SumType<LspLocation, LspLocation[], DocumentLink[]>?> GetGoToDefinitionResultCoreAsync(

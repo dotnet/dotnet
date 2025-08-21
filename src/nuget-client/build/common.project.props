@@ -144,8 +144,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Assembly attributes for net core projects -->
-    <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(TargetFramework)' == '$(NETCoreTargetFramework)'">$(SemanticVersion).0</AssemblyVersion>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</InformationalVersion>

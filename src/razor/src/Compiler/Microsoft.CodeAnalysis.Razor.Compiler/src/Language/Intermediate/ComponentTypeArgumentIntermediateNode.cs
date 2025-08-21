@@ -24,9 +24,9 @@ public sealed class ComponentTypeArgumentIntermediateNode : IntermediateNode
         Debug.Assert(propertyNode.Children.Count == 1);
         Value = propertyNode.Children[0] switch
         {
-            IntermediateToken t => t,
-            CSharpExpressionIntermediateNode c => (IntermediateToken)c.Children[0], // TODO: can we break this in error cases?
-            _ => Assumed.Unreachable<IntermediateToken>()
+            CSharpIntermediateToken t => t,
+            CSharpExpressionIntermediateNode c => (CSharpIntermediateToken)c.Children[0], // TODO: can we break this in error cases?
+            _ => Assumed.Unreachable<CSharpIntermediateToken>()
         };
         Children = [Value];
 
@@ -41,7 +41,7 @@ public sealed class ComponentTypeArgumentIntermediateNode : IntermediateNode
 
     public TagHelperDescriptor TagHelper { get; set; }
 
-    public IntermediateToken Value { get; set; }
+    public CSharpIntermediateToken Value { get; set; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

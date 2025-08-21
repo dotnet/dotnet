@@ -1,11 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -40,21 +37,13 @@ public class ModelExpressionPass : IntermediateNodePassBase, IRazorOptimizationP
             {
                 var expression = new CSharpExpressionIntermediateNode();
 
-                expression.Children.Add(new IntermediateToken()
-                {
-                    Kind = TokenKind.CSharp,
-                    Content = "ModelExpressionProvider.CreateModelExpression(ViewData, __model => ",
-                });
+                expression.Children.Add(IntermediateNodeFactory.CSharpToken("ModelExpressionProvider.CreateModelExpression(ViewData, __model => "));
 
-                if (node.Children.Count == 1 && node.Children[0] is IntermediateToken token && token.IsCSharp)
+                if (node.Children.Count == 1 && node.Children[0] is CSharpIntermediateToken token)
                 {
                     // A 'simple' expression will look like __model => __model.Foo
 
-                    expression.Children.Add(new IntermediateToken()
-                    {
-                        Kind = TokenKind.CSharp,
-                        Content = "__model."
-                    });
+                    expression.Children.Add(IntermediateNodeFactory.CSharpToken("__model."));
 
                     expression.Children.Add(token);
                 }
@@ -66,10 +55,9 @@ public class ModelExpressionPass : IntermediateNodePassBase, IRazorOptimizationP
                         {
                             for (var j = 0; j < nestedExpression.Children.Count; j++)
                             {
-                                if (nestedExpression.Children[j] is IntermediateToken cSharpToken &&
-                                    cSharpToken.IsCSharp)
+                                if (nestedExpression.Children[j] is CSharpIntermediateToken csharpToken)
                                 {
-                                    expression.Children.Add(cSharpToken);
+                                    expression.Children.Add(csharpToken);
                                 }
                             }
 
@@ -78,11 +66,7 @@ public class ModelExpressionPass : IntermediateNodePassBase, IRazorOptimizationP
                     }
                 }
 
-                expression.Children.Add(new IntermediateToken()
-                {
-                    Kind = TokenKind.CSharp,
-                    Content = ")",
-                });
+                expression.Children.Add(IntermediateNodeFactory.CSharpToken(")"));
 
                 node.Children.Clear();
 

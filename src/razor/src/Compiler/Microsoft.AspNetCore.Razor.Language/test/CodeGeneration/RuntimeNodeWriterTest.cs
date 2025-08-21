@@ -120,11 +120,7 @@ using System
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -152,12 +148,7 @@ i++);
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3)
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++", new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3)));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -192,19 +183,11 @@ i++
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -233,21 +216,11 @@ iRender Children
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 1, 0, 1)
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i", new SourceSpan("test.cshtml", 0, 0, 0, 1, 0, 1)));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 2, 0, 2, 2, 0, 4)
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++", new SourceSpan("test.cshtml", 2, 0, 2, 2, 0, 4)));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -286,11 +259,7 @@ Render Children
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "  \t"
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("  \t"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -309,11 +278,7 @@ Render Children
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }"
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -336,12 +301,7 @@ Render Children
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }",
-                Source = new SourceSpan("test.cshtml", 0, 0, 0, 13)
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }", new SourceSpan("test.cshtml", 0, 0, 0, 13)));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -372,12 +332,7 @@ if (true) { }
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    if (true) { }",
-                Source = new SourceSpan("test.cshtml", 0, 0, 0, 17)
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    if (true) { }", new SourceSpan("test.cshtml", 0, 0, 0, 17)));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -488,11 +443,7 @@ WriteLiteral(""👧‍👧"");
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new HtmlContentIntermediateNode();
-        node.Children.Add(new IntermediateToken()
-        {
-            Content = "SomeContent",
-            Kind = TokenKind.Html,
-        });
+        node.Children.Add(IntermediateNodeFactory.HtmlToken("SomeContent"));
 
         // Act
         writer.WriteHtmlContent(context, node);
@@ -514,11 +465,7 @@ WriteLiteral(""👧‍👧"");
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var node = new HtmlContentIntermediateNode();
-        node.Children.Add(new IntermediateToken()
-        {
-            Content = new string('*', 2000),
-            Kind = TokenKind.Html
-        });
+        node.Children.Add(IntermediateNodeFactory.HtmlToken(new string('*', 2000)));
 
         // Act
         writer.WriteHtmlContent(context, node);
