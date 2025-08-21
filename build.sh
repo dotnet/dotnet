@@ -443,11 +443,6 @@ if [[ "$sourceOnly" == "true" ]]; then
         echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
         echo "$sourceVersion" > "$GIT_DIR/HEAD"
       fi
-
-      if [ ! -d "$GIT_DIR" ]; then
-        echo "ERROR: $GIT_DIR is not a git repository."
-        exit 1
-      fi
     fi
 
     # If the release manifest is provided
@@ -466,6 +461,11 @@ if [[ "$sourceOnly" == "true" ]]; then
         SetBranding "$branding"
       fi
     fi
+  fi
+
+  if [ ! -e "$scriptroot/.git" ]; then
+    echo "ERROR: $scriptroot is not a git repository/worktree."
+    exit 1
   fi
 
   # Support custom source built package locations
