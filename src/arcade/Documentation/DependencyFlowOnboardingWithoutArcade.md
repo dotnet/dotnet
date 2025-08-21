@@ -78,7 +78,7 @@ If you only have one Azure DevOps job that publishes assets, then you can add th
     azureSubscription: "Darc: Maestro Production"
     scriptType: ps
     scriptLocation: scriptPath
-    scriptPath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
+    scriptPath: $(System.DefaultWorkingDirectory)/eng/common/sdk-task.ps1
     arguments: -task PublishBuildAssets
       -restore
       -msbuildEngine dotnet

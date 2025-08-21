@@ -7,6 +7,5 @@ namespace Microsoft.CodeAnalysis.Razor.Cohost;
 
 internal interface IIncompatibleProjectService
 {
-    void HandleMiscFilesDocument(TextDocument textDocument);
     void HandleMissingDocument(RazorTextDocumentIdentifier? textDocumentIdentifier, RazorCohostRequestContext context);
 }
