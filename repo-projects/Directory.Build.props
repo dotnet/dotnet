@@ -127,6 +127,9 @@
 
     <CommonArgs>$(CommonArgs) /p:RepositoryName=$(RepositoryName)</CommonArgs>
 
+    <!-- Always enable package pruning in VMR builds as the product orchestration relies on the trimmed down dependency graph. -->
+    <CommonArgs>$(CommonArgs) /p:RestoreEnablePackagePruning=true</CommonArgs>
+
     <!-- Pass the repository URL in globally so that we redirect sourcelink package information to the VMR repo. -->
     <DotNetRepositoryUrl>https://github.com/dotnet/dotnet</DotNetRepositoryUrl>
     <CommonArgs>$(CommonArgs) /p:RepositoryUrl=$(DotNetRepositoryUrl)</CommonArgs>
