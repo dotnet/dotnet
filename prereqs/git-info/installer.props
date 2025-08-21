@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <GitCommitHash>d6c0c7062a75fdd8be10e393c6468c5938cc9186</GitCommitHash>
-    <OfficialBuildId>20250819.1</OfficialBuildId>
+    <GitCommitHash>a4d853b8bc66682822d248c916ba4a37bca297e4</GitCommitHash>
+    <OfficialBuildId>20250821.1</OfficialBuildId>
     <OutputPackageVersion>8.0.100</OutputPackageVersion>
     <PreReleaseVersionLabel></PreReleaseVersionLabel>
     <IsStable>true</IsStable>
