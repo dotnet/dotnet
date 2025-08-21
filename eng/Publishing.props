@@ -112,11 +112,11 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true' and '$(DotNetBuildSourceOnly)' == 'true'">
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)source-build/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
         <Kind>Blob</Kind>
-        <RelativeBlobPath>%(Filename)%(Extension)</RelativeBlobPath>
+        <RelativeBlobPath>source-build/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
 
