@@ -28,12 +28,7 @@ internal class AttributeDirectivePass : IntermediateNodePassBase, IRazorDirectiv
                     Source = token.Source
                 };
 
-                node.Children.Add(new IntermediateToken()
-                {
-                    Content = token.Content,
-                    Source = token.Source,
-                    Kind = TokenKind.CSharp,
-                });
+                node.Children.Add(IntermediateNodeFactory.CSharpToken(token.Content, token.Source));
 
                 @namespace.Children.Insert(classIndex++, node);
             }
