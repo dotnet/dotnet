@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
-#if !NET472_OR_GREATER
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Build.Manifest;
@@ -119,6 +118,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                     if (await client.Channels.GetChannelAsync(targetChannelId) == null)
                     {
                         Log.LogError($"Channel with ID '{targetChannelId}' does not exist in BAR.");
+                        return false;
+                    }
+
+                    // Validate that the channel can be be used for this build
+                    if (!await ValidateTargetChannelAsync(buildInformation, targetChannelConfig))
+                    {
+                        Log.LogError($"Channel with ID '{targetChannelId}' is not valid for this build.");
                         return false;
                     }
 
@@ -239,9 +245,3 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
     }
 }
-#else
-public class PublishArtifactsInManifestV4 : Microsoft.Build.Utilities.Task
-{
-    public override bool Execute() => throw new NotSupportedException("PublishArtifactsInManifestV4 depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-}
-#endif
