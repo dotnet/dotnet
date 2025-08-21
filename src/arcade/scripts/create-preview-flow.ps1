@@ -247,7 +247,7 @@ AddForwardFlow https://github.com/dotnet/roslyn $VSChannel $publicVMR roslyn $Sd
 AddForwardFlow https://github.com/dotnet/fsharp $VSChannel $publicVMR fsharp $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/msbuild $VSChannel $publicVMR msbuild $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/razor $VSChannel $publicVMR razor $SdkBranch EveryBuild
-AddForwardFlow https://github.com/dotnet/vstest $VSChannel $publicVMR vstest $SdkBranch EveryBuild
+AddForwardFlow https://github.com/microsoft/vstest $VSChannel $publicVMR vstest $SdkBranch EveryBuild
 
 if ($AddInternalFlow) {
     Write-Host "Adding internal VMR sdk repo forward flow"
