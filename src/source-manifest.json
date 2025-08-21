@@ -79,12 +79,6 @@
       "commitSha": "f2d2eec875445604040d4add110d3046b83a7d55"
     },
     {
-      "barId": 277064,
-      "path": "roslyn-analyzers",
-      "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "d45048f958379c63acfc716136a5e2466f21c5d4"
-    },
-    {
       "barId": 279489,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
