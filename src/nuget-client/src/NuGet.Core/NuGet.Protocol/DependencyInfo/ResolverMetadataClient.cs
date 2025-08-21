@@ -125,7 +125,6 @@ namespace NuGet.Protocol
             var frameworkReducer = new FrameworkReducer();
             var dependencies = await GetDependencies(httpClient, registrationUri, packageId, range, cacheContext, log, token);
 
-            var result = new HashSet<RegistrationInfo>();
             var registrationInfo = new RegistrationInfo();
 
             registrationInfo.IncludePrerelease = true;

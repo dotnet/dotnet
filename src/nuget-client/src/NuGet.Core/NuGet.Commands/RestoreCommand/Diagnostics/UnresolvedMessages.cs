@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -207,16 +208,13 @@ namespace NuGet.Commands
         }
 
         /// <summary>
-        /// True if no stable versions satisfy the range 
+        /// True if no stable versions satisfy the range
         /// but a pre-release version is found.
         /// </summary>
         internal static bool HasPrereleaseVersionsOnly(VersionRange range, IEnumerable<NuGetVersion> versions)
         {
-            var currentRange = range ?? VersionRange.All;
-            var currentVersions = versions ?? Enumerable.Empty<NuGetVersion>();
-
-            return (versions.Any(e => e.IsPrerelease && currentRange.Satisfies(e))
-                && !versions.Any(e => !e.IsPrerelease && currentRange.Satisfies(e)));
+            return versions.Any(e => e.IsPrerelease && range.Satisfies(e))
+                   && !versions.Any(e => !e.IsPrerelease && range.Satisfies(e));
         }
 
         /// <summary>
@@ -224,8 +222,8 @@ namespace NuGet.Commands
         /// </summary>
         internal static bool IsPrereleaseAllowed(VersionRange range)
         {
-            return (range?.MaxVersion?.IsPrerelease == true
-                || range?.MinVersion?.IsPrerelease == true);
+            return range.MaxVersion?.IsPrerelease == true
+                   || range.MinVersion?.IsPrerelease == true;
         }
 
         /// <summary>
@@ -299,7 +297,7 @@ namespace NuGet.Commands
         /// <summary>
         /// Find the best match on the feed.
         /// </summary>
-        internal static NuGetVersion GetBestMatch(ImmutableArray<NuGetVersion> versions, VersionRange range)
+        internal static NuGetVersion? GetBestMatch(ImmutableArray<NuGetVersion> versions, VersionRange range)
         {
             if (versions.Length == 0)
             {
@@ -308,17 +306,14 @@ namespace NuGet.Commands
 
             // Find a pivot point
             var ideal = V0;
-            NuGetVersion bestMatch = null;
-            if (range != null)
+            NuGetVersion? bestMatch = null;
+            if (range.HasLowerBound)
             {
-                if (range.HasLowerBound)
-                {
-                    ideal = range.MinVersion;
-                }
-                else if (range.HasUpperBound)
-                {
-                    ideal = range.MaxVersion;
-                }
+                ideal = range.MinVersion;
+            }
+            else if (range.HasUpperBound)
+            {
+                ideal = range.MaxVersion;
             }
 
             //|      Range     |          Available         | Closest  |
