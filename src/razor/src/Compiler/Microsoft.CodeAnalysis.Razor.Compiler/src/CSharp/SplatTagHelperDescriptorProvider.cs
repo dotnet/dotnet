@@ -66,9 +66,8 @@ internal sealed class SplatTagHelperDescriptorProvider : TagHelperDescriptorProv
             attribute.Name = "@attributes";
 
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(
-                PropertyName("Attributes"),
-                IsDirectiveAttribute);
+            attribute.IsDirectiveAttribute = true;
+            attribute.PropertyName = "Attributes";
         });
 
         return builder.Build();

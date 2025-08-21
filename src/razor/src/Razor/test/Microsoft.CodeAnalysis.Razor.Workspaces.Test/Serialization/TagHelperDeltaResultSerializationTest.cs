@@ -62,7 +62,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -109,7 +109,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -156,7 +156,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -201,13 +201,13 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("SomeEnum")
                     .AsEnum()
                     .Documentation("Summary"),
                 builder => builder
                     .Name("test-attribute2")
-                    .Metadata(PropertyName("TestAttribute2"))
+                    .PropertyName("TestAttribute2")
                     .TypeName("SomeDictionary")
                     .AsDictionaryAttribute("dict-prefix-", "string"),
             ],
