@@ -219,8 +219,11 @@ namespace NuGet.PackageManagement
                     {
                         message = ExceptionUtilities.DisplayMessage(task.Exception);
                     }
-
+#if IS_DESKTOP
                     errors.AppendLine($"  {tasksLookup[task].PackageSource.Source}: {message}");
+#else
+                    errors.AppendLine(CultureInfo.CurrentCulture, $"  {tasksLookup[task].PackageSource.Source}: {message}");
+#endif
                 }
 
                 throw new FatalProtocolException(errors.ToString());

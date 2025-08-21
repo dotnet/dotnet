@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
-        <source>Allow pushing to HTTP sources (insecure).</source>
-        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <source>Allows pushing to HTTP sources (insecure).</source>
+        <target state="new">Allows pushing to HTTP sources (insecure).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -886,20 +886,25 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
         <target state="translated">Pfad zu einer Projekt- oder Projektmappendatei oder einem Verzeichnis</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
+        <source>All packages are already up to date.</source>
+        <target state="new">All packages are already up to date.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
-        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <target state="translated">{0} Pakete in {1} gescannten Paketen wurden aktualisiert.</target>
         <note>{0}: Number of packages updated
 {1}: Package checked for updated versions</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FindingUpdateVersions">
         <source>Finding versions of packages to update.</source>
-        <target state="new">Finding versions of packages to update.</target>
+        <target state="translated">Zu aktualisierende Paketversionen werden gesucht.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
-        <target state="new">Loading Project(s).</target>
+        <target state="translated">Projekte werden geladen.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -909,7 +914,7 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
-        <target state="new">Running preview restore to check package compatibility.</target>
+        <target state="translated">Vorschauwiederherstellung wird ausgeführt, um die Paketkompatibilität zu überprüfen.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestoreFailed">
@@ -919,14 +924,14 @@ Weitere Informationen finden Sie unter: https://docs.nuget.org/docs/reference/co
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updated {0} {1} to {2}.</source>
-        <target state="new">Updated {0} {1} to {2}.</target>
+        <target state="translated">{0} {1} wurde auf {2} aktualisiert.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
         <source>Updating outdated packages in {0}.</source>
-        <target state="new">Updating outdated packages in {0}.</target>
+        <target state="translated">Veraltete Pakete in {0} werden aktualisiert.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1250,11 +1255,6 @@ Bei der Suche handelt es sich um einen ungültigen Zeichenfolgenvergleich mit de
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">Der Name des vorhandenen vertrauenswürdigen Signaturgebers, der entfernt werden soll.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_MoreThanOnePackage">
-        <source>Unsupported: Updating more than one package is not yet supported</source>
-        <target state="translated">Nicht unterstützt: Das Aktualisieren mehrerer Pakete wird noch nicht unterstützt.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_PackageSourceMapping">

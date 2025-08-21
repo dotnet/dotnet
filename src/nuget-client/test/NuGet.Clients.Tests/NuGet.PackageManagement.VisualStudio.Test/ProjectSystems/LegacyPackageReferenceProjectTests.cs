@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -284,7 +285,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData(null, "Source2", "Fallback2")]
         [InlineData("RestorePackagesPath", null, "Fallback2")]
         [InlineData("RestorePackagesPath", "Source1;Source2", null)]
-        public async Task GetPackageSpecsAsync_ReadSettingsWithRelativePaths(string restorePackagesPath, string sources, string fallbackFolders)
+        public async Task GetPackageSpecsAsync_ReadSettingsWithRelativePaths(string? restorePackagesPath, string? sources, string? fallbackFolders)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // Arrange
@@ -349,7 +350,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData(null, @"C:\Source1;C:\Source2", @"C:\Fallback1;C:\Fallback2")]
         [InlineData(@"C:\RestorePackagesPath", null, @"C:\Fallback1;C:\Fallback2")]
         [InlineData(@"C:\RestorePackagesPath", @"C:\Source1;C:\Source2", null)]
-        public async Task GetPackageSpecsAsync_ReadSettingsWithFullPaths(string restorePackagesPath, string sources, string fallbackFolders)
+        public async Task GetPackageSpecsAsync_ReadSettingsWithFullPaths(string? restorePackagesPath, string sources, string fallbackFolders)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -626,7 +627,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 var projectServices = new TestProjectSystemServices();
 
-                LibraryDependency actualDependency = null;
+                LibraryDependency? actualDependency = null;
                 Mock.Get(projectServices.References)
                     .Setup(x => x.AddOrUpdatePackageReferenceAsync(
                         It.IsAny<LibraryDependency>(), CancellationToken.None))
@@ -677,7 +678,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
 
                 var projectServices = new TestProjectSystemServices();
 
-                string actualPackageId = null;
+                string? actualPackageId = null;
                 Mock.Get(projectServices.References)
                     .Setup(x => x.RemovePackageReferenceAsync(It.IsAny<string>()))
                     .Callback<string>(p => actualPackageId = p)
@@ -757,8 +758,8 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("true", null, true)]
         [InlineData("false", null, false)]
         public async Task GetPackageSpecsAsync_ReadLockFileSettings(
-            string restorePackagesWithLockFile,
-            string lockFilePath,
+            string? restorePackagesWithLockFile,
+            string? lockFilePath,
             bool restoreLockedMode)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -866,7 +867,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("false", false)]
         [InlineData("           false    ", false)]
         [InlineData("FaLsE", false)]
-        public async Task GetPackageSpecAsync_CentralPackageVersionOverride_DisabedWhenSpecified(string isCentralPackageVersionOverrideEnabled, bool expected)
+        public async Task GetPackageSpecAsync_CentralPackageVersionOverride_DisabedWhenSpecified(string? isCentralPackageVersionOverrideEnabled, bool expected)
         {
             // Arrange
             var packageAv1 = (PackageId: "packageA", Version: "1.2.3");
@@ -923,7 +924,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("FaLsE", false)]
         [InlineData("true", true)]
         [InlineData("  true  ", true)]
-        public async Task GetPackageSpecAsync_TransitiveDependencyPinning_CanBeEnabled(string transitiveDependencyPinning, bool expected)
+        public async Task GetPackageSpecAsync_TransitiveDependencyPinning_CanBeEnabled(string? transitiveDependencyPinning, bool expected)
         {
             // Arrange
             var projectNames = new ProjectNames(
@@ -1456,7 +1457,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("win-x64", "win-x86", null, 2, 0)]
         [InlineData("win-x64", "win-x86;win-x64", null, 2, 0)]
         [InlineData("win-x64", "win-x86;win-x64", "win", 2, 1)]
-        public async Task GetPackageSpecsAsync_WithRuntimeIdentifiers_GeneratesRuntimeGraph(string runtimeIdentifier, string runtimeIdentifiers, string runtimeSupports, int runtimeCount, int supportsCount)
+        public async Task GetPackageSpecsAsync_WithRuntimeIdentifiers_GeneratesRuntimeGraph(string? runtimeIdentifier, string? runtimeIdentifiers, string? runtimeSupports, int runtimeCount, int supportsCount)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // Arrange
@@ -1513,7 +1514,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("win-x64", "win-x64", "win-x64")]
         [InlineData(null, "win-x64", "win-x64")]
         [InlineData("win-x86", "win-x64", "win-x86;win-x64")]
-        public void GetRuntimeIdentifiers_WithVariousInputs(string runtimeIdentifier, string runtimeIdentifiers, string expected)
+        public void GetRuntimeIdentifiers_WithVariousInputs(string? runtimeIdentifier, string? runtimeIdentifiers, string expected)
         {
             var actual = LegacyPackageReferenceProject.GetRuntimeIdentifiers(runtimeIdentifier, runtimeIdentifiers);
             Assert.Equal(expected, string.Join(";", actual.Select(e => e.RuntimeIdentifier)));
@@ -1523,7 +1524,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData(null, "")]
         [InlineData("net46.app;win8.app", "net46.app;win8.app")]
         [InlineData("net46.app;win10.app;net46.app;win10.app", "net46.app;win10.app;net46.app;win10.app")]
-        public void GetRuntimeSupports_WithVariousInputs(string runtimeSupports, string expected)
+        public void GetRuntimeSupports_WithVariousInputs(string? runtimeSupports, string expected)
         {
             var actual = LegacyPackageReferenceProject.GetRuntimeSupports(runtimeSupports);
             Assert.Equal(expected, string.Join(";", actual.Select(e => e.Name.ToString())));
@@ -1795,7 +1796,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         [InlineData("False", false)]
         [InlineData("true", true)]
         [InlineData(null, false)]
-        public async Task GetPackageSpec_WithUseLegacyDependencyResolver(string restoreUseLegacyDependencyResolver, bool expected)
+        public async Task GetPackageSpec_WithUseLegacyDependencyResolver(string? restoreUseLegacyDependencyResolver, bool expected)
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
@@ -2029,7 +2030,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test
         {
             await NuGetUIThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             using var testDirectory = TestDirectory.Create();
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => SetupPrunePackageReferenceDataAndAct("true", new (string, string[])[] { ("PackageA", [null]) }, testDirectory));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => SetupPrunePackageReferenceDataAndAct("true", new (string, string[])[] { ("PackageA", [null!]) }, testDirectory));
             exception.Message.Should().Contain("PrunePackageReference");
         }
 

@@ -18,7 +18,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
         internal string Path { get; set; }
         internal string Id { get; set; }
         internal string Version { get; set; }
-        internal byte[] OriginalHash { get; set; }
         internal byte[] PoisonedHash { get; set; }
         internal List<CatalogFileEntry> Files { get; }
 
@@ -31,7 +30,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             new XAttribute(nameof(Path), Path),
             new XAttribute(nameof(Id), Id),
             new XAttribute(nameof(Version), Version),
-            new XAttribute(nameof(OriginalHash), OriginalHash.ToHexString()),
             PoisonedHash == null ? null : new XAttribute(nameof(PoisonedHash), PoisonedHash.ToHexString()),
             Files.Select(f => f.ToXml())
         );

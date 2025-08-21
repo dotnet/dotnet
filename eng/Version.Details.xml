@@ -10,9 +10,13 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>520c71b5277fc1f72dbec14da03ca55205d6c8e5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.25412.1" SkipProperty="True">
+    <Dependency Name="Microsoft.DotNet.Darc" Version="1.1.0-beta.25419.3" SkipProperty="True">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>396eba49bd539a8791adbe3ef60fcbaa02d60b13</Sha>
+      <Sha>af886bb4e0991ea294d43c7fcfea38059a324ff6</Sha>
+    </Dependency>
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25419.3">
+      <Uri>https://github.com/dotnet/arcade-services</Uri>
+      <Sha>af886bb4e0991ea294d43c7fcfea38059a324ff6</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

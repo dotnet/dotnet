@@ -10,6 +10,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25411.109</MicrosoftDotNetArcadeSdkPackageVersion>
     <MicrosoftDotNetBuildManifestPackageVersion>10.0.0-beta.25411.109</MicrosoftDotNetBuildManifestPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25419.3</MicrosoftDotNetDarcLibPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
@@ -17,5 +18,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
     <MicrosoftDotNetBuildManifestVersion>$(MicrosoftDotNetBuildManifestPackageVersion)</MicrosoftDotNetBuildManifestVersion>
     <!-- dotnet/arcade-services dependencies -->
+    <MicrosoftDotNetDarcLibVersion>$(MicrosoftDotNetDarcLibPackageVersion)</MicrosoftDotNetDarcLibVersion>
   </PropertyGroup>
 </Project>
