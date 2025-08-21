@@ -2,15 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Roslyn.Utilities;
 using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CommandLine;
-using System.IO.Pipes;
+
 namespace Microsoft.CodeAnalysis.CompilerServer
 {
     internal enum CompletionReason
@@ -35,20 +28,20 @@ namespace Microsoft.CodeAnalysis.CompilerServer
     {
         internal CompletionReason Reason { get; }
         internal TimeSpan? NewKeepAlive { get; }
-        internal string? ShutdownRequest { get; }
+        internal string? ShutdownRequestedBy { get; }
 
-        internal CompletionData(CompletionReason reason, TimeSpan? newKeepAlive = null, string? shutdownRequested = null)
+        internal CompletionData(CompletionReason reason, TimeSpan? newKeepAlive = null, string? shutdownRequestedBy = null)
         {
             Reason = reason;
             NewKeepAlive = newKeepAlive;
-            ShutdownRequest = shutdownRequested;
+            ShutdownRequestedBy = shutdownRequestedBy;
         }
 
         internal static CompletionData RequestCompleted { get; } = new CompletionData(CompletionReason.RequestCompleted);
 
         internal static CompletionData RequestError { get; } = new CompletionData(CompletionReason.RequestError);
 
-        public override string ToString() => $"{Reason} KeepAlive:{NewKeepAlive} ShutdownRequest:{ShutdownRequest}";
+        public override string ToString() => $"{Reason} KeepAlive:{NewKeepAlive} {nameof(ShutdownRequestedBy)}:{ShutdownRequestedBy}";
     }
 }
 

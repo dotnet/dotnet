@@ -1,4 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
+﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -11,12 +11,17 @@ using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.Net.BuildServerUtils;
 
 internal static class BuildServerUtility
 {
     public const string WindowsPipePrefix = """\\.\pipe\""";
+
+    /// <summary>
+    /// Note that this is not a real path on Windows, it's just a name.
+    /// </summary>
     public const string DotNetHostServerPath = "DOTNET_HOST_SERVER_PATH";
 
     public static void ListenForShutdown(string label, Action<string> onStart, Action onShutdown, Action<Exception> onError, CancellationToken cancellationToken)
@@ -49,13 +54,20 @@ internal static class BuildServerUtility
         File.Delete(pipePath);
 
         // Wait for any input which means shutdown is requested.
-        using var server = new NamedPipeServerStream(NormalizePipeNameForStream(pipePath));
+        string pipeName = NormalizePipeNameForStream(pipePath);
+        using var server = NamedPipeUtil.CreateServer(pipeName, convertPipeNameToPath: false);
         await server.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
         await server.ReadAsync(new byte[1], 0, 1, cancellationToken).ConfigureAwait(false);
 
         // Close and delete the pipe.
         server.Dispose();
         File.Delete(pipePath);
+    }
+
+    public static NamedPipeClientStream CreateClient(string pipePath)
+    {
+        string pipeName = NormalizePipeNameForStream(pipePath);
+        return NamedPipeUtil.CreateClient(".", pipeName, PipeDirection.InOut, PipeOptions.Asynchronous, convertPipeNameToPath: false);
     }
 
     private static string GetPipePath(string label)
@@ -99,8 +111,6 @@ internal static class BuildServerUtility
             return null;
         }
 
-        hostServerPath = Path.GetFullPath(hostServerPath);
-
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             string normalized = hostServerPath.Replace('/', '\\').ToLowerInvariant();
@@ -113,7 +123,7 @@ internal static class BuildServerUtility
             return $"{WindowsPipePrefix}{normalized}";
         }
 
-        return hostServerPath;
+        return Path.GetFullPath(hostServerPath);
     }
 
     /// <summary>

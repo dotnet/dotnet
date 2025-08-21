@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                         _logger.Log($"Listening for unified shutdown on pipe: {pipePath}");
                     },
                     cancellationToken).ConfigureAwait(false);
-                return new CompletionData(CompletionReason.RequestCompleted, shutdownRequested: nameof(BuildServerUtility));
+                return new CompletionData(CompletionReason.RequestCompleted, shutdownRequestedBy: nameof(BuildServerUtility));
             }
             catch (Exception ex)
             {
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                             ChangeKeepAlive(keepAlive);
                         }
 
-                        if (completionData.ShutdownRequest is { } shutdownRequest)
+                        if (completionData.ShutdownRequestedBy is { } shutdownRequest)
                         {
                             _logger.Log($"Client requested shutdown: {shutdownRequest}");
                             shutdown = true;

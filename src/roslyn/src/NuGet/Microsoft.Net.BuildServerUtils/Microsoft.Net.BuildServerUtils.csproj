@@ -16,4 +16,9 @@
     </PackageDescription>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\..\Compilers\Core\Portable\InternalUtilities\PlatformInformation.cs" />
+    <Compile Include="..\..\Compilers\Shared\NamedPipeUtil.cs" />
+  </ItemGroup>
+
 </Project>

@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CompilerServer
                         clientConnection,
                         request.RequestId,
                         new ShutdownBuildResponse(Process.GetCurrentProcess().Id),
-                        new CompletionData(CompletionReason.RequestCompleted, shutdownRequested: nameof(BuildRequest)),
+                        new CompletionData(CompletionReason.RequestCompleted, shutdownRequestedBy: nameof(BuildRequest)),
                         cancellationToken).ConfigureAwait(false);
                 }
 
