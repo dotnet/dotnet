@@ -212,11 +212,13 @@ The time is ");
     private static string GetHtmlContent(HtmlContentIntermediateNode node)
     {
         var builder = new StringBuilder();
-        var htmlTokens = node.Children.OfType<IntermediateToken>().Where(t => t.IsHtml);
+        var htmlTokens = node.Children.OfType<HtmlIntermediateToken>();
+
         foreach (var htmlToken in htmlTokens)
         {
             builder.Append(htmlToken.Content);
         }
+
         return builder.ToString();
     }
 }

@@ -1,0 +1,15 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="Execute">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetFrameworkToolCurrent)</TargetFramework>
+    <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.Baselines.Tasks" Version="$(MicrosoftDotNetBaselinesTasksVersion)" />
+  </ItemGroup>
+
+  <Target Name="Execute" DependsOnTargets="CreateUpdatePR" />
+
+</Project>

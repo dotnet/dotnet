@@ -604,7 +604,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
 
             return cms;
         }
-#if IS_SIGNING_SUPPORTED
         /// <summary>
         /// Generates a SignedCMS object for some content.
         /// </summary>
@@ -630,7 +629,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
                 return cms;
             }
         }
-#endif
         /// <summary>
         /// Returns the public cert without the private key.
         /// </summary>

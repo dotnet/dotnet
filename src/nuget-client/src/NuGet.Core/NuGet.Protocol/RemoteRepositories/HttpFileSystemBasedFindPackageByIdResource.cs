@@ -20,6 +20,7 @@ using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Protocol.Events;
+using NuGet.Protocol.Utility;
 using NuGet.Versioning;
 
 namespace NuGet.Protocol
@@ -494,6 +495,8 @@ namespace NuGet.Protocol
             var maxTries = _maxRetries * _baseUris.Count;
             var packageIdLowerCase = id.ToLowerInvariant();
 
+            PackageIdValidator.Validate(id);
+
             for (var retry = 1; retry <= maxTries; ++retry)
             {
                 var baseUri = _baseUris[retry % _baseUris.Count].OriginalString;
@@ -579,7 +582,7 @@ namespace NuGet.Protocol
 
         private static async Task<HashSet<NuGetVersion>> ConsumeFlatContainerIndexAsync(Stream stream, string id, string baseUri, CancellationToken token)
         {
-            var json = await JsonSerializer.DeserializeAsync<FlatContainerVersionList>(stream, cancellationToken: token);
+            var json = await JsonSerializer.DeserializeAsync(stream, JsonContext.Default.FlatContainerVersionList, cancellationToken: token);
 
             var result =
 #if NETSTANDARD
@@ -606,7 +609,7 @@ namespace NuGet.Protocol
             return contentUri;
         }
 
-        record struct FlatContainerVersionList
+        internal record struct FlatContainerVersionList
         {
             [JsonPropertyName("versions")]
             public List<string>? Versions { get; set; }
