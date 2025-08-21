@@ -225,9 +225,8 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    # Don't clean-while-building on OSs that have enough disk space to keep
-    # intermediates for compliance scanners.
-    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+    # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       value: ''
     ${{ else }}:
       ${{ if eq(parameters.targetOS, 'windows') }}:
@@ -498,6 +497,9 @@ jobs:
 
   - ${{ else }}:
     - ${{ if eq(parameters.targetOS, 'osx') }}:
+      - script: |
+          xcrun simctl runtime delete all
+        displayName: Reclaim disk space from unused simulator runtimes
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies

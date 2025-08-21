@@ -139,12 +139,9 @@ namespace NuGet.Commands.FuncTest
         // P -> C 1.0.0
         // Do not Prune C 1.0.0
         [Theory]
-        [InlineData("net10.0", "10.0.100", true, true)]
-        [InlineData("net10.0", "9.0.100", true, false)]
-        [InlineData("net10.0", "", false, true)]
-        [InlineData("net472", "", false, false)]
-        [InlineData("net472", "10.0.100", false, false)]
-        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependencies(string framework, string sdkAnalysisLevel, bool usingMicrosoftNETSdk, bool shouldWarn)
+        [InlineData("net10.0", true)]
+        [InlineData("net472", false)]
+        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependencies(string framework, bool shouldWarn)
         {
             using var pathContext = new SimpleTestPathContext();
 
@@ -175,8 +172,6 @@ namespace NuGet.Commands.FuncTest
 
             // Setup project
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
-            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = usingMicrosoftNETSdk;
 
             // Act & Assert
             var result = await RunRestoreAsync(pathContext, projectSpec);
@@ -1302,10 +1297,8 @@ namespace NuGet.Commands.FuncTest
             testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
 
-        [Theory]
-        [InlineData("9.0.100", false)]
-        [InlineData("10.0.100", true)]
-        public void AnalyzePruningResults_WithSDKAnalysisLevel_WarnsFor10OrNewerOnly(string sdkAnalysisLevel, bool shouldWarn)
+        [Fact]
+        public void AnalyzePruningResults_WithSDKAnalysisLevel_WarnsFor10OrNewerOnly()
         {
             var rootProject = @"
                 {
@@ -1325,24 +1318,17 @@ namespace NuGet.Commands.FuncTest
                 }";
 
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
             projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
             var testLogger = new TestLogger();
             var testEvent = new TelemetryEvent("dummyEvent");
 
             RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
-            if (shouldWarn)
-            {
-                testLogger.WarningMessages.Should().HaveCount(1);
-                var restoreLogMessage = (RestoreLogMessage)testLogger.LogMessages.Single();
-                restoreLogMessage.Code.Should().Be(NuGetLogCode.NU1510);
-                restoreLogMessage.LibraryId.Should().Be("A");
-            }
-            else
-            {
-                testLogger.WarningMessages.Should().BeEmpty();
-            }
+            testLogger.WarningMessages.Should().HaveCount(1);
+            var restoreLogMessage = (RestoreLogMessage)testLogger.LogMessages.Single();
+            restoreLogMessage.Code.Should().Be(NuGetLogCode.NU1510);
+            restoreLogMessage.LibraryId.Should().Be("A");
+
             testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
             testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }

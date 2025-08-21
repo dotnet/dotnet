@@ -365,19 +365,19 @@
     </Dependency>
     <!-- Necessary for source-build. This allows the package to be retrieved from previously-source-built artifacts
          and flow in as dependencies of the packages produced by runtime. -->
-    <Dependency Name="NuGet.Frameworks" Version="7.0.0-preview.1.42003">
+    <Dependency Name="NuGet.Frameworks" Version="7.0.0-preview.1.191">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>5088919af0e4a144ce5b294542f472bf668c9cc8</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Packaging" Version="7.0.0-preview.1.42003">
+    <Dependency Name="NuGet.Packaging" Version="7.0.0-preview.1.191">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>5088919af0e4a144ce5b294542f472bf668c9cc8</Sha>
     </Dependency>
-    <Dependency Name="NuGet.ProjectModel" Version="7.0.0-preview.1.42003">
+    <Dependency Name="NuGet.ProjectModel" Version="7.0.0-preview.1.191">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>5088919af0e4a144ce5b294542f472bf668c9cc8</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Versioning" Version="7.0.0-preview.1.42003">
+    <Dependency Name="NuGet.Versioning" Version="7.0.0-preview.1.191">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>5088919af0e4a144ce5b294542f472bf668c9cc8</Sha>
     </Dependency>
