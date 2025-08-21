@@ -144,7 +144,6 @@ namespace NuGet.Configuration
             ElementName = XmlConvert.DecodeName(element.Name.LocalName);
 
             var elementDescendants = element.Elements();
-            var countOfDescendants = elementDescendants.Count();
 
             var parsedItems = elementDescendants.Select(e => SettingFactory.Parse(e, origin)).OfType<AddItem>();
 
