@@ -15,6 +15,11 @@ parameters:
   default: ''
 
 steps:
+- ${{ if eq(parameters.OS, 'Darwin') }}:
+  - script: |
+      xcrun simctl runtime delete all
+    displayName: Reclaim disk space from unused simulator runtimes
+
 - ${{ if ne(parameters.reuseBuildArtifactsFrom,'') }}:
   - ${{ each reuseBuildArtifacts in parameters.reuseBuildArtifactsFrom }}:
     - task: DownloadPipelineArtifact@2
