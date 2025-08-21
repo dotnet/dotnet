@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>NuGet's dependency resolver for packages.config based projects.</Description>
-    <TargetFrameworks>$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework />
     <NoWarn>$(NoWarn);CS1591;CS1573;RS0041</NoWarn>
     <PackProject>true</PackProject>

@@ -87,10 +87,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages.TestServer
                         return await action(port, token);
                     }
                 }
-                catch (OverflowException)
-                {
-                    throw;
-                }
                 finally
                 {
                     PortLock.TryRemove(portLockName, out _);
