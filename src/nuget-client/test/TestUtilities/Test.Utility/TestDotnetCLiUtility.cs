@@ -316,36 +316,15 @@ project TFMs found: {string.Join(", ", compiledTfms.Keys.Select(k => k.ToString(
             var targetRuntimeType = "CoreCLR";
 
             var packAssemblyDestinationDirectory = Path.Combine(pathToPackSdk, targetRuntimeType);
-            // Be smart here so we don't have to call ILMerge in the VS build. It takes ~15s total.
-            // In VisualStudio, simply use the non il merged version.
-            bool copiedIlMergedPack = false;
 
-            var ilMergedPackDirectoryPath = Path.Combine(packProjectCoreArtifactsDirectory.FullName, "ilmerge");
-            if (Directory.Exists(ilMergedPackDirectoryPath))
+            foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
             {
-                var packFileName = packProjectName + ".dll";
-                // Only use the il merged assembly if it's newer than the build.
-                DateTime packAssemblyCreationDate = File.GetLastWriteTimeUtc(Path.Combine(packProjectCoreArtifactsDirectory.FullName, packFileName));
-                DateTime ilMergedPackAssemblyCreationDate = File.GetLastWriteTimeUtc(Path.Combine(ilMergedPackDirectoryPath, packFileName));
-                if (ilMergedPackAssemblyCreationDate > packAssemblyCreationDate)
-                {
-                    copiedIlMergedPack = true;
-                    File.Copy(sourceFileName: Path.Combine(packProjectCoreArtifactsDirectory.FullName, "ilmerge", packFileName),
-                        destFileName: Path.Combine(packAssemblyDestinationDirectory, packFileName),
-                        overwrite: true);
-                }
+                File.Copy(
+                    sourceFileName: assembly.FullName,
+                    destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
+                    overwrite: true);
             }
 
-            if (!copiedIlMergedPack)
-            {
-                foreach (var assembly in packProjectCoreArtifactsDirectory.EnumerateFiles("*.dll"))
-                {
-                    File.Copy(
-                        sourceFileName: assembly.FullName,
-                        destFileName: Path.Combine(packAssemblyDestinationDirectory, assembly.Name),
-                        overwrite: true);
-                }
-            }
             // Copy the pack targets
             var packTargetsSource = Path.Combine(packProjectCoreArtifactsDirectory.FullName, packTargetsName);
             var targetsDestination = Path.Combine(pathToPackSdk, "build", packTargetsName);

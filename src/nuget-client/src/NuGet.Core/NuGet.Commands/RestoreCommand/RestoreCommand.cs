@@ -841,12 +841,7 @@ namespace NuGet.Commands
 
         internal static void AnalyzePruningResults(PackageSpec project, TelemetryEvent telemetryEvent, ILogger logger)
         {
-            bool enablePruningWarnings =
-                SdkAnalysisLevelMinimums.IsEnabled(
-                    project.RestoreMetadata.SdkAnalysisLevel,
-                    project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_100) &&
-                HasFrameworkNewerThanNET10(project);
+            bool enablePruningWarnings = HasFrameworkNewerThanNET10(project);
 
             Dictionary<string, List<string>> prunedDirectPackages = GetPrunableDirectPackages(project);
 
@@ -1891,6 +1886,11 @@ namespace NuGet.Commands
                 }
                 catch (FatalProtocolException)
                 {
+                    failed = true;
+                }
+                catch (Packaging.InvalidPackageIdException ex)
+                {
+                    _logger.Log(RestoreLogMessage.CreateError(NuGetLogCode.NU1017, ex.Message));
                     failed = true;
                 }
             }
