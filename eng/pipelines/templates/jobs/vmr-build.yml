@@ -496,10 +496,11 @@ jobs:
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ else }}:
-    - ${{ if eq(parameters.targetOS, 'osx') }}:
+    - ${{ if or(eq(parameters.targetOS, 'osx'), eq(parameters.targetOS, 'ios'), eq(parameters.targetOS, 'iossimulator'), eq(parameters.targetOS, 'tvos'), eq(parameters.targetOS, 'tvossimulator'), eq(parameters.targetOS, 'maccatalyst')) }}:
       - script: |
           xcrun simctl runtime delete all
         displayName: Reclaim disk space from unused simulator runtimes
+    - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies
