@@ -43,7 +43,7 @@ public static class Config
     public static bool DotNetBuildSharedComponents { get; } = TryGetRuntimeConfig(DotNetBuildSharedComponentsSwitch, out bool value) ? value : false;
     const string DotNetBuildSharedComponentsSwitch = RuntimeConfigSwitchPrefix + nameof(DotNetBuildSharedComponents);
 
-    public static string Sdk1xxVersion { get; } = GetRuntimeConfig(Sdk1xxVersionSwitch);
+    public static string Sdk1xxVersion { get; } = TryGetRuntimeConfig(Sdk1xxVersionSwitch, out string? value) ? value : string.Empty;
     const string Sdk1xxVersionSwitch = RuntimeConfigSwitchPrefix + nameof(Sdk1xxVersion);
 
     public const string RuntimeConfigSwitchPrefix = "Microsoft.DotNet.Installer.Tests.";
