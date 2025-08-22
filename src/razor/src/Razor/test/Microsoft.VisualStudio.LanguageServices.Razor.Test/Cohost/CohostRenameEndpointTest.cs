@@ -174,7 +174,7 @@ public class CohostRenameEndpointTest(ITestOutputHelper testOutputHelper) : Coho
         (string oldName, string newName)[]? renames = null)
     {
         TestFileMarkupParser.GetPosition(input, out var source, out var cursorPosition);
-        var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles);
+        var document = CreateProjectAndRazorDocument(source, fileKind, additionalFiles: additionalFiles);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(cursorPosition);
 

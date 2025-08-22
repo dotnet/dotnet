@@ -34,27 +34,27 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("value")
-                                .Metadata(PropertyName("FooProp"))
+                                .PropertyName("FooProp")
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("bound")
-                                .Metadata(PropertyName("BoundProp"))
+                                .PropertyName("BoundProp")
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("age")
-                                .Metadata(PropertyName("AgeProp"))
+                                .PropertyName("AgeProp")
                                 .TypeName("System.Int32"),
                             builder => builder
                                 .Name("alive")
-                                .Metadata(PropertyName("AliveProp"))
+                                .PropertyName("AliveProp")
                                 .TypeName("System.Boolean"),
                             builder => builder
                                 .Name("tag")
-                                .Metadata(PropertyName("TagProp"))
+                                .PropertyName("TagProp")
                                 .TypeName("System.Object"),
                             builder => builder
                                 .Name("tuple-dictionary")
-                                .Metadata(PropertyName("DictionaryOfBoolAndStringTupleProperty"))
+                                .PropertyName("DictionaryOfBoolAndStringTupleProperty")
                                 .TypeName(typeof(IDictionary<string, int>).Namespace + ".IDictionary<System.String, (System.Boolean, System.String)>")
                                 .AsDictionaryAttribute("tuple-prefix-", typeof((bool, string)).FullName)
                         })
@@ -84,15 +84,15 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("value")
-                                .Metadata(PropertyName("FooProp"))
+                                .PropertyName("FooProp")
                                 .TypeName("System.String"),
                             builder => builder
                                 .Name("bound")
-                                .Metadata(PropertyName("BoundProp"))
+                                .PropertyName("BoundProp")
                                 .TypeName("System.Boolean"),
                             builder => builder
                                 .Name("age")
-                                .Metadata(PropertyName("AgeProp"))
+                                .PropertyName("AgeProp")
                                 .TypeName("System.Int32"),
                         })
                 };
@@ -201,7 +201,7 @@ public class TestTagHelperDescriptors
                     {
                         builder => builder
                             .Name("catch-all")
-                            .Metadata(PropertyName("CatchAll"))
+                            .PropertyName("CatchAll")
                             .AsEnum()
                             .TypeName("Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum"),
                     }),
@@ -213,7 +213,7 @@ public class TestTagHelperDescriptors
                     {
                         builder => builder
                             .Name("value")
-                            .Metadata(PropertyName("Value"))
+                            .PropertyName("Value")
                             .AsEnum()
                             .TypeName("Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestTagHelperDescriptors.MyEnum"),
                     }),
@@ -235,27 +235,27 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("[item]")
-                                .Metadata(PropertyName("ListItems"))
+                                .PropertyName("ListItems")
                                 .TypeName("System.Collections.Generic.List<string>"),
                             builder => builder
                                 .Name("[(item)]")
-                                .Metadata(PropertyName("ArrayItems"))
+                                .PropertyName("ArrayItems")
                                 .TypeName(typeof(string[]).FullName),
                             builder => builder
                                 .Name("(click)")
-                                .Metadata(PropertyName("Event1"))
+                                .PropertyName("Event1")
                                 .TypeName(typeof(Action).FullName),
                             builder => builder
                                 .Name("(^click)")
-                                .Metadata(PropertyName("Event2"))
+                                .PropertyName("Event2")
                                 .TypeName(typeof(Action).FullName),
                             builder => builder
                                 .Name("*something")
-                                .Metadata(PropertyName("StringProperty1"))
+                                .PropertyName("StringProperty1")
                                 .TypeName(typeof(string).FullName),
                             builder => builder
                                 .Name("#local")
-                                .Metadata(PropertyName("StringProperty2"))
+                                .PropertyName("StringProperty2")
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -280,7 +280,7 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("catchall-bound-string")
-                                .Metadata(PropertyName("BoundRequiredString"))
+                                .PropertyName("BoundRequiredString")
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -295,11 +295,11 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("input-bound-required-string")
-                                .Metadata(PropertyName("BoundRequiredString"))
+                                .PropertyName("BoundRequiredString")
                                 .TypeName(typeof(string).FullName),
                             builder => builder
                                 .Name("input-bound-string")
-                                .Metadata(PropertyName("BoundString"))
+                                .PropertyName("BoundString")
                                 .TypeName(typeof(string).FullName),
                         },
                         ruleBuilders: new Action<TagMatchingRuleDescriptorBuilder>[]
@@ -316,11 +316,11 @@ public class TestTagHelperDescriptors
                         {
                             builder => builder
                                 .Name("boundbool")
-                                .Metadata(PropertyName("BoundBoolProp"))
+                                .PropertyName("BoundBoolProp")
                                 .TypeName(typeof(bool).FullName),
                             builder => builder
                                 .Name("booldict")
-                                .Metadata(PropertyName("BoolDictProp"))
+                                .PropertyName("BoolDictProp")
                                 .TypeName("System.Collections.Generic.IDictionary<string, bool>")
                                 .AsDictionaryAttribute("booldict-prefix-", typeof(bool).FullName),
                         }),
@@ -342,7 +342,7 @@ public class TestTagHelperDescriptors
                     {
                         builder => builder
                             .Name("bound")
-                            .Metadata(PropertyName("Bound"))
+                            .PropertyName("Bound")
                             .TypeName(typeof(string).FullName)
                     }),
                 };
@@ -458,20 +458,20 @@ public class TestTagHelperDescriptors
                     {
                         builder => builder
                             .Name("int-prefix-grabber")
-                            .Metadata(PropertyName("IntProperty"))
+                            .PropertyName("IntProperty")
                             .TypeName(typeof(int).FullName),
                         builder => builder
                             .Name("int-dictionary")
-                            .Metadata(PropertyName("IntDictionaryProperty"))
+                            .PropertyName("IntDictionaryProperty")
                             .TypeName("System.Collections.Generic.IDictionary<string, int>")
                             .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
                         builder => builder
                             .Name("string-prefix-grabber")
-                            .Metadata(PropertyName("StringProperty"))
+                            .PropertyName("StringProperty")
                             .TypeName(typeof(string).FullName),
                         builder => builder
                             .Name("string-dictionary")
-                            .Metadata(PropertyName("StringDictionaryProperty"))
+                            .PropertyName("StringDictionaryProperty")
                             .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
                             .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
                     }),
@@ -483,12 +483,12 @@ public class TestTagHelperDescriptors
                     {
                         builder => builder
                             .Name("int-dictionary")
-                            .Metadata(PropertyName("IntDictionaryProperty"))
+                            .PropertyName("IntDictionaryProperty")
                             .TypeName(typeof(int).FullName)
                             .AsDictionaryAttribute("int-prefix-", typeof(int).FullName),
                         builder => builder
                             .Name("string-dictionary")
-                            .Metadata(PropertyName("StringDictionaryProperty"))
+                            .PropertyName("StringDictionaryProperty")
                             .TypeName("Namespace.DictionaryWithoutParameterlessConstructor<string, string>")
                             .AsDictionaryAttribute("string-prefix-", typeof(string).FullName),
                     }),
@@ -612,7 +612,7 @@ public class TestTagHelperDescriptors
     {
         builder
             .Name(name)
-            .Metadata(PropertyName(propertyInfo.Name))
+            .PropertyName(propertyInfo.Name)
             .TypeName(propertyInfo.PropertyType.FullName);
 
         if (propertyInfo.PropertyType.GetTypeInfo().IsEnum)
