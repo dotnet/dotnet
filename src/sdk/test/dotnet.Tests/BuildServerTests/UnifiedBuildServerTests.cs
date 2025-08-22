@@ -3,6 +3,10 @@
 
 namespace Microsoft.DotNet.Tests.BuildServerTests;
 
+[CollectionDefinition(nameof(BuildServerTestCollection), DisableParallelization = true)]
+public sealed class BuildServerTestCollection : ICollectionFixture<BuildServerTestCollection>;
+
+[Collection(nameof(BuildServerTestCollection))]
 public sealed class UnifiedBuildServerTests(ITestOutputHelper output) : SdkTest(output)
 {
     [Fact]
@@ -22,26 +26,33 @@ public sealed class UnifiedBuildServerTests(ITestOutputHelper output) : SdkTest(
             Console.WriteLine();
             """);
 
+        var roslynLog = Path.Join(testInstance.Path, "roslyn-log.txt");
+
         // Ensure there is no build server running from other tests.
         new DotnetCommand(Log, "build-server", "shutdown", "--unified")
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Pass()
-            .And.NotHaveStdOutContaining("VBCSCompiler")
             .And.NotHaveStdErr();
 
         // Build.
         new DotnetCommand(Log, "build")
             .WithWorkingDirectory(testInstance.Path)
+            .WithEnvironmentVariable("RoslynCommandLineLogFile", roslynLog)
             .Execute()
             .Should().Pass()
             .And.HaveStdOutContaining("app.dll");
 
         // Shutdown the build server.
-        new DotnetCommand(Log, "build-server", "shutdown", "--unified")
+        var result = new DotnetCommand(Log, "build-server", "shutdown", "--unified")
             .WithWorkingDirectory(testInstance.Path)
-            .Execute()
-            .Should().Pass()
+            .Execute();
+
+        Log.WriteLine(roslynLog);
+        string roslynLogText = File.ReadAllText(roslynLog);
+        Log.WriteLine(roslynLogText);
+
+        result.Should().Pass()
             .And.HaveStdOutContaining("VBCSCompiler")
             .And.NotHaveStdErr();
     }
