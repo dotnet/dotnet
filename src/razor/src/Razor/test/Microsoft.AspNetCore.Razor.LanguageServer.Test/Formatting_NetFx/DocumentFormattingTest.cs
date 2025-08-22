@@ -29,6 +29,68 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: "");
     }
 
+    [FormattingTestFact]
+    public async Task RangeFormatOpenBrace()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div></div>
+
+                @code {
+                    private void M(string [|request|]) {
+                    }
+                }
+                """,
+            expected: """
+                <div></div>
+                
+                @code {
+                    private void M(string request)
+                    {
+                    }
+                }
+                """);
+    }
+
+    [FormattingTestFact]
+    public async Task RangeFormatOpenBrace_WithContent()
+    {
+        await RunFormattingTestAsync(
+            input: """
+                <div></div>
+
+                @code {
+                    private void M(string [|request|]) {
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                    }
+                }
+                """,
+            expected: """
+                <div></div>
+                
+                @code {
+                    private void M(string request)
+                    {
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                        // This is quite a lot of content
+                    }
+                }
+                """);
+    }
+
     [FormattingTestFact(SkipOldFormattingEngine = true)]
     public async Task RoslynFormatSpaceAfterDot()
     {
@@ -6492,7 +6554,7 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
             expected: code);
     }
 
-    [FormattingTestFact(SkipOldFormattingEngine = true)]
+    [FormattingTestFact]
     [WorkItem("https://github.com/dotnet/razor/issues/11777")]
     public Task RangeFormat_AfterProperty()
         => RunFormattingTestAsync(
@@ -6519,7 +6581,8 @@ public class DocumentFormattingTest(FormattingTestContext context, HtmlFormattin
                         {
                             _s = value;
                         }
-                    } private string _s = "";
+                    }
+                    private string _s = "";
                 }
                 """,
             debugAssertsEnabled: false

@@ -4,7 +4,6 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -91,7 +90,7 @@ internal abstract class AbstractDefinitionService(
             _logger.LogInformation($"Attempting to get definition from an attribute directly.");
 
             var range = await RazorComponentDefinitionHelpers
-                .TryGetPropertyRangeAsync(documentSnapshot, attributeDescriptor.GetPropertyName().AssumeNotNull(), _documentMappingService, _logger, cancellationToken)
+                .TryGetPropertyRangeAsync(documentSnapshot, attributeDescriptor.PropertyName, _documentMappingService, _logger, cancellationToken)
                 .ConfigureAwait(false);
 
             if (range is not null)
