@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TestUtilities;
@@ -18,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.Installer.Tests;
 
-public class LinuxInstallerTests : IDisposable
+public partial class LinuxInstallerTests : IDisposable
 {
     private readonly DockerHelper _dockerHelper;
     private readonly string _tmpDir;
@@ -30,10 +31,29 @@ public class LinuxInstallerTests : IDisposable
     private bool _debContextInitialized = false;
     private bool _sharedContextInitialized = false;
 
-    private const string NetStandard21RpmPackage = @"https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.rpm";
-    private const string NetStandard21DebPackage = @"https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.deb";
+    private static readonly Uri NetStandard21RpmPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.rpm");
+    private static readonly Uri NetStandard21DebPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.deb");
+
+    // Transform patch versions in 100-199 range by removing leading "1"
+    // e.g., 10.0.100-rc.1.25405.108 -> 10.0.0-rc.1.25405.108
+    // e.g., 10.0.112-rc.1.25405.108 -> 10.0.12-rc.1.25405.108
+    // Note: This will transform 108 -> 8, 112 -> 12, etc.
+    [GeneratedRegex(@"^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$")]
+    private static partial Regex SdkVersionToRuntimeVersionRegex { get; }
+    private static readonly string Runtime1xxVersion = SdkVersionToRuntimeVersionRegex.Replace(Config.Sdk1xxVersion, "$1$3$4");
+    
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
+    private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
+    private const string DotnetHostPrefix = "dotnet-host-";
+    private const string DotnetHostFxrPrefix = "dotnet-hostfxr-";
+    private const string DotnetRuntimePrefix = "dotnet-runtime-";
+    private const string DotnetTargetingPackPrefix = "dotnet-targeting-pack-";
+    private const string AspNetCoreRuntimePrefix = "aspnetcore-runtime-";
+    private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
+    private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
+    private const string NetStandardTargetingPackPrefix = "netstandard-targeting-pack-";
+    private const string DotnetSdkPrefix = "dotnet-sdk-";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
     public static bool IncludeDebTests => Config.TestDebPackages;
@@ -72,7 +92,7 @@ public class LinuxInstallerTests : IDisposable
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
-    public void RpmTest(string repo, string tag)
+    public async Task RpmTest(string repo, string tag)
     {
         if (!tag.Contains("azurelinux"))
         {
@@ -80,21 +100,21 @@ public class LinuxInstallerTests : IDisposable
             Assert.Fail("Only Azure Linux is currently supported for RPM tests");
         }
 
-        InitializeContext(PackageType.Rpm);
+        await InitializeContextAsync(PackageType.Rpm);
 
         DistroTest($"{repo}:{tag}", PackageType.Rpm);
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
-    public void DebTest(string repo, string tag)
+    public async Task DebTest(string repo, string tag)
     {
-        InitializeContext(PackageType.Deb);
+        await InitializeContextAsync(PackageType.Deb);
 
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    private void InitializeContext(PackageType packageType)
+    private async Task InitializeContextAsync(PackageType packageType)
     {
         string packageArchitecture =
             Config.Architecture == Architecture.X64 ?
@@ -118,10 +138,7 @@ public class LinuxInstallerTests : IDisposable
                 File.Copy(rpmPackage, Path.Combine(_contextDir, Path.GetFileName(rpmPackage)));
             }
 
-            if (Config.Architecture == Architecture.X64)
-            {
-                DownloadFileAsync(NetStandard21RpmPackage, Path.Combine(_contextDir, Path.GetFileName(NetStandard21RpmPackage))).Wait();
-            }
+            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21RpmPackage);
             _rpmContextInitialized = true;
         }
         else if (!_debContextInitialized)
@@ -132,10 +149,7 @@ public class LinuxInstallerTests : IDisposable
                 File.Copy(debPackage, Path.Combine(_contextDir, Path.GetFileName(debPackage)));
             }
 
-            if (Config.Architecture == Architecture.X64)
-            {
-                DownloadFileAsync(NetStandard21DebPackage, Path.Combine(_contextDir, Path.GetFileName(NetStandard21DebPackage))).Wait();
-            }
+            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21DebPackage);
             _debContextInitialized = true;
         }
 
@@ -167,6 +181,69 @@ public class LinuxInstallerTests : IDisposable
             ZipFile.ExtractToDirectory(scenarioTestsPackage, Path.Combine(_contextDir, "scenario-tests"));
             _sharedContextInitialized = true;
         }
+    }
+
+    private async Task DownloadPackagesAsync(string packageArchitecture, PackageType packageType, Uri netStandardPackageUri)
+    {
+        // Collect URLs and file names for downloading
+        var downloadsToProcess = new List<(Uri url, string fileName)>();
+        
+        if (Config.Architecture == Architecture.X64)
+        {
+            downloadsToProcess.Add((netStandardPackageUri, netStandardPackageUri.Segments.Last()));
+        }
+
+        // Since this is for a non-1xx branch, we never produced runtime packages. Download these from
+        // the referenced 1xx build instead.
+        if (!Config.DotNetBuildSharedComponents)
+        {
+            string distroLabel = packageType == PackageType.Rpm ? "-azl.3" : "";
+            AddRuntimePackageForDownload(downloadsToProcess, DotnetRuntimeDepsPrefix, packageArchitecture, packageType, distroLabel: distroLabel);
+
+            string[] runtimePackagePrefixes =
+            [
+                DotnetHostPrefix,
+                DotnetHostFxrPrefix,
+                DotnetRuntimePrefix,
+                DotnetTargetingPackPrefix,
+                DotnetApphostPackPrefix
+            ];
+
+            foreach (string prefix in runtimePackagePrefixes)
+            {
+                AddRuntimePackageForDownload(downloadsToProcess, prefix, packageArchitecture, packageType);
+            }
+
+            string[] aspnetcorePackagePrefixes = 
+            [
+                AspNetCoreRuntimePrefix,
+                AspNetCoreTargetingPackPrefix
+            ];
+
+            foreach (string prefix in aspnetcorePackagePrefixes)
+            {
+                AddRuntimePackageForDownload(downloadsToProcess, prefix, packageArchitecture, packageType, "aspnetcore/Runtime");
+            }
+        }
+
+        // Download all collected files.
+        // These are small files. No need to parallelize. The logging of sequential downloads will be easier to follow.
+        foreach (var (url, fileName) in downloadsToProcess)
+        {
+            await DownloadFileAsync(url, Path.Combine(_contextDir, fileName));
+        }
+    }
+
+    private static void AddRuntimePackageForDownload(
+        List<(Uri url, string fileName)> downloadsToProcess,
+        string packagePrefix,
+        string architecture,
+        PackageType packageType,
+        string runtimeLocation = "Runtime",
+        string distroLabel = "")
+    {
+        Uri packageUrl = new Uri($"https://ci.dot.net/public/{runtimeLocation}/{Runtime1xxVersion}/{packagePrefix}{Runtime1xxVersion}{distroLabel}-{architecture}.{packageType.ToString().ToLower()}");
+        downloadsToProcess.Add((packageUrl, packageUrl.Segments.Last()));
     }
 
     private bool ShouldCopyPackage(string package)
@@ -290,19 +367,19 @@ public class LinuxInstallerTests : IDisposable
         ];
 
         // Add all other packages in correct install order
-        AddPackage(packageList, "dotnet-host-", packageType);
-        AddPackage(packageList, "dotnet-hostfxr-", packageType);
-        AddPackage(packageList, "dotnet-runtime-", packageType);
-        AddPackage(packageList, "dotnet-targeting-pack-", packageType);
-        AddPackage(packageList, "aspnetcore-runtime-", packageType);
-        AddPackage(packageList, "aspnetcore-targeting-pack-", packageType);
-        AddPackage(packageList, "dotnet-apphost-pack-", packageType);
+        AddPackage(packageList, DotnetHostPrefix, packageType);
+        AddPackage(packageList, DotnetHostFxrPrefix, packageType);
+        AddPackage(packageList, DotnetRuntimePrefix, packageType);
+        AddPackage(packageList, DotnetTargetingPackPrefix, packageType);
+        AddPackage(packageList, AspNetCoreRuntimePrefix, packageType);
+        AddPackage(packageList, AspNetCoreTargetingPackPrefix, packageType);
+        AddPackage(packageList, DotnetApphostPackPrefix, packageType);
         if (Config.Architecture == Architecture.X64)
         {
             // netstandard package exists for x64 only
-            AddPackage(packageList, "netstandard-targeting-pack-", packageType);
+            AddPackage(packageList, NetStandardTargetingPackPrefix, packageType);
         }
-        AddPackage(packageList, "dotnet-sdk-", packageType);
+        AddPackage(packageList, DotnetSdkPrefix, packageType);
 
         return packageList;
     }
@@ -340,7 +417,7 @@ public class LinuxInstallerTests : IDisposable
             string options = "";
             // TODO: remove --force-depends after deps image issue has been resolved - https://github.com/dotnet/dotnet-docker/issues/6271
             if (packageType == PackageType.Deb &&
-                package.Contains("dotnet-runtime-deps-"))
+                package.Contains(DotnetRuntimeDepsPrefix))
             {
                 options = " --force-depends";
             }
@@ -380,7 +457,7 @@ public class LinuxInstallerTests : IDisposable
     {
         string matchPattern = PackageType.Deb == packageType ? "*.deb" : "*.rpm";
         string[] files = Directory.GetFiles(_contextDir, prefix + matchPattern, SearchOption.AllDirectories)
-            .Where(p => !Path.GetFileName(p).Contains("dotnet-runtime-deps-"))
+            .Where(p => !Path.GetFileName(p).Contains(DotnetRuntimeDepsPrefix))
             .ToArray();
         if (files.Length == 0)
         {
@@ -393,8 +470,8 @@ public class LinuxInstallerTests : IDisposable
     private string GetMatchingDepsPackage(string baseImage, PackageType packageType)
     {
         string matchPattern = packageType == PackageType.Deb
-            ? "dotnet-runtime-deps-*.deb"
-            : "dotnet-runtime-deps-*azl*.rpm"; // We currently only support Azure Linux deps image
+            ? $"{DotnetRuntimeDepsPrefix}*.deb"
+            : $"{DotnetRuntimeDepsPrefix}*azl*.rpm"; // We currently only support Azure Linux deps image
 
         string[] files = Directory.GetFiles(_contextDir, matchPattern, SearchOption.AllDirectories);
         if (files.Length == 0)
@@ -408,18 +485,15 @@ public class LinuxInstallerTests : IDisposable
     private static string GetSanitizedImageName(string image) =>
         image.Replace("/", "_").Replace(":", "_").Replace(".", "_");
 
-    private static async Task DownloadFileAsync(string url, string filePath)
+    private async Task DownloadFileAsync(Uri url, string filePath)
     {
-        using (HttpClient client = new HttpClient())
-        {
-            HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
+        _outputHelper.WriteLine($"Downloading {url} to {filePath}");
 
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                await response.Content.CopyToAsync(fileStream);
-            }
-        }
+        using HttpClient client = new HttpClient();
+        HttpResponseMessage response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await response.Content.CopyToAsync(fileStream);
     }
 }
-

@@ -58,12 +58,6 @@ parameters:
   type: boolean
   default: false
 
-  # Remove with https://github.com/dotnet/source-build/issues/5288
-- name: enableCoreDumpGeneration
-  displayName: True when core dump generation should be enabled
-  type: boolean
-  default: false
-
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -523,7 +517,11 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            # Don't use --no-artifacts because it will prevent the shared components archive from being
+            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
+            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
+            # to use at the expected location.
+            customPrepArgs="${customPrepArgs} --no-sdk"
             prepSdk=false
           fi
 
@@ -584,12 +582,6 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
-          fi
-
-          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
-          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
-            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
-            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"

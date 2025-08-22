@@ -40,6 +40,12 @@ public static class Config
     public static bool KeepDockerImages { get; } = TryGetRuntimeConfig(KeepDockerImagesSwitch, out bool value) ? value : false;
     const string KeepDockerImagesSwitch = RuntimeConfigSwitchPrefix + nameof(KeepDockerImages);
 
+    public static bool DotNetBuildSharedComponents { get; } = TryGetRuntimeConfig(DotNetBuildSharedComponentsSwitch, out bool value) ? value : false;
+    const string DotNetBuildSharedComponentsSwitch = RuntimeConfigSwitchPrefix + nameof(DotNetBuildSharedComponents);
+
+    public static string Sdk1xxVersion { get; } = TryGetRuntimeConfig(Sdk1xxVersionSwitch, out string? value) ? value : string.Empty;
+    const string Sdk1xxVersionSwitch = RuntimeConfigSwitchPrefix + nameof(Sdk1xxVersion);
+
     public const string RuntimeConfigSwitchPrefix = "Microsoft.DotNet.Installer.Tests.";
 
     public static Architecture GetArchitecture(string architecture) => architecture switch
