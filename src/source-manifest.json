@@ -7,10 +7,10 @@
       "commitSha": "86b53945e6b6b239d68fa465e62fcf4323ff3b7b"
     },
     {
-      "barId": 280197,
+      "barId": 280236,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "231674fe53e84193a9f1379fea6f1e163e9b20eb"
+      "commitSha": "aa1f0fba9ad0f602a35d11570caa491f4d8b4122"
     },
     {
       "barId": 277712,
@@ -37,10 +37,10 @@
       "commitSha": "a321e262b120841f4bd7651da46826589404ac66"
     },
     {
-      "barId": 279842,
+      "barId": 280301,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "69f50fe65f373ffd71239d75fdec44d66c5c2fdc"
+      "commitSha": "5eedebfa7e0466c7c352e694a08913541db0c156"
     },
     {
       "barId": 278900,
@@ -79,16 +79,10 @@
       "commitSha": "caf7125830dca5b28f76f5a2f66c8f125871a613"
     },
     {
-      "barId": 277064,
-      "path": "roslyn-analyzers",
-      "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "d45048f958379c63acfc716136a5e2466f21c5d4"
-    },
-    {
-      "barId": 279990,
+      "barId": 280317,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "e2b61c7e686e7987a6d99d10d8231c3b5eb4c065"
+      "commitSha": "cbfd5265b43ca8379f983de049bb8a0869d1918c"
     },
     {
       "barId": 277711,
@@ -97,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 279844,
+      "barId": 280239,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "a3ab5c9364065a7f5f94f614eefb76360e81b096"
+      "commitSha": "11940f65e7feff2e7daeda1806f75231185e82c4"
     },
     {
       "barId": 279269,
