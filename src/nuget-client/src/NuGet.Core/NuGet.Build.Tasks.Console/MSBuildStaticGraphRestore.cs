@@ -702,8 +702,9 @@ namespace NuGet.Build.Tasks.Console
         /// </summary>
         /// <param name="projectInnerNodes">An <see cref="IReadOnlyDictionary{NuGetFramework,ProjectInstance} "/> containing the projects by their target framework.</param>
         /// <param name="isCpvmEnabled">A flag that is true if the Central Package Management was enabled.</param>
+        /// <param name="isPruningEnabledGlobally">A flag that tells us the default for pruning, if the pruning property is not set.</param>
         /// <returns>A <see cref="List{TargetFrameworkInformation}" /> containing the target framework information for the specified project.</returns>
-        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IReadOnlyDictionary<string, IMSBuildProject> projectInnerNodes, bool isCpvmEnabled)
+        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IReadOnlyDictionary<string, IMSBuildProject> projectInnerNodes, bool isCpvmEnabled, bool isPruningEnabledGlobally)
         {
             var targetFrameworkInfos = new List<TargetFrameworkInformation>(projectInnerNodes.Count);
 
@@ -735,7 +736,10 @@ namespace NuGet.Build.Tasks.Console
                 }
 
                 var dependencies = GetPackageReferences(msBuildProjectInstance, isCpvmEnabled, centralPackageVersions);
-                var prunedReferences = msBuildProjectInstance.IsPropertyTrue("RestoreEnablePackagePruning") ? GetPrunePackageReferences(msBuildProjectInstance) : [];
+
+                bool? restoreEnablePackagePruning = MSBuildStringUtility.GetBooleanOrNull(msBuildProjectInstance.GetProperty("RestoreEnablePackagePruning"));
+                bool isPackagePruningEnabled = restoreEnablePackagePruning == null ? isPruningEnabledGlobally : restoreEnablePackagePruning == true;
+                var prunedReferences = isPackagePruningEnabled ? GetPrunePackageReferences(msBuildProjectInstance) : [];
 
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {
@@ -992,9 +996,10 @@ namespace NuGet.Build.Tasks.Console
 
             (bool isCentralPackageManagementEnabled, bool isCentralPackageVersionOverrideDisabled, bool isCentralPackageTransitivePinningEnabled, bool isCentralPackageFloatingVersionsEnabled) = MSBuildRestoreUtility.GetCentralPackageManagementSettings(project, projectStyle);
 
+            bool isPruningEnabledGlobally = GetPackagePruningDefault(projectsByTargetFramework.Values);
             RestoreAuditProperties auditProperties = MSBuildRestoreUtility.GetRestoreAuditProperties(project, projectsByTargetFramework.Values, GetAuditSuppressions(project));
 
-            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled);
+            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(projectsByTargetFramework, isCentralPackageManagementEnabled, isPruningEnabledGlobally);
 
             List<IMSBuildProject> innerNodes = projectsByTargetFramework.Values.ToList();
 
@@ -1071,6 +1076,18 @@ namespace NuGet.Build.Tasks.Console
 
                 return (projectStyleResult.ProjectStyle, projectStyleResult.PackagesConfigFilePath);
             }
+        }
+
+        internal static bool GetPackagePruningDefault(IEnumerable<IMSBuildProject> innerBuilds)
+        {
+            foreach (var item in innerBuilds.NoAllocEnumerate())
+            {
+                if (item.IsPropertyTrue("_RestorePackagePruningDefault"))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static HashSet<string> GetAuditSuppressions(IMSBuildProject project)
