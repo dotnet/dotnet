@@ -138,7 +138,7 @@ stages:
         scriptLocation: scriptPath
         scriptPath: $(System.DefaultWorkingDirectory)/eng/common/sdk-task.ps1
         arguments: >
-          -task PublishArtifactsInManifest -restore -msbuildEngine dotnet
+          -task PublishArtifactsInManifest -restore -msbuildEngine dotnet -noWarnAsError
           /p:PublishingInfraVersion=3
           /p:BARBuildId=${{ parameters.BARBuildId }}
           /p:TargetChannels='${{ parameters.PromoteToChannelIds }}'
