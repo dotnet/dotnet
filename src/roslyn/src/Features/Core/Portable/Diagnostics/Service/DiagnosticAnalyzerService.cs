@@ -9,6 +9,7 @@ using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -16,6 +17,7 @@ using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.Remote;
 using Microsoft.CodeAnalysis.Shared.TestHooks;
 using Microsoft.CodeAnalysis.SolutionCrawler;
@@ -44,6 +46,13 @@ internal sealed class DiagnosticAnalyzerServiceFactory(
     }
 }
 
+/// <summary>
+/// Only implementation of <see cref="IDiagnosticAnalyzerService"/>.  Note: all methods in this class
+/// should attempt to run in OOP as soon as possible.  This is not always easy, especially if the apis
+/// involve working with in-memory data structures that are not serializable.  In those cases, we should
+/// do all that work in-proc, and then send the results to OOP for further processing.  Examples of this
+/// are apis that take in a delegate callback to determine which analyzers to actually execute.
+/// </summary>
 internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerService
 {
     private static readonly Option2<bool> s_crashOnAnalyzerException = new("dotnet_crash_on_analyzer_exception", defaultValue: false);
@@ -58,6 +67,7 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
     private readonly IDiagnosticsRefresher _diagnosticsRefresher;
     private readonly DiagnosticIncrementalAnalyzer _incrementalAnalyzer;
     private readonly DiagnosticAnalyzerInfoCache _analyzerInfoCache;
+    private readonly StateManager _stateManager;
 
     public DiagnosticAnalyzerService(
         IGlobalOptionService globalOptions,
@@ -71,6 +81,7 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
         GlobalOptions = globalOptions;
         _diagnosticsRefresher = diagnosticsRefresher;
         _incrementalAnalyzer = new DiagnosticIncrementalAnalyzer(this, _analyzerInfoCache, this.GlobalOptions);
+        _stateManager = new StateManager(_analyzerInfoCache);
 
         globalOptions.AddOptionChangedHandler(this, (_, _, e) =>
         {
@@ -122,21 +133,125 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
             document, range, shouldIncludeDiagnostic, priorityProvider, diagnosticKinds, cancellationToken).ConfigureAwait(false);
     }
 
-    public Task<ImmutableArray<DiagnosticData>> ForceAnalyzeProjectAsync(Project project, CancellationToken cancellationToken)
-        => _incrementalAnalyzer.ForceAnalyzeProjectAsync(project, cancellationToken);
-
-    public Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsAsync(
-        Project project, DocumentId? documentId, ImmutableHashSet<string>? diagnosticIds, Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer, bool includeLocalDocumentDiagnostics, bool includeNonLocalDocumentDiagnostics, CancellationToken cancellationToken)
+    public async Task<ImmutableArray<DiagnosticData>> ForceAnalyzeProjectAsync(Project project, CancellationToken cancellationToken)
     {
-        return _incrementalAnalyzer.GetDiagnosticsForIdsAsync(project, documentId, diagnosticIds, shouldIncludeAnalyzer, includeLocalDocumentDiagnostics, includeNonLocalDocumentDiagnostics, cancellationToken);
+        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
+                project,
+                (service, solution, cancellationToken) => service.ForceAnalyzeProjectAsync(solution, project.Id, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+
+            return result.HasValue ? result.Value : [];
+        }
+
+        // No OOP connection. Compute in proc.
+        return await _incrementalAnalyzer.ForceAnalyzeProjectAsync(project, cancellationToken).ConfigureAwait(false);
     }
 
-    public Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsAsync(
+    public async Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsAsync(
+        Project project, DocumentId? documentId, ImmutableHashSet<string>? diagnosticIds, Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer, bool includeLocalDocumentDiagnostics, bool includeNonLocalDocumentDiagnostics, CancellationToken cancellationToken)
+    {
+        var analyzers = await GetDiagnosticAnalyzersAsync(
+            project, diagnosticIds, shouldIncludeAnalyzer, cancellationToken).ConfigureAwait(false);
+
+        return await ProduceProjectDiagnosticsAsync(
+            project, analyzers, diagnosticIds,
+            // Ensure we compute and return diagnostics for both the normal docs and the additional docs in this
+            // project if no specific document id was requested.
+            documentId != null ? [documentId] : [.. project.DocumentIds, .. project.AdditionalDocumentIds],
+            includeLocalDocumentDiagnostics,
+            includeNonLocalDocumentDiagnostics,
+            // return diagnostics specific to one project or document
+            includeProjectNonLocalResult: documentId == null,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsAsync(
         Project project, ImmutableHashSet<string>? diagnosticIds,
         Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer,
         bool includeNonLocalDocumentDiagnostics, CancellationToken cancellationToken)
     {
-        return _incrementalAnalyzer.GetProjectDiagnosticsForIdsAsync(project, diagnosticIds, shouldIncludeAnalyzer, includeNonLocalDocumentDiagnostics, cancellationToken);
+        var analyzers = await GetDiagnosticAnalyzersAsync(
+            project, diagnosticIds, shouldIncludeAnalyzer, cancellationToken).ConfigureAwait(false);
+
+        return await ProduceProjectDiagnosticsAsync(
+            project, analyzers, diagnosticIds,
+            documentIds: [],
+            includeLocalDocumentDiagnostics: false,
+            includeNonLocalDocumentDiagnostics: includeNonLocalDocumentDiagnostics,
+            includeProjectNonLocalResult: true,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    internal async Task<ImmutableArray<DiagnosticData>> ProduceProjectDiagnosticsAsync(
+        Project project,
+        ImmutableArray<DiagnosticAnalyzer> analyzers,
+        ImmutableHashSet<string>? diagnosticIds,
+        ImmutableArray<DocumentId> documentIds,
+        bool includeLocalDocumentDiagnostics,
+        bool includeNonLocalDocumentDiagnostics,
+        bool includeProjectNonLocalResult,
+        CancellationToken cancellationToken)
+    {
+        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var analyzerIds = analyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+            var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
+                project,
+                (service, solution, cancellationToken) => service.ProduceProjectDiagnosticsAsync(
+                    solution, project.Id, analyzerIds, diagnosticIds, documentIds,
+                    includeLocalDocumentDiagnostics, includeNonLocalDocumentDiagnostics, includeProjectNonLocalResult,
+                    cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+            if (!result.HasValue)
+                return [];
+
+            return result.Value;
+        }
+
+        // Fallback to proccessing in proc.
+        return await _incrementalAnalyzer.ProduceProjectDiagnosticsAsync(
+            project, analyzers, diagnosticIds, documentIds,
+            includeLocalDocumentDiagnostics,
+            includeNonLocalDocumentDiagnostics,
+            includeProjectNonLocalResult,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    internal Task<ImmutableArray<DiagnosticAnalyzer>> GetProjectAnalyzersAsync(
+        Project project, CancellationToken cancellationToken)
+    {
+        return _stateManager.GetOrCreateAnalyzersAsync(
+            project.Solution.SolutionState, project.State, cancellationToken);
+    }
+
+    private async Task<ImmutableArray<DiagnosticAnalyzer>> GetDiagnosticAnalyzersAsync(
+        Project project,
+        ImmutableHashSet<string>? diagnosticIds,
+        Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer,
+        CancellationToken cancellationToken)
+    {
+        var analyzersForProject = await GetProjectAnalyzersAsync(project, cancellationToken).ConfigureAwait(false);
+        var analyzers = analyzersForProject.WhereAsArray(a => ShouldIncludeAnalyzer(project, a));
+
+        return analyzers;
+
+        bool ShouldIncludeAnalyzer(Project project, DiagnosticAnalyzer analyzer)
+        {
+            if (!DocumentAnalysisExecutor.IsAnalyzerEnabledForProject(analyzer, project, this.GlobalOptions))
+                return false;
+
+            if (shouldIncludeAnalyzer != null && !shouldIncludeAnalyzer(analyzer))
+                return false;
+
+            if (diagnosticIds != null && _analyzerInfoCache.GetDiagnosticDescriptors(analyzer).All(d => !diagnosticIds.Contains(d.Id)))
+                return false;
+
+            return true;
+        }
     }
 
     public async Task<ImmutableArray<DiagnosticDescriptor>> GetDiagnosticDescriptorsAsync(
@@ -270,6 +385,97 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
         }
 
         return project.Solution.SolutionState.Analyzers.GetDiagnosticDescriptorsPerReference(this._analyzerInfoCache, project);
+    }
+
+    public async Task<ImmutableArray<DiagnosticAnalyzer>> GetDeprioritizationCandidatesAsync(
+        Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
+    {
+        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var analyzerIds = analyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+            var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableHashSet<string>>(
+                project,
+                (service, solution, cancellationToken) => service.GetDeprioritizationCandidatesAsync(
+                    solution, project.Id, analyzerIds, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+            if (!result.HasValue)
+                return [];
+
+            return analyzers.FilterAnalyzers(result.Value);
+        }
+
+        using var _ = ArrayBuilder<DiagnosticAnalyzer>.GetInstance(out var builder);
+
+        var hostAnalyzerInfo = await _stateManager.GetOrCreateHostAnalyzerInfoAsync(
+            project.Solution.SolutionState, project.State, cancellationToken).ConfigureAwait(false);
+        var compilationWithAnalyzers = await GetOrCreateCompilationWithAnalyzersAsync(
+            project, analyzers, hostAnalyzerInfo, this.CrashOnAnalyzerException, cancellationToken).ConfigureAwait(false);
+
+        foreach (var analyzer in analyzers)
+        {
+            if (await IsCandidateForDeprioritizationBasedOnRegisteredActionsAsync(analyzer).ConfigureAwait(false))
+                builder.Add(analyzer);
+        }
+
+        return builder.ToImmutableAndClear();
+
+        async Task<bool> IsCandidateForDeprioritizationBasedOnRegisteredActionsAsync(DiagnosticAnalyzer analyzer)
+        {
+            // We deprioritize SymbolStart/End and SemanticModel analyzers from 'Normal' to 'Low' priority bucket,
+            // as these are computationally more expensive.
+            // Note that we never de-prioritize compiler analyzer, even though it registers a SemanticModel action.
+            if (compilationWithAnalyzers == null ||
+                analyzer.IsWorkspaceDiagnosticAnalyzer() ||
+                analyzer.IsCompilerAnalyzer())
+            {
+                return false;
+            }
+
+            var telemetryInfo = await compilationWithAnalyzers.GetAnalyzerTelemetryInfoAsync(analyzer, cancellationToken).ConfigureAwait(false);
+            if (telemetryInfo == null)
+                return false;
+
+            return telemetryInfo.SymbolStartActionsCount > 0 || telemetryInfo.SemanticModelActionsCount > 0;
+        }
+    }
+
+    public async Task<ImmutableArray<DiagnosticData>> ComputeDiagnosticsAsync(
+        TextDocument document,
+        TextSpan? range,
+        ImmutableArray<DiagnosticAnalyzer> allAnalyzers,
+        ImmutableArray<DiagnosticAnalyzer> syntaxAnalyzers,
+        ImmutableArray<DiagnosticAnalyzer> semanticSpanAnalyzers,
+        ImmutableArray<DiagnosticAnalyzer> semanticDocumentAnalyzers,
+        bool incrementalAnalysis,
+        bool logPerformanceInfo,
+        CancellationToken cancellationToken)
+    {
+        if (allAnalyzers.Length == 0)
+            return [];
+
+        var client = await RemoteHostClient.TryGetClientAsync(document.Project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var allAnalyzerIds = allAnalyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+            var syntaxAnalyzersIds = syntaxAnalyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+            var semanticSpanAnalyzersIds = semanticSpanAnalyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+            var semanticDocumentAnalyzersIds = semanticDocumentAnalyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
+
+            var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
+                document.Project,
+                (service, solution, cancellationToken) => service.ComputeDiagnosticsAsync(
+                    solution, document.Id, range,
+                    allAnalyzerIds, syntaxAnalyzersIds, semanticSpanAnalyzersIds, semanticDocumentAnalyzersIds,
+                    incrementalAnalysis, logPerformanceInfo, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+
+            return result.HasValue ? result.Value : [];
+        }
+
+        return await _incrementalAnalyzer.ComputeDiagnosticsAsync(
+            document, range, allAnalyzers, syntaxAnalyzers, semanticSpanAnalyzers, semanticDocumentAnalyzers,
+            incrementalAnalysis, logPerformanceInfo, cancellationToken).ConfigureAwait(false);
     }
 
     private sealed class DiagnosticAnalyzerComparer : IEqualityComparer<DiagnosticAnalyzer>

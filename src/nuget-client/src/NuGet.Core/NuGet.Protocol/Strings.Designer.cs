@@ -187,6 +187,15 @@ namespace NuGet.Protocol {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid package id : `{0}`..
+        /// </summary>
+        internal static string Error_Invalid_package_id {
+            get {
+                return ResourceManager.GetString("Error_Invalid_package_id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server responded with HTTP &apos;403 Forbidden&apos; when accessing the source &apos;{0}&apos;. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource..
         /// </summary>
         internal static string Http_CredentialsForForbidden {

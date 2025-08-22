@@ -38,7 +38,6 @@ namespace NuGet.PackageManagement.VisualStudio
                 throw new ArgumentNullException(nameof(project));
             }
 
-            var sortedPackages = new List<PackageIdentity>();
             var installedRefs = await project.GetInstalledPackagesAsync(CancellationToken.None);
 
             if (installedRefs != null && installedRefs.Any())
