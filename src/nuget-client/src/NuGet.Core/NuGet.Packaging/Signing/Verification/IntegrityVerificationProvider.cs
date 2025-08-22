@@ -4,13 +4,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-#if IS_SIGNING_SUPPORTED
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using NuGet.Common;
-#endif
 
 namespace NuGet.Packaging.Signing
 {
@@ -21,7 +18,6 @@ namespace NuGet.Packaging.Signing
             return VerifyPackageIntegrityAsync(package, signature, settings);
         }
 
-#if IS_SIGNING_SUPPORTED
         private async Task<PackageVerificationResult> VerifyPackageIntegrityAsync(ISignedPackageReader package, PrimarySignature signature, SignedPackageVerifierSettings settings)
         {
             var status = SignatureVerificationStatus.Unknown;
@@ -53,11 +49,6 @@ namespace NuGet.Packaging.Signing
 
             return new SignedPackageVerificationResult(status, signature, issues);
         }
-#else
-        private Task<PackageVerificationResult> VerifyPackageIntegrityAsync(ISignedPackageReader package, PrimarySignature signature, SignedPackageVerifierSettings settings)
-        {
-            throw new NotSupportedException();
-        }
-#endif
+
     }
 }

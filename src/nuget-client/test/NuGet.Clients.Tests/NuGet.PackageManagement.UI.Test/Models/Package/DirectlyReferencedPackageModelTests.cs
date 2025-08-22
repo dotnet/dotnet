@@ -33,7 +33,7 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
         [Theory]
         [InlineData(null)]
         [InlineData("String")]
-        public void Constructor_SetReportAbuseUrl_InitializeReportAbuseUrl(string reportAbuseUrl)
+        public void Constructor_SetReportAbuseUrl_InitializeReportAbuseUrl(string? reportAbuseUrl)
         {
             // Arrange
             var identity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
