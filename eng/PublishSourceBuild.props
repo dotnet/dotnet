@@ -159,7 +159,7 @@
 
     <!-- Tests expect this file to be in ArtifactsAssetsDir. -->
     <Copy SourceFiles="$(SourceBuiltTarballName)"
-          DestinationFolder="$(ArtifactsAssetsDir)source-build"
+          DestinationFolder="$(ArtifactsAssetSourceBuildDir)"
           SkipUnchangedFiles="true" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
