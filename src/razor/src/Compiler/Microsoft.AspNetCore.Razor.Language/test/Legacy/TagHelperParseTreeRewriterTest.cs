@@ -1314,7 +1314,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bound")
-                .Metadata(PropertyName("Bound"))
+                .PropertyName("Bound")
                 .TypeName(typeof(bool).FullName))
             .Build()
     ];
@@ -1921,7 +1921,7 @@ public class TagHelperParseTreeRewriterTest : TagHelperRewritingTestBase
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bound")
-                .Metadata(PropertyName("Bound"))
+                .PropertyName("Bound")
                 .TypeName(typeof(bool).FullName))
             .TagMatchingRuleDescriptor(rule =>
                 rule
