@@ -395,54 +395,48 @@ if [[ "$sourceOnly" == "true" ]]; then
     }
 
     GIT_DIR="$scriptroot/.git"
-    fake_git=false
-    # Check if exist .git directory or file
+    # Check if exist .git file
     if [ -f "$GIT_DIR" ]; then
       if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
         echo "ERROR: $GIT_DIR exist, but does not contain a valid 'gitdir:' pointer."
         exit 1
       else
         GIT_DIR=$(grep -oP '^gitdir: \K.*' "$GIT_DIR")
-        fake_git=true
+      fi
+    fi
+    if [ -f "$GIT_DIR/config" ] && [ -f "$GIT_DIR/HEAD" ]; then # We check for config/HEAD because if outside of git, we create config and HEAD manually
+      if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
+        echo "ERROR: Source Link arguments cannot be used in a git repository"
+        exit 1
       fi
     else
-      fake_git=true
-    fi
-    if [[ "$fake_git" == true ]]; then
-      if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
-        if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
-          echo "ERROR: Source Link arguments cannot be used in a git repository"
+      if [ -z "$releaseManifest" ]; then
+        if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
+          echo "ERROR: $scriptroot is not a git repository, either --release-manifest or --source-repository and --source-version must be specified"
           exit 1
         fi
       else
-        if [ -z "$releaseManifest" ]; then
-          if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
-            echo "ERROR: $scriptroot is not a git repository, either --release-manifest or --source-repository and --source-version must be specified"
-            exit 1
-          fi
-        else
-          if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ]; then
-            echo "ERROR: --release-manifest cannot be specified together with --source-repository and --source-version"
-            exit 1
-          fi
-
-          sourceRepository=$(get_property "$releaseManifest" sourceRepository) \
-            || (echo "ERROR: Failed to find sourceRepository in $releaseManifest" && exit 1)
-          sourceVersion=$(get_property "$releaseManifest" sourceVersion) \
-            || (echo "ERROR: Failed to find sourceVersion in $releaseManifest" && exit 1)
-
-          if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
-            echo "ERROR: sourceRepository and sourceVersion must be specified in $releaseManifest"
-            exit 1
-          fi
+        if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ]; then
+          echo "ERROR: --release-manifest cannot be specified together with --source-repository and --source-version"
+          exit 1
         fi
 
-        # We need to add "fake" .git/ files when not building from a git repository
-        mkdir -p "$GIT_DIR"
-        echo '[remote "origin"]' > "$GIT_DIR/config"
-        echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
-        echo "$sourceVersion" > "$GIT_DIR/HEAD"
+        sourceRepository=$(get_property "$releaseManifest" sourceRepository) \
+          || (echo "ERROR: Failed to find sourceRepository in $releaseManifest" && exit 1)
+        sourceVersion=$(get_property "$releaseManifest" sourceVersion) \
+          || (echo "ERROR: Failed to find sourceVersion in $releaseManifest" && exit 1)
+
+        if [ -z "$sourceRepository" ] || [ -z "$sourceVersion" ]; then
+          echo "ERROR: sourceRepository and sourceVersion must be specified in $releaseManifest"
+          exit 1
+        fi
       fi
+
+      # We need to add "fake" .git/ files when not building from a git repository
+      mkdir -p "$GIT_DIR"
+      echo '[remote "origin"]' > "$GIT_DIR/config"
+      echo "url=\"$sourceRepository\"" >> "$GIT_DIR/config"
+      echo "$sourceVersion" > "$GIT_DIR/HEAD"
     fi
 
     # If the release manifest is provided
@@ -463,11 +457,6 @@ if [[ "$sourceOnly" == "true" ]]; then
     fi
   fi
 
-  if [ ! -e "$scriptroot/.git" ]; then
-    echo "ERROR: $scriptroot is not a git repository/worktree."
-    exit 1
-  fi
-
   # Support custom source built package locations
   if [ "$CUSTOM_PACKAGES_DIR" != "" ]; then
     if [ "$test" == "true" ]; then
@@ -475,6 +464,11 @@ if [[ "$sourceOnly" == "true" ]]; then
     else
       properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$CUSTOM_PACKAGES_DIR" )
     fi
+  fi
+
+  if [ ! -e "$scriptroot/.git" ]; then
+    echo "ERROR: $scriptroot is not a git repository/worktree."
+    exit 1
   fi
 
   # Allow a custom SDK directory to be specified
