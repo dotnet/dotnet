@@ -76,6 +76,10 @@
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
+    <Dependency Name="System.Private.Windows.Core.TestUtilities" Version="10.0.0-rc.1.25418.110">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25418.110">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
@@ -100,10 +104,6 @@
     <Dependency Name="Microsoft.SourceLink.GitHub" Version="8.0.0-beta.23409.2" Pinned="true">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>e9f665e52848a3615736c099e5631af531b66a5c</Sha>
-    </Dependency>
-    <Dependency Name="System.Private.Windows.Core.TestUtilities" Version="10.0.0-rc.1.25418.110">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>

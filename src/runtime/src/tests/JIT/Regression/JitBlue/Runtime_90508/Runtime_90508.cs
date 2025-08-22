@@ -18,7 +18,7 @@ public class Runtime_90508
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static Vector128<double> Test3(Vector128<double> v) =>
-        v + Sse3.MoveAndDuplicate(Vector128<double>.One);
+        v + Sse3.MoveAndDuplicate(Vector128.Create(1.0));
 
     [Fact]
     public static int TestEntryPoint()

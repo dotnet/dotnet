@@ -6,6 +6,8 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
+    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
+    <MicrosoftApplicationInsightsPackageVersion>2.23.0</MicrosoftApplicationInsightsPackageVersion>
     <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.8.0</MicrosoftNetCompilersToolsetPackageVersion>
@@ -44,6 +46,8 @@ This file should be imported by eng/Versions.props
     <SystemSecurityCryptographyXmlPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingsWebPackageVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebPackageVersion>
     <SystemTextJsonPackageVersion>9.0.0-rc.2.24473.5</SystemTextJsonPackageVersion>
+    <!-- JamesNK/Newtonsoft.Json dependencies -->
+    <NewtonsoftJsonPackageVersion>13.0.3</NewtonsoftJsonPackageVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.24305.1</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <!-- dotnet/sdk dependencies -->
@@ -57,13 +61,11 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildFrameworkPackageVersion>17.12.36</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildTasksCorePackageVersion>17.12.36</MicrosoftBuildTasksCorePackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>17.12.36</MicrosoftBuildUtilitiesCorePackageVersion>
-    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
-    <MicrosoftApplicationInsightsPackageVersion>2.23.0</MicrosoftApplicationInsightsPackageVersion>
-    <!-- JamesNK/Newtonsoft.Json dependencies -->
-    <NewtonsoftJsonPackageVersion>13.0.3</NewtonsoftJsonPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
+    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
+    <MicrosoftApplicationInsightsVersion>$(MicrosoftApplicationInsightsPackageVersion)</MicrosoftApplicationInsightsVersion>
     <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
@@ -102,6 +104,8 @@ This file should be imported by eng/Versions.props
     <SystemSecurityCryptographyXmlVersion>$(SystemSecurityCryptographyXmlPackageVersion)</SystemSecurityCryptographyXmlVersion>
     <SystemTextEncodingsWebVersion>$(SystemTextEncodingsWebPackageVersion)</SystemTextEncodingsWebVersion>
     <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
+    <!-- JamesNK/Newtonsoft.Json dependencies -->
+    <NewtonsoftJsonVersion>$(NewtonsoftJsonPackageVersion)</NewtonsoftJsonVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesVersion>$(MicrosoftDeploymentDotNetReleasesPackageVersion)</MicrosoftDeploymentDotNetReleasesVersion>
     <!-- dotnet/sdk dependencies -->
@@ -115,9 +119,5 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkVersion>
     <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildTasksCorePackageVersion)</MicrosoftBuildTasksCoreVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
-    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
-    <MicrosoftApplicationInsightsVersion>$(MicrosoftApplicationInsightsPackageVersion)</MicrosoftApplicationInsightsVersion>
-    <!-- JamesNK/Newtonsoft.Json dependencies -->
-    <NewtonsoftJsonVersion>$(NewtonsoftJsonPackageVersion)</NewtonsoftJsonVersion>
   </PropertyGroup>
 </Project>

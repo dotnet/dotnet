@@ -144,6 +144,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <!-- Assembly attributes for net core projects -->
+    <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</InformationalVersion>

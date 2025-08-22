@@ -71,10 +71,10 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportPackageVersion>10.0.100-rc.1.25414.103</MicrosoftNETWorkloadEmscriptenCurrentManifest100100TransportPackageVersion>
     <MicrosoftNETCoreAppRefPackageVersion>10.0.0-rc.1.25414.103</MicrosoftNETCoreAppRefPackageVersion>
     <MicrosoftNETCoreILAsmPackageVersion>10.0.0-rc.1.25414.103</MicrosoftNETCoreILAsmPackageVersion>
-    <NuGetFrameworksPackageVersion>7.0.0-preview.1.191</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>7.0.0-preview.1.191</NuGetPackagingPackageVersion>
-    <NuGetProjectModelPackageVersion>7.0.0-preview.1.191</NuGetProjectModelPackageVersion>
-    <NuGetVersioningPackageVersion>7.0.0-preview.1.191</NuGetVersioningPackageVersion>
+    <NuGetFrameworksPackageVersion>7.0.0-preview.1.42003</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>7.0.0-preview.1.42003</NuGetPackagingPackageVersion>
+    <NuGetProjectModelPackageVersion>7.0.0-preview.1.42003</NuGetProjectModelPackageVersion>
+    <NuGetVersioningPackageVersion>7.0.0-preview.1.42003</NuGetVersioningPackageVersion>
     <runtimenativeSystemIOPortsPackageVersion>10.0.0-rc.1.25414.103</runtimenativeSystemIOPortsPackageVersion>
     <SystemCommandLinePackageVersion>2.0.0-rc.1.25414.103</SystemCommandLinePackageVersion>
     <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25414.103</SystemReflectionMetadataPackageVersion>

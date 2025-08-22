@@ -6,8 +6,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Serialization;
 using Microsoft.NET.Sdk.Razor.Tool.CommandLineUtils;
-using Microsoft.NET.Sdk.Razor.Tool.Json;
 using Newtonsoft.Json;
 
 namespace Microsoft.NET.Sdk.Razor.Tool
@@ -308,7 +309,8 @@ namespace Microsoft.NET.Sdk.Razor.Tool
                 var reader = new JsonTextReader(new StreamReader(stream));
 
                 var serializer = new JsonSerializer();
-                serializer.Converters.Add(TagHelperDescriptorJsonConverter.Instance);
+                serializer.Converters.Add(new RazorDiagnosticJsonConverter());
+                serializer.Converters.Add(new TagHelperDescriptorJsonConverter());
 
                 var descriptors = serializer.Deserialize<IReadOnlyList<TagHelperDescriptor>>(reader);
                 return descriptors;
