@@ -28,8 +28,8 @@
         "NonShipping"
       ],
       "vsBranch": "main",
-      "insertionCreateDraftPR": false,
-      "insertionTitlePrefix": "[dNext]"
+      "insertionCreateDraftPR": true,
+      "insertionTitlePrefix": "[Validation]"
     },
     "release/dev17.6": {
       "nugetKind": [
