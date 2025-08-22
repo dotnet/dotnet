@@ -231,7 +231,7 @@ stages:
       - output: pipelineArtifact
         displayName: Publish SBOM manifest
         artifactName: $(ARTIFACT_NAME)
-        targetPath: '$(Build.SourcesDirectory)/artifacts'
+        targetPath: "$(Build.SourcesDirectory)/artifacts/_manifest"
         sbomEnabled: false
 
     steps:
