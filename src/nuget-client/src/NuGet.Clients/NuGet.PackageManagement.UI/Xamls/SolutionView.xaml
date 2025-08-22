@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
              mc:Ignorable="d"
              DataContextChanged="SolutionView_DataContextChanged"
              d:DesignHeight="300" d:DesignWidth="500">
@@ -24,12 +25,6 @@
         x:Key="IntToVulnerabilitySeverityConverter" />
       <local:StringFormatConverter
         x:Key="StringFormatConverter" />
-      <ControlTemplate
-        x:Key="SeparatorControlTemplate">
-        <Separator
-            HorizontalAlignment="Stretch"
-            IsEnabled="False" />
-      </ControlTemplate>
       <!-- style of the list view headers -->
       <Style x:Uid="Style_1" x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
         <Setter x:Uid="Setter_1" Property="Canvas.Right" Value="-8.5" />
@@ -450,20 +445,13 @@
         VerticalAlignment="Center"
         Text="{x:Static local:Resources.Label_InstalledColon}" />
 
-      <TextBox
-          FocusVisualStyle="{DynamicResource MarginFocusVisualStyle}"
+      <shell_controls:TextBox
           Grid.Row="0"
           Grid.Column="2"
           VerticalAlignment="Center"
-          Style="{StaticResource InstalledTextBoxStyle}"
-          Background="{x:Null}"
           IsReadOnly="true"
-          BorderBrush="{DynamicResource {x:Static local:Brushes.ComboBoxBorderKey}}"
-          BorderThickness="1"
-          MinHeight="24"
           AutomationProperties.AutomationId="InstalledVersion"
           AutomationProperties.Name="{x:Static local:Resources.Version_Installed}"
-          Margin="0"
           Focusable="True"
           Text="{Binding InstalledVersions}" />
 
@@ -487,20 +475,18 @@
         FontWeight="Bold"
         VerticalAlignment="Center"
         Text="{x:Static local:Resources.Label_Version}" />
-
-      <ComboBox
+      <shell_controls:ComboBox
         x:Name="_versions"
         Grid.Row="2"
         Grid.Column="2"
         MinWidth="150"
-        MinHeight="22"
         PreviewKeyDown="Versions_PreviewKeyDown"
         AutomationProperties.Name="{x:Static local:Resources.Label_Version}"
         ItemsSource="{Binding Path=Versions}"
         SelectedItem="{Binding Path=SelectedVersion}">
 
-        <ComboBox.ItemContainerStyle>
-          <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+        <shell_controls:ComboBox.ItemContainerStyle>
+          <Style TargetType="{x:Type shell_controls:ComboBoxItem}">
             <Style.Triggers>
               <DataTrigger 
                         Binding="{Binding Converter={StaticResource NotNullToBooleanConverter}}"
@@ -515,10 +501,21 @@
                             Property="IsEnabled"
                             Value="{Binding IsValidVersion}" />
               </DataTrigger>
+              <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                <Setter Property="IsEnabled" Value="False" />
+                <Setter Property="MinHeight" Value="0" />
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="shell_controls:ComboBoxItem">
+                      <shell_controls:Separator />
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+              </DataTrigger>
             </Style.Triggers>
           </Style>
-        </ComboBox.ItemContainerStyle>
-      </ComboBox>
+        </shell_controls:ComboBox.ItemContainerStyle>
+      </shell_controls:ComboBox>
 
       <!-- install button -->
       <Button
