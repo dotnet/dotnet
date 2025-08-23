@@ -7,10 +7,10 @@
       "commitSha": "86b53945e6b6b239d68fa465e62fcf4323ff3b7b"
     },
     {
-      "barId": 279564,
+      "barId": 280384,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "52453ff9e545324516fa49e99d11b2c811d4557f"
+      "commitSha": "7c18d3b410055ad4352d0fcff29c185f8a28402d"
     },
     {
       "barId": 279211,
@@ -37,10 +37,10 @@
       "commitSha": "a321e262b120841f4bd7651da46826589404ac66"
     },
     {
-      "barId": 279968,
+      "barId": 280305,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "59ebfcb5b859ecf9bb94fa3169a9f568ef3c46af"
+      "commitSha": "013bb517654280e57a81c3d89dd0f9d329e23fc0"
     },
     {
       "barId": 278900,
@@ -55,16 +55,16 @@
       "commitSha": "a3e663d51d5ee259c27b199a038b5fe7a2b3f5e6"
     },
     {
-      "barId": 279799,
+      "barId": 280318,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "b85b8a5813da73efd3920c98a03d1c7666c83006"
+      "commitSha": "ef787f127b2db0c0c32b05ba4f23f0809bfa380c"
     },
     {
-      "barId": 279847,
+      "barId": 280174,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
+      "commitSha": "ef6cddc7c977ddbfa28dba10b1ebeec77c6a3674"
     },
     {
       "barId": 279547,
@@ -79,10 +79,10 @@
       "commitSha": "6b2b0e4c7c3e0470c44ad22653996231a013d8e1"
     },
     {
-      "barId": 279489,
+      "barId": 280366,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d1691e1cc3b45df903e3ca67d550277fc2a7bafa"
+      "commitSha": "11e7477ea8c98e79f5d405be4efc4aab659ab570"
     },
     {
       "barId": 277711,
@@ -97,10 +97,10 @@
       "commitSha": "bcf3943e9aed4fc9fbf90a9a938a00913330198b"
     },
     {
-      "barId": 279269,
+      "barId": 280311,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "299471506deb40dc03945ecc920932f95027fec8"
+      "commitSha": "810a5c52854b853e48b4730c9ef93c9fae9b4758"
     },
     {
       "barId": 277912,
