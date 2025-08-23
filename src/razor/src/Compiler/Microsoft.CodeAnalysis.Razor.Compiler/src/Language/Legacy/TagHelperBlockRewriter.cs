@@ -438,16 +438,11 @@ internal static class TagHelperBlockRewriter
     {
         foreach (var descriptor in descriptors)
         {
-            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var firstBoundAttribute, out var indexerMatch, out var _, out var _))
+            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var match))
             {
-                if (indexerMatch)
-                {
-                    return firstBoundAttribute.IndexerTypeName;
-                }
-                else
-                {
-                    return firstBoundAttribute.TypeName;
-                }
+                return match.IsIndexerMatch
+                    ? match.Attribute.IndexerTypeName
+                    : match.Attribute.TypeName;
             }
         }
 
@@ -465,43 +460,31 @@ internal static class TagHelperBlockRewriter
         var isBoundBooleanAttribute = false;
         var isMissingDictionaryKey = false;
         var isDirectiveAttribute = false;
+        var isDuplicateAttribute = false;
 
         foreach (var descriptor in descriptors)
         {
-            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(
-                descriptor,
-                name,
-                out var firstBoundAttribute,
-                out var indexerMatch,
-                out var parameterMatch,
-                out var boundAttributeParameter))
+            if (TagHelperMatchingConventions.TryGetFirstBoundAttributeMatch(descriptor, name, out var match))
             {
                 isBoundAttribute = true;
-                if (parameterMatch)
+                isBoundNonStringAttribute = !match.ExpectsStringValue;
+                isBoundBooleanAttribute = match.ExpectsBooleanValue;
+
+                if (!match.IsParameterMatch)
                 {
-                    isBoundNonStringAttribute = !boundAttributeParameter.IsStringProperty;
-                    isBoundBooleanAttribute = boundAttributeParameter.IsBooleanProperty;
-                    isMissingDictionaryKey = false;
-                }
-                else
-                {
-                    isBoundNonStringAttribute = !firstBoundAttribute.ExpectsStringValue(name);
-                    isBoundBooleanAttribute = firstBoundAttribute.ExpectsBooleanValue(name);
-                    isMissingDictionaryKey = firstBoundAttribute.IndexerNamePrefix != null &&
-                        name.Length == firstBoundAttribute.IndexerNamePrefix.Length;
+                    isMissingDictionaryKey = match.Attribute.IndexerNamePrefix?.Length == name.Length;
                 }
 
-                isDirectiveAttribute = firstBoundAttribute.IsDirectiveAttribute;
+                isDirectiveAttribute = match.Attribute.IsDirectiveAttribute;
+
+                if (!processedBoundAttributeNames.Add(name))
+                {
+                    // A bound attribute with the same name has already been processed.
+                    isDuplicateAttribute = true;
+                }
 
                 break;
             }
-        }
-
-        var isDuplicateAttribute = false;
-        if (isBoundAttribute && !processedBoundAttributeNames.Add(name))
-        {
-            // A bound attribute with the same name has already been processed.
-            isDuplicateAttribute = true;
         }
 
         return new TryParseResult
