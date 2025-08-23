@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:NuGet.PackageManagement.UI"
+             xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
+             xmlns:shell_styles="clr-namespace:Microsoft.VisualStudio.Shell.Styles;assembly=Microsoft.VisualStudio.Shell.Styles"
              Background="{DynamicResource {x:Static local:Brushes.HeaderBackground}}"
              Foreground="{DynamicResource {x:Static local:Brushes.UIText}}"
              mc:Ignorable="d"
@@ -21,12 +23,6 @@
         x:Key="BooleanToFontWeightConverter" />
       <local:NotNullOrTrueToBooleanConverter
         x:Key="NotNullOrTrueToBooleanConverter" />
-      <ControlTemplate
-        x:Key="SeparatorControlTemplate">
-        <Separator
-          HorizontalAlignment="Stretch"
-          IsEnabled="False" />
-      </ControlTemplate>
       <DataTemplate DataType="{x:Type local:DisplayVersion}">
         <TextBlock FontWeight="{Binding Path=IsCurrentInstalled,Converter={StaticResource BooleanToFontWeightConverter}}" Text="{Binding Path=.}" />
       </DataTemplate>
@@ -57,22 +53,15 @@
       Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
       Text="{x:Static local:Resources.Label_InstalledColon}" />
 
-    <Border
+    <shell_controls:TextBox
       Grid.Row="0"
       Grid.Column="2"
-      MinHeight="22"
-      BorderBrush="{DynamicResource {x:Static local:Brushes.ComboBoxBorderKey}}"
-      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
-      BorderThickness="1"
       VerticalAlignment="Center"
-      Margin="0,0,0,9">
-      <TextBox
-        Style="{DynamicResource SelectableTextBlockStyle}"
-        VerticalAlignment="Center"
-        AutomationProperties.LabeledBy="{Binding ElementName=_InstalledVersion}"
-        Margin="4,0,0,0"
-        Text="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}, Mode=OneWay}" />
-    </Border>
+      IsReadOnly="true"
+      AutomationProperties.LabeledBy="{Binding ElementName=_InstalledVersion}"
+      Margin="0,0,0,9"
+      Text="{Binding InstalledVersion, Converter={StaticResource VersionToStringConverter}, Mode=OneWay}"
+      Visibility="{Binding IsInstalledVersionTopLevel, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
 
     <Button
       Grid.Row="0"
@@ -96,13 +85,12 @@
       Text="{x:Static local:Resources.Label_Version}" />
 
     <Label Name="SubscriptionsLabel" Content="{x:Static local:Resources.Label_Version}" Visibility="Collapsed"/>
-    <ComboBox
+    <shell_controls:ComboBox
       x:Name="_versions"
       PreviewKeyDown="Versions_PreviewKeyDown"
       KeyUp="Versions_KeyUp"
       Grid.Row="1"
       Grid.Column="2"
-      MinHeight="22"
       AutomationProperties.Name="{x:Static local:Resources.Label_Version}"
       AutomationProperties.LabeledBy="{Binding ElementName=SubscriptionsLabel}"
       IsEditable="{Binding IsFloatingVersionSupported, Converter={StaticResource InverseNullToVisibilityConverter}}"
@@ -113,13 +101,9 @@
       Text="{Binding Path=UserInput, Mode=OneWay}"
       SelectionChanged="Versions_SelectionChanged"
       SelectedItem="{Binding Path=SelectedVersion, Mode=TwoWay}">
-      <ComboBox.ItemContainerStyle>
-        <Style TargetType="{x:Type ComboBoxItem}" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
-          <Setter Property="Foreground" Value="{DynamicResource {x:Static local:Brushes.UIText}}" />
+      <shell_controls:ComboBox.ItemContainerStyle>
+        <Style TargetType="{x:Type shell_controls:ComboBoxItem}">
           <Style.Triggers>
-            <DataTrigger Binding="{Binding Path=IsValidVersion}" Value="false">
-              <Setter Property="Foreground" Value="{x:Static SystemColors.GrayTextBrush}" />
-            </DataTrigger>
             <DataTrigger
               Binding="{Binding Converter={StaticResource NotNullToBooleanConverter}}"
               Value="True">
@@ -133,10 +117,21 @@
                 Property="ToolTip"
                 Value="{Binding Converter={StaticResource TooltipConverter}}" />
             </DataTrigger>
+            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+              <Setter Property="IsEnabled" Value="False" />
+              <Setter Property="MinHeight" Value="0" />
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="shell_controls:ComboBoxItem">
+                    <shell_controls:Separator />
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </DataTrigger>
           </Style.Triggers>
         </Style>
-      </ComboBox.ItemContainerStyle>
-    </ComboBox>
+      </shell_controls:ComboBox.ItemContainerStyle>
+    </shell_controls:ComboBox>
 
     <!-- install button and update button. They are in fact the same button. Which
          one is displayed depends on whether InstalledVersion is null.
