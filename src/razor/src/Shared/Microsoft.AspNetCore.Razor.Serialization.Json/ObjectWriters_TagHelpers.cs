@@ -6,6 +6,7 @@ using System.Collections.Generic;
 #endif
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Serialization.Json;
 
@@ -102,20 +103,19 @@ internal static partial class ObjectWriters
         {
             writer.WriteObject(value, static (writer, value) =>
             {
+                writer.Write(nameof(value.Flags), (byte)value.Flags);
                 writer.Write(nameof(value.Name), value.Name);
-                writer.Write(nameof(value.TypeName), value.TypeName);
-                writer.WriteIfNotFalse(nameof(value.IsEnum), value.IsEnum);
-                writer.WriteIfNotFalse(nameof(value.HasIndexer), value.HasIndexer);
+                writer.Write(nameof(value.PropertyName), value.PropertyName);
+                WriteTypeNameObject(writer, nameof(value.TypeName), value.TypeNameObject);
                 writer.WriteIfNotNull(nameof(value.IndexerNamePrefix), value.IndexerNamePrefix);
-                writer.WriteIfNotNull(nameof(value.IndexerTypeName), value.IndexerTypeName);
+                WriteTypeNameObject(writer, nameof(value.IndexerTypeName), value.IndexerTypeNameObject);
                 writer.WriteIfNotNull(nameof(value.DisplayName), value.DisplayName);
                 writer.WriteIfNotNull(nameof(value.ContainingType), value.ContainingType);
                 WriteDocumentationObject(writer, nameof(value.Documentation), value.DocumentationObject);
-                writer.WriteIfNotTrue(nameof(value.CaseSensitive), value.CaseSensitive);
-                writer.WriteIfNotFalse(nameof(value.IsEditorRequired), value.IsEditorRequired);
-                writer.WriteArrayIfNotDefaultOrEmpty("BoundAttributeParameters", value.Parameters, WriteBoundAttributeParameter);
+                writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Parameters), value.Parameters, WriteBoundAttributeParameter);
 
-                WriteMetadata(writer, nameof(value.Metadata), value.Metadata);
+                WriteMetadataObject(writer, nameof(value.Metadata), value.Metadata.AssumeNotNull());
+
                 writer.WriteArrayIfNotDefaultOrEmpty(nameof(value.Diagnostics), value.Diagnostics, Write);
             });
         }
@@ -159,6 +159,58 @@ internal static partial class ObjectWriters
                     writer.Write(key, value);
                 }
             });
+        }
+
+        static void WriteMetadataObject(JsonDataWriter writer, string propertyName, MetadataObject metadata)
+        {
+            if (metadata.Kind is MetadataKind.None)
+            {
+                return;
+            }
+
+            writer.Write("MetadataKind", (byte)metadata.Kind);
+
+            if (metadata.Kind is MetadataKind.ChildContentParameter)
+            {
+                // No properties to write for ChildContentParameterMetadata.
+                return;
+            }
+
+            writer.WriteObject(propertyName, metadata, static (writer, value) =>
+            {
+                switch (value.Kind)
+                {
+                    case MetadataKind.TypeParameter:
+                        WriteTypeParameterMetadata(writer, (TypeParameterMetadata)value);
+                        break;
+
+                    case MetadataKind.Property:
+                        WritePropertyMetadata(writer, (PropertyMetadata)value);
+                        break;
+
+                    default:
+                        Debug.Fail($"Unsupported metadata kind '{value.Kind}'.");
+                        break;
+                }
+            });
+
+            static void WriteTypeParameterMetadata(JsonDataWriter writer, TypeParameterMetadata metadata)
+            {
+                writer.WriteIfNotFalse(nameof(metadata.IsCascading), metadata.IsCascading);
+                writer.WriteIfNotNull(nameof(metadata.Constraints), metadata.Constraints);
+                writer.WriteIfNotNull(nameof(metadata.NameWithAttributes), metadata.NameWithAttributes);
+            }
+
+            static void WritePropertyMetadata(JsonDataWriter writer, PropertyMetadata metadata)
+            {
+                writer.WriteIfNotNull(nameof(metadata.GloballyQualifiedTypeName), metadata.GloballyQualifiedTypeName);
+                writer.WriteIfNotFalse(nameof(metadata.IsChildContent), metadata.IsChildContent);
+                writer.WriteIfNotFalse(nameof(metadata.IsEventCallback), metadata.IsEventCallback);
+                writer.WriteIfNotFalse(nameof(metadata.IsDelegateSignature), metadata.IsDelegateSignature);
+                writer.WriteIfNotFalse(nameof(metadata.IsDelegateWithAwaitableResult), metadata.IsDelegateWithAwaitableResult);
+                writer.WriteIfNotFalse(nameof(metadata.IsGenericTyped), metadata.IsGenericTyped);
+                writer.WriteIfNotFalse(nameof(metadata.IsInitOnlyProperty), metadata.IsInitOnlyProperty);
+            }
         }
     }
 }
