@@ -40,24 +40,24 @@ namespace NuGet.VisualStudio.Implementation.Extensibility
             _telemetryProvider = telemetryProvider;
         }
 
-        public async Task<object> MigrateProjectJsonToPackageReferenceAsync(string projectUniqueName)
+        public async Task<object> MigrateProjectJsonToPackageReferenceAsync(string projectFullPath)
         {
             const string eventName = nameof(IVsProjectJsonToPackageReferenceMigrator) + "." + nameof(MigrateProjectJsonToPackageReferenceAsync);
             using var _ = NuGetETW.ExtensibilityEventSource.StartStopEvent(eventName);
 
             try
             {
-                if (string.IsNullOrEmpty(projectUniqueName))
+                if (string.IsNullOrEmpty(projectFullPath))
                 {
-                    throw new ArgumentNullException(nameof(projectUniqueName));
+                    throw new ArgumentNullException(nameof(projectFullPath));
                 }
 
-                if (!File.Exists(projectUniqueName))
+                if (!File.Exists(projectFullPath))
                 {
-                    throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, VsResources.Error_FileNotExists, projectUniqueName));
+                    throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, VsResources.Error_FileNotExists, projectFullPath));
                 }
 
-                return await MigrateProjectToPackageRefAsync(projectUniqueName);
+                return await MigrateProjectToPackageRefAsync(projectFullPath);
             }
             catch (Exception ex)
             {
