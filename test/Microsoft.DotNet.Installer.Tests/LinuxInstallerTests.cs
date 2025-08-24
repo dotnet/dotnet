@@ -16,6 +16,8 @@ using System.Xml.Linq;
 using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
+using System.Formats.Tar;
+using Microsoft.DotNet.Build.Tasks.Installers;
 
 namespace Microsoft.DotNet.Installer.Tests;
 
@@ -30,6 +32,31 @@ public partial class LinuxInstallerTests : IDisposable
     private bool _rpmContextInitialized = false;
     private bool _debContextInitialized = false;
     private bool _sharedContextInitialized = false;
+
+    private readonly Dictionary<string, List<string>> _expectedPackageDependencies = new()
+    {
+        { DotnetHostPrefix, new List<string> { } },
+        { DotnetHostFxrPrefix, new List<string> { $"{DotnetHostPrefix.TrimEnd('-')}" } },
+        { DotnetRuntimePrefix, new List<string>
+            {
+                $"{DotnetHostFxrPrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetRuntimeDepsPrefix}{Config.TargetFrameworkVersion}"
+            }
+        },
+        { DotnetTargetingPackPrefix, new List<string> {  } },
+        { AspNetCoreRuntimePrefix, new List<string> { $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}" } },
+        { AspNetCoreTargetingPackPrefix, new List<string> { $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}" } },
+        { DotnetApphostPackPrefix, new List<string> { } },
+        { DotnetSdkPrefix, new List<string>
+            {
+                $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
+                $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
+                $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
+                $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
+            }
+        }
+    };
 
     private static readonly Uri NetStandard21RpmPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.rpm");
     private static readonly Uri NetStandard21DebPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.deb");
@@ -92,7 +119,7 @@ public partial class LinuxInstallerTests : IDisposable
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
-    public async Task RpmTest(string repo, string tag)
+    public async Task RpmScenarioTest(string repo, string tag)
     {
         if (!tag.Contains("azurelinux"))
         {
@@ -107,14 +134,32 @@ public partial class LinuxInstallerTests : IDisposable
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
-    public async Task DebTest(string repo, string tag)
+    public async Task DebScenarioTest(string repo, string tag)
     {
         await InitializeContextAsync(PackageType.Deb);
 
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    private async Task InitializeContextAsync(PackageType packageType)
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
+    public async Task RpmPackageMetadataTest(string repo, string tag)
+    {
+        await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
+
+        ValidateRpmPackageMetadata($"{repo}:{tag}");
+    }
+
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-trixie-slim")]
+    public async Task DebPackageMetadataTest(string repo, string tag)
+    {
+        await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
+
+        ValidateDebPackageMetadata($"{repo}:{tag}");
+    }
+
+    private async Task InitializeContextAsync(PackageType packageType, bool initializeSharedContext = true)
     {
         string packageArchitecture =
             Config.Architecture == Architecture.X64 ?
@@ -153,7 +198,8 @@ public partial class LinuxInstallerTests : IDisposable
             _debContextInitialized = true;
         }
 
-        if (!_sharedContextInitialized)
+        // Some tests do not need shared context
+        if (initializeSharedContext && !_sharedContextInitialized)
         {
             // Copy nuget packages
             string nugetPackagesDir = Path.Combine(_contextDir, "packages");
@@ -495,5 +541,248 @@ public partial class LinuxInstallerTests : IDisposable
 
         using FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         await response.Content.CopyToAsync(fileStream);
+    }
+
+    private void ValidateRpmPackageMetadata(string image)
+    {
+        List<string> list = GetPackageList(image, PackageType.Rpm);
+        ValidatePackageDependencies(list, PackageType.Rpm);
+    }
+
+    private void ValidateDebPackageMetadata(string image)
+    {
+        List<string> list = GetPackageList(image, PackageType.Deb);
+        ValidatePackageDependencies(list, PackageType.Deb);
+    }
+
+    private void ValidatePackageDependencies(List<string> list, PackageType packageType)
+    {
+        foreach (string package in list)
+        {
+            // Skip netstandard and runtime-deps packages as they are not expected to have .NET dependencies
+            if (package.StartsWith(NetStandardTargetingPackPrefix) || package.StartsWith(DotnetRuntimeDepsPrefix))
+            {
+                continue;
+            }
+
+            Assert.True(PackageContainsExpectedDependencies(package, packageType), $"Package {package} does not contain the expected dependencies.");
+        }
+    }
+
+    private bool PackageContainsExpectedDependencies(string package, PackageType packageType)
+    {
+        List<string> dependencies = GetPackageDependencies(package, packageType);
+
+        string packagePrefix = GetPackagePrefixFromPackageName(package);
+        List<string> expectedDependencies = _expectedPackageDependencies.ContainsKey(packagePrefix)
+            ? _expectedPackageDependencies[packagePrefix]
+            : new List<string>();
+
+        foreach (string dependency in expectedDependencies)
+        {
+            if (!dependencies.Contains(dependency))
+            {
+                _outputHelper.WriteLine($"Package {package} does not contain the expected dependency: {dependency}");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private string GetPackagePrefixFromPackageName(string packageName)
+    {
+        Regex regex = new Regex(@"^(.*?-)(?=\d)");
+        Match match = regex.Match(packageName);
+        if (match.Success)
+        {
+            return match.Value;
+        }
+
+        Assert.Fail($"Could not extract package prefix from package name: {packageName}");
+        return string.Empty;
+    }
+
+    private List<string> GetPackageDependencies(string package, PackageType packageType)
+    {
+        if (packageType == PackageType.Deb)
+        {
+            try
+            {
+                string packagePath = Path.Combine(_contextDir, package);
+                if (!File.Exists(packagePath))
+                {
+                    _outputHelper.WriteLine($"Package file not found: {packagePath}");
+                    return [];
+                }
+
+                using FileStream debStream = File.OpenRead(packagePath);
+                using ArReader ar = new ArReader(debStream, false);
+
+                // Find control.tar.* entry
+                while (ar.GetNextEntry() is ArEntry arEentry)
+                {
+                    if (!arEentry.Name.StartsWith("control.tar", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
+                    using MemoryStream controlArchiveData = new MemoryStream((int)arEentry.DataStream.Length);
+                    arEentry.DataStream?.CopyTo(controlArchiveData);
+                    controlArchiveData.Position = 0;
+
+                    Stream decompressed =
+                        arEentry.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ?
+                            new GZipStream(controlArchiveData, CompressionMode.Decompress, leaveOpen: false) :
+                        // Future compressors can be added here (xz, zst). Fallback: treat as plain.
+                            controlArchiveData;
+
+                    using (decompressed)
+                    {
+                        // Read tar entries to find "control" file
+                        using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
+                        TarEntry? entry;
+                        while ((entry = tarReader.GetNextEntry()) is not null)
+                        {
+                            string name = entry.Name.TrimStart('.', '/');
+                            if (name.Equals("control", StringComparison.Ordinal))
+                            {
+                                using MemoryStream controlFileData = new MemoryStream();
+                                entry.DataStream?.CopyTo(controlFileData);
+                                string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
+                                return ParseDebControlDependencies(controlContent);
+                            }
+                        }
+                    }
+                }
+
+                _outputHelper.WriteLine($"No control.tar.* entry found in {package}");
+                return [];
+            }
+            catch (Exception ex)
+            {
+                _outputHelper.WriteLine($"Error parsing DEB package '{package}': {ex}");
+                return [];
+            }
+        }
+        else if (packageType == PackageType.Rpm)
+        {
+            try
+            {
+                string packagePath = Path.Combine(_contextDir, package);
+                if (!File.Exists(packagePath))
+                {
+                    _outputHelper.WriteLine($"Package file not found: {packagePath}");
+                    return [];
+                }
+
+                using FileStream rpmStream = File.OpenRead(packagePath);
+                using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
+                var headerEntries = rpmPackage.Header.Entries;
+
+                string[] requireNames = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
+                if (requireNames == null || requireNames.Length == 0)
+                {
+                    return [];
+                }
+
+                var result = new HashSet<string>(StringComparer.Ordinal);
+
+                for (int i = 0; i < requireNames.Length; i++)
+                {
+                    string name = requireNames[i];
+                    if (string.IsNullOrWhiteSpace(name) || name.StartsWith("rpmlib(", StringComparison.Ordinal))
+                    {
+                        continue; // Skip internal rpm capabilities
+                    }
+
+                    result.Add(name);
+                }
+
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _outputHelper.WriteLine($"Error parsing RPM package '{package}': {ex}");
+                return [];
+            }
+        }
+
+        // RPM dependency extraction not yet implemented. Return empty so validation will fail if expectations exist.
+        return [];
+    }
+
+    private static List<string> ParseDebControlDependencies(string controlContent)
+    {
+        // Handle continuation lines (lines starting with space belong to previous field)
+        var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        string? currentField = null;
+        var sb = new StringBuilder();
+
+        foreach (string rawLine in controlContent.Split('\n'))
+        {
+            string line = rawLine.TrimEnd('\r');
+            if (string.IsNullOrEmpty(line))
+            {
+                continue;
+            }
+
+            if (char.IsWhiteSpace(line[0]))
+            {
+                // Continuation
+                if (currentField != null)
+                {
+                    fields[currentField] += " " + line.Trim();
+                }
+                continue;
+            }
+
+            int colonIndex = line.IndexOf(':');
+            if (colonIndex > 0)
+            {
+                currentField = line[..colonIndex];
+                string value = line[(colonIndex + 1)..].Trim();
+                fields[currentField] = value;
+            }
+        }
+
+        if (!fields.TryGetValue("Depends", out string? dependsValue) || string.IsNullOrWhiteSpace(dependsValue))
+        {
+            return [];
+        }
+
+        var result = new HashSet<string>(StringComparer.Ordinal);
+        foreach (string segment in dependsValue.Split(','))
+        {
+            string trimmed = segment.Trim();
+            if (trimmed.Length == 0)
+            {
+                continue;
+            }
+
+            // Take first alternative before '|'
+            string firstAlt = trimmed.Split('|')[0].Trim();
+
+            // Remove version specifiers: package-name (>= 1.0)
+            int parenIndex = firstAlt.IndexOf('(');
+            if (parenIndex >= 0)
+            {
+                firstAlt = firstAlt[..parenIndex].Trim();
+            }
+
+            // Remove architecture qualifier: package:name or package:arch (rare), keep base name
+            int colonIndex = firstAlt.IndexOf(':');
+            if (colonIndex > 0)
+            {
+                firstAlt = firstAlt[..colonIndex];
+            }
+
+            if (!string.IsNullOrEmpty(firstAlt))
+            {
+                result.Add(firstAlt);
+            }
+        }
+
+        return result.ToList();
     }
 }
