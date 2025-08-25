@@ -253,6 +253,18 @@
     <RemoveDir Directories="$(IntermediateSdkSymbolsLayout)" />
   </Target>
 
+  <!-- After building, generate the source tarball and zipball -->
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="CreateSourceArtifacts"
+          BeforeTargets="Build"
+          DependsOnTargets="WriteSourceBuiltSdkVersionFile" >
+
+    <CreateSourceArtifacts
+        SourceCommit="$(RepositoryCommit)"
+        ArtifactVersion="$(SourceBuiltSdkNonStableVersion)"
+        OutputDirectory="$(ArtifactsAssetsDir)" />
+  </Target>
+
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UsageReport.WriteUsageBurndownData" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="GeneratePrebuiltBurndownData"
           Inputs="$(MSBuildProjectFullPath)"
