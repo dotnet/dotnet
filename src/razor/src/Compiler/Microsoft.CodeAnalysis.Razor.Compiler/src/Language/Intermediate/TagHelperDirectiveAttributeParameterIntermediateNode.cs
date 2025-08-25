@@ -1,43 +1,35 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class TagHelperDirectiveAttributeParameterIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    private readonly TagHelperAttributeMatch _match;
 
-    public string AttributeName { get; set; }
+    public required string AttributeName { get; init; }
+    public required string AttributeNameWithoutParameter { get; init; }
 
-    public string AttributeNameWithoutParameter { get; set; }
+    public required string OriginalAttributeName { get; init; }
+    public SourceSpan? OriginalAttributeSpan { get; init; }
 
-    public string OriginalAttributeName { get; set; }
+    public required AttributeStructure AttributeStructure { get; init; }
 
-    public AttributeStructure AttributeStructure { get; set; }
+    public bool IsIndexerNameMatch => _match.IsIndexerMatch;
 
-    public BoundAttributeParameterDescriptor BoundAttributeParameter { get; set; }
+    public BoundAttributeParameterDescriptor BoundAttributeParameter => _match.Parameter.AssumeNotNull();
+    public BoundAttributeDescriptor BoundAttribute => BoundAttributeParameter.Parent;
+    public TagHelperDescriptor TagHelper => BoundAttribute.Parent;
 
-    public BoundAttributeDescriptor BoundAttribute { get; set; }
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
-    public TagHelperDescriptor TagHelper { get; set; }
-
-    public bool IsIndexerNameMatch { get; set; }
-
-    public SourceSpan? OriginalAttributeSpan { get; set; }
+    internal TagHelperDirectiveAttributeParameterIntermediateNode(TagHelperAttributeMatch match)
+    {
+        _match = match;
+    }
 
     public override void Accept(IntermediateNodeVisitor visitor)
-    {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
-        visitor.VisitTagHelperDirectiveAttributeParameter(this);
-    }
+        => visitor.VisitTagHelperDirectiveAttributeParameter(this);
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {
@@ -46,8 +38,8 @@ public sealed class TagHelperDirectiveAttributeParameterIntermediateNode : Inter
         formatter.WriteProperty(nameof(AttributeName), AttributeName);
         formatter.WriteProperty(nameof(OriginalAttributeName), OriginalAttributeName);
         formatter.WriteProperty(nameof(AttributeStructure), AttributeStructure.ToString());
-        formatter.WriteProperty(nameof(BoundAttribute), BoundAttribute?.DisplayName);
-        formatter.WriteProperty(nameof(BoundAttributeParameter), BoundAttributeParameter?.DisplayName);
-        formatter.WriteProperty(nameof(TagHelper), TagHelper?.DisplayName);
+        formatter.WriteProperty(nameof(BoundAttribute), BoundAttribute.DisplayName);
+        formatter.WriteProperty(nameof(BoundAttributeParameter), BoundAttributeParameter.DisplayName);
+        formatter.WriteProperty(nameof(TagHelper), TagHelper.DisplayName);
     }
 }
