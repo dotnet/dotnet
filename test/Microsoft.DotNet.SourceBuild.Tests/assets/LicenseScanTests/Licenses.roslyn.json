@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/Analyzers/CSharp/Tests/FileHeaders/FileHeaderTests.cs",
+      "detected_license_expression": "mit AND unknown-license-reference"
+    }
+  ]
+}
