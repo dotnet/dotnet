@@ -28,6 +28,7 @@
     <ArtifactsAssetManifestsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'manifests', '$(Configuration)'))</ArtifactsAssetManifestsDir>
     <AssetManifestsIntermediateDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'manifests', '$(Configuration)'))</AssetManifestsIntermediateDir>
     <ArtifactsAssetsDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'assets', '$(Configuration)'))</ArtifactsAssetsDir>
+    <ArtifactsAssetSourceBuildDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsAssetsDir)', 'source-build'))</ArtifactsAssetSourceBuildDir>
 
     <DotNetSdkExtractDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsObjDir)', 'extracted-dotnet-sdk'))</DotNetSdkExtractDir>
 
