@@ -26,6 +26,13 @@ internal static class TextDocumentExtensions
         }
 
         var filePath = razorDocument.FilePath.AsSpanOrDefault();
+        if (string.IsNullOrEmpty(razorDocument.Project.FilePath))
+        {
+            var fileName = filePath[filePath.LastIndexOfAny(['/', '\\'])..].TrimStart(['/', '\\']);
+            hintName = RazorSourceGenerator.GetIdentifierFromPath(fileName);
+            return hintName is not null;
+        }
+
         var projectFilePath = razorDocument.Project.FilePath.AsSpanOrDefault();
         var projectBasePath = PathUtilities.GetDirectoryName(projectFilePath);
         if (filePath.Length <= projectBasePath.Length)

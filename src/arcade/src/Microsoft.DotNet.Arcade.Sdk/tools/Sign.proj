@@ -6,7 +6,7 @@
       - https://github.com/dotnet/arcade/blob/master/Documentation/CorePackages/Signing.md
   
     Optional variables:
-      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for sigining.
+      EnableDefaultArtifacts            Includes *.nupkg, *.vsix and *.wixpack.zip under "/artifacts/packages/**" for signing.
                                         Defaults to true.
       EnableDefaultRidSpecificArtifacts Do not sign *.nupkg packages under "/artifacts/packages/**" that do not contain the current TargetRid.
       DefaultArtifactVisibility         The default visibility for Artifact items. Defaults to External.
