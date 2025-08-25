@@ -1,6 +1,6 @@
 ### Supported Platforms
 
---------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
 | Platform | main<br>(10.0.x&nbsp;Runtime) | 10.0.1xx-rc1<br>(10.0-rc1&nbsp;Runtime) | 10.0.1xx-rc2<br>(10.0.1xx&nbsp;Runtime) |
 | :--------- | :----------: | :----------: | :----------: |
 | **Windows x64** | [![][win-x64-badge-main]][win-x64-version-main]<br>[Installer][win-x64-installer-main] - [Checksum][win-x64-installer-checksum-main]<br>[zip][win-x64-zip-main] - [Checksum][win-x64-zip-checksum-main] | [![][win-x64-badge-10.0.1XX-rc1]][win-x64-version-10.0.1XX-rc1]<br>[Installer][win-x64-installer-10.0.1XX-rc1] - [Checksum][win-x64-installer-checksum-10.0.1XX-rc1]<br>[zip][win-x64-zip-10.0.1XX-rc1] - [Checksum][win-x64-zip-checksum-10.0.1XX-rc1] | [![][win-x64-badge-10.0.1XX-rc2]][win-x64-version-10.0.1XX]<br>[Installer][win-x64-installer-10.0.1XX] - [Checksum][win-x64-installer-checksum-10.0.1XX]<br>[zip][win-x64-zip-10.0.1XX] - [Checksum][win-x64-zip-checksum-10.0.1XX] |
