@@ -82,7 +82,7 @@ Reference notes:
 [osx-x64-badge-10.0.1XX-rc2]: https://aka.ms/dotnet/10.0.1xx/daily/osx_x64_Release_version_badge.svg?no-cache
 [osx-x64-version-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-osx-x64.txt
 [osx-x64-installer-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg
-[osx-x64-installer-checksum-10.0.1XX-rc1]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
+[osx-x64-installer-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.sha512
 [osx-x64-targz-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.tar.gz
 [osx-x64-targz-checksum-10.0.1XX]: https://aka.ms/dotnet/10.0.1xx/daily/dotnet-sdk-osx-x64.pkg.tar.gz.sha512
 
