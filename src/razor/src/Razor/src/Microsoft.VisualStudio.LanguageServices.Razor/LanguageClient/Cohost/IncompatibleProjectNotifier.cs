@@ -28,12 +28,6 @@ internal sealed class IncompatibleProjectNotifier(
     private readonly HashSet<string> _frameworkProjects = new(PathUtilities.OSSpecificPathComparer);
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
-    public void NotifyMiscFilesDocument(TextDocument textDocument)
-    {
-        _telemetryReporter.ReportEvent("cohost/miscFilesDocument", Severity.Normal);
-        _logger.Log(LogLevel.Error, $"{WorkspacesSR.FormatIncompatibleProject_MiscFiles(Path.GetFileName(textDocument.FilePath))}");
-    }
-
     public void NotifyMissingDocument(Project project, string filePath)
     {
         // When this document was opened, we will have checked if it was a .NET Framework project, and we listened for that below.

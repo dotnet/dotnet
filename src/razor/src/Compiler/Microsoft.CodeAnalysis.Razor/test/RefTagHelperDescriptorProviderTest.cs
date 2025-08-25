@@ -79,7 +79,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
             attribute.Documentation);
 
         Assert.Equal("@ref", attribute.Name);
-        Assert.Equal("Ref", attribute.GetPropertyName());
+        Assert.Equal("Ref", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Ref.Ref", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);

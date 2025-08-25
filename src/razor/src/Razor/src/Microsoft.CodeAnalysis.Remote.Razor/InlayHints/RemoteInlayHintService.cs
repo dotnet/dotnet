@@ -67,8 +67,9 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         var textDocument = inlayHintParams.TextDocument.WithUri(generatedDocument.CreateUri());
         var range = projectedLinePositionSpan.ToRange();
 
+#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
         var hints = await InlayHints.GetInlayHintsAsync(generatedDocument, textDocument, range, displayAllOverride, cancellationToken).ConfigureAwait(false);
-
+#pragma warning restore CS0618 // Type or member is obsolete
         if (hints is null)
         {
             return null;
@@ -130,6 +131,8 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
             .GetGeneratedDocumentAsync(cancellationToken)
             .ConfigureAwait(false);
 
+#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
         return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }

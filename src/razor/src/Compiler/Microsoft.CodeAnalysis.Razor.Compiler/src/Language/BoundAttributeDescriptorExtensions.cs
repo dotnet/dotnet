@@ -2,25 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class BoundAttributeDescriptorExtensions
 {
-    public static string? GetPropertyName(this BoundAttributeDescriptor attribute)
-    {
-        ArgHelper.ThrowIfNull(attribute);
-
-        attribute.Metadata.TryGetValue(TagHelperMetadata.Common.PropertyName, out var propertyName);
-        return propertyName;
-    }
-
     public static string? GetGloballyQualifiedTypeName(this BoundAttributeDescriptor attribute)
     {
         ArgHelper.ThrowIfNull(attribute);
 
-        attribute.Metadata.TryGetValue(TagHelperMetadata.Common.GloballyQualifiedTypeName, out var propertyName);
-        return propertyName;
+        return (attribute.Metadata as PropertyMetadata)?.GloballyQualifiedTypeName;
     }
 
     public static bool IsDefaultKind(this BoundAttributeDescriptor attribute)

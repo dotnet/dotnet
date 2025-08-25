@@ -22,15 +22,6 @@ internal abstract class AbstractCohostDocumentEndpoint<TRequest, TResponse>(
             return SpecializedTasks.Default<TResponse>();
         }
 
-        if (context.TextDocument.Project.FilePath is null)
-        {
-            // If the project file path is null, we can't compute the hint name, so we can't handle the request.
-            // This is likely a file in the misc files project, which we don't support yet anyway.
-            // TODO: Expose context.TextDocument.Project.Solution.WorkspaceKind through our EA to confirm?
-            _incompatibleProjectService.HandleMiscFilesDocument(context.TextDocument);
-            return SpecializedTasks.Default<TResponse>();
-        }
-
         return HandleRequestAsync(request, context, context.TextDocument, cancellationToken);
     }
 

@@ -136,13 +136,13 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteParameterSeparator()
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator()
             .WriteStringLiteral(node.Suffix)
             .WriteParameterSeparator()
-            .Write(suffixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(suffixLocation)
             .WriteParameterSeparator()
-            .Write(valuePieceCount.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valuePieceCount)
             .WriteEndMethodInvocation();
 
         context.RenderChildren(node);
@@ -161,7 +161,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         // Write content
@@ -180,9 +180,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(true)
             .WriteEndMethodInvocation();
@@ -190,12 +190,12 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteCSharpExpressionAttributeValue(CodeRenderingContext context, CSharpExpressionAttributeValueIntermediateNode node)
     {
-        var prefixLocation = node.Source.Value.AbsoluteIndex.ToString(CultureInfo.InvariantCulture);
+        var prefixLocation = node.Source.Value.AbsoluteIndex;
         context.CodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation)
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         WriteCSharpChildren(node.Children, context);
@@ -204,9 +204,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
         var valueLength = node.Source.Value.Length - node.Prefix.Length;
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(false)
             .WriteEndMethodInvocation();
@@ -223,7 +223,7 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
             .WriteStartMethodInvocation(WriteAttributeValueMethod)
             .WriteStringLiteral(node.Prefix)
             .WriteParameterSeparator()
-            .Write(prefixLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(prefixLocation)
             .WriteParameterSeparator();
 
         context.CodeWriter.WriteStartNewObject(TemplateTypeName);
@@ -239,9 +239,9 @@ public class RuntimeNodeWriter : IntermediateNodeWriter
 
         context.CodeWriter
             .WriteParameterSeparator()
-            .Write(valueLocation.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLocation)
             .WriteParameterSeparator()
-            .Write(valueLength.ToString(CultureInfo.InvariantCulture))
+            .WriteIntegerLiteral(valueLength)
             .WriteParameterSeparator()
             .WriteBooleanLiteral(false)
             .WriteEndMethodInvocation();

@@ -160,7 +160,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-MyProperty", attribute.Name);
-        Assert.Equal("MyProperty", attribute.GetPropertyName());
+        Assert.Equal("MyProperty", attribute.PropertyName);
         Assert.Equal("System.Action<System.String> Test.MyComponent.MyProperty", attribute.DisplayName);
 
         // Defined from the property type
@@ -384,7 +384,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-MyProperty", attribute.Name);
-        Assert.Equal("MyProperty", attribute.GetPropertyName());
+        Assert.Equal("MyProperty", attribute.PropertyName);
         Assert.Equal("Microsoft.AspNetCore.Components.EventCallback<System.String> Test.MyComponent.MyProperty", attribute.DisplayName);
 
         // Defined from the property type
@@ -577,7 +577,7 @@ namespace Test
                 attribute.Documentation);
 
             Assert.Equal("@bind", attribute.Name);
-            Assert.Equal("Bind", attribute.GetPropertyName());
+            Assert.Equal("Bind", attribute.PropertyName);
             Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
             // Defined from the property type
@@ -745,12 +745,12 @@ namespace Test
 
                 var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
                 Assert.Equal("@bind-myprop", attribute.Name);
-                Assert.Equal("Bind_myprop", attribute.GetPropertyName());
+                Assert.Equal("Bind_myprop", attribute.PropertyName);
                 Assert.Equal("object Test.BindAttributes.Bind_myprop", attribute.DisplayName);
 
                 attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("format", StringComparison.Ordinal));
                 Assert.Equal("format-myprop", attribute.Name);
-                Assert.Equal("Format_myprop", attribute.GetPropertyName());
+                Assert.Equal("Format_myprop", attribute.PropertyName);
                 Assert.Equal("string Test.BindAttributes.Format_myprop", attribute.DisplayName);
             },
             rule =>
@@ -773,12 +773,12 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind-myprop", attribute.Name);
-        Assert.Equal("Bind_myprop", attribute.GetPropertyName());
+        Assert.Equal("Bind_myprop", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind_myprop", attribute.DisplayName);
 
         attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("format", StringComparison.Ordinal));
         Assert.Equal("format-myprop", attribute.Name);
-        Assert.Equal("Format_myprop", attribute.GetPropertyName());
+        Assert.Equal("Format_myprop", attribute.PropertyName);
         Assert.Equal("string Test.BindAttributes.Format_myprop", attribute.DisplayName);
     }
 
@@ -847,7 +847,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -942,7 +942,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -1039,7 +1039,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind-somevalue", attribute.Name);
-        Assert.Equal("Bind_somevalue", attribute.GetPropertyName());
+        Assert.Equal("Bind_somevalue", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind_somevalue", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -1174,7 +1174,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-...", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal(
             "System.Collections.Generic.Dictionary<string, object> Microsoft.AspNetCore.Components.Bind.Bind",
             attribute.DisplayName);

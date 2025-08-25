@@ -10,30 +10,6 @@ namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class BoundAttributeDescriptorBuilderExtensions
 {
-    public static void SetMetadata(
-        this BoundAttributeDescriptorBuilder builder,
-        KeyValuePair<string, string> pair)
-    {
-        builder.SetMetadata(MetadataCollection.Create(pair));
-    }
-
-    internal static void SetMetadata(
-        this BoundAttributeDescriptorBuilder builder,
-        KeyValuePair<string, string> pair1,
-        KeyValuePair<string, string> pair2)
-    {
-        builder.SetMetadata(MetadataCollection.Create(pair1, pair2));
-    }
-
-    internal static void SetMetadata(
-        this BoundAttributeDescriptorBuilder builder,
-        KeyValuePair<string, string> pair1,
-        KeyValuePair<string, string> pair2,
-        KeyValuePair<string, string> pair3)
-    {
-        builder.SetMetadata(MetadataCollection.Create(pair1, pair2, pair3));
-    }
-
     public static void AsDictionary(
         this BoundAttributeDescriptorBuilder builder,
         string attributeNamePrefix,

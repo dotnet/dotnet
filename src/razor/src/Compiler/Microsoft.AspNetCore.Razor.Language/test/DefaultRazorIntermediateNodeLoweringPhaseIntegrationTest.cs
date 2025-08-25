@@ -328,7 +328,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest : RazorPro
             assemblyName: "TestAssembly",
             attributes: [builder => builder
                 .Name("bound")
-                .Metadata(PropertyName("FooProp"))
+                .PropertyName("FooProp")
                 .TypeName("System.String")]);
 
         var codeDocument = ProjectEngine.CreateCodeDocument(@"@addTagHelper *, TestAssembly

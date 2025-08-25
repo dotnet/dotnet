@@ -50,11 +50,11 @@ public class InstrumentationPassIntegrationTest : IntegrationTestBase
                     {
                         builder => builder
                             .Name("value")
-                            .Metadata(PropertyName("FooProp"))
+                            .PropertyName("FooProp")
                             .TypeName("System.String"),      // Gets preallocated
                         builder => builder
                             .Name("date")
-                            .Metadata(PropertyName("BarProp"))
+                            .PropertyName("BarProp")
                             .TypeName("System.DateTime"),    // Doesn't get preallocated
                     })
             };

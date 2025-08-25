@@ -193,51 +193,48 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
         {
             builder.BindAttribute(pb =>
             {
-                using var metadata = new MetadataBuilder();
+                var builder = new PropertyMetadata.Builder();
 
                 pb.Name = property.Name;
                 pb.ContainingType = containingSymbol.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
                 pb.TypeName = property.Type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
+                pb.PropertyName = property.Name;
                 pb.IsEditorRequired = property.GetAttributes().Any(
                     static a => a.HasFullName("Microsoft.AspNetCore.Components.EditorRequiredAttribute"));
 
                 pb.CaseSensitive = false;
 
-                metadata.Add(PropertyName(property.Name));
-                metadata.Add(GloballyQualifiedTypeName(property.Type.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat)));
+                builder.GloballyQualifiedTypeName = property.Type.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat);
 
                 if (kind == PropertyKind.Enum)
                 {
                     pb.IsEnum = true;
                 }
-
-                if (kind == PropertyKind.ChildContent)
+                else if (kind == PropertyKind.ChildContent)
                 {
-                    metadata.Add(MakeTrue(ComponentMetadata.Component.ChildContentKey));
+                    builder.IsChildContent = true;
                 }
-
-                if (kind == PropertyKind.EventCallback)
+                else if (kind == PropertyKind.EventCallback)
                 {
-                    metadata.Add(MakeTrue(ComponentMetadata.Component.EventCallbackKey));
+                    builder.IsEventCallback = true;
                 }
-
-                if (kind == PropertyKind.Delegate)
+                else if (kind == PropertyKind.Delegate)
                 {
-                    metadata.Add(MakeTrue(ComponentMetadata.Component.DelegateSignatureKey));
-                    metadata.Add(ComponentMetadata.Component.DelegateWithAwaitableResultKey, IsAwaitable(property));
+                    builder.IsDelegateSignature = true;
+                    builder.IsDelegateWithAwaitableResult = IsAwaitable(property);
                 }
 
                 if (HasTypeParameter(property.Type))
                 {
-                    metadata.Add(MakeTrue(ComponentMetadata.Component.GenericTypedKey));
+                    builder.IsGenericTyped = true;
                 }
 
                 if (property.SetMethod.AssumeNotNull().IsInitOnly)
                 {
-                    metadata.Add(MakeTrue(ComponentMetadata.Component.InitOnlyProperty));
+                    builder.IsInitOnlyProperty = true;
                 }
 
-                pb.SetMetadata(metadata.Build());
+                pb.SetMetadata(builder.Build());
 
                 var xml = property.GetDocumentationCommentXml();
                 if (!string.IsNullOrEmpty(xml))
@@ -292,12 +289,12 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             }
         }
 
-        private static string IsAwaitable(IPropertySymbol prop)
+        private static bool IsAwaitable(IPropertySymbol prop)
         {
             var methodSymbol = ((INamedTypeSymbol)prop.Type).DelegateInvokeMethod.AssumeNotNull();
             if (methodSymbol.ReturnsVoid)
             {
-                return bool.FalseString;
+                return false;
             }
 
             var members = methodSymbol.ReturnType.GetMembers();
@@ -313,10 +310,10 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                     continue;
                 }
 
-                return bool.TrueString;
+                return true;
             }
 
-            return methodSymbol.IsAsync ? bool.TrueString : bool.FalseString;
+            return methodSymbol.IsAsync;
 
             static bool VerifyGetAwaiter(IMethodSymbol getAwaiter)
             {
@@ -397,11 +394,12 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 pb.DisplayName = typeParameter.Name;
                 pb.Name = typeParameter.Name;
                 pb.TypeName = typeof(Type).FullName;
+                pb.PropertyName = typeParameter.Name;
 
-                using var _ = ListPool<KeyValuePair<string, string?>>.GetPooledObject(out var metadataPairs);
-                metadataPairs.Add(PropertyName(typeParameter.Name));
-                metadataPairs.Add(MakeTrue(ComponentMetadata.Component.TypeParameterKey));
-                metadataPairs.Add(new(ComponentMetadata.Component.TypeParameterIsCascadingKey, cascade.ToString()));
+                var metadata = new TypeParameterMetadata.Builder
+                {
+                    IsCascading = cascade
+                };
 
                 // Type constraints (like "Image" or "Foo") are stored independently of
                 // things like constructor constraints and not null constraints in the
@@ -444,11 +442,11 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
                 if (TryGetWhereClauseText(typeParameter, constraints, out var whereClauseText))
                 {
-                    metadataPairs.Add(new(ComponentMetadata.Component.TypeParameterConstraintsKey, whereClauseText));
+                    metadata.Constraints = whereClauseText;
                 }
 
                 // Collect attributes that should be propagated to the type inference method.
-                using var _2 = StringBuilderPool.GetPooledObject(out var withAttributes);
+                using var _ = StringBuilderPool.GetPooledObject(out var withAttributes);
                 foreach (var attribute in typeParameter.GetAttributes())
                 {
                     if (attribute.HasFullName("System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembersAttribute"))
@@ -497,14 +495,15 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                         withAttributes.Append(')');
                     }
                 }
+
                 if (withAttributes.Length > 0)
                 {
                     withAttributes.Append("] ");
                     withAttributes.Append(typeParameter.Name);
-                    metadataPairs.Add(new(ComponentMetadata.Component.TypeParameterWithAttributesKey, withAttributes.ToString()));
+                    metadata.NameWithAttributes = withAttributes.ToString();
                 }
 
-                pb.SetMetadata(MetadataCollection.Create(metadataPairs));
+                pb.SetMetadata(metadata.Build());
 
                 pb.SetDocumentation(
                     DocumentationDescriptor.From(
@@ -608,9 +607,8 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             {
                 b.Name = ComponentMetadata.ChildContent.ParameterAttributeName;
                 b.TypeName = typeof(string).FullName;
-                b.SetMetadata(
-                    MakeTrue(ComponentMetadata.Component.ChildContentParameterNameKey),
-                    PropertyName(b.Name));
+                b.PropertyName = b.Name;
+                b.SetMetadata(ChildContentParameterMetadata.Default);
 
                 var documentation = childContentName == null
                     ? DocumentationDescriptor.ChildContentParameterName_TopLevel

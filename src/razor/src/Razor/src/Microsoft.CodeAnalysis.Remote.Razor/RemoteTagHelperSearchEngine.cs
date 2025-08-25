@@ -41,8 +41,7 @@ internal sealed class RemoteTagHelperSearchEngine : ITagHelperSearchEngine
         foreach (var type in compilation.GetTypesByMetadataName(typeName))
         {
             var locations = type.Locations;
-            if (boundAttribute is not null &&
-                boundAttribute.GetPropertyName() is { } propertyName &&
+            if (boundAttribute is { PropertyName: string propertyName } &&
                 type.GetMembers(propertyName) is [{ } property])
             {
                 locations = property.Locations;

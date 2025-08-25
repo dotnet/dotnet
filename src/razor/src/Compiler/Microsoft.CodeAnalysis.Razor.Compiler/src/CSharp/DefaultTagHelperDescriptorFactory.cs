@@ -206,7 +206,7 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
             : (false, HtmlConventions.ToHtmlCase(property.Name));
 
         builder.TypeName = property.Type.GetFullName();
-        builder.SetMetadata(PropertyName(property.Name));
+        builder.PropertyName = property.Name;
 
         var hasPublicSetter = HasPublicSetter(property);
 

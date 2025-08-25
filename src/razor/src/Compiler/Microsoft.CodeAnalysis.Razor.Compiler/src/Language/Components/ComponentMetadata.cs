@@ -34,18 +34,11 @@ internal static class ComponentMetadata
         return className?.StartsWith(MangledClassNamePrefix, StringComparison.Ordinal) == true;
     }
 
-    public static class Common
-    {
-        public const string DirectiveAttribute = "Common.DirectiveAttribute";
-    }
-
     public static class Bind
     {
         public const string RuntimeName = "Components.None";
 
         public const string TagHelperKind = "Components.Bind";
-
-        public const string BindAttributeGetSet = "Components.Bind.AlternativeNotation";
 
         public const string FallbackKey = "Components.Bind.Fallback";
 
@@ -92,8 +85,6 @@ internal static class ComponentMetadata
         public const string DelegateWithAwaitableResultKey = "Components.IsDelegateAwaitableResult";
 
         public const string EventCallbackKey = "Components.EventCallback";
-
-        public const string WeaklyTypedKey = "Components.IsWeaklyTyped";
 
         public const string RuntimeName = "Components.IComponent";
 

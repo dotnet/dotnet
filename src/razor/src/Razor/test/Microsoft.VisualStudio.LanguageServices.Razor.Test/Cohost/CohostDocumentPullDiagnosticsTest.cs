@@ -44,6 +44,25 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             """);
 
     [Fact]
+    public Task CSharpAndRazor_MiscellaneousFile()
+        => VerifyDiagnosticsAsync("""
+            <div>
+
+            {|RZ10012:<NonExistentComponent />|}
+
+            </div>
+
+            @code
+            {
+                public void IJustMetYou()
+                {
+                    {|CS0103:CallMeMaybe|}();
+                }
+            }
+            """,
+            miscellaneousFile: true);
+
+    [Fact]
     public Task Html()
     {
         TestCode input = """
@@ -387,9 +406,9 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
             """,
             taskListRequest: true);
 
-    private async Task VerifyDiagnosticsAsync(TestCode input, VSInternalDiagnosticReport[]? htmlResponse = null, bool taskListRequest = false)
+    private async Task VerifyDiagnosticsAsync(TestCode input, VSInternalDiagnosticReport[]? htmlResponse = null, bool taskListRequest = false, bool miscellaneousFile = false)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true);
+        var document = CreateProjectAndRazorDocument(input.Text, createSeparateRemoteAndLocalWorkspaces: true, miscellaneousFile: miscellaneousFile);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var requestInvoker = new TestHtmlRequestInvoker([(VSInternalMethods.DocumentPullDiagnosticName, htmlResponse)]);

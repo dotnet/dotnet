@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
@@ -67,7 +68,7 @@ internal sealed class CSharpFormattingPass(
 
         _logger.LogTestOnly($"Generated C#:\r\n{context.CSharpSourceText}");
 
-        return changedText.GetTextChangesArray(originalText);
+        return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
     }
 
     private async Task<ImmutableArray<TextChange>> FormatCSharpAsync(FormattingContext context, HostWorkspaceServices hostWorkspaceServices, Document csharpDocument, CancellationToken cancellationToken)

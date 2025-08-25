@@ -77,7 +77,7 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
             attribute.Documentation);
 
         Assert.Equal("@attributes", attribute.Name);
-        Assert.Equal("Attributes", attribute.GetPropertyName());
+        Assert.Equal("Attributes", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Attributes.Attributes", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);

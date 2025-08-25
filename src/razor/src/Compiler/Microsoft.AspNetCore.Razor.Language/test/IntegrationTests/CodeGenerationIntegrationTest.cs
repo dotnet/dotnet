@@ -458,7 +458,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             static string getTagHelperBody(TagHelperDescriptor descriptor)
             {
                 var attributes = descriptor.BoundAttributes.Select(attribute => $$"""
-                    public {{attribute.TypeName}} {{attribute.GetPropertyName()}}
+                    public {{attribute.TypeName}} {{attribute.PropertyName}}
                     {
                         get => throw new System.NotImplementedException();
                         set { }

@@ -31,5 +31,5 @@ public sealed class CascadingGenericTypeParameter
     /// generic parameters, this will only be populated once a variable is emitted corresponding to
     /// <see cref="ValueSourceNode"/>.
     /// </summary>
-    internal string ValueExpression { get; set; }
+    internal object ValueExpression { get; set; }
 }

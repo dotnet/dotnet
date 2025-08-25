@@ -50,13 +50,13 @@ public class ViewComponentTagHelperDescriptorProviderTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("foo"))
+                .PropertyName("foo")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("bar"))
+                .PropertyName("bar")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.bar"))
             .Build();

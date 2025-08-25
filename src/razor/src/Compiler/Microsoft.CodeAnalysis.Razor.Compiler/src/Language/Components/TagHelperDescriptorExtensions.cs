@@ -5,7 +5,6 @@
 #nullable disable
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -82,8 +81,7 @@ internal static class TagHelperDescriptorExtensions
             // it has to be looked up in the bindingAttributes to find the value for that type. This assumes that the type is valid because the user
             // provided it, and if it's not the calling context probably doesn't care.
             if (boundAttribute.IsTypeParameterProperty() &&
-                boundAttribute.GetPropertyName() is string propertyName &&
-                binding.Attributes.FirstOrDefault(propertyName, static (kvp, propertyName) => kvp.Key == propertyName) is { Value: var bindingTypeName })
+                binding.Attributes.FirstOrDefault(boundAttribute.PropertyName, static (kvp, propertyName) => kvp.Key == propertyName) is { Value: var bindingTypeName })
             {
                 if (typeName is not null)
                 {

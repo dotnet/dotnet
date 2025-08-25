@@ -9,49 +9,6 @@ namespace Microsoft.AspNetCore.Razor.Language;
 public class BoundAttributeDescriptorExtensionsTest
 {
     [Fact]
-    public void GetPropertyName_ReturnsPropertyName()
-    {
-        // Arrange
-        var expectedPropertyName = "IntProperty";
-
-        var tagHelper = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
-            .Metadata(TypeName("TestTagHelper"))
-            .BoundAttributeDescriptor(attribute => attribute
-                .Name("test")
-                .Metadata(PropertyName(expectedPropertyName))
-                .TypeName(typeof(int).FullName))
-            .Build();
-
-        var boundAttribute = Assert.Single(tagHelper.BoundAttributes);
-
-        // Act
-        var propertyName = boundAttribute.GetPropertyName();
-
-        // Assert
-        Assert.Equal(expectedPropertyName, propertyName);
-    }
-
-    [Fact]
-    public void GetPropertyName_ReturnsNullIfNoPropertyName()
-    {
-        // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
-            .Metadata(TypeName("TestTagHelper"))
-            .BoundAttributeDescriptor(attribute => attribute
-                .Name("test")
-                .TypeName(typeof(int).FullName))
-            .Build();
-
-        var boundAttribute = Assert.Single(tagHelper.BoundAttributes);
-
-        // Act
-        var propertyName = boundAttribute.GetPropertyName();
-
-        // Assert
-        Assert.Null(propertyName);
-    }
-
-    [Fact]
     public void IsDefaultKind_ReturnsTrue_IfKindIsDefault()
     {
         // Arrange
@@ -59,7 +16,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("IntProperty"))
+                .PropertyName("IntProperty")
                 .TypeName(typeof(int).FullName))
             .Build();
 
@@ -80,7 +37,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("IntProperty"))
+                .PropertyName("IntProperty")
                 .TypeName(typeof(int).FullName))
             .Build();
 
@@ -101,7 +58,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName(typeof(string).FullName))
             .Build();
 
@@ -122,7 +79,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName(typeof(bool).FullName))
             .Build();
 
@@ -143,7 +100,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName("System.Collection.Generic.IDictionary<string, string>")
                 .AsDictionary("prefix-test-", typeof(string).FullName))
             .Build();
@@ -165,7 +122,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName("System.Collection.Generic.IDictionary<string, string>")
                 .AsDictionary("prefix-test-", typeof(string).FullName))
             .Build();
@@ -187,7 +144,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName(typeof(bool).FullName))
             .Build();
 
@@ -208,7 +165,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName(typeof(int).FullName))
             .Build();
 
@@ -229,7 +186,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName("System.Collection.Generic.IDictionary<string, bool>")
                 .AsDictionary("prefix-test-", typeof(bool).FullName))
             .Build();
@@ -251,7 +208,7 @@ public class BoundAttributeDescriptorExtensionsTest
             .Metadata(TypeName("TestTagHelper"))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("test")
-                .Metadata(PropertyName("BoundProp"))
+                .PropertyName("BoundProp")
                 .TypeName("System.Collection.Generic.IDictionary<string, bool>")
                 .AsDictionary("prefix-test-", typeof(bool).FullName))
             .Build();

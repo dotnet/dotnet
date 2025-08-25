@@ -40,15 +40,15 @@ internal record BoundAttributeDescriptionInfo(string ReturnTypeName, string Type
             throw new ArgumentNullException(nameof(boundAttribute));
         }
 
-        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName.AssumeNotNull() : boundAttribute.TypeName;
-        var propertyName = boundAttribute.GetPropertyName().AssumeNotNull();
+        var returnTypeName = isIndexer ? boundAttribute.IndexerTypeName : boundAttribute.TypeName;
+        var propertyName = boundAttribute.PropertyName;
 
         // The BoundAttributeDescriptor does not directly have the TagHelperTypeName information available.
         // Because of this we need to resolve it from other parts of it.
         parentTagHelperTypeName ??= ResolveTagHelperTypeName(propertyName, boundAttribute.DisplayName);
 
         return new BoundAttributeDescriptionInfo(
-            returnTypeName,
+            returnTypeName.AssumeNotNull(),
             parentTagHelperTypeName,
             propertyName,
             boundAttribute.Documentation);

@@ -121,7 +121,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
             writer.WriteAutoPropertyDeclaration(
                 PublicModifiers,
                 attribute.TypeName,
-                attribute.GetPropertyName());
+                attribute.PropertyName);
 
             if (attribute.IndexerTypeName != null)
             {
@@ -164,7 +164,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
 
     private string[] GetMethodParameters(TagHelperDescriptor tagHelper)
     {
-        var propertyNames = tagHelper.BoundAttributes.Select(attribute => attribute.GetPropertyName());
+        var propertyNames = tagHelper.BoundAttributes.Select(attribute => attribute.PropertyName);
         var joinedPropertyNames = string.Join(", ", propertyNames);
         var parametersString = $"new {{ { joinedPropertyNames } }}";
         var viewComponentName = tagHelper.GetViewComponentName();
