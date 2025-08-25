@@ -192,9 +192,9 @@ public static class TestTagHelperDescriptorBuilderExtensions
     {
         builder.BoundAttributeDescriptor(attribute =>
          {
-             attribute.Name(name);
-             attribute.Metadata(PropertyName(propertyName));
-             attribute.TypeName(typeName);
+             attribute.Name = name;
+             attribute.PropertyName = propertyName;
+             attribute.TypeName = typeName;
 
              configure?.Invoke(attribute);
          });
