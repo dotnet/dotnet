@@ -41,4 +41,30 @@
     <ProjectReference Include="$(RepoProjectsDir)scenario-tests.proj" Condition="'$(_RunScenarioTests)' == 'true'" BuildInParallel="false" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <_DownloadWasmPackages Condition="'$(DotNetBuildSharedComponents)' != 'true' and '$(DotNetBuildSourceOnly)' == 'true'">true</_DownloadWasmPackages>
+  </PropertyGroup>
+
+  <!-- Download WASM packages for non-1xx source-only builds -->
+  <Target Name="DownloadWasmPackages" BeforeTargets="Test" Condition="'$(_DownloadWasmPackages)' == 'true'">
+
+    <PropertyGroup>
+      <_TmpPackagesRoot>$(ArtifactsTmpDir)wasm-dependencies/</_TmpPackagesRoot>
+    </PropertyGroup>
+    
+    <Exec
+        Command="&quot;$(DOTNET_HOST_PATH)&quot; restore &quot;$(MSBuildThisFileDirectory)wasm-dependencies.proj&quot; -bl:$(ArtifactsLogDir)/wasm-test-dependencies.binlog"
+        EnvironmentVariables="NUGET_PACKAGES=$(_TmpPackagesRoot)"
+    />
+    
+    <!-- Copy the nupkg files to the extra custom restore path for the tests -->
+    <ItemGroup>
+      <_DownloadedNupkgs Include="$(_TmpPackagesRoot)**/*.nupkg" />
+    </ItemGroup>
+    
+    <Copy SourceFiles="@(_DownloadedNupkgs)"
+          DestinationFolder="$(ExtraRestoreSourcePath)" 
+          Condition="@(_DownloadedNupkgs->Count()) > 0" />
+  </Target>
+
 </Project>

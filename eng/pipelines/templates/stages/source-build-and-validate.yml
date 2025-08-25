@@ -20,6 +20,11 @@ parameters:
   type: string
   default: ''
 
+# Indicates whether runtime dependent jobs are excluded.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -198,13 +203,14 @@ stages:
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
-          - template: ../steps/download-artifacts.yml
-            parameters:
-              artifactDescription: Microsoft WASM Packages
-              artifactName: Browser_Shortstack_wasm_Artifacts
-              downloadFilePatterns: packages/Release/Shipping/**
-              copyDestination: $(Pipeline.Workspace)/msft-pkgs
-              flattenDirs: true
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - template: ../steps/download-artifacts.yml
+              parameters:
+                artifactDescription: Microsoft WASM Packages
+                artifactName: Browser_Shortstack_wasm_Artifacts
+                downloadFilePatterns: packages/Release/Shipping/**
+                copyDestination: $(Pipeline.Workspace)/msft-pkgs
+                flattenDirs: true
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Microsoft Windows Packages
