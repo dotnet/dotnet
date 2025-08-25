@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(TasksDir)Microsoft.DotNet.SourceBuild.Tasks.Sign\Microsoft.DotNet.SourceBuild.Tasks.Sign.csproj" />
+  </ItemGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.SourceBuild.Tasks.Sign.SignArtifacts" AssemblyFile="$(MicrosoftDotNetSourceBuildTasksSignAssembly)" />
+
+  <Target Name="SignArtifacts"
+      DependsOnTargets="GetSignableSourceBuiltAssets"
+      BeforeTargets="Build">
+
+    <Microsoft.DotNet.SourceBuild.Tasks.Sign.SignArtifacts
+      DotNetEngDirectory="$(RepositoryEngineeringDir)"
+      SignableSourceBuiltAssets="@(SignableSourceBuiltAsset)"
+      LogsDirectory="$(ArtifactsLogDir)"
+      SignProperties="$(SignProperties)"
+      OfficialBuildId="$(OfficialBuildId)" />
+  </Target>
+
+  <Target Name="GetSignableSourceBuiltAssets"
+    DependsOnTargets="ResolveProjectReferences"
+    BeforeTargets="Build">
+
+    <!-- We always publish when building the VMR, so we need to define these properties to ensure that we're pulling the source-build artifacts from the correct locations -->
+    <!-- Keep in line with the properties defined in $(RepositoryEngineeringDir)Publishing.props -->
+    <PropertyGroup>
+      <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
+      <ArtifactsPublishStagingDir>$(ArtifactsStagingDir)/artifacts</ArtifactsPublishStagingDir>
+      <SourceBuiltAssetsDir>$(ArtifactsPublishStagingDir)/assets/$(Configuration)</SourceBuiltAssetsDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <SourceBuiltSdkTarballName>dotnet-sdk</SourceBuiltSdkTarballName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- SDK tarball - prefer root if present; otherwise pick from Sdk/ subtree -->
+      <SignableSourceBuiltAsset Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="$(SourceBuiltAssetsDir)/Sdk/**/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" Condition="'@(SignableSourceBuiltAsset)' == ''" />
+
+      <!-- PSB artifact tarball -->
+      <SignableSourceBuiltAsset  Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+    </ItemGroup>
+  </Target>
+
+</Project>
