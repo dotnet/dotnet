@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Complete commands common to command-line and GUI NuGet clients.</Description>
-    <TargetFrameworks Condition="'$(IsVsixBuild)' != 'true'">$(TargetFrameworksLibraryForSigning)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(IsVsixBuild)' != 'true'">$(TargetFrameworksLibrary)</TargetFrameworks>
     <TargetFramework Condition="'$(IsVsixBuild)' == 'true'">$(NETFXTargetFramework)</TargetFramework>
     <NoWarn>$(NoWarn);CS1591;CS1574;CS1573;CS1584;CS1658;RS0041</NoWarn>
     <NoWarn Condition=" $(TargetFramework.StartsWith('netstandard')) OR $(TargetFramework.StartsWith('netcoreapp')) ">$(NoWarn);CS1998</NoWarn>

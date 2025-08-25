@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 279524,
+      "barId": 280436,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "e58b086a85a1df5762c8980308f7e4e330edd0aa"
+      "commitSha": "f2cdf946c00a12a2c283835bb41ddc2255832055"
     },
     {
       "barId": 280529,
@@ -13,10 +13,10 @@
       "commitSha": "ab0cf6aad34e851a8508dc5424626a81c742e68e"
     },
     {
-      "barId": 277712,
+      "barId": 279211,
       "path": "cecil",
       "remoteUri": "https://github.com/dotnet/cecil",
-      "commitSha": "2a768f2c8a54077cd7d788bb135caeb4d7206a15"
+      "commitSha": "27abc57253a0d3010418e877fdfb35f9fa6806b9"
     },
     {
       "barId": 279170,
@@ -25,10 +25,10 @@
       "commitSha": "e292617c0f829bfe777c7ad51467c6a509a9aff8"
     },
     {
-      "barId": 277832,
+      "barId": 279984,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "fb3ca0862ecf66f2ca281723e4db5c040ca37afe"
+      "commitSha": "6c9d06961c0f1fa8714dd12d072fb2eecee5193f"
     },
     {
       "barId": 279003,
@@ -37,10 +37,10 @@
       "commitSha": "a321e262b120841f4bd7651da46826589404ac66"
     },
     {
-      "barId": 279561,
+      "barId": 280547,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "5f505fd5a89f16d760847b975d49a4ef1490b47a"
+      "commitSha": "d3f3e008eb1c9fa8cf6e25dcbf253780f59ef1f2"
     },
     {
       "barId": 278900,
@@ -55,16 +55,16 @@
       "commitSha": "a3e663d51d5ee259c27b199a038b5fe7a2b3f5e6"
     },
     {
-      "barId": 279461,
+      "barId": 280318,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "c4c851ab59a0e6a5521e1910eeff8f57c8d3f6b4"
+      "commitSha": "ef787f127b2db0c0c32b05ba4f23f0809bfa380c"
     },
     {
-      "barId": 277943,
+      "barId": 280174,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "6a593d04a27505575664c460b7f50b17f2ec30c8"
+      "commitSha": "ef6cddc7c977ddbfa28dba10b1ebeec77c6a3674"
     },
     {
       "barId": 279547,
@@ -73,22 +73,16 @@
       "commitSha": "64d001100992653a06a7e1da94eee01da62b74f7"
     },
     {
-      "barId": 279493,
+      "barId": 280398,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "7c7cfd9c3fee9f3be48c1f8b7f1d139cfb3f5942"
+      "commitSha": "9f8e62d6885a4d24bd37089cc6467106202efc84"
     },
     {
-      "barId": 277064,
-      "path": "roslyn-analyzers",
-      "remoteUri": "https://github.com/dotnet/roslyn-analyzers",
-      "commitSha": "d45048f958379c63acfc716136a5e2466f21c5d4"
-    },
-    {
-      "barId": 279489,
+      "barId": 280366,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d1691e1cc3b45df903e3ca67d550277fc2a7bafa"
+      "commitSha": "11e7477ea8c98e79f5d405be4efc4aab659ab570"
     },
     {
       "barId": 277711,
@@ -97,16 +91,16 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 279374,
+      "barId": 279490,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b4882e0c3d6794aacc7b3ce645e3da0cde0f7aeb"
+      "commitSha": "bcf3943e9aed4fc9fbf90a9a938a00913330198b"
     },
     {
-      "barId": 279269,
+      "barId": 280311,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "299471506deb40dc03945ecc920932f95027fec8"
+      "commitSha": "810a5c52854b853e48b4730c9ef93c9fae9b4758"
     },
     {
       "barId": 277912,
@@ -121,10 +115,10 @@
       "commitSha": "9994998c0b0fab5efd5cbe2e13a3ea74f4e8e6e1"
     },
     {
-      "barId": 278461,
+      "barId": 279652,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "b67630f060f02a6f5ef7cfcea731dce0d13e1ad6"
+      "commitSha": "fcc5f2933e4ad7fbfc85a9c4e78d9bfa3e967eb7"
     },
     {
       "barId": 280001,

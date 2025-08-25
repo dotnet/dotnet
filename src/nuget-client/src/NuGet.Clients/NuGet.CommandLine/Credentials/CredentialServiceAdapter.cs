@@ -51,9 +51,9 @@ namespace NuGet.Credentials
             // NuGetCore calls the adapter with a "list" endpoint uri.
             // It may be different from a source uri, for instance when v3 source advertises v2 search endpoint.
             // If endpoints mapping is supplied, retrieve the source uri and use it to acquire credentials
-            if (_endpoints != null && _endpoints.ContainsKey(uri))
+            if (_endpoints != null && _endpoints.TryGetValue(uri, out Uri endpoint))
             {
-                uri = _endpoints[uri];
+                uri = endpoint;
             }
 
             var type = credentialType == CoreV2.NuGet.CredentialType.ProxyCredentials ?
