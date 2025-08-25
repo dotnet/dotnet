@@ -28,6 +28,11 @@ parameters:
   default: '$(Build.ArtifactStagingDirectory)/SigningValidation'
 
 steps:
+- ${{ if eq(parameters.OS, 'Darwin') }}:
+  - script: |
+      xcrun simctl runtime delete all
+    displayName: Reclaim disk space from unused simulator runtimes
+
 - task: DownloadPipelineArtifact@2
   displayName: Download Vertical Build Artifacts
   continueOnError: ${{ parameters.continueOnError }}

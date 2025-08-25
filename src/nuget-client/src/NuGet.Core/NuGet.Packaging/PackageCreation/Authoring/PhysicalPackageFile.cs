@@ -22,7 +22,7 @@ namespace NuGet.Packaging
 
         public PhysicalPackageFile(MemoryStream stream)
         {
-            MemoryStream = stream;
+            _memoryStream = stream;
         }
 
         internal PhysicalPackageFile(Func<Stream> streamFactory)
@@ -30,7 +30,7 @@ namespace NuGet.Packaging
             _streamFactory = streamFactory;
         }
 
-        private MemoryStream MemoryStream { get; set; }
+        private readonly MemoryStream _memoryStream;
 
         /// <summary>
         /// Path on disk
@@ -101,7 +101,7 @@ namespace NuGet.Packaging
             else
             {
                 _lastWriteTime = DateTimeOffset.UtcNow;
-                return MemoryStream;
+                return _memoryStream;
             }
         }
 
