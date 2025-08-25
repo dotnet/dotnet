@@ -68,9 +68,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>10.0.0-rc.1.25418.110</MicrosoftNETCoreBrowserDebugHostTransportPackageVersion>
     <MicrosoftNETCorePlatformsPackageVersion>10.0.0-rc.1.25418.110</MicrosoftNETCorePlatformsPackageVersion>
     <MicrosoftWebXdtPackageVersion>3.2.0-preview.25418.110</MicrosoftWebXdtPackageVersion>
-    <NuGetFrameworksPackageVersion>7.0.0-preview.1.42003</NuGetFrameworksPackageVersion>
-    <NuGetPackagingPackageVersion>7.0.0-preview.1.42003</NuGetPackagingPackageVersion>
-    <NuGetVersioningPackageVersion>7.0.0-preview.1.42003</NuGetVersioningPackageVersion>
+    <NuGetFrameworksPackageVersion>7.0.0-preview.1.41910</NuGetFrameworksPackageVersion>
+    <NuGetPackagingPackageVersion>7.0.0-preview.1.41910</NuGetPackagingPackageVersion>
+    <NuGetVersioningPackageVersion>7.0.0-preview.1.41910</NuGetVersioningPackageVersion>
     <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25418.110</SystemCollectionsImmutablePackageVersion>
     <SystemCompositionPackageVersion>10.0.0-rc.1.25418.110</SystemCompositionPackageVersion>
     <SystemConfigurationConfigurationManagerPackageVersion>10.0.0-rc.1.25418.110</SystemConfigurationConfigurationManagerPackageVersion>
