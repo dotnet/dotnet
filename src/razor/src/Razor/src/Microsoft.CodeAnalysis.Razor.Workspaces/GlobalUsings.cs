@@ -8,6 +8,7 @@
 // makes for a more pleasant development experience.
 
 // Avoid extern alias in every file that needs to use Range
+global using LspCodeLens = Roslyn.LanguageServer.Protocol.CodeLens;
 global using LspColorPresentation = Roslyn.LanguageServer.Protocol.ColorPresentation;
 global using LspDiagnostic = Roslyn.LanguageServer.Protocol.Diagnostic;
 global using LspDiagnosticSeverity = Roslyn.LanguageServer.Protocol.DiagnosticSeverity;

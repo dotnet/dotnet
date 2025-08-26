@@ -24,7 +24,7 @@ public class TagHelperDescriptorComparerTest
                 {
                     builder => builder
                         .Name("value")
-                        .Metadata(PropertyName("FooProp"))
+                        .PropertyName("FooProp")
                         .TypeName("System.String"),
                 });
         var descriptor2 = CreateTagHelperDescriptor(
@@ -35,7 +35,7 @@ public class TagHelperDescriptorComparerTest
                 {
                     builder => builder
                         .Name("value")
-                        .Metadata(PropertyName("FooProp"))
+                        .PropertyName("FooProp")
                         .TypeName("System.String"),
                 });
 
@@ -60,7 +60,7 @@ public class TagHelperDescriptorComparerTest
             {
                 builder => builder
                     .Name("IncrementBy")
-                    .Metadata(PropertyName("IncrementBy"))
+                    .PropertyName("IncrementBy")
                     .TypeName("System.Int32"),
             });
 
@@ -73,7 +73,7 @@ public class TagHelperDescriptorComparerTest
             {
                 builder => builder
                     .Name("value")
-                    .Metadata(PropertyName("FooProp"))
+                    .PropertyName("FooProp")
                     .TypeName("System.String"),
             });
 
