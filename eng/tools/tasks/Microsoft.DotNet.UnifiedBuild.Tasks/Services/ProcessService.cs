@@ -17,7 +17,7 @@ public record ProcessResult(string Output, string Error, int ExitCode);
 public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
 {
     private TaskLoggingHelper Log { get; } = log;
-    private int Timeout { get; } = timeout;
+    private TimeSpan Timeout { get; } = TimeSpan.FromMilliseconds(timeout);
 
     public async Task<ProcessResult> RunProcessAsync(string command, string arguments, bool printOutput = false)
     {
@@ -89,7 +89,7 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
         catch (OperationCanceledException)
         {
             try { process.Kill(entireProcessTree: true); } catch { }
-            throw new TimeoutException($"Process timed out after {Timeout} ms");
+            throw new TimeoutException($"Process timed out after {Timeout.TotalMilliseconds} ms");
         }
 
         return new ProcessResult(
