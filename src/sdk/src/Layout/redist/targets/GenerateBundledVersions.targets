@@ -268,18 +268,6 @@
         Condition="'$(BundleRuntimePacks)' == 'true'"
         Include="$(ProductMonikerRid)" />
 
-      <ILCompilerSupportedPortableRids Include="@(ILCompilerSupportedRids)" />
-
-      <ILCompilerSupportedRids
-        Condition="'$(BundleNativeAotCompiler)' == 'true'"
-        Include="$(ProductMonikerRid)" />
-
-      <Crossgen2SupportedPortableRids Include="@(Crossgen2SupportedRids)" />
-
-      <Crossgen2SupportedRids
-        Condition="'$(BundleCrossgen2)' == 'true'"
-        Include="$(ProductMonikerRid)" />
-
       <Net60MonoRuntimePackRids Include="
         @(Net60RuntimePackRids);
         browser-wasm;
@@ -372,6 +360,12 @@
 
       <Crossgen2SupportedRids Include="@(Net90Crossgen2SupportedRids);" />
 
+      <Crossgen2SupportedPortableRids Include="@(Crossgen2SupportedRids)" />
+
+      <Crossgen2SupportedRids
+        Condition="'$(BundleCrossgen2)' == 'true'"
+        Include="$(ProductMonikerRid)" />
+
       <Net70ILCompilerSupportedRids Include="
         linux-arm64;
         linux-musl-arm64;
@@ -405,6 +399,12 @@
         linux-riscv64;
         linux-musl-riscv64;
         " />
+
+      <ILCompilerSupportedPortableRids Include="@(ILCompilerSupportedRids)" />
+
+      <ILCompilerSupportedRids
+        Condition="'$(BundleNativeAotCompiler)' == 'true'"
+        Include="$(ProductMonikerRid)" />
 
       <Net80NativeAOTRuntimePackRids Include="
         ios-arm64;
