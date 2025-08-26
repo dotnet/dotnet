@@ -38,11 +38,13 @@ public class CreateSourceArtifacts : BuildTask
     [Required]
     public required string OutputDirectory { get; init; }
 
+    private const int GitArchiveTimeout = 5 * 60 * 1000; // 5 minutes
+
     public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
 
     private async Task<bool> ExecuteAsync()
     {
-        var processService = new ProcessService(Log);
+        var processService = new ProcessService(Log, GitArchiveTimeout);
         var errors = new ConcurrentQueue<string>();
 
         await Parallel.ForEachAsync(Enum.GetValues<ArtifactType>(), async (artifactType, _) =>
