@@ -679,7 +679,7 @@ jobs:
         displayName: Sign Source-Built Artifacts
         workingDirectory: $(Build.SourcesDirectory)
 
-    - ${{ if and(eq(parameters.sign, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
         parameters:
           enableMicrobuild: true
