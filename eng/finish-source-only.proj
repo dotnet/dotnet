@@ -262,6 +262,7 @@
 
     <CreateSourceArtifacts
         SourceCommit="$(RepositoryCommit)"
+        ArtifactName="$(SourceBuiltSourceArtifactName)"
         ArtifactVersion="$(SourceBuiltSdkNonStableVersion)"
         OutputDirectory="$(ArtifactsAssetsDir)" />
   </Target>

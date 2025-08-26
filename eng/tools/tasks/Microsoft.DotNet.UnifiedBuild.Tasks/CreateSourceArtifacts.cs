@@ -24,6 +24,12 @@ public class CreateSourceArtifacts : BuildTask
     /// Version of the artifact to generate
     /// </summary>
     [Required]
+    public required string ArtifactName { get; init; }
+
+    /// <summary>
+    /// Version of the artifact to generate
+    /// </summary>
+    [Required]
     public required string ArtifactVersion { get; init; }
 
     /// <summary>
@@ -31,8 +37,6 @@ public class CreateSourceArtifacts : BuildTask
     /// </summary>
     [Required]
     public required string OutputDirectory { get; init; }
-
-    public const string ArtifactRootName = "dotnet-source";
 
     public override bool Execute()
     {
@@ -80,7 +84,7 @@ public class CreateSourceArtifacts : BuildTask
 
     private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService)
     {
-        string artifactFileName = $"{ArtifactRootName}-{ArtifactVersion}{artifactType.GetArtifactExtension()}";
+        string artifactFileName = $"{ArtifactName}-{ArtifactVersion}{artifactType.GetArtifactExtension()}";
         string artifactFilePath = Path.Combine(OutputDirectory, artifactFileName);
 
         Log.LogMessage(MessageImportance.High, $"Creating {artifactType} source artifact at: {artifactFilePath}");
