@@ -104,7 +104,7 @@ stages:
     dependsOn: VSIntegration
     jobs:
       - job: GitHubCommentCompletedSuccessfullyJob
-        condition: eq(stageDependencies.VSIntegration.result, 'Succeeded')
+        condition: and(succeeded(), eq(stageDependencies.VSIntegration.result, 'Succeeded'))
         steps:
           - checkout: none
           - task: GitHubComment@0

@@ -493,7 +493,7 @@ stages:
 
   - job: Correctness_Bootstrap_Build_Framework
     dependsOn: Determine_Changes
-    condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
     pool: ${{ parameters.vs2022PreviewPool }}
     timeoutInMinutes: 90
     variables:
