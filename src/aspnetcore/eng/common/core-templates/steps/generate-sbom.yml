@@ -18,7 +18,7 @@ parameters:
 steps:
 - task: PowerShell@2 
   displayName: Prep for SBOM generation in (Non-linux)
-  condition: and(succeeded(), or(eq(variables['Agent.Os'], 'Windows_NT'), eq(variables['Agent.Os'], 'Darwin')))
+  condition: or(eq(variables['Agent.Os'], 'Windows_NT'), eq(variables['Agent.Os'], 'Darwin'))
   inputs: 
     filePath: ./eng/common/generate-sbom-prep.ps1
     arguments: ${{parameters.manifestDirPath}}
@@ -28,7 +28,7 @@ steps:
     chmod +x ./eng/common/generate-sbom-prep.sh
     ./eng/common/generate-sbom-prep.sh ${{parameters.manifestDirPath}}
   displayName: Prep for SBOM generation in (Linux)
-  condition: and(succeeded(), eq(variables['Agent.Os'], 'Linux'))
+  condition: eq(variables['Agent.Os'], 'Linux')
   continueOnError: ${{ parameters.sbomContinueOnError }}
 
 - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0

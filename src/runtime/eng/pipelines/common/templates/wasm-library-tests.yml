@@ -88,12 +88,9 @@ jobs:
       #       on path changes)
       #     - else run based on path changes
       condition: >-
-        and(
-          succeeded(),
-          or(
-            eq(variables['alwaysRunVar'], true),
-            eq(variables['isDefaultPipeline'], variables['shouldRunOnDefaultPipelines']))
-        )
+        or(
+          eq(variables['alwaysRunVar'], true),
+          eq(variables['isDefaultPipeline'], variables['shouldRunOnDefaultPipelines']))
       # extra steps, run tests
       postBuildSteps:
         - template: /eng/pipelines/libraries/helix.yml

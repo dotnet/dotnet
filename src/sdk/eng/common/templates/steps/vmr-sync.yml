@@ -42,7 +42,7 @@ steps:
     vmr_sha=$(grep -oP '(?<=Sha=")[^"]*' $(Agent.BuildDirectory)/repo/eng/Version.Details.xml)
     echo "##vso[task.setvariable variable=vmr_sha]$vmr_sha"
   displayName: Obtain the vmr sha from Version.Details.xml (Unix)
-  condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - powershell: |
@@ -50,7 +50,7 @@ steps:
     $vmr_sha = $xml.SelectSingleNode("//Source").Sha
     Write-Output "##vso[task.setvariable variable=vmr_sha]$vmr_sha"
   displayName: Obtain the vmr sha from Version.Details.xml (Windows)
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - script: |
@@ -78,14 +78,14 @@ steps:
       exit 1
     fi
   displayName: Sync repo into VMR (Unix)
-  condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+  condition: ne(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - script: |
     git config --global diff.astextplain.textconv echo
     git config --system core.longpaths true
   displayName: Configure Windows git (longpaths, astextplain)
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
 
 - powershell: |
     ./eng/common/vmr-sync.ps1                      `
@@ -100,7 +100,7 @@ steps:
       exit 1
     }
   displayName: Sync repo into VMR (Windows)
-  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  condition: eq(variables['Agent.OS'], 'Windows_NT')
   workingDirectory: $(Agent.BuildDirectory)/repo
 
 - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -161,7 +161,7 @@ steps:
         exit 1
       fi
     displayName: Sync ${{ assetName }} into (Unix)
-    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
     workingDirectory: $(Agent.BuildDirectory)/repo
 
   - powershell: |
@@ -203,5 +203,5 @@ steps:
         exit 1
       }
     displayName: Sync ${{ assetName }} into (Windows)
-    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+    condition: ne(variables['Agent.OS'], 'Windows_NT')
     workingDirectory: $(Agent.BuildDirectory)/repo

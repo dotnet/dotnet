@@ -38,12 +38,9 @@ jobs:
       buildArgs: -s mono+libs+host+packs+libs.tests -c $(_BuildConfig) /p:MonoEnableAssertMessages=true /p:ArchiveTests=true /p:TestWasmBuildTests=true /p:TestAssemblies=false /p:BrowserHost=$(_hostedOs) /p:WorkloadsTestPreviousVersions=$(workloadsTestPreviousVersionsVar) ${{ parameters.extraBuildArgs }}
       timeoutInMinutes: 180
       condition: >-
-        and(
-          succeeded(),
-          or(
-            eq(variables['alwaysRunVar'], true),
-            eq(variables['isDefaultPipeline'], variables['shouldRunWasmBuildTestsOnDefaultPipeline']))
-        )
+        or(
+          eq(variables['alwaysRunVar'], true),
+          eq(variables['isDefaultPipeline'], variables['shouldRunWasmBuildTestsOnDefaultPipeline']))
       # extra steps, run tests
       postBuildSteps:
         - template: /eng/pipelines/libraries/helix.yml
