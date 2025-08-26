@@ -110,12 +110,12 @@ extends:
               outputs:
               - output: pipelineArtifact
                 displayName: Upload package artifacts
-                condition: and(eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+                condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
                 targetPath: artifacts/packages/
                 artifactName: artifacts
               - output: pipelineArtifact
                 displayName: Publish Artifact Symbols
-                condition: and(eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
+                condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false), eq(variables['_BuildConfig'], 'Release'))
                 targetPath: '$(Build.SourcesDirectory)\artifacts\SymStore\$(_BuildConfig)'
                 artifactName: 'NativeSymbols'
             # WORKAROUND: BinSkim requires the folder exist prior to scanning.

@@ -81,7 +81,7 @@ stages:
 
       - ${{ if eq(variables.officialBuild, 'false') }}:
         - job: Linux
-          condition: eq(variables.officialBuild, 'false')
+          condition: and(succeeded(), eq(variables.officialBuild, 'false'))
           pool:
             vmImage: ubuntu-latest
           steps:

@@ -339,7 +339,7 @@ stages:
             continueOnError: true
           - task: PublishBuildArtifacts@1
             displayName: Publish Build BinLog
-            condition: eq(variables['System.JobPositionInPhase'], 1)
+            condition: and(succeeded(), eq(variables['System.JobPositionInPhase'], 1))
             continueOnError: true
             inputs:
                 PathToPublish: '$(Build.SourcesDirectory)\artifacts\log/Release\Build.VisualFSharp.sln.binlog'
@@ -479,7 +479,7 @@ stages:
 
           - powershell: eng\SetupVSHive.ps1
             displayName: Setup VS Hive
-            condition: eq(variables.setupVsHive, 'true')
+            condition: and(succeeded(), eq(variables.setupVsHive, 'true'))
 
           - script: eng\CIBuildNoPublish.cmd -compressallmetadata -configuration $(_configuration) -$(_testKind)
             env:
@@ -580,7 +580,7 @@ stages:
 
           - task: PublishBuildArtifacts@1
             displayName: Publish BinLog
-            condition: eq(variables['System.JobPositionInPhase'], 1)
+            condition: and(succeeded(), eq(variables['System.JobPositionInPhase'], 1))
             continueOnError: true
             inputs:
                 PathToPublish: '$(Build.SourcesDirectory)\artifacts\log/Release\Build.VisualFSharp.sln.binlog'

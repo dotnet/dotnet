@@ -159,7 +159,7 @@ stages:
 
     - job:
       displayName: Signing Validation
-      condition: and( eq( ${{ parameters.enableSigningValidation }}, 'true'), ne( variables['PostBuildSign'], 'true'))
+      condition: and(succeeded(),  eq( ${{ parameters.enableSigningValidation }}, 'true'), ne( variables['PostBuildSign'], 'true'))
       pool:
         # We don't use the collection uri here because it might vary (.visualstudio.com vs. dev.azure.com)
         ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:
@@ -220,7 +220,7 @@ stages:
 
     - job:
       displayName: SourceLink Validation
-      condition: eq( ${{ parameters.enableSourceLinkValidation }}, 'true')
+      condition: and(succeeded(), eq( ${{ parameters.enableSourceLinkValidation }}, 'true'))
       pool:
         # We don't use the collection uri here because it might vary (.visualstudio.com vs. dev.azure.com)
         ${{ if eq(variables['System.TeamProject'], 'DevDiv') }}:

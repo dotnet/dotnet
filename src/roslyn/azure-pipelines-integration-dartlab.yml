@@ -114,7 +114,7 @@ stages:
               id: ${{ parameters.prNumber }}
               comment: 'DartLab pipeline [run]($(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)) completed successfully for ${{ parameters.sha }}'
       - job: GitHubCommentCompletedUnsuccessfullyJob
-        condition: ne(stageDependencies.VSIntegration.result, 'Succeeded')
+        condition: and(succeeded(), ne(stageDependencies.VSIntegration.result, 'Succeeded'))
         steps:
           - checkout: none
           - task: GitHubComment@0

@@ -51,6 +51,7 @@ stages:
   displayName: Validate user changes in VMR
   dependsOn: []
   condition: and(
+              succeeded(),
               eq(variables['isPRTrigger'], 'true'),
               and(
                   not(startsWith(variables['System.PullRequest.SourceBranch'], 'refs/heads/darc-')),
