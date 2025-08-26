@@ -89,9 +89,8 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         {
             TagHelperDescriptor candidate = null;
             List<TagHelperDescriptor> matched = null;
-            for (var i = 0; i < node.TagHelpers.Count; i++)
+            foreach (var tagHelper in node.TagHelpers)
             {
-                var tagHelper = node.TagHelpers[i];
                 if (!tagHelper.IsComponentTagHelper)
                 {
                     continue;
