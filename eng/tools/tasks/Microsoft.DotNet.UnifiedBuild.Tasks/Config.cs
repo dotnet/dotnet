@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Versioning;
 
-namespace Microsoft.DotNet.SourceBuild.Tasks.Sign;
+namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
 internal static class Config
 {

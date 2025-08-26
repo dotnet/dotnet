@@ -11,9 +11,9 @@ using Microsoft.Build.Framework;
 
 [assembly:UnsupportedOSPlatform("windows")]
 
-namespace Microsoft.DotNet.SourceBuild.Tasks.Sign;
+namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
-public class SignArtifacts : Microsoft.Build.Utilities.Task
+public class SignSourceBuiltArtifacts : Microsoft.Build.Utilities.Task
 {
     /// <summary>
     /// List of source-built assets to sign
