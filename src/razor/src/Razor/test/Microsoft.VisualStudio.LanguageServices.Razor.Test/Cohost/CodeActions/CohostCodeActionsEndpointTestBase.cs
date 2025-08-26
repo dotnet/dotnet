@@ -36,10 +36,11 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         string codeActionName,
         int childActionIndex = 0,
         RazorFileKind? fileKind = null,
+        string? documentFilePath = null,
         (string filePath, string contents)[]? additionalFiles = null,
         (Uri fileUri, string contents)[]? additionalExpectedFiles = null)
     {
-        var document = CreateRazorDocument(input, fileKind, additionalFiles);
+        var document = CreateRazorDocument(input, fileKind, documentFilePath, additionalFiles);
 
         var codeAction = await VerifyCodeActionRequestAsync(document, input, codeActionName, childActionIndex, expectOffer: expected is not null);
 
@@ -56,7 +57,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
         await VerifyCodeActionResultAsync(document, workspaceEdit, expected, additionalExpectedFiles);
     }
 
-    private protected TextDocument CreateRazorDocument(TestCode input, RazorFileKind? fileKind = null, (string filePath, string contents)[]? additionalFiles = null)
+    private protected TextDocument CreateRazorDocument(TestCode input, RazorFileKind? fileKind = null, string? documentFilePath = null, (string filePath, string contents)[]? additionalFiles = null)
     {
         var fileSystem = (RemoteFileSystem)OOPExportProvider.GetExportedValue<IFileSystem>();
         fileSystem.GetTestAccessor().SetFileSystem(new TestFileSystem(additionalFiles));
@@ -74,7 +75,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return options;
         });
 
-        return CreateProjectAndRazorDocument(input.Text, fileKind, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
+        return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
     }
 
     private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)
