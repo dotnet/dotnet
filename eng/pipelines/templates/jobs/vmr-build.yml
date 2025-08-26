@@ -566,8 +566,9 @@ jobs:
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
           else
-            # Source artifact creation requires that we are building in a git repo,
-            # which is not true when we are building from archive
+            # Enable source artifact creation only when building from a git repo.
+            # We strip the .git/ directory when building from archive,
+            # so it's not possible to create the artifacts in that mode.
             extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
           fi
 

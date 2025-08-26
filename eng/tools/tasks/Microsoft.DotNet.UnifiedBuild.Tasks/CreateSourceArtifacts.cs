@@ -21,7 +21,7 @@ public class CreateSourceArtifacts : BuildTask
     public required string SourceCommit { get; init; }
 
     /// <summary>
-    /// Version of the artifact to generate
+    /// Name of the artifact to generate
     /// </summary>
     [Required]
     public required string ArtifactName { get; init; }
