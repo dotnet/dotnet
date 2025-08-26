@@ -319,12 +319,13 @@ namespace NuGet.SolutionRestoreManager
             var targetFrameworks = projectRestoreInfo.TargetFrameworks;
 
             var cpvmEnabled = VSNominationUtilities.IsCentralPackageVersionManagementEnabled(targetFrameworks);
+            var isPruningEnabledGlobally = VSNominationUtilities.IsPruningEnabledGlobally(targetFrameworks);
 
             TargetFrameworkInformation[] tfis = new TargetFrameworkInformation[targetFrameworks.Count];
             for (int i = 0; i < targetFrameworks.Count; i++)
             {
                 IVsTargetFrameworkInfo4 targetFrameworkInfo = targetFrameworks[i];
-                TargetFrameworkInformation tfi = VSNominationUtilities.ToTargetFrameworkInformation(targetFrameworkInfo, cpvmEnabled, projectNames.FullName);
+                TargetFrameworkInformation tfi = VSNominationUtilities.ToTargetFrameworkInformation(targetFrameworkInfo, cpvmEnabled, isPruningEnabledGlobally, projectNames.FullName);
                 tfis[i] = tfi;
             }
 

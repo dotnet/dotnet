@@ -244,6 +244,14 @@ public sealed partial class CodeWriter : IDisposable
         return WriteCore(value.AsMemory(startIndex, count));
     }
 
+    internal CodeWriter Write<T>(T value)
+        where T : IWriteableValue
+    {
+        value.WriteTo(this);
+
+        return this;
+    }
+
     public CodeWriter Write([InterpolatedStringHandlerArgument("")] ref WriteInterpolatedStringHandler handler)
         => this;
 

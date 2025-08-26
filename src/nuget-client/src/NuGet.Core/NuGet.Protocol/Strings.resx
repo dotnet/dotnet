@@ -535,4 +535,8 @@ The "s" should be localized to the abbreviation for seconds.</comment>
     <comment>0 - NuGet Package source url
 1- resource endpoint url</comment>
   </data>
+  <data name="Error_Invalid_package_id" xml:space="preserve">
+    <value>Invalid package id : `{0}`.</value>
+    <comment>0 - package id.</comment>
+  </data>
 </root>

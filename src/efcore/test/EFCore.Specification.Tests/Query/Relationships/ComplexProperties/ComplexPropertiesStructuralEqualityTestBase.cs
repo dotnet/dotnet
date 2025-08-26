@@ -29,13 +29,33 @@ public abstract class ComplexPropertiesStructuralEqualityTestBase<TFixture>(TFix
     public override Task Nested_with_inline()
         => AssertQuery(
             ss => ss.Set<RootEntity>()
-                .Where(e => e.RequiredRelated.RequiredNested == new NestedType { Id = 1000, Name = "Root1_RequiredRelated_RequiredNested", Int = 8, String = "foo" }),
+                .Where(e => e.RequiredRelated.RequiredNested
+                    == new NestedType
+                    {
+                        Id = 1000,
+                        Name = "Root1_RequiredRelated_RequiredNested",
+                        Int = 8,
+                        String = "foo"
+                    }),
             ss => ss.Set<RootEntity>()
-                .Where(e => e.RequiredRelated.RequiredNested.Equals(new NestedType { Id = 1000, Name = "Root1_RequiredRelated_RequiredNested", Int = 8, String = "foo" })));
+                .Where(e => e.RequiredRelated.RequiredNested.Equals(
+                    new NestedType
+                    {
+                        Id = 1000,
+                        Name = "Root1_RequiredRelated_RequiredNested",
+                        Int = 8,
+                        String = "foo"
+                    })));
 
     public override async Task Nested_with_parameter()
     {
-        var nested = new NestedType { Id = 1000, Name = "Root1_RequiredRelated_RequiredNested", Int = 8, String = "foo" };
+        var nested = new NestedType
+        {
+            Id = 1000,
+            Name = "Root1_RequiredRelated_RequiredNested",
+            Int = 8,
+            String = "foo"
+        };
 
         await AssertQuery(
             ss => ss.Set<RootEntity>().Where(e => e.RequiredRelated.RequiredNested == nested),
@@ -45,33 +65,80 @@ public abstract class ComplexPropertiesStructuralEqualityTestBase<TFixture>(TFix
     public override Task Two_nested_collections()
         => AssertQuery(
             ss => ss.Set<RootEntity>().Where(e => e.RequiredRelated.NestedCollection == e.OptionalRelated!.NestedCollection),
-            ss => ss.Set<RootEntity>().Where(e => e.OptionalRelated != null && e.RequiredRelated.NestedCollection.SequenceEqual(e.OptionalRelated!.NestedCollection)));
+            ss => ss.Set<RootEntity>().Where(e
+                => e.OptionalRelated != null && e.RequiredRelated.NestedCollection.SequenceEqual(e.OptionalRelated!.NestedCollection)));
 
     public override Task Nested_collection_with_inline()
         => AssertQuery(
             ss => ss.Set<RootEntity>()
-                .Where(e => e.RequiredRelated.NestedCollection == new List<NestedType>
-                {
-                    new() { Id = 1002, Name = "Root1_RequiredRelated_NestedCollection_1", Int = 8, String = "foo" },
-                    new() { Id = 1003, Name = "Root1_RequiredRelated_NestedCollection_2", Int = 8, String = "foo" }
-                }),
+                .Where(e => e.RequiredRelated.NestedCollection
+                    == new List<NestedType>
+                    {
+                        new()
+                        {
+                            Id = 1002,
+                            Name = "Root1_RequiredRelated_NestedCollection_1",
+                            Int = 8,
+                            String = "foo"
+                        },
+                        new()
+                        {
+                            Id = 1003,
+                            Name = "Root1_RequiredRelated_NestedCollection_2",
+                            Int = 8,
+                            String = "foo"
+                        }
+                    }),
             ss => ss.Set<RootEntity>()
-                .Where(e => e.RequiredRelated.NestedCollection.SequenceEqual(new List<NestedType>
-                {
-                    new() { Id = 1002, Name = "Root1_RequiredRelated_NestedCollection_1", Int = 8, String = "foo" },
-                    new() { Id = 1003, Name = "Root1_RequiredRelated_NestedCollection_2", Int = 8, String = "foo" }
-                })));
+                .Where(e => e.RequiredRelated.NestedCollection.SequenceEqual(
+                    new List<NestedType>
+                    {
+                        new()
+                        {
+                            Id = 1002,
+                            Name = "Root1_RequiredRelated_NestedCollection_1",
+                            Int = 8,
+                            String = "foo"
+                        },
+                        new()
+                        {
+                            Id = 1003,
+                            Name = "Root1_RequiredRelated_NestedCollection_2",
+                            Int = 8,
+                            String = "foo"
+                        }
+                    })));
 
     public override async Task Nested_collection_with_parameter()
     {
         var nestedCollection = new List<NestedType>
         {
-            new() { Id = 1002, Name = "Root1_RequiredRelated_NestedCollection_1", Int = 8, String = "foo" },
-            new() { Id = 1003, Name = "Root1_RequiredRelated_NestedCollection_2", Int = 8, String = "foo" }
+            new()
+            {
+                Id = 1002,
+                Name = "Root1_RequiredRelated_NestedCollection_1",
+                Int = 8,
+                String = "foo"
+            },
+            new()
+            {
+                Id = 1003,
+                Name = "Root1_RequiredRelated_NestedCollection_2",
+                Int = 8,
+                String = "foo"
+            }
         };
 
         await AssertQuery(
             ss => ss.Set<RootEntity>().Where(e => e.RequiredRelated.NestedCollection == nestedCollection),
             ss => ss.Set<RootEntity>().Where(e => e.RequiredRelated.NestedCollection.SequenceEqual(nestedCollection)));
     }
+
+    #region Value types
+
+    [ConditionalFact]
+    public virtual Task Nullable_value_type_with_null()
+        => AssertQuery(ss => ss.Set<ValueRootEntity>().Where(e => e.OptionalRelated == null));
+
+    #endregion Value types
 }

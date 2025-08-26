@@ -320,7 +320,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             var boolTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(bool))!;
             SqlExpression? comparisons = null;
 
-            if (!TryGenerateComparisons(complexType, left, right, ref comparisons))
+            if (!TryGenerateComparisons(complexType, left, right, ref comparisons, out _))
             {
                 result = null;
                 return false;
@@ -333,12 +333,10 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             // into complex properties to generate a flattened list of comparisons.
             // The moment we reach a a complex property that's mapped to JSON, we stop and generate a single comparison
             // for the whole complex type.
-            bool TryGenerateComparisons(
-                IComplexType type,
-                Expression left,
-                Expression right,
-                [NotNullWhen(true)] ref SqlExpression? comparisons)
+            bool TryGenerateComparisons(IComplexType type, Expression left, Expression right, [NotNullWhen(true)] ref SqlExpression? comparisons, out bool exitImmediately)
             {
+                exitImmediately = false;
+
                 if (type.IsMappedToJson())
                 {
                     var leftScalar = Process(left);
@@ -346,6 +344,9 @@ public partial class RelationalSqlTranslatingExpressionVisitor
 
                     var comparison = _sqlExpressionFactory.MakeBinary(nodeType, leftScalar, rightScalar, boolTypeMapping)!;
 
+                    // A single JSON-mapped complex type requires only a single comparison for the JSON value/column on each side;
+                    // but the JSON-mapped complex type may be nested inside a non-JSON (table-split) complex type, in which
+                    // case this is just one comparison in several.
                     comparisons = comparisons is null
                         ? comparison
                         : nodeType == ExpressionType.Equal
@@ -368,7 +369,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                                 => new JsonScalarExpression(
                                     jsonQuery.JsonColumn,
                                     jsonQuery.Path,
-                                    jsonQuery.Type,
+                                    jsonQuery.Type.UnwrapNullableType(),
                                     jsonQuery.JsonColumn.TypeMapping,
                                     jsonQuery.IsNullable),
 
@@ -377,7 +378,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                                 => new JsonScalarExpression(
                                     jsonQuery.JsonColumn,
                                     jsonQuery.Path,
-                                    jsonQuery.Type,
+                                    jsonQuery.Type.UnwrapNullableType(),
                                     jsonQuery.JsonColumn.TypeMapping,
                                     jsonQuery.IsNullable),
 
@@ -418,6 +419,17 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                     {
                         var comparison = _sqlExpressionFactory.MakeBinary(nodeType, leftTranslation, rightTranslation, boolTypeMapping)!;
 
+                        // If we have a required property and one of the sides is a constant null,
+                        // we can use just that property and skip comparing the rest of properties.
+                        if (!property.IsNullable
+                            && (leftTranslation is SqlConstantExpression { Value: null }
+                                || rightTranslation is SqlConstantExpression { Value: null }))
+                        {
+                            comparisons = comparison;
+                            exitImmediately = true;
+                            return true;
+                        }
+
                         comparisons = comparisons is null
                             ? comparison
                             : nodeType == ExpressionType.Equal
@@ -447,9 +459,14 @@ public partial class RelationalSqlTranslatingExpressionVisitor
 
                     if (nestedLeft is null
                         || nestedRight is null
-                        || !TryGenerateComparisons(complexProperty.ComplexType, nestedLeft, nestedRight, ref comparisons))
+                        || !TryGenerateComparisons(complexProperty.ComplexType, nestedLeft, nestedRight, ref comparisons, out exitImmediately))
                     {
                         return false;
+                    }
+
+                    if (exitImmediately)
+                    {
+                        return true;
                     }
                 }
 
