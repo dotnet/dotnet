@@ -257,7 +257,8 @@
   <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.CreateSourceArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
   <Target Name="CreateSourceArtifacts"
           BeforeTargets="Build"
-          DependsOnTargets="WriteSourceBuiltSdkVersionFile" >
+          DependsOnTargets="WriteSourceBuiltSdkVersionFile"
+          Condition="'$(CreateSourceArtifacts)' == 'true'" >
 
     <CreateSourceArtifacts
         SourceCommit="$(RepositoryCommit)"
