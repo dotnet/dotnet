@@ -100,7 +100,7 @@
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
       <!-- Add the source artifacts to the publishing output. -->
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)">
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
