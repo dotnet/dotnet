@@ -99,6 +99,11 @@
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SourceBuildArtifact>
+      <!-- Add the source artifacts to the publishing output. -->
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltSourceArtifactName)-*$(ArchiveExtension)">
+        <Kind>Blob</Kind>
+        <IsShipping>true</IsShipping>
+      </SourceBuildArtifact>
       <!-- Include the prebuilts tarball in the publishing output as well. -->
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)$(SourceBuiltPrebuiltsTarballName).*$(ArchiveExtension)">
         <Kind>Blob</Kind>
