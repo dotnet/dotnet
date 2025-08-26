@@ -19,7 +19,7 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
     private TaskLoggingHelper Log { get; } = log;
     private TimeSpan Timeout { get; } = TimeSpan.FromMilliseconds(timeout);
 
-    public async Task<ProcessResult> RunProcessAsync(string command, string arguments, bool printOutput = false)
+    public async Task<ProcessResult> RunProcessAsync(string command, string arguments, string workingDirectory = "", bool printOutput = false)
     {
         var processInfo = new ProcessStartInfo
         {
@@ -28,7 +28,8 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
-            CreateNoWindow = true
+            CreateNoWindow = true,
+            WorkingDirectory = workingDirectory
         };
 
         using var process = new Process { StartInfo = processInfo, EnableRaisingEvents = true };

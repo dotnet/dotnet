@@ -33,6 +33,12 @@ public class CreateSourceArtifacts : BuildTask
     public required string ArtifactVersion { get; init; }
 
     /// <summary>
+    /// Path to the root of the repo
+    /// </summary>
+    [Required]
+    public required string RepoRoot { get; init; }
+
+    /// <summary>
     /// Path to the directory to place the source artifacts in
     /// </summary>
     [Required]
@@ -75,7 +81,10 @@ public class CreateSourceArtifacts : BuildTask
 
         try
         {
-            ProcessResult result = await processService.RunProcessAsync("git", $"archive -o {artifactFilePath} {SourceCommit}");
+            ProcessResult result = await processService.RunProcessAsync(
+                "git",
+                $"archive -o {artifactFilePath} {SourceCommit}",
+                workingDirectory: RepoRoot);
 
             if (result.ExitCode != 0)
             {
