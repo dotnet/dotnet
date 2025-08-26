@@ -401,7 +401,7 @@ if [[ "$sourceOnly" == "true" ]]; then
         echo "ERROR: $GIT_DIR exist, but does not contain a valid 'gitdir:' pointer."
         exit 1
       else
-        GIT_DIR=$(grep -oP '^gitdir: \K.*' "$GIT_DIR")
+        GIT_DIR=$(grep '^gitdir: ' "$GIT_DIR" | awk -F'gitdir: ' '{ print $2 }')
       fi
     fi
     if [ -f "$GIT_DIR/config" ] && [ -f "$GIT_DIR/HEAD" ]; then # We check for config/HEAD because if outside of git, we create config and HEAD manually
