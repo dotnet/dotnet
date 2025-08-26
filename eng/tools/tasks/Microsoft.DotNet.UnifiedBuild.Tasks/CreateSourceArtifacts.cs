@@ -38,18 +38,7 @@ public class CreateSourceArtifacts : BuildTask
     [Required]
     public required string OutputDirectory { get; init; }
 
-    public override bool Execute()
-    {
-        try
-        {
-            return ExecuteAsync().GetAwaiter().GetResult();
-        }
-        catch (Exception ex)
-        {
-            Log.LogError($"Source artifact creation failed: {ex.Message}");
-            return false;
-        }
-    }
+    public override bool Execute() => ExecuteAsync().GetAwaiter().GetResult();
 
     private async Task<bool> ExecuteAsync()
     {
@@ -58,14 +47,7 @@ public class CreateSourceArtifacts : BuildTask
 
         await Parallel.ForEachAsync(Enum.GetValues<ArtifactType>(), async (artifactType, _) =>
         {
-            try
-            {
-                await CreateArtifactAsync(artifactType, processService);
-            }
-            catch (Exception ex)
-            {
-                errors.Enqueue(ex.Message);
-            }
+            await CreateArtifactAsync(artifactType, processService, errors);
         });
 
         if (errors.IsEmpty)
@@ -82,18 +64,25 @@ public class CreateSourceArtifacts : BuildTask
         return false;
     }
 
-    private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService)
+    private async Task CreateArtifactAsync(ArtifactType artifactType, ProcessService processService, ConcurrentQueue<string> errors)
     {
         string artifactFileName = $"{ArtifactName}-{ArtifactVersion}{artifactType.GetArtifactExtension()}";
         string artifactFilePath = Path.Combine(OutputDirectory, artifactFileName);
 
         Log.LogMessage(MessageImportance.High, $"Creating {artifactType} source artifact at: {artifactFilePath}");
 
-        ProcessResult result = await processService.RunProcessAsync("git", $"archive -o {artifactFilePath} {SourceCommit}");
-
-        if (result.ExitCode != 0)
+        try
         {
-            throw new InvalidOperationException($"Failed to create {artifactType} source artifact: {result.Error}");
+            ProcessResult result = await processService.RunProcessAsync("git", $"archive -o {artifactFilePath} {SourceCommit}");
+
+            if (result.ExitCode != 0)
+            {
+                errors.Enqueue($"[{artifactType}] Git exited with code {result.ExitCode}: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Enqueue($"[{artifactType}] Exception during artifact creation: {ex.Message}");
         }
     }
 }
