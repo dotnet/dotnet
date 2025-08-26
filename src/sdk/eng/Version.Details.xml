@@ -383,10 +383,6 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7f2a07b481a3d24677ebcf6a45e7e27c8ff95a4e</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.0-preview.25411.109">
-      <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>520c71b5277fc1f72dbec14da03ca55205d6c8e5</Sha>
-    </Dependency>
     <Dependency Name="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.0.0-2.25416.109">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7f2a07b481a3d24677ebcf6a45e7e27c8ff95a4e</Sha>
@@ -512,6 +508,10 @@
       <Sha>7f2a07b481a3d24677ebcf6a45e7e27c8ff95a4e</Sha>
     </Dependency>
     <Dependency Name="System.Windows.Extensions" Version="10.0.0-rc.2.25416.109">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>7f2a07b481a3d24677ebcf6a45e7e27c8ff95a4e</Sha>
+    </Dependency>
+    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-rc.2.25416.109">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7f2a07b481a3d24677ebcf6a45e7e27c8ff95a4e</Sha>
     </Dependency>

@@ -42,7 +42,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>5.0.0-2.25416.109</MicrosoftCodeAnalysisCSharpCodeStylePackageVersion>
     <MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>5.0.0-2.25416.109</MicrosoftCodeAnalysisCSharpFeaturesPackageVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>5.0.0-2.25416.109</MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion>
-    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.0-preview.25411.109</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>5.0.0-2.25416.109</MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>10.0.0-preview.25416.109</MicrosoftCodeAnalysisRazorToolingInternalPackageVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>5.0.0-2.25416.109</MicrosoftCodeAnalysisWorkspacesCommonPackageVersion>
@@ -119,6 +118,7 @@ This file should be imported by eng/Versions.props
     <NuGetVersioningPackageVersion>7.0.0-preview.1.41709</NuGetVersioningPackageVersion>
     <SystemCodeDomPackageVersion>10.0.0-rc.2.25416.109</SystemCodeDomPackageVersion>
     <SystemCommandLinePackageVersion>2.0.0-rc.2.25416.109</SystemCommandLinePackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.2.25416.109</SystemComponentModelCompositionPackageVersion>
     <SystemCompositionAttributedModelPackageVersion>10.0.0-rc.2.25416.109</SystemCompositionAttributedModelPackageVersion>
     <SystemCompositionConventionPackageVersion>10.0.0-rc.2.25416.109</SystemCompositionConventionPackageVersion>
     <SystemCompositionHostingPackageVersion>10.0.0-rc.2.25416.109</SystemCompositionHostingPackageVersion>
@@ -182,7 +182,6 @@ This file should be imported by eng/Versions.props
     <MicrosoftCodeAnalysisCSharpCodeStyleVersion>$(MicrosoftCodeAnalysisCSharpCodeStylePackageVersion)</MicrosoftCodeAnalysisCSharpCodeStyleVersion>
     <MicrosoftCodeAnalysisCSharpFeaturesVersion>$(MicrosoftCodeAnalysisCSharpFeaturesPackageVersion)</MicrosoftCodeAnalysisCSharpFeaturesVersion>
     <MicrosoftCodeAnalysisCSharpWorkspacesVersion>$(MicrosoftCodeAnalysisCSharpWorkspacesPackageVersion)</MicrosoftCodeAnalysisCSharpWorkspacesVersion>
-    <MicrosoftCodeAnalysisNetAnalyzersVersion>$(MicrosoftCodeAnalysisNetAnalyzersPackageVersion)</MicrosoftCodeAnalysisNetAnalyzersVersion>
     <MicrosoftCodeAnalysisPublicApiAnalyzersVersion>$(MicrosoftCodeAnalysisPublicApiAnalyzersPackageVersion)</MicrosoftCodeAnalysisPublicApiAnalyzersVersion>
     <MicrosoftCodeAnalysisRazorToolingInternalVersion>$(MicrosoftCodeAnalysisRazorToolingInternalPackageVersion)</MicrosoftCodeAnalysisRazorToolingInternalVersion>
     <MicrosoftCodeAnalysisWorkspacesCommonVersion>$(MicrosoftCodeAnalysisWorkspacesCommonPackageVersion)</MicrosoftCodeAnalysisWorkspacesCommonVersion>
@@ -259,6 +258,7 @@ This file should be imported by eng/Versions.props
     <NuGetVersioningVersion>$(NuGetVersioningPackageVersion)</NuGetVersioningVersion>
     <SystemCodeDomVersion>$(SystemCodeDomPackageVersion)</SystemCodeDomVersion>
     <SystemCommandLineVersion>$(SystemCommandLinePackageVersion)</SystemCommandLineVersion>
+    <SystemComponentModelCompositionVersion>$(SystemComponentModelCompositionPackageVersion)</SystemComponentModelCompositionVersion>
     <SystemCompositionAttributedModelVersion>$(SystemCompositionAttributedModelPackageVersion)</SystemCompositionAttributedModelVersion>
     <SystemCompositionConventionVersion>$(SystemCompositionConventionPackageVersion)</SystemCompositionConventionVersion>
     <SystemCompositionHostingVersion>$(SystemCompositionHostingPackageVersion)</SystemCompositionHostingVersion>
