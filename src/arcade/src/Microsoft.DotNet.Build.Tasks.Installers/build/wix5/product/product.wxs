@@ -1,0 +1,59 @@
+﻿<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <?include "..\variables.wxi" ?>
+
+  <Package
+    Name="$(var.ProductName)"
+    Language="$(var.ProductLanguage)"
+    Version="$(var.ProductVersion)"
+    Manufacturer="$(var.Manufacturer)"
+    UpgradeCode="$(var.UpgradeCode)"
+    Compressed="yes"
+    Scope="perMachine"
+    InstallerVersion="$(var.InstallerVersion)" >
+
+    <?include "product.common.wxi" ?>
+
+    <Feature Id="MainFeature" Title="Main Feature" Level="1">
+      <?ifdef InstallFiles ?>
+        <ComponentGroupRef Id="InstallFiles" />
+      <?endif?>
+
+      <?ifdef AuthoredRegistryKeys ?>
+        <ComponentGroupRef Id="AuthoredRegistryKeys"/>
+      <?endif?>
+
+      <?ifdef WerRelatedKeys ?>
+        <ComponentGroupRef Id="WerRelatedKeys"/>
+      <?endif?>
+
+      <?ifdef BreadcrumbStoreFolder ?>
+        <ComponentRef Id="BreadcrumbStoreFolder"/>
+      <?endif?>
+
+      <?ifdef ExtraComponentGroupRefIds ?>
+        <?foreach extraComponentGroupRefId in $(var.ExtraComponentGroupRefIds)?>
+          <ComponentGroupRef Id="$(var.extraComponentGroupRefId)"/>
+        <?endforeach?>
+      <?endif?>
+    </Feature>
+
+    <?ifdef ExtraPropertyRefIds ?>
+      <?foreach extraPropertyRefId in $(var.ExtraPropertyRefIds)?>
+        <PropertyRef Id="$(var.extraPropertyRefId)" />
+      <?endforeach?>
+    <?endif?>
+
+  </Package>
+
+  <Fragment>
+    <StandardDirectory Id="ProgramFiles6432Folder">
+        <Directory Id="DOTNETHOME" Name="dotnet" />
+    </StandardDirectory>
+
+    <?if $(var.Platform)~=x64?>
+    <CustomActionRef Id="Set_DOTNETHOME_NON_NATIVE_ARCHITECTURE" />
+    <?endif?>
+  </Fragment>
+</Wix>
