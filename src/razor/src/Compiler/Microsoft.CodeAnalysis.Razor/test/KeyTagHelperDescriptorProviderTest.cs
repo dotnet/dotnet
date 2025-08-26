@@ -79,7 +79,7 @@ public class KeyTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
             attribute.Documentation);
 
         Assert.Equal("@key", attribute.Name);
-        Assert.Equal("Key", attribute.GetPropertyName());
+        Assert.Equal("Key", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Key.Key", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);

@@ -15,11 +15,6 @@ namespace Microsoft.CodeAnalysis.Diagnostics;
 internal interface IDiagnosticAnalyzerService : IWorkspaceService
 {
     /// <summary>
-    /// Provides and caches analyzer information.
-    /// </summary>
-    DiagnosticAnalyzerInfoCache AnalyzerInfoCache { get; }
-
-    /// <summary>
     /// Re-analyze all projects and documents.  This will cause an LSP diagnostic refresh request to be sent.
     /// </summary>
     /// <remarks>
@@ -27,10 +22,12 @@ internal interface IDiagnosticAnalyzerService : IWorkspaceService
     /// </remarks>
     void RequestDiagnosticRefresh();
 
-    /// <summary>
-    /// Force analyzes the given project by running all applicable analyzers on the project.
-    /// </summary>
+    /// <inheritdoc cref="IRemoteDiagnosticAnalyzerService.ForceAnalyzeProjectAsync"/>
     Task<ImmutableArray<DiagnosticData>> ForceAnalyzeProjectAsync(Project project, CancellationToken cancellationToken);
+
+    /// <inheritdoc cref="IRemoteDiagnosticAnalyzerService.GetDeprioritizationCandidatesAsync"/>
+    Task<ImmutableArray<DiagnosticAnalyzer>> GetDeprioritizationCandidatesAsync(
+        Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken);
 
     /// <summary>
     /// Get diagnostics of the given diagnostic ids and/or analyzers from the given solution. all diagnostics returned
@@ -85,6 +82,18 @@ internal interface IDiagnosticAnalyzerService : IWorkspaceService
         ICodeActionRequestPriorityProvider priorityProvider,
         DiagnosticKind diagnosticKind,
         CancellationToken cancellationToken);
+
+    /// <param name="projectId">A project within <paramref name="solution"/> where <paramref name="analyzerReference"/> can be found</param>
+    Task<ImmutableArray<DiagnosticDescriptor>> GetDiagnosticDescriptorsAsync(
+        Solution solution, ProjectId projectId, AnalyzerReference analyzerReference, string language, CancellationToken cancellationToken);
+
+    /// <inheritdoc cref="HostDiagnosticAnalyzers.GetDiagnosticDescriptorsPerReference(DiagnosticAnalyzerInfoCache)"/>
+    Task<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>> GetDiagnosticDescriptorsPerReferenceAsync(
+        Solution solution, CancellationToken cancellationToken);
+
+    /// <inheritdoc cref="HostDiagnosticAnalyzers.GetDiagnosticDescriptorsPerReference(DiagnosticAnalyzerInfoCache, Project)"/>
+    Task<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>> GetDiagnosticDescriptorsPerReferenceAsync(
+        Project project, CancellationToken cancellationToken);
 }
 
 internal static class IDiagnosticAnalyzerServiceExtensions

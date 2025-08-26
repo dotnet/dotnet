@@ -10,7 +10,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using Microsoft.CodeAnalysis;
 using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
@@ -207,7 +206,7 @@ internal sealed class DefaultTagHelperDescriptorFactory(bool includeDocumentatio
             : (false, HtmlConventions.ToHtmlCase(property.Name));
 
         builder.TypeName = property.Type.GetFullName();
-        builder.SetMetadata(PropertyName(property.Name));
+        builder.PropertyName = property.Name;
 
         var hasPublicSetter = HasPublicSetter(property);
 

@@ -188,6 +188,12 @@ internal struct DacpMethodTableFieldData
     public ushort wContextStaticsSize;
 };
 
+internal enum MethodTableInitializationFlags
+{
+    MethodTableInitialized = 1,
+    MethodTableInitializationFailed = 2
+};
+
 internal struct DacpReJitData
 {
     // FIXME[cdac]: the C++ definition enum doesn't have an explicit underlying type or constant values for the flags
@@ -235,6 +241,20 @@ internal struct DacpMethodDescData
     // Total number of rejit versions that have been jitted
     public uint /*ULONG*/ cJittedRejitVersions;
 
+}
+
+internal struct DacpMethodDescTransparencyData
+{
+    public int bHasCriticalTransparentInfo;
+    public int bIsCritical;
+    public int bIsTreatAsSafe;
+}
+
+internal struct DacpMethodTableTransparencyData
+{
+    public int bHasCriticalTransparentInfo;
+    public int bIsCritical;
+    public int bIsTreatAsSafe;
 }
 
 [GeneratedComInterface]
@@ -300,7 +320,7 @@ internal unsafe partial interface ISOSDacInterface
     [PreserveSig]
     int GetMethodDescFromToken(ClrDataAddress moduleAddr, /*mdToken*/ uint token, ClrDataAddress* methodDesc);
     [PreserveSig]
-    int GetMethodDescTransparencyData(ClrDataAddress methodDesc, /*struct DacpMethodDescTransparencyData*/ void* data);
+    int GetMethodDescTransparencyData(ClrDataAddress methodDesc, DacpMethodDescTransparencyData* data);
 
     // JIT Data
     [PreserveSig]
@@ -338,7 +358,7 @@ internal unsafe partial interface ISOSDacInterface
     [PreserveSig]
     int GetMethodTableFieldData(ClrDataAddress mt, DacpMethodTableFieldData* data);
     [PreserveSig]
-    int GetMethodTableTransparencyData(ClrDataAddress mt, /*struct DacpMethodTableTransparencyData*/ void* data);
+    int GetMethodTableTransparencyData(ClrDataAddress mt, DacpMethodTableTransparencyData* data);
 
     // EEClass
     [PreserveSig]
@@ -647,7 +667,7 @@ internal unsafe partial interface ISOSDacInterface14
     [PreserveSig]
     int GetThreadStaticBaseAddress(ClrDataAddress methodTable, ClrDataAddress thread, ClrDataAddress* nonGCStaticsAddress, ClrDataAddress* GCStaticsAddress);
     [PreserveSig]
-    int GetMethodTableInitializationFlags(ClrDataAddress methodTable, /*MethodTableInitializationFlags*/ int* initializationStatus);
+    int GetMethodTableInitializationFlags(ClrDataAddress methodTable, MethodTableInitializationFlags* initializationStatus);
 }
 
 [GeneratedComInterface]

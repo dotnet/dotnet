@@ -172,11 +172,10 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                             .ToList();
                         if (requiredNonPkProperties.Count > 0)
                         {
-                            condition = requiredNonPkProperties.Select(
-                                    p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
-                                        CreatePropertyAccessExpression(nonNullEntityReference, p),
-                                        Expression.Constant(null, p.ClrType.MakeNullable()),
-                                        nodeType != ExpressionType.Equal))
+                            condition = requiredNonPkProperties.Select(p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
+                                    CreatePropertyAccessExpression(nonNullEntityReference, p),
+                                    Expression.Constant(null, p.ClrType.MakeNullable()),
+                                    nodeType != ExpressionType.Equal))
                                 .Aggregate((l, r) => nodeType == ExpressionType.Equal ? Expression.OrElse(l, r) : Expression.AndAlso(l, r));
                         }
 
@@ -190,11 +189,10 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                             // - if entity is to be null, all the properties must be null
                             // - if the entity is to be not null, at least one property must be not null
                             var optionalPropertiesCondition = allNonPrincipalSharedNonPkProperties
-                                .Select(
-                                    p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
-                                        CreatePropertyAccessExpression(nonNullEntityReference, p),
-                                        Expression.Constant(null, p.ClrType.MakeNullable()),
-                                        nodeType != ExpressionType.Equal))
+                                .Select(p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
+                                    CreatePropertyAccessExpression(nonNullEntityReference, p),
+                                    Expression.Constant(null, p.ClrType.MakeNullable()),
+                                    nodeType != ExpressionType.Equal))
                                 .Aggregate((l, r) => nodeType == ExpressionType.Equal ? Expression.AndAlso(l, r) : Expression.OrElse(l, r));
 
                             condition = condition == null
@@ -216,11 +214,10 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                 }
 
                 result = (SqlExpression)Visit(
-                    nullComparedEntityTypePrimaryKeyProperties.Select(
-                            p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
-                                CreatePropertyAccessExpression(nonNullEntityReference, p),
-                                Expression.Constant(null, p.ClrType.MakeNullable()),
-                                nodeType != ExpressionType.Equal))
+                    nullComparedEntityTypePrimaryKeyProperties.Select(p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
+                            CreatePropertyAccessExpression(nonNullEntityReference, p),
+                            Expression.Constant(null, p.ClrType.MakeNullable()),
+                            nodeType != ExpressionType.Equal))
                         .Aggregate((l, r) => nodeType == ExpressionType.Equal ? Expression.OrElse(l, r) : Expression.AndAlso(l, r)));
 
                 return true;
@@ -268,15 +265,13 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             }
 
             result = (SqlExpression)Visit(
-                primaryKeyProperties.Select(
-                        p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
-                            CreatePropertyAccessExpression(left, p),
-                            CreatePropertyAccessExpression(right, p),
-                            nodeType != ExpressionType.Equal))
-                    .Aggregate(
-                        (l, r) => nodeType == ExpressionType.Equal
-                            ? Expression.AndAlso(l, r)
-                            : Expression.OrElse(l, r)));
+                primaryKeyProperties.Select(p => Infrastructure.ExpressionExtensions.CreateEqualsExpression(
+                        CreatePropertyAccessExpression(left, p),
+                        CreatePropertyAccessExpression(right, p),
+                        nodeType != ExpressionType.Equal))
+                    .Aggregate((l, r) => nodeType == ExpressionType.Equal
+                        ? Expression.AndAlso(l, r)
+                        : Expression.OrElse(l, r)));
 
             return true;
         }
@@ -311,15 +306,6 @@ public partial class RelationalSqlTranslatingExpressionVisitor
 
             Check.DebugAssert(complexType != null, "We checked that at least one side is a complex type before calling this function");
 
-            // Comparison to null needs to be handled in a special way for table splitting, but for JSON mapping is handled via
-            // the regular JSON flow below.
-            if ((IsNullSqlConstantExpression(left) || IsNullSqlConstantExpression(right)) && !complexType.IsMappedToJson())
-            {
-                // TODO: when we support optional complex types with table splitting - or projecting required complex types via optional
-                // navigations - we'll be able to translate this, #31376
-                throw new InvalidOperationException(RelationalStrings.CannotCompareComplexTypeToNull);
-            }
-
             // If a complex type is the result of a subquery, then comparing its columns would mean duplicating the subquery, which would
             // be potentially very inefficient.
             // TODO: Enable this by extracting the subquery out to a common table expressions (WITH), #31237
@@ -334,7 +320,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             var boolTypeMapping = Dependencies.TypeMappingSource.FindMapping(typeof(bool))!;
             SqlExpression? comparisons = null;
 
-            if (!TryGenerateComparisons(complexType, left, right, ref comparisons))
+            if (!TryGenerateComparisons(complexType, left, right, ref comparisons, out _))
             {
                 result = null;
                 return false;
@@ -347,8 +333,10 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             // into complex properties to generate a flattened list of comparisons.
             // The moment we reach a a complex property that's mapped to JSON, we stop and generate a single comparison
             // for the whole complex type.
-            bool TryGenerateComparisons(IComplexType type, Expression left, Expression right, [NotNullWhen(true)] ref SqlExpression? comparisons)
+            bool TryGenerateComparisons(IComplexType type, Expression left, Expression right, [NotNullWhen(true)] ref SqlExpression? comparisons, out bool exitImmediately)
             {
+                exitImmediately = false;
+
                 if (type.IsMappedToJson())
                 {
                     var leftScalar = Process(left);
@@ -356,6 +344,9 @@ public partial class RelationalSqlTranslatingExpressionVisitor
 
                     var comparison = _sqlExpressionFactory.MakeBinary(nodeType, leftScalar, rightScalar, boolTypeMapping)!;
 
+                    // A single JSON-mapped complex type requires only a single comparison for the JSON value/column on each side;
+                    // but the JSON-mapped complex type may be nested inside a non-JSON (table-split) complex type, in which
+                    // case this is just one comparison in several.
                     comparisons = comparisons is null
                         ? comparison
                         : nodeType == ExpressionType.Equal
@@ -372,11 +363,13 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                             // JsonScalarExpression, which is our current representation for a complex JSON in the SQL tree
                             // (as opposed to in the shaper) - see #36392.
                             StructuralTypeReferenceExpression
-                            { Parameter: StructuralTypeShaperExpression { ValueBufferExpression: JsonQueryExpression jsonQuery } }
+                                {
+                                    Parameter: { ValueBufferExpression: JsonQueryExpression jsonQuery }
+                                }
                                 => new JsonScalarExpression(
                                     jsonQuery.JsonColumn,
                                     jsonQuery.Path,
-                                    jsonQuery.Type,
+                                    jsonQuery.Type.UnwrapNullableType(),
                                     jsonQuery.JsonColumn.TypeMapping,
                                     jsonQuery.IsNullable),
 
@@ -385,7 +378,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                                 => new JsonScalarExpression(
                                     jsonQuery.JsonColumn,
                                     jsonQuery.Path,
-                                    jsonQuery.Type,
+                                    jsonQuery.Type.UnwrapNullableType(),
                                     jsonQuery.JsonColumn.TypeMapping,
                                     jsonQuery.IsNullable),
 
@@ -399,18 +392,20 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                                     typeMapping: null),
 
                             SqlParameterExpression parameter
-                                => (SqlParameterExpression)Visit(_queryCompilationContext.RegisterRuntimeParameter(
-                                    $"{RuntimeParameterPrefix}{parameter.Name}",
-                                    Expression.Lambda(
-                                        Expression.Call(
-                                            SerializeComplexTypeToJsonMethod,
-                                            Expression.Constant(complexType),
-                                            Expression.MakeIndex(
-                                                Expression.Property(QueryCompilationContext.QueryContextParameter, nameof(QueryContext.Parameters)),
-                                                indexer: typeof(Dictionary<string, object>).GetProperty("Item", [typeof(string)]),
-                                                [Expression.Constant(parameter.Name, typeof(string))]),
-                                            Expression.Constant(collection)),
-                                        QueryCompilationContext.QueryContextParameter))),
+                                => (SqlParameterExpression)Visit(
+                                    _queryCompilationContext.RegisterRuntimeParameter(
+                                        $"{RuntimeParameterPrefix}{parameter.Name}",
+                                        Expression.Lambda(
+                                            Expression.Call(
+                                                SerializeComplexTypeToJsonMethod,
+                                                Expression.Constant(complexType),
+                                                Expression.MakeIndex(
+                                                    Expression.Property(
+                                                        QueryCompilationContext.QueryContextParameter, nameof(QueryContext.Parameters)),
+                                                    indexer: typeof(Dictionary<string, object>).GetProperty("Item", [typeof(string)]),
+                                                    [Expression.Constant(parameter.Name, typeof(string))]),
+                                                Expression.Constant(collection)),
+                                            QueryCompilationContext.QueryContextParameter))),
 
                             _ => throw new UnreachableException()
                         };
@@ -423,6 +418,17 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                         && TryTranslatePropertyAccess(right, property, out var rightTranslation))
                     {
                         var comparison = _sqlExpressionFactory.MakeBinary(nodeType, leftTranslation, rightTranslation, boolTypeMapping)!;
+
+                        // If we have a required property and one of the sides is a constant null,
+                        // we can use just that property and skip comparing the rest of properties.
+                        if (!property.IsNullable
+                            && (leftTranslation is SqlConstantExpression { Value: null }
+                                || rightTranslation is SqlConstantExpression { Value: null }))
+                        {
+                            comparisons = comparison;
+                            exitImmediately = true;
+                            return true;
+                        }
 
                         comparisons = comparisons is null
                             ? comparison
@@ -453,9 +459,14 @@ public partial class RelationalSqlTranslatingExpressionVisitor
 
                     if (nestedLeft is null
                         || nestedRight is null
-                        || !TryGenerateComparisons(complexProperty.ComplexType, nestedLeft, nestedRight, ref comparisons))
+                        || !TryGenerateComparisons(complexProperty.ComplexType, nestedLeft, nestedRight, ref comparisons, out exitImmediately))
                     {
                         return false;
+                    }
+
+                    if (exitImmediately)
+                    {
+                        return true;
                     }
                 }
 
@@ -471,7 +482,7 @@ public partial class RelationalSqlTranslatingExpressionVisitor
         return translation is not null;
     }
 
-    Expression CreatePropertyAccessExpression(Expression target, IPropertyBase property)
+    private Expression CreatePropertyAccessExpression(Expression target, IPropertyBase property)
     {
         switch (target)
         {
@@ -504,7 +515,8 @@ public partial class RelationalSqlTranslatingExpressionVisitor
                 var newParameterName =
                     $"{RuntimeParameterPrefix}{sqlParameterExpression.Name}_{property.Name}";
 
-                return _queryCompilationContext.RegisterRuntimeParameter($"{RuntimeParameterPrefix}{sqlParameterExpression.Name}_{property.Name}", lambda);
+                return _queryCompilationContext.RegisterRuntimeParameter(
+                    $"{RuntimeParameterPrefix}{sqlParameterExpression.Name}_{property.Name}", lambda);
             }
 
             case ParameterBasedComplexPropertyChainExpression chainExpression:
@@ -533,8 +545,8 @@ public partial class RelationalSqlTranslatingExpressionVisitor
             }
 
             case MemberInitExpression memberInitExpression
-                when memberInitExpression.Bindings.SingleOrDefault(
-                    mb => mb.Member.Name == property.Name) is MemberAssignment memberAssignment:
+                when memberInitExpression.Bindings.SingleOrDefault(mb => mb.Member.Name == property.Name) is MemberAssignment
+                    memberAssignment:
                 return memberAssignment.Expression;
 
             default:

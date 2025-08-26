@@ -16,15 +16,15 @@ namespace NuGetConsole.Implementation.Console
 {
     internal class WpfConsoleClassifier : ObjectWithFactory<WpfConsoleService>, IClassifier
     {
-        private ITextBuffer TextBuffer { get; set; }
+        private ITextBuffer _textBuffer;
         private readonly ComplexCommandSpans _commandLineSpans = new ComplexCommandSpans();
         private readonly OrderedTupleSpans<IClassificationType> _colorSpans = new OrderedTupleSpans<IClassificationType>();
 
         public WpfConsoleClassifier(WpfConsoleService factory, ITextBuffer textBuffer)
             : base(factory)
         {
-            this.TextBuffer = textBuffer;
-            TextBuffer.Changed += TextBuffer_Changed;
+            this._textBuffer = textBuffer;
+            _textBuffer.Changed += TextBuffer_Changed;
         }
 
         private void TextBuffer_Changed(object sender, TextContentChangedEventArgs e)
@@ -50,7 +50,7 @@ namespace NuGetConsole.Implementation.Console
         /// <summary>
         /// The CommandTokenizer for this console if available.
         /// </summary>
-        private ICommandTokenizer CommandTokenizer { get; set; }
+        private ICommandTokenizer _commandTokenizer;
 
         private WpfConsole _console;
 
@@ -60,12 +60,12 @@ namespace NuGetConsole.Implementation.Console
             {
                 if (_console == null)
                 {
-                    TextBuffer.Properties.TryGetProperty<WpfConsole>(typeof(IConsole), out _console);
+                    _textBuffer.Properties.TryGetProperty<WpfConsole>(typeof(IConsole), out _console);
                     if (_console != null)
                     {
                         // Only processing command lines when we have a CommandTokenizer
-                        CommandTokenizer = Factory.GetCommandTokenizer(_console);
-                        if (CommandTokenizer != null)
+                        _commandTokenizer = Factory.GetCommandTokenizer(_console);
+                        if (_commandTokenizer != null)
                         {
                             _console.Dispatcher.ExecuteInputLine += Console_ExecuteInputLine;
                         }
@@ -142,7 +142,7 @@ namespace NuGetConsole.Implementation.Console
                 ITextSnapshot snapshot = span.Snapshot;
 
                 // Check command line spans
-                if (CommandTokenizer != null)
+                if (_commandTokenizer != null)
                 {
                     bool hasInputLine = Console.InputLineStart != null;
                     if (hasInputLine)
@@ -226,7 +226,7 @@ namespace NuGetConsole.Implementation.Console
             string[] lines = spans.Select(snapshot.GetText).ToArray();
             try
             {
-                IEnumerable<Token> tokens = CommandTokenizer.Tokenize(lines);
+                IEnumerable<Token> tokens = _commandTokenizer.Tokenize(lines);
                 foreach (Token token in tokens)
                 {
                     IClassificationType classificationType = Factory.GetTokenTypeClassification();

@@ -406,6 +406,11 @@ Pro MSTest před 2.2.4 se časový limit použije pro všechny testovací příp
         <target state="translated">Cesta ke konfiguračnímu souboru NuGet, který se má použít. Vyžaduje přepínač --outdated, --deprecated nebo --vulnerable.</target>
         <note />
       </trans-unit>
+      <trans-unit id="CmdConfigFileDescription">
+        <source>Specifies a testconfig.json file.</source>
+        <target state="translated">Určuje soubor testconfig.json.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CmdConfigFileOption">
         <source>FILE</source>
         <target state="translated">FILE</target>
@@ -414,6 +419,11 @@ Pro MSTest před 2.2.4 se časový limit použije pro všechny testovací příp
       <trans-unit id="CmdConfigFileOptionDescription">
         <source>The NuGet configuration file to use.</source>
         <target state="translated">Konfigurační soubor NuGet, který se použije.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CmdConfigFilePath">
+        <source>CONFIG_FILE</source>
+        <target state="translated">CONFIG_FILE</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdCurrentRuntimeOptionDescription">
@@ -434,6 +444,18 @@ Pro MSTest před 2.2.4 se časový limit použije pro všechny testovací příp
       <trans-unit id="CmdDeprecatedDescription">
         <source>Lists packages that have been deprecated. Cannot be combined with '--vulnerable' or '--outdated' options.</source>
         <target state="translated">Vypíše balíčky, které jsou zastaralé. Nedá se kombinovat s možností --vulnerable ani --outdated.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CmdDiagnosticOutputDirectoryDescription">
+        <source>Output directory of the diagnostic logging.
+If not specified the file will be generated inside the default 'TestResults' directory.</source>
+        <target state="translated">Výstupní adresář diagnostického protokolování.
+Pokud není zadaný, soubor se vygeneruje ve výchozím adresáři TestResults.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CmdDiagnosticOutputDirectoryPath">
+        <source>DIAGNOSTIC_DIR</source>
+        <target state="translated">DIAGNOSTIC_DIR</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdDirectoryDescription">
@@ -1886,6 +1908,16 @@ Nástroj {1} (verze {2}) se úspěšně nainstaloval. Do souboru manifestu {3} s
         <target state="translated">Výstupní adresář, kam se mají umístit sestavené balíčky</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackCmdVersion">
+        <source>VERSION</source>
+        <target state="translated">VERZE</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackCmdVersionDescription">
+        <source>The version of the package to create</source>
+        <target state="translated">Verze balíčku, který se má vytvořit</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackConfigurationOptionDescription">
         <source>The configuration to use for building the package. The default is 'Release'.</source>
         <target state="translated">Konfigurace, která se má použít k sestavení balíčku. Výchozí hodnota je Release.</target>
@@ -2412,7 +2444,7 @@ Nástroj {1} (verze {2}) se úspěšně nainstaloval. Do souboru manifestu {3} s
       <trans-unit id="PropertyDirectiveMissingParts">
         <source>The property directive needs to have two parts separated by '=' like '#:property PropertyName=PropertyValue': {0}</source>
         <target state="translated">Direktiva property musí mít dvě části oddělené znakem =, například #:property PropertyName=PropertyValue: {0}</target>
-        <note>{0} is the file path and line number.</note>
+        <note>{0} is the file path and line number.{Locked="#:property"}</note>
       </trans-unit>
       <trans-unit id="PublishAppDescription">
         <source>Publisher for the .NET Platform</source>
@@ -2796,8 +2828,8 @@ Cílem projektu je více architektur. Pomocí parametru {0} určete, která arch
         <note>{Locked="--sdk-version"}</note>
       </trans-unit>
       <trans-unit id="ShouldInstallAWorkloadSet">
-        <source>Workloads are configured to install and update using workload versions, but none were found. Run "dotnet workload restore" to install a workload version.</source>
-        <target state="translated">Úlohy jsou nakonfigurované tak, aby se instalovaly a aktualizovaly pomocí verzí úloh, ale žádná nebyla nalezena. Spusťte příkaz dotnet workload restore a nainstalujte verzi úlohy.</target>
+        <source>No workload sets are installed. Run "dotnet workload restore" to install a workload set.</source>
+        <target state="translated">Nejsou nainstalované žádné sady úloh. Spuštěním příkazu dotnet workload restore nainstalujte sadu úloh.</target>
         <note>{Locked="dotnet workload restore"}</note>
       </trans-unit>
       <trans-unit id="ShutDownFailed">
@@ -2950,6 +2982,11 @@ Cílem projektu je více architektur. Pomocí parametru {0} určete, která arch
         <target state="translated">Standardní výstup</target>
         <note />
       </trans-unit>
+      <trans-unit id="StaticGraphRestoreNotSupported">
+        <source>Static graph restore is not supported for file-based apps. Remove the '#:property' at {0}.</source>
+        <target state="new">Static graph restore is not supported for file-based apps. Remove the '#:property' at {0}.</target>
+        <note>{0} is the file path and line number.{Locked="#:property"}</note>
+      </trans-unit>
       <trans-unit id="StatusColumnHeader">
         <source>Status</source>
         <target state="translated">Stav</target>
@@ -3013,6 +3050,26 @@ Cílem projektu je více architektur. Pomocí parametru {0} určete, která arch
       <trans-unit id="TestCmdOutputDir">
         <source>OUTPUT_DIR</source>
         <target state="translated">OUTPUT_DIR</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCommandUseDirectory">
+        <source>Specifying a directory for 'dotnet test' should be via '--directory'.</source>
+        <target state="translated">Zadání adresáře pro dotnet test by mělo být prostřednictvím --directory.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCommandUseProject">
+        <source>Specifying a project for 'dotnet test' should be via '--project'.</source>
+        <target state="translated">Zadání projektu pro dotnet test by mělo být prostřednictvím --project.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCommandUseSolution">
+        <source>Specifying a solution for 'dotnet test' should be via '--solution'.</source>
+        <target state="translated">Zadání řešení pro dotnet test by mělo být prostřednictvím --solution.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="TestCommandUseTestModules">
+        <source>Specifying dlls or executables for 'dotnet test' should be via '--test-modules'.</source>
+        <target state="translated">Zadání knihoven DLL nebo spustitelných souborů pro dotnet test by mělo být prostřednictvím --test-modules.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestConfigurationOptionDescription">
@@ -3823,10 +3880,15 @@ Pokud chcete zobrazit hodnotu, zadejte odpovídající volbu příkazového řá
         <target state="translated">ID manifestu úlohy</target>
         <note />
       </trans-unit>
-      <trans-unit id="WorkloadManifestInstallationConfiguration">
-        <source>Configured to use {0} when installing new manifests.</source>
-        <target state="translated">Nakonfigurováno pro použití {0} při instalaci nových manifestů</target>
+      <trans-unit id="WorkloadManifestInstallationConfigurationLooseManifests">
+        <source>Configured to use loose manifests when installing new manifests.</source>
+        <target state="translated">Nakonfigurováno pro použití volných manifestů při instalaci nových manifestů</target>
         <note />
+      </trans-unit>
+      <trans-unit id="WorkloadManifestInstallationConfigurationWorkloadSets">
+        <source>Configured to use workload sets when installing new manifests.</source>
+        <target state="translated">Nakonfigurováno pro použití sad úloh (workload sets) při instalaci nových manifestů</target>
+        <note>{Locked="workload sets"}</note>
       </trans-unit>
       <trans-unit id="WorkloadManifestPathColumn">
         <source>Manifest Path</source>

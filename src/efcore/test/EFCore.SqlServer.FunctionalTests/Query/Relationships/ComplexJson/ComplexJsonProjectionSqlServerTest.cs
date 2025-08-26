@@ -177,6 +177,18 @@ FROM [RootEntity] AS [r]
 """);
     }
 
+    public override async Task Select_required_related_via_optional_navigation(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_required_related_via_optional_navigation(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT [r0].[RequiredRelated]
+FROM [RootReferencingEntity] AS [r]
+LEFT JOIN [RootEntity] AS [r0] ON [r].[RootEntityId] = [r0].[Id]
+""");
+    }
+
     #endregion Non-collection
 
     #region Collection
@@ -323,6 +335,57 @@ OUTER APPLY (
     }
 
     #endregion Subquery
+
+    #region Value types
+
+    public override async Task Select_root_with_value_types(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_root_with_value_types(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT [v].[Id], [v].[Name], [v].[OptionalRelated], [v].[RelatedCollection], [v].[RequiredRelated]
+FROM [ValueRootEntity] AS [v]
+""");
+    }
+
+    public override async Task Select_non_nullable_value_type(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_non_nullable_value_type(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT [v].[RequiredRelated]
+FROM [ValueRootEntity] AS [v]
+ORDER BY [v].[Id]
+""");
+    }
+
+    public override async Task Select_nullable_value_type(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_nullable_value_type(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT [v].[OptionalRelated]
+FROM [ValueRootEntity] AS [v]
+ORDER BY [v].[Id]
+""");
+    }
+
+    public override async Task Select_nullable_value_type_with_Value(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_nullable_value_type_with_Value(queryTrackingBehavior);
+
+        AssertSql(
+            """
+SELECT [v].[OptionalRelated]
+FROM [ValueRootEntity] AS [v]
+ORDER BY [v].[Id]
+""");
+    }
+
+    #endregion Value types
 
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()

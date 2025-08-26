@@ -14,7 +14,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.DotNet.SourceBuild.Tests
 {
-    internal class BaselineHelper
+    internal partial class BaselineHelper
     {
         private const string SemanticVersionPlaceholder = "x.y.z";
         private const string SemanticVersionPlaceholderMatchingPattern = "*.*.*"; // wildcard pattern used to match on the version represented by the placeholder
@@ -24,6 +24,10 @@ namespace Microsoft.DotNet.SourceBuild.Tests
         private const string TargetRidPlaceholderMatchingPattern = "*-*"; // wildcard pattern used to match on the rid represented by the placeholder
         private const string PortableRidPlaceholder = "portable-rid";
         private const string PortableRidPlaceholderMatchingPattern = "*-*"; // wildcard pattern used to match on the rid represented by the placeholder
+        private const string SemanticVersionPattern = @"(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))+"
+            + @"(((?:[-.]((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)))+"
+            + @"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
+            + @"(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?";
 
         public static void CompareEntries(string baselineFileName, IOrderedEnumerable<string> actualEntries)
         {
@@ -96,19 +100,8 @@ namespace Microsoft.DotNet.SourceBuild.Tests
                 string wordPart = match.Groups[1].Value;
                 return $"{Path.DirectorySeparatorChar}{wordPart}{NonSemanticVersionPlaceholder}{Path.DirectorySeparatorChar}";
             });
-        
-            // Remove semantic versions
-            // Regex source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-            // The regex from https://semver.org has been modified to account for the following:
-                // - The version should be preceded by a path separator, '.', '-', or '/'
-                // - The version should match a release identifier that begins with '.' or '-'
-                // - The version may have one or more release identifiers that begin with '.' or '-'
-                // - The version should end before a path separator, '.', '-', or '/'
-            Regex semanticVersionRegex = new(
-                @"(?<=[./-])(0|[1-9]\d*)\.(0|[1-9]\d*)(\.(0|[1-9]\d*))+"
-                + @"(((?:[-.]((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)))+"
-                + @"(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"
-                + @"(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?(?=[/.-])");
+
+            var semanticVersionRegex = GetSemanticVersionRegex();
             return semanticVersionRegex.Replace(result, SemanticVersionPlaceholder);
         }
 
@@ -127,5 +120,15 @@ namespace Microsoft.DotNet.SourceBuild.Tests
             matcher.AddInclude(path);
             return matcher;
         }
+
+        // Semantic version regex pattern to match semantic versions in paths and configuration strings.
+        // Base regex source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+        // The regex from semver.org has been modified to match versions that are either:
+        // 1. Surrounded by path delimiters, periods, or hyphens: 
+        //    - Uses lookbehind/lookahead (?<=[./-]) to require these characters before/after the version
+        // 2. Enclosed in double quotes (as in JSON/XML strings/elements):
+        //    - Uses lookbehind/lookahead (?<="") to match opening/closing quotes
+        [GeneratedRegex(@"(?<=[./-])" + SemanticVersionPattern + @"(?=[/.-])|(?<="")" + SemanticVersionPattern + @"(?="")")]
+        private static partial Regex GetSemanticVersionRegex();
     }
 }

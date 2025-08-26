@@ -5,4 +5,43 @@ namespace Microsoft.EntityFrameworkCore.Query.Relationships.ComplexProperties;
 
 public abstract class ComplexPropertiesProjectionTestBase<TFixture>(TFixture fixture)
     : RelationshipsProjectionTestBase<TFixture>(fixture)
-        where TFixture : ComplexPropertiesFixtureBase, new();
+    where TFixture : ComplexPropertiesFixtureBase, new()
+{
+    #region Value types
+
+    [ConditionalTheory]
+    [MemberData(nameof(TrackingData))]
+    public virtual Task Select_root_with_value_types(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertQuery(
+            ss => ss.Set<ValueRootEntity>(),
+            queryTrackingBehavior: queryTrackingBehavior);
+
+
+    [ConditionalTheory]
+    [MemberData(nameof(TrackingData))]
+    public virtual Task Select_non_nullable_value_type(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertQuery(
+            ss => ss.Set<ValueRootEntity>().OrderBy(e => e.Id).Select(x => x.RequiredRelated),
+            assertOrder: true,
+            queryTrackingBehavior: queryTrackingBehavior);
+
+
+    [ConditionalTheory]
+    [MemberData(nameof(TrackingData))]
+    public virtual Task Select_nullable_value_type(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertQuery(
+            ss => ss.Set<ValueRootEntity>().OrderBy(e => e.Id).Select(x => x.OptionalRelated),
+            assertOrder: true,
+            queryTrackingBehavior: queryTrackingBehavior);
+
+    [ConditionalTheory]
+    [MemberData(nameof(TrackingData))]
+    public virtual Task Select_nullable_value_type_with_Value(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertQuery(
+            ss => ss.Set<ValueRootEntity>().OrderBy(e => e.Id).Select(x => x.OptionalRelated!.Value),
+            ss => ss.Set<ValueRootEntity>().OrderBy(e => e.Id).Select(x => x.OptionalRelated == null ? default : x.OptionalRelated!.Value),
+            assertOrder: true,
+            queryTrackingBehavior: queryTrackingBehavior);
+
+    #endregion Value types
+}

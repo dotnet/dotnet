@@ -5,35 +5,55 @@ namespace Microsoft.EntityFrameworkCore.Query.Relationships;
 
 public abstract class RelationshipsQueryFixtureBase : SharedStoreFixtureBase<PoolableDbContext>, IQueryFixtureBase
 {
-    public virtual bool AreCollectionsOrdered => true;
+    public virtual bool AreCollectionsOrdered
+        => true;
 
-    private readonly RelationshipsData _data;
+    public RelationshipsData Data { get; private set; }
 
     public RelationshipsQueryFixtureBase()
     {
-        _data = CreateData();
+        Data = CreateData();
 
-        EntityAsserters = new Dictionary<Type, Action<object?, object?>>
+        EntityAsserters = new Dictionary<Type, object>
         {
-            [typeof(RootEntity)] = (e, a) => NullSafeAssert<RootEntity>(e, a, AssertRootEntity),
-            [typeof(RelatedType)] = (e, a) => NullSafeAssert<RelatedType>(e, a, AssertRelatedType),
-            [typeof(NestedType)] = (e, a) => NullSafeAssert<NestedType>(e, a, AssertNestedType),
-            [typeof(RootReferencingEntity)] = (e, a) => NullSafeAssert<RootReferencingEntity>(e, a, AssertPreRootEntity)
-        }.ToDictionary(e => e.Key, e => (object)e.Value);
+            [typeof(RootEntity)] = (RootEntity e, RootEntity a)
+                => NullSafeAssert<RootEntity>(e, a, AssertRootEntity),
+            [typeof(RelatedType)] = (RelatedType e, RelatedType a)
+                => NullSafeAssert<RelatedType>(e, a, AssertRelatedType),
+            [typeof(NestedType)] = (NestedType e, NestedType a)
+                => NullSafeAssert<NestedType>(e, a, AssertNestedType),
+            [typeof(RootReferencingEntity)] = (RootReferencingEntity e, RootReferencingEntity a)
+                => NullSafeAssert<RootReferencingEntity>(e, a, AssertPreRootEntity),
+
+            [typeof(ValueRootEntity)] = (ValueRootEntity e, ValueRootEntity a)
+                => NullSafeAssert<ValueRootEntity>(e, a, AssertValueRootEntity),
+            [typeof(ValueRelatedType)] = (ValueRelatedType e, ValueRelatedType a)
+                => NullSafeAssert<ValueRelatedType>(e, a, AssertValueRelatedType),
+            [typeof(ValueRelatedType?)] = (ValueRelatedType? e, ValueRelatedType? a)
+                => NullSafeAssert<ValueRelatedType>(e, a, AssertValueRelatedType),
+            [typeof(ValueNestedType)] = (ValueNestedType e, ValueNestedType a)
+                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedType),
+            [typeof(ValueNestedType?)] = (ValueNestedType? e, ValueNestedType? a)
+                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedType)
+        }.ToDictionary(e => e.Key, e => e.Value);
     }
 
     public Func<DbContext> GetContextCreator()
         => CreateContext;
 
     public virtual ISetSource GetExpectedData()
-        => _data;
+        => Data;
 
     protected virtual RelationshipsData CreateData()
         => new();
 
     protected override Task SeedAsync(PoolableDbContext context)
     {
-        context.Set<RootEntity>().AddRange(_data.RootEntities);
+        context.Set<RootEntity>().AddRange(Data.RootEntities);
+        if (context.Model.FindEntityType(typeof(RootReferencingEntity)) is not null)
+        {
+            context.Set<RootReferencingEntity>().AddRange(Data.RootReferencingEntities);
+        }
 
         return context.SaveChangesAsync();
     }
@@ -51,17 +71,23 @@ public abstract class RelationshipsQueryFixtureBase : SharedStoreFixtureBase<Poo
             .IsRequired(false);
     }
 
-    public virtual IReadOnlyDictionary<Type, object> EntitySorters { get; } = new Dictionary<Type, Func<object?, object?>>
+    public virtual IReadOnlyDictionary<Type, object> EntitySorters { get; } = new Dictionary<Type, object>
     {
-        { typeof(RootEntity), e => ((RootEntity?)e)?.Id },
-        { typeof(RelatedType), e => ((RelatedType?)e)?.Id },
-        { typeof(NestedType), e => ((NestedType?)e)?.Id },
-        { typeof(RootReferencingEntity), e => ((RootReferencingEntity?)e)?.Id }
-    }.ToDictionary(e => e.Key, e => (object)e.Value);
+        { typeof(RootEntity), object? (RootEntity e) => ((RootEntity?)e)?.Id },
+        { typeof(RelatedType), object? (RelatedType e) => ((RelatedType?)e)?.Id },
+        { typeof(NestedType), object? (NestedType e) => ((NestedType?)e)?.Id },
+        { typeof(RootReferencingEntity), object? (RootReferencingEntity e) => ((RootReferencingEntity?)e)?.Id },
+
+        { typeof(ValueRootEntity), object? (ValueRootEntity e) => ((ValueRootEntity?)e)?.Id },
+        { typeof(ValueRelatedType), object? (ValueRelatedType e) => e.Id },
+        { typeof(ValueRelatedType?), object? (ValueRelatedType? e) => e?.Id },
+        { typeof(ValueNestedType), object? (ValueNestedType e) => e.Id },
+        { typeof(ValueNestedType?), object? (ValueNestedType? e) => e?.Id }
+    }.ToDictionary(e => e.Key, e => e.Value);
 
     public virtual IReadOnlyDictionary<Type, object> EntityAsserters { get; }
 
-    private void AssertRootEntity(RootEntity e, RootEntity a)
+    protected virtual void AssertRootEntity(RootEntity e, RootEntity a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
@@ -69,10 +95,26 @@ public abstract class RelationshipsQueryFixtureBase : SharedStoreFixtureBase<Poo
         NullSafeAssert<RelatedType>(e.RequiredRelated, a.RequiredRelated, AssertRelatedType);
         NullSafeAssert<RelatedType>(e.OptionalRelated, a.OptionalRelated, AssertRelatedType);
 
-        // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
+        if (e.RelatedCollection is not null && a.RelatedCollection is not null)
+        {
+            Assert.Equal(e.RelatedCollection.Count, a.RelatedCollection.Count);
+
+            var (orderedExpected, orderedActual) = AreCollectionsOrdered
+                ? (e.RelatedCollection, a.RelatedCollection)
+                : (e.RelatedCollection.OrderBy(n => n.Id).ToList(), a.RelatedCollection.OrderBy(n => n.Id).ToList());
+
+            for (var i = 0; i < e.RelatedCollection.Count; i++)
+            {
+                AssertRelatedType(orderedExpected[i], orderedActual[i]);
+            }
+        }
+        else
+        {
+            Assert.Equal(e.RelatedCollection, a.RelatedCollection);
+        }
     }
 
-    private void AssertRelatedType(RelatedType e, RelatedType a)
+    protected virtual void AssertRelatedType(RelatedType e, RelatedType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
@@ -83,10 +125,26 @@ public abstract class RelationshipsQueryFixtureBase : SharedStoreFixtureBase<Poo
         NullSafeAssert<NestedType>(e.RequiredNested, a.RequiredNested, AssertNestedType);
         NullSafeAssert<NestedType>(e.OptionalNested, a.OptionalNested, AssertNestedType);
 
-        // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
+        if (e.NestedCollection is not null && a.NestedCollection != null)
+        {
+            Assert.Equal(e.NestedCollection.Count, a.NestedCollection.Count);
+
+            var (orderedExpected, orderedActual) = AreCollectionsOrdered
+                ? (e.NestedCollection, a.NestedCollection)
+                : (e.NestedCollection.OrderBy(n => n.Id).ToList(), a.NestedCollection.OrderBy(n => n.Id).ToList());
+
+            for (var i = 0; i < e.NestedCollection.Count; i++)
+            {
+                AssertNestedType(orderedExpected[i], orderedActual[i]);
+            }
+        }
+        else
+        {
+            Assert.Equal(e.NestedCollection, a.NestedCollection);
+        }
     }
 
-    private void AssertNestedType(NestedType e, NestedType a)
+    protected virtual void AssertNestedType(NestedType e, NestedType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
@@ -102,7 +160,41 @@ public abstract class RelationshipsQueryFixtureBase : SharedStoreFixtureBase<Poo
         NullSafeAssert<RootEntity>(e.Root, a.Root, AssertRootEntity);
     }
 
-    protected virtual void NullSafeAssert<T>(object? e, object? a, Action<T, T> assertAction)
+    private void AssertValueRootEntity(ValueRootEntity e, ValueRootEntity a)
+    {
+        Assert.Equal(e.Id, a.Id);
+        Assert.Equal(e.Name, a.Name);
+
+        AssertValueRelatedType(e.RequiredRelated, a.RequiredRelated);
+        NullSafeAssert<ValueRelatedType>(e.OptionalRelated, a.OptionalRelated, AssertValueRelatedType);
+
+        // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
+    }
+
+    private void AssertValueRelatedType(ValueRelatedType e, ValueRelatedType a)
+    {
+        Assert.Equal(e.Id, a.Id);
+        Assert.Equal(e.Name, a.Name);
+
+        Assert.Equal(e.Int, a.Int);
+        Assert.Equal(e.String, a.String);
+
+        AssertValueNestedType(e.RequiredNested, a.RequiredNested);
+        NullSafeAssert<ValueNestedType>(e.OptionalNested, a.OptionalNested, AssertValueNestedType);
+
+        // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
+    }
+
+    private void AssertValueNestedType(ValueNestedType e, ValueNestedType a)
+    {
+        Assert.Equal(e.Id, a.Id);
+        Assert.Equal(e.Name, a.Name);
+
+        Assert.Equal(e.Int, a.Int);
+        Assert.Equal(e.String, a.String);
+    }
+
+    private void NullSafeAssert<T>(object? e, object? a, Action<T, T> assertAction)
     {
         if (e is T ee && a is T aa)
         {

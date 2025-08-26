@@ -204,6 +204,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         VSInternalCompletionList? completionList = null;
         using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, Constants.ExternalAccessServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
         {
+#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
             completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
                 generatedDocument,
                 mappedLinePosition,
@@ -212,6 +213,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionSetting,
                 cancellationToken)
                 .ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         if (completionList is null)
@@ -328,20 +330,16 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
             var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
             var completionListSetting = clientCapabilities.TextDocument?.Completion;
+#pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in a future PR but Roslyn changes are batched
             var result = await ExternalAccess.Razor.Cohost.Handlers.Completion.ResolveCompletionItemAsync(
                 request,
                 generatedDocument,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionListSetting ?? new(),
                 cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
-
-            if (clientCapabilities.SupportsVisualStudioExtensions && !item.VsResolveTextEditOnCommit)
-            {
-                // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
-                return item;
-            }
 
             item = await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
                 item,
@@ -349,6 +347,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 formattingOptions,
                 _formattingService,
                 _documentMappingService,
+                clientCapabilities.SupportsVisualStudioExtensions,
                 Logger,
                 cancellationToken).ConfigureAwait(false);
 

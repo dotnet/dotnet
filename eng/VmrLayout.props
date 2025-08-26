@@ -41,8 +41,6 @@
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
-    <PreviouslySourceBuiltReferencePackagesDirName>SourceBuildReferencePackages</PreviouslySourceBuiltReferencePackagesDirName>
-    <PreviouslySourceBuiltReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PreviouslySourceBuiltPackagesPath)', '$(PreviouslySourceBuiltReferencePackagesDirName)'))</PreviouslySourceBuiltReferencePackagesDir>
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
@@ -65,8 +63,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
-    <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
-    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
+    <PrebuiltPoisonMarkerFile>.prebuilt.xml</PrebuiltPoisonMarkerFile>
+    <PrebuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-prebuilt-catalog.xml</PrebuiltPoisonReportDataFile>
+    <PreviouslySourceBuiltPoisonMarkerFile>.previously-source-built.xml</PreviouslySourceBuiltPoisonMarkerFile>
+    <PreviouslySourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-previously-source-built-catalog.xml</PreviouslySourceBuiltPoisonReportDataFile>
+    <SharedComponentPoisonMarkerFile>.shared-component.xml</SharedComponentPoisonMarkerFile>
+    <SharedComponentPoisonReportDataFile>$(ArtifactsLogDir)poison-shared-component-catalog.xml</SharedComponentPoisonReportDataFile>
     <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
     <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>

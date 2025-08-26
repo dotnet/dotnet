@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 internal static class RazorComponentDefinitionHelpers
 {
     public static bool TryGetBoundTagHelpers(
-        RazorCodeDocument codeDocument, int absoluteIndex, bool ignoreAttributes, ILogger logger,
+        RazorCodeDocument codeDocument, int absoluteIndex, bool ignoreComponentAttributes, ILogger logger,
         [NotNullWhen(true)] out TagHelperDescriptor? boundTagHelper,
         [MaybeNullWhen(true)] out BoundAttributeDescriptor? boundAttribute)
     {
@@ -54,7 +54,27 @@ internal static class RazorComponentDefinitionHelpers
         var nameSpan = tagName.Span;
         string? propertyName = null;
 
-        if (!ignoreAttributes && tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
+        if (tagHelperNode.Parent is not MarkupTagHelperElementSyntax tagHelperElement)
+        {
+            logger.LogInformation($"Parent of start or end tag is not a MarkupTagHelperElement.");
+            return false;
+        }
+
+        if (tagHelperElement.TagHelperInfo?.BindingResult is not TagHelperBinding binding)
+        {
+            logger.LogInformation($"MarkupTagHelperElement does not contain TagHelperInfo.");
+            return false;
+        }
+
+        boundTagHelper = binding.Descriptors.FirstOrDefault(static d => !d.IsAttributeDescriptor());
+        if (boundTagHelper is null)
+        {
+            logger.LogInformation($"Could not locate bound TagHelperDescriptor.");
+            return false;
+        }
+
+        if ((!ignoreComponentAttributes || !boundTagHelper.IsComponentTagHelper) &&
+            tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
         {
             // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
             // as if the user wants to go to the attribute definition.
@@ -81,25 +101,6 @@ internal static class RazorComponentDefinitionHelpers
         if (!nameSpan.IntersectsWith(absoluteIndex))
         {
             logger.LogInformation($"Tag name or attributes' span does not intersect with index, {absoluteIndex}.");
-            return false;
-        }
-
-        if (tagHelperNode.Parent is not MarkupTagHelperElementSyntax tagHelperElement)
-        {
-            logger.LogInformation($"Parent of start or end tag is not a MarkupTagHelperElement.");
-            return false;
-        }
-
-        if (tagHelperElement.TagHelperInfo?.BindingResult is not TagHelperBinding binding)
-        {
-            logger.LogInformation($"MarkupTagHelperElement does not contain TagHelperInfo.");
-            return false;
-        }
-
-        boundTagHelper = binding.Descriptors.FirstOrDefault(static d => !d.IsAttributeDescriptor());
-        if (boundTagHelper is null)
-        {
-            logger.LogInformation($"Could not locate bound TagHelperDescriptor.");
             return false;
         }
 

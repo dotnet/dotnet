@@ -6,13 +6,13 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Features;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
@@ -213,7 +213,7 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
         // And we're done, we have a final set of changes to apply. BUT these are changes to the document after Html and Razor
         // formatting, and the return from this method must be changes relative to the original passed in document. The algorithm
         // above is fairly naive anyway, and a lot of them will be no-ops, so it's nice to have this final step as a filter.
-        return changedText.GetTextChangesArray(context.SourceText);
+        return SourceTextDiffer.GetMinimalTextChanges(context.SourceText, changedText, DiffKind.Char);
     }
 
     private async Task<SourceText> FormatCSharpAsync(SourceText generatedCSharpText, RazorFormattingOptions options, CancellationToken cancellationToken)
@@ -222,28 +222,31 @@ internal sealed partial class CSharpFormattingPass(IHostServicesProvider hostSer
 
         var tree = CSharpSyntaxTree.ParseText(generatedCSharpText, cancellationToken: cancellationToken);
         var csharpRoot = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
-        var csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions.AssumeNotNull();
+        var csharpSyntaxFormattingOptions = options.CSharpSyntaxFormattingOptions;
 
-        // Roslyn can be configured to insert a space after a method call, or a dot, but that can break Razor. eg:
-        //
-        // <div>@PrintHello()</div>
-        // @DateTime.Now.ToString()
-        //
-        // Would become:
-        //
-        // <div>@PrintHello ()</div>
-        // @DateTime. Now. ToString()
-        //
-        // In Razor, that's not a method call, its a method group (ie C# compile error) followed by Html, and
-        // the dot after DateTime is also just Html, as is the rest of the line.
-        // We're not smart enough (yet?) to ignore this change when its inline in Razor, but allow it when
-        // in a code block, so we just force these options to off.
-        csharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions with
+        if (csharpSyntaxFormattingOptions is not null)
         {
-            Spacing = csharpSyntaxFormattingOptions.Spacing
-                & ~RazorSpacePlacement.AfterMethodCallName
-                & ~RazorSpacePlacement.AfterDot
-        };
+            // Roslyn can be configured to insert a space after a method call, or a dot, but that can break Razor. eg:
+            //
+            // <div>@PrintHello()</div>
+            // @DateTime.Now.ToString()
+            //
+            // Would become:
+            //
+            // <div>@PrintHello ()</div>
+            // @DateTime. Now. ToString()
+            //
+            // In Razor, that's not a method call, its a method group (ie C# compile error) followed by Html, and
+            // the dot after DateTime is also just Html, as is the rest of the line.
+            // We're not smart enough (yet?) to ignore this change when its inline in Razor, but allow it when
+            // in a code block, so we just force these options to off.
+            csharpSyntaxFormattingOptions = csharpSyntaxFormattingOptions with
+            {
+                Spacing = csharpSyntaxFormattingOptions.Spacing
+                    & ~RazorSpacePlacement.AfterMethodCallName
+                    & ~RazorSpacePlacement.AfterDot
+            };
+        }
 
         var csharpChanges = RazorCSharpFormattingInteractionService.GetFormattedTextChanges(helper.HostWorkspaceServices, csharpRoot, csharpRoot.FullSpan, options.ToIndentationOptions(), csharpSyntaxFormattingOptions, cancellationToken);
 

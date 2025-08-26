@@ -6,8 +6,6 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
-    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
-    <MicrosoftApplicationInsightsPackageVersion>2.23.0</MicrosoftApplicationInsightsPackageVersion>
     <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpPackageVersion>4.8.0</MicrosoftCodeAnalysisCSharpPackageVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>4.8.0</MicrosoftNetCompilersToolsetPackageVersion>
@@ -17,13 +15,13 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/templating dependencies -->
     <MicrosoftTemplateEngineAuthoringTasksPackageVersion>10.0.100-preview.4.25220.1</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
     <!-- dotnet/arcade dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25379.3</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.25379.3</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25415.5</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.25415.5</MicrosoftDotNetHelixSdkPackageVersion>
     <!-- dotnet/arcade-services dependencies -->
-    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25378.2</MicrosoftDotNetDarcLibPackageVersion>
-    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25378.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
+    <MicrosoftDotNetDarcLibPackageVersion>1.1.0-beta.25412.2</MicrosoftDotNetDarcLibPackageVersion>
+    <MicrosoftDotNetProductConstructionServiceClientPackageVersion>1.1.0-beta.25412.2</MicrosoftDotNetProductConstructionServiceClientPackageVersion>
     <!-- dotnet/xharness dependencies -->
-    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25375.1</MicrosoftDotNetXHarnessCLIPackageVersion>
+    <MicrosoftDotNetXHarnessCLIPackageVersion>10.0.0-prerelease.25412.1</MicrosoftDotNetXHarnessCLIPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
@@ -46,8 +44,6 @@ This file should be imported by eng/Versions.props
     <SystemSecurityCryptographyXmlPackageVersion>9.0.0-rc.2.24473.5</SystemSecurityCryptographyXmlPackageVersion>
     <SystemTextEncodingsWebPackageVersion>9.0.0-rc.2.24473.5</SystemTextEncodingsWebPackageVersion>
     <SystemTextJsonPackageVersion>9.0.0-rc.2.24473.5</SystemTextJsonPackageVersion>
-    <!-- JamesNK/Newtonsoft.Json dependencies -->
-    <NewtonsoftJsonPackageVersion>13.0.3</NewtonsoftJsonPackageVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.24305.1</MicrosoftDeploymentDotNetReleasesPackageVersion>
     <!-- dotnet/sdk dependencies -->
@@ -55,17 +51,19 @@ This file should be imported by eng/Versions.props
     <!-- dotnet/command-line-api dependencies -->
     <SystemCommandLinePackageVersion>2.0.0-beta5.25210.1</SystemCommandLinePackageVersion>
     <!-- dotnet/dnceng dependencies -->
-    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.25360.1</MicrosoftDncEngSecretManagerPackageVersion>
+    <MicrosoftDncEngSecretManagerPackageVersion>1.1.0-beta.25381.1</MicrosoftDncEngSecretManagerPackageVersion>
     <!-- dotnet/msbuild dependencies -->
     <MicrosoftBuildPackageVersion>17.12.36</MicrosoftBuildPackageVersion>
     <MicrosoftBuildFrameworkPackageVersion>17.12.36</MicrosoftBuildFrameworkPackageVersion>
     <MicrosoftBuildTasksCorePackageVersion>17.12.36</MicrosoftBuildTasksCorePackageVersion>
     <MicrosoftBuildUtilitiesCorePackageVersion>17.12.36</MicrosoftBuildUtilitiesCorePackageVersion>
+    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
+    <MicrosoftApplicationInsightsPackageVersion>2.23.0</MicrosoftApplicationInsightsPackageVersion>
+    <!-- JamesNK/Newtonsoft.Json dependencies -->
+    <NewtonsoftJsonPackageVersion>13.0.3</NewtonsoftJsonPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
-    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
-    <MicrosoftApplicationInsightsVersion>$(MicrosoftApplicationInsightsPackageVersion)</MicrosoftApplicationInsightsVersion>
     <!-- dotnet/roslyn dependencies -->
     <MicrosoftCodeAnalysisCSharpVersion>$(MicrosoftCodeAnalysisCSharpPackageVersion)</MicrosoftCodeAnalysisCSharpVersion>
     <MicrosoftNetCompilersToolsetVersion>$(MicrosoftNetCompilersToolsetPackageVersion)</MicrosoftNetCompilersToolsetVersion>
@@ -104,8 +102,6 @@ This file should be imported by eng/Versions.props
     <SystemSecurityCryptographyXmlVersion>$(SystemSecurityCryptographyXmlPackageVersion)</SystemSecurityCryptographyXmlVersion>
     <SystemTextEncodingsWebVersion>$(SystemTextEncodingsWebPackageVersion)</SystemTextEncodingsWebVersion>
     <SystemTextJsonVersion>$(SystemTextJsonPackageVersion)</SystemTextJsonVersion>
-    <!-- JamesNK/Newtonsoft.Json dependencies -->
-    <NewtonsoftJsonVersion>$(NewtonsoftJsonPackageVersion)</NewtonsoftJsonVersion>
     <!-- dotnet/deployment-tools dependencies -->
     <MicrosoftDeploymentDotNetReleasesVersion>$(MicrosoftDeploymentDotNetReleasesPackageVersion)</MicrosoftDeploymentDotNetReleasesVersion>
     <!-- dotnet/sdk dependencies -->
@@ -119,5 +115,9 @@ This file should be imported by eng/Versions.props
     <MicrosoftBuildFrameworkVersion>$(MicrosoftBuildFrameworkPackageVersion)</MicrosoftBuildFrameworkVersion>
     <MicrosoftBuildTasksCoreVersion>$(MicrosoftBuildTasksCorePackageVersion)</MicrosoftBuildTasksCoreVersion>
     <MicrosoftBuildUtilitiesCoreVersion>$(MicrosoftBuildUtilitiesCorePackageVersion)</MicrosoftBuildUtilitiesCoreVersion>
+    <!-- microsoft/ApplicationInsights-dotnet dependencies -->
+    <MicrosoftApplicationInsightsVersion>$(MicrosoftApplicationInsightsPackageVersion)</MicrosoftApplicationInsightsVersion>
+    <!-- JamesNK/Newtonsoft.Json dependencies -->
+    <NewtonsoftJsonVersion>$(NewtonsoftJsonPackageVersion)</NewtonsoftJsonVersion>
   </PropertyGroup>
 </Project>
