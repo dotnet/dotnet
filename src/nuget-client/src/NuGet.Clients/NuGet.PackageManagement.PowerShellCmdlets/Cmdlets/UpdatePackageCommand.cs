@@ -73,7 +73,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
         [Parameter(ParameterSetName = "All")]
         public SwitchParameter Reinstall { get; set; }
 
-        private List<NuGetProject> Projects { get; set; }
+        private List<NuGetProject> _projects;
 
         public bool IsVersionEnum { get; set; }
 
@@ -83,11 +83,11 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
             ParseUserInputForVersion();
             if (!_projectSpecified)
             {
-                Projects = NuGetUIThreadHelper.JoinableTaskFactory.Run(async () => await VsSolutionManager.GetNuGetProjectsAsync()).ToList();
+                _projects = NuGetUIThreadHelper.JoinableTaskFactory.Run(async () => await VsSolutionManager.GetNuGetProjectsAsync()).ToList();
             }
             else
             {
-                Projects = new List<NuGetProject> { Project };
+                _projects = new List<NuGetProject> { Project };
             }
 
             if (Reinstall)
@@ -160,7 +160,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
         {
             if (Source != null)
             {
-                var projectNames = string.Join(",", Projects.Where(e => e is BuildIntegratedNuGetProject).Select(p => NuGetProject.GetUniqueNameOrName(p)));
+                var projectNames = string.Join(",", _projects.Where(e => e is BuildIntegratedNuGetProject).Select(p => NuGetProject.GetUniqueNameOrName(p)));
                 if (!string.IsNullOrEmpty(projectNames))
                 {
                     var warning = string.Format(CultureInfo.CurrentCulture, Resources.Warning_SourceNotRespectedForProjectType, nameof(Source), projectNames);
@@ -197,8 +197,8 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                         new GatherCache(),
                         sourceCacheContext);
 
-                    // PackageReference projects don't support `Update-Package -Reinstall`. 
-                    List<NuGetProject> applicableProjects = GetApplicableProjectsAndWarnForRest(Projects);
+                    // PackageReference projects don't support `Update-Package -Reinstall`.
+                    List<NuGetProject> applicableProjects = GetApplicableProjectsAndWarnForRest(_projects);
 
                     // if the source is explicitly specified we will use exclusively that source otherwise use ALL enabled sources
                     var actions = await PackageManager.PreviewUpdatePackagesAsync(
@@ -347,8 +347,8 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
                     new GatherCache(),
                     sourceCacheContext);
 
-                // PackageReference projects don't support `Update-Package -Reinstall`. 
-                List<NuGetProject> applicableProjects = GetApplicableProjectsAndWarnForRest(Projects);
+                // PackageReference projects don't support `Update-Package -Reinstall`.
+                List<NuGetProject> applicableProjects = GetApplicableProjectsAndWarnForRest(_projects);
 
                 // If -Version switch is specified
                 if (!string.IsNullOrEmpty(Version))
@@ -395,7 +395,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
         /// <returns><code>bool</code> indicating whether the package is already installed, on any project, or not</returns>
         private async Task<bool> IsPackageInstalledAsync(string packageId)
         {
-            foreach (var project in Projects)
+            foreach (var project in _projects)
             {
                 var installedPackages = await project.GetInstalledPackagesAsync(Token);
 
@@ -436,7 +436,7 @@ namespace NuGet.PackageManagement.PowerShellCmdlets
             else
             {
                 // Execute project actions by Package Manager
-                await PackageManager.ExecuteNuGetProjectActionsAsync(Projects, actions, this, sourceCacheContext, Token);
+                await PackageManager.ExecuteNuGetProjectActionsAsync(_projects, actions, this, sourceCacheContext, Token);
 
                 // Refresh Manager UI if needed
                 RefreshUI(actions);

@@ -62,7 +62,7 @@ function Test-VsPackageInstallerServices {
     )
 
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $cm = Get-VsComponentModel
     $installerServices = $cm.GetService([NuGet.VisualStudio.IVsPackageInstallerServices])
 
@@ -751,31 +751,6 @@ function Test-ExecuteInitPS1OnUAP
     Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
 
     Assert-True ($global:PackageInitPS1Var -eq 1)
-
-    # Act
-    $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
-
-    Assert-True $result
-
-    Assert-True ($global:PackageInitPS1Var -eq 1)
-}
-
-# NOTE: The following test does not work since ExecuteInitScript needs the powershell pipeline to be free
-#       for it execute scripts. But, under Run-Test, the pipeline is already busy.
-function ExecuteInitPS1OnAspNetCore
-{
-    param($context)
-
-    # Set DNX packages folder to be NUGET global packages folder
-    $env:DNX_PACKAGES = "$env:USERPROFILE\.nuget\packages"
-
-    # Arrange
-    $global:PackageInitPS1Var = 0
-    $p = New-DNXClassLibrary
-
-    Install-Package PackageInitPS1 -Project $p.Name -Source $context.RepositoryRoot
-
-    Assert-True ($global:PackageInitPS1Var -eq 0)
 
     # Act
     $result = [API.Test.InternalAPITestHook]::ExecuteInitScript("PackageInitPS1","1.0.2")
