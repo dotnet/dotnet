@@ -520,7 +520,11 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            # Don't use --no-artifacts because it will prevent the shared components archive from being
+            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
+            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
+            # to use at the expected location.
+            customPrepArgs="${customPrepArgs} --no-sdk"
             prepSdk=false
           fi
 

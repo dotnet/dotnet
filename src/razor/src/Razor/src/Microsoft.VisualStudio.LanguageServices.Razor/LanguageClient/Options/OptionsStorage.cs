@@ -111,15 +111,15 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
             _unifiedSettingsReader = unifiedSettingsManager.GetReader();
             _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
 
-            await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, synchronousServiceProvider);
+            await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, serviceProvider);
         });
     }
 
-    private async Task GetTaskListDescriptorsAsync(JoinableTaskFactory jtf, SVsServiceProvider synchronousServiceProvider)
+    private async Task GetTaskListDescriptorsAsync(JoinableTaskFactory jtf, IAsyncServiceProvider serviceProvider)
     {
         await jtf.SwitchToMainThreadAsync();
 
-        var taskListService = synchronousServiceProvider.GetService<IVsTaskList, IVsCommentTaskInfo>();
+        var taskListService = await serviceProvider.GetServiceAsync<IVsTaskList, IVsCommentTaskInfo>();
         if (taskListService is null)
         {
             return;

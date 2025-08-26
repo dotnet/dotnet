@@ -22,20 +22,19 @@ public partial class BoundAttributeDescriptorBuilder
     private protected override void Reset()
     {
         _parent = null;
+        _flags = 0;
+        _typeNameObject = default;
+        _indexerTypeNameObject = default;
         _documentationObject = default;
-        _caseSensitive = null;
+        _metadataObject = null;
+        _caseSensitiveSet = false;
 
         Name = null;
-        TypeName = null;
-        IsEnum = false;
-        IsDictionary = false;
-        IsEditorRequired = false;
+        PropertyName = null;
         IndexerAttributeNamePrefix = null;
-        IndexerValueTypeName = null;
         DisplayName = null;
         ContainingType = null;
         Parameters.Clear();
-        _metadata.Clear();
     }
 
     private sealed class Policy : PooledBuilderPolicy<BoundAttributeDescriptorBuilder>
