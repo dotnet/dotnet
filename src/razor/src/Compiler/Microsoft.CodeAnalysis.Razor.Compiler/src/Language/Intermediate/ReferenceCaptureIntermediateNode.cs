@@ -4,7 +4,6 @@
 #nullable disable
 
 using System;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -35,9 +34,14 @@ public sealed class ReferenceCaptureIntermediateNode : IntermediateNode
 
     public bool IsComponentCapture { get; }
 
+    /// <remarks>
+    /// This is not <c>global::</c>-prefixed, for that consider using <see cref="FieldTypeName"/> instead.
+    /// </remarks>
     public string ComponentCaptureTypeName { get; set; }
 
-    public string FieldTypeName => IsComponentCapture ? ComponentCaptureTypeName : $"global::{ComponentsApi.ElementReference.FullTypeName}";
+    public string FieldTypeName => IsComponentCapture
+        ? TypeNameHelper.GetGloballyQualifiedNameIfNeeded(ComponentCaptureTypeName)
+        : $"global::{ComponentsApi.ElementReference.FullTypeName}";
 
     public string TypeName => $"global::System.Action<{FieldTypeName}>";
 

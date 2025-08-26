@@ -7,7 +7,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Relationships.OwnedTableSplitting;
 
 public abstract class OwnedTableSplittingProjectionRelationalTestBase<TFixture>
     : OwnedNavigationsProjectionTestBase<TFixture>
-        where TFixture : OwnedTableSplittingRelationalFixtureBase, new()
+    where TFixture : OwnedTableSplittingRelationalFixtureBase, new()
 {
     public OwnedTableSplittingProjectionRelationalTestBase(TFixture fixture, ITestOutputHelper testOutputHelper)
         : base(fixture)
@@ -15,6 +15,11 @@ public abstract class OwnedTableSplittingProjectionRelationalTestBase<TFixture>
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
+
+    public override Task Select_required_related_via_optional_navigation(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertOwnedTrackingQuery(
+            queryTrackingBehavior,
+            () => base.Select_required_related_via_optional_navigation(queryTrackingBehavior));
 
     // Traditional relational collections navigations can't be compared reliably.
     // The failure below is because collections on from null instances are returned as empty collections rather than null; but

@@ -23,7 +23,7 @@
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' != 'true'">rc</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and $(VersionPrefix.EndsWith('00'))">rtm</PreReleaseVersionLabel>
     <PreReleaseVersionLabel Condition="'$(StabilizePackageVersion)' == 'true' and !$(VersionPrefix.EndsWith('00'))">servicing</PreReleaseVersionLabel>
-    <PreReleaseVersionIteration Condition="'$(StabilizePackageVersion)' != 'true'">1</PreReleaseVersionIteration>
+    <PreReleaseVersionIteration Condition="'$(StabilizePackageVersion)' != 'true'">2</PreReleaseVersionIteration>
     <!-- In source-build the version of the compiler must be same or newer than the version of the
          compiler API targeted by analyzer assemblies. This is mostly an issue on source-build as
          in that build mode analyzer assemblies always target the live compiler API. -->
@@ -64,16 +64,12 @@
     <WebDeploymentPackageVersion>4.0.5</WebDeploymentPackageVersion>
     <SystemCommandLineVersion>2.0.0-rc.1.25377.103</SystemCommandLineVersion>
     <SystemCommandLineNamingConventionBinderVersion>2.0.0-beta5.25279.2</SystemCommandLineNamingConventionBinderVersion>
-    <MicrosoftCodeAnalysisAnalyzerTestingVersion>1.1.2-beta1.22216.1</MicrosoftCodeAnalysisAnalyzerTestingVersion>
+    <MicrosoftCodeAnalysisAnalyzerTestingVersion>1.1.2</MicrosoftCodeAnalysisAnalyzerTestingVersion>
     <MicrosoftVisualBasicVersion>10.3.0</MicrosoftVisualBasicVersion>
     <MicrosoftVisualStudioSetupConfigurationInteropVersion>3.2.2146</MicrosoftVisualStudioSetupConfigurationInteropVersion>
     <MicrosoftWindowsCsWin32PackageVersion>0.3.49-beta</MicrosoftWindowsCsWin32PackageVersion>
     <!-- When updating MicrosoftVisualStudioSolutionPersistenceVersion make sure to sync with dotnet/msbuild, dotnet/source-build-externals and NuGet/NuGet.Client -->
     <MicrosoftVisualStudioSolutionPersistenceVersion>1.0.52</MicrosoftVisualStudioSolutionPersistenceVersion>
-  </PropertyGroup>
-  <PropertyGroup Label="NUnit3.DotNetNew.Template version">
-    <!-- NUnit3.DotNetNew.Template versions do not 'flow in' -->
-    <NUnit3DotNetNewTemplatePackageVersion>1.8.1</NUnit3DotNetNewTemplatePackageVersion>
   </PropertyGroup>
   <PropertyGroup Label="MicroBuild.Core version">
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
@@ -130,7 +126,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Manually updated">
     <!-- Dependencies from https://github.com/microsoft/MSBuildLocator -->
-    <MicrosoftBuildLocatorPackageVersion>1.6.10</MicrosoftBuildLocatorPackageVersion>
+    <MicrosoftBuildLocatorPackageVersion>1.8.1</MicrosoftBuildLocatorPackageVersion>
     <MicrosoftCodeAnalysisCSharpAnalyzerPinnedVersionPackageVersion>4.0.1</MicrosoftCodeAnalysisCSharpAnalyzerPinnedVersionPackageVersion>
   </PropertyGroup>
   <!-- Get .NET Framework reference assemblies from NuGet packages -->

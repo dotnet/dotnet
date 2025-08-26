@@ -75,28 +75,44 @@ internal partial class HelpBuilder
                 _ => throw new InvalidOperationException()
             };
 
-            static string? GetUsageLabel(string? helpName, Type valueType, List<Func<CompletionContext, IEnumerable<CompletionItem>>> completionSources, Symbol symbol, ArgumentArity arity)
+            static string? GetUsageLabel(
+                string? helpName,
+                Type valueType,
+                List<Func<CompletionContext, IEnumerable<CompletionItem>>> completionSources,
+                Symbol symbol,
+                ArgumentArity arity)
             {
-                // Argument.HelpName is always first choice
                 if (!string.IsNullOrWhiteSpace(helpName))
                 {
                     return $"<{helpName}>";
                 }
-                else if (
-                    !(valueType == typeof(bool) || valueType == typeof(bool?))
-                    && arity.MaximumNumberOfValues > 0 // allowing zero arguments means we don't need to show usage
-                    && completionSources.Count > 0)
+
+                if (valueType == typeof(bool) ||
+                    valueType == typeof(bool?) ||
+                    arity.MaximumNumberOfValues <= 0) // allowing zero arguments means we don't need to show usage
                 {
-                    IEnumerable<string> completions = symbol
-                        .GetCompletions(CompletionContext.Empty)
-                        .Select(item => item.Label);
+                    return null;
+                }
 
-                    string joined = string.Join("|", completions);
-
-                    if (!string.IsNullOrEmpty(joined))
+                if (completionSources.Count <= 0)
+                {
+                    if (symbol is Option)
                     {
-                        return $"<{joined}>";
+                        return $"<{symbol.Name.TrimStart('-', '/')}>";
                     }
+
+                    return null;
+                }
+
+                IEnumerable<string> completions = symbol
+                                                  .GetCompletions(CompletionContext.Empty)
+                                                  .Select(item => item.Label);
+
+                string joined = string.Join("|", completions);
+
+                if (!string.IsNullOrEmpty(joined))
+                {
+                    return $"<{joined}>";
                 }
 
                 return null;
@@ -215,15 +231,16 @@ internal partial class HelpBuilder
             {
                 List<TwoColumnHelpRow> optionRows = new();
                 bool addedHelpOption = false;
-                foreach (Option option in ctx.Command.Options)
+                foreach (Option option in ctx.Command.Options.OrderBy(o => o is HelpOption or VersionOption))
                 {
                     if (!option.Hidden)
                     {
-                        optionRows.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
                         if (option is HelpOption)
                         {
                             addedHelpOption = true;
                         }
+
+                        optionRows.Add(ctx.HelpBuilder.GetTwoColumnRow(option, ctx));
                     }
                 }
 

@@ -85,7 +85,7 @@ WHERE JSON_QUERY([r].[RequiredRelated], '$.OptionalNested') IS NULL
         await base.Nested_with_inline();
 
         AssertSql(
-);
+        );
     }
 
     public override async Task Nested_with_parameter()
@@ -93,7 +93,7 @@ WHERE JSON_QUERY([r].[RequiredRelated], '$.OptionalNested') IS NULL
         await base.Nested_with_parameter();
 
         AssertSql(
-);
+        );
     }
 
     public override async Task Two_nested_collections()
@@ -113,7 +113,7 @@ WHERE 0 = 1
         await base.Nested_collection_with_inline();
 
         AssertSql(
-);
+        );
     }
 
     public override async Task Nested_collection_with_parameter()
@@ -121,8 +121,40 @@ WHERE 0 = 1
         await base.Nested_collection_with_parameter();
 
         AssertSql(
-);
+        );
     }
+
+    #region Contains
+
+    public override async Task Contains_with_inline()
+    {
+        await base.Contains_with_inline();
+
+        AssertSql();
+    }
+
+    public override async Task Contains_with_parameter()
+    {
+        await base.Contains_with_parameter();
+
+        AssertSql();
+    }
+
+    public override async Task Contains_with_operators_composed_on_the_collection()
+    {
+        await base.Contains_with_operators_composed_on_the_collection();
+
+        AssertSql();
+    }
+
+    public override async Task Contains_with_nested_and_composed_operators()
+    {
+        await base.Contains_with_nested_and_composed_operators();
+
+        AssertSql();
+    }
+
+    #endregion Contains
 
     [ConditionalFact]
     public virtual void Check_all_tests_overridden()

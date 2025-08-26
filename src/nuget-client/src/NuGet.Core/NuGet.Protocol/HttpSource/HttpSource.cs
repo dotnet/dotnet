@@ -516,9 +516,7 @@ namespace NuGet.Protocol
 
         private void ThrowIfHttpUriAndInsecureConnectionsNotAllowed(string uri)
         {
-            var parsedUri = new Uri(uri);
-
-            if (string.Equals(parsedUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
+            if (uri.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
             {
                 if (_packageSource.IsHttps && !_packageSource.AllowInsecureConnections)
                 {

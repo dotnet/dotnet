@@ -182,7 +182,7 @@ internal partial class RazorLanguageServer : SystemTextJsonLanguageServer<RazorR
 
             services.AddHandlerWithCapabilities<ImplementationEndpoint>();
 
-            services.AddSingleton<IRazorComponentDefinitionService, RazorComponentDefinitionService>();
+            services.AddSingleton<IDefinitionService, DefinitionService>();
             services.AddHandlerWithCapabilities<DefinitionEndpoint>();
 
             services.AddSingleton<IRenameService, RenameService>();

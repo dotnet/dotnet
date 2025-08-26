@@ -5,7 +5,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Relationships.OwnedNavigations;
 
 public abstract class OwnedNavigationsProjectionRelationalTestBase<TFixture>
     : OwnedNavigationsProjectionTestBase<TFixture>
-        where TFixture : OwnedNavigationsRelationalFixtureBase, new()
+    where TFixture : OwnedNavigationsRelationalFixtureBase, new()
 {
     public OwnedNavigationsProjectionRelationalTestBase(TFixture fixture, ITestOutputHelper testOutputHelper)
         : base(fixture)
@@ -13,6 +13,11 @@ public abstract class OwnedNavigationsProjectionRelationalTestBase<TFixture>
         Fixture.TestSqlLoggerFactory.Clear();
         Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
     }
+
+    public override Task Select_required_related_via_optional_navigation(QueryTrackingBehavior queryTrackingBehavior)
+        => AssertOwnedTrackingQuery(
+            queryTrackingBehavior,
+            () => base.Select_required_related_via_optional_navigation(queryTrackingBehavior));
 
     // Traditional relational collections navigations projected from null instances are returned as empty collections rather than null.
     // This is in contrast to client evaluation behavior - and also the JSON collection behavior - where we get null instance (coalescing).
