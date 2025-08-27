@@ -496,10 +496,11 @@ jobs:
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ else }}:
-    - ${{ if eq(parameters.targetOS, 'osx') }}:
+    - ${{ if or(eq(parameters.targetOS, 'osx'), eq(parameters.targetOS, 'ios'), eq(parameters.targetOS, 'iossimulator'), eq(parameters.targetOS, 'tvos'), eq(parameters.targetOS, 'tvossimulator'), eq(parameters.targetOS, 'maccatalyst')) }}:
       - script: |
           xcrun simctl runtime delete all
         displayName: Reclaim disk space from unused simulator runtimes
+    - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
         displayName: Install dependencies
@@ -519,7 +520,11 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            # Don't use --no-artifacts because it will prevent the shared components archive from being
+            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
+            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
+            # to use at the expected location.
+            customPrepArgs="${customPrepArgs} --no-sdk"
             prepSdk=false
           fi
 
