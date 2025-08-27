@@ -17,7 +17,8 @@
         ComponentGroupName="InstallFiles"
         DirectoryRef="SHARED" />
 
-      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/sharedfxdir.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)wix/product/sharedfxdir.wxs" Condition="'$(UseWix5)' == ''" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)wix5/product/sharedfxdir.wxs" Condition="'$(UseWix5)' != ''" />
 
       <CandleVariables Include="AuthoredRegistryKeys" Value="true" />
       <CandleVariables Include="RegKeyNugetVersionExistence" Value="true" />

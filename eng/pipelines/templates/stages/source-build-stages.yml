@@ -39,6 +39,11 @@ parameters:
   type: object
   default: []
 
+# Indicates whether runtime dependent jobs are excluded.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 stages:
 - ${{ if or(in(parameters.scope, 'full') , contains(join(';', parameters.verifications), 'source-build-')) }}:
   - template: source-build-and-validate.yml
@@ -49,6 +54,7 @@ stages:
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
       
       # Description of the source build legs to run.
       # This is described here as a parameter to allow two separate stages to be produced from this list (one for building

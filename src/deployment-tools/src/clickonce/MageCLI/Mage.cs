@@ -102,6 +102,7 @@ namespace Microsoft.Deployment.MageCLI
         /// <param name="appProviderUrl">Application provider URL</param>
         /// <param name="minVersion">Minimum version</param>
         /// <param name="install">Install state</param>
+        /// <param name="mapFileExtensions">MapFileExtensions state</param>
         /// <param name="includeDeploymentProviderUrl"></param>
         /// <param name="publisherName">Publisher name</param>
         /// <param name="supportUrl">Support URL</param>
@@ -111,7 +112,7 @@ namespace Microsoft.Deployment.MageCLI
         public static DeployManifest GenerateDeploymentManifest(string deploymentManifestPath,
             string appName, Version version, Processors processor,
             ApplicationManifest applicationManifest, string applicationManifestPath, string appCodeBase,
-            string appProviderUrl, string minVersion, TriStateBool install, TriStateBool includeDeploymentProviderUrl,
+            string appProviderUrl, string minVersion, TriStateBool install, TriStateBool mapFileExtensions, TriStateBool includeDeploymentProviderUrl,
             string publisherName, string supportUrl, string targetFrameworkVersion, TriStateBool trustUrlParameters)
         {
             /*
@@ -136,6 +137,15 @@ namespace Microsoft.Deployment.MageCLI
             else
             {
                 manifest.Install = false;
+            }
+
+            if (mapFileExtensions == TriStateBool.True)
+            {
+                manifest.MapFileExtensions = true;
+            }
+            else
+            {
+                manifest.MapFileExtensions = false;
             }
 
             // Use default application name if none was specified
@@ -164,7 +174,7 @@ namespace Microsoft.Deployment.MageCLI
 
             UpdateDeploymentManifest(manifest, deploymentManifestPath, appName, version, processor,
                 applicationManifest, applicationManifestPath, appCodeBase,
-                appProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                appProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
 
             return manifest;
         }
@@ -303,6 +313,7 @@ namespace Microsoft.Deployment.MageCLI
         /// <param name="appProviderUrl">Application provider URL</param>
         /// <param name="minVersion">Minimum version</param>
         /// <param name="install">Install state</param>
+        /// <param name="mapFileExtensions">MapFileExtensions state</param>
         /// <param name="includeDeploymentProviderUrl"></param>
         /// <param name="publisherName">Publisher name</param>
         /// <param name="supportUrl">Support URL</param>
@@ -313,6 +324,7 @@ namespace Microsoft.Deployment.MageCLI
             ApplicationManifest applicationManifest, string applicationManifestPath,
             string appCodeBase, string appProviderUrl, string minVersion,
             TriStateBool install,
+            TriStateBool mapFileExtensions,
             TriStateBool includeDeploymentProviderUrl,
             string publisherName, string supportUrl, string targetFrameworkVersion,
             TriStateBool trustUrlParameters)
@@ -334,6 +346,18 @@ namespace Microsoft.Deployment.MageCLI
                     // representation might not be in sync with the propery value.
                     manifest.UpdateInterval = manifest.UpdateInterval;
                     manifest.UpdateUnit = manifest.UpdateUnit;
+                }
+            }
+
+            if (mapFileExtensions != TriStateBool.Undefined)
+            {
+                if (mapFileExtensions == TriStateBool.False)
+                {
+                    manifest.MapFileExtensions = false;
+                }
+                else
+                {
+                    manifest.MapFileExtensions = true;
                 }
             }
 
