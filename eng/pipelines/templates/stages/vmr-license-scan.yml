@@ -109,7 +109,7 @@ stages:
 
   - job: Publish_Test_Results_PR
     dependsOn: LicenseScan
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'))
     variables:
     - template: /eng/pipelines/templates/variables/pipelines.yml@self
       # GH access token for SB bot - BotAccount-dotnet-sb-bot-pat

@@ -67,13 +67,10 @@ extends:
             buildArgs: -s mono+libs+host+packs+libs.tests+clr.iltools+clr.packages -c $(_BuildConfig) /p:ArchiveTests=true
             timeoutInMinutes: 180
             condition: >-
-              and(
-                succeeded(),
-                or(
-                  eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_libraries.containsChange'], true),
-                  eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_mono_excluding_wasm.containsChange'], true),
-                  eq(variables['isRollingBuild'], true))
-              )
+              or(
+                eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_libraries.containsChange'], true),
+                eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_mono_excluding_wasm.containsChange'], true),
+                eq(variables['isRollingBuild'], true))
 
       #
       # Build the whole product using Mono
@@ -98,10 +95,7 @@ extends:
             buildArgs: -s mono+libs+host+packs -c $(_BuildConfig)
             timeoutInMinutes: 120
             condition: >-
-              and(
-                succeeded(),
-                or(
-                  eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_libraries.containsChange'], true),
-                  eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_mono_excluding_wasm.containsChange'], true),
-                  eq(variables['isRollingBuild'], true))
-              )
+              or(
+                eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_libraries.containsChange'], true),
+                eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_mono_excluding_wasm.containsChange'], true),
+                eq(variables['isRollingBuild'], true))

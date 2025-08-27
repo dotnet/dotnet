@@ -173,7 +173,7 @@ stages:
         - publish: artifacts/TestResults/$(_BuildConfig)
           artifact: $(Agent.Os)_$(Agent.JobName) Attempt $(System.JobAttempt) TestResults
           displayName: Publish Test Artifacts
-          condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest'))
+          condition: and(succeededOrFailed(), in(variables['Build.Reason'], 'PullRequest'))
 
         # Publish an artifact that the RoslynInsertionTool is able to find by its name.
         - publish: artifacts\VSSetup\$(_BuildConfig)
