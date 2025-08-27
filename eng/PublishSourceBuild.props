@@ -75,7 +75,7 @@
       <SourceBuiltLayoutDir>$([MSBuild]::NormalizeDirectory('$(BaseIntermediateOutputPath)', 'artifacts-layout'))</SourceBuiltLayoutDir>
 
       <!-- Outputs -->
-      <SourceBuiltTarballName>$(SourceBuiltAssetsDir)/source-build/$(SourceBuiltArtifactsTarballName).$(SourceBuiltSdkNonStableVersion).$(TargetRid)$(ArchiveExtension)</SourceBuiltTarballName>
+      <SourceBuiltTarballName>$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).$(SourceBuiltSdkNonStableVersion).$(TargetRid)$(ArchiveExtension)</SourceBuiltTarballName>
       <SourceBuiltVersionName>$(SourceBuiltLayoutDir).version</SourceBuiltVersionName>
       <AllPackageVersionsPropsName>$(SourceBuiltLayoutDir)PackageVersions.props</AllPackageVersionsPropsName>
       <SourceBuiltMergedAssetManifestName>$(SourceBuiltLayoutDir)%(MergedAssetManifest.Filename)%(MergedAssetManifest.Extension)</SourceBuiltMergedAssetManifestName>
@@ -142,7 +142,7 @@
                                PropertySuffixes="@(DefaultPackageVersionPropertySuffixes)" />
 
     <!-- Ensure the target parent dir has been created. -->
-    <MakeDir Directories="$(SourceBuiltAssetsDir)/source-build" />
+    <MakeDir Directories="$(SourceBuiltAssetsDir)" />
 
     <Exec Command="tar --numeric-owner -czhf $(SourceBuiltTarballName) $([System.IO.Path]::GetFileName('$(SourceBuiltVersionName)')) *"
           WorkingDirectory="$(SourceBuiltLayoutDir)" />
@@ -151,7 +151,7 @@
 
     <!-- Tests expect this file to be in ArtifactsAssetsDir. -->
     <Copy SourceFiles="$(SourceBuiltTarballName)"
-          DestinationFolder="$(ArtifactsAssetSourceBuildDir)"
+          DestinationFolder="$(ArtifactsAssetsDir)"
           SkipUnchangedFiles="true" />
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"

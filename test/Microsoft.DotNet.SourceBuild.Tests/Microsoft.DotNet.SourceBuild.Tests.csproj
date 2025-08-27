@@ -36,7 +36,7 @@
           DependsOnTargets="DetermineSourceBuiltSdkVersion"
           BeforeTargets="_GenerateRuntimeConfigurationFilesInputCache">
     <ItemGroup Condition="'$(SourceBuiltArtifactsPath)' == ''">
-      <SourceBuiltArtifactsItem Include="$(ArtifactsAssetSourceBuildDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SourceBuiltArtifactsItem Include="$(ArtifactsAssetsDir)$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
     </ItemGroup>
 
     <PropertyGroup>
