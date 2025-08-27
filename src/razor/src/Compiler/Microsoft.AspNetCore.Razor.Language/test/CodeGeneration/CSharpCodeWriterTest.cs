@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -481,5 +482,208 @@ public class CSharpCodeWriterTest
 
         testReader.Read(output, 0, output.Length);
         Assert.Equal("rst Line\0\0", string.Join("", output));
+    }
+
+    [Fact]
+    public void WriteIntegerLiteral_Zero_WritesZero()
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(0);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        Assert.Equal("0", output);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(42)]
+    [InlineData(99)]
+    [InlineData(100)]
+    [InlineData(999)]
+    public void WriteIntegerLiteral_SmallPositiveNumbers_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(1000)]
+    [InlineData(1234)]
+    [InlineData(12345)]
+    [InlineData(123456)]
+    [InlineData(1000000)]
+    public void WriteIntegerLiteral_LargePositiveNumbers_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-5)]
+    [InlineData(-42)]
+    [InlineData(-99)]
+    [InlineData(-100)]
+    [InlineData(-999)]
+    public void WriteIntegerLiteral_SmallNegativeNumbers_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(-1000)]
+    [InlineData(-1234)]
+    [InlineData(-12345)]
+    [InlineData(-123456)]
+    [InlineData(-1000000)]
+    public void WriteIntegerLiteral_LargeNegativeNumbers_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(999999)]
+    [InlineData(1000001)]
+    [InlineData(999000)]
+    [InlineData(1001000)]
+    public void WriteIntegerLiteral_BoundaryValues_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(10000)]      // Exactly 5 digits
+    [InlineData(100000)]     // Exactly 6 digits  
+    [InlineData(1000000000)] // Close to int.MaxValue
+    [InlineData(2000000000)] // Larger value
+    [InlineData(10001)]      // Leading zeros in middle group
+    [InlineData(1000010)]    // Multiple leading zeros
+    [InlineData(1020000)]    // Trailing zeros after non-zero
+    [InlineData(102030)]     // Mixed digits
+    [InlineData(1000000001)] // Maximum digits with leading zeros
+    public void WriteIntegerLiteral_AdditionalEdgeCases_WritesCorrectly(int value)
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Theory]
+    [InlineData(int.MinValue + 1)] // Just above MinValue
+    [InlineData(-10001)]           // Negative with leading zeros
+    [InlineData(-1000010)]         // Negative with multiple groups
+    public void WriteIntegerLiteral_NegativeEdgeCases_WritesCorrectly(int value)
+    {
+        // Arrange  
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(value);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        var expected = value.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(expected, output);
+    }
+
+    [Fact]
+    public void WriteIntegerLiteral_MaxValue_WritesCorrectly()
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(int.MaxValue);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        Assert.Equal("2147483647", output);
+    }
+
+    [Fact]
+    public void WriteIntegerLiteral_MinValue_WritesCorrectly()
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(int.MinValue);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        Assert.Equal("-2147483648", output);
+    }
+
+    [Fact]
+    public void WriteIntegerLiteral_MultipleValues_WritesCorrectly()
+    {
+        // Arrange
+        using var writer = new CodeWriter();
+
+        // Act
+        writer.WriteIntegerLiteral(123);
+        writer.Write(", ");
+        writer.WriteIntegerLiteral(-456);
+        writer.Write(", ");
+        writer.WriteIntegerLiteral(0);
+
+        // Assert
+        var output = writer.GetText().ToString();
+        Assert.Equal("123, -456, 0", output);
     }
 }

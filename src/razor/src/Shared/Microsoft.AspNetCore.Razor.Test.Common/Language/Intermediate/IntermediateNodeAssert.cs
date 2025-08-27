@@ -373,7 +373,7 @@ public static class IntermediateNodeAssert
         try
         {
             Assert.Equal(name, propertyNode.AttributeName);
-            Assert.Equal(propertyName, propertyNode.BoundAttribute.GetPropertyName());
+            Assert.Equal(propertyName, propertyNode.BoundAttribute.PropertyName);
             Assert.Equal(valueStyle, propertyNode.AttributeStructure);
             Children(propertyNode, valueValidators);
         }
