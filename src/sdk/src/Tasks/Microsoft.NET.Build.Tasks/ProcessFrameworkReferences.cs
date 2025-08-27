@@ -805,12 +805,20 @@ namespace Microsoft.NET.Build.Tasks
 
                 var runtimeGraph = new RuntimeGraphCache(this).GetRuntimeGraph(RuntimeGraphPath);
 
-                // If the provided RID is compatible with a non-portable RID in the support list, then it's considered non-portable.
-                NuGetUtils.GetBestMatchingRidWithExclusion(runtimeGraph, RuntimeIdentifier, packSupportedPortableRuntimeIdentifiers, packSupportedRuntimeIdentifiers, out bool targetsNonPortableSdkRid);
+                // Prefer portable when the "supported RID" for the tool pack is the same RID as the "supported portable RID".
+                // This makes non-portable SDKs behave the same as portable SDKs except for the specific cases added to "supported", such as targeting the non-portable RID.
+                // This also ensures that targeting common RIDs doesn't require any non-portable assets that aren't packaged in the SDK by default.
+                // Due to size concerns, the non-portable ILCompiler and Crossgen2 aren't included by default in non-portable SDK distributions.
+                string supportedTargetRid = NuGetUtils.GetBestMatchingRid(runtimeGraph, RuntimeIdentifier, packSupportedRuntimeIdentifiers, out _);
+                string supportedPortableTargetRid = NuGetUtils.GetBestMatchingRid(runtimeGraph, RuntimeIdentifier, packSupportedPortableRuntimeIdentifiers, out _);
 
-                string hostRuntimeIdentifier = targetsNonPortableSdkRid ? NETCoreSdkRuntimeIdentifier : portableSdkRid;
+                bool usePortable = !string.IsNullOrEmpty(NETCoreSdkPortableRuntimeIdentifier) && supportedTargetRid == supportedPortableTargetRid;
+
                 // Get the best RID for the host machine, which will be used to validate that we can run crossgen for the target platform and architecture
-                hostRuntimeIdentifier = NuGetUtils.GetBestMatchingRid(runtimeGraph, hostRuntimeIdentifier, packSupportedRuntimeIdentifiers, out bool wasInGraph);
+                string hostRuntimeIdentifier = usePortable
+                    ? NuGetUtils.GetBestMatchingRid(runtimeGraph, NETCoreSdkPortableRuntimeIdentifier, packSupportedPortableRuntimeIdentifiers, out _)
+                    : NuGetUtils.GetBestMatchingRid(runtimeGraph, NETCoreSdkRuntimeIdentifier, packSupportedRuntimeIdentifiers, out _);
+
                 if (hostRuntimeIdentifier == null)
                 {
                     return ToolPackSupport.UnsupportedForHostRuntimeIdentifier;
