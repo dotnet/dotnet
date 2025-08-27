@@ -129,7 +129,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
             writer.WriteAutoPropertyDeclaration(
                 PublicModifiers,
                 attribute.TypeName,
-                attribute.GetPropertyName());
+                attribute.PropertyName);
 
             if (attribute.IndexerTypeName != null)
             {
@@ -186,7 +186,7 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
             foreach (var attribute in tagHelper.BoundAttributes)
             {
                 var attributeName = attribute.Name;
-                var parameterName = attribute.GetPropertyName();
+                var parameterName = attribute.PropertyName;
                 writer.WriteLine($"if (__context.AllAttributes.ContainsName(\"{attributeName}\"))");
                 writer.WriteLine("{");
                 writer.CurrentIndent += writer.TabSize;
