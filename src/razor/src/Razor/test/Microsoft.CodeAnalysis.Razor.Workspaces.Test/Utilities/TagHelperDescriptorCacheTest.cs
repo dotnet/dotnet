@@ -28,7 +28,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : Toolin
         intTagHelperBuilder.BoundAttributeDescriptor(intBuilder =>
             intBuilder
                 .Name("test")
-                .Metadata(PropertyName(expectedPropertyName))
+                .PropertyName(expectedPropertyName)
                 .TypeName(typeof(int).FullName)
         );
         var intTagHelper = intTagHelperBuilder.Build();
@@ -38,7 +38,7 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : Toolin
         stringTagHelperBuilder.BoundAttributeDescriptor(stringBuilder =>
             stringBuilder
                 .Name("test")
-                .Metadata(PropertyName(expectedPropertyName))
+                .PropertyName(expectedPropertyName)
                 .TypeName(typeof(string).FullName)
         );
         var stringTagHelper = stringTagHelperBuilder.Build();
