@@ -35,6 +35,11 @@ parameters:
   type: object
   default: []
 
+# Indicates whether runtime dependent jobs are excluded.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 stages:
 - ${{ if or(in(parameters.scope, 'full') , contains(join(';', parameters.verifications), 'source-build-')) }}:
   - template: source-build-and-validate.yml
@@ -44,6 +49,7 @@ stages:
       useMicrosoftBuildAssetsForTests: ${{ parameters.useMicrosoftBuildAssetsForTests }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
       
       # Description of the source build legs to run.
       # This is described here as a parameter to allow two separate stages to be produced from this list (one for building
@@ -164,7 +170,6 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
-            enableCoreDumpGeneration: true     # ✅
 
           - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
             distro: ubuntu
@@ -185,7 +190,6 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            enableCoreDumpGeneration: true     # ✅
             reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
 
           - buildNameFormat: '{0}_Mono_Offline_CurrentSourceBuiltSdk'

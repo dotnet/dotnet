@@ -498,7 +498,7 @@ function Test-UpdatePackageAcceptsRelativePathSource2 {
 
 function Test-UpdateProjectLevelPackageNotInstalledInAnyProject {
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
 
     # Act
     $p1 | Install-Package Ninject -Version 2.0.1.0
@@ -596,7 +596,7 @@ function Test-UpdateAllPackagesInSolution {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p2 = New-ClassLibrary
 
     # Act
@@ -696,7 +696,7 @@ function Test-UpdateAllPackagesInSolutionWithSafeFlag {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p1 | Install-Package A -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package B -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
     $p1 | Install-Package C -Version 1.0 -Source $context.RepositoryPath -IgnoreDependencies
@@ -839,7 +839,7 @@ function Test-UpdatePackageWithDependentsThatHaveNoAvailableUpdatesThrows {
     )
 
     # Arrange
-    $p1 = New-WebApplication
+    $p1 = New-ConsoleApplication
     $p1 | Install-Package A -Version 1.0 -Source $context.RepositoryPath
 
     # Act
@@ -848,7 +848,7 @@ function Test-UpdatePackageWithDependentsThatHaveNoAvailableUpdatesThrows {
 
 function Test-UpdatePackageThrowsWhenSourceIsInvalid {
     # Arrange
-    $p = New-WebApplication
+    $p = New-ConsoleApplication
     $p | Install-Package jQuery -Version 1.5.1 -Source $context.RepositoryPath
 
     # Act & Assert

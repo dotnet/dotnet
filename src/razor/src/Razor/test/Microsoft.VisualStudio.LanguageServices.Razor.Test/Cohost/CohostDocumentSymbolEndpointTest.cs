@@ -45,6 +45,33 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
 
     [Theory]
     [CombinatorialData]
+    public Task DocumentSymbols_CSharpClassWithMethods_MiscFile(bool hierarchical)
+        => VerifyDocumentSymbolsAsync(
+            """
+            @functions {
+                class {|ASP.File1.C:C|}
+                {
+                    private void {|HandleString(string s):HandleString|}(string s)
+                    {
+                        s += "Hello";
+                    }
+
+                    private void {|M(int i):M|}(int i)
+                    {
+                        i++;
+                    }
+            
+                    private string {|ObjToString(object o):ObjToString|}(object o)
+                    {
+                        return o.ToString();
+                    }
+                }
+            }
+            
+            """, hierarchical, miscellaneousFile: true);
+
+    [Theory]
+    [CombinatorialData]
     public Task DocumentSymbols_CSharpMethods(bool hierarchical)
         => VerifyDocumentSymbolsAsync(
             """
@@ -67,10 +94,10 @@ public class CohostDocumentSymbolEndpointTest(ITestOutputHelper testOutput) : Co
             
             """, hierarchical);
 
-    private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false)
+    private async Task VerifyDocumentSymbolsAsync(string input, bool hierarchical = false, bool miscellaneousFile = false)
     {
         TestFileMarkupParser.GetSpans(input, out input, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spansDict);
-        var document = CreateProjectAndRazorDocument(input);
+        var document = CreateProjectAndRazorDocument(input, miscellaneousFile: miscellaneousFile);
 
         var endpoint = new CohostDocumentSymbolEndpoint(IncompatibleProjectService, RemoteServiceInvoker);
 
