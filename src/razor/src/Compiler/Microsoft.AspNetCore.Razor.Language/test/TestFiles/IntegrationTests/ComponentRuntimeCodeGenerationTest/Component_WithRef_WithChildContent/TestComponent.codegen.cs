@@ -32,7 +32,7 @@ myInstance
 #line default
 #line hidden
 #nullable disable
-                 = (Test.MyComponent)__value;
+                 = (global::Test.MyComponent)__value;
             }
             );
             __builder.CloseComponent();

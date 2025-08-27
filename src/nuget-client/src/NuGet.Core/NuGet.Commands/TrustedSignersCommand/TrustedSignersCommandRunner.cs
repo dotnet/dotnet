@@ -12,11 +12,8 @@ using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.Packaging.Signing;
 using static NuGet.Commands.TrustedSignersArgs;
-
-#if IS_SIGNING_SUPPORTED
 using NuGet.Packaging;
 using NuGet.Protocol;
-#endif
 
 namespace NuGet.Commands
 {
@@ -60,7 +57,6 @@ namespace NuGet.Commands
 
                     if (isPackagePathProvided)
                     {
-#if IS_SIGNING_SUPPORTED
                         if (isServiceIndexProvided || isFingerprintProvided || isAlgorithmProvided)
                         {
                             throw new CommandLineArgumentCombinationException(string.Format(CultureInfo.CurrentCulture, Strings.Error_CouldNotAdd, Strings.Error_InvalidCombinationOfArguments));
@@ -117,10 +113,6 @@ namespace NuGet.Commands
                         }
 
                         break;
-
-#else
-                        throw new NotSupportedException();
-#endif
                     }
 
                     if (isServiceIndexProvided)
