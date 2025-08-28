@@ -39,9 +39,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <SignableSourceBuiltAsset Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
-      <SignableSourceBuiltAsset  Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <!-- Sdk tarball -->
+      <SignableSourceBuiltSdkTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSdkTarball)" />
+
+      <!-- PSB artifacts -->
+      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
+
+      <!-- Source tarball and zipball -->
+      <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" />
     </ItemGroup>
+
+    <Error Text="$(SourceBuiltSdkTarballName) artifact count is @(SignableSourceBuiltSdkTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltSdkTarball->Count()) != 1"/>
+    <Error Text="$(SourceBuiltArtifactsTarballName) artifact count is @(SignableSourceBuiltArtifactsTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltArtifactsTarball->Count()) != 1"/>
+    <!-- Enable once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
+    <!-- <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 2" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 2"/> -->
   </Target>
 
 </Project>
