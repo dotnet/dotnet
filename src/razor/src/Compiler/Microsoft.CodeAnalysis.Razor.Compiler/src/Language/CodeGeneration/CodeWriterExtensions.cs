@@ -5,9 +5,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Utilities;
 
@@ -19,6 +22,11 @@ internal static class CodeWriterExtensions
 
     private static readonly ReadOnlyMemory<char> s_true = "true".AsMemory();
     private static readonly ReadOnlyMemory<char> s_false = "false".AsMemory();
+
+    private static readonly ReadOnlyMemory<char> s_zeroes = "0000000000".AsMemory(); // 10 zeros
+
+    // This table contains string representations of numbers from 0 to 999.
+    private static readonly ImmutableArray<ReadOnlyMemory<char>> s_integerTable = InitializeIntegerTable();
 
     private static readonly char[] CStyleStringLiteralEscapeChars =
     {
@@ -32,6 +40,34 @@ internal static class CodeWriterExtensions
         '\u2028',
         '\u2029',
     };
+
+    private static ImmutableArray<ReadOnlyMemory<char>> InitializeIntegerTable()
+    {
+        var array = new ReadOnlyMemory<char>[1000];
+
+        // Fill entries 100 to 999.
+        for (var i = 100; i < 1000; i++)
+        {
+            array[i] = i.ToString(CultureInfo.InvariantCulture).AsMemory();
+        }
+
+        // Fill entries 10 to 99 with two-digit strings sliced from entries 110 to 199.
+        for (var i = 10; i < 100; i++)
+        {
+            array[i] = array[i + 100][^2..];
+        }
+
+        // Fill 1 to 9 with slices of the last character from entries 11 to 19.
+        for (var i = 1; i < 10; i++)
+        {
+            array[i] = array[i + 10][^1..];
+        }
+
+        // Finally, fill the entry for 0 with a slice from s_zeroes.
+        array[0] = s_zeroes[..1];
+
+        return ImmutableCollectionsMarshal.AsImmutableArray(array);
+    }
 
     public static bool IsAtBeginningOfLine(this CodeWriter writer)
     {
@@ -102,6 +138,108 @@ internal static class CodeWriterExtensions
         return writer.Write(value ? s_true : s_false);
     }
 
+    /// <summary>
+    ///  Writes an integer literal to the code writer using optimized precomputed lookup tables
+    ///  and efficient grouping for large numbers. This avoids string allocation and formatting overhead.
+    /// </summary>
+    /// <param name="writer">The code writer to write to.</param>
+    /// <param name="value">The integer value to write as a literal.</param>
+    /// <returns>
+    ///  The code writer for method chaining.
+    /// </returns>
+    /// <remarks>
+    ///  Performance optimizations:
+    ///  <list type="bullet">
+    ///   <item>Zero is written directly from a precomputed slice</item>
+    ///   <item>Numbers -999 to 999 use a precomputed lookup table</item>
+    ///   <item>Larger numbers are decomposed into groups of 3 digits, each using the lookup table</item>
+    ///   <item>Uses long arithmetic to handle int.MinValue correctly (avoids overflow when negating)</item>
+    ///  </list>
+    /// </remarks>
+    public static CodeWriter WriteIntegerLiteral(this CodeWriter writer, int value)
+    {
+        // Handle zero as a special case
+        if (value == 0)
+        {
+            return writer.Write(s_integerTable[0]);
+        }
+
+        var isNegative = value < 0;
+        if (isNegative)
+        {
+            // For negative numbers, write the minus sign first
+            writer.Write("-");
+        }
+
+        // Fast path: For small numbers (-999 to 999), use the precomputed lookup table directly
+        if (value is > -1000 and < 1000)
+        {
+            var index = isNegative ? -value : value;
+            return writer.Write(s_integerTable[index]);
+        }
+
+        // Slow path: For larger numbers, decompose into groups of three digits using the precomputed table.
+        // This approach avoids string formatting while maintaining readability of the output.
+
+        // Extract digits and write groups from most significant to least significant.
+        // Note: Use long to handle int.MinValue correctly. Math.Abs(int.MinValue) would throw.
+        var remaining = isNegative ? -(long)value : value;
+        long divisor = 1;
+
+        // Find the highest power of 1000 needed (1, 1000, 1000000, 1000000000)
+        // This determines how many 3-digit groups we need
+        while (remaining >= divisor * 1000)
+        {
+            divisor *= 1000;
+        }
+
+        // Process each group of 3 digits from most significant to least significant
+        var first = true;
+        while (divisor > 0)
+        {
+            var group = (int)(remaining / divisor);
+            remaining %= divisor;
+            divisor /= 1000;
+
+            Debug.Assert(group >= 0 && group < 1000, "Digit group should be in the range [0, 999]");
+
+            if (group == 0)
+            {
+                Debug.Assert(!first, "The first group should never be 0.");
+
+                // Entire group is zero: add "000" for proper place value
+                writer.Write(s_zeroes[..3]);
+                continue;
+            }
+
+            if (first)
+            {
+                // First group: no leading zeros needed (e.g., "123" not "0123")
+                writer.Write(s_integerTable[group]);
+                first = false;
+                continue;
+            }
+
+            // Groups after the first one with values 1-99 need leading zeros for proper formatting
+            // Example: 1234567 becomes "1" + "234" + "567", but 1000067 becomes "1" + "000" + "067"
+            var leadingZeros = group switch
+            {
+                < 10 => 2,  // 1-9: needs "00" prefix (e.g., "007")
+                < 100 => 1, // 10-99: needs "0" prefix (e.g., "067") 
+                _ => 0      // 100-999: no leading zeros needed
+            };
+
+            if (leadingZeros > 0)
+            {
+                writer.Write(s_zeroes[..leadingZeros]); // Add "00" or "0"
+            }
+
+            writer.Write(s_integerTable[group]); // Add the actual digit group
+        }
+
+        return writer;
+    }
+
     public static CodeWriter WriteStartAssignment(this CodeWriter writer, string name)
     {
         return writer.Write(name).Write(" = ");
@@ -155,25 +293,20 @@ internal static class CodeWriterExtensions
     public static CodeWriter WriteEnhancedLineNumberDirective(this CodeWriter writer, SourceSpan span, int characterOffset, bool ensurePathBackslashes)
     {
         // All values here need to be offset by 1 since #line uses a 1-indexed numbering system.
-        var lineNumberAsString = (span.LineIndex + 1).ToString(CultureInfo.InvariantCulture);
-        var characterStartAsString = (span.CharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
-        var lineEndAsString = (span.LineIndex + 1 + span.LineCount).ToString(CultureInfo.InvariantCulture);
-        var characterEndAsString = (span.EndCharacterIndex + 1).ToString(CultureInfo.InvariantCulture);
         writer.Write("#line (")
-            .Write(lineNumberAsString)
+            .WriteIntegerLiteral(span.LineIndex + 1)
             .Write(",")
-            .Write(characterStartAsString)
+            .WriteIntegerLiteral(span.CharacterIndex + 1)
             .Write(")-(")
-            .Write(lineEndAsString)
+            .WriteIntegerLiteral(span.LineIndex + 1 + span.LineCount)
             .Write(",")
-            .Write(characterEndAsString)
+            .WriteIntegerLiteral(span.EndCharacterIndex + 1)
             .Write(") ");
 
         // an offset of zero is indicated by its absence.
         if (characterOffset != 0)
         {
-            var characterOffsetAsString = characterOffset.ToString(CultureInfo.InvariantCulture);
-            writer.Write(characterOffsetAsString).Write(" ");
+            writer.WriteIntegerLiteral(characterOffset).Write(" ");
         }
 
         return writer.Write("\"").WriteFilePath(span.FilePath, ensurePathBackslashes).WriteLine("\"");
@@ -186,8 +319,12 @@ internal static class CodeWriterExtensions
             writer.WriteLine();
         }
 
-        var lineNumberAsString = (span.LineIndex + 1).ToString(CultureInfo.InvariantCulture);
-        return writer.Write("#line ").Write(lineNumberAsString).Write(" \"").WriteFilePath(span.FilePath, ensurePathBackslashes).WriteLine("\"");
+        return writer
+            .Write("#line ")
+            .WriteIntegerLiteral(span.LineIndex + 1)
+            .Write(" \"")
+            .WriteFilePath(span.FilePath, ensurePathBackslashes)
+            .WriteLine("\"");
     }
 
     private static CodeWriter WriteFilePath(this CodeWriter writer, string filePath, bool ensurePathBackslashes)
@@ -221,6 +358,15 @@ internal static class CodeWriterExtensions
     public static CodeWriter WriteStartMethodInvocation(this CodeWriter writer, string methodName)
     {
         writer.Write(methodName);
+
+        return writer.Write("(");
+    }
+
+    public static CodeWriter WriteStartMethodInvocation(
+        this CodeWriter writer,
+        [InterpolatedStringHandlerArgument(nameof(writer))] ref CodeWriter.WriteInterpolatedStringHandler handler)
+    {
+        writer.Write(ref handler);
 
         return writer.Write("(");
     }
@@ -303,50 +449,37 @@ internal static class CodeWriterExtensions
             string.Format(CultureInfo.InvariantCulture, InstanceMethodFormat, instanceName, methodName));
     }
 
-    public static CodeWriter WriteField(this CodeWriter writer, IList<string> suppressWarnings, IList<string> modifiers, string typeName, string fieldName)
+    public static CodeWriter WriteField(
+        this CodeWriter writer,
+        ImmutableArray<string> suppressWarnings,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name)
     {
-        if (suppressWarnings == null)
+        if (!suppressWarnings.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(suppressWarnings));
+            foreach (var suppressWarning in suppressWarnings)
+            {
+                writer.WriteLine($"#pragma warning disable {suppressWarning}");
+            }
         }
 
-        if (modifiers == null)
+        if (!modifiers.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(modifiers));
+            foreach (var modifier in modifiers)
+            {
+                writer.Write($"{modifier} ");
+            }
         }
 
-        if (typeName == null)
-        {
-            throw new ArgumentNullException(nameof(typeName));
-        }
+        writer.WriteLine($"{type} {name};");
 
-        if (fieldName == null)
+        if (!suppressWarnings.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(fieldName));
-        }
-
-        for (var i = 0; i < suppressWarnings.Count; i++)
-        {
-            writer.Write("#pragma warning disable ");
-            writer.WriteLine(suppressWarnings[i]);
-        }
-
-        for (var i = 0; i < modifiers.Count; i++)
-        {
-            writer.Write(modifiers[i]);
-            writer.Write(" ");
-        }
-
-        writer.Write(typeName);
-        writer.Write(" ");
-        writer.Write(fieldName);
-        writer.Write(";");
-        writer.WriteLine();
-
-        for (var i = suppressWarnings.Count - 1; i >= 0; i--)
-        {
-            writer.Write("#pragma warning restore ");
-            writer.WriteLine(suppressWarnings[i]);
+            for (var i = suppressWarnings.Length - 1; i >= 0; i--)
+            {
+                writer.WriteLine($"#pragma warning restore {suppressWarnings[i]}");
+            }
         }
 
         return writer;
@@ -365,32 +498,44 @@ internal static class CodeWriterExtensions
             .WriteEndMethodInvocation(endLine);
     }
 
-    public static CodeWriter WritePropertyDeclaration(this CodeWriter writer, IList<string> modifiers, IntermediateToken type, string propertyName, string propertyExpression, CodeRenderingContext context)
+    public static CodeWriter WritePropertyDeclaration(
+        this CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        IntermediateToken type,
+        string name,
+        string expressionBody,
+        CodeRenderingContext context)
     {
-        WritePropertyDeclarationPreamble(writer, modifiers, type.Content, propertyName, type.Source, propertySpan: null, context);
-        writer.Write(" => ");
-        writer.Write(propertyExpression);
-        writer.WriteLine(";");
+        WritePropertyDeclarationPreamble(writer, modifiers, type.Content, name, type.Source, nameSpan: null, context);
+
+        writer.WriteLine($" => {expressionBody};");
+
         return writer;
     }
 
-    public static CodeWriter WriteAutoPropertyDeclaration(this CodeWriter writer, IList<string> modifiers, string typeName, string propertyName, SourceSpan? typeSpan = null, SourceSpan? propertySpan = null, CodeRenderingContext context = null, bool privateSetter = false, bool defaultValue = false)
+    public static CodeWriter WriteAutoPropertyDeclaration(
+        this CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name,
+        SourceSpan? typeSpan = null,
+        SourceSpan? nameSpan = null,
+        CodeRenderingContext context = null,
+        bool privateSetter = false,
+        bool defaultValue = false)
     {
-        ArgHelper.ThrowIfNull(modifiers);
-        ArgHelper.ThrowIfNull(typeName);
-        ArgHelper.ThrowIfNull(propertyName);
-
-        WritePropertyDeclarationPreamble(writer, modifiers, typeName, propertyName, typeSpan, propertySpan, context);
+        WritePropertyDeclarationPreamble(writer, modifiers, type, name, typeSpan, nameSpan, context);
 
         writer.Write(" { get;");
+
         if (privateSetter)
         {
             writer.Write(" private");
         }
-        writer.Write(" set; }");
-        writer.WriteLine();
 
-        if (defaultValue && context?.Options.SuppressNullabilityEnforcement == false && context?.Options.DesignTime == false)
+        writer.WriteLine(" set; }");
+
+        if (defaultValue && context?.Options is { SuppressNullabilityEnforcement: false, DesignTime: false })
         {
             writer.WriteLine(" = default!;");
         }
@@ -398,17 +543,26 @@ internal static class CodeWriterExtensions
         return writer;
     }
 
-    private static void WritePropertyDeclarationPreamble(CodeWriter writer, IList<string> modifiers, string typeName, string propertyName, SourceSpan? typeSpan, SourceSpan? propertySpan, CodeRenderingContext context)
+    private static void WritePropertyDeclarationPreamble(
+        CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name,
+        SourceSpan? typeSpan,
+        SourceSpan? nameSpan,
+        CodeRenderingContext context)
     {
-        for (var i = 0; i < modifiers.Count; i++)
+        if (!modifiers.IsDefaultOrEmpty)
         {
-            writer.Write(modifiers[i]);
-            writer.Write(" ");
+            foreach (var modifier in modifiers)
+            {
+                writer.Write($"{modifier} ");
+            }
         }
 
-        WriteToken(writer, typeName, typeSpan, context);
+        WriteToken(writer, type, typeSpan, context);
         writer.Write(" ");
-        WriteToken(writer, propertyName, propertySpan, context);
+        WriteToken(writer, name, nameSpan, context);
 
         static void WriteToken(CodeWriter writer, string content, SourceSpan? span, CodeRenderingContext context)
         {
@@ -449,28 +603,56 @@ internal static class CodeWriterExtensions
         return new CSharpCodeWritingScope(writer);
     }
 
-    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer, params string[] parameterNames)
+    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer)
+        => writer.WriteLambdaHeader().BuildScope();
+
+    public static CSharpCodeWritingScope BuildLambda(this CodeWriter writer, string parameterName)
+        => writer.WriteLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildLambda<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
+        => writer.WriteLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer)
+        => writer.WriteAsyncLambdaHeader().BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer, string parameterName)
+        => writer.WriteAsyncLambdaHeader(parameterName).BuildScope();
+
+    public static CSharpCodeWritingScope BuildAsyncLambda<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
+        => writer.WriteAsyncLambdaHeader(parameterName).BuildScope();
+
+    public static CodeWriter WriteLambdaHeader(this CodeWriter writer)
+        => writer.Write("() => ");
+
+    public static CodeWriter WriteLambdaHeader(this CodeWriter writer, string parameterName)
+        => writer.Write($"({parameterName}) => ");
+
+    public static CodeWriter WriteLambdaHeader<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
     {
-        return BuildLambda(writer, async: false, parameterNames: parameterNames);
+        writer.Write("(");
+        parameterName.WriteTo(writer);
+        writer.Write(") => ");
+
+        return writer;
     }
 
-    public static CSharpCodeWritingScope BuildAsyncLambda(this CodeWriter writer, params string[] parameterNames)
+    public static CodeWriter WriteAsyncLambdaHeader(this CodeWriter writer)
+        => writer.Write($"async() => ");
+
+    public static CodeWriter WriteAsyncLambdaHeader(this CodeWriter writer, string parameterName)
+        => writer.Write($"async({parameterName}) => ");
+
+    public static CodeWriter WriteAsyncLambdaHeader<T>(this CodeWriter writer, T parameterName)
+        where T : IWriteableValue
     {
-        return BuildLambda(writer, async: true, parameterNames: parameterNames);
-    }
+        writer.Write("async(");
+        parameterName.WriteTo(writer);
+        writer.Write(") => ");
 
-    private static CSharpCodeWritingScope BuildLambda(CodeWriter writer, bool async, string[] parameterNames)
-    {
-        if (async)
-        {
-            writer.Write("async");
-        }
-
-        writer.Write("(").Write(string.Join(", ", parameterNames)).Write(") => ");
-
-        var scope = new CSharpCodeWritingScope(writer);
-
-        return scope;
+        return writer;
     }
 
 #nullable enable
@@ -500,11 +682,11 @@ internal static class CodeWriterExtensions
 
     public static CSharpCodeWritingScope BuildClassDeclaration(
         this CodeWriter writer,
-        IList<string> modifiers,
+        ImmutableArray<string> modifiers,
         string name,
         BaseTypeWithModel baseType,
-        IList<IntermediateToken> interfaces,
-        IList<TypeParameter> typeParameters,
+        ImmutableArray<IntermediateToken> interfaces,
+        ImmutableArray<TypeParameter> typeParameters,
         CodeRenderingContext context,
         bool useNullableContext = false)
     {
@@ -515,33 +697,26 @@ internal static class CodeWriterExtensions
             writer.WriteLine("#nullable restore");
         }
 
-        for (var i = 0; i < modifiers.Count; i++)
+        foreach (var modifier in modifiers)
         {
-            writer.Write(modifiers[i]);
+            writer.Write(modifier);
             writer.Write(" ");
         }
 
         writer.Write("class ");
         writer.Write(name);
 
-        if (typeParameters != null && typeParameters.Count > 0)
+        if (!typeParameters.IsDefaultOrEmpty)
         {
             writer.Write("<");
 
-            for (var i = 0; i < typeParameters.Count; i++)
+            for (var i = 0; i < typeParameters.Length; i++)
             {
                 var typeParameter = typeParameters[i];
-                if (typeParameter.ParameterNameSource is { } source)
-                {
-                    WriteWithPragma(writer, typeParameter.ParameterName, context, source);
-                }
-                else
-                {
-                    writer.Write(typeParameter.ParameterName);
-                }
+                WriteToken(typeParameter.Name);
 
                 // Write ',' between parameters, but not after them
-                if (i < typeParameters.Count - 1)
+                if (i < typeParameters.Length - 1)
                 {
                     writer.Write(",");
                 }
@@ -551,7 +726,7 @@ internal static class CodeWriterExtensions
         }
 
         var hasBaseType = !string.IsNullOrWhiteSpace(baseType?.BaseType.Content);
-        var hasInterfaces = interfaces != null && interfaces.Count > 0;
+        var hasInterfaces = !interfaces.IsDefaultOrEmpty;
 
         if (hasBaseType || hasInterfaces)
         {
@@ -573,7 +748,7 @@ internal static class CodeWriterExtensions
             if (hasInterfaces)
             {
                 WriteToken(interfaces[0]);
-                for (var i = 1; i < interfaces.Count; i++)
+                for (var i = 1; i < interfaces.Length; i++)
                 {
                     writer.Write(", ");
                     WriteToken(interfaces[i]);
@@ -582,24 +757,12 @@ internal static class CodeWriterExtensions
         }
 
         writer.WriteLine();
-        if (typeParameters != null)
+
+        if (!typeParameters.IsDefaultOrEmpty)
         {
             foreach (var typeParameter in typeParameters)
             {
-                var constraint = typeParameter.Constraints;
-                if (constraint != null)
-                {
-                    if (typeParameter.ConstraintsSource is { } source)
-                    {
-                        Debug.Assert(context != null);
-                        WriteWithPragma(writer, constraint, context, source);
-                    }
-                    else
-                    {
-                        writer.Write(constraint);
-                        writer.WriteLine();
-                    }
-                }
+                WriteOptionalToken(typeParameter.Constraints, addLineBreak: true);
             }
         }
 
@@ -610,15 +773,15 @@ internal static class CodeWriterExtensions
 
         return new CSharpCodeWritingScope(writer);
 
-        void WriteOptionalToken(IntermediateToken token)
+        void WriteOptionalToken(IntermediateToken token, bool addLineBreak = false)
         {
             if (token is not null)
             {
-                WriteToken(token);
+                WriteToken(token, addLineBreak);
             }
         }
 
-        void WriteToken(IntermediateToken token)
+        void WriteToken(IntermediateToken token, bool addLineBreak = false)
         {
             if (token.Source is { } source)
             {
@@ -627,6 +790,11 @@ internal static class CodeWriterExtensions
             else
             {
                 writer.Write(token.Content);
+
+                if (addLineBreak)
+                {
+                    writer.WriteLine();
+                }
             }
         }
 
@@ -797,6 +965,11 @@ internal static class CodeWriterExtensions
 
         public void Dispose()
         {
+            if (_writer is null)
+            {
+                return;
+            }
+
             WriteEndScope();
         }
 

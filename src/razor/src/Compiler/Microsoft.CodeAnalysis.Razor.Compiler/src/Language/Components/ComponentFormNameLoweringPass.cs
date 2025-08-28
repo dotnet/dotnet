@@ -22,7 +22,7 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
         foreach (var reference in references)
         {
             var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
-            if (node.TagHelper.IsFormNameTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.FormName)
             {
                 var parent = reference.Parent;
 
