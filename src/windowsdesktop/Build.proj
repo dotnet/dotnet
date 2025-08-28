@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Microsoft.WindowsDesktop.App shared framework -->
     <ProjectReference Include="src\windowsdesktop\src\sfx\**\*.sfxproj" />
