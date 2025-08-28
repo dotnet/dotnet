@@ -141,7 +141,7 @@ public partial class LinuxInstallerTests : IDisposable
         DistroTest($"{repo}:{tag}", PackageType.Deb);
     }
 
-    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeRpmTests), Skip = "RPM package metadata test requires https://github.com/dotnet/arcade/pull/16079")]
     [InlineData(RuntimeDepsRepo, $"{RuntimeDepsVersion}-azurelinux3.0")]
     public async Task RpmPackageMetadataTest(string repo, string tag)
     {
@@ -576,7 +576,7 @@ public partial class LinuxInstallerTests : IDisposable
         string packagePrefix = GetPackagePrefixFromPackageName(package);
         List<string> expectedDependencies = _expectedPackageDependencies.ContainsKey(packagePrefix)
             ? _expectedPackageDependencies[packagePrefix]
-            : new List<string>();
+            : [];
 
         foreach (string dependency in expectedDependencies)
         {
@@ -644,8 +644,9 @@ public partial class LinuxInstallerTests : IDisposable
                         TarEntry? entry;
                         while ((entry = tarReader.GetNextEntry()) is not null)
                         {
-                            string name = entry.Name.TrimStart('.', '/');
-                            if (name.Equals("control", StringComparison.Ordinal))
+                            if (entry.Name
+                                .TrimStart('.', '/')
+                                .Equals("control", StringComparison.Ordinal))
                             {
                                 using MemoryStream controlFileData = new MemoryStream();
                                 entry.DataStream?.CopyTo(controlFileData);
@@ -678,9 +679,8 @@ public partial class LinuxInstallerTests : IDisposable
 
                 using FileStream rpmStream = File.OpenRead(packagePath);
                 using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
-                var headerEntries = rpmPackage.Header.Entries;
 
-                string[] requireNames = (string[])headerEntries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
+                string[] requireNames = (string[])rpmPackage.Header.Entries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
                 if (requireNames == null || requireNames.Length == 0)
                 {
                     return [];
@@ -708,7 +708,6 @@ public partial class LinuxInstallerTests : IDisposable
             }
         }
 
-        // RPM dependency extraction not yet implemented. Return empty so validation will fail if expectations exist.
         return [];
     }
 
