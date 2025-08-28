@@ -13,14 +13,18 @@
     <PackageReference Include="Microsoft.DotNet.Build.Tasks.Feed" />
   </ItemGroup>
 
-  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToAzureDevOpsArtifacts" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
-  <UsingTask TaskName="Microsoft.DotNet.Maestro.Tasks.PushMetadataToBuildAssetRegistry" AssemblyFile="$(PkgMicrosoft_DotNet_Maestro_Tasks)\tools\net6.0\Microsoft.DotNet.Maestro.Tasks.dll" />
-
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PushToBuildStorage" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
+  <UsingTask TaskName="Microsoft.DotNet.Build.Tasks.Feed.PublishBuildToMaestro" AssemblyFile="$(PkgMicrosoft_DotNet_Build_Tasks_Feed)\tools\netcoreapp2.1\Microsoft.DotNet.Build.Tasks.Feed.dll" />
 
   <Target Name="PublishToBuildAssetRegistry">
     <PropertyGroup>
       <AssetManifestFileName>nuget.client.xml</AssetManifestFileName>
       <AssetManifestPath>$(ArtifactsLogDir)AssetManifest\$(AssetManifestFileName)</AssetManifestPath>
+
+      <SymbolPackageBaseRelativeBlobPath>assets/symbols/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_REPOSITORY_NAME)/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_REPOSITORY_NAME)' == '' and '$(RepositoryName)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(RepositoryName)/</SymbolPackageBaseRelativeBlobPath>
+      <SymbolPackageBaseRelativeBlobPath Condition="'$(BUILD_BUILDNUMBER)' != ''">$(SymbolPackageBaseRelativeBlobPath)$(BUILD_BUILDNUMBER)/</SymbolPackageBaseRelativeBlobPath>
     </PropertyGroup>
 
     <Error Condition="'$(NuGetClientNupkgsDirectoryPath)' == ''" Text="The property '$(NuGetClientNupkgsDirectoryPath)' is required.  Set it at the command-line with /property:&lt;NuGetClientNupkgsDirectoryPath&gt;" />
@@ -28,8 +32,16 @@
     <Error Condition="Exists($(AssetManifestPath))" Text="The manifest file '$(AssetManifestPath)' already exists." />
 
     <ItemGroup>
-      <ItemsToPush Include="$(NuGetClientNupkgsDirectoryPath)/*.nupkg" />
-      <ItemsToPush Remove="$(NuGetClientNupkgsDirectoryPath)/NuGet.Packaging.Core.*" />
+      <_NonSymbolPackages Include="$(NuGetClientNupkgsDirectoryPath)/*.nupkg" Exclude="$(NuGetClientNupkgsDirectoryPath)/*.symbols.nupkg;$(NuGetClientNupkgsDirectoryPath)/NuGet.Packaging.Core.*" Kind="Package" />
+      <_SymbolPackages Include="$(NuGetClientNupkgsDirectoryPath)/*.symbols.nupkg" />
+      <_SymbolPackagesWithMetadata Include="@(_SymbolPackages)">
+      <!-- Update the kind of the symbol packages to blob -->
+        <Kind>Blob</Kind>
+        <!-- Set the category to Symbols (otherwise it will inherit the original package category -->
+        <Category>Symbols</Category>
+        <RelativeBlobPath>$(SymbolPackageBaseRelativeBlobPath)%(Filename)%(Extension)</RelativeBlobPath>
+      </_SymbolPackagesWithMetadata>
+      <ItemsToPush Include="@(_NonSymbolPackages);@(_SymbolPackagesWithMetadata)" />
     </ItemGroup>
 
     <Error Condition="@(ItemsToPush->Count()) == 0" Text="There were no packages found at '$(NuGetClientNupkgsDirectoryPath)'." />
@@ -55,7 +67,7 @@
       <ManifestBuildData Include="AzureDevOpsBranch=$(BUILD_SOURCEBRANCH)" />
     </ItemGroup>
 
-    <PushToAzureDevOpsArtifacts
+    <PushToBuildStorage
       ItemsToPush="@(ItemsToPush)"
       ManifestBuildData="@(ManifestBuildData)"
       ManifestRepoUri="$(BUILD_REPOSITORY_NAME)"
@@ -65,7 +77,7 @@
       AssetManifestPath="$(AssetManifestPath)"
       PublishingVersion="3" />
 
-    <PushMetadataToBuildAssetRegistry
+    <PublishBuildToMaestro
       MaestroApiEndpoint="$(MaestroApiEndpoint)"
       ManifestsPath="$(ArtifactsLogDir)AssetManifest\"
       AssetVersion="$(Version)" />

@@ -145,8 +145,14 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="CopyNuGetConfig"
-          Condition="'$(NuGetConfigFile)' != ''">
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.AddSourceToNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.RemoveInternetSourcesFromNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateNuGetConfigPackageSourcesMappings" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+  <Target Name="UpdateNuGetConfig"
+          DependsOnTargets="ResolveProjectReferences;GetRepositoryReferenceInfo"
+          Condition="'$(NuGetConfigFile)' != ''"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(NuGetConfigFile)'))" />
 
     <Copy SourceFiles="$(OriginalNuGetConfigFile)"
@@ -154,16 +160,7 @@
           SkipUnchangedFiles="true">
       <Output TaskParameter="CopiedFiles" ItemName="FileWrites" />
     </Copy>
-  </Target>
 
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.AddSourceToNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.RemoveInternetSourcesFromNuGetConfig" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.UpdateNuGetConfigPackageSourcesMappings" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
-  <Target Name="UpdateNuGetConfig"
-          DependsOnTargets="ResolveProjectReferences;CopyNuGetConfig;GetRepositoryReferenceInfo"
-          Condition="'$(NuGetConfigFile)' != ''"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BaseIntermediateOutputPath)UpdateNuGetConfig.complete">
     <PropertyGroup>
       <!-- Dev innerloop opt-in feed: /p:ExtraRestoreSourcePath=... -->
       <ExtraSourcesNuGetSourceName>ExtraSources</ExtraSourcesNuGetSourceName>
@@ -345,6 +342,7 @@
 
     <MSBuild Projects="$(MSBuildProjectFullPath)"
              Targets="GetFilteredSharedComponentPackages"
+             Properties="SharedComponentFilterMode=NonToolingOnly"
              Condition="!$([System.String]::new(';$(BootstrapArcadeRepos);').Contains(';$(RepositoryName);'))">
       <Output TaskParameter="TargetOutputs" ItemName="_PreviouslyBuiltSourceBuiltSharedComponentPackages" />
     </MSBuild>

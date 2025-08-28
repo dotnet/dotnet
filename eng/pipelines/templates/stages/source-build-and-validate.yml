@@ -20,6 +20,11 @@ parameters:
   type: string
   default: ''
 
+# Indicates whether runtime dependent jobs are excluded.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -39,21 +44,20 @@ stages:
           container:
             name: ${{ variables.centOSStreamContainerName }}
             image: ${{ variables.centOSStreamContainerImage }}
+          artifactsRid: ${{ variables.centOSStreamX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          ${{ if and(contains(leg.buildNameFormat, 'Previous'), eq(leg.targetArchitecture, 'x64')) }}:
-            artifactsRid: ${{ variables.centOSStreamX64Rid }}
         # Fedora
         ${{ elseif eq(leg.distro, 'fedora') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}
           container:
             name: ${{ variables.fedoraContainerName }}
             image: ${{ variables.fedoraContainerImage }}
+          artifactsRid: ${{ variables.fedoraX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.fedoraName) }}
-          enableCoreDumpGeneration: ${{ leg.enableCoreDumpGeneration }}
         # Ubuntu
         ${{ elseif eq(leg.distro, 'ubuntu') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}
@@ -65,6 +69,10 @@ stages:
             container:
               name: ${{ variables.ubuntuContainerName }}
               image: ${{ variables.ubuntuContainerImage }}
+          ${{ if eq(leg.targetArchitecture, 'arm64') }}:
+            artifactsRid: ${{ variables.ubuntuArm64Rid }}
+          ${{ else }}:
+            artifactsRid: ${{ variables.ubuntuX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
@@ -74,20 +82,22 @@ stages:
           container:
             name: ${{ variables.almaLinuxContainerName }}
             image: ${{ variables.almaLinuxContainerImage }}
+          artifactsRid: ${{ variables.almaLinuxX64Rid }}
+          targetRid: ${{ variables.almaLinuxX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          targetRid: ${{ variables.almaLinuxX64Rid }}
         # Alpine
         ${{ elseif eq(leg.distro, 'alpine') }}:
           buildName: ${{ format(leg.buildNameFormat, variables.alpineName) }}
           container:
             name: ${{ variables.alpineContainerName }}
             image: ${{ variables.alpineContainerImage }}
+          artifactsRid: ${{ variables.alpineX64Rid }}
+          targetRid: ${{ variables.alpineX64Rid }}
           ${{ if ne(leg.reuseBuildArtifactsFrom, '') }}:
             reuseBuildArtifactsFrom:
             - ${{ format(leg.reuseBuildArtifactsFrom, variables.centOSStreamName) }}
-          targetRid: ${{ variables.alpineX64Rid }}
         
         targetArchitecture: ${{ leg.targetArchitecture }}
         isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
@@ -199,13 +209,14 @@ stages:
                 downloadFilePatterns: packages/Release/Shipping/**
                 copyDestination: $(Pipeline.Workspace)/msft-pkgs
                 flattenDirs: true
-          - template: ../steps/download-artifacts.yml
-            parameters:
-              artifactDescription: Microsoft WASM Packages
-              artifactName: Browser_Shortstack_wasm_Artifacts
-              downloadFilePatterns: packages/Release/Shipping/**
-              copyDestination: $(Pipeline.Workspace)/msft-pkgs
-              flattenDirs: true
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - template: ../steps/download-artifacts.yml
+              parameters:
+                artifactDescription: Microsoft WASM Packages
+                artifactName: Browser_Shortstack_wasm_Artifacts
+                downloadFilePatterns: packages/Release/Shipping/**
+                copyDestination: $(Pipeline.Workspace)/msft-pkgs
+                flattenDirs: true
           - template: ../steps/download-artifacts.yml
             parameters:
               artifactDescription: Microsoft Windows Packages
