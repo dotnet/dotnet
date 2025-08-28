@@ -408,7 +408,7 @@ MSTest 2.2.4 이전의 경우 시간 제한은 모든 테스트케이스에 사�
       </trans-unit>
       <trans-unit id="CmdConfigFileDescription">
         <source>Specifies a testconfig.json file.</source>
-        <target state="new">Specifies a testconfig.json file.</target>
+        <target state="translated">testconfig.json 파일을 지정합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdConfigFileOption">
@@ -423,7 +423,7 @@ MSTest 2.2.4 이전의 경우 시간 제한은 모든 테스트케이스에 사�
       </trans-unit>
       <trans-unit id="CmdConfigFilePath">
         <source>CONFIG_FILE</source>
-        <target state="new">CONFIG_FILE</target>
+        <target state="translated">CONFIG_FILE</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdCurrentRuntimeOptionDescription">
@@ -449,13 +449,13 @@ MSTest 2.2.4 이전의 경우 시간 제한은 모든 테스트케이스에 사�
       <trans-unit id="CmdDiagnosticOutputDirectoryDescription">
         <source>Output directory of the diagnostic logging.
 If not specified the file will be generated inside the default 'TestResults' directory.</source>
-        <target state="new">Output directory of the diagnostic logging.
-If not specified the file will be generated inside the default 'TestResults' directory.</target>
+        <target state="translated">진단 로깅의 출력 디렉터리입니다.
+지정하지 않으면 파일이 기본 'TestResults' 디렉터리 내에 생성됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdDiagnosticOutputDirectoryPath">
         <source>DIAGNOSTIC_DIR</source>
-        <target state="new">DIAGNOSTIC_DIR</target>
+        <target state="translated">DIAGNOSTIC_DIR</target>
         <note />
       </trans-unit>
       <trans-unit id="CmdDirectoryDescription">
@@ -1908,6 +1908,16 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
         <target state="translated">빌드된 패키지를 배치할 출력 디렉터리입니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackCmdVersion">
+        <source>VERSION</source>
+        <target state="translated">VERSION</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackCmdVersionDescription">
+        <source>The version of the package to create</source>
+        <target state="translated">생성할 패키지의 버전</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackConfigurationOptionDescription">
         <source>The configuration to use for building the package. The default is 'Release'.</source>
         <target state="translated">패키지를 빌드하는 데 사용할 구성입니다. 기본값은 'Release'입니다.</target>
@@ -2668,15 +2678,15 @@ The default is to publish a framework-dependent application.</source>
         <note />
       </trans-unit>
       <trans-unit id="RunCommandExceptionUnableToRun">
-        <source>Unable to run your project.
-Ensure you have a runnable project type and ensure '{0}' supports this project.
-A runnable project should target a runnable TFM (for instance, net5.0) and have OutputType 'Exe'.
-The current {1} is '{2}'.</source>
-        <target state="translated">프로젝트를 실행할 수 없습니다.
-실행 가능한 프로젝트 형식이 있고 '{0}'에서 이 프로젝트를 지원하는지 확인하세요.
-실행 가능한 프로젝트는 실행 가능한 TFM(예: net5.0)을 대상으로 하고 OutputType 'Exe'가 있어야 합니다.
-현재 {1}은(는) '{2}'입니다.</target>
-        <note />
+        <source>Unable to proceed with project '{0}'.
+Ensure you have a runnable project type.
+A runnable project should target a runnable TFM (for instance, net{1}) and have OutputType 'Exe'.
+The current OutputType is '{2}'.</source>
+        <target state="new">Unable to proceed with project '{0}'.
+Ensure you have a runnable project type.
+A runnable project should target a runnable TFM (for instance, net{1}) and have OutputType 'Exe'.
+The current OutputType is '{2}'.</target>
+        <note>{0} is project file path. {1} is dotnet framework version. {2} is the project output type.{Locked="OutputType"}{Locked="Exe"}</note>
       </trans-unit>
       <trans-unit id="RunCommandExceptionUnableToRunSpecifyFramework">
         <source>Unable to run your project
@@ -2818,8 +2828,8 @@ Your project targets multiple frameworks. Specify which framework to run using '
         <note>{Locked="--sdk-version"}</note>
       </trans-unit>
       <trans-unit id="ShouldInstallAWorkloadSet">
-        <source>Workloads are configured to install and update using workload versions, but none were found. Run "dotnet workload restore" to install a workload version.</source>
-        <target state="translated">워크로드 버전을 사용하여 설치하고 업데이트하도록 워크로드를 구성했지만, 워크로드 버전을 찾을 수 없습니다. "dotnet workload restore"를 실행하여 워크로드 버전을 설치하세요.</target>
+        <source>No workload sets are installed. Run "dotnet workload restore" to install a workload set.</source>
+        <target state="translated">워크로드 집합이 설치되어 있지 않습니다. "dotnet workload restore"를 실행하여 워크로드 집합을 설치하세요.</target>
         <note>{Locked="dotnet workload restore"}</note>
       </trans-unit>
       <trans-unit id="ShutDownFailed">
@@ -3037,24 +3047,24 @@ Your project targets multiple frameworks. Specify which framework to run using '
         <target state="translated">OUTPUT_DIR</target>
         <note />
       </trans-unit>
-      <trans-unit id="TestCommandUseDirectory">
-        <source>Specifying a directory for 'dotnet test' should be via '--directory'.</source>
-        <target state="new">Specifying a directory for 'dotnet test' should be via '--directory'.</target>
+      <trans-unit id="TestCommandUseDirectoryWithSwitch">
+        <source>Specifying a directory for 'dotnet test' should be via '--project' or '--solution'.</source>
+        <target state="new">Specifying a directory for 'dotnet test' should be via '--project' or '--solution'.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCommandUseProject">
         <source>Specifying a project for 'dotnet test' should be via '--project'.</source>
-        <target state="new">Specifying a project for 'dotnet test' should be via '--project'.</target>
+        <target state="translated">'dotnet test'에 대한 프로젝트를 지정하려면 '--project'를 통해 지정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCommandUseSolution">
         <source>Specifying a solution for 'dotnet test' should be via '--solution'.</source>
-        <target state="new">Specifying a solution for 'dotnet test' should be via '--solution'.</target>
+        <target state="translated">'dotnet test'에 대한 솔루션을 지정하려면 '--solution'을 통해 지정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestCommandUseTestModules">
         <source>Specifying dlls or executables for 'dotnet test' should be via '--test-modules'.</source>
-        <target state="new">Specifying dlls or executables for 'dotnet test' should be via '--test-modules'.</target>
+        <target state="translated">'dotnet test'에 대한 dll 또는 실행 파일을 지정하는 것은 '--test-modules'를 통해 지정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="TestConfigurationOptionDescription">
@@ -3865,10 +3875,15 @@ To display a value, specify the corresponding command-line option without provid
         <target state="translated">워크로드 매니페스트 ID</target>
         <note />
       </trans-unit>
-      <trans-unit id="WorkloadManifestInstallationConfiguration">
-        <source>Configured to use {0} when installing new manifests.</source>
-        <target state="translated">새 매니페스트를 설치할 때 {0}을(를) 사용하도록 구성됩니다.</target>
+      <trans-unit id="WorkloadManifestInstallationConfigurationLooseManifests">
+        <source>Configured to use loose manifests when installing new manifests.</source>
+        <target state="translated">새 매니페스트를 설치할 때 느슨한 매니페스트를 사용하도록 구성됩니다.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="WorkloadManifestInstallationConfigurationWorkloadSets">
+        <source>Configured to use workload sets when installing new manifests.</source>
+        <target state="translated">새 매니페스트를 설치할 때 use workload sets 사용하도록 구성됩니다.</target>
+        <note>{Locked="workload sets"}</note>
       </trans-unit>
       <trans-unit id="WorkloadManifestPathColumn">
         <source>Manifest Path</source>

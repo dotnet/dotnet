@@ -2,7 +2,7 @@
      # Arrange
      New-SolutionFolder 'Folder1'
      $p1 = New-ClassLibrary 'ProjectA' 'Folder1'
-     $p3 = New-WebApplication 'ProjectB' 'Folder1'
+     $p3 = New-ConsoleApplication 'ProjectB' 'Folder1'
 
      $p2 = New-ConsoleApplication 'ProjectA'
 

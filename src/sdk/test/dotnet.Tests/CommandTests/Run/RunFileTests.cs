@@ -15,7 +15,7 @@ namespace Microsoft.DotNet.Cli.Run.Tests;
 
 public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
 {
-    private static readonly string s_program = """
+    private static readonly string s_program = /* lang=C#-Test */ """
         if (args.Length > 0)
         {
             Console.WriteLine("echo args:" + string.Join(";", args));
@@ -29,7 +29,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         #endif
         """;
 
-    private static readonly string s_programDependingOnUtil = """
+    private static readonly string s_programDependingOnUtil = /* lang=C#-Test */ """
         if (args.Length > 0)
         {
             Console.WriteLine("echo args:" + string.Join(";", args));
@@ -37,7 +37,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         Console.WriteLine("Hello, " + Util.GetMessage());
         """;
 
-    private static readonly string s_util = """
+    private static readonly string s_util = /* lang=C#-Test */ """
         static class Util
         {
             public static string GetMessage()
@@ -45,6 +45,29 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                 return "String from Util";
             }
         }
+        """;
+
+    private static readonly string s_programReadingEmbeddedResource = /* lang=C#-Test */ """
+        var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        var resourceName = assembly.GetManifestResourceNames().SingleOrDefault();
+
+        if (resourceName is null)
+        {
+            Console.WriteLine("Resource not found");
+            return;
+        }
+
+        using var stream = assembly.GetManifestResourceStream(resourceName)!;
+        using var reader = new System.Resources.ResourceReader(stream);
+        Console.WriteLine(reader.Cast<System.Collections.DictionaryEntry>().Single());
+        """;
+
+    private static readonly string s_resx = """
+        <root>
+          <data name="MyString">
+            <value>TestValue</value>
+          </data>
+        </root>
         """;
 
     private static readonly string s_consoleProject = $"""
@@ -222,6 +245,16 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .Should().Pass()
             .And.HaveStdOut("""
                 echo args:build
+                Hello from Program
+                Release config
+                """);
+
+        new DotnetCommand(Log, "Program.cs", "arg1", "arg2")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:arg1;arg2
                 Hello from Program
                 Release config
                 """);
@@ -832,6 +865,54 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .And.HaveStdOut("Hello from TestName");
     }
 
+    [Fact]
+    public void ComputeRunArguments_Success()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.targets"), """
+            <Project>
+              <Target Name="_SetCustomRunArgs" BeforeTargets="ComputeRunArguments">
+                <PropertyGroup>
+                  <RunArguments>$(RunArguments) extended</RunArguments>
+                </PropertyGroup>
+              </Target>
+            </Project>
+            """);
+
+        new DotnetCommand(Log, "run", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("""
+                echo args:extended
+                Hello from Program
+                """);
+    }
+
+    [Fact]
+    public void ComputeRunArguments_Failure()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_program);
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.targets"), """
+            <Project>
+              <Target Name="_SetCustomRunArgs" BeforeTargets="ComputeRunArguments">
+                <Error Code="MYAPP001" Text="Custom error" />
+              </Target>
+            </Project>
+            """);
+
+        new DotnetCommand(Log, "run", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Fail()
+            .And.HaveStdOutContaining("""
+                MYAPP001: Custom error
+                """)
+            .And.HaveStdErrContaining(CliCommandStrings.RunCommandException);
+    }
+
     /// <summary>
     /// Command-line arguments should be passed through.
     /// </summary>
@@ -920,7 +1001,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         new DirectoryInfo(testInstance.Path)
             .EnumerateFiles("*.binlog", SearchOption.TopDirectoryOnly)
             .Select(f => f.Name)
-            .Should().BeEquivalentTo(["msbuild.binlog", "msbuild-dotnet-run.binlog"]);
+            .Should().BeEquivalentTo(["msbuild.binlog"]);
     }
 
     [Theory, CombinatorialData]
@@ -969,7 +1050,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         new DirectoryInfo(testInstance.Path)
             .EnumerateFiles("*.binlog", SearchOption.TopDirectoryOnly)
             .Select(f => f.Name)
-            .Should().BeEquivalentTo([$"{fileName}.binlog", $"{fileName}-dotnet-run.binlog"]);
+            .Should().BeEquivalentTo([$"{fileName}.binlog"]);
     }
 
     [Fact]
@@ -990,7 +1071,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         new DirectoryInfo(testInstance.Path)
             .EnumerateFiles("*.binlog", SearchOption.TopDirectoryOnly)
             .Select(f => f.Name)
-            .Should().BeEquivalentTo(["three.binlog", "three-dotnet-run.binlog"]);
+            .Should().BeEquivalentTo(["three.binlog"]);
     }
 
     [Fact]
@@ -1058,6 +1139,31 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         records.Count(static r => r.Args is ProjectEvaluationFinishedEventArgs).Should().BeGreaterThanOrEqualTo(2);
     }
 
+    [Theory, CombinatorialData]
+    public void TerminalLogger(bool on)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        var programFile = Path.Join(testInstance.Path, "Program.cs");
+        File.WriteAllText(programFile, s_program);
+
+        var result = new DotnetCommand(Log, "run", "Program.cs", "--no-cache")
+            .WithWorkingDirectory(testInstance.Path)
+            .WithEnvironmentVariable("MSBUILDTERMINALLOGGER", on ? "on" : "off")
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOutContaining("Hello from Program");
+
+        const string terminalLoggerSubstring = "\x1b";
+        if (on)
+        {
+            result.And.HaveStdOutContaining(terminalLoggerSubstring);
+        }
+        else
+        {
+            result.And.NotHaveStdOutContaining(terminalLoggerSubstring);
+        }
+    }
+
     /// <summary>
     /// Default projects include embedded resources by default.
     /// </summary>
@@ -1065,26 +1171,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
     public void EmbeddedResource()
     {
         var testInstance = _testAssetsManager.CreateTestDirectory();
-        string code = """
-            using var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("Program.Resources.resources");
-
-            if (stream is null)
-            {
-                Console.WriteLine("Resource not found");
-                return;
-            }
-
-            using var reader = new System.Resources.ResourceReader(stream);
-            Console.WriteLine(reader.Cast<System.Collections.DictionaryEntry>().Single());
-            """;
-        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), code);
-        File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), """
-            <root>
-              <data name="MyString">
-                <value>TestValue</value>
-              </data>
-            </root>
-            """);
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_programReadingEmbeddedResource);
+        File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx);
 
         new DotnetCommand(Log, "run", "Program.cs")
             .WithWorkingDirectory(testInstance.Path)
@@ -1097,7 +1185,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         // This behavior can be overridden.
         File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
             #:property EnableDefaultEmbeddedResourceItems=false
-            {code}
+            {s_programReadingEmbeddedResource}
             """);
 
         new DotnetCommand(Log, "run", "Program.cs")
@@ -1107,6 +1195,27 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .And.HaveStdOut("""
                 Resource not found
                 """);
+    }
+
+    /// <summary>
+    /// Scripts in repo root should not include <c>.resx</c> files.
+    /// Part of <see href="https://github.com/dotnet/sdk/issues/49826"/>.
+    /// </summary>
+    [Theory, CombinatorialData]
+    public void EmbeddedResource_AlongsideProj([CombinatorialValues("sln", "slnx", "csproj", "vbproj", "shproj", "proj")] string ext)
+    {
+        bool considered = ext is "sln" or "slnx" or "csproj";
+
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), s_programReadingEmbeddedResource);
+        File.WriteAllText(Path.Join(testInstance.Path, "Resources.resx"), s_resx);
+        File.WriteAllText(Path.Join(testInstance.Path, $"repo.{ext}"), "");
+
+        new DotnetCommand(Log, "run", "--file", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut(considered ? "Resource not found" : "[MyString, TestValue]");
     }
 
     [Fact]
@@ -1455,6 +1564,88 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
         new DirectoryInfo(testInstance.Path).Sub("subdir").Sub("artifacts").Sub("Program")
             .Should().Exist()
             .And.NotHaveFilesMatching("*.deps.json", SearchOption.TopDirectoryOnly); // no deps.json file for AOT-published app
+    }
+
+    [Fact]
+    public void Pack()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        var programFile = Path.Join(testInstance.Path, "MyFileBasedTool.cs");
+        File.WriteAllText(programFile, """
+            #:property PackAsTool=true
+            Console.WriteLine($"Hello; EntryPointFilePath set? {AppContext.GetData("EntryPointFilePath") is string}");
+            """);
+
+        // Run unpacked.
+        new DotnetCommand(Log, "run", "MyFileBasedTool.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("Hello; EntryPointFilePath set? True");
+
+        var artifactsDir = VirtualProjectBuildingCommand.GetArtifactsPath(programFile);
+        if (Directory.Exists(artifactsDir)) Directory.Delete(artifactsDir, recursive: true);
+
+        var outputDir = Path.Join(testInstance.Path, "artifacts");
+        if (Directory.Exists(outputDir)) Directory.Delete(outputDir, recursive: true);
+
+        // Pack.
+        new DotnetCommand(Log, "pack", "MyFileBasedTool.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        var packageDir = new DirectoryInfo(outputDir).Sub("MyFileBasedTool");
+        packageDir.File("MyFileBasedTool.1.0.0.nupkg").Should().Exist();
+        new DirectoryInfo(artifactsDir).Sub("package").Should().NotExist();
+
+        // Run the packed tool.
+        new DotnetCommand(Log, "tool", "exec", "MyFileBasedTool", "--yes", "--add-source", packageDir.FullName)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOutContaining("Hello; EntryPointFilePath set? False");
+    }
+
+    [Fact]
+    public void Pack_CustomPath()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        var programFile = Path.Join(testInstance.Path, "MyFileBasedTool.cs");
+        File.WriteAllText(programFile, """
+            #:property PackAsTool=true
+            #:property PackageOutputPath=custom
+            Console.WriteLine($"Hello; EntryPointFilePath set? {AppContext.GetData("EntryPointFilePath") is string}");
+            """);
+
+        // Run unpacked.
+        new DotnetCommand(Log, "run", "MyFileBasedTool.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOut("Hello; EntryPointFilePath set? True");
+
+        var artifactsDir = VirtualProjectBuildingCommand.GetArtifactsPath(programFile);
+        if (Directory.Exists(artifactsDir)) Directory.Delete(artifactsDir, recursive: true);
+
+        var outputDir = Path.Join(testInstance.Path, "custom");
+        if (Directory.Exists(outputDir)) Directory.Delete(outputDir, recursive: true);
+
+        // Pack.
+        new DotnetCommand(Log, "pack", "MyFileBasedTool.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        new DirectoryInfo(outputDir).File("MyFileBasedTool.1.0.0.nupkg").Should().Exist();
+        new DirectoryInfo(artifactsDir).Sub("package").Should().NotExist();
+
+        // Run the packed tool.
+        new DotnetCommand(Log, "tool", "exec", "MyFileBasedTool", "--yes", "--add-source", outputDir)
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass()
+            .And.HaveStdOutContaining("Hello; EntryPointFilePath set? False");
     }
 
     [Fact]
@@ -2090,7 +2281,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             {
                 Log.WriteLine($"{codeFilePath.FullName} needs to be updated:");
                 Log.WriteLine(newText);
-                if (Environment.GetEnvironmentVariable("CI") == "true")
+                if (Env.GetEnvironmentVariableAsBool("CI"))
                 {
                     throw new InvalidOperationException($"Not updating file in CI: {codeFilePath.FullName}");
                 }
@@ -2217,7 +2408,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             var msbuildFileText = File.ReadAllText(msbuildFile);
             if (cscOnlyFileText.ReplaceLineEndings() != msbuildFileText.ReplaceLineEndings())
             {
-                Log.WriteLine($"File differs between MSBuild and CSC-only runs: {cscOnlyFile}");
+                Log.WriteLine($"File differs between MSBuild and CSC-only runs (if this is expected, find the template in '{nameof(CSharpCompilerCommand)}.cs' and update it): {cscOnlyFile}");
                 const int limit = 3_000;
                 if (cscOnlyFileText.Length < limit && msbuildFileText.Length < limit)
                 {
@@ -2382,9 +2573,8 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
             .Should().BeEquivalentTo(
                 level switch
                 {
-                    BuildLevel.Csc => [],
-                    BuildLevel.None => ["msbuild-dotnet-run.binlog"],
-                    BuildLevel.All => ["msbuild.binlog", "msbuild-dotnet-run.binlog"],
+                    BuildLevel.None or BuildLevel.Csc => [],
+                    BuildLevel.All => ["msbuild.binlog"],
                     _ => throw new ArgumentOutOfRangeException(paramName: nameof(level), message: level.ToString()),
                 });
 
@@ -2648,6 +2838,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <IncludeProjectNameInArtifactsPaths>false</IncludeProjectNameInArtifactsPaths>
                         <ArtifactsPath>/artifacts</ArtifactsPath>
                         <PublishDir>artifacts/$(MSBuildProjectName)</PublishDir>
+                        <PackageOutputPath>artifacts/$(MSBuildProjectName)</PackageOutputPath>
                         <FileBasedProgram>true</FileBasedProgram>
                       </PropertyGroup>
 
@@ -2664,6 +2855,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+                        <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
                         <TargetFramework>net11.0</TargetFramework>
                         <LangVersion>preview</LangVersion>
                         <Features>$(Features);FileBasedProgram</Features>
@@ -2715,6 +2907,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <IncludeProjectNameInArtifactsPaths>false</IncludeProjectNameInArtifactsPaths>
                         <ArtifactsPath>/artifacts</ArtifactsPath>
                         <PublishDir>artifacts/$(MSBuildProjectName)</PublishDir>
+                        <PackageOutputPath>artifacts/$(MSBuildProjectName)</PackageOutputPath>
                         <FileBasedProgram>true</FileBasedProgram>
                       </PropertyGroup>
 
@@ -2731,6 +2924,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+                        <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
                         <Features>$(Features);FileBasedProgram</Features>
                       </PropertyGroup>
 
@@ -2779,6 +2973,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <IncludeProjectNameInArtifactsPaths>false</IncludeProjectNameInArtifactsPaths>
                         <ArtifactsPath>/artifacts</ArtifactsPath>
                         <PublishDir>artifacts/$(MSBuildProjectName)</PublishDir>
+                        <PackageOutputPath>artifacts/$(MSBuildProjectName)</PackageOutputPath>
                         <FileBasedProgram>true</FileBasedProgram>
                       </PropertyGroup>
 
@@ -2795,6 +2990,7 @@ public sealed class RunFileTests(ITestOutputHelper log) : SdkTest(log)
                         <Nullable>enable</Nullable>
                         <PublishAot>true</PublishAot>
                         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+                        <DisableDefaultItemsInProjectFolder>true</DisableDefaultItemsInProjectFolder>
                         <Features>$(Features);FileBasedProgram</Features>
                       </PropertyGroup>
 

@@ -27,6 +27,14 @@ namespace System.Runtime
         internal const string RuntimeLibrary = "*";
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        [RuntimeImport(RuntimeLibrary, "RhGetThreadEntryPointAddress")]
+#if TARGET_UNIX
+        internal static extern unsafe delegate* unmanaged<nint, nint> RhGetThreadEntryPointAddress();
+#else
+        internal static extern unsafe delegate* unmanaged<nint, uint> RhGetThreadEntryPointAddress();
+#endif
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [RuntimeImport(RuntimeLibrary, "RhGetCrashInfoBuffer")]
         internal static extern unsafe byte* RhGetCrashInfoBuffer(out int cbMaxSize);
 
@@ -672,11 +680,6 @@ namespace System.Runtime
         [MethodImpl(MethodImplOptions.InternalCall)]
         [RuntimeImport(RuntimeLibrary, "RhUnregisterForGCReporting")]
         internal static extern unsafe void RhUnregisterForGCReporting(GCFrameRegistration* pRegistration);
-
-#if FEATURE_PERFTRACING
-        [LibraryImport(RuntimeLibrary)]
-        internal static unsafe partial void NativeRuntimeEventSource_LogExceptionThrown(char* exceptionTypeName, char* exceptionMessage, IntPtr faultingIP, int hresult);
-#endif // FEATURE_PERFTRACING
 
         //
         // Interlocked helpers
