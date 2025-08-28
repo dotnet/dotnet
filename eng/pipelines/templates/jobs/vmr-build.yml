@@ -601,6 +601,14 @@ jobs:
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
+    - script: |
+        if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
+          rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
+        fi
+      displayName: Clean up unwanted Source Build Artifacts
+      continueOnError: true
+      condition: succeededOrFailed()
+
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
           set -ex
