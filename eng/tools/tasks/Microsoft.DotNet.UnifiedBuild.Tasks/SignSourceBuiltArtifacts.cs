@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.UnifiedBuild.Tasks.Services;
 using BuildTask = Microsoft.Build.Utilities.Task;
-
-[assembly:UnsupportedOSPlatform("windows")]
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
@@ -54,6 +52,12 @@ public class SignSourceBuiltArtifacts : BuildTask
 
     private async Task<bool> ExecuteAsync()
     {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            Log.LogError("Windows is not supported for signing.");
+            return false;
+        }
+
         try
         {
             PrepareForSigning();
