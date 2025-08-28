@@ -25,10 +25,10 @@
       "commitSha": "0b4618bc860374941e605d8eb1d2bc29c32801db"
     },
     {
-      "barId": 277832,
+      "barId": 280917,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "fb3ca0862ecf66f2ca281723e4db5c040ca37afe"
+      "commitSha": "0a1e8362711c7651575bed49000215adb7f0c599"
     },
     {
       "barId": 279003,
@@ -49,10 +49,10 @@
       "commitSha": "8414d1e1025bbfaca0829a595d2654836fd0034b"
     },
     {
-      "barId": 280763,
+      "barId": 280918,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "934a248159dda09b70613047313e4b4bd2980b92"
+      "commitSha": "e5136907ae7b5db690206fa70559d1b76bbaca72"
     },
     {
       "barId": 281032,
@@ -79,10 +79,10 @@
       "commitSha": "b467cfbff565a16d1791a684e28be2ef6b86bf01"
     },
     {
-      "barId": 280992,
+      "barId": 281087,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "491bcb543944411b0cee68e13dafe4b89d47ecb3"
+      "commitSha": "ed57bae9f09fcf4b6c2cc04f31bd7d3f7d9d6844"
     },
     {
       "barId": 277711,
