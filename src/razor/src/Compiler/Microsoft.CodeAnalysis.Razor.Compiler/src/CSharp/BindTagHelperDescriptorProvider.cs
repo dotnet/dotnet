@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -121,20 +120,19 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
     private static TagHelperDescriptor CreateFallbackBindTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Bind.TagHelperKind, "Bind", ComponentsApi.AssemblyName,
+            TagHelperKind.Bind, "Bind", ComponentsApi.AssemblyName,
             out var builder);
 
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.Bind",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "Bind");
+
         builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
         builder.SetDocumentation(DocumentationDescriptor.BindTagHelper_Fallback);
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.Bind.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.Bind.RuntimeName),
-            MakeTrue(ComponentMetadata.Bind.FallbackKey),
-            TypeName("Microsoft.AspNetCore.Components.Bind"),
-            TypeNamespace("Microsoft.AspNetCore.Components"),
-            TypeNameIdentifier("Bind"));
+        builder.SetMetadata(new BindMetadata() { IsFallback = true });
 
         builder.TagMatchingRule(rule =>
         {
@@ -154,10 +152,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
             var attributeName = "@bind-...";
             attribute.Name = attributeName;
             attribute.AsDictionary("@bind-", typeof(object).FullName);
+            attribute.IsDirectiveAttribute = true;
 
-            attribute.SetMetadata(
-                PropertyName("Bind"),
-                IsDirectiveAttribute);
+            attribute.PropertyName = "Bind";
 
             attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
 
@@ -358,23 +355,28 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                 formatAttributeName = "format-" + suffix;
                 eventName = "Event_" + suffix;
             }
+
             using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.Bind.TagHelperKind, name, ComponentsApi.AssemblyName,
+                TagHelperKind.Bind, name, ComponentsApi.AssemblyName,
                 out var builder);
-            using var metadata = builder.GetMetadataBuilder(ComponentMetadata.Bind.RuntimeName);
+
+            builder.SetTypeName(typeName, typeNamespace, typeNameIdentifier);
+
             builder.CaseSensitive = true;
+            builder.ClassifyAttributesOnly = true;
             builder.SetDocumentation(
                 DocumentationDescriptor.From(
                     DocumentationId.BindTagHelper_Element,
                     valueAttribute,
                     changeAttribute));
 
-            metadata.Add(SpecialKind(ComponentMetadata.Bind.TagHelperKind));
-            metadata.Add(MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly));
-            metadata.Add(ComponentMetadata.Bind.ValueAttribute, valueAttribute);
-            metadata.Add(ComponentMetadata.Bind.ChangeAttribute, changeAttribute);
-            metadata.Add(ComponentMetadata.Bind.IsInvariantCulture, isInvariantCulture ? bool.TrueString : bool.FalseString);
-            metadata.Add(ComponentMetadata.Bind.Format, format);
+            var metadata = new BindMetadata.Builder
+            {
+                ValueAttribute = valueAttribute,
+                ChangeAttribute = changeAttribute,
+                IsInvariantCulture = isInvariantCulture,
+                Format = format
+            };
 
             if (typeAttribute != null)
             {
@@ -387,12 +389,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                 //
                 // Therefore we use this metadata to know which one is more specific when two
                 // tag helpers match.
-                metadata.Add(ComponentMetadata.Bind.TypeAttribute, typeAttribute);
+                metadata.TypeAttribute = typeAttribute;
             }
-
-            metadata.Add(TypeName(typeName));
-            metadata.Add(TypeNamespace(typeNamespace));
-            metadata.Add(TypeNameIdentifier(typeNameIdentifier));
 
             builder.SetMetadata(metadata.Build());
 
@@ -457,10 +455,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
 
                 a.Name = attributeName;
                 a.TypeName = typeof(object).FullName;
-
-                a.SetMetadata(
-                    IsDirectiveAttribute,
-                    PropertyName(name));
+                a.IsDirectiveAttribute = true;
+                a.PropertyName = name;
 
                 a.BindAttributeParameter(parameter =>
                 {
@@ -528,7 +524,7 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                         DocumentationId.BindTagHelper_Element_Format,
                         attributeName));
 
-                attribute.SetMetadata(PropertyName(formatName));
+                attribute.PropertyName = formatName;
             });
 
             return builder.Build();
@@ -536,7 +532,7 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
 
         private static void AddComponentBindTagHelpers(TagHelperDescriptor tagHelper, ref PooledArrayBuilder<TagHelperDescriptor> results)
         {
-            if (!tagHelper.IsComponentTagHelper)
+            if (tagHelper.Kind != TagHelperKind.Component)
             {
                 return;
             }
@@ -591,10 +587,10 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                 }
 
                 using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                    ComponentMetadata.Bind.TagHelperKind, tagHelper.Name, tagHelper.AssemblyName,
+                    TagHelperKind.Bind, tagHelper.Name, tagHelper.AssemblyName,
                     out var builder);
 
-                using var metadata = builder.GetMetadataBuilder(ComponentMetadata.Bind.RuntimeName);
+                builder.SetTypeName(tagHelper.TypeNameObject);
 
                 builder.DisplayName = tagHelper.DisplayName;
                 builder.CaseSensitive = true;
@@ -604,18 +600,16 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                         valueAttribute.Name,
                         changeAttribute.Name));
 
-                metadata.Add(SpecialKind(ComponentMetadata.Bind.TagHelperKind));
-                metadata.Add(ComponentMetadata.Bind.ValueAttribute, valueAttribute.Name);
-                metadata.Add(ComponentMetadata.Bind.ChangeAttribute, changeAttribute.Name);
+                var metadata = new BindMetadata.Builder
+                {
+                    ValueAttribute = valueAttribute.Name,
+                    ChangeAttribute = changeAttribute.Name
+                };
 
                 if (expressionAttribute != null)
                 {
-                    metadata.Add(ComponentMetadata.Bind.ExpressionAttribute, expressionAttribute.Name);
+                    metadata.ExpressionAttribute = expressionAttribute.Name;
                 }
-
-                metadata.Add(TypeName(tagHelper.GetTypeName()));
-                metadata.Add(TypeNamespace(tagHelper.GetTypeNamespace()));
-                metadata.Add(TypeNameIdentifier(tagHelper.GetTypeNameIdentifier()));
 
                 // Match the component and attribute name
                 builder.TagMatchingRule(rule =>
@@ -658,10 +652,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     attribute.TypeName = changeAttribute.TypeName;
                     attribute.IsEnum = valueAttribute.IsEnum;
                     attribute.ContainingType = valueAttribute.ContainingType;
-
-                    attribute.SetMetadata(
-                        PropertyName(valueAttribute.GetPropertyName()),
-                        IsDirectiveAttribute);
+                    attribute.IsDirectiveAttribute = true;
+                    attribute.PropertyName = valueAttribute.PropertyName;
 
                     attribute.BindAttributeParameter(parameter =>
                     {
@@ -689,9 +681,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     });
                 });
 
-                if (tagHelper.IsComponentFullyQualifiedNameMatch)
+                if (tagHelper.IsFullyQualifiedNameMatch)
                 {
-                    metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
+                    builder.IsFullyQualifiedNameMatch = true;
                 }
 
                 builder.SetMetadata(metadata.Build());

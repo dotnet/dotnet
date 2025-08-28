@@ -2,54 +2,30 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Basic.Reference.Assemblies;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Remote;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
-using Microsoft.CodeAnalysis.Remote.Razor;
-using Microsoft.CodeAnalysis.Remote.Razor.Logging;
-using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
+using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Composition;
-using Roslyn.Test.Utilities;
+using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
-public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : ToolingTestBase(testOutputHelper)
+public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper) : CohostTestBase(testOutputHelper)
 {
-    private ExportProvider? _exportProvider;
-    private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
-    private RemoteClientInitializationOptions _clientInitializationOptions;
-    private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
-    private IFilePathService? _filePathService;
+    private IClientSettingsManager? _clientSettingsManager;
 
-    private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
-    private protected TestRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
-    private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
-    private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
-    private protected RemoteClientCapabilitiesService ClientCapabilitiesService => OOPExportProvider.GetExportedValue<RemoteClientCapabilitiesService>();
-    private protected RemoteSemanticTokensLegendService SemanticTokensLegendService => OOPExportProvider.GetExportedValue<RemoteSemanticTokensLegendService>();
-
-    /// <summary>
-    /// The export provider for Razor OOP services (not Roslyn)
-    /// </summary>
-    private protected ExportProvider OOPExportProvider => _exportProvider.AssumeNotNull();
+    private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
+    private protected TestRemoteServiceInvoker TestRemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
+    private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
 
     /// <summary>
     /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
@@ -60,119 +36,56 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     {
         await base.InitializeAsync();
 
-        // Create a new isolated MEF composition.
-        // Note that this uses a cached catalog and configuration for performance.
-        try
-        {
-            _exportProvider = await RemoteMefComposition.CreateExportProviderAsync(cacheDirectory: null, DisposalToken);
-        }
-        catch (CompositionFailedException ex) when (ex.Errors is not null)
-        {
-            Assert.Fail($"""
-                Errors in the Remote MEF composition:
-
-                {string.Join(Environment.NewLine, ex.Errors.SelectMany(e => e).Select(e => e.Message))}
-                """);
-        }
-
-        AddDisposable(_exportProvider);
-
-        _incompatibleProjectService = new TestIncompatibleProjectService();
-
-        var remoteLogger = _exportProvider.GetExportedValue<RemoteLoggerFactory>();
-        remoteLogger.SetTargetLoggerFactory(LoggerFactory);
-
-        _remoteServiceInvoker = new TestRemoteServiceInvoker(JoinableTaskContext, _exportProvider, LoggerFactory);
+        _remoteServiceInvoker = new TestRemoteServiceInvoker(JoinableTaskContext, OOPExportProvider, LoggerFactory);
         AddDisposable(_remoteServiceInvoker);
 
-        _clientInitializationOptions = new()
-        {
-            HtmlVirtualDocumentSuffix = ".g.html",
-            UsePreciseSemanticTokenRanges = false,
-            UseRazorCohostServer = true,
-            ReturnCodeActionAndRenamePathsWithPrefixedSlash = false,
-            SupportsFileManipulation = true,
-            ShowAllCSharpCodeActions = false,
-            SupportsSoftSelectionInCompletion = true,
-            UseVsCodeCompletionTriggerCharacters = false,
-        };
-        UpdateClientInitializationOptions(c => c);
+        _clientSettingsManager = new ClientSettingsManager([], null, null);
+    }
 
-        var completionSetting = new VSInternalCompletionSetting
-        {
-            CompletionItem = new CompletionItemSetting(),
-            CompletionItemKind = new CompletionItemKindSetting()
-            {
-                ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
-            },
-            CompletionList = new VSInternalCompletionListSetting() { Data = true },
-            CompletionListSetting = new CompletionListSetting()
-            {
-                ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat", "data"]
-            },
-            ContextSupport = false,
-            InsertTextMode = InsertTextMode.AsIs,
-        };
-
-        _clientLSPInitializationOptions = new()
+    private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()
+    {
+        return new()
         {
             ClientCapabilities = new VSInternalClientCapabilities()
             {
                 SupportsVisualStudioExtensions = true,
                 TextDocument = new TextDocumentClientCapabilities
                 {
-                    Completion = completionSetting
+                    Completion = new VSInternalCompletionSetting
+                    {
+                        CompletionItem = new CompletionItemSetting(),
+                        CompletionItemKind = new CompletionItemKindSetting()
+                        {
+                            ValueSet = (CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind)),
+                        },
+                        CompletionList = new VSInternalCompletionListSetting() { Data = true },
+                        CompletionListSetting = new CompletionListSetting()
+                        {
+                            ItemDefaults = ["commitCharacters", "editRange", "insertTextFormat", "data"]
+                        },
+                        ContextSupport = false,
+                        InsertTextMode = InsertTextMode.AsIs,
+                    }
                 }
             },
-            TokenTypes = [],
-            TokenModifiers = []
+            TokenModifiers = [],
+            TokenTypes = []
         };
-        UpdateClientLSPInitializationOptions(c => c);
-
-        _filePathService = new RemoteFilePathService(FeatureOptions);
-
-        // Force initialization and creation of the remote workspace. It will be filled in later.
-        await RemoteWorkspaceProvider.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), DisposalToken);
-        _ = RemoteWorkspaceProvider.Instance.GetWorkspace();
-    }
-
-    private protected void UpdateClientInitializationOptions(Func<RemoteClientInitializationOptions, RemoteClientInitializationOptions> mutation)
-    {
-        _clientInitializationOptions = mutation(_clientInitializationOptions);
-        FeatureOptions.SetOptions(_clientInitializationOptions);
-    }
-
-    private protected void UpdateClientLSPInitializationOptions(Func<RemoteClientLSPInitializationOptions, RemoteClientLSPInitializationOptions> mutation)
-    {
-        _clientLSPInitializationOptions = mutation(_clientLSPInitializationOptions);
-        ClientCapabilitiesService.SetCapabilities(_clientLSPInitializationOptions.ClientCapabilities);
-        SemanticTokensLegendService.SetLegend(_clientLSPInitializationOptions.TokenTypes, _clientLSPInitializationOptions.TokenModifiers);
     }
 
     private protected virtual TestComposition ConfigureRoslynDevenvComposition(TestComposition composition)
         => composition;
 
-    protected TextDocument CreateProjectAndRazorDocument(
+    protected override TextDocument CreateProjectAndRazorDocument(
         string contents,
         RazorFileKind? fileKind = null,
+        string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
         bool createSeparateRemoteAndLocalWorkspaces = false,
-        bool inGlobalNamespace = false)
+        bool inGlobalNamespace = false,
+        bool miscellaneousFile = false)
     {
-        // Using IsLegacy means null == component, so easier for test authors
-        var isComponent = fileKind != RazorFileKind.Legacy;
-
-        var documentFilePath = isComponent
-            ? TestProjectData.SomeProjectComponentFile1.FilePath
-            : TestProjectData.SomeProjectFile1.FilePath;
-
-        var projectFilePath = TestProjectData.SomeProject.FilePath;
-        var projectName = Path.GetFileNameWithoutExtension(projectFilePath);
-        var projectId = ProjectId.CreateNewId(debugName: projectName);
-        var documentId = DocumentId.CreateNewId(projectId, debugName: documentFilePath);
-
-        var remoteWorkspace = RemoteWorkspaceProvider.Instance.GetWorkspace();
-        var remoteDocument = CreateProjectAndRazorDocument(remoteWorkspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var remoteDocument = base.CreateProjectAndRazorDocument(contents, fileKind, documentFilePath, additionalFiles, createSeparateRemoteAndLocalWorkspaces, inGlobalNamespace, miscellaneousFile);
 
         if (createSeparateRemoteAndLocalWorkspaces)
         {
@@ -183,10 +96,10 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
             // of test setup.
             return CreateLocalProjectAndRazorDocument(
                 remoteDocument.Project.Solution,
-                projectId,
-                projectName,
-                documentId,
-                documentFilePath,
+                remoteDocument.Id.ProjectId,
+                miscellaneousFile,
+                remoteDocument.Id,
+                remoteDocument.FilePath.AssumeNotNull(),
                 contents,
                 additionalFiles,
                 inGlobalNamespace);
@@ -201,7 +114,7 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private TextDocument CreateLocalProjectAndRazorDocument(
         Solution remoteSolution,
         ProjectId projectId,
-        string projectName,
+        bool miscellaneousFile,
         DocumentId documentId,
         string documentFilePath,
         string contents,
@@ -221,112 +134,12 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         var workspace = TestWorkspace.CreateWithDiagnosticAnalyzers(RoslynDevenvExportProvider);
         AddDisposable(workspace);
 
-        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, projectName, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
+        var razorDocument = CreateProjectAndRazorDocument(workspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
 
         // If we're creating remote and local workspaces, then we'll return the local document, and have to allow
         // the remote service invoker to map from the local solution to the remote one.
-        RemoteServiceInvoker.MapSolutionIdToRemote(razorDocument.Project.Solution.Id, remoteSolution);
+        TestRemoteServiceInvoker.MapSolutionIdToRemote(razorDocument.Project.Solution.Id, remoteSolution);
 
         return razorDocument;
     }
-
-    private TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, string projectName, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
-    {
-        var sgAssembly = typeof(RazorSourceGenerator).Assembly;
-
-        var projectInfo = ProjectInfo
-            .Create(
-                projectId,
-                VersionStamp.Create(),
-                name: projectName,
-                assemblyName: projectName,
-                LanguageNames.CSharp,
-                documentFilePath,
-                compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .WithMetadataReferences(AspNet80.ReferenceInfos.All.Select(r => r.Reference))
-            .WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace)
-            // TODO: Can we just use an object reference? Trying to do so now results in a serialization error from Roslyn
-            .WithAnalyzerReferences([new AnalyzerFileReference(sgAssembly.Location, TestAnalyzerAssemblyLoader.LoadFromFile)]);
-
-        if (!inGlobalNamespace)
-        {
-            projectInfo = projectInfo.WithDefaultNamespace(TestProjectData.SomeProject.RootNamespace);
-        }
-
-        var solution = workspace.CurrentSolution.AddProject(projectInfo);
-
-        solution = solution
-            .AddAdditionalDocument(
-                documentId,
-                documentFilePath,
-                SourceText.From(contents),
-                filePath: documentFilePath)
-            .AddAdditionalDocument(
-                DocumentId.CreateNewId(projectId),
-                name: TestProjectData.SomeProjectComponentImportFile1.FilePath,
-                text: SourceText.From("""
-                    @using Microsoft.AspNetCore.Components
-                    @using Microsoft.AspNetCore.Components.Authorization
-                    @using Microsoft.AspNetCore.Components.Forms
-                    @using Microsoft.AspNetCore.Components.Routing
-                    @using Microsoft.AspNetCore.Components.Web
-                    """),
-                filePath: TestProjectData.SomeProjectComponentImportFile1.FilePath)
-            .AddAdditionalDocument(
-                DocumentId.CreateNewId(projectId),
-                name: "_ViewImports.cshtml",
-                text: SourceText.From("""
-                    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-                    """),
-                filePath: TestProjectData.SomeProjectImportFile.FilePath);
-
-        if (additionalFiles is not null)
-        {
-            foreach (var file in additionalFiles)
-            {
-                solution = Path.GetExtension(file.fileName) == ".cs"
-                    ? solution.AddDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName)
-                    : solution.AddAdditionalDocument(DocumentId.CreateNewId(projectId), name: file.fileName, text: SourceText.From(file.contents), filePath: file.fileName);
-            }
-        }
-
-        var globalConfigContent = new StringBuilder();
-        globalConfigContent.AppendLine($"""
-                    is_global = true
-
-                    build_property.RazorLangVersion = {FallbackRazorConfiguration.Latest.LanguageVersion}
-                    build_property.RazorConfiguration = {FallbackRazorConfiguration.Latest.ConfigurationName}
-                    build_property.RootNamespace = {TestProjectData.SomeProject.RootNamespace}
-                    """);
-
-        var projectBasePath = TestProjectData.SomeProjectPath;
-        // Normally MS Build targets do this for us, but we're on our own!
-        foreach (var razorDocument in solution.Projects.Single().AdditionalDocuments)
-        {
-            if (razorDocument.FilePath is not null &&
-                razorDocument.FilePath.StartsWith(projectBasePath))
-            {
-                var relativePath = razorDocument.FilePath[(projectBasePath.Length + 1)..];
-                globalConfigContent.AppendLine($"""
-
-                [{razorDocument.FilePath.AssumeNotNull().Replace('\\', '/')}]
-                build_metadata.AdditionalFiles.TargetPath = {Convert.ToBase64String(Encoding.UTF8.GetBytes(relativePath))}
-                """);
-            }
-        }
-
-        solution = solution.AddAnalyzerConfigDocument(
-                DocumentId.CreateNewId(projectId),
-                name: ".globalconfig",
-                text: SourceText.From(globalConfigContent.ToString()),
-                filePath: Path.Combine(TestProjectData.SomeProjectPath, ".globalconfig"));
-
-        return solution.GetAdditionalDocument(documentId).AssumeNotNull();
-    }
-
-    protected static Uri FileUri(string projectRelativeFileName)
-        => new(FilePath(projectRelativeFileName));
-
-    protected static string FilePath(string projectRelativeFileName)
-        => Path.GetFullPath(Path.Combine(TestProjectData.SomeProjectPath, projectRelativeFileName));
 }

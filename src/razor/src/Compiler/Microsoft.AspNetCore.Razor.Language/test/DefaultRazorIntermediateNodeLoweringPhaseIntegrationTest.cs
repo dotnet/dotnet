@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 using static Microsoft.AspNetCore.Razor.Language.Intermediate.IntermediateNodeAssert;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -328,7 +327,7 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest : RazorPro
             assemblyName: "TestAssembly",
             attributes: [builder => builder
                 .Name("bound")
-                .Metadata(PropertyName("FooProp"))
+                .PropertyName("FooProp")
                 .TypeName("System.String")]);
 
         var codeDocument = ProjectEngine.CreateCodeDocument(@"@addTagHelper *, TestAssembly
@@ -469,8 +468,8 @@ public class DefaultRazorIntermediateNodeLoweringPhaseIntegrationTest : RazorPro
         string assemblyName,
         params ReadOnlySpan<Action<BoundAttributeDescriptorBuilder>> attributes)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(typeName, assemblyName);
+        builder.SetTypeName(typeName, typeNamespace: null, typeNameIdentifier: null);
 
         foreach (var attributeBuilder in attributes)
         {

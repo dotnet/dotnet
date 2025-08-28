@@ -244,7 +244,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
         static bool IsComponentTagHelperNode(MarkupTagHelperElementSyntax node)
         {
             return node.TagHelperInfo?.BindingResult?.Descriptors is { Length: > 0 } descriptors &&
-                   descriptors.Any(static d => d.IsComponentOrChildContentTagHelper);
+                   descriptors.Any(static d => d.IsComponentOrChildContentTagHelper());
         }
 
         static bool ParentHasProperty(MarkupTagHelperElementSyntax parentComponent, string? propertyName)

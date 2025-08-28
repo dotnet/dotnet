@@ -1,11 +1,8 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor;
@@ -23,19 +20,19 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
         provider.Execute(context);
 
         // Assert
-        var matches = context.Results.Where(result => result.IsSplatTagHelper());
+        var matches = context.Results.Where(static result => result.Kind == TagHelperKind.Splat);
         var item = Assert.Single(matches);
 
         Assert.Empty(item.AllowedChildTags);
         Assert.Null(item.TagOutputHint);
         Assert.Empty(item.Diagnostics);
         Assert.False(item.HasErrors);
-        Assert.Equal(ComponentMetadata.Splat.TagHelperKind, item.Kind);
-        Assert.Equal(bool.TrueString, item.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.Splat.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Splat, item.Kind);
+        Assert.Equal(RuntimeKind.None, item.RuntimeKind);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
         Assert.True(item.CaseSensitive);
+        Assert.True(item.ClassifyAttributesOnly);
 
         Assert.Equal(
             "Merges a collection of attributes into the current element or component.",
@@ -44,7 +41,7 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
         Assert.Equal("Microsoft.AspNetCore.Components", item.AssemblyName);
         Assert.Equal("Attributes", item.Name);
         Assert.Equal("Microsoft.AspNetCore.Components.Attributes", item.DisplayName);
-        Assert.Equal("Microsoft.AspNetCore.Components.Attributes", item.GetTypeName());
+        Assert.Equal("Microsoft.AspNetCore.Components.Attributes", item.TypeName);
 
         var rule = Assert.Single(item.TagMatchingRules);
         Assert.Empty(rule.Diagnostics);
@@ -64,7 +61,7 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Splat.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.Splat, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -77,7 +74,7 @@ public class SplatTagHelperDescriptorProviderTest : TagHelperDescriptorProviderT
             attribute.Documentation);
 
         Assert.Equal("@attributes", attribute.Name);
-        Assert.Equal("Attributes", attribute.GetPropertyName());
+        Assert.Equal("Attributes", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Attributes.Attributes", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);
