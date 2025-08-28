@@ -39,11 +39,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <!-- SDK tarball - prefer root if present; otherwise pick from Sdk/ subtree -->
       <SignableSourceBuiltAsset Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
-      <SignableSourceBuiltAsset Include="$(SourceBuiltAssetsDir)/Sdk/**/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" Condition="'@(SignableSourceBuiltAsset)' == ''" />
-
-      <!-- PSB artifact tarball -->
       <SignableSourceBuiltAsset  Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
     </ItemGroup>
   </Target>
