@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -24,7 +25,7 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
             var identity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new EmbeddedResourcesCapability(null, identity, null));
+            Assert.Throws<ArgumentNullException>(() => new EmbeddedResourcesCapability(null!, identity, null));
         }
 
 
@@ -35,16 +36,16 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
             var mockPackageFileService = new Mock<INuGetPackageFileService>();
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => new EmbeddedResourcesCapability(mockPackageFileService.Object, null, null));
+            Assert.Throws<ArgumentNullException>(() => new EmbeddedResourcesCapability(mockPackageFileService.Object, null!, null));
         }
 
         [Theory]
         [InlineData("stream")]
         [InlineData(null)]
-        public async Task GetIconAsync_WithDifferentFileServiceResults_ReturnsFileServiceResults(string streamText)
+        public async Task GetIconAsync_WithDifferentFileServiceResults_ReturnsFileServiceResults(string? streamText)
         {
             // Arrange
-            using Stream stream = streamText == null ? null : new MemoryStream(Encoding.UTF8.GetBytes(streamText));
+            using Stream? stream = streamText == null ? null : new MemoryStream(Encoding.UTF8.GetBytes(streamText));
             var identity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
             var mockPackageFileService = new Mock<INuGetPackageFileService>();
             mockPackageFileService.Setup(x => x.GetPackageIconAsync(It.IsAny<PackageIdentity>(), default)).ReturnsAsync(stream);
@@ -61,10 +62,10 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
         [Theory]
         [InlineData("stream")]
         [InlineData(null)]
-        public async Task GetLicenseAsync_WithDifferentFileServiceResults_ReturnsFileServiceResults(string streamText)
+        public async Task GetLicenseAsync_WithDifferentFileServiceResults_ReturnsFileServiceResults(string? streamText)
         {
             // Arrange
-            using Stream stream = streamText == null ? null : new MemoryStream(Encoding.UTF8.GetBytes(streamText));
+            using Stream? stream = streamText == null ? null : new MemoryStream(Encoding.UTF8.GetBytes(streamText));
 
             var identity = new PackageIdentity("TestPackage", new NuGetVersion("1.0.0"));
             var mockPackageFileService = new Mock<INuGetPackageFileService>();
@@ -82,7 +83,7 @@ namespace NuGet.PackageManagement.UI.Test.Models.Package
         [Theory]
         [InlineData(@"C:\path\to\image.png")]
         [InlineData(null)]
-        public async Task GetReadmeAsync_WithDifferentReadmeUri_ReturnStreamOrNull(string readmePath)
+        public async Task GetReadmeAsync_WithDifferentReadmeUri_ReturnStreamOrNull(string? readmePath)
         {
             // Arrange
             using Stream stream = new MemoryStream(Encoding.UTF8.GetBytes("stream"));

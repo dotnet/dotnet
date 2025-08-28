@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>$(NETCoreTargetFramework)</TargetFramework>
+    <TargetFramework>$(LatestNETCoreTargetFramework)</TargetFramework>
     <Description>Unit tests for NuGet.CommandLine.XPlat.</Description>
   </PropertyGroup>
 
