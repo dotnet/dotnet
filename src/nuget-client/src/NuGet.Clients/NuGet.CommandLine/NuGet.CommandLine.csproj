@@ -95,9 +95,9 @@
       <DependentUpon>NuGetResources.resx</DependentUpon>
     </Compile>
     <!-- nuget.exe localized assemblies -->
-    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" />
+    <EmbeddedResource Include="$(OutputPath)\**\$(AssemblyName).resources.dll" Condition="'$(CI)' == 'true'" />
     <!-- NuGet.Commands localized assemblies -->
-    <LocResource Include="$(OutputPath)\**\NuGet.Commands.resources.dll" />
+    <LocResource Include="$(OutputPath)\**\NuGet.Commands.resources.dll" Condition="'$(CI)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
