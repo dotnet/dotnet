@@ -100,7 +100,7 @@ internal class SimplifyTagToSelfClosingCodeActionProvider : IRazorCodeActionProv
         }
 
         // Get symbols for the markup element
-        var boundTagHelper = descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+        var boundTagHelper = descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (boundTagHelper == null)
         {
             return false;

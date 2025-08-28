@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Razor.LanguageServer.Completion;
 using Microsoft.VisualStudio.Editor.Razor;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
@@ -105,15 +104,15 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_TagHelperAttribute()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("WithBoundAttribute", "TestAssembly");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("WithBoundAttribute", "TestAssembly");
+        tagHelper.SetTypeName("WithBoundAttribute", typeNamespace: null, typeNameIdentifier: null);
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetMetadata(PropertyName("Bound"));
+            attribute.PropertyName = "Bound";
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument("""
             @addTagHelper *, TestAssembly
             <test bound='true' />
@@ -138,15 +137,15 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
     public void StringifyAttributes_MinimizedTagHelperAttribute()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("WithBoundAttribute", "TestAssembly");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("WithBoundAttribute", "TestAssembly");
+        tagHelper.SetTypeName("WithBoundAttribute", typeNamespace: null, typeNameIdentifier: null);
         tagHelper.TagMatchingRule(rule => rule.TagName = "test");
         tagHelper.BindAttribute(attribute =>
         {
             attribute.Name = "bound";
-            attribute.SetMetadata(PropertyName("Bound"));
+            attribute.PropertyName = "Bound";
             attribute.TypeName = typeof(bool).FullName;
         });
-        tagHelper.SetMetadata(TypeName("WithBoundAttribute"));
         var codeDocument = CreateCodeDocument("""
             @addTagHelper *, TestAssembly
             <test bound />

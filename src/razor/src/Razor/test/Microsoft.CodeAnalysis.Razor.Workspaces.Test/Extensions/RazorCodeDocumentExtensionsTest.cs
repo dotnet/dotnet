@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces.Test.Extensions;
 
@@ -17,9 +16,9 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
     public void GetLanguageKind_TagHelperElementOwnsName()
     {
         // Arrange
-        var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
+        var descriptor = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly");
+        descriptor.TypeName = "TestTagHelper";
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetMetadata(TypeName("TestTagHelper"));
 
         TestCode code = """
             @addTagHelper *, TestAssembly
@@ -39,9 +38,9 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
     public void GetLanguageKind_TagHelpersDoNotOwnTrailingEdge()
     {
         // Arrange
-        var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
+        var descriptor = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly");
+        descriptor.TypeName = "TestTagHelper";
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetMetadata(TypeName("TestTagHelper"));
 
         TestCode code = """
             @addTagHelper *, TestAssembly
@@ -61,15 +60,15 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
     public void GetLanguageKind_TagHelperNestedCSharpAttribute()
     {
         // Arrange
-        var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
+        var descriptor = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly");
+        descriptor.TypeName = "TestTagHelper";
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
         descriptor.BindAttribute(builder =>
         {
             builder.Name = "asp-int";
             builder.TypeName = typeof(int).FullName;
-            builder.SetMetadata(PropertyName("AspInt"));
+            builder.PropertyName = "AspInt";
         });
-        descriptor.SetMetadata(TypeName("TestTagHelper"));
 
         TestCode code = """
             @addTagHelper *, TestAssembly
@@ -303,9 +302,9 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
     public void GetLanguageKind_TagHelperInCSharpRightAssociative()
     {
         // Arrange
-        var descriptor = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly");
+        var descriptor = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly");
+        descriptor.TypeName = "TestTagHelper";
         descriptor.TagMatchingRule(rule => rule.TagName = "test");
-        descriptor.SetMetadata(TypeName("TestTagHelper"));
 
         TestCode code = """
             @addTagHelper *, TestAssembly

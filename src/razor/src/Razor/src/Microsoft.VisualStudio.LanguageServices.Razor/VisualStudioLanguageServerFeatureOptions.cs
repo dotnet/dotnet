@@ -15,7 +15,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
     private readonly Lazy<bool> _includeProjectKeyInGeneratedFilePath;
-    private readonly Lazy<bool> _usePreciseSemanticTokenRanges;
     private readonly Lazy<bool> _useRazorCohostServer;
     private readonly Lazy<bool> _useNewFormattingEngine;
 
@@ -41,13 +40,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
             var includeProjectKeyInGeneratedFilePath = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.IncludeProjectKeyInGeneratedFilePath, defaultValue: true);
             return includeProjectKeyInGeneratedFilePath;
-        });
-
-        _usePreciseSemanticTokenRanges = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var usePreciseSemanticTokenRanges = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UsePreciseSemanticTokenRanges, defaultValue: false);
-            return usePreciseSemanticTokenRanges;
         });
 
         _useRazorCohostServer = new Lazy<bool>(() =>
@@ -85,8 +77,6 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool ShowAllCSharpCodeActions => _showAllCSharpCodeActions.Value;
 
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath.Value;
-
-    public override bool UsePreciseSemanticTokenRanges => _usePreciseSemanticTokenRanges.Value;
 
     public override bool UseRazorCohostServer => _useRazorCohostServer.Value;
 

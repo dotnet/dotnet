@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -24,7 +23,7 @@ public class TagHelperDescriptorComparerTest
                 {
                     builder => builder
                         .Name("value")
-                        .Metadata(PropertyName("FooProp"))
+                        .PropertyName("FooProp")
                         .TypeName("System.String"),
                 });
         var descriptor2 = CreateTagHelperDescriptor(
@@ -35,7 +34,7 @@ public class TagHelperDescriptorComparerTest
                 {
                     builder => builder
                         .Name("value")
-                        .Metadata(PropertyName("FooProp"))
+                        .PropertyName("FooProp")
                         .TypeName("System.String"),
                 });
 
@@ -60,7 +59,7 @@ public class TagHelperDescriptorComparerTest
             {
                 builder => builder
                     .Name("IncrementBy")
-                    .Metadata(PropertyName("IncrementBy"))
+                    .PropertyName("IncrementBy")
                     .TypeName("System.Int32"),
             });
 
@@ -73,7 +72,7 @@ public class TagHelperDescriptorComparerTest
             {
                 builder => builder
                     .Name("value")
-                    .Metadata(PropertyName("FooProp"))
+                    .PropertyName("FooProp")
                     .TypeName("System.String"),
             });
 
@@ -92,8 +91,8 @@ public class TagHelperDescriptorComparerTest
         string tagMatchingRuleName = null,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(typeName, assemblyName);
+        builder.SetTypeName(typeName, typeNamespace: null, typeNameIdentifier: null);
 
         if (attributes != null)
         {

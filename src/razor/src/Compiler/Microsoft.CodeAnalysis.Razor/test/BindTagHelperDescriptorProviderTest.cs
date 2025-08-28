@@ -73,16 +73,16 @@ namespace Test
         // here and then ignoring them.
         Assert.Empty(bind.Diagnostics);
         Assert.False(bind.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, bind.Kind);
-        Assert.Equal(ComponentMetadata.Bind.RuntimeName, bind.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Bind, bind.Kind);
+        Assert.Equal(RuntimeKind.None, bind.RuntimeKind);
         Assert.False(bind.IsDefaultKind());
         Assert.False(bind.KindUsesDefaultTagHelperRuntime());
-        Assert.False(bind.IsComponentOrChildContentTagHelper);
+        Assert.False(bind.IsComponentOrChildContentTagHelper());
         Assert.True(bind.CaseSensitive);
 
-        Assert.Equal("MyProperty", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("MyPropertyChanged", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
-        Assert.Equal("MyPropertyExpression", bind.Metadata[ComponentMetadata.Bind.ExpressionAttribute]);
+        Assert.Equal("MyProperty", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("MyPropertyChanged", ((BindMetadata)bind.Metadata).ChangeAttribute);
+        Assert.Equal("MyPropertyExpression", ((BindMetadata)bind.Metadata).ExpressionAttribute);
 
         Assert.Equal(
             "Binds the provided expression to the 'MyProperty' property and a change event " +
@@ -93,7 +93,7 @@ namespace Test
         Assert.Equal("TestAssembly", bind.AssemblyName);
         Assert.Equal("Test.MyComponent", bind.Name);
         Assert.Equal("Test.MyComponent", bind.DisplayName);
-        Assert.Equal("Test.MyComponent", bind.GetTypeName());
+        Assert.Equal("Test.MyComponent", bind.TypeName);
 
         Assert.Collection(bind.TagMatchingRules.OrderBy(r => r.Attributes.Length),
             rule =>
@@ -146,7 +146,7 @@ namespace Test
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.Bind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -160,7 +160,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-MyProperty", attribute.Name);
-        Assert.Equal("MyProperty", attribute.GetPropertyName());
+        Assert.Equal("MyProperty", attribute.PropertyName);
         Assert.Equal("System.Action<System.String> Test.MyComponent.MyProperty", attribute.DisplayName);
 
         // Defined from the property type
@@ -190,7 +190,7 @@ namespace Test
         bindTagHelperProvider.Execute(context);
 
         // Assert
-        var matches = context.Results.Where(t => t.IsBindTagHelper());
+        var matches = context.Results.Where(static t => t.Kind == TagHelperKind.Bind);
         Assert.NotEmpty(matches);
     }
 
@@ -215,7 +215,7 @@ namespace Test
         bindTagHelperProvider.Execute(context);
 
         // Assert
-        var matches = context.Results.Where(t => t.IsBindTagHelper());
+        var matches = context.Results.Where(static t => t.Kind == TagHelperKind.Bind);
         Assert.NotEmpty(matches);
     }
 
@@ -298,15 +298,15 @@ namespace Test
         // here and then ignoring them.
         Assert.Empty(bind.Diagnostics);
         Assert.False(bind.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, bind.Kind);
-        Assert.Equal(ComponentMetadata.Bind.RuntimeName, bind.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Bind, bind.Kind);
+        Assert.Equal(RuntimeKind.None, bind.RuntimeKind);
         Assert.False(bind.IsDefaultKind());
         Assert.False(bind.KindUsesDefaultTagHelperRuntime());
-        Assert.False(bind.IsComponentOrChildContentTagHelper);
+        Assert.False(bind.IsComponentOrChildContentTagHelper());
         Assert.True(bind.CaseSensitive);
 
-        Assert.Equal("MyProperty", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("MyPropertyChanged", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
+        Assert.Equal("MyProperty", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("MyPropertyChanged", ((BindMetadata)bind.Metadata).ChangeAttribute);
 
         Assert.Equal(
             "Binds the provided expression to the 'MyProperty' property and a change event " +
@@ -317,7 +317,7 @@ namespace Test
         Assert.Equal("TestAssembly", bind.AssemblyName);
         Assert.Equal("Test.MyComponent", bind.Name);
         Assert.Equal("Test.MyComponent", bind.DisplayName);
-        Assert.Equal("Test.MyComponent", bind.GetTypeName());
+        Assert.Equal("Test.MyComponent", bind.TypeName);
 
         Assert.Collection(bind.TagMatchingRules.OrderBy(o => o.Attributes.Length),
             rule =>
@@ -370,7 +370,7 @@ namespace Test
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.Bind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -384,7 +384,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-MyProperty", attribute.Name);
-        Assert.Equal("MyProperty", attribute.GetPropertyName());
+        Assert.Equal("MyProperty", attribute.PropertyName);
         Assert.Equal("Microsoft.AspNetCore.Components.EventCallback<System.String> Test.MyComponent.MyProperty", attribute.DisplayName);
 
         // Defined from the property type
@@ -478,16 +478,16 @@ namespace Test
         // here and then ignoring them.
         Assert.Empty(bind.Diagnostics);
         Assert.False(bind.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, bind.Kind);
-        Assert.Equal(bool.TrueString, bind.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.Bind.RuntimeName, bind.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Bind, bind.Kind);
+        Assert.Equal(RuntimeKind.None, bind.RuntimeKind);
         Assert.False(bind.IsDefaultKind());
         Assert.False(bind.KindUsesDefaultTagHelperRuntime());
-        Assert.False(bind.IsComponentOrChildContentTagHelper);
+        Assert.False(bind.IsComponentOrChildContentTagHelper());
         Assert.True(bind.CaseSensitive);
+        Assert.True(bind.ClassifyAttributesOnly);
 
-        Assert.Equal("myprop", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("myevent", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
+        Assert.Equal("myprop", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("myevent", ((BindMetadata)bind.Metadata).ChangeAttribute);
         Assert.False(bind.IsInputElementBindTagHelper());
         Assert.False(bind.IsInputElementFallbackBindTagHelper());
 
@@ -500,7 +500,7 @@ namespace Test
         Assert.Equal("Microsoft.AspNetCore.Components", bind.AssemblyName);
         Assert.Equal("Bind", bind.Name);
         Assert.Equal("Test.BindAttributes", bind.DisplayName);
-        Assert.Equal("Test.BindAttributes", bind.GetTypeName());
+        Assert.Equal("Test.BindAttributes", bind.TypeName);
 
         // The tag matching rule for a bind-Component is always the component name + the attribute name
         Assert.Collection(bind.TagMatchingRules.OrderBy(o => o.Attributes.Length),
@@ -563,7 +563,7 @@ namespace Test
             // Invariants
             Assert.Empty(attribute.Diagnostics);
             Assert.False(attribute.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, attribute.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, attribute.Parent.Kind);
             Assert.False(attribute.IsDefaultKind());
             Assert.False(attribute.HasIndexer);
             Assert.Null(attribute.IndexerNamePrefix);
@@ -577,7 +577,7 @@ namespace Test
                 attribute.Documentation);
 
             Assert.Equal("@bind", attribute.Name);
-            Assert.Equal("Bind", attribute.GetPropertyName());
+            Assert.Equal("Bind", attribute.PropertyName);
             Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
             // Defined from the property type
@@ -591,7 +591,7 @@ namespace Test
             // Invariants
             Assert.Empty(parameter.Diagnostics);
             Assert.False(parameter.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
             Assert.False(parameter.IsDefaultKind());
 
             Assert.Equal(
@@ -614,7 +614,7 @@ namespace Test
             // Invariants
             Assert.Empty(parameter.Diagnostics);
             Assert.False(parameter.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
             Assert.False(parameter.IsDefaultKind());
 
             Assert.Equal(
@@ -636,7 +636,7 @@ namespace Test
             // Invariants
             Assert.Empty(parameter.Diagnostics);
             Assert.False(parameter.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
             Assert.False(parameter.IsDefaultKind());
 
             Assert.Equal(
@@ -658,7 +658,7 @@ namespace Test
             // Invariants
             Assert.Empty(parameter.Diagnostics);
             Assert.False(parameter.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
             Assert.False(parameter.IsDefaultKind());
 
             Assert.Equal(
@@ -680,7 +680,7 @@ namespace Test
             // Invariants
             Assert.Empty(parameter.Diagnostics);
             Assert.False(parameter.HasErrors);
-            Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+            Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
             Assert.False(parameter.IsDefaultKind());
 
             Assert.Equal(
@@ -728,8 +728,8 @@ namespace Test
         matches = AssertAndExcludeFullyQualifiedNameMatchComponents(matches, expectedCount: 0);
         var bind = Assert.Single(matches);
 
-        Assert.Equal("myprop", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("myevent", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
+        Assert.Equal("myprop", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("myevent", ((BindMetadata)bind.Metadata).ChangeAttribute);
         Assert.False(bind.IsInputElementBindTagHelper());
         Assert.False(bind.IsInputElementFallbackBindTagHelper());
 
@@ -745,12 +745,12 @@ namespace Test
 
                 var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
                 Assert.Equal("@bind-myprop", attribute.Name);
-                Assert.Equal("Bind_myprop", attribute.GetPropertyName());
+                Assert.Equal("Bind_myprop", attribute.PropertyName);
                 Assert.Equal("object Test.BindAttributes.Bind_myprop", attribute.DisplayName);
 
                 attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("format", StringComparison.Ordinal));
                 Assert.Equal("format-myprop", attribute.Name);
-                Assert.Equal("Format_myprop", attribute.GetPropertyName());
+                Assert.Equal("Format_myprop", attribute.PropertyName);
                 Assert.Equal("string Test.BindAttributes.Format_myprop", attribute.DisplayName);
             },
             rule =>
@@ -773,12 +773,12 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind-myprop", attribute.Name);
-        Assert.Equal("Bind_myprop", attribute.GetPropertyName());
+        Assert.Equal("Bind_myprop", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind_myprop", attribute.DisplayName);
 
         attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("format", StringComparison.Ordinal));
         Assert.Equal("format-myprop", attribute.Name);
-        Assert.Equal("Format_myprop", attribute.GetPropertyName());
+        Assert.Equal("Format_myprop", attribute.PropertyName);
         Assert.Equal("string Test.BindAttributes.Format_myprop", attribute.DisplayName);
     }
 
@@ -811,9 +811,9 @@ namespace Test
         matches = AssertAndExcludeFullyQualifiedNameMatchComponents(matches, expectedCount: 0);
         var bind = Assert.Single(matches);
 
-        Assert.Equal("myprop", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("myevent", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
-        Assert.False(bind.Metadata.ContainsKey(ComponentMetadata.Bind.TypeAttribute));
+        Assert.Equal("myprop", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("myevent", ((BindMetadata)bind.Metadata).ChangeAttribute);
+        Assert.Null(((BindMetadata)bind.Metadata).TypeAttribute);
         Assert.True(bind.IsInputElementBindTagHelper());
         Assert.True(bind.IsInputElementFallbackBindTagHelper());
 
@@ -847,7 +847,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -885,9 +885,9 @@ namespace Test
         matches = AssertAndExcludeFullyQualifiedNameMatchComponents(matches, expectedCount: 0);
         var bind = Assert.Single(matches);
 
-        Assert.Equal("myprop", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("myevent", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
-        Assert.Equal("checkbox", bind.Metadata[ComponentMetadata.Bind.TypeAttribute]);
+        Assert.Equal("myprop", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("myevent", ((BindMetadata)bind.Metadata).ChangeAttribute);
+        Assert.Equal("checkbox", ((BindMetadata)bind.Metadata).TypeAttribute);
         Assert.True(bind.IsInputElementBindTagHelper());
         Assert.False(bind.IsInputElementFallbackBindTagHelper());
 
@@ -942,7 +942,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -980,9 +980,9 @@ namespace Test
         matches = AssertAndExcludeFullyQualifiedNameMatchComponents(matches, expectedCount: 0);
         var bind = Assert.Single(matches);
 
-        Assert.Equal("myprop", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("myevent", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
-        Assert.Equal("checkbox", bind.Metadata[ComponentMetadata.Bind.TypeAttribute]);
+        Assert.Equal("myprop", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("myevent", ((BindMetadata)bind.Metadata).ChangeAttribute);
+        Assert.Equal("checkbox", ((BindMetadata)bind.Metadata).TypeAttribute);
         Assert.True(bind.IsInputElementBindTagHelper());
         Assert.False(bind.IsInputElementFallbackBindTagHelper());
         Assert.False(bind.IsInvariantCultureBindTagHelper());
@@ -1039,7 +1039,7 @@ namespace Test
 
         var attribute = Assert.Single(bind.BoundAttributes, a => a.Name.StartsWith("@bind", StringComparison.Ordinal));
         Assert.Equal("@bind-somevalue", attribute.Name);
-        Assert.Equal("Bind_somevalue", attribute.GetPropertyName());
+        Assert.Equal("Bind_somevalue", attribute.PropertyName);
         Assert.Equal("object Test.BindAttributes.Bind_somevalue", attribute.DisplayName);
 
         var parameter = Assert.Single(attribute.Parameters, a => a.Name.Equals("format"));
@@ -1077,9 +1077,9 @@ namespace Test
         matches = AssertAndExcludeFullyQualifiedNameMatchComponents(matches, expectedCount: 0);
         var bind = Assert.Single(matches);
 
-        Assert.Equal("value", bind.Metadata[ComponentMetadata.Bind.ValueAttribute]);
-        Assert.Equal("onchange", bind.Metadata[ComponentMetadata.Bind.ChangeAttribute]);
-        Assert.Equal("number", bind.Metadata[ComponentMetadata.Bind.TypeAttribute]);
+        Assert.Equal("value", ((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Equal("onchange", ((BindMetadata)bind.Metadata).ChangeAttribute);
+        Assert.Equal("number", ((BindMetadata)bind.Metadata).TypeAttribute);
         Assert.True(bind.IsInputElementBindTagHelper());
         Assert.False(bind.IsInputElementFallbackBindTagHelper());
         Assert.True(bind.IsInvariantCultureBindTagHelper());
@@ -1111,16 +1111,16 @@ namespace Test
         // here and then ignoring them.
         Assert.Empty(bind.Diagnostics);
         Assert.False(bind.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, bind.Kind);
-        Assert.Equal(bool.TrueString, bind.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.Bind.RuntimeName, bind.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Bind, bind.Kind);
+        Assert.Equal(RuntimeKind.None, bind.RuntimeKind);
         Assert.False(bind.IsDefaultKind());
         Assert.False(bind.KindUsesDefaultTagHelperRuntime());
-        Assert.False(bind.IsComponentOrChildContentTagHelper);
+        Assert.False(bind.IsComponentOrChildContentTagHelper());
         Assert.True(bind.CaseSensitive);
+        Assert.True(bind.ClassifyAttributesOnly);
 
-        Assert.False(bind.Metadata.ContainsKey(ComponentMetadata.Bind.ValueAttribute));
-        Assert.False(bind.Metadata.ContainsKey(ComponentMetadata.Bind.ChangeAttribute));
+        Assert.Null(((BindMetadata)bind.Metadata).ValueAttribute);
+        Assert.Null(((BindMetadata)bind.Metadata).ChangeAttribute);
         Assert.True(bind.IsFallbackBindTagHelper());
 
         Assert.Equal(
@@ -1134,7 +1134,7 @@ namespace Test
         Assert.Equal("Microsoft.AspNetCore.Components", bind.AssemblyName);
         Assert.Equal("Bind", bind.Name);
         Assert.Equal("Microsoft.AspNetCore.Components.Bind", bind.DisplayName);
-        Assert.Equal("Microsoft.AspNetCore.Components.Bind", bind.GetTypeName());
+        Assert.Equal("Microsoft.AspNetCore.Components.Bind", bind.TypeName);
 
         // The tag matching rule for a bind-Component is always the component name + the attribute name
         var rule = Assert.Single(bind.TagMatchingRules);
@@ -1157,7 +1157,7 @@ namespace Test
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.Bind, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.IsIndexerBooleanProperty);
         Assert.False(attribute.IsIndexerStringProperty);
@@ -1174,7 +1174,7 @@ namespace Test
             attribute.Documentation);
 
         Assert.Equal("@bind-...", attribute.Name);
-        Assert.Equal("Bind", attribute.GetPropertyName());
+        Assert.Equal("Bind", attribute.PropertyName);
         Assert.Equal(
             "System.Collections.Generic.Dictionary<string, object> Microsoft.AspNetCore.Components.Bind.Bind",
             attribute.DisplayName);
@@ -1190,7 +1190,7 @@ namespace Test
         // Invariants
         Assert.Empty(parameter.Diagnostics);
         Assert.False(parameter.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+        Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
         Assert.False(parameter.IsDefaultKind());
 
         Assert.Equal(
@@ -1215,7 +1215,7 @@ namespace Test
         // Invariants
         Assert.Empty(parameter.Diagnostics);
         Assert.False(parameter.HasErrors);
-        Assert.Equal(ComponentMetadata.Bind.TagHelperKind, parameter.Parent.Parent.Kind);
+        Assert.Equal(TagHelperKind.Bind, parameter.Parent.Parent.Kind);
         Assert.False(parameter.IsDefaultKind());
 
         Assert.Equal(
@@ -1234,7 +1234,5 @@ namespace Test
     }
 
     private static TagHelperDescriptor[] GetBindTagHelpers(TagHelperDescriptorProviderContext context)
-    {
-        return ExcludeBuiltInComponents(context).Where(t => t.IsBindTagHelper()).ToArray();
-    }
+        => [.. ExcludeBuiltInComponents(context).Where(static t => t.Kind == TagHelperKind.Bind)];
 }
