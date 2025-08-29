@@ -1,8 +1,6 @@
 parameters:
 - name: BuildRTM
   type: boolean
-- name: NuGetLocalizationType
-  type: string
 - name: RunUnitTests
   displayName: Run unit tests
   type: boolean
@@ -110,6 +108,15 @@ steps:
     solution: "build\\build.proj"
     configuration: "$(BuildConfiguration)"
     msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
+
+# NuGet.exe embeds its own satellite resources, but satellite resources are built after the main assembly.
+# This means on the first build it's missing the resources, so we have to build nuget.exe a second time.
+- task: MSBuild@1
+  displayName: "Build localized NuGet.exe"
+  inputs:
+    solution: "src\\NuGet.Clients\\NuGet.CommandLine"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:GitRepositoryRemoteName=github /binarylogger:$(Build.StagingDirectory)\\binlog\\02a.Build_NuGet.exe.binlog /property:MicroBuild_SigningEnabled=false"
 
 - task: CodeQL3000Finalize@0
   displayName: Finalize CodeQL
@@ -374,6 +381,16 @@ steps:
   # Using MSBuild CLI results in an assembly binding failure for NuGet.Common.dll 4.4.0.3 because Microsoft.DotNet.Build.Tasks.Feed.dll references SleetLib.dll which references NuGet.Common 4.4.0.3.
   # The Microsoft.DotNet.Build.Tasks.Feed package includes NuGet.Common 4.9.0.6 and a binding redirection in Microsoft.DotNet.Build.Tasks.Feed.dll.config but the binding redirection is not processed.
   # This would probably solve it:  https://github.com/Microsoft/msbuild/issues/1309
+- task: UseDotNet@2
+  displayName: "Install .NET 10.0.0 for BAR publishing"
+  inputs:
+    packageType: sdk
+    version: 10.0.x
+    includePreviewVersions: true
+    installationPath: $(Agent.TempDirectory)/dotnet
+    workingDirectory: $(Agent.TempDirectory)
+  condition: "and(succeeded(),eq(variables['PublishArtifactsToDotNetBuildAssetRegistry'], 'true'), eq(variables['BuildRTM'], 'false'))"
+
 - task: AzureCLI@2
   displayName: "Publish to the .NET Core build asset registry (BAR)"
   inputs:
@@ -381,7 +398,7 @@ steps:
     scriptType: ps
     scriptLocation: inlineScript
     inlineScript: |
-      dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(Build.SourceBranchName) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
+      $(Agent.TempDirectory)/dotnet/dotnet msbuild $(Build.Repository.LocalPath)\build\publish.proj /t:PublishToBuildAssetRegistry /property:NuGetClientNupkgsDirectoryPath=$(Build.Repository.LocalPath)\artifacts\$(NupkgOutputDir) /property:BUILD_BUILDNUMBER=$(Build.BuildNumber) /property:BUILD_SOURCEBRANCH=$(Build.SourceBranchName) /property:BUILD_SOURCEVERSION=$(Build.SourceVersion) /property:BUILD_REPOSITORY_URI=$(Build.Repository.Uri) /property:BUILD_REPOSITORY_NAME=$(Build.Repository.Name) /property:ArtifactsLogDir=$(Build.Repository.LocalPath)\artifacts\manifests\ /binarylogger:$(Build.StagingDirectory)\binlog\21.PublishToBuildAssetRegistry.binlog /property:MaestroApiEndpoint=$(MaestroApiEndpoint)
     workingDirectory: cli
     failOnStderr: true
   env:

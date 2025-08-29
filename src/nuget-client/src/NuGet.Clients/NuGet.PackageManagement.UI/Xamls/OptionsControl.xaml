@@ -6,6 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
+             xmlns:shell_controls="clr-namespace:Microsoft.VisualStudio.Shell.Controls;assembly=Microsoft.VisualStudio.Shell.Styles"
              mc:Ignorable="d"
              d:DesignHeight="350" d:DesignWidth="350">
   <UserControl.Resources>
@@ -81,10 +82,9 @@
             VerticalAlignment="Center"
             Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
             Text="{x:Static nuget:Resources.Label_DependencyBehavior}" />
-          <ComboBox
+          <shell_controls:ComboBox
             Grid.Row="0"
             Grid.Column="1"
-            MinHeight="22"
             AutomationProperties.Name="{x:Static nuget:Resources.Label_DependencyBehavior}"
             ItemsSource="{Binding Path=Options.DependencyBehaviors}"
             SelectedItem="{Binding Path=Options.SelectedDependencyBehavior}" />
@@ -95,10 +95,9 @@
             VerticalAlignment="Center"
             Foreground="{DynamicResource {x:Static nuget:Brushes.UIText}}"
             Text="{x:Static nuget:Resources.Label_FileConflictAction}" />
-          <ComboBox
+          <shell_controls:ComboBox
             Grid.Row="2"
             Grid.Column="1"
-            MinHeight="22"
             AutomationProperties.Name="{x:Static nuget:Resources.Label_FileConflictAction}"
             ItemsSource="{Binding Path=Options.FileConflictActions}"
             SelectedItem="{Binding Path=Options.SelectedFileConflictAction}" />

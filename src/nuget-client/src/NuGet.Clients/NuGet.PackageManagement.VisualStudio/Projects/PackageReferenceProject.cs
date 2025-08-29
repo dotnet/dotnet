@@ -86,7 +86,7 @@ namespace NuGet.PackageManagement.VisualStudio
         }
 
         /// <summary>
-        /// Gets the installed (top level) package references for this project. 
+        /// Gets the installed (top level) package references for this project.
         /// </summary>
         public override async Task<IEnumerable<PackageReference>> GetInstalledPackagesAsync(CancellationToken token)
         {
@@ -480,27 +480,29 @@ namespace NuGet.PackageManagement.VisualStudio
                 visited.Add(current.PackageIdentity); // visited
 
                 // Lookup Transitive Origins Cache
-                TransitiveEntry cachedEntry;
-                if (!transitiveOriginsCache.TryGetValue(current.PackageIdentity.Id, out cachedEntry))
+                if (transitiveOriginsCache.TryGetValue(current.PackageIdentity.Id, out TransitiveEntry cachedEntry))
+                {
+                    if (cachedEntry.TryGetValue(fxRidEntry, out var packageReferences))
+                    {
+                        // Dictionary value is a List. If perf. is bad, change to HashSet.
+                        if (!packageReferences.Contains(top))
+                        {
+                            packageReferences.Add(top);
+                        }
+                    }
+                    else
+                    {
+                        cachedEntry[fxRidEntry] = [top];
+                    }
+                }
+                else
                 {
                     cachedEntry = new Dictionary<FrameworkRuntimePair, IList<PackageReference>>
                     {
-                        [fxRidEntry] = new List<PackageReference>()
+                        {fxRidEntry, [top]}
                     };
+                    transitiveOriginsCache[current.PackageIdentity.Id] = cachedEntry;
                 }
-
-                if (!cachedEntry.ContainsKey(fxRidEntry))
-                {
-                    cachedEntry[fxRidEntry] = new List<PackageReference>();
-                }
-
-                if (!cachedEntry[fxRidEntry].Contains(top)) // Dictionary value is a List. If perf. is bad, change to HashSet.
-                {
-                    cachedEntry[fxRidEntry].Add(top);
-                }
-
-                // Upsert Transitive Origins Cache
-                transitiveOriginsCache[current.PackageIdentity.Id] = cachedEntry;
 
                 foreach (PackageDependency dep in node.Dependencies.ToList()) // Casting to list to prevent backing allocations
                 {

@@ -65,6 +65,7 @@ variables:
   RunTestsOnMac: ${{ parameters.RunTestsOnMac }}
   RunMonoTestsOnMac: ${{ parameters.RunMonoTestsOnMac }}
   RunStaticAnalysis: ${{ parameters.RunStaticAnalysis }}
+  OneLocBranch: 'dev'
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
@@ -92,7 +93,10 @@ extends:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
         isOfficialBuild: true
-        NuGetLocalizationType: Full
+        # Only run against dev.
+        # To request a change in localization branch, see https://github.com/dotnet/arcade/blob/main/Documentation/OneLocBuild.md#releasing-with-onelocbuild-using-arcade
+        ${{ if eq(variables['Build.SourceBranch'], format('refs/heads/{0}', variables['OneLocBranch'])) }}:
+          RunOneLocBuild: true
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
         RunUnitTestsOnWindows: ${{parameters.RunUnitTestsOnWindows}}
