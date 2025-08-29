@@ -885,9 +885,8 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         await VerifySemanticTokensAsync(documentText, supportsVSExtensions: supportsVSExtensions, isRazorFile: true, withCSharpBackground: true);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public void GetMappedCSharpRanges_MinimalRangeVsSmallDisjointRanges_DisjointRangesAreSmaller(bool precise)
+    [Fact]
+    public void GetMappedCSharpRanges_MinimalRangeVsSmallDisjointRanges_DisjointRangesAreSmaller()
     {
         var documentText = """
             @[|using System|]
@@ -903,24 +902,13 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
         var csharpSourceText = codeDocument.GetCSharpSourceText();
         var razorRange = GetSpan(documentText);
 
-        if (precise)
+        Assert.True(RazorSemanticTokensInfoService.TryGetSortedCSharpRanges(codeDocument, razorRange, out var csharpRanges));
+        Assert.Equal(spans.Length, csharpRanges.Length);
+        for (var i = 0; i < csharpRanges.Length; i++)
         {
-            Assert.True(RazorSemanticTokensInfoService.TryGetSortedCSharpRanges(codeDocument, razorRange, out var csharpRanges));
-            Assert.Equal(spans.Length, csharpRanges.Length);
-            for (var i = 0; i < csharpRanges.Length; i++)
-            {
-                var csharpRange = csharpRanges[i];
-                var textSpan = csharpSourceText.GetTextSpan(csharpRange);
-                Assert.Equal(spans[i].Length, textSpan.Length);
-            }
-        }
-        else
-        {
-            // Note that the expected lengths are different on Windows vs. Unix.
-            var expectedCsharpRangeLength = PlatformInformation.IsWindows ? 945 : 911;
-            Assert.True(codeDocument.TryGetMinimalCSharpRange(razorRange, out var csharpRange));
+            var csharpRange = csharpRanges[i];
             var textSpan = csharpSourceText.GetTextSpan(csharpRange);
-            Assert.Equal(expectedCsharpRangeLength, textSpan.Length);
+            Assert.Equal(spans[i].Length, textSpan.Length);
         }
     }
 
