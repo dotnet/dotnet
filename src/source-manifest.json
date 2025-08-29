@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 280436,
+      "barId": 281229,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "f2cdf946c00a12a2c283835bb41ddc2255832055"
+      "commitSha": "dd478fca469865d5f76e45a31e699f3f13649806"
     },
     {
       "barId": 281003,
@@ -25,10 +25,10 @@
       "commitSha": "e292617c0f829bfe777c7ad51467c6a509a9aff8"
     },
     {
-      "barId": 280917,
+      "barId": 281094,
       "path": "deployment-tools",
       "remoteUri": "https://github.com/dotnet/deployment-tools",
-      "commitSha": "0a1e8362711c7651575bed49000215adb7f0c599"
+      "commitSha": "c3b8848af005deb9cab2a64b47a39f507f095835"
     },
     {
       "barId": 279003,
@@ -37,10 +37,10 @@
       "commitSha": "a321e262b120841f4bd7651da46826589404ac66"
     },
     {
-      "barId": 280963,
+      "barId": 281112,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "3aca835b14f6d4443a9bc1b1c3b42e148e5fe444"
+      "commitSha": "a899d64152b3719f803bd2aebb1dda35959d9bec"
     },
     {
       "barId": 280178,
@@ -55,10 +55,10 @@
       "commitSha": "e5136907ae7b5db690206fa70559d1b76bbaca72"
     },
     {
-      "barId": 280948,
+      "barId": 281032,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "35f09c081b80710315af6d2741811a02f67c2358"
+      "commitSha": "1ccfc7120271f243ece45a4017ecadf38b4a0ceb"
     },
     {
       "barId": 280776,
@@ -73,16 +73,16 @@
       "commitSha": "c150d2096536ce3e0fb5b1007d4e39663f22bcaa"
     },
     {
-      "barId": 280955,
+      "barId": 281090,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "b467cfbff565a16d1791a684e28be2ef6b86bf01"
+      "commitSha": "8e3d84569a17786744edc314614a99800ec3fd1f"
     },
     {
-      "barId": 280952,
+      "barId": 281053,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "4cf369ee051d845236c5dab9b2074490d33242b6"
+      "commitSha": "a4210ec7bf5f4669bfa249fccf395bf930dc74ea"
     },
     {
       "barId": 277711,
