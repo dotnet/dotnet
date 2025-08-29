@@ -601,6 +601,13 @@ jobs:
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
+    - ${{ if ne(parameters.runOnline, 'True' )}}:
+      - script: |
+          set -ex
+          # Update the owner of the staging directory to the current user
+          sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
+        displayName: Update owner of artifacts staging directory
+
     - script: |
         if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
           rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
@@ -608,13 +615,6 @@ jobs:
       displayName: Clean up unwanted Source Build Artifacts
       continueOnError: true
       condition: succeededOrFailed()
-
-    - ${{ if ne(parameters.runOnline, 'True' )}}:
-      - script: |
-          set -ex
-          # Update the owner of the staging directory to the current user
-          sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
-        displayName: Update owner of artifacts staging directory
 
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:
