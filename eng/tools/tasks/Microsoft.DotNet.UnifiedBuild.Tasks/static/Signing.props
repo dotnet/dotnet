@@ -1,0 +1,40 @@
+<Project>
+
+  <PropertyGroup>
+    <ExternalCertificateId>3PartySHA2</ExternalCertificateId>
+    <UseDotNetCertificate>true</UseDotNetCertificate>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ItemsToSign Remove="@(ItemsToSign)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ItemsToSign Include="$(SignableSourceBuiltAssets)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Some of the artifacts need to be strong-named with the AspNetCore snk -->
+    <StrongNameSignInfo Include="$(AspNetCoreSnkPath)" PublicKeyToken="adb9793829ddae60" CertificateName="MicrosoftDotNet500" />
+
+    <!-- We don't need to code sign .js files because they are not used in Windows Script Host -->
+    <FileExtensionSignInfo Update=".js" CertificateName="None" />
+
+    <!-- Sign 3rd party files that end up in the artifacts -->
+    <FileSignInfo Include="Humanizer.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Mono.Cecil.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Mono.Cecil.Mdb.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Mono.Cecil.Pdb.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Mono.Cecil.Rocks.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Newtonsoft.Json.dll" CertificateName="$(ExternalCertificateId)" />
+    <FileSignInfo Include="Valleysoft.DockerCredsProvider.dll" CertificateName="$(ExternalCertificateId)" />
+
+    <!--
+        Skip warning on files that are marked as 3rd party but have .NET copyright:
+        "Copyright © .NET Foundation and Contributors" or ".NET Foundation and Contributors" 
+    -->
+    <ItemsToSkip3rdPartyCheck Include="mscorlib.dll" />
+    <ItemsToSkip3rdPartyCheck Include="netstandard.dll" />
+  </ItemGroup>
+
+</Project>
