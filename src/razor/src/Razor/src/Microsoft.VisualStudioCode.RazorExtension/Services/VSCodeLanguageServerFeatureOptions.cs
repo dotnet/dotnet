@@ -29,7 +29,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
     // Options that are set to their defaults
     public override bool SupportsFileManipulation => true;
     public override bool SingleServerSupport => false;
-    public override bool UsePreciseSemanticTokenRanges => false;
     public override bool ShowAllCSharpCodeActions => false;
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => PlatformInformation.IsWindows;
     public override bool IncludeProjectKeyInGeneratedFilePath => false;

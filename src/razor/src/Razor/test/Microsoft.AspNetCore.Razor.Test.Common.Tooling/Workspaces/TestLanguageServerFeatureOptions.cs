@@ -29,8 +29,6 @@ internal class TestLanguageServerFeatureOptions(
 
     public override bool ShowAllCSharpCodeActions => false;
 
-    public override bool UsePreciseSemanticTokenRanges => true;
-
     public override bool UpdateBuffersForClosedDocuments => updateBuffersForClosedDocuments;
 
     public override bool IncludeProjectKeyInGeneratedFilePath => includeProjectKeyInGeneratedFilePath;
