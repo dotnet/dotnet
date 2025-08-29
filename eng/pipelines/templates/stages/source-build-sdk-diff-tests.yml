@@ -13,7 +13,7 @@ stages:
   jobs:
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.centOSStreamName) }}
+      sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.centOSStreamName) }}
       msftJobName: AzureLinux_x64_Cross
       sbTargetRid: ${{ variables.centOSStreamX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
@@ -23,7 +23,7 @@ stages:
 
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.almaLinuxName) }}
+      sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.almaLinuxName) }}
       msftJobName: AzureLinux_x64_Cross
       sbTargetRid: ${{ variables.almaLinuxX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
@@ -32,7 +32,7 @@ stages:
 
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.alpineName) }}
+      sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.alpineName) }}
       msftJobName: AzureLinux_x64_Cross_Alpine
       sbTargetRid: ${{ variables.alpineX64Rid }}
       msftTargetRid: ${{ variables.linuxMuslX64Rid }}
@@ -41,7 +41,7 @@ stages:
 
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.fedoraName) }}
+      sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.fedoraName) }}
       msftJobName: AzureLinux_x64_Cross
       sbTargetRid: ${{ variables.fedoraX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
@@ -50,7 +50,7 @@ stages:
 
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}_Offline_MsftSdk', variables.ubuntuName) }}
+      sbJobName: ${{ format('SB_{0}_Offline_MsftSdk', variables.ubuntuName) }}
       msftJobName: AzureLinux_x64_Cross
       sbTargetRid: ${{ variables.ubuntuX64Rid }}
       msftTargetRid: ${{ variables.linuxX64Rid }}
@@ -59,7 +59,7 @@ stages:
 
   - template: /eng/pipelines/templates/jobs/sdk-diff-tests.yml@self
     parameters:
-      sbJobName: ${{ format('{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
+      sbJobName: ${{ format('SB_{0}Arm64_Offline_MsftSdk', variables.ubuntuName) }}
       msftJobName: AzureLinux_x64_Cross
       sbTargetRid: ${{ variables.ubuntuArm64Rid }}
       msftTargetRid: ${{ variables.linuxArm64Rid }}
