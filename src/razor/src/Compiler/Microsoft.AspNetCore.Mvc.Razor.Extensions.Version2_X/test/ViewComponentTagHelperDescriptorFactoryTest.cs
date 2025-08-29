@@ -41,13 +41,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("foo"))
+                .PropertyName("foo")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("bar"))
+                .PropertyName("bar")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string StringParameterViewComponentTagHelper.bar"))
             .Build();
@@ -84,20 +84,20 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("test-enum")
-                .Metadata(PropertyName("testEnum"))
+                .PropertyName("testEnum")
                 .TypeName(typeof(VariousParameterViewComponent).FullName + "." + nameof(VariousParameterViewComponent.TestEnum))
                 .AsEnum()
                 .DisplayName(typeof(VariousParameterViewComponent).FullName + "." + nameof(VariousParameterViewComponent.TestEnum) + " VariousParameterViewComponentTagHelper.testEnum"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("test-string")
-                .Metadata(PropertyName("testString"))
+                .PropertyName("testString")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string VariousParameterViewComponentTagHelper.testString"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("baz")
-                .Metadata(PropertyName("baz"))
+                .PropertyName("baz")
                 .TypeName(typeof(int).FullName)
                 .DisplayName("int VariousParameterViewComponentTagHelper.baz"))
             .Build();
@@ -132,13 +132,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("Foo"))
+                .PropertyName("Foo")
                 .TypeName("System.Collections.Generic.List<System.String>")
                 .DisplayName("System.Collections.Generic.List<System.String> GenericParameterViewComponentTagHelper.Foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("Bar"))
+                .PropertyName("Bar")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
                 .AsDictionaryAttribute("bar-", typeof(int).FullName)
                 .DisplayName("System.Collections.Generic.Dictionary<System.String, System.Int32> GenericParameterViewComponentTagHelper.Bar"))
@@ -174,13 +174,13 @@ public class ViewComponentTagHelperDescriptorFactoryTest
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("foo")
-                .Metadata(PropertyName("foo"))
+                .PropertyName("foo")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string SyncDerivedViewComponentTagHelper.foo"))
             .BoundAttributeDescriptor(attribute =>
                 attribute
                 .Name("bar")
-                .Metadata(PropertyName("bar"))
+                .PropertyName("bar")
                 .TypeName(typeof(string).FullName)
                 .DisplayName("string SyncDerivedViewComponentTagHelper.bar"))
             .Build();

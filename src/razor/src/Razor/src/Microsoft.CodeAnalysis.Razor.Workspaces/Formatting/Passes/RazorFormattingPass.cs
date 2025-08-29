@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
@@ -53,7 +54,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             _logger.LogTestOnly($"After RazorFormattingPass:\r\n{changedText}");
         }
 
-        return changedText.GetTextChangesArray(originalText);
+        return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
     }
 
     private ImmutableArray<TextChange> FormatRazor(FormattingContext context, RazorSyntaxTree syntaxTree)

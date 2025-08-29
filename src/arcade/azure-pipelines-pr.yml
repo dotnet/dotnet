@@ -6,6 +6,7 @@ trigger:
     - release/6.0
     - release/8.0
     - release/9.0
+    - release/10.0
     exclude:
     - .github/*
     - Documentation/*
@@ -23,6 +24,7 @@ pr:
     - release/6.0
     - release/8.0
     - release/9.0    
+    - release/10.0
     - templates
   paths:
     include:
@@ -164,7 +166,7 @@ stages:
               /p:DotNetSymbolServerTokenSymWeb=DryRunPTA
               /p:PDBArtifactsDirectory='$(Build.ArtifactStagingDirectory)/PDBArtifacts/'
               /p:BlobBasePath='$(Build.ArtifactStagingDirectory)/BlobArtifacts/'
-              /p:SymbolPublishingExclusionsFile='$(Build.SourcesDirectory)/eng/SymbolPublishingExclusionsFile.txt'
+              /p:SymbolPublishingExclusionsFile='$(System.DefaultWorkingDirectory)/eng/SymbolPublishingExclusionsFile.txt'
               /p:Configuration=Release
               /p:PublishToMSDL=false
         - powershell: eng\common\build.ps1
@@ -174,8 +176,8 @@ stages:
             -restore
             -test
             -warnAsError $false
-            -projects $(Build.SourcesDirectory)\tests\UnitTests.proj
-            /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
+            -projects $(System.DefaultWorkingDirectory)\tests\UnitTests.proj
+            /bl:$(System.DefaultWorkingDirectory)\artifacts\log\$(_BuildConfig)\Helix.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: Run Helix Tests
           env:
@@ -204,8 +206,8 @@ stages:
             --restore
             --test
             --warnAsError false
-            --projects $(Build.SourcesDirectory)/tests/UnitTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
+            --projects $(System.DefaultWorkingDirectory)/tests/UnitTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: Run Helix Tests
           env:
@@ -249,8 +251,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.SimulatorTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Apple.SimulatorTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/XHarness.Apple.Simulator.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Apple Simulator Helix Testing
           env:
@@ -279,8 +281,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Apple.DeviceTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Apple.DeviceTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Apple.Device.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Apple Device Helix Testing
           env:
@@ -309,8 +311,8 @@ stages:
             -restore
             -test
             -warnAsError false
-            -projects $(Build.SourcesDirectory)/tests/XHarness.Android.SimulatorTests.proj
-            /bl:$(Build.SourcesDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Android.Simulator.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)/tests/XHarness.Android.SimulatorTests.proj
+            /bl:$(System.DefaultWorkingDirectory)/artifacts/log/$(_BuildConfig)/Helix.XHarness.Android.Simulator.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Android Helix Testing (Linux)
           env:
@@ -338,8 +340,8 @@ stages:
             -restore
             -test
             -warnAsError $false
-            -projects $(Build.SourcesDirectory)\tests\XHarness.Android.DeviceTests.proj
-            /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Helix.XHarness.Android.Device.Tests.binlog
+            -projects $(System.DefaultWorkingDirectory)\tests\XHarness.Android.DeviceTests.proj
+            /bl:$(System.DefaultWorkingDirectory)\artifacts\log\$(_BuildConfig)\Helix.XHarness.Android.Device.Tests.binlog
             /p:RestoreUsingNuGetTargets=false
           displayName: XHarness Android Helix Testing (Windows)
           env:
