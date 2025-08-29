@@ -147,7 +147,7 @@ public partial class LinuxInstallerTests : IDisposable
     {
         await InitializeContextAsync(PackageType.Rpm, initializeSharedContext: false);
 
-        ValidateRpmPackageMetadata($"{repo}:{tag}");
+        ValidatePackageMetadata($"{repo}:{tag}", PackageType.Rpm);
     }
 
     [ConditionalTheory(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
@@ -156,7 +156,7 @@ public partial class LinuxInstallerTests : IDisposable
     {
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
 
-        ValidateDebPackageMetadata($"{repo}:{tag}");
+        ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
     }
 
     private async Task InitializeContextAsync(PackageType packageType, bool initializeSharedContext = true)
@@ -543,16 +543,10 @@ public partial class LinuxInstallerTests : IDisposable
         await response.Content.CopyToAsync(fileStream);
     }
 
-    private void ValidateRpmPackageMetadata(string image)
+    private void ValidatePackageMetadata(string image, PackageType packageType)
     {
-        List<string> list = GetPackageList(image, PackageType.Rpm);
-        ValidatePackageDependencies(list, PackageType.Rpm);
-    }
-
-    private void ValidateDebPackageMetadata(string image)
-    {
-        List<string> list = GetPackageList(image, PackageType.Deb);
-        ValidatePackageDependencies(list, PackageType.Deb);
+        List<string> list = GetPackageList(image, packageType);
+        ValidatePackageDependencies(list, packageType);
     }
 
     private void ValidatePackageDependencies(List<string> list, PackageType packageType)
@@ -668,44 +662,7 @@ public partial class LinuxInstallerTests : IDisposable
         }
         else if (packageType == PackageType.Rpm)
         {
-            try
-            {
-                string packagePath = Path.Combine(_contextDir, package);
-                if (!File.Exists(packagePath))
-                {
-                    _outputHelper.WriteLine($"Package file not found: {packagePath}");
-                    return [];
-                }
-
-                using FileStream rpmStream = File.OpenRead(packagePath);
-                using RpmPackage rpmPackage = RpmPackage.Read(rpmStream);
-
-                string[] requireNames = (string[])rpmPackage.Header.Entries.FirstOrDefault(e => e.Tag == RpmHeaderTag.RequireName).Value;
-                if (requireNames == null || requireNames.Length == 0)
-                {
-                    return [];
-                }
-
-                var result = new HashSet<string>(StringComparer.Ordinal);
-
-                for (int i = 0; i < requireNames.Length; i++)
-                {
-                    string name = requireNames[i];
-                    if (string.IsNullOrWhiteSpace(name) || name.StartsWith("rpmlib(", StringComparison.Ordinal))
-                    {
-                        continue; // Skip internal rpm capabilities
-                    }
-
-                    result.Add(name);
-                }
-
-                return result.ToList();
-            }
-            catch (Exception ex)
-            {
-                _outputHelper.WriteLine($"Error parsing RPM package '{package}': {ex}");
-                return [];
-            }
+            throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
         }
 
         return [];
