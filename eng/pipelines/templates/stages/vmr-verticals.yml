@@ -82,6 +82,12 @@ parameters:
     demands: ImageOverride -equals $(poolImage_Linux)
     os: linux
 
+# Indicates whether to exclude runtime dependent jobs.
+# This is used to skip building the cross-OS DACs and other runtime dependent jobs in non-1xx branches.
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 stages:
 
 #### VERTICAL BUILD (Validation) ####
@@ -162,225 +168,229 @@ stages:
           targetOS: windows
           targetArchitecture: x86
 
-    - ${{ if containsValue(parameters.verifications, 'unified-build-android-arm64') }}:
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Android_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.androidCrossContainerName }}
-            image: ${{ variables.androidCrossContainerImage }}
-          targetOS: android
-          targetArchitecture: arm64
+    - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
-    - ${{ if containsValue(parameters.verifications, 'unified-build-browser-wasm') }}:
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Browser_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.browserCrossContainerName }}
-            image: ${{ variables.browserCrossContainerImage }}
-          crossRootFs: '/crossrootfs/x64'
-          targetOS: browser
-          targetArchitecture: wasm
+      - ${{ if containsValue(parameters.verifications, 'unified-build-android-arm64') }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Android_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.androidCrossContainerName }}
+              image: ${{ variables.androidCrossContainerImage }}
+            targetOS: android
+            targetArchitecture: arm64
 
-    - ${{ if containsValue(parameters.verifications, 'unified-build-iossimulator-arm64') }}:
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: iOSSimulator_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: iossimulator
-          targetArchitecture: arm64
+      - ${{ if containsValue(parameters.verifications, 'unified-build-browser-wasm') }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Browser_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.browserCrossContainerName }}
+              image: ${{ variables.browserCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: browser
+            targetArchitecture: wasm
+
+      - ${{ if containsValue(parameters.verifications, 'unified-build-iossimulator-arm64') }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: iOSSimulator_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: iossimulator
+            targetArchitecture: arm64
 
     ### Additional jobs for full build ###
     - ${{ if in(parameters.scope, 'full') }}:
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Android_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.androidCrossContainerName }}
-            image: ${{ variables.androidCrossContainerImage }}
-          targetOS: android
-          targetArchitecture: arm
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Android_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.androidCrossContainerName }}
-            image: ${{ variables.androidCrossContainerImage }}
-          targetOS: android
-          targetArchitecture: x64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Android_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.androidCrossContainerName }}
+              image: ${{ variables.androidCrossContainerImage }}
+            targetOS: android
+            targetArchitecture: arm
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Android_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.androidCrossContainerName }}
-            image: ${{ variables.androidCrossContainerImage }}
-          targetOS: android
-          targetArchitecture: x86
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Android_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.androidCrossContainerName }}
+              image: ${{ variables.androidCrossContainerImage }}
+            targetOS: android
+            targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Browser_Multithreaded_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.browserCrossContainerName }}
-            image: ${{ variables.browserCrossContainerImage }}
-          crossRootFs: '/crossrootfs/x64'
-          targetOS: browser
-          targetArchitecture: wasm
-          extraProperties: /p:WasmEnableThreads=true
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Android_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.androidCrossContainerName }}
+              image: ${{ variables.androidCrossContainerImage }}
+            targetOS: android
+            targetArchitecture: x86
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: LinuxBionic_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.linuxBionicCrossContainerName }}
-            image: ${{ variables.linuxBionicCrossContainerImage }}
-          targetOS: linux-bionic
-          targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Browser_Multithreaded_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.browserCrossContainerName }}
+              image: ${{ variables.browserCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: browser
+            targetArchitecture: wasm
+            extraProperties: /p:WasmEnableThreads=true
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: LinuxBionic_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.linuxBionicCrossContainerName }}
-            image: ${{ variables.linuxBionicCrossContainerImage }}
-          targetOS: linux-bionic
-          targetArchitecture: arm
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: LinuxBionic_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.linuxBionicCrossContainerName }}
+              image: ${{ variables.linuxBionicCrossContainerImage }}
+            targetOS: linux-bionic
+            targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: LinuxBionic_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.linuxBionicCrossContainerName }}
-            image: ${{ variables.linuxBionicCrossContainerImage }}
-          targetOS: linux-bionic
-          targetArchitecture: x64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: LinuxBionic_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.linuxBionicCrossContainerName }}
+              image: ${{ variables.linuxBionicCrossContainerImage }}
+            targetOS: linux-bionic
+            targetArchitecture: arm
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: iOS_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: ios
-          targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: LinuxBionic_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.linuxBionicCrossContainerName }}
+              image: ${{ variables.linuxBionicCrossContainerImage }}
+            targetOS: linux-bionic
+            targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: iOSSimulator_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: iossimulator
-          targetArchitecture: x64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: iOS_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: ios
+            targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: MacCatalyst_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: maccatalyst
-          targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: iOSSimulator_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: iossimulator
+            targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: MacCatalyst_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: maccatalyst
-          targetArchitecture: x64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: MacCatalyst_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: maccatalyst
+            targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: tvOS_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: tvos
-          targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: MacCatalyst_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: maccatalyst
+            targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: tvOSSimulator_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: tvossimulator
-          targetArchitecture: arm64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: tvOS_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: tvos
+            targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: tvOSSimulator_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          targetOS: tvossimulator
-          targetArchitecture: x64
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: tvOSSimulator_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: tvossimulator
+            targetArchitecture: arm64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Wasi_Shortstack
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.wasiCrossContainerName }}
-            image: ${{ variables.wasiCrossContainerImage }}
-          crossRootFs: '/crossrootfs/x64'
-          targetOS: wasi
-          targetArchitecture: wasm
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: tvOSSimulator_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            targetOS: tvossimulator
+            targetArchitecture: x64
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Wasi_Shortstack
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.wasiCrossContainerName }}
+              image: ${{ variables.wasiCrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            targetOS: wasi
+            targetArchitecture: wasm
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -392,17 +402,19 @@ stages:
           targetOS: osx
           targetArchitecture: x64
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: OSX_Shortstack_Mono_LLVMAOT
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Mac }}
-          useMonoRuntime: true
-          targetOS: osx
-          targetArchitecture: x64
-          extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: OSX_Shortstack_Mono_LLVMAOT
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Mac }}
+            useMonoRuntime: true
+            targetOS: osx
+            targetArchitecture: x64
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -432,21 +444,23 @@ stages:
           targetArchitecture: x64
           extraProperties: /p:PgoInstrument=true
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.azurelinuxX64CrossContainerName }}
-            image: ${{ variables.azurelinuxX64CrossContainerImage }}
-          crossRootFs: '/crossrootfs/x64'
-          useMonoRuntime: true
-          targetOS: linux
-          targetArchitecture: x64
-          extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.azurelinuxX64CrossContainerName }}
+              image: ${{ variables.azurelinuxX64CrossContainerImage }}
+            crossRootFs: '/crossrootfs/x64'
+            useMonoRuntime: true
+            targetOS: linux
+            targetArchitecture: x64
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -535,21 +549,22 @@ stages:
           targetArchitecture: arm64
           targetRid: ${{ variables.linuxMuslArm64Rid }}
 
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          pool: ${{ parameters.pool_Linux_Shortstack }}
-          container:
-            name: ${{ variables.azurelinuxArm64CrossContainerName }}
-            image: ${{ variables.azurelinuxArm64CrossContainerImage }}
-          crossRootFs: '/crossrootfs/arm64'
-          useMonoRuntime: true
-          targetOS: linux
-          targetArchitecture: arm64
-          extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: AzureLinux_x64_Cross_Shortstack_Mono_LLVMAOT
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            pool: ${{ parameters.pool_Linux_Shortstack }}
+            container:
+              name: ${{ variables.azurelinuxArm64CrossContainerName }}
+              image: ${{ variables.azurelinuxArm64CrossContainerImage }}
+            crossRootFs: '/crossrootfs/arm64'
+            useMonoRuntime: true
+            targetOS: linux
+            targetArchitecture: arm64
+            extraProperties: /p:MonoEnableLLVM=true /p:MonoAOTEnableLLVM=true /p:MonoBundleLLVMOptimizer=true
 
       - template: ../jobs/vmr-build.yml
         parameters:
@@ -606,25 +621,27 @@ stages:
 
       ## Build Pass 2 verticals
 
-      # build the cross-OS DACs
-      - template: ../jobs/vmr-build.yml
-        parameters:
-          buildName: Windows
-          isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-          sign: ${{ variables.signEnabled }}
-          signType: ${{ variables.signType }}
-          signDac: ${{ variables.signDacEnabled }}
-          pool: ${{ parameters.pool_Windows }}
-          targetOS: windows
-          targetArchitecture: x86
-          buildPass: 2
-          reuseBuildArtifactsFrom:
-          - AzureLinux_x64_Cross_x64
-          - AzureLinux_x64_Cross_Alpine_x64
-          - AzureLinux_x64_Cross_arm64
-          - AzureLinux_x64_Cross_Alpine_arm64
-          - AzureLinux_x64_Cross_arm
-          - AzureLinux_x64_Cross_Alpine_arm
+      - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+
+        # build the cross-OS DACs
+        - template: ../jobs/vmr-build.yml
+          parameters:
+            buildName: Windows
+            isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+            sign: ${{ variables.signEnabled }}
+            signType: ${{ variables.signType }}
+            signDac: ${{ variables.signDacEnabled }}
+            pool: ${{ parameters.pool_Windows }}
+            targetOS: windows
+            targetArchitecture: x86
+            buildPass: 2
+            reuseBuildArtifactsFrom:
+            - AzureLinux_x64_Cross_x64
+            - AzureLinux_x64_Cross_Alpine_x64
+            - AzureLinux_x64_Cross_arm64
+            - AzureLinux_x64_Cross_Alpine_arm64
+            - AzureLinux_x64_Cross_arm
+            - AzureLinux_x64_Cross_Alpine_arm
 
       # build the ASP.NET Core hosting bundle and VS components
       - template: ../jobs/vmr-build.yml
@@ -658,21 +675,22 @@ stages:
           - Windows_x64
           - Windows_x86
           - Windows_arm64
-          - Browser_Shortstack_wasm
-          - Browser_Multithreaded_Shortstack_wasm
-          - Wasi_Shortstack_wasm
-          - Android_Shortstack_arm64
-          - Android_Shortstack_arm
-          - Android_Shortstack_x64
-          - Android_Shortstack_x86
-          - iOS_Shortstack_arm64
-          - iOSSimulator_Shortstack_arm64
-          - iOSSimulator_Shortstack_x64
-          - tvOS_Shortstack_arm64
-          - tvOSSimulator_Shortstack_arm64
-          - tvOSSimulator_Shortstack_x64
-          - MacCatalyst_Shortstack_arm64
-          - MacCatalyst_Shortstack_x64
+          - ${{ if not(parameters.excludeRuntimeDependentJobs) }}:
+            - Browser_Shortstack_wasm
+            - Browser_Multithreaded_Shortstack_wasm
+            - Wasi_Shortstack_wasm
+            - Android_Shortstack_arm64
+            - Android_Shortstack_arm
+            - Android_Shortstack_x64
+            - Android_Shortstack_x86
+            - iOS_Shortstack_arm64
+            - iOSSimulator_Shortstack_arm64
+            - iOSSimulator_Shortstack_x64
+            - tvOS_Shortstack_arm64
+            - tvOSSimulator_Shortstack_arm64
+            - tvOSSimulator_Shortstack_x64
+            - MacCatalyst_Shortstack_arm64
+            - MacCatalyst_Shortstack_x64
 
       ## Build Pass 3 verticals
 

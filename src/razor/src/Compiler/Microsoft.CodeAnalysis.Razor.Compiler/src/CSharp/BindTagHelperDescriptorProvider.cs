@@ -154,10 +154,9 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
             var attributeName = "@bind-...";
             attribute.Name = attributeName;
             attribute.AsDictionary("@bind-", typeof(object).FullName);
+            attribute.IsDirectiveAttribute = true;
 
-            attribute.SetMetadata(
-                PropertyName("Bind"),
-                IsDirectiveAttribute);
+            attribute.PropertyName = "Bind";
 
             attribute.TypeName = "System.Collections.Generic.Dictionary<string, object>";
 
@@ -457,10 +456,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
 
                 a.Name = attributeName;
                 a.TypeName = typeof(object).FullName;
-
-                a.SetMetadata(
-                    IsDirectiveAttribute,
-                    PropertyName(name));
+                a.IsDirectiveAttribute = true;
+                a.PropertyName = name;
 
                 a.BindAttributeParameter(parameter =>
                 {
@@ -528,7 +525,7 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                         DocumentationId.BindTagHelper_Element_Format,
                         attributeName));
 
-                attribute.SetMetadata(PropertyName(formatName));
+                attribute.PropertyName = formatName;
             });
 
             return builder.Build();
@@ -658,10 +655,8 @@ internal sealed class BindTagHelperDescriptorProvider() : TagHelperDescriptorPro
                     attribute.TypeName = changeAttribute.TypeName;
                     attribute.IsEnum = valueAttribute.IsEnum;
                     attribute.ContainingType = valueAttribute.ContainingType;
-
-                    attribute.SetMetadata(
-                        PropertyName(valueAttribute.GetPropertyName()),
-                        IsDirectiveAttribute);
+                    attribute.IsDirectiveAttribute = true;
+                    attribute.PropertyName = valueAttribute.PropertyName;
 
                     attribute.BindAttributeParameter(parameter =>
                     {

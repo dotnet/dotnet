@@ -24,8 +24,6 @@ namespace NuGet.PackageManagement.UI
 
         public static object BorderBrush { get; private set; } = SystemColors.InactiveBorderBrushKey;
 
-        public static object ComboBoxBorderKey { get; private set; } = SystemColors.InactiveBorderBrushKey;
-
         public static object ContentInactiveSelectedBrushKey { get; private set; } = SystemColors.ControlTextBrushKey;
 
         public static object ContentInactiveSelectedTextBrushKey { get; private set; } = SystemColors.ControlTextBrushKey;
@@ -186,7 +184,6 @@ namespace NuGet.PackageManagement.UI
             FocusVisualStyleBrushKey = VsBrushes.ToolWindowTextKey;
             ActiveBorderKey = VsBrushes.ActiveBorderKey;
             BorderBrush = VsBrushes.BrandedUIBorderKey;
-            ComboBoxBorderKey = VsBrushes.ComboBoxBorderKey;
             ControlLinkTextHoverKey = VsBrushes.ControlLinkTextHoverKey;
             ControlLinkTextKey = VsBrushes.ControlLinkTextKey;
             DetailPaneBackground = isBgColorFlightEnabled ? CommonDocumentColors.PageBrushKey : VsBrushes.BrandedUIBackgroundKey;

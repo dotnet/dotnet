@@ -51,7 +51,7 @@ _my
 #line default
 #line hidden
 #nullable disable
-                 = (Test.MyComponent<int>)__value;
+                 = (global::Test.MyComponent<int>)__value;
             }
             );
             __builder.CloseComponent();
