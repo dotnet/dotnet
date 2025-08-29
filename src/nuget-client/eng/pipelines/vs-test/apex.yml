@@ -97,7 +97,7 @@ stages:
           name: SetVisualStudioBaseBuildID
           displayName: Set 'VisualStudio.BaseBuild.ID'
           retryCountOnTaskFailure: 3
-          condition: ne(variables['BaselineBuildCommitIds'], '')
+          condition: and(succeeded(), ne(variables['BaselineBuildCommitIds'], ''))
           continueOnError: true
           inputs:
             filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-BaselineBuildID.ps1
@@ -106,7 +106,7 @@ stages:
           name: SetVisualStudioBaseBuildProductsDropName
           displayName: Set 'VisualStudio.BaseBuild.ProductsDropName'
           retryCountOnTaskFailure: 3
-          condition: ne(variables['VisualStudio.BaseBuild.ID'], '')
+          condition: and(succeeded(), ne(variables['VisualStudio.BaseBuild.ID'], ''))
           inputs:
             filePath: $(DartLab.Path)\Scripts\VisualStudio\Build\Get-VisualStudioDropName.ps1
             arguments: -AccessToken (ConvertTo-SecureString '$(System.AccessToken)' -AsPlainText -Force) -DropNamePrefix 'Products' -AccountURL '$(System.CollectionUri)' -ProjectName '$(System.TeamProject)' -BuildID $(VisualStudio.BaseBuild.ID) -OutVariableName 'VisualStudio.BaseBuild.ProductsDropName'
@@ -114,7 +114,7 @@ stages:
           name: SetBaseProductsDropNameToTarget
           displayName: Set 'VisualStudio.BaseBuild.ProductsDropName' to drop from target build
           retryCountOnTaskFailure: 3
-          condition: eq(variables['VisualStudio.BaseBuild.ID'], '')
+          condition: and(succeeded(), eq(variables['VisualStudio.BaseBuild.ID'], ''))
           inputs:
             targetType: 'inline'
             script: |

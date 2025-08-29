@@ -30,7 +30,7 @@ steps:
   inputs:
     version: 9.0.100-preview.4.24267.66
     includePreviewVersions: true
-  condition: eq(variables['TargetNet9'], 'True')
+  condition: and(succeeded(), eq(variables['TargetNet9'], 'True'))
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet --list-sdks'
@@ -102,7 +102,7 @@ steps:
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-roslynanalyzers.RoslynAnalyzers@2
   displayName: 'Run Roslyn Analyzers'
-  condition: and(eq(variables['TargetNet8'], 'False'), eq(variables['PipelineType'], 'legacy'))
+  condition: and(succeeded(), eq(variables['TargetNet8'], 'False'), eq(variables['PipelineType'], 'legacy'))
 
 - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@4
   displayName: 'Run BinSkim'
@@ -187,7 +187,7 @@ steps:
 
 - task: NuGetCommand@2
   displayName: 'Upload NuGet Package to VSTS NuGet'
-  condition: eq(variables['WilsonVersion'], '')
+  condition: and(succeeded(), eq(variables['WilsonVersion'], ''))
   inputs:
     command: push
     packagesToPush: '$(Build.Repository.LocalPath)\artifacts\*.nupkg'
