@@ -1,8 +1,6 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <!-- TODO: Remove warnaserror=false, https://github.com/dotnet/dotnet/issues/1848 -->
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)warnAsError $(ArcadeFalseBoolBuildArg)</BuildArgs>
     <BuildArgs Condition="'$(EnableIBCOptimization)' != 'true'">$(BuildArgs) /p:EnableNgenOptimization=false</BuildArgs>
   </PropertyGroup>
 

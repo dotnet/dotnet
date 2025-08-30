@@ -1,6 +1,7 @@
 <Project>
 
-  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" Condition="'$(UseWix5)' == ''" />
+  <Import Project="$(MSBuildThisFileDirectory)wix5/wix.targets" Condition="'$(UseWix5)' != ''" />
 
   <Target Name="GenerateDeb" DependsOnTargets="CreateDeb" />
   <Target Name="GenerateRpm" DependsOnTargets="CreateRpm" />

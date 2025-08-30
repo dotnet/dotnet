@@ -33,14 +33,13 @@
     <RepositoryReference Include="msbuild" />
     <RepositoryReference Include="nuget-client" />
     <RepositoryReference Include="razor" />
-    <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="roslyn" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="sourcelink" />
     <RepositoryReference Include="symreader" />
     <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
-    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
+    <RepositoryReference Include="windowsdesktop" />
     <RepositoryReference Include="xdt" />
   </ItemGroup>
 

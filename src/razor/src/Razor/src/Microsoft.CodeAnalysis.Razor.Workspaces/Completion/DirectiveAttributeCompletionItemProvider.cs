@@ -128,7 +128,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             // Strip off the @ from the insertion text. This change is here to align the insertion text with the
             // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
             // want to insert `@bind` because `@` already exists.
-            if (SpanExtensions.StartsWith(insertTextSpan, '@'))
+            if (insertTextSpan.StartsWith('@'))
             {
                 insertTextSpan = insertTextSpan[1..];
             }

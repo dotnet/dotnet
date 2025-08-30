@@ -10,13 +10,13 @@ namespace NuGetConsole.Implementation.PowerConsole
     /// </summary>
     internal class HostInfo : ObjectWithFactory<PowerConsoleWindow>, IDisposable
     {
-        private Lazy<IHostProvider, IHostMetadata> HostProvider { get; set; }
+        private readonly Lazy<IHostProvider, IHostMetadata> _hostProvider;
 
         public HostInfo(PowerConsoleWindow factory, Lazy<IHostProvider, IHostMetadata> hostProvider)
             : base(factory)
         {
             UtilityMethods.ThrowIfArgumentNull(hostProvider);
-            this.HostProvider = hostProvider;
+            this._hostProvider = hostProvider;
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace NuGetConsole.Implementation.PowerConsole
         /// </summary>
         public string HostName
         {
-            get { return HostProvider.Metadata.HostName; }
+            get { return _hostProvider.Metadata.HostName; }
         }
 
         private IWpfConsole _wpfConsole;
@@ -45,7 +45,7 @@ namespace NuGetConsole.Implementation.PowerConsole
                 {
                     _wpfConsole = Factory.WpfConsoleService.CreateConsole(
                         Factory.ServiceProvider, PowerConsoleWindow.ContentType, HostName);
-                    _wpfConsole.Host = HostProvider.Value.CreateHost(@async: true);
+                    _wpfConsole.Host = _hostProvider.Value.CreateHost(@async: true);
                 }
                 return _wpfConsole;
             }
