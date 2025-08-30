@@ -33,8 +33,6 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool UseRazorCohostServer => false;
 
-    public override bool UseNewFormattingEngine => true;
-
     public override bool SupportsSoftSelectionInCompletion => true;
 
     public override bool UseVsCodeCompletionTriggerCharacters => false;

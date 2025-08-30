@@ -20,7 +20,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly bool? _updateBuffersForClosedDocuments;
     private readonly bool? _includeProjectKeyInGeneratedFilePath;
     private readonly bool? _useRazorCohostServer;
-    private readonly bool? _useNewFormattingEngine;
     private readonly bool? _doNotInitializeMiscFilesProjectFromWorkspace;
 
     public override bool SupportsFileManipulation => _supportsFileManipulation ?? _defaults.SupportsFileManipulation;
@@ -33,7 +32,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool UpdateBuffersForClosedDocuments => _updateBuffersForClosedDocuments ?? _defaults.UpdateBuffersForClosedDocuments;
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath ?? _defaults.IncludeProjectKeyInGeneratedFilePath;
     public override bool UseRazorCohostServer => _useRazorCohostServer ?? _defaults.UseRazorCohostServer;
-    public override bool UseNewFormattingEngine => _useNewFormattingEngine ?? _defaults.UseNewFormattingEngine;
     public override bool SupportsSoftSelectionInCompletion => false;
     public override bool UseVsCodeCompletionTriggerCharacters => true;
 
@@ -62,7 +60,6 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
             TryProcessBoolOption(nameof(UpdateBuffersForClosedDocuments), ref _updateBuffersForClosedDocuments, option, args, i);
             TryProcessBoolOption(nameof(IncludeProjectKeyInGeneratedFilePath), ref _includeProjectKeyInGeneratedFilePath, option, args, i);
             TryProcessBoolOption(nameof(UseRazorCohostServer), ref _useRazorCohostServer, option, args, i);
-            TryProcessBoolOption(nameof(UseNewFormattingEngine), ref _useNewFormattingEngine, option, args, i);
             TryProcessBoolOption(nameof(DoNotInitializeMiscFilesProjectFromWorkspace), ref _doNotInitializeMiscFilesProjectFromWorkspace, option, args, i);
         }
     }
