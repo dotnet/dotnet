@@ -45,10 +45,7 @@
            Text="Expected NuGet packages to be present from shared components artifacts." />
 
     <ItemGroup>
-      <_SharedToolingComponentFilenames Include="@(_FilteredSharedComponentPackages)">
-        <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>
-      </_SharedToolingComponentFilenames>
-      <SharedComponentPackagesToPoison Include="@(_SharedToolingComponentFilenames->'%(PackagePath)')" />
+      <SharedComponentPackagesToPoison Include="@(_FilteredSharedComponentPackages->'%(PackagePath)')" />
     </ItemGroup>
 
     <Message Importance="High" Text="[$([System.DateTime]::Now.ToString('HH:mm:ss.ff'))] Poisoning existing packages for leak detection." />

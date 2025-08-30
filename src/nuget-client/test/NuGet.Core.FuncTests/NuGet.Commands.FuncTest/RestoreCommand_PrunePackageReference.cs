@@ -139,12 +139,9 @@ namespace NuGet.Commands.FuncTest
         // P -> C 1.0.0
         // Do not Prune C 1.0.0
         [Theory]
-        [InlineData("net10.0", "10.0.100", true, true)]
-        [InlineData("net10.0", "9.0.100", true, false)]
-        [InlineData("net10.0", "", false, true)]
-        [InlineData("net472", "", false, false)]
-        [InlineData("net472", "10.0.100", false, false)]
-        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependencies(string framework, string sdkAnalysisLevel, bool usingMicrosoftNETSdk, bool shouldWarn)
+        [InlineData("net10.0", true)]
+        [InlineData("net472", false)]
+        public async Task RestoreCommand_WithPrunePackageReferences_DoesNotPruneDirectDependencies(string framework, bool shouldWarn)
         {
             using var pathContext = new SimpleTestPathContext();
 
@@ -175,8 +172,6 @@ namespace NuGet.Commands.FuncTest
 
             // Setup project
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
-            projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = usingMicrosoftNETSdk;
 
             // Act & Assert
             var result = await RunRestoreAsync(pathContext, projectSpec);
@@ -1302,10 +1297,8 @@ namespace NuGet.Commands.FuncTest
             testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
 
-        [Theory]
-        [InlineData("9.0.100", false)]
-        [InlineData("10.0.100", true)]
-        public void AnalyzePruningResults_WithSDKAnalysisLevel_WarnsFor10OrNewerOnly(string sdkAnalysisLevel, bool shouldWarn)
+        [Fact]
+        public void AnalyzePruningResults_WithSDKAnalysisLevel_WarnsFor10OrNewerOnly()
         {
             var rootProject = @"
                 {
@@ -1325,24 +1318,17 @@ namespace NuGet.Commands.FuncTest
                 }";
 
             var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", Path.GetTempPath(), rootProject);
-            projectSpec.RestoreMetadata.SdkAnalysisLevel = !string.IsNullOrEmpty(sdkAnalysisLevel) ? NuGetVersion.Parse(sdkAnalysisLevel) : null;
             projectSpec.RestoreMetadata.UsingMicrosoftNETSdk = true;
             var testLogger = new TestLogger();
             var testEvent = new TelemetryEvent("dummyEvent");
 
             RestoreCommand.AnalyzePruningResults(projectSpec, testEvent, testLogger);
 
-            if (shouldWarn)
-            {
-                testLogger.WarningMessages.Should().HaveCount(1);
-                var restoreLogMessage = (RestoreLogMessage)testLogger.LogMessages.Single();
-                restoreLogMessage.Code.Should().Be(NuGetLogCode.NU1510);
-                restoreLogMessage.LibraryId.Should().Be("A");
-            }
-            else
-            {
-                testLogger.WarningMessages.Should().BeEmpty();
-            }
+            testLogger.WarningMessages.Should().HaveCount(1);
+            var restoreLogMessage = (RestoreLogMessage)testLogger.LogMessages.Single();
+            restoreLogMessage.Code.Should().Be(NuGetLogCode.NU1510);
+            restoreLogMessage.LibraryId.Should().Be("A");
+
             testEvent["Pruning.RemovablePackages.Count"].Should().Be(1);
             testEvent["Pruning.Pruned.Direct.Count"].Should().Be(1);
         }
@@ -2394,6 +2380,174 @@ namespace NuGet.Commands.FuncTest
             restoreResult.LockFile.Targets[0].Libraries[0].Dependencies.Should().BeEmpty();
             restoreResult.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
             restoreResult.LockFile.Targets[0].Libraries[1].Dependencies.Should().HaveCount(1);
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithLockFileAndPrunablePackage_WhenPackageIsRemoved_Fails()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("packageB", "1.0.0")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var rootProject = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                        ""packageB"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                            ""autoReferenced"": true
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            var rootProjectWithoutAutoRefPackage = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        }
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            projectSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(restorePackagesWithLockFile: "true", nuGetLockFilePath: null, restoreLockedMode: false);
+
+            // Pre-Conditions
+            var setupResult = await RunRestoreAsync(pathContext, projectSpec);
+            setupResult.Success.Should().BeTrue();
+            await setupResult.CommitAsync(NullLogger.Instance, CancellationToken.None);
+            ValidateAssetsFile(setupResult);
+            File.Delete(setupResult.LockFilePath); // Delete the assets file to avoid assets file library caching.
+
+            // Set-up again with LockedMode and remove the auto-referenced package
+            projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProjectWithoutAutoRefPackage);
+            projectSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(restorePackagesWithLockFile: "true", nuGetLockFilePath: null, restoreLockedMode: true);
+
+            // Run again
+            var testLogger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, testLogger, projectSpec);
+            result.Success.Should().BeFalse(because: testLogger.ShowMessages());
+
+            result.LockFile.Targets.Should().HaveCount(1);
+            result.LockFile.Targets[0].Libraries.Should().HaveCount(0);
+            result.LockFile.LogMessages.Should().HaveCount(1);
+            result.LockFile.LogMessages[0].Code.Should().Be(NuGetLogCode.NU1004);
+
+            static void ValidateAssetsFile(RestoreResult restoreResult)
+            {
+                restoreResult.LockFile.Targets.Should().HaveCount(1);
+                restoreResult.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+                restoreResult.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+                restoreResult.LockFile.Targets[0].Libraries[0].Dependencies.Should().HaveCount(0);
+                restoreResult.LockFile.Targets[0].Libraries[1].Name.Should().Be("packageB");
+                restoreResult.LockFile.Targets[0].Libraries[1].Dependencies.Should().BeEmpty();
+            }
+        }
+
+        [Fact]
+        public async Task RestoreCommand_WithLockFileAndPrunablePackageFromProjectReference_WithLockedMode_Succeeds()
+        {
+            using var pathContext = new SimpleTestPathContext();
+
+            // Setup packages
+            var packageA = new SimpleTestPackageContext("packageA", "1.0.0")
+            {
+                Dependencies = [new SimpleTestPackageContext("packageB", "1.0.0")]
+            };
+
+            await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                pathContext.PackageSource,
+                PackageSaveMode.Defaultv3,
+                packageA);
+
+            var leafProject = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+                ""dependencies"": {
+                        ""packageA"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                        ""packageB"": {
+                            ""version"": ""[1.0.0,)"",
+                            ""target"": ""Package"",
+                        },
+                },
+                ""packagesToPrune"": {
+                    ""packageB"" : ""(,1.0.0]"" 
+                }
+            }
+          }
+        }";
+
+            var rootProject = @"
+        {
+          ""frameworks"": {
+            ""net472"": {
+            }
+          }
+        }";
+            // Setup project
+            var projectSpec = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project1", pathContext.SolutionRoot, rootProject);
+            projectSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(restorePackagesWithLockFile: "true", nuGetLockFilePath: null, restoreLockedMode: false);
+            var projectSpec2 = ProjectTestHelpers.GetPackageSpecWithProjectNameAndSpec("Project2", pathContext.SolutionRoot, leafProject);
+            projectSpec = projectSpec.WithTestProjectReference(projectSpec2);
+
+            // Pre-Conditions
+            var setupResult = await RunRestoreAsync(pathContext, projectSpec, projectSpec2);
+            setupResult.Success.Should().BeTrue();
+            await setupResult.CommitAsync(NullLogger.Instance, CancellationToken.None);
+            ValidateAssetsFile(setupResult);
+            File.Delete(setupResult.LockFilePath); // Delete the assets file to avoid assets file library caching.
+
+            // Set-up again with LockedMode
+            projectSpec.RestoreMetadata.RestoreLockProperties = new RestoreLockProperties(restorePackagesWithLockFile: "true", nuGetLockFilePath: null, restoreLockedMode: true);
+
+            // Run again
+            var testLogger = new TestLogger();
+            var result = await RunRestoreAsync(pathContext, testLogger, projectSpec, projectSpec2);
+            result.Success.Should().BeTrue(because: testLogger.ShowMessages());
+            ValidateAssetsFile(result);
+
+            static void ValidateAssetsFile(RestoreResult restoreResult)
+            {
+                restoreResult.LockFile.Targets.Should().HaveCount(1);
+                restoreResult.LockFile.Targets[0].Libraries.Should().HaveCount(2);
+                restoreResult.LockFile.Targets[0].Libraries[0].Name.Should().Be("packageA");
+                restoreResult.LockFile.Targets[0].Libraries[0].Dependencies.Should().HaveCount(1);
+                restoreResult.LockFile.Targets[0].Libraries[1].Name.Should().Be("Project2");
+                restoreResult.LockFile.Targets[0].Libraries[1].Dependencies.Should().HaveCount(1);
+            }
         }
 
         [Fact]

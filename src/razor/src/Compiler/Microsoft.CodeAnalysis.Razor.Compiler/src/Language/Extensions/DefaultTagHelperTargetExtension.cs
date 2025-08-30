@@ -233,7 +233,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
                     .WriteParameterSeparator()
                     .WriteStringLiteral(node.AttributeName)
                     .WriteParameterSeparator()
-                    .Write(valuePieceCount.ToString(CultureInfo.InvariantCulture))
+                    .WriteIntegerLiteral(valuePieceCount)
                     .WriteParameterSeparator()
                     .Write(attributeValueStyleParameter)
                     .WriteEndMethodInvocation();

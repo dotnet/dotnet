@@ -69,12 +69,12 @@ namespace NuGetConsole.Implementation.Console
             UtilityMethods.ThrowIfArgumentNull(sp);
 
             _consoleStatus = consoleStatus;
-            ServiceProvider = sp;
+            _serviceProvider = sp;
             ContentTypeName = contentTypeName;
             HostName = hostName;
         }
 
-        private IServiceProvider ServiceProvider { get; set; }
+        private IServiceProvider _serviceProvider;
         public string ContentTypeName { get; private set; }
         public string HostName { get; private set; }
 
@@ -92,7 +92,7 @@ namespace NuGetConsole.Implementation.Console
 
         public IVsUIShell VsUIShell
         {
-            get { return ServiceProvider.GetService<IVsUIShell>(typeof(SVsUIShell)); }
+            get { return _serviceProvider.GetService<IVsUIShell>(typeof(SVsUIShell)); }
         }
 
         private IVsStatusbar VsStatusBar
@@ -114,7 +114,7 @@ namespace NuGetConsole.Implementation.Console
 
         private IOleServiceProvider OleServiceProvider
         {
-            get { return ServiceProvider.GetService<IOleServiceProvider>(typeof(IOleServiceProvider)); }
+            get { return _serviceProvider.GetService<IOleServiceProvider>(typeof(IOleServiceProvider)); }
         }
 
         private IContentType ContentType

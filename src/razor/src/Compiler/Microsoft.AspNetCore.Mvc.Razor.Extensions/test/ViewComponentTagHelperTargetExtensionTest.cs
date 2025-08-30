@@ -24,7 +24,7 @@ public class ViewComponentTagHelperTargetExtensionTest
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32")
-                .Metadata(PropertyName("Foo")))
+                .PropertyName("Foo"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
             .Build();
 
@@ -87,7 +87,7 @@ public class __Generated__TagCloudViewComponentTagHelper : Microsoft.AspNetCore.
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
-                .Metadata(PropertyName("Tags"))
+                .PropertyName("Tags")
                 .AsDictionaryAttribute("foo-", "System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
             .Build();
