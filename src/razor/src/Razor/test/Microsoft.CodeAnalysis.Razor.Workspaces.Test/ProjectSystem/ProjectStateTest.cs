@@ -26,7 +26,7 @@ public class ProjectStateTest(ITestOutputHelper testOutput) : ToolingTestBase(te
         SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
 
     private static readonly ProjectWorkspaceState s_projectWorkspaceState =
-        ProjectWorkspaceState.Create([TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
+        ProjectWorkspaceState.Create([TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build()]);
 
     private static readonly SourceText s_text = SourceText.From("Hello, world!");
     private static readonly TextLoader s_textLoader = TestMocks.CreateTextLoader(s_text);

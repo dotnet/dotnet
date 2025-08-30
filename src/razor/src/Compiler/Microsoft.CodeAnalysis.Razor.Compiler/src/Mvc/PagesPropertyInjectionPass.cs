@@ -44,10 +44,10 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
         {
             @class.Children.Add(new PropertyDeclarationIntermediateNode()
             {
-                Modifiers = { "public" },
-                PropertyName = "Model",
-                PropertyType = modelType,
-                PropertyExpression = "ViewData.Model"
+                Modifiers = CommonModifiers.Public,
+                Name = "Model",
+                Type = modelType,
+                ExpressionBody = "ViewData.Model"
             });
         }
 

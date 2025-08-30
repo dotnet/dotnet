@@ -4,7 +4,7 @@
 #nullable disable
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
@@ -13,11 +13,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 
 internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
 {
-    private static readonly IList<string> _injectedPropertyModifiers = new[]
-    {
-            $"[global::{ComponentsApi.InjectAttribute.FullTypeName}]",
-            "private" // Encapsulation is the default
-        };
+    private static readonly ImmutableArray<string> s_injectedPropertyModifiers =
+    [
+        $"[global::{ComponentsApi.InjectAttribute.FullTypeName}]",
+        "private" // Encapsulation is the default
+    ];
 
     public ComponentInjectIntermediateNode(string typeName, string memberName, SourceSpan? typeSpan, SourceSpan? memberSpan, bool isMalformed)
     {
@@ -74,7 +74,7 @@ internal class ComponentInjectIntermediateNode : ExtensionIntermediateNode
             if (!context.Options.DesignTime || !IsMalformed)
             {
                 context.CodeWriter.WriteAutoPropertyDeclaration(
-                    _injectedPropertyModifiers,
+                    s_injectedPropertyModifiers,
                     TypeName,
                     memberName,
                     TypeSpan,

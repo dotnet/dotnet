@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -154,24 +153,24 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
 
             var attributeName = "@" + attribute;
             var eventArgType = eventArgsType.ToDisplayString();
-            _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.EventHandler.TagHelperKind, attribute, ComponentsApi.AssemblyName,
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                TagHelperKind.EventHandler, attribute, ComponentsApi.AssemblyName,
                 out var builder);
+
+            builder.SetTypeName(typeName, typeNamespace, typeNameIdentifier);
+
             builder.CaseSensitive = true;
+            builder.ClassifyAttributesOnly = true;
             builder.SetDocumentation(
                 DocumentationDescriptor.From(
                     DocumentationId.EventHandlerTagHelper,
                     attributeName,
                     eventArgType));
 
-            builder.SetMetadata(
-                SpecialKind(ComponentMetadata.EventHandler.TagHelperKind),
-                new(ComponentMetadata.EventHandler.EventArgsType, eventArgType),
-                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-                RuntimeName(ComponentMetadata.EventHandler.RuntimeName),
-                TypeName(typeName),
-                TypeNamespace(typeNamespace),
-                TypeNameIdentifier(typeNameIdentifier));
+            builder.SetMetadata(new EventHandlerMetadata()
+            {
+                EventArgsType = eventArgType
+            });
 
             builder.TagMatchingRule(rule =>
             {

@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor.Test;
 
@@ -81,11 +80,11 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
 
     private IRazorCodeDocument GetCodeDocument(string source)
     {
-        var taghelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+        var taghelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestTagHelper")
             .BoundAttributeDescriptor(attr => attr.Name("show").TypeName("System.Boolean"))
             .BoundAttributeDescriptor(attr => attr.Name("id").TypeName("System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("taghelper"))
-            .Metadata(TypeName("TestTagHelper"))
             .Build();
 
         var engine = CreateProjectEngine(builder =>
@@ -99,7 +98,7 @@ public class RazorSyntaxFactsServiceTest(ITestOutputHelper testOutput) : RazorTo
         var sourceDocument = TestRazorSourceDocument.Create(source, normalizeNewLines: true);
         var importDocument = TestRazorSourceDocument.Create("@addTagHelper *, TestAssembly", filePath: "import.cshtml", relativePath: "import.cshtml");
 
-        var codeDocument = engine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: ImmutableArray.Create(importDocument), new []{ taghelper });
+        var codeDocument = engine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: ImmutableArray.Create(importDocument), new[] { taghelper });
 
         return RazorWrapperFactory.WrapCodeDocument(codeDocument);
     }

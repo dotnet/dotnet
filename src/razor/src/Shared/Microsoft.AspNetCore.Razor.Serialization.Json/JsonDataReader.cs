@@ -390,6 +390,9 @@ internal partial class JsonDataReader
         return ReadNonNullObject(readProperties);
     }
 
+    public T ReadNonNullObjectOrDefault<T>(string propertyName, ReadProperties<T> readProperties, T defaultValue)
+        => TryReadPropertyName(propertyName) ? ReadNonNullObject(readProperties) : defaultValue;
+
     public T[]? ReadArray<T>(ReadValue<T> readElement)
     {
         if (TryReadNull())

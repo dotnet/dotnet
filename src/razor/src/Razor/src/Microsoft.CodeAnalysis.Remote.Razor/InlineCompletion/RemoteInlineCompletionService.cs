@@ -69,7 +69,7 @@ internal sealed class RemoteInlineCompletionService(in ServiceArgs args) : Razor
 
         var hostDocumentIndex = codeDocument.Source.Text.GetRequiredAbsoluteIndex(razorRange.End);
 
-        var formattingContext = FormattingContext.Create(context.Snapshot, codeDocument, options, useNewFormattingEngine: false);
+        var formattingContext = FormattingContext.Create(context.Snapshot, codeDocument, options);
         if (!SnippetFormatter.TryGetSnippetWithAdjustedIndentation(formattingContext, text, hostDocumentIndex, out var newSnippetText))
         {
             return null;

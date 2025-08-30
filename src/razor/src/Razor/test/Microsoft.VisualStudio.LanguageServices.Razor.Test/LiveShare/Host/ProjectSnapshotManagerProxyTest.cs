@@ -29,10 +29,10 @@ public class ProjectSnapshotManagerProxyTest(ITestOutputHelper testOutput) : Vis
     private readonly HostProject _hostProject2 = new(ProjectFilePath2, IntermediateOutputPath2, RazorConfiguration.Default, ProjectName2);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState1 = ProjectWorkspaceState.Create(
-        [TagHelperDescriptorBuilder.Create("test1", "TestAssembly1").Build()]);
+        [TagHelperDescriptorBuilder.CreateTagHelper("test1", "TestAssembly1").Build()]);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState2 = ProjectWorkspaceState.Create(
-        [TagHelperDescriptorBuilder.Create("test2", "TestAssembly2").Build()]);
+        [TagHelperDescriptorBuilder.CreateTagHelper("test2", "TestAssembly2").Build()]);
 
     [UIFact]
     public async Task CalculateUpdatedStateAsync_ReturnsStateForAllProjects()

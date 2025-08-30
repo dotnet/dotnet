@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
-using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,25 +24,10 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
                 <div st$$></div>
 
                 The end.
-                """,
-            supportsVisualStudioExtensions: true);
+                """);
     }
 
-    [Fact]
-    public async Task HtmlResolve_VSCode()
-    {
-        await VerifyCompletionItemResolveAsync(
-            input: """
-                This is a Razor document.
-
-                <div st$$></div>
-
-                The end.
-                """,
-            supportsVisualStudioExtensions: false);
-    }
-
-    private async Task VerifyCompletionItemResolveAsync(TestCode input, bool supportsVisualStudioExtensions)
+    private async Task VerifyCompletionItemResolveAsync(TestCode input)
     {
         var document = CreateProjectAndRazorDocument(input.Text);
 
@@ -54,12 +38,11 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentCompletionResolveName, response)]);
 
         var completionListCache = new CompletionListCache();
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
         var endpoint = new CohostDocumentCompletionResolveEndpoint(
             IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
-            clientSettingsManager,
+            ClientSettingsManager,
             requestInvoker,
             LoggerFactory);
 
@@ -72,35 +55,21 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
 
         var list = new RazorVSInternalCompletionList
         {
-            Data = supportsVisualStudioExtensions ? JsonSerializer.SerializeToElement(context) : null,
+#if VSCODE
             ItemDefaults = new()
             {
-                Data = supportsVisualStudioExtensions ? null : JsonSerializer.SerializeToElement(context),
+                Data = JsonSerializer.SerializeToElement(context),
             },
+#else
+            Data = JsonSerializer.SerializeToElement(context),
+#endif
             Items = [new VSInternalCompletionItem()
             {
                 Label = "TestItem"
             }]
         };
 
-        var clientCapabilities = new VSInternalClientCapabilities
-        {
-            SupportsVisualStudioExtensions = supportsVisualStudioExtensions,
-            TextDocument = new TextDocumentClientCapabilities()
-            {
-                Completion = new VSInternalCompletionSetting()
-                {
-                    CompletionList = new()
-                    {
-                        Data = supportsVisualStudioExtensions
-                    },
-                    CompletionListSetting = new()
-                    {
-                        ItemDefaults = supportsVisualStudioExtensions ? null : ["data"]
-                    }
-                }
-            }
-        };
+        var clientCapabilities = ClientCapabilitiesService.ClientCapabilities;
 
         var resultId = completionListCache.Add(list, context);
         list.SetResultId(resultId, clientCapabilities);
@@ -109,7 +78,7 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var request = list.Items[0];
         // Simulate the LSP client, which would receive all of the items and the list data, and send the item back to us with
         // data filled in.
-        request.Data = JsonSerializer.SerializeToElement(list.Data ?? list.ItemDefaults.Data, JsonHelpers.JsonSerializerOptions);
+        request.Data = JsonSerializer.SerializeToElement(list.Data ?? list.ItemDefaults?.Data, JsonHelpers.JsonSerializerOptions);
 
         var tdi = endpoint.GetTestAccessor().GetRazorTextDocumentIdentifier(request);
         Assert.NotNull(tdi);
@@ -118,7 +87,13 @@ public class CohostDocumentCompletionResolveEndpointTest(ITestOutputHelper testO
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
 
         Assert.NotNull(result);
+#if VSCODE
+        // We don't support Html resolve in VS Code, so original item should have been returned
+        Assert.Same(result, request);
+        Assert.NotEqual(response.Label, result.Label);
+#else
         Assert.NotSame(result, request);
         Assert.Equal(response.Label, result.Label);
+#endif
     }
 }

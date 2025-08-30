@@ -35,11 +35,11 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
 
         if (!codeDocument.TryGetNamespace(fallbackToRootNamespace: false, out var namespaceName))
         {
-            @namespace.Content = _useConsolidatedMvcViews ? "AspNetCoreGeneratedDocument" : "AspNetCore";
+            @namespace.Name = _useConsolidatedMvcViews ? "AspNetCoreGeneratedDocument" : "AspNetCore";
         }
         else
         {
-            @namespace.Content = namespaceName;
+            @namespace.Name = namespaceName;
         }
 
         if (!codeDocument.TryComputeClassName(out var className))
@@ -47,31 +47,22 @@ public class MvcViewDocumentClassifierPass : DocumentClassifierPassBase
             // It's possible for a Razor document to not have a file path.
             // Eg. When we try to generate code for an in memory document like default imports.
             var checksum = ChecksumUtilities.BytesToString(codeDocument.Source.Text.GetChecksum());
-            @class.ClassName = "AspNetCore_" + checksum;
+            @class.Name = "AspNetCore_" + checksum;
         }
         else
         {
-            @class.ClassName = className;
+            @class.Name = className;
         }
         @class.BaseType = new BaseTypeWithModel("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<TModel>", location: null);
-        @class.Modifiers.Clear();
-        if (_useConsolidatedMvcViews)
-        {
-            @class.Modifiers.Add("internal");
-            @class.Modifiers.Add("sealed");
-        }
-        else
-        {
-            @class.Modifiers.Add("public");
-        }
+
+        @class.Modifiers = _useConsolidatedMvcViews
+            ? CommonModifiers.InternalSealed
+            : CommonModifiers.Public;
 
         @class.NullableContext = true;
 
-        method.MethodName = "ExecuteAsync";
-        method.Modifiers.Clear();
-        method.Modifiers.Add("public");
-        method.Modifiers.Add("async");
-        method.Modifiers.Add("override");
+        method.Name = "ExecuteAsync";
+        method.Modifiers = CommonModifiers.PublicAsyncOverride;
         method.ReturnType = $"global::{typeof(System.Threading.Tasks.Task).FullName}";
     }
 }

@@ -17,7 +17,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
     private static readonly HostProject s_hostProject = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
-    private static readonly ProjectWorkspaceState s_projectWorkspaceState = ProjectWorkspaceState.Create([TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
+    private static readonly ProjectWorkspaceState s_projectWorkspaceState = ProjectWorkspaceState.Create([
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build()]);
 
     private static readonly HostDocument[] s_documents =
     [

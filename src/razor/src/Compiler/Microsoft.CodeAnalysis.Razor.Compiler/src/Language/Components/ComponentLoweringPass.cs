@@ -38,7 +38,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         foreach (var reference in references)
         {
             var node = (TagHelperIntermediateNode)reference.Node;
-            if (node.TagHelpers.Any(t => t.IsChildContentTagHelper))
+            if (node.TagHelpers.Any(t => t.Kind == TagHelperKind.ChildContent))
             {
                 // This is a child content tag helper. This will be rewritten when we visit its parent.
                 continue;
@@ -48,7 +48,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             var count = 0;
             foreach (var tagHelper in node.TagHelpers)
             {
-                if (tagHelper.IsComponentTagHelper)
+                if (tagHelper.Kind == TagHelperKind.Component)
                 {
                     // Only allow a single component tag helper per element. If there are multiple, we'll just consider
                     // the first one and ignore the others.
@@ -62,7 +62,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
             if (count == 1)
             {
-                reference.Replace(RewriteAsComponent(node, node.TagHelpers.Single(n => n.IsComponentTagHelper)));
+                reference.Replace(RewriteAsComponent(node, node.TagHelpers.Single(n => n.Kind == TagHelperKind.Component)));
             }
             else if (count > 1)
             {
@@ -91,7 +91,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             List<TagHelperDescriptor> matched = null;
             foreach (var tagHelper in node.TagHelpers)
             {
-                if (!tagHelper.IsComponentTagHelper)
+                if (tagHelper.Kind != TagHelperKind.Component)
                 {
                     continue;
                 }
@@ -99,7 +99,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 for (var j = 0; j < usings.Count; j++)
                 {
                     var usingNamespace = usings[j].Content;
-                    if (string.Equals(tagHelper.GetTypeNamespace(), usingNamespace, StringComparison.Ordinal))
+                    if (string.Equals(tagHelper.TypeNamespace, usingNamespace, StringComparison.Ordinal))
                     {
                         if (candidate == null)
                         {
@@ -143,7 +143,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             Component = tagHelper,
             Source = node.Source,
             TagName = node.TagName,
-            TypeName = tagHelper.GetTypeName(),
+            TypeName = tagHelper.TypeName,
         };
 
         component.AddDiagnosticsFromNode(node);
@@ -155,7 +155,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
         // because we see the nodes in the wrong order.
         foreach (var childContent in component.ChildContents)
         {
-            childContent.ParameterName ??= component.ChildContentParameterName ?? ComponentMetadata.ChildContent.DefaultParameterName;
+            childContent.ParameterName ??= component.ChildContentParameterName ?? ComponentHelpers.ChildContent.DefaultParameterName;
         }
 
         ValidateRequiredAttributes(node, tagHelper, component);
@@ -165,7 +165,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
     private static void ValidateRequiredAttributes(TagHelperIntermediateNode node, TagHelperDescriptor tagHelper, ComponentIntermediateNode intermediateNode)
     {
-        if (intermediateNode.Children.Any(c => c is TagHelperDirectiveAttributeIntermediateNode node && (node.TagHelper?.IsSplatTagHelper() ?? false)))
+        if (intermediateNode.Children.Any(static c => c is TagHelperDirectiveAttributeIntermediateNode node && (node.TagHelper?.Kind == TagHelperKind.Splat)))
         {
             // If there are any splat attributes, assume the user may have provided all values.
             // This pass runs earlier than ComponentSplatLoweringPass, so we cannot rely on the presence of SplatIntermediateNode to make this check.
@@ -302,7 +302,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             //    which is always allowed.
             // 5. Each 'child content' element will generate its own lambda, and be assigned to the property
             //    that matches the element name.
-            if (!node.Children.OfType<TagHelperIntermediateNode>().Any(t => t.TagHelpers.Any(th => th.IsChildContentTagHelper)))
+            if (!node.Children.OfType<TagHelperIntermediateNode>().Any(t => t.TagHelpers.Any(th => th.Kind == TagHelperKind.ChildContent)))
             {
                 // This node has implicit child content. It may or may not have an attribute that matches.
                 var attribute = _component.Component.BoundAttributes
@@ -325,7 +325,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
                 }
 
                 if (child is TagHelperIntermediateNode tagHelperNode &&
-                    tagHelperNode.TagHelpers.Any(th => th.IsChildContentTagHelper))
+                    tagHelperNode.TagHelpers.Any(th => th.Kind == TagHelperKind.ChildContent))
                 {
                     // This is a child content element
                     var attribute = _component.Component.BoundAttributes
@@ -490,7 +490,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             // Each 'tag helper property' belongs to a specific tag helper. We want to handle
             // the cases for components, but leave others alone. This allows our other passes
             // to handle those cases.
-            if (!node.TagHelper.IsComponentTagHelper)
+            if (node.TagHelper.Kind != TagHelperKind.Component)
             {
                 _children.Add(node);
                 return;
@@ -631,7 +631,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
             // Each 'tag helper property' belongs to a specific tag helper. We want to handle
             // the cases for components, but leave others alone. This allows our other passes
             // to handle those cases.
-            _children.Add(node.TagHelper.IsComponentTagHelper ? (IntermediateNode)new ComponentAttributeIntermediateNode(node) : node);
+            _children.Add(node.TagHelper.Kind == TagHelperKind.Component ? new ComponentAttributeIntermediateNode(node) : node);
         }
 
         public override void VisitTagHelperDirectiveAttribute(TagHelperDirectiveAttributeIntermediateNode node)

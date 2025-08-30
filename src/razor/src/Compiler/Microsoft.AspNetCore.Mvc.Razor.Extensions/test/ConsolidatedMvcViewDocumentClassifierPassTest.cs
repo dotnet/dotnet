@@ -31,7 +31,7 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
         var documentNode = processor.GetDocumentNode();
         var namespaceNode = documentNode.GetNamespaceNode();
 
-        Assert.Equal("AspNetCoreGeneratedDocument", namespaceNode.Content);
+        Assert.Equal("AspNetCoreGeneratedDocument", namespaceNode.Name);
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
         Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
-        Assert.Equal("Test", classNode.ClassName);
+        Assert.Equal<string>(["internal", "sealed"], classNode.Modifiers);
+        Assert.Equal("Test", classNode.Name);
     }
 
     [Fact]
@@ -76,8 +76,8 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
         Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
-        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", classNode.ClassName);
+        Assert.Equal<string>(["internal", "sealed"], classNode.Modifiers);
+        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", classNode.Name);
     }
 
     [Theory]
@@ -97,8 +97,8 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
         var documentNode = processor.GetDocumentNode();
         var classNode = documentNode.GetClassNode();
 
-        Assert.Equal(expected, classNode.ClassName);
-        Assert.Equal(["internal", "sealed"], classNode.Modifiers);
+        Assert.Equal(expected, classNode.Name);
+        Assert.Equal<string>(["internal", "sealed"], classNode.Modifiers);
     }
 
     [Fact]
@@ -115,8 +115,8 @@ public class ConsolidatedMvcViewDocumentClassifierPassTest : RazorProjectEngineT
         var documentNode = processor.GetDocumentNode();
         var methodNode = documentNode.GetMethodNode();
 
-        Assert.Equal("ExecuteAsync", methodNode.MethodName);
+        Assert.Equal("ExecuteAsync", methodNode.Name);
         Assert.Equal("global::System.Threading.Tasks.Task", methodNode.ReturnType);
-        Assert.Equal(["public", "async", "override"], methodNode.Modifiers);
+        Assert.Equal<string>(["public", "async", "override"], methodNode.Modifiers);
     }
 }

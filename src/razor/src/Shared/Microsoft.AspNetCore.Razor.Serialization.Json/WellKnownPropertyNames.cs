@@ -8,4 +8,5 @@ internal static class WellKnownPropertyNames
     public const string Checksum = "__Checksum";
     public const string Version = "__Version";
     public const string Message = "Message";
+    public const string MetadataKind = "MetadataKind";
 }

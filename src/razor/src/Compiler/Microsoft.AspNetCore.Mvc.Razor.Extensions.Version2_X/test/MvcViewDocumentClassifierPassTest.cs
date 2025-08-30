@@ -3,7 +3,6 @@
 
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Roslyn.Test.Utilities;
 using Xunit;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
@@ -64,7 +63,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
         var namespaceNode = documentNode.GetNamespaceNode();
 
-        Assert.Equal("AspNetCore", namespaceNode.Content);
+        Assert.Equal("AspNetCore", namespaceNode.Name);
     }
 
     [Fact]
@@ -86,8 +85,8 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
         Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(["public"], classNode.Modifiers);
-        Assert.Equal("Test", classNode.ClassName);
+        Assert.Equal<string>(["public"], classNode.Modifiers);
+        Assert.Equal("Test", classNode.Name);
     }
 
     [Fact]
@@ -109,8 +108,8 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         Assert.Equal("global::Microsoft.AspNetCore.Mvc.Razor.RazorPage", baseNode.BaseType.Content);
         Assert.NotNull(baseNode.ModelType);
         Assert.Equal("TModel", baseNode.ModelType.Content);
-        Assert.Equal(["public"], classNode.Modifiers);
-        AssertEx.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", classNode.ClassName);
+        Assert.Equal<string>(["public"], classNode.Modifiers);
+        Assert.Equal("AspNetCore_ec563e63d931b806184cb02f79875e4f3b21d1ca043ad06699424459128b58c0", classNode.Name);
     }
 
     [Theory]
@@ -130,7 +129,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
         var classNode = documentNode.GetClassNode();
 
-        Assert.Equal(expected, classNode.ClassName);
+        Assert.Equal(expected, classNode.Name);
     }
 
     [Fact]
@@ -148,7 +147,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
         var classNode = documentNode.GetClassNode();
 
-        Assert.Equal("x___application_Views_Home_Index", classNode.ClassName);
+        Assert.Equal("x___application_Views_Home_Index", classNode.Name);
     }
 
     [Fact]
@@ -166,7 +165,7 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
         var classNode = documentNode.GetClassNode();
 
-        Assert.Equal("path_with_invalid_chars", classNode.ClassName);
+        Assert.Equal("path_with_invalid_chars", classNode.Name);
     }
 
     [Fact]
@@ -183,8 +182,8 @@ public class MvcViewDocumentClassifierPassTest : RazorProjectEngineTestBase
         var documentNode = processor.GetDocumentNode();
         var methodNode = documentNode.GetMethodNode();
 
-        Assert.Equal("ExecuteAsync", methodNode.MethodName);
+        Assert.Equal("ExecuteAsync", methodNode.Name);
         Assert.Equal("global::System.Threading.Tasks.Task", methodNode.ReturnType);
-        Assert.Equal(["public", "async", "override"], methodNode.Modifiers);
+        Assert.Equal<string>(["public", "async", "override"], methodNode.Modifiers);
     }
 }

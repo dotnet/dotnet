@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Razor.Utilities;
 using Microsoft.CodeAnalysis;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Utilities;
 
@@ -23,24 +22,32 @@ public class TagHelperDescriptorCacheTest(ITestOutputHelper testOutput) : Toolin
         // Arrange
         var expectedPropertyName = "PropertyName";
 
-        var intTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        _ = intTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
-        intTagHelperBuilder.BoundAttributeDescriptor(intBuilder =>
-            intBuilder
-                .Name("test")
-                .PropertyName(expectedPropertyName)
-                .TypeName(typeof(int).FullName)
-        );
+        var intTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperKind.ITagHelper, "TestTagHelper", "Test")
+        {
+            TypeName = "TestTagHelper"
+        };
+
+        intTagHelperBuilder.BindAttribute(b =>
+        {
+            b.Name = "test";
+            b.PropertyName = expectedPropertyName;
+            b.TypeName = typeof(int).FullName;
+        });
+
         var intTagHelper = intTagHelperBuilder.Build();
 
-        var stringTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        _ = stringTagHelperBuilder.Metadata(TypeName("TestTagHelper"));
-        stringTagHelperBuilder.BoundAttributeDescriptor(stringBuilder =>
-            stringBuilder
-                .Name("test")
-                .PropertyName(expectedPropertyName)
-                .TypeName(typeof(string).FullName)
-        );
+        var stringTagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperKind.ITagHelper, "TestTagHelper", "Test")
+        {
+            TypeName = "TestTagHelper"
+        };
+
+        stringTagHelperBuilder.BindAttribute(b =>
+        {
+            b.Name = "test";
+            b.PropertyName = expectedPropertyName;
+            b.TypeName = typeof(string).FullName;
+        });
+
         var stringTagHelper = stringTagHelperBuilder.Build();
 
         // Act

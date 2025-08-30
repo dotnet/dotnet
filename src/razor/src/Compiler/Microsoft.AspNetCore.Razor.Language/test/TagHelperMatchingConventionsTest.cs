@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -121,16 +119,15 @@ public class TagHelperMatchingConventionsTest
         bool expectedResult)
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var tagMatchingRuleBuilder = new TagMatchingRuleDescriptorBuilder(tagHelperBuilder);
-        var builder = new RequiredAttributeDescriptorBuilder(tagMatchingRuleBuilder);
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
+            .TagMatchingRuleDescriptor(builder => builder
+                .RequiredAttribute(builder => configure(builder)))
+            .Build();
 
-        configure(builder);
-
-        var requiredAttibute = builder.Build();
+        var requiredAttribute = tagHelper.TagMatchingRules[0].Attributes[0];
 
         // Act
-        var result = TagHelperMatchingConventions.SatisfiesRequiredAttribute(requiredAttibute, attributeName, attributeValue);
+        var result = TagHelperMatchingConventions.SatisfiesRequiredAttribute(requiredAttribute, attributeName, attributeValue);
 
         // Assert
         Assert.Equal(expectedResult, result);
@@ -140,11 +137,11 @@ public class TagHelperMatchingConventionsTest
     public void CanSatisfyBoundAttribute_IndexerAttribute_ReturnsFalseIsNotMatching()
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
-        builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
+            .BoundAttributeDescriptor(builder => builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName))
+            .Build();
 
-        var boundAttribute = builder.Build();
+        var boundAttribute = tagHelper.BoundAttributes[0];
 
         // Act
         var result = TagHelperMatchingConventions.CanSatisfyBoundAttribute("style", boundAttribute);
@@ -157,11 +154,11 @@ public class TagHelperMatchingConventionsTest
     public void CanSatisfyBoundAttribute_IndexerAttribute_ReturnsTrueIfMatching()
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
-        builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName);
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
+            .BoundAttributeDescriptor(builder => builder.AsDictionary("asp-", typeof(Dictionary<string, string>).FullName))
+            .Build();
 
-        var boundAttribute = builder.Build();
+        var boundAttribute = tagHelper.BoundAttributes[0];
 
         // Act
         var result = TagHelperMatchingConventions.CanSatisfyBoundAttribute("asp-route-controller", boundAttribute);

@@ -193,13 +193,13 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
 
         // Assert
         var @namespace = SingleChild<NamespaceDeclarationIntermediateNode>(documentNode);
-        Assert.Equal("TestNamespace", @namespace.Content);
+        Assert.Equal("TestNamespace", @namespace.Name);
 
         var @class = SingleChild<ClassDeclarationIntermediateNode>(@namespace);
-        Assert.Equal("TestClass", @class.ClassName);
+        Assert.Equal("TestClass", @class.Name);
 
         var method = SingleChild<MethodDeclarationIntermediateNode>(@class);
-        Assert.Equal("TestMethod", method.MethodName);
+        Assert.Equal("TestMethod", method.Name);
     }
 
     [Fact]
@@ -264,9 +264,9 @@ public class DocumentClassifierPassBaseTest : RazorProjectEngineTestBase
             ClassDeclarationIntermediateNode @class,
             MethodDeclarationIntermediateNode method)
         {
-            @namespace.Content = Namespace;
-            @class.ClassName = Class;
-            @method.MethodName = Method;
+            @namespace.Name = Namespace;
+            @class.Name = Class;
+            @method.Name = Method;
         }
 
         protected override void ConfigureTarget(CodeTargetBuilder builder)

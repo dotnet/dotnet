@@ -62,10 +62,10 @@ public abstract class TagHelperDescriptorProviderTestBase
         int expectedCount)
     {
         var componentLookup = new Dictionary<string, List<TagHelperDescriptor>>();
-        var fullyQualifiedNameMatchComponents = components.Where(c => c.IsComponentFullyQualifiedNameMatch).ToArray();
+        var fullyQualifiedNameMatchComponents = components.Where(c => c.IsFullyQualifiedNameMatch).ToArray();
         Assert.Equal(expectedCount, fullyQualifiedNameMatchComponents.Length);
 
-        var shortNameMatchComponents = components.Where(c => !c.IsComponentFullyQualifiedNameMatch).ToArray();
+        var shortNameMatchComponents = components.Where(c => !c.IsFullyQualifiedNameMatch).ToArray();
 
         // For every fully qualified name component, we want to make sure we have a corresponding short name component.
         foreach (var fullNameComponent in fullyQualifiedNameMatchComponents)

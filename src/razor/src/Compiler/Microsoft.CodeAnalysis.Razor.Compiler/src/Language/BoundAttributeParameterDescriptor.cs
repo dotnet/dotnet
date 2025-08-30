@@ -16,7 +16,7 @@ public sealed class BoundAttributeParameterDescriptor : TagHelperObject<BoundAtt
     public BoundAttributeParameterFlags Flags => _flags;
     public string Name { get; }
     public string PropertyName { get; }
-    public string TypeName => TypeNameObject.GetTypeName().AssumeNotNull();
+    public string TypeName => TypeNameObject.FullName.AssumeNotNull();
     public string DisplayName => _displayName ??= ":" + Name;
 
     public string? Documentation => DocumentationObject.GetText();

@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.IntegrationTests;
 
@@ -573,8 +572,8 @@ public class TestTagHelperDescriptors
         IEnumerable<Action<BoundAttributeDescriptorBuilder>> attributes = null,
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>> ruleBuilders = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(typeName, assemblyName);
+        builder.SetTypeName(typeName, typeNamespace: null, typeNameIdentifier: null);
 
         if (attributes != null)
         {

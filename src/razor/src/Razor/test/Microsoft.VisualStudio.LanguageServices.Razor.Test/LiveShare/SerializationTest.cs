@@ -20,8 +20,8 @@ public class SerializationTest(ITestOutputHelper testOutput) : ToolingTestBase(t
     {
         // Arrange
         var tagHelpers = ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
-            TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly2").Build());
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper2", "TestAssembly2").Build());
 
         var projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         var expectedConfiguration = RazorConfiguration.Default;

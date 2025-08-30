@@ -31,7 +31,7 @@ internal class ComponentKeyLoweringPass : ComponentIntermediateNodePassBase, IRa
         {
             var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
 
-            if (node.TagHelper.IsKeyTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.Key)
             {
                 reference.Replace(RewriteUsage(reference.Parent, node));
             }

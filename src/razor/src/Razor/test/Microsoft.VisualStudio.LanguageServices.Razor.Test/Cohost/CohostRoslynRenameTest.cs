@@ -195,9 +195,9 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
     [PartNotDiscoverable]
     private class ExportableRemoteServiceInvoker : IRemoteServiceInvoker
     {
-        private TestRemoteServiceInvoker? _remoteServiceInvoker;
+        private IRemoteServiceInvoker? _remoteServiceInvoker;
 
-        internal void SetInvoker(TestRemoteServiceInvoker remoteServiceInvoker)
+        internal void SetInvoker(IRemoteServiceInvoker remoteServiceInvoker)
         {
             _remoteServiceInvoker = remoteServiceInvoker;
         }

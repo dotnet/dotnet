@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -18,21 +17,21 @@ using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
-using Microsoft.VisualStudio.ProjectSystem;
-using Microsoft.VisualStudio.Razor.Settings;
-using Microsoft.VisualStudio.Razor.Snippets;
 using Roslyn.Test.Utilities;
 using Roslyn.Text.Adornments;
 using Xunit;
 using Xunit.Abstractions;
+#if !VSCODE
+using Microsoft.VisualStudio.ProjectSystem;
+using Microsoft.VisualStudio.Razor.Snippets;
+#endif
 
 namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpInEmptyExplicitStatement(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpInEmptyExplicitStatement()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -49,13 +48,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 InvokeKind = VSInternalCompletionInvokeKind.Explicit,
                 TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["var", "char", "DateTime", "Exception"],
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedItemLabels: ["var", "char", "DateTime", "Exception"]);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpClassesAtTransition(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpClassesAtTransition()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -73,13 +70,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: ["char", "DateTime", "Exception"],
             itemToResolve: "DateTime",
-            expectedResolvedItemDescription: "readonly struct System.DateTime",
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedResolvedItemDescription: "readonly struct System.DateTime");
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpClassesBeforeTag(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpClassesBeforeTag()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -103,13 +98,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["char", "DateTime", "Exception"],
             itemToResolve: "DateTime",
             expectedResolvedItemDescription: "readonly struct System.DateTime",
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions,
             fileKind: RazorFileKind.Legacy);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpClassMembersAtProvisionalCompletion(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpClassMembersAtProvisionalCompletion()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -125,13 +118,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = ".",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"],
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpClassesInCodeBlock(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpClassesInCodeBlock()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -149,13 +140,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = null,
                 TriggerKind = CompletionTriggerKind.Invoked
             },
-            expectedItemLabels: ["char", "DateTime", "Exception"],
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedItemLabels: ["char", "DateTime", "Exception"]);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpClassMembersInCodeBlock(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpClassMembersInCodeBlock()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -178,13 +167,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerCharacter = ".",
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
-            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"],
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedItemLabels: ["DaysInMonth", "IsLeapYear", "Now"]);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpOverrideMethods(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpOverrideMethods()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -221,14 +208,12 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: ["Equals(object? obj)", "GetHashCode()", "SetParametersAsync(ParameterView parameters)", "ToString()"],
             itemToResolve: "SetParametersAsync(ParameterView parameters)",
-            expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)",
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedResolvedItemDescription: "(awaitable) Task ComponentBase.SetParametersAsync(ParameterView parameters)");
     }
 
     // Tests MarkupTransitionCompletionItemProvider
-    [Theory]
-    [CombinatorialData]
-    public async Task CSharpMarkupTransitionAndTagHelpersInCodeBlock(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task CSharpMarkupTransitionAndTagHelpersInCodeBlock()
     {
         await VerifyCompletionListAsync(
             input: """
@@ -252,13 +237,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
                 TriggerKind = CompletionTriggerKind.TriggerCharacter
             },
             expectedItemLabels: ["text", "EditForm", "InputDate", "div"],
-            htmlItemLabels: ["div"],
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            htmlItemLabels: ["div"]);
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task RazorDirectives(bool supportsVisualStudioExtensions)
+    [Fact]
+    public async Task RazorDirectives()
     {
         var expectedDirectiveLabels = new string[]
             {
@@ -296,8 +279,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             },
             expectedItemLabels: expectedLabels,
             itemToResolve: "page",
-            expectedResolvedItemDescription: "Mark the page as a routable component.",
-            supportsVisualStudioExtensions: supportsVisualStudioExtensions);
+            expectedResolvedItemDescription: "Mark the page as a routable component.");
     }
 
     [Fact]
@@ -387,6 +369,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             commitElementsWithSpace: false);
     }
 
+#if !VSCODE
     [Fact]
     public async Task HtmlSnippetsCompletion()
     {
@@ -487,6 +470,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             htmlItemLabels: ["style", "dir"],
             snippetLabels: ["snippet1", "snippet2"]);
     }
+#endif
 
     // Tests HTML attributes and DirectiveAttributeTransitionCompletionItemProvider
     [Fact]
@@ -531,10 +515,18 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["style", "dir", "@rendermode", "@bind-..."],
             htmlItemLabels: ["style", "dir"],
             itemToResolve: "@rendermode",
+#if VSCODE
+            expectedResolvedItemDescription: """
+                IComponentRenderMode RenderMode.RenderMode
+
+                Specifies the render mode for a component.
+                """);
+#else
             expectedResolvedItemDescription: """
                 IComponentRenderMode Microsoft.AspNetCore.Components.RenderMode.RenderMode
                 Specifies the render mode for a component.
                 """);
+#endif
     }
 
     // Tests HTML attributes and DirectiveAttributeParameterCompletionItemProvider
@@ -657,7 +649,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["style", "dir", "FormName", "OnValidSubmit", "@..."],
             htmlItemLabels: ["style", "dir"],
             itemToResolve: "FormName",
+#if VSCODE
+            expectedResolvedItemDescription: "string EditForm.FormName");
+#else
             expectedResolvedItemDescription: "string Microsoft.AspNetCore.Components.Forms.EditForm.FormName");
+#endif
     }
 
     [Fact]
@@ -714,20 +710,12 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
-        bool supportsVisualStudioExtensions = true,
         RazorFileKind? fileKind = null)
     {
-        UpdateClientLSPInitializationOptions(c =>
-        {
-            c.ClientCapabilities.SupportsVisualStudioExtensions = supportsVisualStudioExtensions;
-            return c;
-        });
-
         var document = CreateProjectAndRazorDocument(input.Text, fileKind);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var clientSettingsManager = new ClientSettingsManager([], null, null);
-        clientSettingsManager.Update(ClientAdvancedSettings.Default with { AutoInsertAttributeQuotes = autoInsertAttributeQuotes, CommitElementsWithSpace = commitElementsWithSpace });
+        ClientSettingsManager.Update(ClientAdvancedSettings.Default with { AutoInsertAttributeQuotes = autoInsertAttributeQuotes, CommitElementsWithSpace = commitElementsWithSpace });
 
         const string InvalidLabel = "_INVALID_";
 
@@ -748,17 +736,21 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentCompletionName, response)]);
 
+#if VSCODE
+        ISnippetCompletionItemProvider? snippetCompletionItemProvider = null;
+#else
         var snippetCompletionItemProvider = new SnippetCompletionItemProvider(new SnippetCache());
         // If snippetLabels wasn't supplied, supply our own to ensure snippets aren't being requested and causing a false positive result
         snippetLabels ??= [InvalidLabel];
         var snippetInfos = snippetLabels.Select(label => new SnippetInfo(label, label, label, string.Empty, SnippetLanguage.Html)).ToImmutableArray();
         snippetCompletionItemProvider.SnippetCache.Update(SnippetLanguage.Html, snippetInfos);
+#endif
 
         var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             IncompatibleProjectService,
             RemoteServiceInvoker,
-            clientSettingsManager,
+            ClientSettingsManager,
             ClientCapabilitiesService,
             snippetCompletionItemProvider,
             TestLanguageServerFeatureOptions.Instance,
@@ -782,7 +774,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         Assert.NotNull(result);
 
         using var _ = HashSetPool<string>.GetPooledObject(out var labelSet);
-        labelSet.AddRange(result.Items.Select((item) => item.Label));
+        labelSet.AddRange(result.Items.SelectAsArray((item) => item.Label));
 
         Assert.DoesNotContain(InvalidLabel, labelSet);
 
@@ -835,12 +827,11 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         // We expect data to be a JsonElement, so for tests we have to _not_ strongly type
         item.Data = JsonSerializer.SerializeToElement(item.Data, JsonHelpers.JsonSerializerOptions);
 
-        var clientSettingsManager = new ClientSettingsManager(changeTriggers: []);
         var endpoint = new CohostDocumentCompletionResolveEndpoint(
             IncompatibleProjectService,
             completionListCache,
             RemoteServiceInvoker,
-            clientSettingsManager,
+            ClientSettingsManager,
             new TestHtmlRequestInvoker(),
             LoggerFactory);
 

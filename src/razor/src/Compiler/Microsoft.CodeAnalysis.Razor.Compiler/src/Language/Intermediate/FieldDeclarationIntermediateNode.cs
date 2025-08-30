@@ -1,43 +1,30 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class FieldDeclarationIntermediateNode : MemberDeclarationIntermediateNode
 {
+    public required string Name { get; init; }
+    public required string Type { get; init; }
+    public ImmutableArray<string> Modifiers { get; init => field = value.NullToEmpty(); } = [];
+    public ImmutableArray<string> SuppressWarnings { get; init => field = value.NullToEmpty(); } = [];
+
+    public bool IsTagHelperField { get; init; }
+
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
 
-    public IList<string> Modifiers { get; } = new List<string>();
-
-    public IList<string> SuppressWarnings { get; } = new List<string>();
-
-    public string FieldName { get; set; }
-
-    public string FieldType { get; set; }
-
-    public bool IsTagHelperField { get; set; }
-
     public override void Accept(IntermediateNodeVisitor visitor)
-    {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
-        visitor.VisitFieldDeclaration(this);
-    }
+        => visitor.VisitFieldDeclaration(this);
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {
-        formatter.WriteContent(FieldName);
+        formatter.WriteContent(Name);
 
-        formatter.WriteProperty(nameof(FieldName), FieldName);
-        formatter.WriteProperty(nameof(FieldType), FieldType);
+        formatter.WriteProperty(nameof(Name), Name);
+        formatter.WriteProperty(nameof(Type), Type);
         formatter.WriteProperty(nameof(Modifiers), string.Join(" ", Modifiers));
     }
 }

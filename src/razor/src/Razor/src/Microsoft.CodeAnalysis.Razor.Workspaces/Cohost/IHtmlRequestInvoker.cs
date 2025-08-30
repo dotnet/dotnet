@@ -4,9 +4,8 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 
-namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
+namespace Microsoft.CodeAnalysis.Razor.Cohost;
 
 internal interface IHtmlRequestInvoker
 {

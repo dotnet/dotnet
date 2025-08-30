@@ -78,7 +78,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 continue;
             }
 
-            if (node.TagHelper.IsBindTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.Bind)
             {
                 bindEntries[(parent, node.AttributeName)] = new BindEntry(reference);
             }
@@ -130,7 +130,7 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                 continue;
             }
 
-            if (node.TagHelper.IsBindTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.Bind)
             {
                 // Check if this tag contains a corresponding non-parameterized bind node.
                 if (!bindEntries.TryGetValue((parent, node.AttributeNameWithoutParameter), out var entry))
@@ -256,9 +256,10 @@ internal class ComponentBindLoweringPass : ComponentIntermediateNodePassBase, IR
                         duplicateAttributeName = duplicateParameterAttribute.AttributeName;
                         duplicateTagHelper = duplicateParameterAttribute.TagHelper;
                     }
+
                     if (duplicate != null &&
                         duplicateTagHelper != null &&
-                        duplicateTagHelper.IsBindTagHelper() &&
+                        duplicateTagHelper.Kind == TagHelperKind.Bind &&
                         duplicateAttributeName == attributeName &&
                         !object.ReferenceEquals(attribute, duplicate))
                     {
