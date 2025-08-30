@@ -54,7 +54,6 @@ internal class VSCodeRemoteServicesInitializer(
         await service.InitializeAsync(new RemoteClientInitializationOptions
         {
             UseRazorCohostServer = _featureOptions.UseRazorCohostServer,
-            UsePreciseSemanticTokenRanges = _featureOptions.UsePreciseSemanticTokenRanges,
             HtmlVirtualDocumentSuffix = _featureOptions.HtmlVirtualDocumentSuffix,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = _featureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
             SupportsFileManipulation = _featureOptions.SupportsFileManipulation,

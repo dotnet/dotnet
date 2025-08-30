@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-public sealed class TypeParameterMetadata() : MetadataObject(MetadataKind.TypeParameter)
+public sealed record TypeParameterMetadata() : MetadataObject(MetadataKind.TypeParameter)
 {
+    public static TypeParameterMetadata Default { get; } = new();
+
     public bool IsCascading { get; init; }
     public string? Constraints { get; init; }
 
@@ -15,6 +17,8 @@ public sealed class TypeParameterMetadata() : MetadataObject(MetadataKind.TypePa
     /// <c>[global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(global::System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All)] T</c>.
     /// </summary>
     public string? NameWithAttributes { get; init; }
+
+    internal override bool HasDefaultValue => Equals(Default);
 
     private protected override void BuildChecksum(in Checksum.Builder builder)
     {

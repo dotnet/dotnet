@@ -49,7 +49,6 @@ internal sealed class RazorProjectInfoResolver : IFormatterResolver
             BoundAttributeFormatter.Instance,
             BoundAttributeParameterFormatter.Instance,
             DocumentationObjectFormatter.Instance,
-            MetadataCollectionFormatter.Instance,
             MetadataObjectFormatter.Instance,
             RazorDiagnosticFormatter.Instance,
             RequiredAttributeFormatter.Instance,

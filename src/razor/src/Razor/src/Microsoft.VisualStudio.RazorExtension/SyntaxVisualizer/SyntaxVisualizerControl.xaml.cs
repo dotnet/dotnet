@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Serialization.Json;
-using Microsoft.CodeAnalysis.Razor.Formatting.New;
+using Microsoft.CodeAnalysis.Razor.Formatting;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Extensions;
 using Microsoft.VisualStudio.Razor;

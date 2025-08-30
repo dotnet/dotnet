@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics;
 using MessagePack;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
@@ -12,10 +13,8 @@ internal sealed class TypeNameObjectFormatter : ValueFormatter<TypeNameObject>
     private enum TypeNameKind : byte
     {
         Index,
-        String
+        Strings
     }
-
-    private const int PropertyCount = 2;
 
     public static readonly ValueFormatter<TypeNameObject> Instance = new TypeNameObjectFormatter();
 
@@ -30,18 +29,26 @@ internal sealed class TypeNameObjectFormatter : ValueFormatter<TypeNameObject>
             return default;
         }
 
-        reader.ReadArrayHeaderAndVerify(PropertyCount);
+        var propertyCount = reader.ReadArrayHeader();
+        Debug.Assert(propertyCount >= 2);
 
         var typeNameKind = (TypeNameKind)reader.ReadByte();
 
         switch (typeNameKind)
         {
             case TypeNameKind.Index:
+                Debug.Assert(propertyCount == 2);
                 var index = reader.ReadByte();
                 return new(index);
-            case TypeNameKind.String:
+
+            case TypeNameKind.Strings:
+                Debug.Assert(propertyCount == 4);
+
                 var fullName = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull();
-                return new(fullName);
+                var namespaceName = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+                var name = CachedStringFormatter.Instance.Deserialize(ref reader, options);
+
+                return TypeNameObject.From(fullName, namespaceName, name);
 
             default:
                 return Assumed.Unreachable<TypeNameObject>();
@@ -56,21 +63,22 @@ internal sealed class TypeNameObjectFormatter : ValueFormatter<TypeNameObject>
             return;
         }
 
-        writer.WriteArrayHeader(PropertyCount);
-
         if (value.Index is byte index)
         {
+            writer.WriteArrayHeader(2);
+
             writer.Write((byte)TypeNameKind.Index);
             writer.Write(index);
         }
-        else if (value.StringValue is string stringValue)
-        {
-            writer.Write((byte)TypeNameKind.String);
-            CachedStringFormatter.Instance.Serialize(ref writer, stringValue, options);
-        }
         else
         {
-            Assumed.Unreachable();
+            writer.WriteArrayHeader(4);
+
+            writer.Write((byte)TypeNameKind.Strings);
+
+            CachedStringFormatter.Instance.Serialize(ref writer, value.FullName, options);
+            CachedStringFormatter.Instance.Serialize(ref writer, value.Namespace, options);
+            CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
         }
     }
 
@@ -81,17 +89,21 @@ internal sealed class TypeNameObjectFormatter : ValueFormatter<TypeNameObject>
             return;
         }
 
-        reader.ReadArrayHeaderAndVerify(PropertyCount);
+        var propertyCount = reader.ReadArrayHeader();
 
         var typeNameKind = (TypeNameKind)reader.ReadByte();
         switch (typeNameKind)
         {
             case TypeNameKind.Index:
+                Debug.Assert(propertyCount == 2);
                 reader.Skip(); // Index
                 break;
 
-            case TypeNameKind.String:
-                CachedStringFormatter.Instance.Skim(ref reader, options); // StringValue
+            case TypeNameKind.Strings:
+                Debug.Assert(propertyCount == 4);
+                CachedStringFormatter.Instance.Skim(ref reader, options); // FullName
+                CachedStringFormatter.Instance.Skim(ref reader, options); // Namespace
+                CachedStringFormatter.Instance.Skim(ref reader, options); // Name
                 break;
         }
     }

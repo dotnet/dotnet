@@ -558,7 +558,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 if (!node.TagName.Contains("."))
                 {
                     // The tag is not fully qualified
-                    context.CodeWriter.Write(node.Component.GetTypeNamespace());
+                    context.CodeWriter.Write(node.Component.TypeNamespace.AssumeNotNull());
                     context.CodeWriter.Write(".");
                 }
                 context.CodeWriter.Write(node.TagName);

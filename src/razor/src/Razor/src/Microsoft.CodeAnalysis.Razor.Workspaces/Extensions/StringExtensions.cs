@@ -2,20 +2,17 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 internal static class StringExtensions
 {
-    private const string RazorExtension = ".razor";
-    private const string CSHtmlExtension = ".cshtml";
-
     public static bool IsRazorFilePath(this string filePath)
     {
         var comparison = PathUtilities.OSSpecificPathComparison;
 
-        return filePath.EndsWith(RazorExtension, comparison) ||
-               filePath.EndsWith(CSHtmlExtension, comparison);
+        return FileUtilities.IsAnyRazorFilePath(filePath, comparison);
     }
 
     public static int? GetFirstNonWhitespaceOffset(this string line)

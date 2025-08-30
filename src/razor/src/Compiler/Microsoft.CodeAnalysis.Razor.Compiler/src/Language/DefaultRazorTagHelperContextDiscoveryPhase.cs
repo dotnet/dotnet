@@ -358,14 +358,14 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                     continue;
                 }
 
-                if (tagHelper.IsComponentFullyQualifiedNameMatch)
+                if (tagHelper.IsFullyQualifiedNameMatch)
                 {
                     // If the component descriptor matches for a fully qualified name, using directives shouldn't matter.
                     AddMatch(tagHelper);
                     continue;
                 }
 
-                var tagHelperTypeNamespace = tagHelper.GetTypeNamespace().AsMemory();
+                var tagHelperTypeNamespace = tagHelper.TypeNamespace.AsMemory();
 
                 if (tagHelperTypeNamespace.IsEmpty)
                 {
@@ -485,7 +485,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                         // Add all tag helpers that have an empty type namespace
                         foreach (var tagHelper in componentsWithEmptyTypeNamespace)
                         {
-                            Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch, "We've already processed these.");
+                            Debug.Assert(!tagHelper.IsFullyQualifiedNameMatch, "We've already processed these.");
 
                             AddMatch(tagHelper);
                         }
@@ -498,7 +498,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                         {
                             foreach (var tagHelper in tagHelpers)
                             {
-                                Debug.Assert(!tagHelper.IsComponentFullyQualifiedNameMatch, "We've already processed these.");
+                                Debug.Assert(!tagHelper.IsFullyQualifiedNameMatch, "We've already processed these.");
 
                                 AddMatch(tagHelper);
                             }
@@ -543,7 +543,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
         // open file in the editor. We mangle the class name for its generated code, so using that here to filter these out.
         internal static bool IsTagHelperFromMangledClass(TagHelperDescriptor tagHelper)
         {
-            return ComponentMetadata.IsMangledClass(tagHelper.GetTypeNameIdentifier());
+            return ComponentHelpers.IsMangledClass(tagHelper.TypeNameIdentifier);
         }
     }
 }

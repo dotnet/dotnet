@@ -89,8 +89,7 @@ public class FormattingContentValidationPassTest(ITestOutputHelper testOutput) :
         var context = FormattingContext.Create(
             documentSnapshot,
             codeDocument,
-            options,
-            useNewFormattingEngine: false);
+            options);
         return context;
     }
 

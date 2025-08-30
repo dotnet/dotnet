@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.TextDifferencing;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using RazorRazorSyntaxNodeList = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxList<Microsoft.AspNetCore.Razor.Language.Syntax.RazorSyntaxNode>;
 using RazorSyntaxNode = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxNode;
@@ -24,9 +23,8 @@ using RazorSyntaxNodeOrToken = Microsoft.AspNetCore.Razor.Language.Syntax.Syntax
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
 
-internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageServerFeatureOptions, ILoggerFactory loggerFactory) : IFormattingPass
+internal sealed class RazorFormattingPass(ILoggerFactory loggerFactory) : IFormattingPass
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<RazorFormattingPass>();
 
     public async Task<ImmutableArray<TextChange>> ExecuteAsync(FormattingContext context, ImmutableArray<TextChange> changes, CancellationToken cancellationToken)
@@ -57,7 +55,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
     }
 
-    private ImmutableArray<TextChange> FormatRazor(FormattingContext context, RazorSyntaxTree syntaxTree)
+    private static ImmutableArray<TextChange> FormatRazor(FormattingContext context, RazorSyntaxTree syntaxTree)
     {
         using var changes = new PooledArrayBuilder<TextChange>();
         var source = syntaxTree.Source;
@@ -74,7 +72,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         return changes.ToImmutable();
     }
 
-    private void TryFormatBlocks(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static void TryFormatBlocks(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // We only want to run one of these
         _ = TryFormatFunctionsBlock(context, ref changes, source, node) ||
@@ -84,7 +82,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             TryFormatSectionBlock(context, ref changes, source, node);
     }
 
-    private bool TryFormatSectionBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatSectionBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // @section Goo {
         // }
@@ -97,31 +95,8 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         if (node is CSharpCodeBlockSyntax directiveCode &&
             directiveCode.Children is [RazorDirectiveSyntax directive, ..] &&
             directive.DirectiveDescriptor?.Directive == SectionDirective.Directive.Directive &&
-            directive.Body is RazorDirectiveBodySyntax { CSharpCode: { Children: var children } })
+            directive.Body is RazorDirectiveBodySyntax { CSharpCode.Children: var children })
         {
-            // This doesn't cause any harm with the new engine, but its a waste of effort.
-            if (!_languageServerFeatureOptions.UseNewFormattingEngine)
-            {
-                // Section directives are really annoying in their implementation, and we have some code in the C# formatting pass
-                // to work around those annoyances, but if the section content has no C# mappings then that code won't get hit.
-                // Fortunately for a Html-only section block, the indentation is entirely handled by the Html formatter, and we
-                // just need to push it out one level, because the Html formatter will have pushed it back to position 0.
-                if (children is [.., MarkupBlockSyntax block, RazorMetaCodeSyntax /* close brace */] &&
-                    !context.CodeDocument.GetRequiredCSharpDocument().SourceMappings.Any(m => block.Span.Contains(m.OriginalSpan.AbsoluteIndex)))
-                {
-                    // The Html formatter will have "collapsed" the @section block contents to 0 indent, so we push it back out
-                    // again because we're opinionated about section blocks
-                    var indentationString = context.GetIndentationLevelString(1);
-                    var sourceText = context.CodeDocument.Source.Text;
-                    var span = sourceText.GetLinePositionSpan(block.Span);
-                    // The block starts with the newline after the open brace, so we start from the next line
-                    for (var i = span.Start.Line + 1; i < span.End.Line; i++)
-                    {
-                        changes.Add(new TextChange(new TextSpan(sourceText.Lines[i].Start, 0), indentationString));
-                    }
-                }
-            }
-
             if (TryGetWhitespace(children, out var whitespaceBeforeSectionName, out var whitespaceAfterSectionName))
             {
                 // For whitespace we normalize it differently depending on if its multi-line or not
@@ -162,7 +137,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
     }
 
-    private bool TryFormatFunctionsBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatFunctionsBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // @functions
         // {
@@ -203,7 +178,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         return false;
     }
 
-    private bool TryFormatCSharpExplicitTransition(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatCSharpExplicitTransition(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // We're looking for a code block like this:
         //
@@ -225,7 +200,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         return false;
     }
 
-    private bool TryFormatComplexCSharpBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatComplexCSharpBlock(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // complex situations like
         // @{
@@ -247,7 +222,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         return false;
     }
 
-    private bool TryFormatHtmlInCSharp(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
+    private static bool TryFormatHtmlInCSharp(FormattingContext context, ref PooledArrayBuilder<TextChange> changes, RazorSourceDocument source, RazorSyntaxNode node)
     {
         // void Method()
         // {
@@ -399,7 +374,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         changes.Add(new TextChange(nodeOrToken.Span, " "));
     }
 
-    private bool FormatBlock(FormattingContext context, RazorSourceDocument source, RazorSyntaxNode? directiveNode, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode, RazorSyntaxNode closeBraceNode, ref PooledArrayBuilder<TextChange> changes)
+    private static bool FormatBlock(FormattingContext context, RazorSourceDocument source, RazorSyntaxNode? directiveNode, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode, RazorSyntaxNode closeBraceNode, ref PooledArrayBuilder<TextChange> changes)
     {
         var didFormat = false;
 
@@ -409,26 +384,24 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
         }
 
         var additionalIndentation = "";
-        if (_languageServerFeatureOptions.UseNewFormattingEngine)
+
+        // It's important with the new formatting engine that we maintain the indentation that the Html formatter would have applied,
+        // if the Razor formatting pass had happened first. This is only applicable inside an element, as that is the only place that
+        // the Html formatter will do anything.
+        // TODO: Rather than ascend up the tree, this could be smarter as this class already descends down the tree
+        if (openBraceNode.AncestorsAndSelf().Any(n => n is MarkupTagHelperElementSyntax or MarkupElementSyntax))
         {
-            // It's important with the new formatting engine that we maintain the indentation that the Html formatter would have applied,
-            // if the Razor formatting pass had happened first. This is only applicable inside an element, as that is the only place that
-            // the Html formatter will do anything.
-            // TODO: Rather than ascend up the tree, this could be smarter as this class already descends down the tree
-            if (openBraceNode.AncestorsAndSelf().Any(n => n is MarkupTagHelperElementSyntax or MarkupElementSyntax))
+            var openBraceLineNumber = openBraceNode.GetLinePositionSpan(source).Start.Line;
+            var openBraceLine = source.Text.Lines[openBraceLineNumber];
+
+            // The open brace node might actually start with a newline on the line before, which could be blank,
+            // so make sure we find some actual content.
+            while (!openBraceLine.GetFirstNonWhitespacePosition().HasValue)
             {
-                var openBraceLineNumber = openBraceNode.GetLinePositionSpan(source).Start.Line;
-                var openBraceLine = source.Text.Lines[openBraceLineNumber];
-
-                // The open brace node might actually start with a newline on the line before, which could be blank,
-                // so make sure we find some actual content.
-                while (!openBraceLine.GetFirstNonWhitespacePosition().HasValue)
-                {
-                    openBraceLine = source.Text.Lines[++openBraceLineNumber];
-                }
-
-                additionalIndentation = openBraceLine.GetLeadingWhitespace();
+                openBraceLine = source.Text.Lines[++openBraceLineNumber];
             }
+
+            additionalIndentation = openBraceLine.GetLeadingWhitespace();
         }
 
         if (openBraceNode.TryGetLinePositionSpanWithoutWhitespace(source, out var openBraceRange) &&
@@ -436,17 +409,6 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             !RangeHasBeenModified(ref changes, source.Text, codeRange))
         {
             var end = codeRange.Start;
-            if (!_languageServerFeatureOptions.UseNewFormattingEngine)
-            {
-                // This logic is harmful in the new formatting engine, because it is interpreted as being the result of the Html formatter
-                end = openBraceRange.End;
-                var additionalIndentationLevel = GetAdditionalIndentationLevel(context, openBraceRange, openBraceNode, codeNode);
-                if (additionalIndentationLevel > 0)
-                {
-                    additionalIndentation = FormattingUtilities.GetIndentationString(additionalIndentationLevel, context.Options.InsertSpaces, context.Options.TabSize);
-                }
-            }
-
             var newText = context.NewLineString + additionalIndentation;
             changes.Add(new TextChange(source.Text.GetTextSpan(openBraceRange.End, end), newText));
             didFormat = true;
@@ -476,9 +438,7 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
                 // In the new formatter, we have to make sure there is no extra whitespace on the new line, or it will be
                 // kept when recording Html indentation. This probably wouldn't be an issue in the old engine, but I'm being
                 // cautious.
-                var start = _languageServerFeatureOptions.UseNewFormattingEngine
-                    ? closeBraceRange.Start
-                    : codeRange.End;
+                var start = closeBraceRange.Start;
                 changes.Add(new TextChange(source.Text.GetTextSpan(codeRange.End, start), context.NewLineString + additionalIndentation));
                 didFormat = true;
             }
@@ -503,83 +463,6 @@ internal sealed class RazorFormattingPass(LanguageServerFeatureOptions languageS
             var hasBeenModified = changes.Any(e => e.Span.End == endIndex);
 
             return hasBeenModified;
-        }
-
-        static int GetAdditionalIndentationLevel(FormattingContext context, LinePositionSpan range, RazorSyntaxNode openBraceNode, RazorSyntaxNode codeNode)
-        {
-            if (!context.TryGetIndentationLevel(codeNode.Position, out var desiredIndentationLevel))
-            {
-                // If for some reason we don't match a particular span use the indentation for the whole line
-                var indentations = context.GetIndentations();
-                var indentation = indentations[range.Start.Line];
-                desiredIndentationLevel = indentation.HtmlIndentationLevel + indentation.RazorIndentationLevel;
-            }
-
-            var desiredIndentationOffset = context.GetIndentationOffsetForLevel(desiredIndentationLevel);
-            var currentIndentationOffset = GetTrailingWhitespaceLength(openBraceNode, context) + GetLeadingWhitespaceLength(codeNode, context);
-
-            return desiredIndentationOffset - currentIndentationOffset;
-
-            static int GetLeadingWhitespaceLength(RazorSyntaxNode node, FormattingContext context)
-            {
-                var whitespaceLength = 0;
-
-                foreach (var token in node.DescendantTokens())
-                {
-                    if (token.IsWhitespace())
-                    {
-                        if (token.Kind == SyntaxKind.NewLine)
-                        {
-                            // We need to reset when we move to a new line.
-                            whitespaceLength = 0;
-                        }
-                        else if (token.IsSpace())
-                        {
-                            whitespaceLength++;
-                        }
-                        else if (token.IsTab())
-                        {
-                            whitespaceLength += (int)context.Options.TabSize;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                return whitespaceLength;
-            }
-
-            static int GetTrailingWhitespaceLength(RazorSyntaxNode node, FormattingContext context)
-            {
-                var whitespaceLength = 0;
-
-                foreach (var token in node.DescendantTokens().Reverse())
-                {
-                    if (token.IsWhitespace())
-                    {
-                        if (token.Kind == SyntaxKind.NewLine)
-                        {
-                            whitespaceLength = 0;
-                        }
-                        else if (token.IsSpace())
-                        {
-                            whitespaceLength++;
-                        }
-                        else if (token.IsTab())
-                        {
-                            whitespaceLength += (int)context.Options.TabSize;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                return whitespaceLength;
-            }
         }
     }
 

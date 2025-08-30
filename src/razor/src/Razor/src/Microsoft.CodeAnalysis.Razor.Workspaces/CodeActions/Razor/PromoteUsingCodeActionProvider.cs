@@ -71,6 +71,6 @@ internal class PromoteUsingCodeActionProvider : IRazorCodeActionProvider
     {
         return fileKind.IsLegacy()
             ? MvcImportProjectFeature.ImportsFileName
-            : ComponentMetadata.ImportsFileName;
+            : ComponentHelpers.ImportsFileName;
     }
 }

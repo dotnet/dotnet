@@ -11,13 +11,24 @@ public enum MetadataKind : byte
     TypeParameter,
     Property,
     ChildContentParameter,
+    Bind,
+    Component,
+    EventHandler,
+    ViewComponent
 }
 
-public abstract class MetadataObject(MetadataKind kind)
+public abstract record MetadataObject
 {
     public static readonly MetadataObject None = new NoMetadataObject();
 
-    public MetadataKind Kind { get; } = kind;
+    public MetadataKind Kind { get; }
+
+    protected MetadataObject(MetadataKind kind)
+    {
+        Kind = kind;
+    }
+
+    internal abstract bool HasDefaultValue { get; }
 
     internal void AppendToChecksum(in Checksum.Builder builder)
     {
@@ -28,8 +39,10 @@ public abstract class MetadataObject(MetadataKind kind)
 
     private protected abstract void BuildChecksum(in Checksum.Builder builder);
 
-    private sealed class NoMetadataObject() : MetadataObject(MetadataKind.None)
+    private sealed record NoMetadataObject() : MetadataObject(MetadataKind.None)
     {
+        internal override bool HasDefaultValue => true;
+
         private protected override void BuildChecksum(in Checksum.Builder builder)
         {
             // No more data to append.

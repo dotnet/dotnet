@@ -21,7 +21,6 @@ internal sealed class FormattingVisitor : SyntaxWalker
     private readonly ImmutableArray<FormattingSpan>.Builder _spans;
     private readonly bool _inGlobalNamespace;
     private FormattingBlockKind _currentBlockKind;
-    private SyntaxNode? _currentBlock;
     private int _currentHtmlIndentationLevel = 0;
     private int _currentRazorIndentationLevel = 0;
     private int _currentComponentIndentationLevel = 0;
@@ -43,7 +42,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitRazorCommentBlock(RazorCommentBlockSyntax node)
     {
-        using (CommentBlock(node))
+        using (CommentBlock())
         {
             // We only want to move the start of the comment into the right spot, so we only
             // create spans for the start.
@@ -96,7 +95,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
             return;
         }
 
-        using (StatementBlock(node))
+        using (StatementBlock())
         {
             base.VisitCSharpCodeBlock(node);
         }
@@ -104,7 +103,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitCSharpStatement(CSharpStatementSyntax node)
     {
-        using (StatementBlock(node))
+        using (StatementBlock())
         {
             base.VisitCSharpStatement(node);
         }
@@ -112,7 +111,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitCSharpExplicitExpression(CSharpExplicitExpressionSyntax node)
     {
-        using (ExpressionBlock(node))
+        using (ExpressionBlock())
         {
             base.VisitCSharpExplicitExpression(node);
         }
@@ -120,7 +119,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitCSharpImplicitExpression(CSharpImplicitExpressionSyntax node)
     {
-        using (ExpressionBlock(node))
+        using (ExpressionBlock())
         {
             base.VisitCSharpImplicitExpression(node);
         }
@@ -128,7 +127,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitRazorDirective(RazorDirectiveSyntax node)
     {
-        using (DirectiveBlock(node))
+        using (DirectiveBlock())
         {
             base.VisitRazorDirective(node);
         }
@@ -136,7 +135,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitCSharpTemplateBlock(CSharpTemplateBlockSyntax node)
     {
-        using (TemplateBlock(node))
+        using (TemplateBlock())
         {
             base.VisitCSharpTemplateBlock(node);
         }
@@ -144,7 +143,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupBlock(MarkupBlockSyntax node)
     {
-        using (MarkupBlock(node))
+        using (MarkupBlock())
         {
             base.VisitMarkupBlock(node);
         }
@@ -180,7 +179,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupStartTag(MarkupStartTagSyntax node)
     {
-        using (TagBlock(node))
+        using (TagBlock())
         {
             var children = SyntaxUtilities.GetRewrittenMarkupStartTagChildren(node);
 
@@ -193,7 +192,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupEndTag(MarkupEndTagSyntax node)
     {
-        using (TagBlock(node))
+        using (TagBlock())
         {
             var children = SyntaxUtilities.GetRewrittenMarkupEndTagChildren(node);
 
@@ -244,7 +243,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
         static bool IsComponentTagHelperNode(MarkupTagHelperElementSyntax node)
         {
             return node.TagHelperInfo?.BindingResult?.Descriptors is { Length: > 0 } descriptors &&
-                   descriptors.Any(static d => d.IsComponentOrChildContentTagHelper);
+                   descriptors.Any(static d => d.IsComponentOrChildContentTagHelper());
         }
 
         static bool ParentHasProperty(MarkupTagHelperElementSyntax parentComponent, string? propertyName)
@@ -320,7 +319,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperStartTag(MarkupTagHelperStartTagSyntax node)
     {
-        using (TagBlock(node))
+        using (TagBlock())
         {
             foreach (var child in node.LegacyChildren)
             {
@@ -331,7 +330,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperEndTag(MarkupTagHelperEndTagSyntax node)
     {
-        using (TagBlock(node))
+        using (TagBlock())
         {
             foreach (var child in node.LegacyChildren)
             {
@@ -342,7 +341,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupAttributeBlock(MarkupAttributeBlockSyntax node)
     {
-        using (MarkupBlock(node))
+        using (MarkupBlock())
         {
             // For attributes, we add a single span from the start of the name prefix to the end of the value prefix.
             var spanComputer = new SpanComputer();
@@ -364,7 +363,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperAttribute(MarkupTagHelperAttributeSyntax node)
     {
-        using (TagBlock(node))
+        using (TagBlock())
         {
             // For attributes, we add a single span from the start of the name prefix to the end of the value prefix.
             var spanComputer = new SpanComputer();
@@ -399,7 +398,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupMinimizedAttributeBlock(MarkupMinimizedAttributeBlockSyntax node)
     {
-        using (MarkupBlock(node))
+        using (MarkupBlock())
         {
             // For minimized attributes, we add a single span for the attribute name along with the name prefix.
             var spanComputer = new SpanComputer();
@@ -414,7 +413,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupCommentBlock(MarkupCommentBlockSyntax node)
     {
-        using (HtmlCommentBlock(node))
+        using (HtmlCommentBlock())
         {
             base.VisitMarkupCommentBlock(node);
         }
@@ -422,7 +421,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupDynamicAttributeValue(MarkupDynamicAttributeValueSyntax node)
     {
-        using (MarkupBlock(node))
+        using (MarkupBlock())
         {
             base.VisitMarkupDynamicAttributeValue(node);
         }
@@ -430,7 +429,7 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     public override void VisitMarkupTagHelperAttributeValue(MarkupTagHelperAttributeValueSyntax node)
     {
-        using (MarkupBlock(node))
+        using (MarkupBlock())
         {
             base.VisitMarkupTagHelperAttributeValue(node);
         }
@@ -524,35 +523,34 @@ internal sealed class FormattingVisitor : SyntaxWalker
         base.VisitMarkupEphemeralTextLiteral(node);
     }
 
-    private BlockSaver CommentBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Comment);
+    private BlockSaver CommentBlock()
+        => Block(FormattingBlockKind.Comment);
 
-    private BlockSaver DirectiveBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Directive);
+    private BlockSaver DirectiveBlock()
+        => Block(FormattingBlockKind.Directive);
 
-    private BlockSaver ExpressionBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Expression);
+    private BlockSaver ExpressionBlock()
+        => Block(FormattingBlockKind.Expression);
 
-    private BlockSaver HtmlCommentBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.HtmlComment);
+    private BlockSaver HtmlCommentBlock()
+        => Block(FormattingBlockKind.HtmlComment);
 
-    private BlockSaver MarkupBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Markup);
+    private BlockSaver MarkupBlock()
+        => Block(FormattingBlockKind.Markup);
 
-    private BlockSaver StatementBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Statement);
+    private BlockSaver StatementBlock()
+        => Block(FormattingBlockKind.Statement);
 
-    private BlockSaver TagBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Tag);
+    private BlockSaver TagBlock()
+        => Block(FormattingBlockKind.Tag);
 
-    private BlockSaver TemplateBlock(SyntaxNode node)
-        => Block(node, FormattingBlockKind.Template);
+    private BlockSaver TemplateBlock()
+        => Block(FormattingBlockKind.Template);
 
-    private BlockSaver Block(SyntaxNode node, FormattingBlockKind kind)
+    private BlockSaver Block(FormattingBlockKind kind)
     {
         var saver = new BlockSaver(this);
 
-        _currentBlock = node;
         _currentBlockKind = kind;
 
         return saver;
@@ -560,12 +558,10 @@ internal sealed class FormattingVisitor : SyntaxWalker
 
     private readonly ref struct BlockSaver(FormattingVisitor visitor)
     {
-        private readonly SyntaxNode? _previousBlock = visitor._currentBlock;
         private readonly FormattingBlockKind _previousKind = visitor._currentBlockKind;
 
         public void Dispose()
         {
-            visitor._currentBlock = _previousBlock;
             visitor._currentBlockKind = _previousKind;
         }
     }
@@ -597,17 +593,13 @@ internal sealed class FormattingVisitor : SyntaxWalker
             return;
         }
 
-        Assumes.NotNull(_currentBlock);
-
         var span = new FormattingSpan(
             textSpan,
-            _currentBlock.Span,
             kind,
-            _currentBlockKind,
             _currentRazorIndentationLevel,
             _currentHtmlIndentationLevel,
-            isInGlobalNamespace: _inGlobalNamespace,
-            isInClassBody: _isInClassBody,
+            IsInGlobalNamespace: _inGlobalNamespace,
+            IsInClassBody: _isInClassBody,
             _currentComponentIndentationLevel);
 
         _spans.Add(span);

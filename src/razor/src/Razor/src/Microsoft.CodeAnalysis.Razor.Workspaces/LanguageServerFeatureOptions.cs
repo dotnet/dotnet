@@ -15,8 +15,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool DelegateToCSharpOnDiagnosticPublish { get; }
 
-    public abstract bool UsePreciseSemanticTokenRanges { get; }
-
     public abstract bool ShowAllCSharpCodeActions { get; }
 
     public abstract bool UpdateBuffersForClosedDocuments { get; }
@@ -32,8 +30,6 @@ internal abstract class LanguageServerFeatureOptions
     public abstract bool IncludeProjectKeyInGeneratedFilePath { get; }
 
     public abstract bool UseRazorCohostServer { get; }
-
-    public abstract bool UseNewFormattingEngine { get; }
 
     /// <summary>
     /// Indicates that client supports soft selection in completion list, meaning that typing a commit 

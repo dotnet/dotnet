@@ -126,8 +126,8 @@ public class DefaultRazorProjectEngineIntegrationTest
         var expectedImports = ImmutableArray.Create(RazorSourceDocument.ReadFrom(importItem));
         var expectedTagHelpers = new[]
         {
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
-            TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("Test2TagHelper", "TestAssembly").Build(),
         };
 
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty);
@@ -245,8 +245,8 @@ public class DefaultRazorProjectEngineIntegrationTest
         var expectedImports = ImmutableArray.Create(RazorSourceDocument.ReadFrom(importItem));
         var expectedTagHelpers = new[]
         {
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build(),
-            TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build(),
+            TagHelperDescriptorBuilder.CreateTagHelper("Test2TagHelper", "TestAssembly").Build(),
         };
 
         var projectEngine = RazorProjectEngine.Create(RazorConfiguration.Default, TestRazorProjectFileSystem.Empty);

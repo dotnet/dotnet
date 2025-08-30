@@ -27,7 +27,7 @@ public class ModelExpressionPassTest : RazorProjectEngineTestBase
     public void ModelExpressionPass_NonModelExpressionProperty_Ignored()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32"))
@@ -58,7 +58,7 @@ public class ModelExpressionPassTest : RazorProjectEngineTestBase
     public void ModelExpressionPass_ModelExpressionProperty_SimpleExpression()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
@@ -94,7 +94,7 @@ public class ModelExpressionPassTest : RazorProjectEngineTestBase
     public void ModelExpressionPass_ModelExpressionProperty_ComplexExpression()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("Microsoft.AspNetCore.Mvc.ViewFeatures.ModelExpression"))
