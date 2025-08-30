@@ -145,7 +145,7 @@ internal sealed partial class DiagnosticAnalyzerService
     }
 
     public Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsAsync(
-        Project project, DocumentId? documentId, ImmutableHashSet<string>? diagnosticIds, Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer, bool includeLocalDocumentDiagnostics, bool includeNonLocalDocumentDiagnostics, CancellationToken cancellationToken)
+        Project project, ImmutableArray<DocumentId> documentIds, ImmutableHashSet<string>? diagnosticIds, Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer, bool includeLocalDocumentDiagnostics, CancellationToken cancellationToken)
     {
         var analyzers = GetDiagnosticAnalyzers(project, diagnosticIds, shouldIncludeAnalyzer);
 
@@ -153,18 +153,19 @@ internal sealed partial class DiagnosticAnalyzerService
             project, analyzers, diagnosticIds,
             // Ensure we compute and return diagnostics for both the normal docs and the additional docs in this
             // project if no specific document id was requested.
-            documentId != null ? [documentId] : [.. project.DocumentIds, .. project.AdditionalDocumentIds],
+            documentIds.IsDefault ? [.. project.DocumentIds, .. project.AdditionalDocumentIds] : documentIds,
             includeLocalDocumentDiagnostics,
-            includeNonLocalDocumentDiagnostics,
+            includeNonLocalDocumentDiagnostics: true,
             // return diagnostics specific to one project or document
-            includeProjectNonLocalResult: documentId == null,
+            includeProjectNonLocalResult: documentIds.IsDefault,
             cancellationToken);
     }
 
     public Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsAsync(
-        Project project, ImmutableHashSet<string>? diagnosticIds,
+        Project project,
+        ImmutableHashSet<string>? diagnosticIds,
         Func<DiagnosticAnalyzer, bool>? shouldIncludeAnalyzer,
-        bool includeNonLocalDocumentDiagnostics, CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
         var analyzers = GetDiagnosticAnalyzers(project, diagnosticIds, shouldIncludeAnalyzer);
 
@@ -172,7 +173,7 @@ internal sealed partial class DiagnosticAnalyzerService
             project, analyzers, diagnosticIds,
             documentIds: [],
             includeLocalDocumentDiagnostics: false,
-            includeNonLocalDocumentDiagnostics: includeNonLocalDocumentDiagnostics,
+            includeNonLocalDocumentDiagnostics: false,
             includeProjectNonLocalResult: true,
             cancellationToken);
     }
