@@ -31,8 +31,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool UseRazorCohostServer { get; }
 
-    public abstract bool UseNewFormattingEngine { get; }
-
     /// <summary>
     /// Indicates that client supports soft selection in completion list, meaning that typing a commit 
     /// character with a soft-selected item will not commit that item.

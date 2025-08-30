@@ -113,7 +113,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         };
         var razorOptions = RazorFormattingOptions.From(options, codeBlockBraceOnNextLine: razorLSPOptions?.CodeBlockBraceOnNextLine ?? false, csharpSyntaxFormattingOptions);
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
 
         var formattingService = await TestRazorFormattingService.CreateWithFullSupportAsync(LoggerFactory, codeDocument, razorLSPOptions, languageServerFeatureOptions, debugAssertsEnabled);
         var documentContext = new DocumentContext(uri, documentSnapshot, projectContext: null);
@@ -164,7 +164,7 @@ public abstract class FormattingTestBase : RazorToolingIntegrationTestBase
         var uri = new Uri(path);
         var (codeDocument, documentSnapshot) = CreateCodeDocumentAndSnapshot(razorSourceText, uri.AbsolutePath, tagHelpers, fileKind: fileKindValue, inGlobalNamespace: inGlobalNamespace);
 
-        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useNewFormattingEngine: _context.UseNewFormattingEngine);
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
 
         var filePathService = new LSPFilePathService(languageServerFeatureOptions);
         var mappingService = new LspDocumentMappingService(
