@@ -440,17 +440,17 @@
       <Uri>https://github.com/dotnet/msbuild</Uri>
       <Sha>d1cce8d7cc03c23a4f1bad8e9240714fd9d199a3</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Frameworks" Version="7.0.0-preview.1.41712" Label="Manual">
+    <Dependency Name="NuGet.Frameworks" Version="7.0.0-preview.1.41910" Label="Manual">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>8c49b059243665b9c1a4ce01c24bedb4f5641f15</Sha>
+      <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Packaging" Version="7.0.0-preview.1.41712" Label="Manual">
+    <Dependency Name="NuGet.Packaging" Version="7.0.0-preview.1.41910" Label="Manual">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>8c49b059243665b9c1a4ce01c24bedb4f5641f15</Sha>
+      <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Versioning" Version="7.0.0-preview.1.41712" Label="Manual">
+    <Dependency Name="NuGet.Versioning" Version="7.0.0-preview.1.41910" Label="Manual">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>8c49b059243665b9c1a4ce01c24bedb4f5641f15</Sha>
+      <Sha>60fecc0f99696a998bfd1fca8ed314bc591a3b9b</Sha>
     </Dependency>
     <!-- End of manually updated dependencies -->
   </ToolsetDependencies>
