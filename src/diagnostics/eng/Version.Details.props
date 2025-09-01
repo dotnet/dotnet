@@ -5,6 +5,9 @@ This file should be imported by eng/Versions.props
 -->
 <Project>
   <PropertyGroup>
+    <!-- dotnet/runtime dependencies -->
+    <MicrosoftBclAsyncInterfacesPackageVersion>9.0.8</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>9.0.8</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
     <!-- microsoft/clrmd dependencies -->
     <MicrosoftDiagnosticsRuntimePackageVersion>4.0.0-beta.25381.2</MicrosoftDiagnosticsRuntimePackageVersion>
     <MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>4.0.0-beta.25381.2</MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion>
@@ -35,6 +38,9 @@ This file should be imported by eng/Versions.props
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
+    <!-- dotnet/runtime dependencies -->
+    <MicrosoftBclAsyncInterfacesVersion>$(MicrosoftBclAsyncInterfacesPackageVersion)</MicrosoftBclAsyncInterfacesVersion>
+    <MicrosoftExtensionsLoggingAbstractionsVersion>$(MicrosoftExtensionsLoggingAbstractionsPackageVersion)</MicrosoftExtensionsLoggingAbstractionsVersion>
     <!-- microsoft/clrmd dependencies -->
     <MicrosoftDiagnosticsRuntimeVersion>$(MicrosoftDiagnosticsRuntimePackageVersion)</MicrosoftDiagnosticsRuntimeVersion>
     <MicrosoftDiagnosticsRuntimeUtilitiesVersion>$(MicrosoftDiagnosticsRuntimeUtilitiesPackageVersion)</MicrosoftDiagnosticsRuntimeUtilitiesVersion>
