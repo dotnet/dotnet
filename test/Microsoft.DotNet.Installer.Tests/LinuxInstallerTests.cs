@@ -599,17 +599,17 @@ public partial class LinuxInstallerTests : IDisposable
 
     private List<string> GetPackageDependencies(string package, PackageType packageType)
     {
+        string packagePath = Path.Combine(_contextDir, package);
+        if (!File.Exists(packagePath))
+        {
+            _outputHelper.WriteLine($"Package file not found: {packagePath}");
+            return [];
+        }
+
         if (packageType == PackageType.Deb)
         {
             try
             {
-                string packagePath = Path.Combine(_contextDir, package);
-                if (!File.Exists(packagePath))
-                {
-                    _outputHelper.WriteLine($"Package file not found: {packagePath}");
-                    return [];
-                }
-
                 using FileStream debStream = File.OpenRead(packagePath);
                 using ArReader ar = new ArReader(debStream, false);
 
