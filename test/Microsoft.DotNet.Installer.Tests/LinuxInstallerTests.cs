@@ -1,9 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.DotNet.Build.Tasks.Installers;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -16,8 +18,6 @@ using System.Xml.Linq;
 using TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
-using System.Formats.Tar;
-using Microsoft.DotNet.Build.Tasks.Installers;
 
 namespace Microsoft.DotNet.Installer.Tests;
 
@@ -52,6 +52,7 @@ public partial class LinuxInstallerTests : IDisposable
                 $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
+                NetStandardTargetingPackName,
                 $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
             }
@@ -85,6 +86,7 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
     private const string NetStandardTargetingPackPrefix = "netstandard-targeting-pack-";
+    private const string NetStandardTargetingPackName = $"{NetStandardTargetingPackPrefix}2.1";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
@@ -564,11 +566,11 @@ public partial class LinuxInstallerTests : IDisposable
                 continue;
             }
 
-            Assert.True(PackageContainsExpectedDependencies(package, packageType), $"Package {package} does not contain the expected dependencies.");
+            EnsurePackageContainsExpectedDependencies(package, packageType);
         }
     }
 
-    private bool PackageContainsExpectedDependencies(string package, PackageType packageType)
+    private void EnsurePackageContainsExpectedDependencies(string package, PackageType packageType)
     {
         List<string> dependencies = GetPackageDependencies(package, packageType);
 
@@ -577,16 +579,15 @@ public partial class LinuxInstallerTests : IDisposable
             ? _expectedPackageDependencies[packagePrefix]
             : [];
 
-        foreach (string dependency in expectedDependencies)
+        if (Config.Architecture == Architecture.Arm64 && expectedDependencies.Contains(NetStandardTargetingPackName))
         {
-            if (!dependencies.Contains(dependency))
-            {
-                _outputHelper.WriteLine($"Package {package} does not contain the expected dependency: {dependency}");
-                return false;
-            }
+            // If we're on Arm64, remove netstandard-targeting-pack-2.1 dependency, as it is x64 only
+            expectedDependencies = expectedDependencies
+                .Where(dep => !dep.StartsWith(NetStandardTargetingPackName))
+                .ToList();
         }
 
-        return true;
+        Assert.Equal(expectedDependencies.OrderBy(x => x), dependencies.OrderBy(x => x));
     }
 
     private string GetPackagePrefixFromPackageName(string packageName)
@@ -737,7 +738,8 @@ public partial class LinuxInstallerTests : IDisposable
                 firstAlt = firstAlt[..colonIndex];
             }
 
-            if (!string.IsNullOrEmpty(firstAlt))
+            // Skip native lib packages
+            if (!string.IsNullOrEmpty(firstAlt) && !firstAlt.StartsWith("lib"))
             {
                 result.Add(firstAlt);
             }
