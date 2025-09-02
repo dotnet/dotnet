@@ -260,6 +260,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <CandleVariables Include="MicrosoftEula" Value="$(MSBuildThisFileDirectory)eula.rtf" />
       <CandleVariables Include="InstallerVersion" Value="$(WixInstallerVersion)" />
     </ItemGroup>
   </Target>

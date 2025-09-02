@@ -114,6 +114,11 @@ parameters:
   type: boolean
   default: false
 
+# Create and publish the source artifacts
+- name: createSourceArtifacts
+  type: boolean
+  default: false
+
 # Skip the build step (this would be used when wanting to run tests only)
 - name: skipBuild
   type: boolean
@@ -572,10 +577,16 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
-          else
-            # Enable source artifact creation only when building from a git repo.
-            # We strip the .git/ directory when building from archive,
-            # so it's not possible to create the artifacts in that mode.
+            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+              # Do not enable source artifact creation when not building from a git repo.
+              # We strip the .git/ directory when building from archive,
+              # so it's not possible to create the artifacts in that mode.
+              echo "Cannot create source artifacts when building from archive."
+              exit 1
+            fi
+          fi
+          
+          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
             extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
           fi
 
@@ -613,6 +624,13 @@ jobs:
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
+    - ${{ if ne(parameters.runOnline, 'True' )}}:
+      - script: |
+          set -ex
+          # Update the owner of the staging directory to the current user
+          sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
+        displayName: Update owner of artifacts staging directory
+
     - script: |
         if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
           rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
@@ -620,13 +638,6 @@ jobs:
       displayName: Clean up unwanted Source Build Artifacts
       continueOnError: true
       condition: succeededOrFailed()
-
-    - ${{ if ne(parameters.runOnline, 'True' )}}:
-      - script: |
-          set -ex
-          # Update the owner of the staging directory to the current user
-          sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
-        displayName: Update owner of artifacts staging directory
 
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:

@@ -39,7 +39,7 @@
     <RepositoryReference Include="symreader" />
     <RepositoryReference Include="templating" />
     <RepositoryReference Include="vstest" />
-    <RepositoryReference Include="windowsdesktop" Condition="'$(TargetOS)' == 'windows' and '$(DotNetBuildSourceOnly)' != 'true'" />
+    <RepositoryReference Include="windowsdesktop" />
     <RepositoryReference Include="xdt" />
   </ItemGroup>
 

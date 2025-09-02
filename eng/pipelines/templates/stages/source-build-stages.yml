@@ -81,6 +81,7 @@ stages:
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
           allowSigning: true                 # ✅
+          createSourceArtifacts: true        # ✅
 
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
@@ -94,6 +95,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
 
         ### Additional legs for full build ###
@@ -110,6 +112,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
             distro: centos
@@ -121,6 +124,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: almalinux
@@ -132,6 +136,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: alpine
@@ -143,6 +148,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: centos
@@ -154,6 +160,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
             distro: centos
@@ -165,6 +172,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
             distro: centos
@@ -176,6 +184,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: fedora
@@ -187,6 +196,7 @@ stages:
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
             distro: ubuntu
@@ -198,6 +208,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
             distro: fedora
@@ -209,6 +220,7 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'
 
           - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
@@ -221,4 +233,5 @@ stages:
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
             allowSigning: false                # 🚫
+            createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
