@@ -288,20 +288,18 @@ if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarb
 fi
 
 # Check if dotnet is installed
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
 if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
   installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
-  expectedVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
-  if ! grep -qx "$expectedVersion" <<< "$installedVersions"; then
-    echo "  Installing .NET SDK $expectedVersion...to skip this installation, exit and re-run with --no-sdk"
-  else
-    echo "  Skipping SDK installation - version $expectedVersion detected"
+  if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
+    echo "  Skipping SDK installation - version $expectedSdkVersion detected"
     installDotnet=false
   fi
 fi
 
 # Check for the version of dotnet to install
 if [ "$installDotnet" == true ]; then
-  echo "  Installing dotnet..."
+  echo "  Installing .NET SDK $expectedSdkVersion"
   use_installed_dotnet_cli=false
   (source ./eng/common/tools.sh && InitializeDotNetCli true)
 fi
