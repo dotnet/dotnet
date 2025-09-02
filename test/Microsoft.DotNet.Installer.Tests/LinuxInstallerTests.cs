@@ -68,7 +68,12 @@ public partial class LinuxInstallerTests : IDisposable
     [GeneratedRegex(@"^(\d+\.\d+\.)1(0)?(\d+)(-.*)?$")]
     private static partial Regex SdkVersionToRuntimeVersionRegex { get; }
     private static readonly string Runtime1xxVersion = SdkVersionToRuntimeVersionRegex.Replace(Config.Sdk1xxVersion, "$1$3$4");
-    
+
+    // Extract the package prefix from the package name
+    // e.g., dotnet-runtime-10.0.0-rc.2.25418.119-x64 -> dotnet-runtime-
+    [GeneratedRegex(@"^(.*?-)(?=\d)")]
+    private static partial Regex PackagePrefixFromPackageNameRegex { get; }
+
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
@@ -586,8 +591,7 @@ public partial class LinuxInstallerTests : IDisposable
 
     private string GetPackagePrefixFromPackageName(string packageName)
     {
-        Regex regex = new Regex(@"^(.*?-)(?=\d)");
-        Match match = regex.Match(packageName);
+        Match match = PackagePrefixFromPackageNameRegex.Match(packageName);
         if (match.Success)
         {
             return match.Value;
