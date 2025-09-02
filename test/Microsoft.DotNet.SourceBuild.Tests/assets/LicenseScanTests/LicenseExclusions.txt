@@ -13,7 +13,7 @@
 #
 
 # False positive
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/bundle/bundle.wxs|unknown-license-reference
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/bundle/bundle.wxs|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/templates/debian/copyright|unknown-license-reference
 src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright|unknown-license-reference
 
