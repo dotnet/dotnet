@@ -75,6 +75,16 @@ public partial class LinuxInstallerTests : IDisposable
     [GeneratedRegex(@"^(.*?-)(?=\d)")]
     private static partial Regex PackagePrefixFromPackageNameRegex { get; }
 
+    // Use multiline + case-insensitive to find the Depends line (same line only)
+    // Captures everything after "Depends:" up to the end of that line
+    [GeneratedRegex(@"(?im)^[ \t]*Depends:\s*(.+)$")]
+    private static partial Regex DependsLineRegex { get; }
+
+    // Remove any version constraint in parentheses: "package (>= 1.0)" -> "package"
+    // Handles any interior text until the matching closing parenthesis on that token.
+    [GeneratedRegex(@"\s*\([^)]*\)", RegexOptions.CultureInvariant)]
+    private static partial Regex RemoveVersionConstraintRegex { get; }
+
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
@@ -613,138 +623,117 @@ public partial class LinuxInstallerTests : IDisposable
 
         if (packageType == PackageType.Deb)
         {
-            try
-            {
-                using FileStream debStream = File.OpenRead(packagePath);
-                using ArReader ar = new ArReader(debStream, false);
-
-                // Find control.tar.* entry
-                while (ar.GetNextEntry() is ArEntry arEentry)
-                {
-                    if (!arEentry.Name.StartsWith("control.tar", StringComparison.Ordinal))
-                    {
-                        continue;
-                    }
-
-                    using MemoryStream controlArchiveData = new MemoryStream((int)arEentry.DataStream.Length);
-                    arEentry.DataStream?.CopyTo(controlArchiveData);
-                    controlArchiveData.Position = 0;
-
-                    Stream decompressed =
-                        arEentry.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ?
-                            new GZipStream(controlArchiveData, CompressionMode.Decompress, leaveOpen: false) :
-                        // Future compressors can be added here (xz, zst). Fallback: treat as plain.
-                            controlArchiveData;
-
-                    using (decompressed)
-                    {
-                        // Read tar entries to find "control" file
-                        using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
-                        TarEntry? entry;
-                        while ((entry = tarReader.GetNextEntry()) is not null)
-                        {
-                            if (entry.Name
-                                .TrimStart('.', '/')
-                                .Equals("control", StringComparison.Ordinal))
-                            {
-                                using MemoryStream controlFileData = new MemoryStream();
-                                entry.DataStream?.CopyTo(controlFileData);
-                                string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
-                                return ParseDebControlDependencies(controlContent);
-                            }
-                        }
-                    }
-                }
-
-                _outputHelper.WriteLine($"No control.tar.* entry found in {package}");
-                return [];
-            }
-            catch (Exception ex)
-            {
-                _outputHelper.WriteLine($"Error parsing DEB package '{package}': {ex}");
-                return [];
-            }
+            return GetDebianPackageDependencies(packagePath);
         }
         else if (packageType == PackageType.Rpm)
         {
-            throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
+            return GetRpmPackageDependencies(packagePath);
         }
 
         return [];
     }
 
-    private static List<string> ParseDebControlDependencies(string controlContent)
+    private List<string> GetRpmPackageDependencies(string packagePath)
     {
-        // Handle continuation lines (lines starting with space belong to previous field)
-        var fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        string? currentField = null;
-        var sb = new StringBuilder();
+        throw new NotImplementedException("https://github.com/dotnet/arcade/pull/16079 is required for getting RPM package dependencies.");
+    }
 
-        foreach (string rawLine in controlContent.Split('\n'))
+    private List<string> GetDebianPackageDependencies(string packagePath)
+    {
+        try
         {
-            string line = rawLine.TrimEnd('\r');
-            if (string.IsNullOrEmpty(line))
-            {
-                continue;
-            }
+            using FileStream debStream = File.OpenRead(packagePath);
+            using ArReader ar = new ArReader(debStream, false);
 
-            if (char.IsWhiteSpace(line[0]))
+            // Find control.tar.* entry
+            while (ar.GetNextEntry() is ArEntry arEentry)
             {
-                // Continuation
-                if (currentField != null)
+                if (!arEentry.Name.StartsWith("control.tar", StringComparison.Ordinal))
                 {
-                    fields[currentField] += " " + line.Trim();
+                    continue;
                 }
-                continue;
+
+                using MemoryStream controlArchiveData = new MemoryStream((int)arEentry.DataStream.Length);
+                arEentry.DataStream?.CopyTo(controlArchiveData);
+                controlArchiveData.Position = 0;
+
+                Stream decompressed =
+                    arEentry.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ?
+                        new GZipStream(controlArchiveData, CompressionMode.Decompress, leaveOpen: false) :
+                    // Future compressors can be added here (xz, zst). Fallback: treat as plain.
+                        controlArchiveData;
+
+                using (decompressed)
+                {
+                    // Read tar entries to find "control" file
+                    using TarReader tarReader = new TarReader(decompressed, leaveOpen: false);
+                    TarEntry? entry;
+                    while ((entry = tarReader.GetNextEntry()) is not null)
+                    {
+                        if (entry.Name
+                            .TrimStart('.', '/')
+                            .Equals("control", StringComparison.Ordinal))
+                        {
+                            using MemoryStream controlFileData = new MemoryStream();
+                            entry.DataStream?.CopyTo(controlFileData);
+                            string controlContent = Encoding.UTF8.GetString(controlFileData.ToArray());
+                            File.WriteAllText(Path.Combine(Path.GetTempPath(), "control.txt"), controlContent);
+                            return ParseDebControlDependencies(controlContent);
+                        }
+                    }
+                }
             }
 
-            int colonIndex = line.IndexOf(':');
-            if (colonIndex > 0)
-            {
-                currentField = line[..colonIndex];
-                string value = line[(colonIndex + 1)..].Trim();
-                fields[currentField] = value;
-            }
-        }
-
-        if (!fields.TryGetValue("Depends", out string? dependsValue) || string.IsNullOrWhiteSpace(dependsValue))
-        {
+            _outputHelper.WriteLine($"No control.tar.* entry found in {packagePath}");
             return [];
         }
-
-        var result = new HashSet<string>(StringComparer.Ordinal);
-        foreach (string segment in dependsValue.Split(','))
+        catch (Exception ex)
         {
-            string trimmed = segment.Trim();
-            if (trimmed.Length == 0)
-            {
-                continue;
-            }
-
-            // Take first alternative before '|'
-            string firstAlt = trimmed.Split('|')[0].Trim();
-
-            // Remove version specifiers: package-name (>= 1.0)
-            int parenIndex = firstAlt.IndexOf('(');
-            if (parenIndex >= 0)
-            {
-                firstAlt = firstAlt[..parenIndex].Trim();
-            }
-
-            // Remove architecture qualifier: package:name or package:arch (rare), keep base name
-            int colonIndex = firstAlt.IndexOf(':');
-            if (colonIndex > 0)
-            {
-                firstAlt = firstAlt[..colonIndex];
-            }
-
-            // Skip native lib packages
-            if (!string.IsNullOrEmpty(firstAlt) && !firstAlt.StartsWith("lib"))
-            {
-                result.Add(firstAlt);
-            }
+            _outputHelper.WriteLine($"Error parsing DEB package '{packagePath}': {ex}");
+            return [];
         }
+    }
 
-        return result.ToList();
+    private static List<string> ParseDebControlDependencies(string contents)
+    {
+            Match match = DependsLineRegex.Match(contents);
+            if (!match.Success)
+            {
+                return [];
+            }
+
+            string dependsLine = match.Groups[1].Value.Trim();
+            if (dependsLine.Length == 0)
+            {
+                return [];
+            }
+
+            var results = new List<string>();
+
+            foreach (string segment in dependsLine.Split(','))
+            {
+                string part = segment.Trim();
+                if (part.Length == 0)
+                {
+                    continue;
+                }
+
+                // If there are alternates (pkgA | pkgB), keep only the first one as the dependency
+                int pipeIndex = part.IndexOf('|');
+                if (pipeIndex >= 0)
+                {
+                    part = part.Substring(0, pipeIndex).Trim();
+                }
+
+                part = RemoveVersionConstraintRegex.Replace(part, "").Trim();
+
+                // Skip native lib packages
+                if (part.Length > 0 && !part.StartsWith("lib"))
+                {
+                    results.Add(part);
+                }
+            }
+
+            return results;
     }
 }
