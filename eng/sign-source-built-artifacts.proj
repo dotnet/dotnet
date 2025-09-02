@@ -48,8 +48,9 @@
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
 
       <!-- Source tarball and zipball -->
-      <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
-      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" />
+      <!-- Uncomment once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
+      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
     </ItemGroup>
 
     <Error Text="$(SourceBuiltSdkTarballName) artifact count is @(SignableSourceBuiltSdkTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltSdkTarball->Count()) != 1"/>
