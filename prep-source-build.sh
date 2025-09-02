@@ -294,7 +294,7 @@ if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
   if ! grep -qx "$expectedVersion" <<< "$installedVersions"; then
     echo "  Installing .NET SDK $expectedVersion...to skip this installation, exit and re-run with --no-sdk"
   else
-    echo "  ./.dotnet SDK directory exists for SDK version $expectedVersion...it will not be installed"
+    echo "  Skipping SDK installation - version $expectedVersion detected"
     installDotnet=false
   fi
 fi
