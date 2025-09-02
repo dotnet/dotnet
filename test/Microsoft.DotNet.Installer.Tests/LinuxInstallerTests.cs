@@ -696,44 +696,44 @@ public partial class LinuxInstallerTests : IDisposable
 
     private static List<string> ParseDebControlDependencies(string contents)
     {
-            Match match = DependsLineRegex.Match(contents);
-            if (!match.Success)
+        Match match = DependsLineRegex.Match(contents);
+        if (!match.Success)
+        {
+            return [];
+        }
+
+        string dependsLine = match.Groups[1].Value.Trim();
+        if (dependsLine.Length == 0)
+        {
+            return [];
+        }
+
+        var results = new List<string>();
+
+        foreach (string segment in dependsLine.Split(','))
+        {
+            string part = segment.Trim();
+            if (part.Length == 0)
             {
-                return [];
+                continue;
             }
 
-            string dependsLine = match.Groups[1].Value.Trim();
-            if (dependsLine.Length == 0)
+            // If there are alternates (pkgA | pkgB), keep only the first one as the dependency
+            int pipeIndex = part.IndexOf('|');
+            if (pipeIndex >= 0)
             {
-                return [];
+                part = part.Substring(0, pipeIndex).Trim();
             }
 
-            var results = new List<string>();
+            part = RemoveVersionConstraintRegex.Replace(part, "").Trim();
 
-            foreach (string segment in dependsLine.Split(','))
+            // Skip native lib packages
+            if (part.Length > 0 && !part.StartsWith("lib"))
             {
-                string part = segment.Trim();
-                if (part.Length == 0)
-                {
-                    continue;
-                }
-
-                // If there are alternates (pkgA | pkgB), keep only the first one as the dependency
-                int pipeIndex = part.IndexOf('|');
-                if (pipeIndex >= 0)
-                {
-                    part = part.Substring(0, pipeIndex).Trim();
-                }
-
-                part = RemoveVersionConstraintRegex.Replace(part, "").Trim();
-
-                // Skip native lib packages
-                if (part.Length > 0 && !part.StartsWith("lib"))
-                {
-                    results.Add(part);
-                }
+                results.Add(part);
             }
+        }
 
-            return results;
+        return results;
     }
 }
