@@ -44,7 +44,7 @@
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSdkTarball)" />
 
       <!-- PSB artifacts -->
-      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
 
       <!-- Source tarball and zipball -->
