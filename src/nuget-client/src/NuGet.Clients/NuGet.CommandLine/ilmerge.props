@@ -21,6 +21,7 @@
     <MergeAllowdup Include="FrameworkReducer"/>
     <MergeAllowdup Include="FrameworkRuntimePair"/>
     <MergeAllowdup Include="FrameworkSpecificMapping"/>
+    <MergeAllowDup Include="GetProjectTargetFrameworksTask"/>
     <MergeAllowdup Include="IFrameworkCompatibilityListProvider"/>
     <MergeAllowdup Include="IFrameworkCompatibilityProvider"/>
     <MergeAllowdup Include="IFrameworkMappings"/>
