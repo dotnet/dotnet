@@ -69,9 +69,9 @@ public class GenericTypeNameRewriterTest
         // Arrange
         var visitor = new GenericTypeNameRewriter(new Dictionary<string, ComponentTypeArgumentIntermediateNode>()
         {
-            { "TItem1", new ComponentTypeArgumentIntermediateNode(new() { Children = { IntermediateNodeFactory.CSharpToken("Type1") } })},
-            { "TItem2", new ComponentTypeArgumentIntermediateNode(new() { Children = { IntermediateNodeFactory.CSharpToken("Type2") } })},
-            { "TItem3", new ComponentTypeArgumentIntermediateNode(new() { Children = { IntermediateNodeFactory.CSharpToken(null!) } })},
+            { "TItem1", Create("Type1") },
+            { "TItem2", Create("Type2") },
+            { "TItem3", Create(null) },
         });
 
         // Act
@@ -79,5 +79,10 @@ public class GenericTypeNameRewriterTest
 
         // Assert
         Assert.Equal(expected, actual.ToString());
+
+        static ComponentTypeArgumentIntermediateNode Create(string? typeName)
+        {
+            return new(boundAttribute: null!, IntermediateNodeFactory.CSharpToken(typeName!));
+        }
     }
 }
