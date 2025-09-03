@@ -56,7 +56,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
             if (!reference.Parent.Children.Contains(node))
             {
@@ -72,7 +72,7 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
 
         foreach (var parameterReference in parameterReferences)
         {
-            var node = (TagHelperDirectiveAttributeParameterIntermediateNode)parameterReference.Node;
+            var node = parameterReference.Node;
 
             if (!parameterReference.Parent.Children.Contains(node))
             {
@@ -210,20 +210,17 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
         }
         else
         {
-            var result = new ComponentAttributeIntermediateNode(node)
-            {
-                OriginalAttributeName = node.OriginalAttributeName,
-            };
-
-            result.Children.Clear();
+            var result = ComponentAttributeIntermediateNode.From(node, addChildren: false);
+            result.OriginalAttributeName = node.OriginalAttributeName;
 
             var expressionNode = new CSharpExpressionIntermediateNode();
-            result.Children.Add(expressionNode);
 
             foreach (var token in tokens)
             {
                 expressionNode.Children.Add(token);
             }
+
+            result.Children.Add(expressionNode);
 
             return result;
         }
@@ -277,13 +274,9 @@ internal class ComponentEventHandlerLoweringPass : ComponentIntermediateNodePass
             return node;
         }
 
-        var result = new ComponentAttributeIntermediateNode(node)
-        {
-            OriginalAttributeName = node.OriginalAttributeName,
-            AddAttributeMethodName = eventHandlerMethod,
-        };
-
-        result.Children.Clear();
+        var result = ComponentAttributeIntermediateNode.From(node, addChildren: false);
+        result.OriginalAttributeName = node.OriginalAttributeName;
+        result.AddAttributeMethodName = eventHandlerMethod;
 
         if (node.AttributeStructure != AttributeStructure.Minimized)
         {

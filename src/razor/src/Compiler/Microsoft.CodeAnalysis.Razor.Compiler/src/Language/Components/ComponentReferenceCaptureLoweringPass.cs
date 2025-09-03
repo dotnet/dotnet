@@ -29,7 +29,7 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
 
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
             if (node.TagHelper.Kind == TagHelperKind.Ref)
             {

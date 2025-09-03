@@ -20,7 +20,7 @@ internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, I
 
         foreach (var reference in documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>())
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
             if (node.TagHelper.Kind == TagHelperKind.Splat)
             {
                 reference.Replace(RewriteUsage(reference.Parent, node));
