@@ -22,7 +22,7 @@ src/arcade/eng/xcopy-msbuild/msbuild.nuspec|ms-visual-2015-sdk
 src/arcade/src/Microsoft.DotNet.Arcade.Sdk/tools/Licenses/*
 
 # Applies to installer, not source
-src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix/eula.rtf
+src/arcade/src/Microsoft.DotNet.Build.Tasks.Installers/build/wix*/eula.rtf
 
 #
 # aspnetcore
