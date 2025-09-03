@@ -1,8 +1,0 @@
-{
-  "files": [
-    {
-      "path": "src/Microsoft.DotNet.Build.Tasks.Installers/build/wix5/eula.rtf",
-      "detected_license_expression": "ms-net-library-2016-05"
-    }
-  ]
-}
