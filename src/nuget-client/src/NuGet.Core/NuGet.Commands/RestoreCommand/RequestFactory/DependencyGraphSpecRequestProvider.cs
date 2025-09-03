@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -255,33 +254,6 @@ namespace NuGet.Commands
                 project.RestoreMetadata.PackagesPath = restoreArgs.GlobalPackagesFolder;
             }
             return project.RestoreMetadata.PackagesPath;
-        }
-
-        /// <summary>
-        /// Return all references for a given project path.
-        /// References is modified by this method.
-        /// This includes the root project.
-        /// </summary>
-        private static void CollectReferences(
-            ExternalProjectReference root,
-            Dictionary<string, ExternalProjectReference> allProjects,
-            HashSet<ExternalProjectReference> references)
-        {
-            if (references.Add(root))
-            {
-                foreach (var child in root.ExternalProjectReferences)
-                {
-                    ExternalProjectReference childProject;
-                    if (!allProjects.TryGetValue(child, out childProject))
-                    {
-                        // Let the resolver handle this later
-                        Debug.Fail($"Missing project {childProject}");
-                    }
-
-                    // Recurse down
-                    CollectReferences(childProject, allProjects, references);
-                }
-            }
         }
 
         internal static IReadOnlyList<IAssetsLogMessage> GetMessagesForProject(IReadOnlyList<IAssetsLogMessage> allMessages, string projectPath)

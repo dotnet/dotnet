@@ -70,13 +70,15 @@ namespace NuGet.Indexing
             var defaultRank = DefaultRankValue;
             foreach (var v in entries.Reverse().Select(e => e.Identity.Id))
             {
-                if (!ranking.ContainsKey(v))
+                if (ranking.TryGetValue(v, out var rank))
+                {
+                    // assign rank of element behind current
+                    defaultRank = rank;
+                }
+                else
                 {
                     ranking.Add(v, defaultRank);
                 }
-
-                // assign rank of element behind current
-                defaultRank = ranking[v];
             }
 
             // returns unmodified list for convenience
