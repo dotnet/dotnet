@@ -23,7 +23,7 @@ internal class ImplementsDirectivePass : IntermediateNodePassBase, IRazorDirecti
 
         foreach (var implements in documentNode.FindDirectiveReferences(ImplementsDirective.Directive))
         {
-            var token = ((DirectiveIntermediateNode)implements.Node).Tokens.FirstOrDefault();
+            var token = implements.Node.Tokens.FirstOrDefault();
             if (token != null)
             {
                 var source = codeDocument.ParserOptions.DesignTime ? null : token.Source;

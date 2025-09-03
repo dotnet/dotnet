@@ -197,7 +197,7 @@ internal sealed class FormattingContext
     {
         result = null;
         var formattingSpans = GetFormattingSpans();
-        foreach (var formattingSpan in formattingSpans.AsEnumerable())
+        foreach (var formattingSpan in formattingSpans)
         {
             var span = formattingSpan.Span;
 

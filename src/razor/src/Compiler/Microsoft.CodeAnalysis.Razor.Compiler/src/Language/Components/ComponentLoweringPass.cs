@@ -37,7 +37,7 @@ internal class ComponentLoweringPass : ComponentIntermediateNodePassBase, IRazor
 
         foreach (var reference in references)
         {
-            var node = (TagHelperIntermediateNode)reference.Node;
+            var node = reference.Node;
             if (node.TagHelpers.Any(t => t.Kind == TagHelperKind.ChildContent))
             {
                 // This is a child content tag helper. This will be rewritten when we visit its parent.

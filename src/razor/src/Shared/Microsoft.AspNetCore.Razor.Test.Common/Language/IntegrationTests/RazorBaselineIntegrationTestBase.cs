@@ -213,7 +213,7 @@ public abstract class RazorBaselineIntegrationTestBase : RazorIntegrationTestBas
 
             foreach(var pragma in pragmasInDocument)
             {
-                Assert.NotNull(pragma.EndCharacterIndex);
+                Assert.True(pragma.IsEnhanced);
             }
 
             Assert.Equal(pragmasInDocument.Length, csharpDocument.SourceMappings.Length);
