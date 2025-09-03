@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 281474,
+      "barId": 281655,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6122520523105dacdd702177a76c9f6b982fd759"
+      "commitSha": "19b800616b55f3fae5098eb0dad0a63a15747a00"
     },
     {
       "barId": 281307,
@@ -73,16 +73,16 @@
       "commitSha": "f2270a5492e831864b60a8853c7435ded110ad6f"
     },
     {
-      "barId": 281489,
+      "barId": 281711,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "a2075fd3ca58143b8bc966a117febfd5de50fe6c"
+      "commitSha": "e5924c0044a45b9b10ccde820a447adbb636f8be"
     },
     {
-      "barId": 281573,
+      "barId": 281694,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "af1a89fb109aaf31efcd450b26369a0aa5bed8bc"
+      "commitSha": "b3de022ce057a48a3956c4d691c5b9e4a2714ba7"
     },
     {
       "barId": 277711,
@@ -133,10 +133,10 @@
       "commitSha": "5cf429afe4ec59b46e8b792bb1aac1bdd5f2d235"
     },
     {
-      "barId": 280936,
+      "barId": 281586,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "3774d9fe0b61fcfc9e2c20441b7ff117f6050a1e"
+      "commitSha": "6bce8b57c6db7b5f2ee15ae72f86c11cf36b5632"
     },
     {
       "barId": 279242,
