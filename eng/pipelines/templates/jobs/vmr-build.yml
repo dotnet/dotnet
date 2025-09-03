@@ -621,14 +621,6 @@ jobs:
           sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
         displayName: Update owner of artifacts staging directory
 
-    - script: |
-        if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
-          rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
-        fi
-      displayName: Clean up unwanted Source Build Artifacts
-      continueOnError: true
-      condition: succeededOrFailed()
-
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:
       - ${{ parameters.testInitSteps }}
@@ -769,3 +761,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+
