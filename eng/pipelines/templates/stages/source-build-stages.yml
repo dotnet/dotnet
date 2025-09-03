@@ -64,7 +64,7 @@ stages:
       # to determine which variable to use for determining the various parameter values which are based on variables.
       #
       # Changing the build name requires updating the referenced name in the source-build-sdk-diff-tests.yml pipeline
-      # Changing the `allowedSigning` parameter requires adding or removing the build name and source-built artifact
+      # Changing the `disableSigning` parameter requires adding or removing the build name and source-built artifact
       # patterns in the ../steps/vmr-validate-signing.yml file.
       legs:
 
@@ -80,7 +80,7 @@ stages:
           useMonoRuntime: false              # 🚫
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
-          allowSigning: true                 # ✅
+          disableSigning: false              # 🚫
           createSourceArtifacts: true        # ✅
 
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
@@ -94,7 +94,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
 
@@ -111,7 +111,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
@@ -123,7 +123,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
@@ -135,7 +135,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
@@ -147,7 +147,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
@@ -159,7 +159,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
@@ -171,7 +171,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
@@ -183,7 +183,7 @@ stages:
             useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
@@ -195,7 +195,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
@@ -207,7 +207,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
           - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
@@ -219,7 +219,7 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'
 
@@ -232,6 +232,6 @@ stages:
             useMonoRuntime: true               # ✅
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            allowSigning: false                # 🚫
+            disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'

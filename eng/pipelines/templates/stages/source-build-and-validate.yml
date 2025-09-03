@@ -120,7 +120,7 @@ stages:
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
         createSourceArtifacts: ${{ leg.createSourceArtifacts }}
-        ${{ if eq(leg.allowSigning, true) }}:
+        ${{ if eq(leg.disableSigning, false) }}:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
         
