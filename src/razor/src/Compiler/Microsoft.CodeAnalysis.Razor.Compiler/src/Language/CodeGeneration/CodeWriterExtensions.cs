@@ -374,7 +374,7 @@ internal static class CodeWriterExtensions
         [InterpolatedStringHandlerArgument(nameof(writer))] ref CodeWriter.WriteInterpolatedStringHandler handler)
     {
         writer.Write(ref handler);
-        
+
         return writer.Write("(");
     }
 

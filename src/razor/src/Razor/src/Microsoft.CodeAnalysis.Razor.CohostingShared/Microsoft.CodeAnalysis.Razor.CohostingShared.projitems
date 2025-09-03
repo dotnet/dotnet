@@ -11,8 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsResolveEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeLens\CohostResolveCodeLensEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeLens\CohostCodeLensEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostEndpointAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostDocSyncEndpointRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostInitializeReporter.cs" />
