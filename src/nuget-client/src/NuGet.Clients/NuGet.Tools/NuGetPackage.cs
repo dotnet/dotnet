@@ -136,9 +136,9 @@ namespace NuGetVSExtension
         [Import]
         private Lazy<INuGetUIFactory> UIFactory { get; set; }
 
-        private IDisposable ProjectRetargetingHandler { get; set; }
+        private IDisposable _projectRetargetingHandler;
 
-        private IDisposable ProjectUpgradeHandler { get; set; }
+        private IDisposable _projectUpgradeHandler;
 
         [Import]
         private Lazy<IServiceBrokerProvider> ServiceBrokerProvider { get; set; }
@@ -259,7 +259,7 @@ namespace NuGetVSExtension
 
                 IVsTrackProjectRetargeting vsTrackProjectRetargeting = await this.GetServiceAsync<SVsTrackProjectRetargeting, IVsTrackProjectRetargeting>();
                 IVsMonitorSelection vsMonitorSelection = await this.GetServiceAsync<IVsMonitorSelection, IVsMonitorSelection>(throwOnFailure: false);
-                ProjectRetargetingHandler = new ProjectRetargetingHandler(
+                _projectRetargetingHandler = new ProjectRetargetingHandler(
                     _dte,
                     SolutionManager.Value,
                     this,
@@ -268,7 +268,7 @@ namespace NuGetVSExtension
                     vsMonitorSelection);
 
                 IVsSolution2 vsSolution2 = await this.GetServiceAsync<SVsSolution, IVsSolution2>();
-                ProjectUpgradeHandler = new ProjectUpgradeHandler(
+                _projectUpgradeHandler = new ProjectUpgradeHandler(
                     SolutionManager.Value,
                     vsSolution2);
 
@@ -1420,8 +1420,8 @@ namespace NuGetVSExtension
                     _mcs?.Dispose();
                     _nuGetPowerShellUsageCollector?.Dispose();
                     _semaphore.Dispose();
-                    ProjectRetargetingHandler?.Dispose();
-                    ProjectUpgradeHandler?.Dispose();
+                    _projectRetargetingHandler?.Dispose();
+                    _projectUpgradeHandler?.Dispose();
 
                     GC.SuppressFinalize(this);
                 }

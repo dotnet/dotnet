@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -46,7 +47,7 @@ internal abstract class HtmlFormattingPassBase(ILogger logger) : IFormattingPass
             _logger.LogTestOnly($"After AdjustRazorIndentation:\r\n{changedText}");
         }
 
-        return changedText.GetTextChangesArray(originalText);
+        return SourceTextDiffer.GetMinimalTextChanges(originalText, changedText, DiffKind.Char);
     }
 
     private static ImmutableArray<TextChange> FilterIncomingChanges(FormattingContext context, ImmutableArray<TextChange> changes)

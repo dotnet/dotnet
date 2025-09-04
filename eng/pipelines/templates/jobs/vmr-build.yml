@@ -58,12 +58,6 @@ parameters:
   type: boolean
   default: false
 
-  # Remove with https://github.com/dotnet/source-build/issues/5288
-- name: enableCoreDumpGeneration
-  displayName: True when core dump generation should be enabled
-  type: boolean
-  default: false
-
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -231,9 +225,8 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    # Don't clean-while-building on OSs that have enough disk space to keep
-    # intermediates for compliance scanners.
-    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+    # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       value: ''
     ${{ else }}:
       ${{ if eq(parameters.targetOS, 'windows') }}:
@@ -503,6 +496,10 @@ jobs:
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ else }}:
+    - ${{ if or(eq(parameters.targetOS, 'osx'), eq(parameters.targetOS, 'ios'), eq(parameters.targetOS, 'iossimulator'), eq(parameters.targetOS, 'tvos'), eq(parameters.targetOS, 'tvossimulator'), eq(parameters.targetOS, 'maccatalyst')) }}:
+      - script: |
+          xcrun simctl runtime delete all
+        displayName: Reclaim disk space from unused simulator runtimes
     - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
@@ -523,7 +520,11 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            # Don't use --no-artifacts because it will prevent the shared components archive from being
+            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
+            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
+            # to use at the expected location.
+            customPrepArgs="${customPrepArgs} --no-sdk"
             prepSdk=false
           fi
 
@@ -584,12 +585,6 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
-          fi
-
-          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
-          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
-            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
-            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
@@ -753,3 +748,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+
