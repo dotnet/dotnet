@@ -135,7 +135,6 @@ public class SignSourceBuiltArtifacts : BuildTask
             $"--excludecibinarylog " +
             $"/bl:{binlog} " +
             $"/p:OfficialBuildId={OfficialBuildId} " +
-            $"/p:AspNetCoreSnkPath={Config.AspNetCoreSnkPath} " +
             $"/p:SignableSourceBuiltAssets=\\\"{signableAssets}\\\" " +
             $"{SignProperties}";
 

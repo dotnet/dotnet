@@ -16,11 +16,9 @@ internal static class Config
 
     private static readonly string _staticDirectory = Path.Combine(_taskAssemblyLocation, "static");
 
-    private const string AspNetCoreSnkFileName = "AspNetCore.snk";
     private const string EmptyProjectFileName = "empty.proj";
     public const string SigningPropsFileName = "Signing.props";
 
-    public static string AspNetCoreSnkPath => Path.Combine(_staticDirectory, AspNetCoreSnkFileName);
     public static string EmptyProjectPath => Path.Combine(_staticDirectory, EmptyProjectFileName);
     public static string SigningPropsPath => Path.Combine(_staticDirectory, SigningPropsFileName);
 }
