@@ -88,7 +88,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
         //   such as closing parenthesis.
         // - Error cases: there are no nodes, so we do nothing
         var firstCSharpChild = node.Children.OfType<CSharpIntermediateToken>().FirstOrDefault();
-        using (context.CodeWriter.BuildEnhancedLinePragma(firstCSharpChild?.Source, context, characterOffset))
+        using (context.BuildEnhancedLinePragma(firstCSharpChild?.Source, characterOffset))
         {
             context.CodeWriter
                 .WriteStartMethodInvocation($"{BuilderVariableName}.{ComponentsApi.RenderTreeBuilder.AddContent}")
@@ -317,7 +317,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
 
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildEnhancedLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: true))
+            using (context.BuildEnhancedLinePragma(sourceSpan, suppressLineDefaultAndHidden: true))
             {
                 context.CodeWriter.WriteUsing(node.Content, endLine: node.HasExplicitSemicolon);
             }
@@ -1224,7 +1224,7 @@ internal class ComponentRuntimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
+        using (context.BuildEnhancedLinePragma(token.Source))
         {
             context.CodeWriter.Write(token.Content);
         }

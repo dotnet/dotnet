@@ -157,7 +157,7 @@ internal static class RazorSyntaxFacts
     public static CSharpCodeBlockSyntax? TryGetCSharpCodeFromCodeBlock(RazorSyntaxNode node)
     {
         if (node is CSharpCodeBlockSyntax block &&
-            block.Children.FirstOrDefault() is RazorDirectiveSyntax directive &&
+            block.Children.FirstOrDefault(n => n is RazorDirectiveSyntax) is RazorDirectiveSyntax directive &&
             directive.Body is RazorDirectiveBodySyntax directiveBody &&
             directiveBody.Keyword.GetContent() == "code")
         {

@@ -12,7 +12,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
-using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
@@ -72,6 +71,14 @@ internal static class CodeWriterExtensions
     public static bool IsAtBeginningOfLine(this CodeWriter writer)
     {
         return writer.LastChar is '\n';
+    }
+
+    public static void EnsureNewLine(this CodeWriter writer)
+    {
+        if (!IsAtBeginningOfLine(writer))
+        {
+            writer.WriteLine();
+        }
     }
 
     public static CodeWriter WritePadding(this CodeWriter writer, int offset, SourceSpan? span, CodeRenderingContext context)
@@ -367,7 +374,7 @@ internal static class CodeWriterExtensions
         [InterpolatedStringHandlerArgument(nameof(writer))] ref CodeWriter.WriteInterpolatedStringHandler handler)
     {
         writer.Write(ref handler);
-        
+
         return writer.Write("(");
     }
 
@@ -449,50 +456,37 @@ internal static class CodeWriterExtensions
             string.Format(CultureInfo.InvariantCulture, InstanceMethodFormat, instanceName, methodName));
     }
 
-    public static CodeWriter WriteField(this CodeWriter writer, IList<string> suppressWarnings, IList<string> modifiers, string typeName, string fieldName)
+    public static CodeWriter WriteField(
+        this CodeWriter writer,
+        ImmutableArray<string> suppressWarnings,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name)
     {
-        if (suppressWarnings == null)
+        if (!suppressWarnings.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(suppressWarnings));
+            foreach (var suppressWarning in suppressWarnings)
+            {
+                writer.WriteLine($"#pragma warning disable {suppressWarning}");
+            }
         }
 
-        if (modifiers == null)
+        if (!modifiers.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(modifiers));
+            foreach (var modifier in modifiers)
+            {
+                writer.Write($"{modifier} ");
+            }
         }
 
-        if (typeName == null)
-        {
-            throw new ArgumentNullException(nameof(typeName));
-        }
+        writer.WriteLine($"{type} {name};");
 
-        if (fieldName == null)
+        if (!suppressWarnings.IsDefaultOrEmpty)
         {
-            throw new ArgumentNullException(nameof(fieldName));
-        }
-
-        for (var i = 0; i < suppressWarnings.Count; i++)
-        {
-            writer.Write("#pragma warning disable ");
-            writer.WriteLine(suppressWarnings[i]);
-        }
-
-        for (var i = 0; i < modifiers.Count; i++)
-        {
-            writer.Write(modifiers[i]);
-            writer.Write(" ");
-        }
-
-        writer.Write(typeName);
-        writer.Write(" ");
-        writer.Write(fieldName);
-        writer.Write(";");
-        writer.WriteLine();
-
-        for (var i = suppressWarnings.Count - 1; i >= 0; i--)
-        {
-            writer.Write("#pragma warning restore ");
-            writer.WriteLine(suppressWarnings[i]);
+            for (var i = suppressWarnings.Length - 1; i >= 0; i--)
+            {
+                writer.WriteLine($"#pragma warning restore {suppressWarnings[i]}");
+            }
         }
 
         return writer;
@@ -511,32 +505,44 @@ internal static class CodeWriterExtensions
             .WriteEndMethodInvocation(endLine);
     }
 
-    public static CodeWriter WritePropertyDeclaration(this CodeWriter writer, IList<string> modifiers, IntermediateToken type, string propertyName, string propertyExpression, CodeRenderingContext context)
+    public static CodeWriter WritePropertyDeclaration(
+        this CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        IntermediateToken type,
+        string name,
+        string expressionBody,
+        CodeRenderingContext context)
     {
-        WritePropertyDeclarationPreamble(writer, modifiers, type.Content, propertyName, type.Source, propertySpan: null, context);
-        writer.Write(" => ");
-        writer.Write(propertyExpression);
-        writer.WriteLine(";");
+        WritePropertyDeclarationPreamble(writer, modifiers, type.Content, name, type.Source, nameSpan: null, context);
+
+        writer.WriteLine($" => {expressionBody};");
+
         return writer;
     }
 
-    public static CodeWriter WriteAutoPropertyDeclaration(this CodeWriter writer, IList<string> modifiers, string typeName, string propertyName, SourceSpan? typeSpan = null, SourceSpan? propertySpan = null, CodeRenderingContext context = null, bool privateSetter = false, bool defaultValue = false)
+    public static CodeWriter WriteAutoPropertyDeclaration(
+        this CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name,
+        SourceSpan? typeSpan = null,
+        SourceSpan? nameSpan = null,
+        CodeRenderingContext context = null,
+        bool privateSetter = false,
+        bool defaultValue = false)
     {
-        ArgHelper.ThrowIfNull(modifiers);
-        ArgHelper.ThrowIfNull(typeName);
-        ArgHelper.ThrowIfNull(propertyName);
-
-        WritePropertyDeclarationPreamble(writer, modifiers, typeName, propertyName, typeSpan, propertySpan, context);
+        WritePropertyDeclarationPreamble(writer, modifiers, type, name, typeSpan, nameSpan, context);
 
         writer.Write(" { get;");
+
         if (privateSetter)
         {
             writer.Write(" private");
         }
-        writer.Write(" set; }");
-        writer.WriteLine();
 
-        if (defaultValue && context?.Options.SuppressNullabilityEnforcement == false && context?.Options.DesignTime == false)
+        writer.WriteLine(" set; }");
+
+        if (defaultValue && context?.Options is { SuppressNullabilityEnforcement: false, DesignTime: false })
         {
             writer.WriteLine(" = default!;");
         }
@@ -544,23 +550,32 @@ internal static class CodeWriterExtensions
         return writer;
     }
 
-    private static void WritePropertyDeclarationPreamble(CodeWriter writer, IList<string> modifiers, string typeName, string propertyName, SourceSpan? typeSpan, SourceSpan? propertySpan, CodeRenderingContext context)
+    private static void WritePropertyDeclarationPreamble(
+        CodeWriter writer,
+        ImmutableArray<string> modifiers,
+        string type,
+        string name,
+        SourceSpan? typeSpan,
+        SourceSpan? nameSpan,
+        CodeRenderingContext context)
     {
-        for (var i = 0; i < modifiers.Count; i++)
+        if (!modifiers.IsDefaultOrEmpty)
         {
-            writer.Write(modifiers[i]);
-            writer.Write(" ");
+            foreach (var modifier in modifiers)
+            {
+                writer.Write($"{modifier} ");
+            }
         }
 
-        WriteToken(writer, typeName, typeSpan, context);
+        WriteToken(writer, type, typeSpan, context);
         writer.Write(" ");
-        WriteToken(writer, propertyName, propertySpan, context);
+        WriteToken(writer, name, nameSpan, context);
 
         static void WriteToken(CodeWriter writer, string content, SourceSpan? span, CodeRenderingContext context)
         {
             if (span is not null && context?.Options.DesignTime == false)
             {
-                using (writer.BuildEnhancedLinePragma(span, context))
+                using (context.BuildEnhancedLinePragma(span))
                 {
                     writer.Write(content);
                 }
@@ -663,7 +678,7 @@ internal static class CodeWriterExtensions
         else
         {
             writer.WriteLine();
-            using (writer.BuildEnhancedLinePragma(span, context))
+            using (context.BuildEnhancedLinePragma(span))
             {
                 writer.WriteLine(name);
             }
@@ -674,11 +689,11 @@ internal static class CodeWriterExtensions
 
     public static CSharpCodeWritingScope BuildClassDeclaration(
         this CodeWriter writer,
-        IList<string> modifiers,
+        ImmutableArray<string> modifiers,
         string name,
         BaseTypeWithModel baseType,
-        IList<IntermediateToken> interfaces,
-        IList<TypeParameter> typeParameters,
+        ImmutableArray<IntermediateToken> interfaces,
+        ImmutableArray<TypeParameter> typeParameters,
         CodeRenderingContext context,
         bool useNullableContext = false)
     {
@@ -689,33 +704,26 @@ internal static class CodeWriterExtensions
             writer.WriteLine("#nullable restore");
         }
 
-        for (var i = 0; i < modifiers.Count; i++)
+        foreach (var modifier in modifiers)
         {
-            writer.Write(modifiers[i]);
+            writer.Write(modifier);
             writer.Write(" ");
         }
 
         writer.Write("class ");
         writer.Write(name);
 
-        if (typeParameters != null && typeParameters.Count > 0)
+        if (!typeParameters.IsDefaultOrEmpty)
         {
             writer.Write("<");
 
-            for (var i = 0; i < typeParameters.Count; i++)
+            for (var i = 0; i < typeParameters.Length; i++)
             {
                 var typeParameter = typeParameters[i];
-                if (typeParameter.ParameterNameSource is { } source)
-                {
-                    WriteWithPragma(writer, typeParameter.ParameterName, context, source);
-                }
-                else
-                {
-                    writer.Write(typeParameter.ParameterName);
-                }
+                WriteToken(typeParameter.Name);
 
                 // Write ',' between parameters, but not after them
-                if (i < typeParameters.Count - 1)
+                if (i < typeParameters.Length - 1)
                 {
                     writer.Write(",");
                 }
@@ -725,7 +733,7 @@ internal static class CodeWriterExtensions
         }
 
         var hasBaseType = !string.IsNullOrWhiteSpace(baseType?.BaseType.Content);
-        var hasInterfaces = interfaces != null && interfaces.Count > 0;
+        var hasInterfaces = !interfaces.IsDefaultOrEmpty;
 
         if (hasBaseType || hasInterfaces)
         {
@@ -747,7 +755,7 @@ internal static class CodeWriterExtensions
             if (hasInterfaces)
             {
                 WriteToken(interfaces[0]);
-                for (var i = 1; i < interfaces.Count; i++)
+                for (var i = 1; i < interfaces.Length; i++)
                 {
                     writer.Write(", ");
                     WriteToken(interfaces[i]);
@@ -756,24 +764,12 @@ internal static class CodeWriterExtensions
         }
 
         writer.WriteLine();
-        if (typeParameters != null)
+
+        if (!typeParameters.IsDefaultOrEmpty)
         {
             foreach (var typeParameter in typeParameters)
             {
-                var constraint = typeParameter.Constraints;
-                if (constraint != null)
-                {
-                    if (typeParameter.ConstraintsSource is { } source)
-                    {
-                        Debug.Assert(context != null);
-                        WriteWithPragma(writer, constraint, context, source);
-                    }
-                    else
-                    {
-                        writer.Write(constraint);
-                        writer.WriteLine();
-                    }
-                }
+                WriteOptionalToken(typeParameter.Constraints, addLineBreak: true);
             }
         }
 
@@ -784,31 +780,38 @@ internal static class CodeWriterExtensions
 
         return new CSharpCodeWritingScope(writer);
 
-        void WriteOptionalToken(IntermediateToken token)
+        void WriteOptionalToken(IntermediateToken token, bool addLineBreak = false)
         {
             if (token is not null)
             {
-                WriteToken(token);
+                WriteToken(token, addLineBreak);
             }
         }
 
-        void WriteToken(IntermediateToken token)
+        void WriteToken(IntermediateToken token, bool addLineBreak = false)
         {
             if (token.Source is { } source)
             {
-                WriteWithPragma(writer, token.Content, context, source);
+                WriteWithPragma(token.Content, context, source);
             }
             else
             {
                 writer.Write(token.Content);
+
+                if (addLineBreak)
+                {
+                    writer.WriteLine();
+                }
             }
         }
 
-        static void WriteWithPragma(CodeWriter writer, string content, CodeRenderingContext context, SourceSpan source)
+        static void WriteWithPragma(string content, CodeRenderingContext context, SourceSpan source)
         {
+            var writer = context.CodeWriter;
+
             if (context.Options.DesignTime)
             {
-                using (writer.BuildLinePragma(source, context))
+                using (context.BuildLinePragma(source))
                 {
                     context.AddSourceMappingFor(source);
                     writer.Write(content);
@@ -816,7 +819,7 @@ internal static class CodeWriterExtensions
             }
             else
             {
-                using (writer.BuildEnhancedLinePragma(source, context))
+                using (context.BuildEnhancedLinePragma(source))
                 {
                     writer.Write(content);
                 }
@@ -841,28 +844,6 @@ internal static class CodeWriterExtensions
             .WriteLine(")");
 
         return new CSharpCodeWritingScope(writer);
-    }
-
-    public static IDisposable BuildLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, bool suppressLineDefaultAndHidden = false)
-    {
-        if (string.IsNullOrEmpty(span?.FilePath))
-        {
-            // Can't build a valid line pragma without a file path.
-            return NullDisposable.Default;
-        }
-
-        return new LinePragmaWriter(writer, span.Value, context, 0, useEnhancedLinePragma: false, suppressLineDefaultAndHidden);
-    }
-
-    public static IDisposable BuildEnhancedLinePragma(this CodeWriter writer, SourceSpan? span, CodeRenderingContext context, int characterOffset = 0, bool suppressLineDefaultAndHidden = false)
-    {
-        if (string.IsNullOrEmpty(span?.FilePath))
-        {
-            // Can't build a valid line pragma without a file path.
-            return NullDisposable.Default;
-        }
-
-        return new LinePragmaWriter(writer, span.Value, context, characterOffset, useEnhancedLinePragma: true, suppressLineDefaultAndHidden);
     }
 
     private static void WriteVerbatimStringLiteral(CodeWriter writer, ReadOnlyMemory<char> literal)
@@ -1024,123 +1005,6 @@ internal static class CodeWriterExtensions
             {
                 _writer.Write(spaceCharacter);
             }
-        }
-    }
-
-    private class LinePragmaWriter : IDisposable
-    {
-        private readonly CodeWriter _writer;
-        private readonly CodeRenderingContext _context;
-        private readonly int _startIndent;
-        private readonly int _startLineIndex;
-        private readonly SourceSpan _span;
-        private readonly bool _suppressLineDefaultAndHidden;
-
-        public LinePragmaWriter(
-            CodeWriter writer,
-            SourceSpan span,
-            CodeRenderingContext context,
-            int characterOffset,
-            bool useEnhancedLinePragma = false,
-            bool suppressLineDefaultAndHidden = false)
-        {
-            Debug.Assert(context.Options.DesignTime || useEnhancedLinePragma, "Runtime generation should only use enhanced line pragmas");
-
-            if (writer == null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
-
-            _writer = writer;
-            _context = context;
-            _suppressLineDefaultAndHidden = suppressLineDefaultAndHidden;
-            _startIndent = _writer.CurrentIndent;
-            _writer.CurrentIndent = 0;
-            _span = span;
-
-            var endsWithNewline = _writer.LastChar is '\n';
-            if (!endsWithNewline)
-            {
-                _writer.WriteLine();
-            }
-
-            if (!_context.Options.SuppressNullabilityEnforcement)
-            {
-                _writer.WriteLine("#nullable restore");
-            }
-
-            var ensurePathBackslashes = context.Options.RemapLinePragmaPathsOnWindows && PlatformInformation.IsWindows;
-            if (useEnhancedLinePragma && _context.Options.UseEnhancedLinePragma)
-            {
-                WriteEnhancedLineNumberDirective(writer, span, characterOffset, ensurePathBackslashes);
-            }
-            else
-            {
-                WriteLineNumberDirective(writer, span, ensurePathBackslashes);
-            }
-
-            // Capture the line index after writing the #line directive.
-            _startLineIndex = writer.Location.LineIndex;
-
-            if (useEnhancedLinePragma)
-            {
-                // If the caller requested an enhanced line directive, but we fell back to regular ones, write out the extra padding that is required
-                if (!_context.Options.UseEnhancedLinePragma)
-                {
-                    context.CodeWriter.WritePadding(0, span, context);
-                    characterOffset = 0;
-                }
-
-                context.AddSourceMappingFor(span, characterOffset);
-            }
-        }
-
-        public void Dispose()
-        {
-            // Need to add an additional line at the end IF there wasn't one already written.
-            // This is needed to work with the C# editor's handling of #line ...
-            var endsWithNewline = _writer.LastChar is '\n';
-
-            // Always write at least 1 empty line to potentially separate code from pragmas.
-            _writer.WriteLine();
-
-            // Check if the previous empty line wasn't enough to separate code from pragmas.
-            if (!endsWithNewline)
-            {
-                _writer.WriteLine();
-            }
-
-            var lineCount = _writer.Location.LineIndex - _startLineIndex;
-            var linePragma = new LinePragma(_span.LineIndex, lineCount, _span.FilePath, _span.EndCharacterIndex, _span.EndCharacterIndex, _span.CharacterIndex);
-            _context.AddLinePragma(linePragma);
-
-            if (!_suppressLineDefaultAndHidden)
-            {
-                _writer
-                    .WriteLine("#line default")
-                    .WriteLine("#line hidden");
-            }
-
-            if (!_context.Options.SuppressNullabilityEnforcement)
-            {
-                _writer.WriteLine("#nullable disable");
-            }
-
-            _writer.CurrentIndent = _startIndent;
-
-        }
-    }
-
-    private class NullDisposable : IDisposable
-    {
-        public static readonly NullDisposable Default = new NullDisposable();
-
-        private NullDisposable()
-        {
-        }
-
-        public void Dispose()
-        {
         }
     }
 }

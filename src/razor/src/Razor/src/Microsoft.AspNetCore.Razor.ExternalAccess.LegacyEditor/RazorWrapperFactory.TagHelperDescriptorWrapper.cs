@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.ExternalAccess.LegacyEditor;
 
@@ -36,6 +37,6 @@ internal static partial class RazorWrapperFactory
             => Object.GetHashCode();
 
         public bool IsComponentOrChildContentTagHelper()
-            => Object.IsComponentOrChildContentTagHelper;
+            => Object.IsComponentOrChildContentTagHelper();
     }
 }

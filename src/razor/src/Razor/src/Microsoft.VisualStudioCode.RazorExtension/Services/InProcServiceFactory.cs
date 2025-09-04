@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Remote.Razor;
+using Microsoft.VisualStudio.Composition;
 
 namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 
@@ -24,6 +25,7 @@ namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 internal static class InProcServiceFactory
 {
     private static readonly Dictionary<Type, IInProcServiceFactory> s_factoryMap = BuildFactoryMap();
+    private static ExportProvider? _exportProvider;
 
     private static Dictionary<Type, IInProcServiceFactory> BuildFactoryMap()
     {
@@ -53,7 +55,7 @@ internal static class InProcServiceFactory
     {
         Assumes.True(s_factoryMap.TryGetValue(typeof(TService), out var factory));
 
-        var brokeredServiceData = new RazorBrokeredServiceData(ExportProvider: null, loggerFactory, brokeredServiceInterceptor, workspaceProvider);
+        var brokeredServiceData = new RazorBrokeredServiceData(ExportProvider: _exportProvider, loggerFactory, brokeredServiceInterceptor, workspaceProvider);
         var hostProvidedServices = new HostProvidedServices(brokeredServiceData);
 
         return (TService)await factory.CreateInProcAsync(hostProvidedServices).ConfigureAwait(false);
@@ -63,5 +65,13 @@ internal static class InProcServiceFactory
     {
         public object? GetService(Type serviceType)
             => serviceType == typeof(RazorBrokeredServiceData) ? brokeredServiceData : null;
+    }
+
+    internal static class TestAccessor
+    {
+        public static void SetExportProvider(ExportProvider exportProvider)
+        {
+            _exportProvider = exportProvider;
+        }
     }
 }
