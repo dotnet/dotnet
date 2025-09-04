@@ -7,11 +7,9 @@ public sealed class FormattingTestContext
 {
     public required bool ShouldFlipLineEndings { get; init; }
 
-    public required bool ForceRuntimeCodeGeneration { get; init; }
-
     public required bool CreatedByFormattingDiscoverer { get; init; }
 
-    public string FlipLineEndings(string input)
+    public static string FlipLineEndings(string input)
     {
         if (string.IsNullOrEmpty(input))
         {

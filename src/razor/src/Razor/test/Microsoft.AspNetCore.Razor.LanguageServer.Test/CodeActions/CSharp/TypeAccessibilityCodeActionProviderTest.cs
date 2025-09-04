@@ -445,7 +445,7 @@ public class TypeAccessibilityCodeActionProviderTest(ITestOutputHelper testOutpu
             });
         });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
+        var codeDocument = projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
 
         var csharpDocument = codeDocument.GetRequiredCSharpDocument();
         var diagnosticDescriptor = new RazorDiagnosticDescriptor("RZ10012", "diagnostic", RazorDiagnosticSeverity.Error);

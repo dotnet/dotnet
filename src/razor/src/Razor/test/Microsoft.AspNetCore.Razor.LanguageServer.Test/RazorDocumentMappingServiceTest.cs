@@ -705,7 +705,7 @@ public class RazorDocumentMappingServiceTest(ITestOutputHelper testOutput) : Too
             });
         });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers: []);
+        var codeDocument = projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers: []);
 
         var csharpDocument = TestRazorCSharpDocument.Create(
             codeDocument,

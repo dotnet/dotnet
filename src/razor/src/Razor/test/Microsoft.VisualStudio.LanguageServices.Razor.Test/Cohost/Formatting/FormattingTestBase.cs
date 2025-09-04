@@ -172,8 +172,8 @@ public abstract class FormattingTestBase : CohostEndpointTestBase
         if (_context.ShouldFlipLineEndings)
         {
             // flip the line endings of the stings (LF to CRLF and vice versa) and run again
-            input = new TestCode(_context.FlipLineEndings(input.OriginalInput));
-            expected = _context.FlipLineEndings(expected);
+            input = new TestCode(FormattingTestContext.FlipLineEndings(input.OriginalInput));
+            expected = FormattingTestContext.FlipLineEndings(expected);
         }
 
         return (input, expected);

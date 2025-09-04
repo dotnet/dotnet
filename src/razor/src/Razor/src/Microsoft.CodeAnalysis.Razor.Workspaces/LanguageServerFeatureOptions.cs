@@ -47,12 +47,4 @@ internal abstract class LanguageServerFeatureOptions
     /// all Razor files found under the workspace root path.
     /// </summary>
     public abstract bool DoNotInitializeMiscFilesProjectFromWorkspace { get; }
-
-    /// <summary>
-    /// When enabled, design time code will not be generated. All tooling, except formatting, will be using runtime code generation.
-    /// </summary>
-    /// <remarks>
-    /// This is now always <see langword="true" /> but cannot be removed entirely until the legacy editor is removed.
-    /// </remarks>
-    public bool ForceRuntimeCodeGeneration { get; } = true;
 }

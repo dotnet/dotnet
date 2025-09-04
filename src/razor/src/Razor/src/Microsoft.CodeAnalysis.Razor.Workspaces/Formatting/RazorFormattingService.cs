@@ -124,9 +124,7 @@ internal class RazorFormattingService : IRazorFormattingService
     {
         var documentSnapshot = documentContext.Snapshot;
 
-        var codeDocument = documentContext.Snapshot is IDesignTimeCodeGenerator generator
-            ? await generator.GenerateDesignTimeOutputAsync(cancellationToken).ConfigureAwait(false)
-            : await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
+        var codeDocument = await documentContext.Snapshot.GetGeneratedOutputAsync(cancellationToken).ConfigureAwait(false);
 
         return await ApplyFormattedChangesAsync(
                 documentSnapshot,

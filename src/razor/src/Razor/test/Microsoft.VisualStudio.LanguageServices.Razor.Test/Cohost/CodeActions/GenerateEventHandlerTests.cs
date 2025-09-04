@@ -56,6 +56,30 @@ public class GenerateEventHandlerTests(ITestOutputHelper testOutputHelper) : Coh
         await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
     }
 
+    [Fact]
+    public async Task CodeBlock_Indented()
+    {
+        var input = """
+            <button @onclick="{|CS0103:Does[||]NotExist|}"></button>
+
+              @code {
+              }
+            """;
+
+        var expected = """
+            <button @onclick="DoesNotExist"></button>
+
+            @code {
+                private void DoesNotExist(MouseEventArgs args)
+                {
+                    throw new NotImplementedException();
+                }  
+            }
+            """;
+
+        await VerifyCodeActionAsync(input, expected, LanguageServerConstants.CodeActions.GenerateEventHandler);
+    }
+
     [Fact(Skip = "@bind- attribute tag helper is not being found")]
     public async Task BindSet()
     {

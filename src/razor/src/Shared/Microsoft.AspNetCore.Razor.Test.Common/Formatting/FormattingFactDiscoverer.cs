@@ -17,19 +17,12 @@ internal sealed class FormattingFactDiscoverer(IMessageSink diagnosticMessageSin
 
     public static IEnumerable<IXunitTestCase> CreateTestCases(ITestFrameworkDiscoveryOptions discoveryOptions, ITestMethod testMethod, IMessageSink messageSink, object[]? dataRow = null)
     {
-        // Cohosting only has runtime code-gen, so the old formatting engine doesn't work with them
-        if (!testMethod.TestClass.TestCollection.TestAssembly.Assembly.Name.StartsWith("Microsoft.VisualStudio.LanguageServices.Razor"))
-        {
-            yield return CreateTestCase(shouldFlipLineEndings: false, forceRuntimeCodeGeneration: false);
-            yield return CreateTestCase(shouldFlipLineEndings: true, forceRuntimeCodeGeneration: false);
-        }
+        yield return CreateTestCase(shouldFlipLineEndings: false);
+        yield return CreateTestCase(shouldFlipLineEndings: true);
 
-        yield return CreateTestCase(shouldFlipLineEndings: false, forceRuntimeCodeGeneration: true);
-        yield return CreateTestCase(shouldFlipLineEndings: true, forceRuntimeCodeGeneration: true);
-
-        FormattingTestCase CreateTestCase(bool shouldFlipLineEndings, bool forceRuntimeCodeGeneration)
+        FormattingTestCase CreateTestCase(bool shouldFlipLineEndings)
         {
-            return new FormattingTestCase(shouldFlipLineEndings, forceRuntimeCodeGeneration, messageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod, dataRow);
+            return new FormattingTestCase(shouldFlipLineEndings, messageSink, discoveryOptions.MethodDisplayOrDefault(), discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod, dataRow);
         }
     }
 }

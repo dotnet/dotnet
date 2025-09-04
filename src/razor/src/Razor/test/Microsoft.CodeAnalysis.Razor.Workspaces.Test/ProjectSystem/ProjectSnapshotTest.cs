@@ -38,7 +38,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     public void ProjectSnapshot_CachesDocumentSnapshots()
     {
         // Arrange
-        var state = ProjectState.Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+        var state = ProjectState.Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0])
             .AddEmptyDocument(s_documents[1])
@@ -62,7 +62,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     {
         // Arrange
         var state = ProjectState
-            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0]);
 
@@ -80,7 +80,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     {
         // Arrange
         var state = ProjectState
-            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0])
             .AddEmptyDocument(s_documents[1])
@@ -113,7 +113,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
             Path.Combine(basePath, "Products", "Index.cshtml"));
 
         var state = ProjectState
-            .Create(hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(hostProject, ProjectEngineFactoryProvider)
             .AddEmptyDocument(importHostDocument)
             .AddEmptyDocument(hostDocument);
 

@@ -340,7 +340,7 @@ public class DirectiveAttributeTransitionCompletionItemProviderTest : ToolingTes
             });
         });
 
-        var codeDocument = projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
+        var codeDocument = projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers: []);
 
         return codeDocument.GetRequiredSyntaxTree();
     }
