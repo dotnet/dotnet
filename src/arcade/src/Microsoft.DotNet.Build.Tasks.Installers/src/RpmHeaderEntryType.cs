@@ -3,7 +3,7 @@
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal enum RpmHeaderEntryType : uint
+    public enum RpmHeaderEntryType : uint
     {
         Null = 0,
         Char = 1,

@@ -46,6 +46,9 @@ public static class Config
     public static string Sdk1xxVersion { get; } = TryGetRuntimeConfig(Sdk1xxVersionSwitch, out string? value) ? value : string.Empty;
     const string Sdk1xxVersionSwitch = RuntimeConfigSwitchPrefix + nameof(Sdk1xxVersion);
 
+    public static string TargetFrameworkVersion { get; } = TryGetRuntimeConfig(TargetFrameworkVersionSwitch, out string? value) ? value : string.Empty;
+    const string TargetFrameworkVersionSwitch = RuntimeConfigSwitchPrefix + nameof(TargetFrameworkVersion);
+
     public const string RuntimeConfigSwitchPrefix = "Microsoft.DotNet.Installer.Tests.";
 
     public static Architecture GetArchitecture(string architecture) => architecture switch

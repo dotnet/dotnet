@@ -14,8 +14,8 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!-- Load NuGet.Build.Tasks.Pack.dll, this can be overridden to use a different version with $(NuGetPackTaskAssemblyFile) -->
   <PropertyGroup Condition="$(NuGetPackTaskAssemblyFile) == ''">
-    <NuGetPackTaskAssemblyFile Condition="'$(MSBuildRuntimeType)' == 'Core'">..\CoreCLR\NuGet.Build.Tasks.Pack.dll</NuGetPackTaskAssemblyFile>
-    <NuGetPackTaskAssemblyFile Condition="'$(MSBuildRuntimeType)' != 'Core'">..\Desktop\NuGet.Build.Tasks.Pack.dll</NuGetPackTaskAssemblyFile>
+    <NuGetPackTaskAssemblyFile Condition="'$(UsingMicrosoftNetSdk)' == 'true' And '$(MSBuildRuntimeType)' != 'Core'">Sdks\Microsoft.NET.Sdk\tools\net472\NuGet.Build.Tasks.Pack.dll</NuGetPackTaskAssemblyFile>
+    <NuGetPackTaskAssemblyFile Condition="'$(NuGetPackTaskAssemblyFile)' == ''">NuGet.Build.Tasks.Pack.dll</NuGetPackTaskAssemblyFile>
   </PropertyGroup>
 
   <!-- Tasks -->
@@ -38,7 +38,7 @@ Copyright (c) .NET Foundation. All rights reserved.
     <BuildOutputTargetFolder Condition="'$(BuildOutputTargetFolder)' == '' AND '$(IsTool)' == 'true'">tools</BuildOutputTargetFolder>
     <BuildOutputTargetFolder Condition="'$(BuildOutputTargetFolder)' == ''">lib</BuildOutputTargetFolder>
     <ContentTargetFolders Condition="'$(ContentTargetFolders)' == ''">content;contentFiles</ContentTargetFolders>
-    <PackDependsOn>$(BeforePack); _IntermediatePack; GenerateNuspec; $(PackDependsOn)</PackDependsOn>
+    <PackDependsOn>$(BeforePack); _GetRestoreProjectStyle; _IntermediatePack; GenerateNuspec; $(PackDependsOn)</PackDependsOn>
     <IsInnerBuild Condition="'$(TargetFramework)' != '' AND '$(TargetFrameworks)' != ''">true</IsInnerBuild>
     <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">symbols.nupkg</SymbolPackageFormat>
     <AddPriFileDependsOn Condition="'$(MicrosoftPortableCurrentVersionPropsHasBeenImported)' == 'true'">DeterminePortableBuildCapabilities</AddPriFileDependsOn>
@@ -103,7 +103,8 @@ Copyright (c) .NET Foundation. All rights reserved.
   -->
   <Target Name="_GetOutputItemsFromPack"
           DependsOnTargets="_GetAbsoluteOutputPathsForPack"
-          Returns="@(_OutputPackItems)">
+          Returns="@(_OutputPackItems)"
+          Condition="'$(PackageReferenceCompatibleProjectStyle)' == 'true'">
 
     <!-- 'PackageOutputAbsolutePath' and 'NuspecOutputAbsolutePath' will be provided by '_GetAbsoluteOutputPathsForPack' target -->
 
@@ -209,7 +210,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   </Target>
 
   <Target Name="GenerateNuspec"
-          Condition="'$(IsPackable)' == 'true'"
+          Condition="'$(IsPackable)' == 'true' AND '$(PackageReferenceCompatibleProjectStyle)' == 'true'"
           Inputs="@(NuGetPackInput)" Outputs="@(NuGetPackOutput)"
           DependsOnTargets="$(GenerateNuspecDependsOn);_CalculateInputsOutputsForPack;_GetProjectReferenceVersions;_InitializeNuspecRepositoryInformationProperties">
 
@@ -459,7 +460,7 @@ Copyright (c) .NET Foundation. All rights reserved.
   </Target>
 
   <Target Name="_GetDebugSymbolsWithTfm"
-          DependsOnTargets="DebugSymbolsProjectOutputGroup;$(TargetsForTfmSpecificDebugSymbolsInPackage)" 
+          DependsOnTargets="DebugSymbolsProjectOutputGroup;$(TargetsForTfmSpecificDebugSymbolsInPackage)"
           Returns="@(_TargetPathsToSymbolsWithTfm)">
     <ItemGroup Condition="'$(IncludeBuildOutput)' == 'true'">
       <_TargetPathsToSymbolsWithTfm Include="@(DebugSymbolsProjectOutputGroupOutput)">
