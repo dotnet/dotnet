@@ -279,7 +279,9 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if eq(parameters.signType, 'DryRun') }}:
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -429,18 +431,13 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  # https://github.com/dotnet/dotnet/issues/1758
-  # After a re-boostrap:
-  # - Uncomment the line below, replacing the one after it.
-  # - Uncomment the two parameter lines at the end of the template parameters.
-  # - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
-        # ${{ if ne(parameters.signType, 'Real') }}:
-        #   microbuildUseESRP: false
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -624,14 +621,6 @@ jobs:
           sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
         displayName: Update owner of artifacts staging directory
 
-    - script: |
-        if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
-          rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
-        fi
-      displayName: Clean up unwanted Source Build Artifacts
-      continueOnError: true
-      condition: succeededOrFailed()
-
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:
       - ${{ parameters.testInitSteps }}
@@ -772,3 +761,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+
