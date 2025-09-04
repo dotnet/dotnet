@@ -252,7 +252,7 @@
       </trans-unit>
       <trans-unit id="Error_NotOnePrimarySignature">
         <source>The package signature file does not contain exactly one primary signature.</source>
-        <target state="translated">Paket imzası dosyası tam olarak bir birincil imza içermiyor.</target>
+        <target state="translated">Paket imza dosyası tam olarak bir birincil imza içermiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
@@ -362,12 +362,12 @@
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFile">
         <source>The package contains an invalid package signature file.</source>
-        <target state="translated">Paket, geçersiz bir paket imzası dosyası içeriyor.</target>
+        <target state="translated">Paket, geçersiz bir paket imza dosyası içeriyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntry">
         <source>The package signature file entry is invalid. {0}</source>
-        <target state="translated">Paket imzası dosyası girdisi geçersiz. {0}</target>
+        <target state="translated">Paket imza dosyası girdisi geçersiz. {0}</target>
         <note>{0} - error message suffix containing the reason for failure.</note>
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
@@ -483,7 +483,7 @@
       </trans-unit>
       <trans-unit id="MultiplePackageSignatureFiles">
         <source>The package contains multiple package signature files.</source>
-        <target state="translated">Paket birden çok paket imzası dosyası içeriyor.</target>
+        <target state="translated">Paket birden çok paket imza dosyası içeriyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="MustContainAbsolutePath">
@@ -493,7 +493,7 @@
       </trans-unit>
       <trans-unit id="NoPackageSignatureFile">
         <source>The package does not contain a valid package signature file.</source>
-        <target state="translated">Paket geçerli bir paket imzası dosyası içermiyor.</target>
+        <target state="translated">Paket geçerli bir paket imza dosyası içermiyor.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRepositoryCountersignature">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' boş olamaz.</target>
+        <target state="translated">'{0}' null olamaz.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">

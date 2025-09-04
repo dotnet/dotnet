@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="HeaderLabel.Text">
         <source>Package sources:</source>
-        <target state="translated">Orígenes del paquete:</target>
+        <target state="translated">Orígenes de paquetes:</target>
         <note />
       </trans-unit>
       <trans-unit id="HttpWarningIcon.AccessibleDescription">

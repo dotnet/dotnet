@@ -22,9 +22,6 @@ namespace NuGet.Commands
             string inputPath,
             RestoreArgs restoreContext)
         {
-            var paths = new List<string>();
-            var requests = new List<RestoreSummaryRequest>();
-
             var dgSpec = DependencyGraphSpec.Load(inputPath);
             var dgProvider = new DependencyGraphSpecRequestProvider(_providerCache, dgSpec);
 

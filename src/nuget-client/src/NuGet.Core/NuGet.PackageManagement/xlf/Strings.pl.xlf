@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Element „{0}” nie może mieć wartości null.</target>
+        <target state="translated">Właściwość „{0}” nie może mieć wartości null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Katalog „{0}” nie jest pusty. Pomijanie...</target>
+        <target state="translated">Katalog „{0}” nie jest pusty. Trwa pomijanie...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">

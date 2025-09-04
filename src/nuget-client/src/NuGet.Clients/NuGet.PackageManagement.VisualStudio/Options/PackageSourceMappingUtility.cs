@@ -18,11 +18,14 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             {
                 foreach (PackagePatternItem patternItem in sourceItem.Patterns)
                 {
-                    if (!packageSourceMappingDictionary.ContainsKey(patternItem.Pattern))
+                    if (packageSourceMappingDictionary.TryGetValue(patternItem.Pattern, out var packageSourceContextInfos))
                     {
-                        packageSourceMappingDictionary[patternItem.Pattern] = new List<PackageSourceContextInfo>();
+                        packageSourceContextInfos.Add(new PackageSourceContextInfo(sourceItem.Key));
                     }
-                    packageSourceMappingDictionary[patternItem.Pattern].Add(new PackageSourceContextInfo(sourceItem.Key));
+                    else
+                    {
+                        packageSourceMappingDictionary[patternItem.Pattern] = [new PackageSourceContextInfo(sourceItem.Key)];
+                    }
                 }
             }
 

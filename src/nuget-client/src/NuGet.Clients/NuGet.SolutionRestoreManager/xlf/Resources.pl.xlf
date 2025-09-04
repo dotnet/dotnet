@@ -45,7 +45,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Wszystkie pakiety są już zainstalowane i nie ma elementów do przywrócenia.</target>
+        <target state="translated">Wszystkie pakiety są już zainstalowane i nie ma niczego do przywrócenia.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">

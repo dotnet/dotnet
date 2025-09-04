@@ -83,13 +83,10 @@ namespace NuGet.PackageManagement.VisualStudio.Options
 
         /// <summary>
         /// Validates the Uri of a remote or local package source.
-        /// The regex used here will eventually be supported in the Unified Settings registration.json file
-        /// for the package sources page. See https://github.com/NuGet/Home/issues/14358.
         /// </summary>
-        /// <param name="packageSource"></param>
+        /// <returns>True when valid, false otherwise.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal static void EnsureValidSources(PackageSource packageSource)
+        internal static bool IsValidSource(PackageSource packageSource)
         {
             _ = packageSource ?? throw new ArgumentNullException(nameof(packageSource));
             string source = packageSource.Source;
@@ -98,13 +95,29 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                 !Common.PathValidator.IsValidUncPath(source) &&
                 !Common.PathValidator.IsValidUrl(source))
             {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Validates the Uri of a remote or local package source and throws <see cref="ArgumentOutOfRangeException"/> if invalid.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        internal static void EnsureValidSources(PackageSource packageSource)
+        {
+            if (!IsValidSource(packageSource))
+            {
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(PackageSource.Source),
-                    actualValue: source,
-                    Strings.Error_PackageSource_InvalidSource);
+                    actualValue: packageSource.Source,
+                    message: Strings.Error_PackageSource_InvalidSource);
             }
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         internal static void ValidateUniquenessOrThrow(List<PackageSource> packageSources)
         {
             _ = packageSources ?? throw new ArgumentNullException(nameof(packageSources));
@@ -113,6 +126,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             EnsureUniqueSources(packageSources);
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         private static void EnsureUniqueNames(List<PackageSource> packageSources)
         {
             var seen = new HashSet<string>(
@@ -128,6 +142,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         private static void EnsureUniqueSources(List<PackageSource> packageSources)
         {
             var seen = new HashSet<string>(

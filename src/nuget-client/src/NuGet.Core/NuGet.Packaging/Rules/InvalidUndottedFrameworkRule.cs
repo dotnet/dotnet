@@ -38,10 +38,6 @@ namespace NuGet.Packaging.Rules
         // NOTE: We generate many different messages here, so we avoid using MessageFormat itself.
         public string MessageFormat => "";
 
-        public InvalidUndottedFrameworkRule()
-        {
-        }
-
         public IEnumerable<PackagingLogMessage> Validate(PackageArchiveReader builder)
         {
             return Validate(LoadXml(builder.GetNuspec()), builder.GetFiles());

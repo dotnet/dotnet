@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">Id. de paquete no válido: `{0}`.</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">El servidor respondió con HTTP "403 Prohibido" al acceder al origen "{0}". Este hecho hace pensar que el servidor ha autenticado la identidad pero no le ha permitido acceder al recurso solicitado. Proporcione credenciales que tengan permiso para ver este recurso.</target>

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">todo</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
-        <source>Allow pushing to HTTP sources (insecure).</source>
-        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <source>Allows pushing to HTTP sources (insecure).</source>
+        <target state="translated">Permite insertar en orígenes HTTP (no seguro).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">No se pudo agregar PackageReference para '{0}'. Ya existe un elemento ProjectReference con el mismo nombre y no se puede agregar un paquete con el mismo nombre al proyecto.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">No se puede encontrar un paquete resuelto para '{0}'. Se trata de un error de herramientas. Envíe una incidencia a https://github.com/NuGet/Home.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -323,8 +323,8 @@ Do not translate "PackageVersion"</note>
       <trans-unit id="Error_HttpServerUsage_MultipleSources">
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">Está ejecutando la operación "{0}" con orígenes "HTTP": {1}
-NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establecer explícitamente "allowInsecureConnections" en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para obtener más información.</target>
+        <target state="translated">Está ejecutando la operación '{0}' con orígenes 'HTTP': {1}
+NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establecer explícitamente 'allowInsecureConnections' en verdadero en el archivo NuGet.Config. Consulte https://aka.ms/nuget-https-everywhere para más información.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -400,7 +400,7 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
         <source>The specified path '{0}' does not exist.</source>
-        <target state="translated">La ruta de acceso "{0}" especificada no existe.</target>
+        <target state="translated">La ruta de acceso especificada '{0}' no existe.</target>
         <note>0 - path</note>
       </trans-unit>
       <trans-unit id="Error_PkgMissingArgument">
@@ -573,7 +573,7 @@ NuGet requiere orígenes HTTPS. Para usar orígenes HTTP, es necesario establece
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOptions">
         <source>Options '--outdated', '--deprecated' and '--vulnerable' cannot be combined.</source>
-        <target state="translated">No se pueden combinar las opciones "--outdated", "--deprecated" y "--vulnerable".</target>
+        <target state="translated">No se pueden combinar las opciones '--outdated', '--deprecated' y '--vulnerable'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ListPkg_InvalidOutputFormat">
@@ -886,30 +886,35 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
         <target state="translated">Ruta de acceso a un archivo de proyecto o solución, o a un directorio.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
+        <source>All packages are already up to date.</source>
+        <target state="translated">Todos los paquetes ya están actualizados.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
-        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <target state="translated">{0} paquetes actualizados en {1} paquetes escaneados.</target>
         <note>{0}: Number of packages updated
 {1}: Package checked for updated versions</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FindingUpdateVersions">
         <source>Finding versions of packages to update.</source>
-        <target state="new">Finding versions of packages to update.</target>
+        <target state="translated">Buscando versiones de paquetes que se van a actualizar.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
-        <target state="new">Loading Project(s).</target>
+        <target state="translated">Cargando proyectos.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
-        <target state="translated">Referencia de paquete en forma de identificador de paquete como "Newtonsoft.Json" o identificador de paquete y versión separados por "@", como "Newtonsoft.Json@13.0.3".</target>
+        <target state="translated">Referencia de paquete en forma de identificador de paquete como 'Newtonsoft.Json' o identificador de paquete y versión separados por '@', como 'Newtonsoft.Json@13.0.3'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
-        <target state="new">Running preview restore to check package compatibility.</target>
+        <target state="translated">Ejecutando la restauración de versión preliminar para comprobar la compatibilidad del paquete.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestoreFailed">
@@ -919,14 +924,14 @@ Para obtener más información, visite https://docs.nuget.org/docs/reference/com
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updated {0} {1} to {2}.</source>
-        <target state="new">Updated {0} {1} to {2}.</target>
+        <target state="translated">{0} {1} actualizado a {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
         <source>Updating outdated packages in {0}.</source>
-        <target state="new">Updating outdated packages in {0}.</target>
+        <target state="translated">Actualizando paquetes desactualizados en {0}.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1049,7 +1054,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="SignCommandInvalidCertificateFingerprint">
         <source>{0}: Invalid value for '--certificate-fingerprint' option. The value must be a SHA-256, SHA-384, or SHA-512 certificate fingerprint (in hexadecimal).</source>
-        <target state="translated">{0}: Valor no válido para la opción '--certificate-fingerprint'. El valor debe ser una huella digital de certificado SHA-256, SHA-384 o SHA-512 (en hexadecimal).</target>
+        <target state="translated">{0}: valor no válido para la opción '--certificate-fingerprint'. El valor debe ser una huella de certificado SHA-256, SHA-384 o SHA-512 (en hexadecimal).</target>
         <note>{0} - error code</note>
       </trans-unit>
       <trans-unit id="SignCommandMultipleCertificateException">
@@ -1252,11 +1257,6 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
         <target state="translated">Nombre del firmante de confianza existente que se va a quitar.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Unsupported_MoreThanOnePackage">
-        <source>Unsupported: Updating more than one package is not yet supported</source>
-        <target state="translated">No compatible: Aún no se admite la actualización de más de un paquete</target>
-        <note />
-      </trans-unit>
       <trans-unit id="Unsupported_PackageSourceMapping">
         <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
         <target state="translated">No compatible: Aún no se admiten los proyectos que usan la asignación de origen de paquetes</target>
@@ -1338,7 +1338,7 @@ La búsqueda es una comparación de cadenas que no diferencia mayúsculas de min
       </trans-unit>
       <trans-unit id="Warning_AuditSourceWithoutData">
         <source>Audit source '{0}' did not provide any vulnerability data.</source>
-        <target state="translated">El origen de auditoría '{0}' no proporcionó ningún dato de vulnerabilidad.</target>
+        <target state="translated">El origen de auditoría ''{0}'' no proporcionó ningún dato de vulnerabilidad.</target>
         <note>{0} is the source name</note>
       </trans-unit>
       <trans-unit id="WhyCommand_Description">

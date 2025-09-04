@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">全部</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
-        <source>Allow pushing to HTTP sources (insecure).</source>
-        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <source>Allows pushing to HTTP sources (insecure).</source>
+        <target state="translated">允許推送至 HTTP 來源 (不安全)。</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">無法為 '{0}' 新增 PackageReference。具有相同名稱的 ProjectReference 已存在，無法將具有相同名稱的套件新增至專案。</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">找不到 '{0}' 的已解決套件。這是工具錯誤。請在 https://github.com/NuGet/Home 提出問題。</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -886,20 +886,25 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
         <target state="translated">專案、解決方案檔案或目錄的路徑。</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
+        <source>All packages are already up to date.</source>
+        <target state="translated">所有套件均已是最新版本。</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
-        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <target state="translated">在 {1} 個已掃描的套件中更新 {0} 個套件。</target>
         <note>{0}: Number of packages updated
 {1}: Package checked for updated versions</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FindingUpdateVersions">
         <source>Finding versions of packages to update.</source>
-        <target state="new">Finding versions of packages to update.</target>
+        <target state="translated">正在尋找要更新的套件版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
-        <target state="new">Loading Project(s).</target>
+        <target state="translated">正在載入專案。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -909,7 +914,7 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
-        <target state="new">Running preview restore to check package compatibility.</target>
+        <target state="translated">正在執行預覽還原以檢查套件的相容性。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestoreFailed">
@@ -919,14 +924,14 @@ For more information, visit https://docs.nuget.org/docs/reference/command-line-r
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updated {0} {1} to {2}.</source>
-        <target state="new">Updated {0} {1} to {2}.</target>
+        <target state="translated">已將 {0} {1} 更新至 {2}。</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
         <source>Updating outdated packages in {0}.</source>
-        <target state="new">Updating outdated packages in {0}.</target>
+        <target state="translated">正在更新 {0} 中的過期套件。</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1099,7 +1104,7 @@ The search is a case-insensitive string comparison using the supplied value, whi
       </trans-unit>
       <trans-unit id="SourcesCommandAllowInsecureConnectionsDescription">
         <source>Allows HTTP connections for adding or updating packages. Note: This method is not secure. For secure options, see https://aka.ms/nuget-https-everywhere for more information.</source>
-        <target state="translated">允許將 HTTP 連線用於新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
+        <target state="translated">允許 HTTP 連線用於新增或更新封裝。注意: 此方法不安全。如需安全選項，請參閱 https://aka.ms/nuget-https-everywhere 以取得詳細資訊。</target>
         <note />
       </trans-unit>
       <trans-unit id="SourcesCommandFormatDescription">
@@ -1250,11 +1255,6 @@ The search is a case-insensitive string comparison using the supplied value, whi
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">要移除之現有信任簽署者的名稱。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_MoreThanOnePackage">
-        <source>Unsupported: Updating more than one package is not yet supported</source>
-        <target state="translated">不支援: 尚不支援更新多個套件</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_PackageSourceMapping">

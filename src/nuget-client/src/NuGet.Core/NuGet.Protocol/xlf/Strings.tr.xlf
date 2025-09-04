@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">Geçersiz paket kimliği: `{0}`.</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">'{0}' kaynağına erişilirken sunucu HTTP '403 Yasak' yanıtı döndürdü. Bu, sunucunun kimliğinizi doğruladığı, ancak size istenen kaynağa erişim izni vermediği anlamına gelir. Bu kaynağı görüntüleme iznine sahip kimlik bilgilerini sağlayın.</target>
@@ -81,7 +86,7 @@
       </trans-unit>
       <trans-unit id="Http_CredentialsForProxy">
         <source>The server responded with HTTP '407 Proxy Authentication Required' when accessing the proxy '{0}'. This suggests that the server needs credentials to authenticate your identity to use a proxy. Provide credentials to access this resource.</source>
-        <target state="translated">'{0}' proxy'sine erişilirken sunucu HTTP '407 Proxy Kimlik Doğrulaması Gerekli' yanıtı döndürdü. Bu, sunucunun proxy kullanmak üzere kimliğinizi doğrulamak için kimlik bilgilerinize ihtiyaç olduğu anlamına gelir. Bu kaynağa erişmek için kimlik bilgilerini sağlayın.</target>
+        <target state="translated">'{0}' ara sunucusuna erişilirken sunucu HTTP '407 Ara Sunucu Kimlik Doğrulaması Gerekli' yanıtı döndürdü. Bu, sunucunun ara sunucu kullanmak üzere kimliğinizi doğrulamak için kimlik bilgilerinize ihtiyaç olduğu anlamına gelir. Bu kaynağa erişmek için kimlik bilgilerini sağlayın.</target>
         <note>{0} is the proxy URL that needs credentials to be accessed.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForUnauthorized">

@@ -44,10 +44,6 @@ namespace NuGet.Protocol
         private readonly ConcurrentDictionary<string, bool> _metadataFileCache
             = new ConcurrentDictionary<string, bool>(PathUtility.GetStringComparerBasedOnOS());
 
-        public LocalPackageFileCache()
-        {
-        }
-
         /// <summary>
         /// Read a nuspec file from disk. The nuspec is expected to exist.
         /// </summary>

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">Ocorreu um erro ao restaurar os pacotes NuGet: {0}</target>
+        <target state="translated">Erro ao restaurar pacotes do NuGet: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -45,7 +45,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Todos os pacotes já estão instalados e não há nada a ser restaurado.</target>
+        <target state="translated">Todos os pacotes já estão instalados e não há nada para ser restaurado.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -74,7 +74,7 @@ Pacotes ausentes: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">
         <source>NuGet package restore canceled.</source>
-        <target state="translated">Restauração do pacote NuGet cancelada.</target>
+        <target state="translated">Restauração do pacote do NuGet cancelada.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
@@ -84,7 +84,7 @@ Pacotes ausentes: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">A restauração do pacote NuGet foi concluída.</target>
+        <target state="translated">Restauração do pacote do NuGet concluída.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">
@@ -121,7 +121,7 @@ Para impedir que o NuGet restaure pacotes durante o build, abra a caixa de diál
       </trans-unit>
       <trans-unit id="RestoringPackages">
         <source>Restoring NuGet packages...</source>
-        <target state="translated">Restaurando pacotes NuGet...</target>
+        <target state="translated">Restaurando pacotes do NuGet...</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">

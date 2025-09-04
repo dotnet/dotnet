@@ -91,7 +91,7 @@ namespace NuGet.SolutionRestoreManager
         }
 
         internal static TargetFrameworkInformation ToTargetFrameworkInformation(
-            IVsTargetFrameworkInfo4 targetFrameworkInfo, bool cpvmEnabled, string projectFullPath)
+            IVsTargetFrameworkInfo4 targetFrameworkInfo, bool cpvmEnabled, bool isPruningEnabledGlobally, string projectFullPath)
         {
             var frameworkName = GetTargetFramework(targetFrameworkInfo.Properties, projectFullPath);
 
@@ -105,7 +105,8 @@ namespace NuGet.SolutionRestoreManager
                 ? MSBuildStringUtility.Split(atfString).Select(NuGetFramework.Parse).ToList()
                 : null;
 
-            bool isPackagePruningEnabled = MSBuildStringUtility.IsTrue(GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RestoreEnablePackagePruning));
+            bool? restoreEnablePackagePruning = MSBuildStringUtility.GetBooleanOrNull(GetPropertyValueOrNull(targetFrameworkInfo.Properties, ProjectBuildProperties.RestoreEnablePackagePruning));
+            bool isPackagePruningEnabled = restoreEnablePackagePruning == null ? isPruningEnabledGlobally : restoreEnablePackagePruning == true;
 
             // Get fallback properties
             (frameworkName, var imports, var assetTargetFallback, var warn) = AssetTargetFallbackUtility.GetFallbackFrameworkInformation(frameworkName, ptf, atf);
@@ -333,6 +334,18 @@ namespace NuGet.SolutionRestoreManager
         internal static bool GetUseLegacyDependencyResolver(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
         {
             return GetSingleNonEvaluatedPropertyOrNull(tfms, ProjectBuildProperties.RestoreUseLegacyDependencyResolver, MSBuildStringUtility.IsTrue);
+        }
+
+        internal static bool IsPruningEnabledGlobally(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
+        {
+            foreach (var value in GetNonEvaluatedPropertyOrNull(tfms, "RestorePackagePruningDefault", s => s))
+            {
+                if (value is not null && MSBuildStringUtility.IsTrue(value))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal static RestoreAuditProperties? GetRestoreAuditProperties(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)

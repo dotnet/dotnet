@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">tutto</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
-        <source>Allow pushing to HTTP sources (insecure).</source>
-        <target state="new">Allow pushing to HTTP sources (insecure).</target>
+        <source>Allows pushing to HTTP sources (insecure).</source>
+        <target state="translated">Consente di eseguire il push in origini HTTP (non sicuro).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">L'aggiunta di PackageReference per '{0}' non è riuscita. Esiste già un ProjectReference con lo stesso nome e non è possibile aggiungere un pacchetto con lo stesso nome al progetto.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">Non è possibile trovare un pacchetto risolto per '{0}'. Si tratta di un errore di tooling. Segnala un problema in https://github.com/NuGet/Home.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -324,7 +324,7 @@ Do not translate "PackageVersion"</note>
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">L'operazione '{0}' è in esecuzione con origini 'HTTP': {1}
-NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare in modo esplicito 'allowInsecureConnections' su true nel file NuGet.Config. Vedere https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
+NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario impostare esplicitamente 'allowInsecureConnections' su true nel file NuGet.Config. Vedi https://aka.ms/nuget-https-everywhere per altre informazioni.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -400,7 +400,7 @@ NuGet richiede origini HTTPS. Per utilizzare origini HTTP, è necessario imposta
       </trans-unit>
       <trans-unit id="Error_PathNotFound">
         <source>The specified path '{0}' does not exist.</source>
-        <target state="translated">Il percorso specificato '{0}' non esiste.</target>
+        <target state="translated">Il percorso '{0}' specificato non esiste.</target>
         <note>0 - path</note>
       </trans-unit>
       <trans-unit id="Error_PkgMissingArgument">
@@ -886,20 +886,25 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
         <target state="translated">Percorso di un progetto, un file di soluzione o una directory.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
+        <source>All packages are already up to date.</source>
+        <target state="translated">Tutti i pacchetti sono già aggiornati.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
-        <target state="new">Updated {0} packages in {1} scanned packages.</target>
+        <target state="translated">{0} Pacchetti aggiornati nei {1} pacchetti analizzati.</target>
         <note>{0}: Number of packages updated
 {1}: Package checked for updated versions</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FindingUpdateVersions">
         <source>Finding versions of packages to update.</source>
-        <target state="new">Finding versions of packages to update.</target>
+        <target state="translated">Ricerca delle versioni dei pacchetti da aggiornare.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
-        <target state="new">Loading Project(s).</target>
+        <target state="translated">Caricamento dei progetti in corso.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -909,7 +914,7 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">
         <source>Running preview restore to check package compatibility.</source>
-        <target state="new">Running preview restore to check package compatibility.</target>
+        <target state="translated">Esecuzione del ripristino dell'anteprima per verificare la compatibilità dei pacchetti.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestoreFailed">
@@ -919,14 +924,14 @@ Per altre informazioni, vedere https://docs.nuget.org/docs/reference/command-lin
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
         <source>Updated {0} {1} to {2}.</source>
-        <target state="new">Updated {0} {1} to {2}.</target>
+        <target state="translated">Aggiornato {0} {1} a {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatingOutdatedPackages">
         <source>Updating outdated packages in {0}.</source>
-        <target state="new">Updating outdated packages in {0}.</target>
+        <target state="translated">Aggiornamento dei pacchetti obsoleti in {0}.</target>
         <note>{0}: the project or solution that is being updated</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
@@ -1250,11 +1255,6 @@ La ricerca viene eseguita in un confronto di stringhe senza distinzione tra maiu
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">Nome del firmatario attendibile esistente da rimuovere.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_MoreThanOnePackage">
-        <source>Unsupported: Updating more than one package is not yet supported</source>
-        <target state="translated">Non supportato: l'aggiornamento di più pacchetti non è ancora supportato</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_PackageSourceMapping">

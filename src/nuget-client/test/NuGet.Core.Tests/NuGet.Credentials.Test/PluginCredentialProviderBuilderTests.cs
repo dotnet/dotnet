@@ -48,11 +48,6 @@ namespace NuGet.Credentials.Test
             }
         }
 
-        public PluginCredentialProviderBuilderTests()
-        {
-        }
-
-
         [Fact]
         public void WhenNoPlugins_ThenEmptyList()
         {

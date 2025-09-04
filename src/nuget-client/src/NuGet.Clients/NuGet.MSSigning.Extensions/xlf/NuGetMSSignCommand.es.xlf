@@ -101,9 +101,9 @@
         <source>nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
 
 nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</source>
-        <target state="translated">nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
+        <target state="translated">nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Proveedor de servicios criptográficos"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a"  
 
-nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Cryptographic Service Provider"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</target>
+nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p7b -CSPName "Proveedor de servicios criptográficos"  -KeyContainer "4003d786-cc37-4004-bfdf-c4f3e8ef9b3a" -CertificateFingerprint "4003d786cc374004bfdfc4f3e8ef9b3a" -OutputDirectory .\..\Signed</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="MSSignCommandUsageSummary">
@@ -130,9 +130,9 @@ nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p
         <source>nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
 
 nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</source>
-        <target state="translated">nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
+        <target state="translated">nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Proveedor de servicios criptográficos" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -V3ServiceIndexUrl https://v3.index.test
 
-nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Cryptographic Service Provider" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "owner1;owner2" -V3ServiceIndexUrl https://v3.index.test</target>
+nuget reposign MyPackage.nupkg -Timestamper http://timestamper.test -CertificateFile certificates.p7b -CSPName "Proveedor de servicios criptográficos" -KeyContainer 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -CertificateFingerprint 8599ADD1C62EE42E315EA887FF60908B7A7C6E9B -OutputDirectory .\..\Signed -PackageOwners "propietario1;propietario2" -V3ServiceIndexUrl https://v3.index.test</target>
         <note />
       </trans-unit>
       <trans-unit id="RepoSignCommandUsageSummary">

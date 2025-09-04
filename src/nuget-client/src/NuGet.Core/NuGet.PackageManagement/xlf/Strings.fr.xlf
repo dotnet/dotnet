@@ -59,17 +59,17 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFile">
         <source>Added file '{0}'.</source>
-        <target state="translated">Ficher « {0} » ajouté.</target>
+        <target state="translated">Ficher '{0}' ajouté.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">Fichier « {0} » ajouté au dossier « {1} ».</target>
+        <target state="translated">Fichier '{0}' ajouté au dossier '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'.</source>
-        <target state="translated">Fichier « {0} » supprimé.</target>
+        <target state="translated">Fichier '{0}' supprimé.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
         <source>Removed folder '{0}'.</source>
-        <target state="translated">Dossier « {0} » supprimé.</target>
+        <target state="translated">Dossier '{0}' supprimé.</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfo">
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="Error_FileDoesNotExist">
         <source>File {0} does not exist.</source>
-        <target state="translated">Le fichier {0} n'existe pas.</target>
+        <target state="translated">Le fichier {0} n’existe pas.</target>
         <note>{0} is the filename.</note>
       </trans-unit>
       <trans-unit id="Error_HttpSource_Single">
@@ -331,7 +331,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' ne peut pas avoir la valeur null.</target>
+        <target state="translated">« {0} » ne peut pas avoir la valeur nul.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
@@ -421,7 +421,7 @@
       </trans-unit>
       <trans-unit id="UnableToFindCompatibleItems">
         <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
-        <target state="translated">Impossible d’installer le package « {0} ». Vous essayez d’installer ce package dans un projet ciblant « {1} », mais le package ne contient aucun fichier de contenu ou référence d’assembly compatible avec cette infrastructure. Pour plus d’informations, contactez le créateur du package.</target>
+        <target state="translated">Impossible d’installer le package « {0} ». Vous essayez d’installer ce package dans un projet ciblant « {1} », mais le package ne contient aucun fichier de contenu ou référence d’assembly compatible avec ce framework. Pour plus d’informations, contactez le créateur du package.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindPathInLookupOrList">
@@ -464,7 +464,7 @@
       </trans-unit>
       <trans-unit id="UnknownPackageSpecificVersion">
         <source>Unable to find version '{1}' of package '{0}'.</source>
-        <target state="translated">Impossible de trouver la version « {1} » du package « {0} ».</target>
+        <target state="translated">La version '{1}' du package '{0}' est introuvable.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedPackageType">
@@ -492,12 +492,12 @@
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">
         <source>'{0}' already exists. Skipping...</source>
-        <target state="translated">« {0} » existe déjà. Ignoré...</target>
+        <target state="translated">'{0}' existe déjà. Ignoré...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">« {0} » a été ignoré car il a été modifié.</target>
+        <target state="translated">'{0}' a été ignoré car il a été modifié.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
@@ -510,7 +510,7 @@
       </trans-unit>
       <trans-unit id="Warning_RollingBack">
         <source>Install failed. Rolling back...</source>
-        <target state="translated">Échec de l’installation. Restauration...</target>
+        <target state="translated">L'installation a échoué. Restauration en cours...</target>
         <note />
       </trans-unit>
       <trans-unit id="XdtError">

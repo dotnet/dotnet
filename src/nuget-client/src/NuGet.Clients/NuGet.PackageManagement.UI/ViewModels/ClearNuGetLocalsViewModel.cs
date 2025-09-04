@@ -16,11 +16,25 @@ namespace NuGet.PackageManagement.UI.ViewModels
         private string? _commandCompleteText;
         private readonly Func<Task> _clearNuGetLocalsCommandExecute;
         private bool _isExecuting;
+        private bool _hasError;
 
         public ClearNuGetLocalsViewModel(Func<Task> clearNuGetLocalsCommandExecute)
         {
             _clearNuGetLocalsCommandExecute = clearNuGetLocalsCommandExecute ?? throw new ArgumentNullException(nameof(clearNuGetLocalsCommandExecute));
         }
+
+        public bool HasError
+        {
+            get
+            {
+                return _hasError;
+            }
+            set
+            {
+                SetAndRaisePropertyChanged(ref _hasError, value);
+            }
+        }
+
 
         public bool IsCommandComplete
         {
@@ -62,11 +76,22 @@ namespace NuGet.PackageManagement.UI.ViewModels
                 {
                     if (task.IsFaulted)
                     {
-                        OnCommandComplete(string.Format(CultureInfo.CurrentCulture, Resources.ShowMessage_LocalsCommandFailure, DateTime.Now.ToString(Resources.Culture), task.Exception.InnerException.Message));
+                        string message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ShowMessage_LocalsCommandFailure,
+                            DateTime.Now.ToString(Resources.Culture),
+                            task.Exception.InnerException.Message);
+
+                        OnCommandComplete(message, hasError: true);
                     }
                     else
                     {
-                        OnCommandComplete(message: string.Format(CultureInfo.CurrentCulture, Resources.ShowMessage_LocalsCommandSuccess, DateTime.Now.ToString(Resources.Culture)));
+                        string message = string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ShowMessage_LocalsCommandSuccess,
+                            DateTime.Now.ToString(Resources.Culture));
+
+                        OnCommandComplete(message, hasError: false);
                     }
                 },
                 TaskScheduler.FromCurrentSynchronizationContext());
@@ -82,11 +107,12 @@ namespace NuGet.PackageManagement.UI.ViewModels
             });
         }
 
-        private void OnCommandComplete(string message)
+        private void OnCommandComplete(string message, bool hasError)
         {
             _isExecuting = false;
             CommandCompleteText = message;
             IsCommandComplete = true;
+            HasError = hasError;
         }
     }
 }

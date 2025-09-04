@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="ImportsFallbackWarning">
         <source>ProjectReference '{0}' was resolved using '{1}' instead of the project target framework '{2}'. This project may not be fully compatible with your project.</source>
-        <target state="translated">Odkaz ProjectReference {0} se místo cílové architektury projektu {2} přeložil pomocí {1}. Projekt nemusí být plně kompatibilní s vaším projektem.</target>
+        <target state="translated">Odkaz ProjectReference {0} se místo cílové verze rozhraní .NET Framework projektu {2} přeložil pomocí {1}. Projekt nemusí být plně kompatibilní s vaším projektem.</target>
         <note>0 - referenced project path
 1 - resolved tfm
 2 - project tfm</note>
@@ -153,12 +153,12 @@
       </trans-unit>
       <trans-unit id="UnsupportedFallbackFramework">
         <source>The project fallback framework '{0}' is not a supported target framework.</source>
-        <target state="translated">Náhradní architektura projektu {0} není podporovaná cílová architektura.</target>
+        <target state="translated">Náhradní rozhraní projektu {0} není podporovaná cílová verze rozhraní .NET Framework.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnsupportedTargetFramework">
         <source>The project target framework '{0}' is not a supported target framework.</source>
-        <target state="translated">Cílová architektura projektu {0} není podporovaná cílová architektura.</target>
+        <target state="translated">Cílové rozhraní projektu {0} není podporovaná cílová verze rozhraní .NET Framework.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_InvalidPackageSaveMode">

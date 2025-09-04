@@ -40,7 +40,7 @@
       </trans-unit>
       <trans-unit id="CertUtilityCertificateValidity">
         <source>Valid from: {0} to {1}</source>
-        <target state="translated">유효 기간: {0}~{1}</target>
+        <target state="translated">유효 기간: {0}~007E;{1}</target>
         <note>0 -  start date
 1 - end date</note>
       </trans-unit>
@@ -113,7 +113,7 @@
       </trans-unit>
       <trans-unit id="DefaultError_NoMatchInAllowList">
         <source>The package signature certificate fingerprint does not match any certificate fingerprint in the allow list.</source>
-        <target state="translated">패키지 서명 인증서 지문이 허용 목록의 모든 인증서 지문과 일치하지 않습니다.</target>
+        <target state="translated">패키지 시그니처 인증서 지문이 허용 목록의 모든 인증서 지문과 일치하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorAuthorTargetCannotBeACountersignature">
@@ -190,7 +190,7 @@
       </trans-unit>
       <trans-unit id="ErrorPackageSignatureInvalid">
         <source>The package signature is invalid or cannot be verified on this platform.</source>
-        <target state="translated">패키지 서명이 잘못되었거나 이 플랫폼에서 확인할 수 없습니다.</target>
+        <target state="translated">패키지 시그니처가 잘못되었거나 이 플랫폼에서 확인할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorUnableCheckPackageEntries">
@@ -252,12 +252,12 @@
       </trans-unit>
       <trans-unit id="Error_NotOnePrimarySignature">
         <source>The package signature file does not contain exactly one primary signature.</source>
-        <target state="translated">패키지 서명 파일에 정확하게 기본 시그니처 하나가 없습니다.</target>
+        <target state="translated">패키지 시그니처 파일에 정확하게 기본 시그니처 하나가 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
         <source>The package signature contains multiple repository countersignatures.</source>
-        <target state="translated">패키지 서명에 여러 개의 리포지토리 연대 시그니처가 포함되어 있습니다.</target>
+        <target state="translated">패키지 시그니처에 여러 개의 리포지토리 연대 시그니처가 포함되어 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_RepositorySettings_UnsignedPackage">
@@ -362,12 +362,12 @@
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFile">
         <source>The package contains an invalid package signature file.</source>
-        <target state="translated">패키지에 잘못된 패키지 서명 파일이 있습니다.</target>
+        <target state="translated">패키지에 잘못된 패키지 시그니처 파일이 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntry">
         <source>The package signature file entry is invalid. {0}</source>
-        <target state="translated">패키지 서명 파일 항목이 잘못되었습니다. {0}</target>
+        <target state="translated">패키지 시그니처 파일 항목이 잘못되었습니다. {0}</target>
         <note>{0} - error message suffix containing the reason for failure.</note>
       </trans-unit>
       <trans-unit id="InvalidPackageSignatureFileEntryCentralDirectoryHeader">
@@ -399,7 +399,7 @@
       </trans-unit>
       <trans-unit id="InvalidSignatureContent">
         <source>The package signature content is invalid.</source>
-        <target state="translated">패키지 서명 콘텐츠가 잘못되었습니다.</target>
+        <target state="translated">패키지 시그니처 콘텐츠가 잘못되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidTimestampSignature">
@@ -414,7 +414,7 @@
       </trans-unit>
       <trans-unit id="InvalidX509StorePurpose">
         <source>Invalid X.509 store purpose.</source>
-        <target state="translated">유효하지 않은 X.509 저장소 용도입니다.</target>
+        <target state="translated">잘못된 X.509 저장소 용도입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Log_InstalledPackage">
@@ -483,7 +483,7 @@
       </trans-unit>
       <trans-unit id="MultiplePackageSignatureFiles">
         <source>The package contains multiple package signature files.</source>
-        <target state="translated">패키지에 여러 패키지 서명 파일이 있습니다.</target>
+        <target state="translated">패키지에 여러 패키지 시그니처 파일이 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MustContainAbsolutePath">
@@ -493,7 +493,7 @@
       </trans-unit>
       <trans-unit id="NoPackageSignatureFile">
         <source>The package does not contain a valid package signature file.</source>
-        <target state="translated">패키지에 유효한 패키지 서명 파일이 없습니다.</target>
+        <target state="translated">패키지에 유효한 패키지 시그니처 파일이 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NoRepositoryCountersignature">
@@ -725,12 +725,12 @@
       </trans-unit>
       <trans-unit id="SignFailureCertificateInvalidProviderType">
         <source>The following certificate cannot be used for package signing as the private key provider is unsupported:</source>
-        <target state="translated">프라이빗 키 공급자가 지원되지 않으므로 다음 인증서를 패키지 서명에 사용할 수 없습니다.</target>
+        <target state="translated">개인 키 공급자가 지원되지 않으므로 다음 인증서를 패키지 서명에 사용할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignatureContainsInvalidAttribute">
         <source>Package signature contains an invalid attribute: {0}</source>
-        <target state="translated">패키지 서명에 잘못된 특성이 있습니다. {0}</target>
+        <target state="translated">패키지 시그니처에 잘못된 특성이 있습니다. {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SignatureDebug_HashOidFound">
@@ -925,12 +925,12 @@
       </trans-unit>
       <trans-unit id="UnableToReadPackageHashInformation">
         <source>Package hash information could not be read from the package signature.</source>
-        <target state="translated">패키지 서명에서 패키지 해시 정보를 읽을 수 없습니다.</target>
+        <target state="translated">패키지 시그니처에서 패키지 해시 정보를 읽을 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnexpectedPackageSignatureVerificationError">
         <source>An unexpected error occurred while verifying a package signature.</source>
-        <target state="translated">패키지 서명을 확인하는 동안 예기치 않은 오류가 발생했습니다.</target>
+        <target state="translated">패키지 시그니처를 확인하는 동안 예기치 않은 오류가 발생했습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnrecognizedEnumValue">
@@ -950,7 +950,7 @@
       </trans-unit>
       <trans-unit id="UnsupportedSignatureFormatVersion">
         <source>The package signature format version is not supported. Updating your client may solve this problem.</source>
-        <target state="translated">패키지 서명 형식 버전이 지원되지 않습니다. 클라이언트를 업데이트하면 이 문제를 해결할 수 있습니다.</target>
+        <target state="translated">패키지 시그니처 형식 버전이 지원되지 않습니다. 클라이언트를 업데이트하면 이 문제를 해결할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UntrustedRoot_WithCertificateBundle">
@@ -960,8 +960,8 @@
     Certificate (PEM):
 {3}</source>
         <target state="translated">다음 X.509 루트 인증서는 {0}에 있는 인증서 번들에 없으므로 신뢰할 수 없습니다.  자세한 내용은 NU3042에 대한 설명서를 참조하세요.
-    제목: {1}
-    지문(SHA-256): {2}
+    제목:  {1}
+    지문(SHA-256):  {2}
     인증서(PEM):
 {3}</target>
         <note>0 is a file path, 1 is a certificate subject, 2 is a certificate fingerprint, and 3 is a PEM-encoded certificate.</note>

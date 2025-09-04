@@ -18,10 +18,6 @@ namespace NuGet.PackageManagement.UI.TestContract
     [Export(typeof(NuGetApexUITestService))]
     public class NuGetApexUITestService
     {
-        public NuGetApexUITestService()
-        {
-        }
-
         public ApexTestUIProject GetApexTestUIProject(string project, TimeSpan timeout, TimeSpan interval)
         {
             PackageManagerControl packageManagerControl = null;

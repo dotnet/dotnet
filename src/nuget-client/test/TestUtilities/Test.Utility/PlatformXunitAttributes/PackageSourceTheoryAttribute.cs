@@ -54,10 +54,6 @@ namespace NuGet.Test.Utility
 
             set => _skip = value;
         }
-
-        public PackageSourceTheoryAttribute()
-        {
-        }
     }
 
     [DataDiscoverer("NuGet.Test.Utility.PackageSourceDataDiscoverer", "Test.Utility")]
