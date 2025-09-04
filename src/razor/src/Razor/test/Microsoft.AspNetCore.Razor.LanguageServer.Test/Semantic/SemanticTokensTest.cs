@@ -387,18 +387,6 @@ public partial class SemanticTokensTest(ITestOutputHelper testOutput) : TagHelpe
 
     [Theory]
     [CombinatorialData]
-    public async Task GetSemanticTokens_Razor_ComponentAttributeAsync(bool supportsVSExtensions)
-    {
-        var documentText = """
-            @addTagHelper *, TestAssembly
-            <Component1 bool-val=""true""></Component1>
-            """;
-
-        await VerifySemanticTokensAsync(documentText, supportsVSExtensions: supportsVSExtensions, isRazorFile: true);
-    }
-
-    [Theory]
-    [CombinatorialData]
     public async Task GetSemanticTokens_Razor_ComponentAttribute_DoesntGetABackground(bool supportsVSExtensions)
     {
         // Need C# around the component for the C# range to be valid, to correctly validate the attribute handling

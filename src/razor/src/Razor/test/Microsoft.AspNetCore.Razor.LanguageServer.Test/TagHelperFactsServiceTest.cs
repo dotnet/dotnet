@@ -250,6 +250,6 @@ public class TagHelperFactsServiceTest(ITestOutputHelper testOutput) : TagHelper
             });
         });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Component, importSources: default, tagHelpers);
+        return projectEngine.Process(sourceDocument, RazorFileKind.Component, importSources: default, tagHelpers);
     }
 }

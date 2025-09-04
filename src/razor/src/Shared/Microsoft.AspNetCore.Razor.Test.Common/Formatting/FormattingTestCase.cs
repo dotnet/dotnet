@@ -14,24 +14,21 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 internal sealed class FormattingTestCase : XunitTestCase
 {
     private bool _shouldFlipLineEndings;
-    private bool _forceRuntimeCodeGeneration;
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]
     public FormattingTestCase() { }
 
-    public FormattingTestCase(bool shouldFlipLineEndings, bool forceRuntimeCodeGeneration, IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, TestMethodDisplayOptions defaultMethodDisplayOptions, ITestMethod testMethod, object[]? testMethodArguments = null)
+    public FormattingTestCase(bool shouldFlipLineEndings, IMessageSink diagnosticMessageSink, TestMethodDisplay defaultMethodDisplay, TestMethodDisplayOptions defaultMethodDisplayOptions, ITestMethod testMethod, object[]? testMethodArguments = null)
         : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, testMethodArguments)
     {
         _shouldFlipLineEndings = shouldFlipLineEndings;
-        _forceRuntimeCodeGeneration = forceRuntimeCodeGeneration;
     }
 
     protected override string GetDisplayName(IAttributeInfo factAttribute, string displayName)
     {
         return base.GetDisplayName(factAttribute, displayName) +
-            (_shouldFlipLineEndings ? " (LF)" : " (CRLF)") +
-            (_forceRuntimeCodeGeneration ? " (FUSE)" : " "); // A single space here is important here for uniqueness!
+            (_shouldFlipLineEndings ? " (LF)" : " (CRLF)");
     }
 
     protected override string GetSkipReason(IAttributeInfo factAttribute)
@@ -50,7 +47,6 @@ internal sealed class FormattingTestCase : XunitTestCase
         constructorArguments[0] = new FormattingTestContext
         {
             ShouldFlipLineEndings = _shouldFlipLineEndings,
-            ForceRuntimeCodeGeneration = _forceRuntimeCodeGeneration,
             CreatedByFormattingDiscoverer = true
         };
         return base.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
@@ -59,21 +55,18 @@ internal sealed class FormattingTestCase : XunitTestCase
     public override void Deserialize(IXunitSerializationInfo data)
     {
         _shouldFlipLineEndings = data.GetValue<bool>(nameof(_shouldFlipLineEndings));
-        _forceRuntimeCodeGeneration = data.GetValue<bool>(nameof(_forceRuntimeCodeGeneration));
         base.Deserialize(data);
     }
 
     public override void Serialize(IXunitSerializationInfo data)
     {
         data.AddValue(nameof(_shouldFlipLineEndings), _shouldFlipLineEndings);
-        data.AddValue(nameof(_forceRuntimeCodeGeneration), _forceRuntimeCodeGeneration);
         base.Serialize(data);
     }
 
     protected override string GetUniqueID()
     {
         return base.GetUniqueID() +
-            (_shouldFlipLineEndings ? "lf" : "crlf") +
-            (_forceRuntimeCodeGeneration ? "FUSE" : "NOFUSE");
+            (_shouldFlipLineEndings ? "lf" : "crlf");
     }
 }

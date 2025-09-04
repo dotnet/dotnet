@@ -271,6 +271,34 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
     }
 
     [Fact]
+    public void GetLanguageKind_HtmlAtCSharpBraceLeftAssociative()
+    {
+        // Arrange
+        TestCode code = "@if (true) {$$ <br /> }";
+        var codeDocument = CreateCodeDocument(code);
+
+        // Act
+        var languageKind = codeDocument.GetLanguageKind(code.Position, rightAssociative: false);
+
+        // Assert
+        Assert.Equal(RazorLanguageKind.CSharp, languageKind);
+    }
+
+    [Fact]
+    public void GetLanguageKind_HtmlAtCSharpBraceRightAssociative()
+    {
+        // Arrange
+        TestCode code = "@if (true) {$$ <br /> }";
+        var codeDocument = CreateCodeDocument(code);
+
+        // Act
+        var languageKind = codeDocument.GetLanguageKind(code.Position, rightAssociative: true);
+
+        // Assert
+        Assert.Equal(RazorLanguageKind.Html, languageKind);
+    }
+
+    [Fact]
     public void GetLanguageKind_HtmlInCSharpLeftAssociative()
     {
         // Arrange
@@ -281,7 +309,7 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
         var languageKind = codeDocument.GetLanguageKind(code.Position, rightAssociative: false);
 
         // Assert
-        Assert.Equal(RazorLanguageKind.CSharp, languageKind);
+        Assert.Equal(RazorLanguageKind.Html, languageKind);
     }
 
     [Fact]
@@ -335,6 +363,6 @@ public class RazorCodeDocumentExtensionsTest(ITestOutputHelper testOutput) : Too
             });
         });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
+        return projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: default, tagHelpers);
     }
 }
