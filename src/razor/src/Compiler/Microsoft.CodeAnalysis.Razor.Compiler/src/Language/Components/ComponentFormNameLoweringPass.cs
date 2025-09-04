@@ -21,8 +21,8 @@ internal sealed class ComponentFormNameLoweringPass : ComponentIntermediateNodeP
         var references = documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>();
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
-            if (node.TagHelper.IsFormNameTagHelper())
+            var node = reference.Node;
+            if (node.TagHelper.Kind == TagHelperKind.FormName)
             {
                 var parent = reference.Parent;
 

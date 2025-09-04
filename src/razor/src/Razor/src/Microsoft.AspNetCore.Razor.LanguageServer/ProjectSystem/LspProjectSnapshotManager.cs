@@ -12,7 +12,7 @@ internal class LspProjectSnapshotManager(
     IProjectEngineFactoryProvider projectEngineFactoryProvider,
     LanguageServerFeatureOptions languageServerFeatureOptions,
     ILoggerFactory loggerFactory)
-    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions.ToCompilerOptions(), languageServerFeatureOptions, loggerFactory, initializer: AddMiscFilesProject)
+    : ProjectSnapshotManager(projectEngineFactoryProvider, languageServerFeatureOptions, loggerFactory, initializer: AddMiscFilesProject)
 {
     private static void AddMiscFilesProject(Updater updater)
     {
