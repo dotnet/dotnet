@@ -50,13 +50,13 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // here and then ignoring them.
         Assert.Empty(item.Diagnostics);
         Assert.False(item.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, item.Kind);
-        Assert.Equal(bool.TrueString, item.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.EventHandler.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.EventHandler, item.Kind);
+        Assert.Equal(RuntimeKind.None, item.RuntimeKind);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
-        Assert.False(item.IsComponentOrChildContentTagHelper);
+        Assert.False(item.IsComponentOrChildContentTagHelper());
         Assert.True(item.CaseSensitive);
+        Assert.True(item.ClassifyAttributesOnly);
 
         Assert.Equal(
             "Sets the '@onclick' attribute to the provided string or delegate value. " +
@@ -67,7 +67,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Equal("Microsoft.AspNetCore.Components", item.AssemblyName);
         Assert.Equal("onclick", item.Name);
         Assert.Equal("Test.EventHandlers", item.DisplayName);
-        Assert.Equal("Test.EventHandlers", item.GetTypeName());
+        Assert.Equal("Test.EventHandlers", item.TypeName);
 
         // The tag matching rule for an event handler is just the attribute name
         var rule = Assert.Single(item.TagMatchingRules);
@@ -90,7 +90,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.EventHandler, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -156,13 +156,13 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // here and then ignoring them.
         Assert.Empty(item.Diagnostics);
         Assert.False(item.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, item.Kind);
-        Assert.Equal(bool.TrueString, item.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.EventHandler.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.EventHandler, item.Kind);
+        Assert.Equal(RuntimeKind.None, item.RuntimeKind);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
-        Assert.False(item.IsComponentOrChildContentTagHelper);
+        Assert.False(item.IsComponentOrChildContentTagHelper());
         Assert.True(item.CaseSensitive);
+        Assert.True(item.ClassifyAttributesOnly);
 
         Assert.Equal(
             "Sets the '@onclick' attribute to the provided string or delegate value. " +
@@ -173,7 +173,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         Assert.Equal("Microsoft.AspNetCore.Components", item.AssemblyName);
         Assert.Equal("onclick", item.Name);
         Assert.Equal("Test.EventHandlers", item.DisplayName);
-        Assert.Equal("Test.EventHandlers", item.GetTypeName());
+        Assert.Equal("Test.EventHandlers", item.TypeName);
 
         Assert.Equal(3, item.TagMatchingRules.Length);
 
@@ -227,7 +227,7 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
         // Invariants
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.EventHandler.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.EventHandler, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -348,7 +348,5 @@ public class EventHandlerTagHelperDescriptorProviderTest : TagHelperDescriptorPr
     }
 
     private static TagHelperDescriptor[] GetEventHandlerTagHelpers(TagHelperDescriptorProviderContext context)
-    {
-        return ExcludeBuiltInComponents(context).Where(t => t.IsEventHandlerTagHelper()).ToArray();
-    }
+        => [.. ExcludeBuiltInComponents(context).Where(static t => t.Kind == TagHelperKind.EventHandler)];
 }

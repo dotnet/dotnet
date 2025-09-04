@@ -98,12 +98,12 @@ public sealed class CodeRenderingContext : IDisposable
     {
         ArgHelper.ThrowIfNull(node);
 
-        if (node.Source == null)
+        if (node.Source is not SourceSpan nodeSource)
         {
             return;
         }
 
-        AddSourceMappingFor(node.Source.Value);
+        AddSourceMappingFor(nodeSource);
     }
 
     public void AddSourceMappingFor(SourceSpan source, int offset = 0)

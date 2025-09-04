@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,48 +14,19 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Endpoints;
 
 internal partial class RazorCustomMessageTarget
 {
-    // Called by the Razor Language Server to provide ranged semantic tokens from the platform.
-    [JsonRpcMethod(CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public Task<ProvideSemanticTokensResponse?> ProvideMinimalRangeSemanticTokensAsync(
-        ProvideSemanticTokensRangesParams inputParams,
-        CancellationToken cancellationToken)
-    {
-        Debug.Assert(inputParams.Ranges.Length == 1);
-
-        return ProvideSemanticTokensAsync(
-            semanticTokensParams: inputParams,
-            lspMethodName: Methods.TextDocumentSemanticTokensRangeName,
-            requestParams: new SemanticTokensRangeParams
-            {
-                TextDocument = inputParams.TextDocument,
-                Range = inputParams.Ranges[0],
-            },
-            cancellationToken);
-    }
-
     [JsonRpcMethod(CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, UseSingleObjectParameterDeserialization = true)]
-    public Task<ProvideSemanticTokensResponse?> ProvidePreciseRangeSemanticTokensAsync(
-        ProvideSemanticTokensRangesParams inputParams,
-        CancellationToken cancellationToken)
-    {
-        return ProvideSemanticTokensAsync(
-            semanticTokensParams: inputParams,
-            lspMethodName: RazorLSPConstants.RoslynSemanticTokenRangesEndpointName,
-            requestParams: new SemanticTokensRangesParams()
-            {
-                TextDocument = inputParams.TextDocument,
-                Ranges = inputParams.Ranges
-            },
-            cancellationToken);
-    }
-
-    private async Task<ProvideSemanticTokensResponse?> ProvideSemanticTokensAsync(
+    public async Task<ProvideSemanticTokensResponse?> ProvidePreciseRangeSemanticTokensAsync(
         ProvideSemanticTokensRangesParams semanticTokensParams,
-        string lspMethodName,
-        SemanticTokensRangeParams requestParams,
         CancellationToken cancellationToken)
     {
         _logger.LogDebug($"Semantic tokens request for {semanticTokensParams.Ranges.Max(static r => r.End.Line)} max line number, host version {semanticTokensParams.RequiredHostDocumentVersion}, correlation ID {semanticTokensParams.CorrelationId}");
+
+        var lspMethodName = RazorLSPConstants.RoslynSemanticTokenRangesEndpointName;
+        var requestParams = new SemanticTokensRangesParams()
+        {
+            TextDocument = semanticTokensParams.TextDocument,
+            Ranges = semanticTokensParams.Ranges
+        };
 
         var (synchronized, csharpDoc) = await TrySynchronizeVirtualDocumentAsync<CSharpVirtualDocumentSnapshot>(
             semanticTokensParams.RequiredHostDocumentVersion,

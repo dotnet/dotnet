@@ -44,8 +44,8 @@ internal static class IDocumentSnapshotExtensions
         foreach (var tagHelper in tagHelpers)
         {
             // Check the typename and namespace match
-            if (documentSnapshot.IsPathCandidateForComponent(tagHelper.GetTypeNameIdentifier().AsMemory()) &&
-                razorCodeDocument.ComponentNamespaceMatches(tagHelper.GetTypeNamespace()))
+            if (documentSnapshot.IsPathCandidateForComponent(tagHelper.TypeNameIdentifier.AsMemory()) &&
+                razorCodeDocument.ComponentNamespaceMatches(tagHelper.TypeNamespace))
             {
                 return tagHelper;
             }

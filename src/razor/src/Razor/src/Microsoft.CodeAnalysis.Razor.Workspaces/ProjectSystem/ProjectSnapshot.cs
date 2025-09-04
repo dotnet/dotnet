@@ -22,7 +22,6 @@ internal sealed class ProjectSnapshot(ProjectState state) : IProjectSnapshot, IL
     private Dictionary<string, DocumentSnapshot>? _filePathToDocumentMap;
 
     public HostProject HostProject => _state.HostProject;
-    public RazorCompilerOptions CompilerOptions => _state.CompilerOptions;
 
     public ProjectKey Key => _state.HostProject.Key;
     public RazorConfiguration Configuration => _state.HostProject.Configuration;

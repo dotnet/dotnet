@@ -12,6 +12,4 @@ namespace Microsoft.AspNetCore.Razor.Test.Common;
 internal sealed class FormattingTestFactAttribute : FactAttribute
 {
     public bool SkipFlipLineEnding { get; set; }
-    public bool SkipFlipLineEndingInOldEngine { get; set; }
-    public bool SkipOldFormattingEngine { get; set; }
 }

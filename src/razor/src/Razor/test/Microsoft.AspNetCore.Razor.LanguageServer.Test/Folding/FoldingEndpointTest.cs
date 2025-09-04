@@ -25,15 +25,15 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
                 <div>
                   Hello World
                 </div>
-              }|]
-            </div>
+              }
+            |]</div>
 
             [|@if (true) {
               <div>
                 Hello World
               </div>
-            }|]
-
+            }
+            |]
             [|@if (true) {
             }|]
             """);
@@ -68,8 +68,8 @@ public class FoldingEndpointTest(ITestOutputHelper testOutput) : SingleServerDel
                     Goodbye World
                 </div>
                 }
-              }|]
-            </div>
+              }
+            |]</div>
             """);
 
     [Fact]
