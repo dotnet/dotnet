@@ -114,6 +114,11 @@ parameters:
   type: boolean
   default: false
 
+# Create and publish the source artifacts
+- name: createSourceArtifacts
+  type: boolean
+  default: false
+
 # Skip the build step (this would be used when wanting to run tests only)
 - name: skipBuild
   type: boolean
@@ -274,7 +279,9 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if eq(parameters.signType, 'DryRun') }}:
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -424,18 +431,13 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  # https://github.com/dotnet/dotnet/issues/1758
-  # After a re-boostrap:
-  # - Uncomment the line below, replacing the one after it.
-  # - Uncomment the two parameter lines at the end of the template parameters.
-  # - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
-        # ${{ if ne(parameters.signType, 'Real') }}:
-        #   microbuildUseESRP: false
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -565,6 +567,17 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
+            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+              # Do not enable source artifact creation when not building from a git repo.
+              # We strip the .git/ directory when building from archive,
+              # so it's not possible to create the artifacts in that mode.
+              echo "Cannot create source artifacts when building from archive."
+              exit 1
+            fi
+          fi
+          
+          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
@@ -600,14 +613,6 @@ jobs:
         ${{ if eq(parameters.sign, 'true') }}:
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-
-    - script: |
-        if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
-          rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
-        fi
-      displayName: Clean up unwanted Source Build Artifacts
-      continueOnError: true
-      condition: succeededOrFailed()
 
     - ${{ if ne(parameters.runOnline, 'True' )}}:
       - script: |
@@ -756,3 +761,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+
