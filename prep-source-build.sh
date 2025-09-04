@@ -127,47 +127,6 @@ while :; do
   shift
 done
 
-# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
-# or a pre-existing .dotnet SDK directory must exist.
-if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ERROR: --no-sdk requires --no-bootstrap or a pre-existing .dotnet SDK directory.  Exiting..."
-  exit 1
-fi
-
-# Check to make sure curl exists to download the archive files
-if ! command -v curl &> /dev/null
-then
-  echo "  ERROR: curl not found.  Exiting..."
-  exit 1
-fi
-
-# Check if Private.SourceBuilt artifacts archive exists
-downloadPsbArtifacts=$downloadArtifacts
-packagesArchiveDir="$packagesDir/archive/"
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
-  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadPsbArtifacts=false
-fi
-
-# Check if shared components archive exists
-downloadSharedComponentsArtifacts=$downloadArtifacts
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
-  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadSharedComponentsArtifacts=false
-fi
-
-# Check if Private.SourceBuilt prebuilts archive exists
-if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
-  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadPrebuilts=false
-fi
-
-# Check if dotnet is installed
-if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
-  echo "  ./.dotnet SDK directory exists...it will not be installed"
-  installDotnet=false;
-fi
-
 # Helper to extract a property value from an XML file
 function GetXmlPropertyValue {
   local propName="$1"
@@ -295,9 +254,54 @@ function BootstrapArtifacts {
   rm -rf "$workingDir"
 }
 
+# Attempting to bootstrap without an SDK will fail. So either the --no-sdk flag must be passed
+# or a pre-existing .dotnet SDK directory must exist.
+if [ "$buildBootstrap" == true ] && [ "$installDotnet" == false ] && [ ! -d "$REPO_ROOT/.dotnet" ]; then
+  echo "  ERROR: --no-sdk requires --no-bootstrap or a pre-existing .dotnet SDK directory.  Exiting..."
+  exit 1
+fi
+
+# Check to make sure curl exists to download the archive files
+if ! command -v curl &> /dev/null
+then
+  echo "  ERROR: curl not found.  Exiting..."
+  exit 1
+fi
+
+# Check if Private.SourceBuilt artifacts archive exists
+downloadPsbArtifacts=$downloadArtifacts
+packagesArchiveDir="$packagesDir/archive/"
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarballPattern} ]; then
+  echo "  $artifactsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPsbArtifacts=false
+fi
+
+# Check if shared components archive exists
+downloadSharedComponentsArtifacts=$downloadArtifacts
+if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
+  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadSharedComponentsArtifacts=false
+fi
+
+# Check if Private.SourceBuilt prebuilts archive exists
+if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
+  echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
+  downloadPrebuilts=false
+fi
+
+# Check if dotnet is installed
+expectedSdkVersion=$(GetXmlPropertyValue "PrivateSourceBuiltSdkVersion" "$REPO_ROOT/eng/Versions.props")
+if [ "$installDotnet" == true ] && [ -d "$REPO_ROOT/.dotnet" ]; then
+  installedVersions=$("$REPO_ROOT/.dotnet/dotnet" --list-sdks | awk '{print $1}')
+  if grep -qx "$expectedSdkVersion" <<< "${installedVersions[*]}"; then
+    echo "  Skipping SDK installation - version $expectedSdkVersion detected"
+    installDotnet=false
+  fi
+fi
+
 # Check for the version of dotnet to install
 if [ "$installDotnet" == true ]; then
-  echo "  Installing dotnet..."
+  echo "  Installing .NET SDK $expectedSdkVersion"
   use_installed_dotnet_cli=false
   (source ./eng/common/tools.sh && InitializeDotNetCli true)
 fi

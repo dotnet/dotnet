@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -12,6 +13,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks.Services;
 
+public record ProcessEnvironmentVariable(string Name, string Value);
 public record ProcessResult(string Output, string Error, int ExitCode);
 
 public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
@@ -19,7 +21,12 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
     private TaskLoggingHelper Log { get; } = log;
     private TimeSpan Timeout { get; } = TimeSpan.FromMilliseconds(timeout);
 
-    public async Task<ProcessResult> RunProcessAsync(string command, string arguments, string workingDirectory = "", bool printOutput = false)
+    public async Task<ProcessResult> RunProcessAsync(
+        string command,
+        string arguments,
+        List<ProcessEnvironmentVariable>? environmentVariables = null,
+        string workingDirectory = "",
+        bool printOutput = false)
     {
         var processInfo = new ProcessStartInfo
         {
@@ -31,6 +38,14 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
             CreateNoWindow = true,
             WorkingDirectory = workingDirectory
         };
+
+        if (environmentVariables != null)
+        {
+            foreach (ProcessEnvironmentVariable env in environmentVariables)
+            {
+                processInfo.EnvironmentVariables.Add(env.Name, env.Value);
+            }
+        }
 
         using var process = new Process { StartInfo = processInfo, EnableRaisingEvents = true };
 
@@ -51,7 +66,7 @@ public class ProcessService(TaskLoggingHelper log, int timeout = 10 * 1000)
             outputBuilder.AppendLine(e.Data);
             if (printOutput)
             {
-                Log.LogMessage(e.Data);
+                Log.LogMessage(MessageImportance.High, e.Data);
             }
         };
 
