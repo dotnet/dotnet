@@ -219,6 +219,8 @@
                                 Group="ARCADE"
                                 Version="$(ArcadeBootstrapVersion)"
                                 Location="$(BootstrapPackagesDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)" />
+    <!-- Make the WindowsDesktop SDK override opt-in for repos that need it. Keep this line until the VMR updates to a new SDK. -->
+    <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>
 
   <ItemGroup>
