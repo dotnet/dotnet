@@ -91,14 +91,14 @@ internal static partial class RazorCodeDocumentExtensions
         return false;
     }
 
-    public static bool ComponentNamespaceMatches(this RazorCodeDocument razorCodeDocument, string fullyQualifiedNamespace)
+    public static bool ComponentNamespaceMatches(this RazorCodeDocument razorCodeDocument, string? fullyQualifiedNamespace)
     {
         var namespaceNode = (NamespaceDeclarationIntermediateNode)razorCodeDocument
             .GetRequiredDocumentNode()
             .FindDescendantNodes<IntermediateNode>()
             .First(static n => n is NamespaceDeclarationIntermediateNode);
 
-        return namespaceNode.Content == fullyQualifiedNamespace;
+        return namespaceNode.Name == fullyQualifiedNamespace;
     }
 
     public static RazorLanguageKind GetLanguageKind(this RazorCodeDocument codeDocument, int hostDocumentIndex, bool rightAssociative)

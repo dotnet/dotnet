@@ -17,6 +17,21 @@
         <target state="translated">IRemoteJsonService 方法中的参数类型无效</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImmutableArrayBoxingDescription">
+        <source>Calling EnumerableExtensions or ReadOnlyListExtensions methods on ImmutableArray&lt;T&gt; causes the struct to be boxed, which creates unnecessary allocations. Use the corresponding ImmutableArray&lt;T&gt; extension methods instead.</source>
+        <target state="new">Calling EnumerableExtensions or ReadOnlyListExtensions methods on ImmutableArray&lt;T&gt; causes the struct to be boxed, which creates unnecessary allocations. Use the corresponding ImmutableArray&lt;T&gt; extension methods instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImmutableArrayBoxingMessage">
+        <source>Call to '{0}' on ImmutableArray&lt;T&gt; causes boxing. Consider using the ImmutableArray&lt;T&gt; extension method instead.</source>
+        <target state="new">Call to '{0}' on ImmutableArray&lt;T&gt; causes boxing. Consider using the ImmutableArray&lt;T&gt; extension method instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImmutableArrayBoxingTitle">
+        <source>ImmutableArray&lt;T&gt; is being boxed to IReadOnlyList&lt;T&gt;</source>
+        <target state="new">ImmutableArray&lt;T&gt; is being boxed to IReadOnlyList&lt;T&gt;</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PooledArrayBuilderAsRefDescription">
         <source>Instance of PooledArrayBuilder&lt;T&gt;.AsRef() must be a 'using' variable.</source>
         <target state="translated">PooledArrayBuilder&lt;T&gt;.AsRef() 的实例必须是 'using' 变量。</target>

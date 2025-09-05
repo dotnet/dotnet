@@ -63,22 +63,19 @@ public static class RazorProjectEngineBuilderExtensions
 
         feature.ConfigureNamespace.Add((RazorCodeDocument codeDocument, NamespaceDeclarationIntermediateNode node) =>
         {
-            node.Content = "Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles";
+            node.Name = "Microsoft.AspNetCore.Razor.Language.IntegrationTests.TestFiles";
         });
 
         feature.ConfigureClass.Add((RazorCodeDocument codeDocument, ClassDeclarationIntermediateNode node) =>
         {
-            node.ClassName = testFileName.Replace('/', '_');
-            node.Modifiers.Clear();
-            node.Modifiers.Add("public");
+            node.Name = testFileName.Replace('/', '_');
+            node.Modifiers = ["public"];
         });
 
         feature.ConfigureMethod.Add((RazorCodeDocument codeDocument, MethodDeclarationIntermediateNode node) =>
         {
-            node.Modifiers.Clear();
-            node.Modifiers.Add("public");
-            node.Modifiers.Add("async");
-            node.MethodName = "ExecuteAsync";
+            node.Modifiers = ["public", "async"];
+            node.Name = "ExecuteAsync";
             node.ReturnType = typeof(Task).FullName;
         });
 

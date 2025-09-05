@@ -13,7 +13,6 @@ if ($flags -eq '') {
 $knownFlags = @{
     ShowAllCSharpCodeActions = "Razor.LSP.ShowAllCSharpCodeActions";
     IncludeProjectKeyInGeneratedFilePath = "Razor.LSP.IncludeProjectKeyInGeneratedFilePath";
-    UsePreciseSemanticTokenRanges = "Razor.LSP.UsePreciseSemanticTokenRanges";
     UseRazorCohostServer = "Razor.LSP.UseRazorCohostServer";
     DisableRazorLanguageServer = "Razor.LSP.DisableRazorLanguageServer";
     ForceRuntimeCodeGeneration = "Razor.LSP.ForceRuntimeCodeGeneration";

@@ -128,6 +128,72 @@ internal static partial class ImmutableArrayExtensions
         return ImmutableCollectionsMarshal.AsImmutableArray(result);
     }
 
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="selector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="arg">An argument to pass to <paramref name="selector"/>.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAsArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, TResult> selector)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        var result = new TResult[length];
+
+        for (var i = 0; i < length; i++)
+        {
+            result[i] = selector(array[i], arg);
+        }
+
+        return ImmutableCollectionsMarshal.AsImmutableArray(result);
+    }
+
+    /// <summary>
+    ///  Projects each element of an <see cref="ImmutableArray{T}"/> into a new form by incorporating the element's index.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="selector"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector"/>.</typeparam>
+    /// <param name="array">An array of values to invoke a transform function on.</param>
+    /// <param name="arg">An argument to pass to <paramref name="selector"/>.</param>
+    /// <param name="selector">
+    ///  A transform function to apply to each element; the third parameter of the function represents the index of the element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> whose elements are the result of invoking the transform function
+    ///  on each element of <paramref name="array"/>.
+    /// </returns>
+    public static ImmutableArray<TResult> SelectAsArray<T, TArg, TResult>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, int, TResult> selector)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        var result = new TResult[length];
+
+        for (var i = 0; i < length; i++)
+        {
+            result[i] = selector(array[i], arg, i);
+        }
+
+        return ImmutableCollectionsMarshal.AsImmutableArray(result);
+    }
+
     public static ImmutableArray<TResult> SelectManyAsArray<TSource, TResult>(this IReadOnlyCollection<TSource>? source, Func<TSource, ImmutableArray<TResult>> selector)
     {
         if (source is null || source.Count == 0)
@@ -144,27 +210,49 @@ internal static partial class ImmutableArrayExtensions
         return builder.ToImmutableAndClear();
     }
 
-    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> source, Func<T, bool> predicate)
+    /// <summary>
+    ///  Filters an <see cref="ImmutableArray{T}"/> based on a predicate.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <param name="array">An <see cref="ImmutableArray{T}"/> to filter.</param>
+    /// <param name="predicate">A function to test each element for a condition.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> that contains elements from the input array
+    ///  that satisfy the condition.
+    /// </returns>
+    /// <remarks>
+    ///  This method uses an optimized algorithm that avoids allocating a new array if all elements
+    ///  match the predicate (returns the original array) or if no elements match (returns an empty array).
+    /// </remarks>
+    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> array, Func<T, bool> predicate)
     {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
         using var builder = new PooledArrayBuilder<T>();
         var none = true;
         var all = true;
 
-        var n = source.Length;
-        for (var i = 0; i < n; i++)
+        for (var i = 0; i < length; i++)
         {
-            var a = source[i];
+            var item = array[i];
 
-            if (predicate(a))
+            if (predicate(item))
             {
                 none = false;
+
                 if (all)
                 {
                     continue;
                 }
 
                 Debug.Assert(i > 0);
-                builder.Add(a);
+
+                builder.Add(item);
             }
             else
             {
@@ -175,52 +263,80 @@ internal static partial class ImmutableArrayExtensions
                 }
 
                 Debug.Assert(i > 0);
+
+                // We found at least one item that doesn't match the predicate.
+                // If this is the first one, we need to copy all the previous items
+                // that matched the predicate.
                 if (all)
                 {
                     all = false;
-                    for (var j = 0; j < i; j++)
-                    {
-                        builder.Add(source[j]);
-                    }
+                    builder.AddRange(array.AsSpan()[..i]);
                 }
             }
         }
 
+        Debug.Assert(!(none && all));
+
         if (all)
         {
-            return source;
+            return array;
         }
-        else if (none)
+
+        if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
-        else
-        {
-            return builder.ToImmutableAndClear();
-        }
+
+        return builder.ToImmutableAndClear();
     }
 
-    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T>.Builder source, Func<T, bool> predicate)
+    /// <summary>
+    ///  Filters an <see cref="ImmutableArray{T}"/> based on a predicate. Each element's index is used in
+    ///  the logic of the predicate function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <param name="array">An <see cref="ImmutableArray{T}"/> to filter.</param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition; the second parameter of the function
+    ///  represents the index of the element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> that contains elements from the input array
+    ///  that satisfy the condition.
+    /// </returns>
+    /// <remarks>
+    ///  This method uses an optimized algorithm that avoids allocating a new array if all elements
+    ///  match the predicate (returns the original array) or if no elements match (returns an empty array).
+    /// </remarks>
+    public static ImmutableArray<T> WhereAsArray<T>(this ImmutableArray<T> array, Func<T, int, bool> predicate)
     {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
         using var builder = new PooledArrayBuilder<T>();
         var none = true;
         var all = true;
 
-        var n = source.Count;
-        for (var i = 0; i < n; i++)
+        for (var i = 0; i < length; i++)
         {
-            var a = source[i];
+            var item = array[i];
 
-            if (predicate(a))
+            if (predicate(item, i))
             {
                 none = false;
+
                 if (all)
                 {
                     continue;
                 }
 
                 Debug.Assert(i > 0);
-                builder.Add(a);
+
+                builder.Add(item);
             }
             else
             {
@@ -231,29 +347,499 @@ internal static partial class ImmutableArrayExtensions
                 }
 
                 Debug.Assert(i > 0);
+
+                // We found at least one item that doesn't match the predicate.
+                // If this is the first one, we need to copy all the previous items
+                // that matched the predicate.
                 if (all)
                 {
                     all = false;
-                    for (var j = 0; j < i; j++)
-                    {
-                        builder.Add(source[j]);
-                    }
+                    builder.AddRange(array.AsSpan()[..i]);
                 }
             }
         }
 
+        Debug.Assert(!(none && all));
+
         if (all)
         {
-            return source.ToImmutable();
+            return array;
         }
-        else if (none)
+
+        if (none)
         {
-            return ImmutableArray<T>.Empty;
+            return [];
         }
-        else
+
+        return builder.ToImmutableAndClear();
+    }
+
+    /// <summary>
+    ///  Filters an <see cref="ImmutableArray{T}"/> based on a predicate.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="predicate"/>.</typeparam>
+    /// <param name="array">An <see cref="ImmutableArray{T}"/> to filter.</param>
+    /// <param name="arg">An argument to pass to <paramref name="predicate"/>.</param>
+    /// <param name="predicate">A function to test each element for a condition.</param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> that contains elements from the input array
+    ///  that satisfy the condition.
+    /// </returns>
+    /// <remarks>
+    ///  This method uses an optimized algorithm that avoids allocating a new array if all elements
+    ///  match the predicate (returns the original array) or if no elements match (returns an empty array).
+    /// </remarks>
+    public static ImmutableArray<T> WhereAsArray<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        var length = array.Length;
+
+        if (length == 0)
         {
-            return builder.ToImmutableAndClear();
+            return [];
         }
+
+        using var builder = new PooledArrayBuilder<T>();
+        var none = true;
+        var all = true;
+
+        for (var i = 0; i < length; i++)
+        {
+            var item = array[i];
+
+            if (predicate(item, arg))
+            {
+                none = false;
+
+                if (all)
+                {
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+
+                builder.Add(item);
+            }
+            else
+            {
+                if (none)
+                {
+                    all = false;
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+
+                // We found at least one item that doesn't match the predicate.
+                // If this is the first one, we need to copy all the previous items
+                // that matched the predicate.
+                if (all)
+                {
+                    all = false;
+                    builder.AddRange(array.AsSpan()[..i]);
+                }
+            }
+        }
+
+        Debug.Assert(!(none && all));
+
+        if (all)
+        {
+            return array;
+        }
+
+        if (none)
+        {
+            return [];
+        }
+
+        return builder.ToImmutableAndClear();
+    }
+
+    /// <summary>
+    ///  Filters an <see cref="ImmutableArray{T}"/> based on a predicate. Each element's index is used in
+    ///  the logic of the predicate function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in <paramref name="array"/>.</typeparam>
+    /// <typeparam name="TArg">The type of the argument to pass to <paramref name="predicate"/>.</typeparam>
+    /// <param name="array">An <see cref="ImmutableArray{T}"/> to filter.</param>
+    /// <param name="arg">An argument to pass to <paramref name="predicate"/>.</param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition; the third parameter of the function
+    ///  represents the index of the element.
+    /// </param>
+    /// <returns>
+    ///  Returns a new <see cref="ImmutableArray{T}"/> that contains elements from the input array
+    ///  that satisfy the condition.
+    /// </returns>
+    /// <remarks>
+    ///  This method uses an optimized algorithm that avoids allocating a new array if all elements
+    ///  match the predicate (returns the original array) or if no elements match (returns an empty array).
+    /// </remarks>
+    public static ImmutableArray<T> WhereAsArray<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, int, bool> predicate)
+    {
+        var length = array.Length;
+
+        if (length == 0)
+        {
+            return [];
+        }
+
+        using var builder = new PooledArrayBuilder<T>();
+        var none = true;
+        var all = true;
+
+        for (var i = 0; i < length; i++)
+        {
+            var item = array[i];
+
+            if (predicate(item, arg, i))
+            {
+                none = false;
+
+                if (all)
+                {
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+
+                builder.Add(item);
+            }
+            else
+            {
+                if (none)
+                {
+                    all = false;
+                    continue;
+                }
+
+                Debug.Assert(i > 0);
+
+                // We found at least one item that doesn't match the predicate.
+                // If this is the first one, we need to copy all the previous items
+                // that matched the predicate.
+                if (all)
+                {
+                    all = false;
+                    builder.AddRange(array.AsSpan()[..i]);
+                }
+            }
+        }
+
+        Debug.Assert(!(none && all));
+
+        if (all)
+        {
+            return array;
+        }
+
+        if (none)
+        {
+            return [];
+        }
+
+        return builder.ToImmutableAndClear();
+    }
+
+    /// <summary>
+    ///  Determines whether any element of an array satisfies a condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> whose elements to apply the predicate to.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  <see langword="true"/> if the array is not empty and at least one of its elements passes
+    ///  the test in the specified predicate; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool Any<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array)
+        {
+            if (predicate(item, arg))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///  Determines whether all elements of an array satisfy a condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> whose elements to apply the predicate to.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  <see langword="true"/> if every element of the array passes the test
+    ///  in the specified predicate, or if the array is empty; otherwise,
+    ///  <see langword="false"/>.</returns>
+    public static bool All<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array)
+        {
+            if (!predicate(item, arg))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    ///  Returns the first element in an array that satisfies a specified condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return an element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  The first element in the array that passes the test in the specified predicate function.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///  No element satisfies the condition in <paramref name="predicate"/>.
+    /// </exception>
+    public static T First<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array)
+        {
+            if (predicate(item, arg))
+            {
+                return item;
+            }
+        }
+
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
+    }
+
+    /// <summary>
+    ///  Returns the first element of the array that satisfies a condition or a default value if no such element is found.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return an element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  <see langword="default"/>(<typeparamref name="T"/>) if <paramref name="array"/> is empty or if no element
+    ///  passes the test specified by <paramref name="predicate"/>; otherwise, the first element in <paramref name="array"/>
+    ///  that passes the test specified by <paramref name="predicate"/>.
+    /// </returns>
+    public static T? FirstOrDefault<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array)
+        {
+            if (predicate(item, arg))
+            {
+                return item;
+            }
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    ///  Returns the last element of an array that satisfies a specified condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return an element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  The last element in the array that passes the test in the specified predicate function.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///  No element satisfies the condition in <paramref name="predicate"/>.
+    /// </exception>
+    public static T Last<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array.AsSpan().Reversed)
+        {
+            if (predicate(item, arg))
+            {
+                return item;
+            }
+        }
+
+        return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_no_matching_elements);
+    }
+
+    /// <summary>
+    ///  Returns the last element of an array that satisfies a condition or a default value if no such element is found.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return an element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <returns>
+    ///  <see langword="default"/>(<typeparamref name="T"/>) if <paramref name="array"/> is empty or if no element
+    ///  passes the test specified by <paramref name="predicate"/>; otherwise, the last element in <paramref name="array"/>
+    ///  that passes the test specified by <paramref name="predicate"/>.
+    /// </returns>
+    public static T? LastOrDefault<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        foreach (var item in array.AsSpan().Reversed)
+        {
+            if (predicate(item, arg))
+            {
+                return item;
+            }
+        }
+
+        return default;
+    }
+
+    /// <summary>
+    ///  Returns the last element of an array that satisfies a condition, or a specified default value if no such element is found.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return an element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test each element for a condition.
+    /// </param>
+    /// <param name="defaultValue">
+    ///  The default value to return if the array is empty or no element was found.
+    /// </param>
+    /// <returns>
+    ///  <paramref name="defaultValue"/> if <paramref name="array"/> is empty or if no element
+    ///  passes the test specified by <paramref name="predicate"/>; otherwise, the last element in <paramref name="array"/>
+    ///  that passes the test specified by <paramref name="predicate"/>.
+    /// </returns>
+    public static T LastOrDefault<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate, T defaultValue)
+    {
+        foreach (var item in array.AsSpan().Reversed)
+        {
+            if (predicate(item, arg))
+            {
+                return item;
+            }
+        }
+
+        return defaultValue;
+    }
+
+    /// <summary>
+    ///  Returns the only element of an array that satisfies a specified condition or a default value
+    ///  if no such element exists; this method throws an exception if more than one element satisfies the condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return a single element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test an element for a condition.
+    /// </param>
+    /// <returns>
+    ///  The single element of the array that satisfies the condition, or
+    ///  <see langword="default"/>(<typeparamref name="T"/>) if no such element is found.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///  More than one element satisfies the condition in <paramref name="predicate"/>.
+    /// </exception>
+    public static T? SingleOrDefault<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate)
+    {
+        var firstSeen = false;
+        T? result = default;
+
+        foreach (var item in array)
+        {
+            if (predicate(item, arg))
+            {
+                if (firstSeen)
+                {
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
+                }
+
+                firstSeen = true;
+                result = item;
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    ///  Returns the only element of an array that satisfies a specified condition, or a specified default value
+    ///  if no such element exists; this method throws an exception if more than one element satisfies the condition.
+    /// </summary>
+    /// <param name="array">
+    ///  An <see cref="ImmutableArray{T}"/> to return a single element from.
+    /// </param>
+    /// <param name="arg">
+    ///  An argument to pass to <paramref name="predicate"/>.
+    /// </param>
+    /// <param name="predicate">
+    ///  A function to test an element for a condition.
+    /// </param>
+    /// <param name="defaultValue">
+    ///  The default value to return if the array is empty or no element was found.
+    /// </param>
+    /// <returns>
+    ///  The single element of the array that satisfies the condition, or
+    ///  <paramref name="defaultValue"/> if no such element is found.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    ///  More than one element satisfies the condition in <paramref name="predicate"/>.
+    /// </exception>
+    public static T SingleOrDefault<T, TArg>(this ImmutableArray<T> array, TArg arg, Func<T, TArg, bool> predicate, T defaultValue)
+    {
+        var firstSeen = false;
+        var result = defaultValue;
+
+        foreach (var item in array)
+        {
+            if (predicate(item, arg))
+            {
+                if (firstSeen)
+                {
+                    return ThrowHelper.ThrowInvalidOperationException<T>(SR.Contains_more_than_one_matching_element);
+                }
+
+                firstSeen = true;
+                result = item;
+            }
+        }
+
+        return result;
     }
 
     /// <summary>

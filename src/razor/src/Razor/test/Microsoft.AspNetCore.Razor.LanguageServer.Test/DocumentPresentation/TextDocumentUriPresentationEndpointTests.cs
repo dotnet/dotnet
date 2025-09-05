@@ -16,7 +16,6 @@ using Microsoft.CodeAnalysis.Razor.Protocol.DocumentPresentation;
 using Microsoft.CodeAnalysis.Text;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.DocumentPresentation;
 
@@ -40,8 +39,11 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         });
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        builder.SetMetadata(TypeNameIdentifier("MyTagHelper"), TypeNamespace("TestRootNamespace"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("MyTagHelper", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.MyTagHelper",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "MyTagHelper");
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -100,8 +102,11 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         });
 
         var droppedUri = new Uri("file:///c:/path/MyTagHelper.razor");
-        var builder = TagHelperDescriptorBuilder.Create("MyTagHelper", "MyAssembly");
-        builder.SetMetadata(TypeNameIdentifier("MyTagHelper"), TypeNamespace("TestRootNamespace"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("MyTagHelper", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.MyTagHelper",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "MyTagHelper");
 
         await projectManager.UpdateAsync(updater =>
         {
@@ -165,8 +170,11 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
         });
 
         var droppedUri = new Uri("file:///c:/path/fetchdata.razor");
-        var builder = TagHelperDescriptorBuilder.Create("FetchData", "MyAssembly");
-        builder.SetMetadata(TypeNameIdentifier("FetchData"), TypeNamespace("TestRootNamespace"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("FetchData", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.FetchData",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "FetchData");
         builder.BindAttribute(b =>
         {
             b.IsEditorRequired = true;
@@ -326,8 +334,11 @@ public class TextDocumentUriPresentationEndpointTests(ITestOutputHelper testOutp
 
         var droppedUri1 = new Uri("file:///c:/path/fetchdata.razor.cs");
         var droppedUri2 = new Uri("file:///c:/path/fetchdata.razor");
-        var builder = TagHelperDescriptorBuilder.Create("FetchData", "MyAssembly");
-        builder.SetMetadata(TypeNameIdentifier("FetchData"), TypeNamespace("TestRootNamespace"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("FetchData", "MyAssembly");
+        builder.SetTypeName(
+            fullName: "TestRootNamespace.FetchData",
+            typeNamespace: "TestRootNamespace",
+            typeNameIdentifier: "FetchData");
 
         await projectManager.UpdateAsync(updater =>
         {
