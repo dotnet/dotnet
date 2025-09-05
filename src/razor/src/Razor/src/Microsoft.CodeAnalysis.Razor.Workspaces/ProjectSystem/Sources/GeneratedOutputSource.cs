@@ -48,10 +48,9 @@ internal sealed class GeneratedOutputSource(DocumentSnapshot document)
 
             var project = _document.Project;
             var projectEngine = project.ProjectEngine;
-            var compilerOptions = project.CompilerOptions;
 
             result = await CompilationHelpers
-                .GenerateCodeDocumentAsync(_document, projectEngine, compilerOptions, cancellationToken)
+                .GenerateCodeDocumentAsync(_document, projectEngine, cancellationToken)
                 .ConfigureAwait(false);
 
             if (_output is null)

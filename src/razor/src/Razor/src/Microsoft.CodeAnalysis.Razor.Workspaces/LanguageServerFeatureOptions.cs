@@ -15,8 +15,6 @@ internal abstract class LanguageServerFeatureOptions
 
     public abstract bool DelegateToCSharpOnDiagnosticPublish { get; }
 
-    public abstract bool UsePreciseSemanticTokenRanges { get; }
-
     public abstract bool ShowAllCSharpCodeActions { get; }
 
     public abstract bool UpdateBuffersForClosedDocuments { get; }
@@ -32,8 +30,6 @@ internal abstract class LanguageServerFeatureOptions
     public abstract bool IncludeProjectKeyInGeneratedFilePath { get; }
 
     public abstract bool UseRazorCohostServer { get; }
-
-    public abstract bool UseNewFormattingEngine { get; }
 
     /// <summary>
     /// Indicates that client supports soft selection in completion list, meaning that typing a commit 
@@ -51,12 +47,4 @@ internal abstract class LanguageServerFeatureOptions
     /// all Razor files found under the workspace root path.
     /// </summary>
     public abstract bool DoNotInitializeMiscFilesProjectFromWorkspace { get; }
-
-    /// <summary>
-    /// When enabled, design time code will not be generated. All tooling, except formatting, will be using runtime code generation.
-    /// </summary>
-    /// <remarks>
-    /// This is now always <see langword="true" /> but cannot be removed entirely until the legacy editor is removed.
-    /// </remarks>
-    public bool ForceRuntimeCodeGeneration { get; } = true;
 }

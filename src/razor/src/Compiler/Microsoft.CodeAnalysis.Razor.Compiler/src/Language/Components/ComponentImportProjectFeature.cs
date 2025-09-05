@@ -17,7 +17,7 @@ internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureB
         "@using global::System.Threading.Tasks\r\n" +
         "@using global::" + ComponentsApi.RenderFragment.Namespace + "\r\n"; // Microsoft.AspNetCore.Components
 
-    private static readonly DefaultImportProjectItem s_defaultImport = new($"Default component imports ({ComponentMetadata.ImportsFileName})", DefaultUsingImportContent);
+    private static readonly DefaultImportProjectItem s_defaultImport = new($"Default component imports ({ComponentHelpers.ImportsFileName})", DefaultUsingImportContent);
 
     public void CollectImports(RazorProjectItem projectItem, ref PooledArrayBuilder<RazorProjectItem> imports)
     {
@@ -38,6 +38,6 @@ internal sealed class ComponentImportProjectFeature : RazorProjectEngineFeatureB
     private static ImmutableArray<RazorProjectItem> GetHierarchicalImports(RazorProjectFileSystem fileSystem, RazorProjectItem projectItem)
     {
         // We want items in descending order. FindHierarchicalItems returns items in ascending order.
-        return fileSystem.FindHierarchicalItems(projectItem.FilePath, ComponentMetadata.ImportsFileName);
+        return fileSystem.FindHierarchicalItems(projectItem.FilePath, ComponentHelpers.ImportsFileName);
     }
 }

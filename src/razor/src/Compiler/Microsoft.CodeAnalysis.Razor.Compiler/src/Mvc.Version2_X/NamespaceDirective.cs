@@ -67,7 +67,7 @@ public static class NamespaceDirective
                 return;
             }
 
-            @namespace.Content = GetNamespace(codeDocument.Source.FilePath, directive);
+            @namespace.Name = GetNamespace(codeDocument.Source.FilePath, directive);
         }
     }
 

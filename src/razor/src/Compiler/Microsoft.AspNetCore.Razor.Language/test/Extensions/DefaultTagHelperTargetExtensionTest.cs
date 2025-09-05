@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -1255,8 +1254,8 @@ private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeMana
         string assemblyName,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>>? attributes = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(typeName, assemblyName);
+        builder.SetTypeName(typeName, typeNamespace: null, typeNameIdentifier: null);
 
         if (attributes != null)
         {

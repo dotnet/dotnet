@@ -80,4 +80,48 @@ internal static class SpanExtensions
         where T : IEquatable<T>? =>
         span.Length != 0 && (span[^1]?.Equals(value) ?? (object?)value is null);
 #endif
+
+    extension<T>(Span<T> span)
+    {
+        public ReversedEnumerable<T> Reversed => new(span);
+    }
+
+    extension<T>(ReadOnlySpan<T> span)
+    {
+        public ReversedEnumerable<T> Reversed => new(span);
+    }
+
+    public readonly ref struct ReversedEnumerable<T>(ReadOnlySpan<T> span)
+    {
+        private readonly ReadOnlySpan<T> _span = span;
+
+        public ReverseEnumerator<T> GetEnumerator() => new(_span);
+    }
+
+    public ref struct ReverseEnumerator<T>(ReadOnlySpan<T> span)
+    {
+        private readonly ReadOnlySpan<T> _span = span;
+        private int _index = span.Length - 1;
+        private T _current = default!;
+
+        public readonly T Current => _current;
+
+        public bool MoveNext()
+        {
+            if (_index >= 0)
+            {
+                _current = _span[_index];
+                _index--;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Reset()
+        {
+            _index = _span.Length - 1;
+            _current = default!;
+        }
+    }
 }

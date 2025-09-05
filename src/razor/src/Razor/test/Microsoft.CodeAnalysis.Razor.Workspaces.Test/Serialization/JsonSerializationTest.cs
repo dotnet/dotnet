@@ -17,7 +17,7 @@ public class JsonSerializationTest(ITestOutputHelper testOutput) : ToolingTestBa
     private readonly RazorConfiguration _configuration = new(RazorLanguageVersion.Experimental, ConfigurationName: "Custom", [new("TestExtension")]);
 
     private readonly ProjectWorkspaceState _projectWorkspaceState = ProjectWorkspaceState.Create(
-        tagHelpers: [TagHelperDescriptorBuilder.Create("Test", "TestAssembly").Build()]);
+        tagHelpers: [TagHelperDescriptorBuilder.CreateTagHelper("Test", "TestAssembly").Build()]);
 
     [Fact]
     public void RazorProjectInfo_InvalidVersionThrows()
