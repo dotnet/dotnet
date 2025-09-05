@@ -32,6 +32,7 @@
       <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
       <ArtifactsPublishStagingDir>$(ArtifactsStagingDir)/artifacts</ArtifactsPublishStagingDir>
       <SourceBuiltAssetsDir>$(ArtifactsPublishStagingDir)/assets/$(Configuration)</SourceBuiltAssetsDir>
+      <SourceBuiltPublishAssetsDir>$(SourceBuiltAssetsDir)/source-build</SourceBuiltPublishAssetsDir>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -40,16 +41,16 @@
 
     <ItemGroup>
       <!-- Sdk tarball -->
-      <SignableSourceBuiltSdkTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltSdkTarball Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSdkTarball)" />
 
       <!-- PSB artifacts -->
-      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
 
       <!-- Source tarball and zipball -->
       <!-- Uncomment once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
-      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltPublishAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
       <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
     </ItemGroup>
 

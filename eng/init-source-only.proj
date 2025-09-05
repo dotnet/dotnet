@@ -19,6 +19,7 @@
 
   <Target Name="Build"
           DependsOnTargets="
+      ValidateSourceOnlySigning;
       UnpackTarballs;
       BuildMSBuildSdkResolver;
       ExtractToolsetPackages" />
@@ -39,6 +40,11 @@
   <PropertyGroup>
     <SharedComponentsPrereqsArchiveFile>@(SharedComponentsPrereqsArchivePathItem)</SharedComponentsPrereqsArchiveFile>
   </PropertyGroup>
+
+  <Target Name="ValidateSourceOnlySigning">
+    <Error Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true' and '$(DotNetSourceOnlyPublishArtifacts)' != 'true'" 
+           Text="Source-only signing requires publishing artifacts through Arcade. Please set 'DotNetSourceOnlyPublishArtifacts' to 'true', or disable signing by setting 'DotNetSourceOnlyPostBuildSign' to 'false'." />
+  </Target>
 
   <Target Name="ValidateSharedComponents">
     <Error Condition="'$(DotNetBuildSharedComponents)' == 'true' and ('$(CustomSharedComponentsArtifactsPath)' != '' or '$(SharedComponentsPrereqsArchiveFile)' != '')"
