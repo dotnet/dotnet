@@ -52,7 +52,6 @@ public partial class LinuxInstallerTests : IDisposable
                 $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
-                NetStandardTargetingPackName,
                 $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
             }
