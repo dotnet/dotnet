@@ -9,7 +9,7 @@ internal sealed record BoundElementDescriptionInfo(string TagHelperTypeName, str
 {
     public static BoundElementDescriptionInfo From(TagHelperDescriptor tagHelper)
     {
-        var tagHelperTypeName = tagHelper.GetTypeName();
+        var tagHelperTypeName = tagHelper.TypeName;
 
         return new BoundElementDescriptionInfo(tagHelperTypeName, tagHelper.Documentation);
     }

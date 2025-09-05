@@ -15,9 +15,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     private readonly ILspEditorFeatureDetector _lspEditorFeatureDetector;
     private readonly Lazy<bool> _showAllCSharpCodeActions;
     private readonly Lazy<bool> _includeProjectKeyInGeneratedFilePath;
-    private readonly Lazy<bool> _usePreciseSemanticTokenRanges;
     private readonly Lazy<bool> _useRazorCohostServer;
-    private readonly Lazy<bool> _useNewFormattingEngine;
 
     [ImportingConstructor]
     public VisualStudioLanguageServerFeatureOptions(ILspEditorFeatureDetector lspEditorFeatureDetector)
@@ -43,25 +41,11 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
             return includeProjectKeyInGeneratedFilePath;
         });
 
-        _usePreciseSemanticTokenRanges = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var usePreciseSemanticTokenRanges = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UsePreciseSemanticTokenRanges, defaultValue: false);
-            return usePreciseSemanticTokenRanges;
-        });
-
         _useRazorCohostServer = new Lazy<bool>(() =>
         {
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
             var useRazorCohostServer = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseRazorCohostServer, defaultValue: false);
             return useRazorCohostServer;
-        });
-
-        _useNewFormattingEngine = new Lazy<bool>(() =>
-        {
-            var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var useNewFormattingEngine = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseNewFormattingEngine, defaultValue: true);
-            return useNewFormattingEngine;
         });
     }
 
@@ -86,11 +70,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
 
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath.Value;
 
-    public override bool UsePreciseSemanticTokenRanges => _usePreciseSemanticTokenRanges.Value;
-
     public override bool UseRazorCohostServer => _useRazorCohostServer.Value;
-
-    public override bool UseNewFormattingEngine => _useNewFormattingEngine.Value;
 
     // VS actually needs explicit commit characters so don't avoid them.
     public override bool SupportsSoftSelectionInCompletion => true;
