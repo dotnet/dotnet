@@ -75,7 +75,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
     // VS actually needs explicit commit characters so don't avoid them.
     public override bool SupportsSoftSelectionInCompletion => true;
 
-    public override bool UseVsCodeCompletionTriggerCharacters => false;
+    public override bool UseVsCodeCompletionCommitCharacters => false;
 
     // In VS, we do not want the language server to add all documents in the workspace root path
     // to the misc-files project when initialized.

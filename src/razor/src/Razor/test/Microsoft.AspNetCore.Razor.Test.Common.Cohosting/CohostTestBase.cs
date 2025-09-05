@@ -85,7 +85,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
             SupportsFileManipulation = true,
             ShowAllCSharpCodeActions = false,
             SupportsSoftSelectionInCompletion = true,
-            UseVsCodeCompletionTriggerCharacters = false,
+            UseVsCodeCompletionCommitCharacters = false,
         };
         UpdateClientInitializationOptions(c => c);
 

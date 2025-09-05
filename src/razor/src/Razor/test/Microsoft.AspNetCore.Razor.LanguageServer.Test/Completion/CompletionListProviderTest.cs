@@ -41,7 +41,7 @@ public class CompletionListProviderTest : LanguageServerTestBase
         _completionContext = new VSInternalCompletionContext();
         _documentContext = TestDocumentContext.Create("C:/path/to/file.cshtml");
         _clientCapabilities = new VSInternalClientCapabilities();
-        _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
         _triggerAndCommitCharacters = new(TestLanguageServerFeatureOptions.Instance);
     }
 
