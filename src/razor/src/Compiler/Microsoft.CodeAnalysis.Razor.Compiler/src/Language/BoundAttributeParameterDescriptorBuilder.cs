@@ -30,7 +30,7 @@ public sealed partial class BoundAttributeParameterDescriptorBuilder : TagHelper
 
     public string? TypeName
     {
-        get => _typeNameObject.GetTypeName();
+        get => _typeNameObject.FullName;
         set => _typeNameObject = TypeNameObject.From(value);
     }
 

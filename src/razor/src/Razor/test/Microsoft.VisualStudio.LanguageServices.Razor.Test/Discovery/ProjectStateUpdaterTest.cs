@@ -36,7 +36,8 @@ public class ProjectStateUpdaterTest(ITestOutputHelper testOutput) : VisualStudi
         var solution = Workspace.CurrentSolution.AddProject(projectInfo);
         Workspace.TryApplyChanges(solution);
 
-        ImmutableArray<TagHelperDescriptor> tagHelpers = [TagHelperDescriptorBuilder.Create("ResolvableTagHelper", "TestAssembly").Build()];
+        ImmutableArray<TagHelperDescriptor> tagHelpers = [
+            TagHelperDescriptorBuilder.CreateTagHelper("ResolvableTagHelper", "TestAssembly").Build()];
         _projectWorkspaceState = ProjectWorkspaceState.Create(tagHelpers);
         _tagHelperResolver = new TestTagHelperResolver(tagHelpers);
 

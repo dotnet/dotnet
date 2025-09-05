@@ -16,6 +16,10 @@ parameters:
   type: boolean
   default: true
 
+- name: desiredSigning
+  type: string
+  default: ''
+
 - name: desiredFinalVersionKind
   type: string
   default: ''
@@ -33,6 +37,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
   - ${{ each leg in parameters.legs }}:
@@ -114,6 +119,10 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
+        createSourceArtifacts: ${{ leg.createSourceArtifacts }}
+        ${{ if eq(leg.disableSigning, false) }}:
+          sign: ${{ variables.signEnabled }}
+          signType: ${{ variables.signType }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:

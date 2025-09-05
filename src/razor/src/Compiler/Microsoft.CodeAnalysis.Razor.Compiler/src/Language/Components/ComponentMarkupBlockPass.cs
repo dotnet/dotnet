@@ -191,7 +191,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(Parent, node));
+                Trees.Add(new IntermediateNodeReference(node, Parent));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;
@@ -241,7 +241,7 @@ internal class ComponentMarkupBlockPass : ComponentIntermediateNodePassBase, IRa
 
             if (!_foundNonHtml)
             {
-                Trees.Add(new IntermediateNodeReference(Parent, node));
+                Trees.Add(new IntermediateNodeReference(node, Parent));
             }
 
             _foundNonHtml = originalState |= _foundNonHtml;
