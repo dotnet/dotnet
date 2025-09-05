@@ -43,7 +43,7 @@ extends:
                   archiveExtension: $(archiveExtension)
                   artifactName: BuildArtifacts_$(osGroup)$(osSubgroup)_$(archType)_$(_BuildConfig)
                   displayName: Build Assets
-            condition: not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true))
+            condition: and(succeeded(), not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true)))
 
       - template: /eng/pipelines/common/platform-matrix.yml
         parameters:
