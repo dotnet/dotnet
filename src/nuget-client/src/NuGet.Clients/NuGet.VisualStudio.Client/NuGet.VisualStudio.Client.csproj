@@ -39,6 +39,10 @@
       <Link>NuGet.targets</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\..\NuGet.Core\NuGet.Build.Tasks\NuGet.Build.Tasks.Pack.targets">
+      <Link>NuGet.Build.Tasks.Pack.targets</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="registration.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

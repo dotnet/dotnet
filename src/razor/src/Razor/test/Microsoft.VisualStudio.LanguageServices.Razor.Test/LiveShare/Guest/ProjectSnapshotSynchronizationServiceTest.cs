@@ -30,7 +30,7 @@ public class ProjectSnapshotSynchronizationServiceTest : VisualStudioWorkspaceTe
         _projectManager = CreateProjectSnapshotManager();
 
         _projectWorkspaceStateWithTagHelpers = ProjectWorkspaceState.Create(
-            tagHelpers: [TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
+            tagHelpers: [TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build()]);
     }
 
     [UIFact]

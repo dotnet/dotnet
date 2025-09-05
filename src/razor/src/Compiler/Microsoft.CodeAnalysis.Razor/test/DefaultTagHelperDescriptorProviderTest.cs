@@ -31,7 +31,7 @@ public class DefaultTagHelperDescriptorProviderTest : TagHelperDescriptorProvide
         Assert.NotNull(compilation.GetTypeByMetadataName(editorBrowsableTypeName));
         var nullDescriptors = context.Results.Where(descriptor => descriptor == null);
         Assert.Empty(nullDescriptors);
-        var editorBrowsableDescriptor = context.Results.Where(descriptor => descriptor.GetTypeName() == editorBrowsableTypeName);
+        var editorBrowsableDescriptor = context.Results.Where(descriptor => descriptor.TypeName == editorBrowsableTypeName);
         Assert.Empty(editorBrowsableDescriptor);
     }
 
@@ -61,8 +61,8 @@ namespace TestAssembly
         // Assert
         Assert.NotNull(compilation.GetTypeByMetadataName(testTagHelper));
         Assert.NotEmpty(context.Results);
-        Assert.NotEmpty(context.Results.Where(f => f.GetTypeName() == testTagHelper));
-        Assert.NotEmpty(context.Results.Where(f => f.GetTypeName() == enumTagHelper));
+        Assert.NotEmpty(context.Results.Where(f => f.TypeName == testTagHelper));
+        Assert.NotEmpty(context.Results.Where(f => f.TypeName == enumTagHelper));
     }
 
     [Fact]
@@ -94,7 +94,7 @@ namespace TestAssembly
         // Assert
         Assert.NotNull(compilation.GetTypeByMetadataName(testTagHelper));
         Assert.NotEmpty(context.Results);
-        Assert.Empty(context.Results.Where(f => f.GetTypeName() == testTagHelper));
-        Assert.NotEmpty(context.Results.Where(f => f.GetTypeName() == enumTagHelper));
+        Assert.Empty(context.Results.Where(f => f.TypeName == testTagHelper));
+        Assert.NotEmpty(context.Results.Where(f => f.TypeName == enumTagHelper));
     }
 }
