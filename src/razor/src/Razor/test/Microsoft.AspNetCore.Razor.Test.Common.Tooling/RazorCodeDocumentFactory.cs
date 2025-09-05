@@ -27,6 +27,11 @@ internal static class RazorCodeDocumentFactory
         var sourceDocument = TestRazorSourceDocument.Create(text, filePath: filePath, relativePath: filePath);
         var projectEngine = RazorProjectEngine.Create(builder =>
         {
+            builder.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.UseEnhancedLinePragma = true;
+            });
+
             builder.ConfigureParserOptions(builder =>
             {
                 builder.UseRoslynTokenizer = true;
@@ -37,6 +42,6 @@ internal static class RazorCodeDocumentFactory
 
         var fileKind = FileKinds.GetFileKindFromPath(filePath);
 
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKind, importSources: default, tagHelpers);
+        return projectEngine.Process(sourceDocument, fileKind, importSources: default, tagHelpers);
     }
 }

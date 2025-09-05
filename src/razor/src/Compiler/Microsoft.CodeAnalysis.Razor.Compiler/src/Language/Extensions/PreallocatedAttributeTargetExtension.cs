@@ -113,7 +113,7 @@ internal class PreallocatedAttributeTargetExtension : IPreallocatedAttributeTarg
                     .WriteStartMethodInvocation(FormatInvalidIndexerAssignmentMethodName)
                     .WriteStringLiteral(node.AttributeName)
                     .WriteParameterSeparator()
-                    .WriteStringLiteral(node.TagHelper.GetTypeName())
+                    .WriteStringLiteral(node.TagHelper.TypeName)
                     .WriteParameterSeparator()
                     .WriteStringLiteral(node.PropertyName)
                     .WriteEndMethodInvocation(endLine: false)   // End of method call

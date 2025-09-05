@@ -495,7 +495,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
     {
         if (node is MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var binding })
         {
-            var componentDescriptor = binding.Descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+            var componentDescriptor = binding.Descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
             return componentDescriptor is not null;
         }
         else if (node is MarkupTagHelperStartTagSyntax startTag)

@@ -4,7 +4,6 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
@@ -46,7 +45,7 @@ internal abstract class AbstractComponentAvailabilityService : IComponentAvailab
 
         foreach (var tagHelper in tagHelpers)
         {
-            if (tagHelper.GetTypeName() == typeName)
+            if (tagHelper.TypeName == typeName)
             {
                 return true;
             }
