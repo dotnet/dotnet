@@ -436,7 +436,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     {
         var tagHelperClasses = descriptors.Select(descriptor =>
         {
-            var typeName = descriptor.GetTypeName();
+            var typeName = descriptor.TypeName;
             var namespaceSeparatorIndex = typeName.LastIndexOf('.');
             if (namespaceSeparatorIndex >= 0)
             {

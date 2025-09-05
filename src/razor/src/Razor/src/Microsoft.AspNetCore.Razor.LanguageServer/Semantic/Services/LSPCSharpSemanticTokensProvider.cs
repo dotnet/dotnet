@@ -17,9 +17,8 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 
-internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions languageServerFeatureOptions, IClientConnection clientConnection, ILoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
+internal class LSPCSharpSemanticTokensProvider(IClientConnection clientConnection, ILoggerFactory loggerFactory) : ICSharpSemanticTokensProvider
 {
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IClientConnection _clientConnection = clientConnection;
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<LSPCSharpSemanticTokensProvider>();
 
@@ -45,29 +44,7 @@ internal class LSPCSharpSemanticTokensProvider(LanguageServerFeatureOptions lang
             csharpRanges,
             correlationId);
 
-        ProvideSemanticTokensResponse? csharpResponse;
-        if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
-        {
-            csharpResponse = await GetCsharpResponseAsync(_clientConnection, parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
-
-            // Likely the server doesn't support the new endpoint, fallback to the original one
-            if (csharpResponse?.Tokens is null && csharpRanges.Length > 1)
-            {
-                var minimalRange = LspFactory.CreateRange(csharpRanges[0].Start, csharpRanges[^1].End);
-
-                var newParams = new ProvideSemanticTokensRangesParams(
-                    parameter.TextDocument,
-                    parameter.RequiredHostDocumentVersion,
-                    [minimalRange],
-                    parameter.CorrelationId);
-
-                csharpResponse = await GetCsharpResponseAsync(_clientConnection, newParams, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
-            }
-        }
-        else
-        {
-            csharpResponse = await GetCsharpResponseAsync(_clientConnection, parameter, CustomMessageNames.RazorProvideSemanticTokensRangeEndpoint, cancellationToken).ConfigureAwait(false);
-        }
+        var csharpResponse = await GetCsharpResponseAsync(_clientConnection, parameter, CustomMessageNames.RazorProvidePreciseRangeSemanticTokensEndpoint, cancellationToken).ConfigureAwait(false);
 
         if (csharpResponse is null)
         {

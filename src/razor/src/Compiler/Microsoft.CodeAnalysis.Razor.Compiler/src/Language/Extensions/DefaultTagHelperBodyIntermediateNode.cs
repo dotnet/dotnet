@@ -32,7 +32,7 @@ public sealed class DefaultTagHelperBodyIntermediateNode : ExtensionIntermediate
         AddDiagnosticsFromNode(bodyNode);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public TagMode TagMode { get; set; }
 

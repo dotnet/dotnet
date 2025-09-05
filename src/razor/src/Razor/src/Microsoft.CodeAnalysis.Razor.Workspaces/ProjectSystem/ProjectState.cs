@@ -34,7 +34,6 @@ internal sealed class ProjectState
     private readonly object _lock = new();
 
     public HostProject HostProject { get; }
-    public RazorCompilerOptions CompilerOptions { get; }
     public ProjectWorkspaceState ProjectWorkspaceState { get; }
 
     public ImmutableDictionary<string, DocumentState> Documents { get; }
@@ -45,12 +44,10 @@ internal sealed class ProjectState
 
     private ProjectState(
         HostProject hostProject,
-        RazorCompilerOptions compilerOptions,
         IProjectEngineFactoryProvider projectEngineFactoryProvider)
     {
         HostProject = hostProject;
         ProjectWorkspaceState = ProjectWorkspaceState.Default;
-        CompilerOptions = compilerOptions;
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
 
         Documents = s_emptyDocuments;
@@ -66,7 +63,6 @@ internal sealed class ProjectState
         bool retainProjectEngine)
     {
         HostProject = hostProject;
-        CompilerOptions = older.CompilerOptions;
         _projectEngineFactoryProvider = older._projectEngineFactoryProvider;
         ProjectWorkspaceState = projectWorkspaceState;
 
@@ -81,9 +77,8 @@ internal sealed class ProjectState
 
     public static ProjectState Create(
         HostProject hostProject,
-        RazorCompilerOptions compilerOptions,
         IProjectEngineFactoryProvider projectEngineFactoryProvider)
-        => new(hostProject, compilerOptions, projectEngineFactoryProvider);
+        => new(hostProject, projectEngineFactoryProvider);
 
     public ImmutableArray<TagHelperDescriptor> TagHelpers => ProjectWorkspaceState.TagHelpers;
 

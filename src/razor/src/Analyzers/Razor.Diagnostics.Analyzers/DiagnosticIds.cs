@@ -8,4 +8,6 @@ internal static class DiagnosticIds
     public const string PooledArrayBuilderAsRef = "RZD001";
 
     public const string IRemoteJsonServiceParameter = "RZD002";
+
+    public const string ImmutableArrayBoxing = "RZD003";
 }
