@@ -247,6 +247,6 @@ public class RazorBreakpointSpanEndpointTest : LanguageServerTestBase
             });
         });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKind ?? RazorFileKind.Legacy, importSources: default, tagHelpers: []);
+        return projectEngine.Process(sourceDocument, fileKind ?? RazorFileKind.Legacy, importSources: default, tagHelpers: []);
     }
 }

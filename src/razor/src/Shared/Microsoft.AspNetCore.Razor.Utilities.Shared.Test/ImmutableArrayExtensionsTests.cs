@@ -266,10 +266,129 @@ public class ImmutableArrayExtensionsTests
     }
 
     [Fact]
-    public void WhereAsArray_ImmutableArrayBuilder()
+    public void WhereAsArray_ImmutableArray_Empty()
     {
-        var data = ImmutableArray.CreateBuilder<int>();
-        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
+        ImmutableArray<int> data = [];
+        ImmutableArray<int> expected = [];
+
+        var actual = data.WhereAsArray(static x => x > 0);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithIndex()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [1, 3, 5, 7, 9]; // Even indices (0, 2, 4, 6, 8)
+
+        var actual = data.WhereAsArray(static (x, index) => index % 2 == 0);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithIndex_None()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [];
+
+        var actual = data.WhereAsArray(static (x, index) => false);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithIndex_All()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        var expected = data;
+
+        var actual = data.WhereAsArray(static (x, index) => true);
+        Assert.Equal<int>(expected, actual);
+        Assert.Same(ImmutableCollectionsMarshal.AsArray(expected), ImmutableCollectionsMarshal.AsArray(actual));
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArg()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [5, 6, 7, 8, 9, 10];
+        var threshold = 5;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg) => x >= arg);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArg_None()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [];
+        var threshold = 15;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg) => x >= arg);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArg_All()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        var expected = data;
+        var threshold = 0;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg) => x >= arg);
+        Assert.Equal<int>(expected, actual);
+        Assert.Same(ImmutableCollectionsMarshal.AsArray(expected), ImmutableCollectionsMarshal.AsArray(actual));
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArgAndIndex()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [4, 6, 8, 10]; // Values at odd indices (1, 3, 5, 7, 9) where value >= 3
+        var threshold = 3;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg, index) => index % 2 == 1 && x >= arg);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArgAndIndex_None()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        ImmutableArray<int> expected = [];
+        var threshold = 0;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg, index) => false);
+        Assert.Equal<int>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithArgAndIndex_All()
+    {
+        ImmutableArray<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        var expected = data;
+        var threshold = 0;
+
+        var actual = data.WhereAsArray(threshold, static (x, arg, index) => true);
+        Assert.Equal<int>(expected, actual);
+        Assert.Same(ImmutableCollectionsMarshal.AsArray(expected), ImmutableCollectionsMarshal.AsArray(actual));
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_WithReferenceTypes()
+    {
+        ImmutableArray<string> data = ["apple", "banana", "cherry", "date", "elderberry"];
+        ImmutableArray<string> expected = ["banana", "cherry", "elderberry"];
+
+        var actual = data.WhereAsArray(static x => x.Length > 5);
+        Assert.Equal<string>(expected, actual);
+    }
+
+    [Fact]
+    public void WhereAsArray_ImmutableArray_OptimizationTest()
+    {
+        // Test that the optimization works correctly when some items match and some don't
+        ImmutableArray<int> data = [1, 3, 2, 5, 4, 7, 6, 9, 8, 10];
         ImmutableArray<int> expected = [2, 4, 6, 8, 10];
 
         var actual = data.WhereAsArray(static x => x % 2 == 0);
@@ -277,24 +396,24 @@ public class ImmutableArrayExtensionsTests
     }
 
     [Fact]
-    public void WhereAsArray_ImmutableArrayBuilder_None()
+    public void WhereAsArray_ImmutableArray_FirstItemDoesNotMatch()
     {
-        var data = ImmutableArray.CreateBuilder<int>();
-        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
-        ImmutableArray<int> expected = [];
+        // Test optimization when the first item doesn't match the predicate
+        ImmutableArray<int> data = [1, 2, 4, 6, 8];
+        ImmutableArray<int> expected = [2, 4, 6, 8];
 
-        var actual = data.WhereAsArray(static x => false);
+        var actual = data.WhereAsArray(static x => x % 2 == 0);
         Assert.Equal<int>(expected, actual);
     }
 
     [Fact]
-    public void WhereAsArray_ImmutableArrayBuilder_All()
+    public void WhereAsArray_ImmutableArray_LastItemDoesNotMatch()
     {
-        var data = ImmutableArray.CreateBuilder<int>();
-        data.AddRange(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
-        var expected = data;
+        // Test optimization when the last item doesn't match the predicate
+        ImmutableArray<int> data = [2, 4, 6, 8, 9];
+        ImmutableArray<int> expected = [2, 4, 6, 8];
 
-        var actual = data.WhereAsArray(static x => true);
+        var actual = data.WhereAsArray(static x => x % 2 == 0);
         Assert.Equal<int>(expected, actual);
     }
 }

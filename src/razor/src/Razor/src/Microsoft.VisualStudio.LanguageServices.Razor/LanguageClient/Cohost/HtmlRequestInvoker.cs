@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
+using Microsoft.CodeAnalysis.Razor.Cohost;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;

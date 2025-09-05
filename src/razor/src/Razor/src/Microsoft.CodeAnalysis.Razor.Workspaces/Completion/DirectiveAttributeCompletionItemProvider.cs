@@ -222,7 +222,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             (var attributeDescriptions, var commitCharacters) = attributeDetails;
 
             var indexerCompletion = attributeName.EndsWith("...", StringComparison.Ordinal);
-            var tagHelperTypeName = tagHelperDescriptor.GetTypeName();
+            var tagHelperTypeName = tagHelperDescriptor.TypeName;
             var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttributeDescriptor, isIndexer: indexerCompletion, tagHelperTypeName);
             attributeDescriptions.Add(descriptionInfo);
 

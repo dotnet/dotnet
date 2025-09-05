@@ -1,12 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
+using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -133,7 +131,7 @@ public class PreallocatedAttributeTargetExtensionTest
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var tagHelper = TagHelperDescriptorBuilder.Create("FooTagHelper", "Test")
-            .Metadata(TypeName("FooTagHelper"))
+            .TypeName("FooTagHelper")
             .BoundAttributeDescriptor(builder => builder
                 .Name("Foo")
                 .TypeName("System.String")
@@ -181,7 +179,7 @@ __tagHelperExecutionContext.AddTagHelperAttribute(_tagHelper1);
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var tagHelper = TagHelperDescriptorBuilder.Create("FooTagHelper", "Test")
-            .Metadata(TypeName("FooTagHelper"))
+            .TypeName("FooTagHelper")
             .BoundAttributeDescriptor(builder => builder
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.String>")
@@ -235,7 +233,7 @@ __tagHelperExecutionContext.AddTagHelperAttribute(_tagHelper1);
         using var context = TestCodeRenderingContext.CreateRuntime();
 
         var tagHelper = TagHelperDescriptorBuilder.Create("FooTagHelper", "Test")
-            .Metadata(TypeName("FooTagHelper"))
+            .TypeName("FooTagHelper")
             .BoundAttributeDescriptor(builder => builder
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.String>")

@@ -114,6 +114,11 @@ parameters:
   type: boolean
   default: false
 
+# Create and publish the source artifacts
+- name: createSourceArtifacts
+  type: boolean
+  default: false
+
 # Skip the build step (this would be used when wanting to run tests only)
 - name: skipBuild
   type: boolean
@@ -274,7 +279,9 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if eq(parameters.signType, 'DryRun') }}:
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -424,18 +431,13 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  # https://github.com/dotnet/dotnet/issues/1758
-  # After a re-boostrap:
-  # - Uncomment the line below, replacing the one after it.
-  # - Uncomment the two parameter lines at the end of the template parameters.
-  # - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
-        # ${{ if ne(parameters.signType, 'Real') }}:
-        #   microbuildUseESRP: false
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -549,8 +551,15 @@ jobs:
 
           customEnvVars=""
           customPreBuildArgs=""
-          customBuildArgs="$(baseArguments) $(signArguments) $(_SignDiagnosticFilesArgs)"
-          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(signProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+          customBuildArgs="$(baseArguments)"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+
+          # We shouldn't pass signing arguments to the build script when building source-only
+          # because signing source-built artifacts happens post-build.
+          if [[ '${{ parameters.buildSourceOnly }}' != 'True' ]]; then
+            customBuildArgs="$customBuildArgs $(signArguments) $(_SignDiagnosticFilesArgs)"
+            extraBuildProperties="$extraBuildProperties $(signProperties)"
+          fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
@@ -565,6 +574,17 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
+            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+              # Do not enable source artifact creation when not building from a git repo.
+              # We strip the .git/ directory when building from archive,
+              # so it's not possible to create the artifacts in that mode.
+              echo "Cannot create source artifacts when building from archive."
+              exit 1
+            fi
+          fi
+          
+          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
@@ -607,14 +627,6 @@ jobs:
           # Update the owner of the staging directory to the current user
           sudo chown -R $(whoami) $(Build.ArtifactStagingDirectory)
         displayName: Update owner of artifacts staging directory
-
-    - script: |
-        if [[ -d "$(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build" ]]; then
-          rm -rf $(Build.ArtifactStagingDirectory)/artifacts/assets/${{ parameters.configuration }}/source-build
-        fi
-      displayName: Clean up unwanted Source Build Artifacts
-      continueOnError: true
-      condition: succeededOrFailed()
 
     # Only run tests if enabled
     - ${{ if eq(parameters.runTests, 'True') }}:
@@ -665,11 +677,26 @@ jobs:
         displayName: Run Tests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.buildSourceOnly, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
-    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
-      parameters:
-        enableMicrobuild: true
-        enableMicrobuildForMacAndLinux: true
+  - ${{ if eq(parameters.sign, 'True') }}:
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          . eng/common/tools.sh
+
+          sign_properties="$(signProperties) $(_SignDiagnosticFilesArgs)"
+
+          MSBuild -restore eng/sign-source-built-artifacts.proj \
+            /p:SignProperties=$sign_properties \
+            /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) \
+            /p:OfficialBuildId=$(Build.BuildNumber) \
+            /bl:artifacts/log/outer-sign-source-built-artifacts.binlog
+        displayName: Sign Source-Built Artifacts
+        workingDirectory: $(Build.SourcesDirectory)
+
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
+        parameters:
+          enableMicrobuild: true
+          enableMicrobuildForMacAndLinux: true
 
   - task: CopyFiles@2
     displayName: Prepare BuildLogs staging directory
@@ -756,3 +783,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+

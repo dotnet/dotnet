@@ -25,7 +25,7 @@ public class TagHelperRewritingTestBase() : ParserTestBase(layer: TestProject.La
 
         foreach (var tagName in tagNames)
         {
-            var descriptor = TagHelperDescriptorBuilder.Create(tagName + "taghelper", "SomeAssembly")
+            var descriptor = TagHelperDescriptorBuilder.CreateTagHelper(tagName + "taghelper", "SomeAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName(tagName))
                 .Build();
             descriptors.Add(descriptor);

@@ -279,7 +279,7 @@ public static class IntermediateNodeAssert
         try
         {
             var fieldNode = Assert.IsType<FieldDeclarationIntermediateNode>(node);
-            Assert.Equal(typeFullName, fieldNode.FieldType);
+            Assert.Equal(typeFullName, fieldNode.Type);
         }
         catch (XunitException e)
         {

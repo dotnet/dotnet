@@ -111,7 +111,7 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
         {
             var codeWriter = CodeWriter;
 
-            using (codeWriter.BuildNamespace(node.Content, node.Source, _context))
+            using (codeWriter.BuildNamespace(node.Name, node.Source, _context))
             {
                 if (node.Children.OfType<UsingDirectiveIntermediateNode>().Any())
                 {
@@ -134,7 +134,7 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
         {
             using (CodeWriter.BuildClassDeclaration(
                 node.Modifiers,
-                node.ClassName,
+                node.Name,
                 node.BaseType,
                 node.Interfaces,
                 node.TypeParameters,
@@ -147,59 +147,56 @@ internal class DefaultDocumentWriter(CodeTarget codeTarget, RazorCodeGenerationO
 
         public override void VisitMethodDeclaration(MethodDeclarationIntermediateNode node)
         {
-            var codeWriter = CodeWriter;
+            var writer = CodeWriter;
 
-            codeWriter.WriteLine("#pragma warning disable 1998");
+            writer.WriteLine("#pragma warning disable 1998");
 
-            for (var i = 0; i < node.Modifiers.Count; i++)
+            foreach (var modifier in node.Modifiers)
             {
-                codeWriter.Write($"{node.Modifiers[i]} ");
+                writer.Write($"{modifier} ");
             }
 
-            codeWriter.Write($"{node.ReturnType} ");
-            codeWriter.Write($"{node.MethodName}(");
+            writer.Write($"{node.ReturnType} {node.Name}(");
 
             var isFirst = true;
 
-            for (var i = 0; i < node.Parameters.Count; i++)
+            foreach (var parameter in node.Parameters)
             {
-                var parameter = node.Parameters[i];
-
                 if (isFirst)
                 {
                     isFirst = false;
                 }
                 else
                 {
-                    codeWriter.Write(", ");
+                    writer.Write(", ");
                 }
 
-                for (var j = 0; j < parameter.Modifiers.Count; j++)
+                foreach (var modifier in parameter.Modifiers)
                 {
-                    codeWriter.Write($"{parameter.Modifiers[j]} ");
+                    writer.Write($"{modifier} ");
                 }
 
-                codeWriter.Write($"{parameter.TypeName} {parameter.ParameterName}");
+                writer.Write($"{parameter.Type} {parameter.Name}");
             }
 
-            codeWriter.WriteLine(")");
+            writer.WriteLine(")");
 
-            using (codeWriter.BuildScope())
+            using (writer.BuildScope())
             {
                 VisitDefault(node);
             }
 
-            codeWriter.WriteLine("#pragma warning restore 1998");
+            writer.WriteLine("#pragma warning restore 1998");
         }
 
         public override void VisitFieldDeclaration(FieldDeclarationIntermediateNode node)
         {
-            CodeWriter.WriteField(node.SuppressWarnings, node.Modifiers, node.FieldType, node.FieldName);
+            CodeWriter.WriteField(node.SuppressWarnings, node.Modifiers, node.Type, node.Name);
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
         {
-            CodeWriter.WritePropertyDeclaration(node.Modifiers, node.PropertyType, node.PropertyName, node.PropertyExpression, _context);
+            CodeWriter.WritePropertyDeclaration(node.Modifiers, node.Type, node.Name, node.ExpressionBody, _context);
         }
 
         public override void VisitExtension(ExtensionIntermediateNode node)
