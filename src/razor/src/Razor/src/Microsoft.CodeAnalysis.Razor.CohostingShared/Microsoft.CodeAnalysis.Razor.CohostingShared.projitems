@@ -11,8 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeActions\CohostCodeActionsResolveEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeLens\CohostResolveCodeLensEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeLens\CohostCodeLensEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostEndpointAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostDocSyncEndpointRegistration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CohostInitializeReporter.cs" />
@@ -49,7 +47,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentPublisher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentSynchronizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlRequestInvokerExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlRequestInvoker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintResolveEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRazorCohostStartupService.cs" />

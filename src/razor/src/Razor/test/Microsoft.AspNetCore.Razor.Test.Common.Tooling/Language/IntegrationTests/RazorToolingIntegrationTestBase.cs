@@ -77,8 +77,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     internal virtual string DefaultFileName { get; }
 
-    internal virtual bool DesignTime { get; }
-
     internal virtual bool DeclarationOnly { get; }
 
     /// <summary>
@@ -175,11 +173,6 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
     protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, bool throwOnFailure = true, RazorFileKind? fileKind = null)
     {
-        if (DeclarationOnly && DesignTime)
-        {
-            throw new InvalidOperationException($"{nameof(DeclarationOnly)} cannot be used with {nameof(DesignTime)}.");
-        }
-
         if (DeclarationOnly && UseTwoPhaseCompilation)
         {
             throw new InvalidOperationException($"{nameof(DeclarationOnly)} cannot be used with {nameof(UseTwoPhaseCompilation)}.");
@@ -224,7 +217,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             foreach (var item in AdditionalRazorItems)
             {
                 // Result of generating definition
-                codeDocument = DesignTime ? projectEngine.ProcessDesignTime(item) : projectEngine.Process(item);
+                codeDocument = projectEngine.Process(item);
                 Assert.Empty(codeDocument.GetRequiredCSharpDocument().Diagnostics);
 
                 // Replace the 'declaration' syntax tree
@@ -234,7 +227,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
             }
 
             // Result of real code generation for the document under test
-            codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+            codeDocument = projectEngine.Process(projectItem);
             return new CompileToCSharpResult
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
@@ -253,7 +246,7 @@ public class RazorToolingIntegrationTestBase : ToolingTestBase
 
             var codeDocument = DeclarationOnly
                 ? projectEngine.ProcessDeclarationOnly(projectItem)
-                : DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+                : projectEngine.Process(projectItem);
             return new CompileToCSharpResult
             {
                 BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),

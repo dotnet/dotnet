@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.LanguageServer.Common;
 using Microsoft.AspNetCore.Razor.LanguageServer.ProjectSystem;
 using Microsoft.AspNetCore.Razor.Test.Common;
@@ -17,7 +16,6 @@ using Microsoft.CodeAnalysis.Text;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.Test;
 
@@ -206,11 +204,9 @@ public class RazorComponentSearchEngineTest(ITestOutputHelper testOutput) : Lang
     {
         typeName ??= tagName;
         var fullyQualifiedName = $"{namespaceName}.{typeName}";
-        var builder1 = TagHelperDescriptorBuilder.Create(ComponentMetadata.Component.TagHelperKind, fullyQualifiedName, assemblyName);
+        var builder1 = TagHelperDescriptorBuilder.CreateComponent(fullyQualifiedName, assemblyName);
+        builder1.SetTypeName(fullyQualifiedName, namespaceName, typeName);
         builder1.TagMatchingRule(rule => rule.TagName = tagName);
-        builder1.SetMetadata(
-            TypeNameIdentifier(typeName),
-            TypeNamespace(namespaceName));
 
         return builder1.Build();
     }

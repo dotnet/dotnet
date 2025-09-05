@@ -53,7 +53,6 @@ public abstract partial class ProjectSnapshotManagerBenchmarkBase
     internal static ProjectSnapshotManager CreateProjectSnapshotManager()
         => new(
             projectEngineFactoryProvider: StaticProjectEngineFactoryProvider.Instance,
-            compilerOptions: RazorCompilerOptions.None,
             featureOptions: new DefaultLanguageServerFeatureOptions(),
             loggerFactory: EmptyLoggerFactory.Instance);
 }

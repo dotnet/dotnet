@@ -4,6 +4,7 @@
 #nullable disable
 
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
 internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTargetExtension
 {
-    private static readonly string[] PublicModifiers = new[] { "public" };
+    private static readonly ImmutableArray<string> s_publicModifiers = ["public"];
 
     public string TagHelperTypeName { get; set; } = "Microsoft.AspNetCore.Razor.TagHelpers.TagHelper";
 
@@ -64,11 +65,11 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
 
         // Initialize declaration.
         using (context.CodeWriter.BuildClassDeclaration(
-            PublicModifiers,
+            s_publicModifiers,
             node.ClassName,
             new BaseTypeWithModel(TagHelperTypeName),
-            interfaces: null,
-            typeParameters: null,
+            interfaces: default,
+            typeParameters: default,
             context))
         {
             // Add view component helper.
@@ -112,14 +113,14 @@ internal class ViewComponentTagHelperTargetExtension : IViewComponentTagHelperTa
           .WriteLine("]");
 
         writer.WriteAutoPropertyDeclaration(
-            PublicModifiers,
+            s_publicModifiers,
             ViewContextTypeName,
             ViewContextPropertyName);
 
         foreach (var attribute in tagHelper.BoundAttributes)
         {
             writer.WriteAutoPropertyDeclaration(
-                PublicModifiers,
+                s_publicModifiers,
                 attribute.TypeName,
                 attribute.PropertyName);
 
