@@ -22,14 +22,12 @@ namespace Microsoft.VisualStudioCode.RazorExtension.Services;
 internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvider razorClientServerManagerProvider) : LanguageServerFeatureOptions, IRazorCohostStartupService
 {
     private bool _useRazorCohostServer = false;
-    private bool _useNewFormattingEngine = true;
 
     private readonly RazorClientServerManagerProvider _razorClientServerManagerProvider = razorClientServerManagerProvider;
 
     // Options that are set to their defaults
     public override bool SupportsFileManipulation => true;
     public override bool SingleServerSupport => false;
-    public override bool UsePreciseSemanticTokenRanges => false;
     public override bool ShowAllCSharpCodeActions => false;
     public override bool ReturnCodeActionAndRenamePathsWithPrefixedSlash => PlatformInformation.IsWindows;
     public override bool IncludeProjectKeyInGeneratedFilePath => false;
@@ -45,7 +43,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
 
     // User configurable options
     public override bool UseRazorCohostServer => _useRazorCohostServer;
-    public override bool UseNewFormattingEngine => _useNewFormattingEngine;
 
     public int Order => WellKnownStartupOrder.LanguageServerFeatureOptions;
 
@@ -59,7 +56,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
             Items = [
                 // Roslyn's typescript config handler will convert underscores to camelcase, ie 'razor.languageServer.cohostingEnabled'
                 new ConfigurationItem { Section = "razor.language_server.cohosting_enabled" },
-                new ConfigurationItem { Section = "razor.language_server.use_new_formatting_engine" },
             ]
         };
         var options = await razorClientLanguageServerManager.SendRequestAsync<ConfigurationParams, JsonArray>(
@@ -68,7 +64,6 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
             cancellationToken).ConfigureAwait(false);
 
         _useRazorCohostServer = GetBooleanOptionValue(options[0], _useRazorCohostServer);
-        _useNewFormattingEngine = GetBooleanOptionValue(options[1], _useNewFormattingEngine);
 
         RazorCohostingOptions.UseRazorCohostServer = _useRazorCohostServer;
     }

@@ -182,10 +182,10 @@ internal class RenameService(
         foreach (var originTagHelper in originTagHelpers)
         {
             var editedName = newName;
-            if (originTagHelper.IsComponentFullyQualifiedNameMatch)
+            if (originTagHelper.IsFullyQualifiedNameMatch)
             {
                 // Fully qualified binding, our "new name" needs to be fully qualified.
-                var @namespace = originTagHelper.GetTypeNamespace();
+                var @namespace = originTagHelper.TypeNamespace;
                 if (@namespace == null)
                 {
                     return;
@@ -242,7 +242,7 @@ internal class RenameService(
         }
 
         // Can only have 1 component TagHelper belonging to an element at a time
-        var primaryTagHelper = binding.Descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+        var primaryTagHelper = binding.Descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
         if (primaryTagHelper is null)
         {
             return default;
@@ -297,7 +297,7 @@ internal class RenameService(
 
     private static TagHelperDescriptor? FindAssociatedTagHelper(TagHelperDescriptor tagHelper, ImmutableArray<TagHelperDescriptor> tagHelpers)
     {
-        var typeName = tagHelper.GetTypeName();
+        var typeName = tagHelper.TypeName;
         var assemblyName = tagHelper.AssemblyName;
         foreach (var currentTagHelper in tagHelpers)
         {
@@ -307,7 +307,7 @@ internal class RenameService(
                 continue;
             }
 
-            if (typeName != currentTagHelper.GetTypeName())
+            if (typeName != currentTagHelper.TypeName)
             {
                 continue;
             }

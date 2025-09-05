@@ -17,6 +17,30 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
+    [Fact]
+    public Task BadLooseFileUri()
+       => VerifyFoldingRangesAsync("""
+            <div>
+              @if (true) {[|
+                <div>
+                  Hello World
+                </div>
+              }
+            |]</div>
+
+            @if (true) {[|
+              <div>
+                Hello World
+              </div>
+            }
+            |]
+            @if (true) {[|
+            }|]
+            """,
+           fileKind: RazorFileKind.Legacy,
+           miscellaneousFile: true,
+           razorFilePath: "git:/c:/Users/dawengie/source/repos/razor01/Pages/Index.cshtml?%7B%22path%22:%22c:%5C%5CUsers%5C%5Cdawengie%5C%5Csource%5C%5Crepos%5C%5Crazor01%5C%5CPages%5C%5CIndex.cshtml%22,%22ref%22:%22~%22%7D");
+
     [Theory]
     [CombinatorialData]
     public Task IfStatements(bool miscellaneousFile)
@@ -215,10 +239,10 @@ public class CohostFoldingRangeEndpointTest(ITestOutputHelper testOutputHelper) 
             }|]
             """);
 
-    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false)
+    private async Task VerifyFoldingRangesAsync(string input, RazorFileKind? fileKind = null, bool miscellaneousFile = false, string? razorFilePath = null)
     {
         TestFileMarkupParser.GetSpans(input, out var source, out ImmutableDictionary<string, ImmutableArray<TextSpan>> spans);
-        var document = CreateProjectAndRazorDocument(source, fileKind, miscellaneousFile: miscellaneousFile);
+        var document = CreateProjectAndRazorDocument(source, fileKind, miscellaneousFile: miscellaneousFile, documentFilePath: razorFilePath);
         var inputText = await document.GetTextAsync(DisposalToken);
 
         var htmlSpans = spans.GetValueOrDefault("html").NullToEmpty();
