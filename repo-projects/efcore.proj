@@ -8,6 +8,8 @@
   <ItemGroup>
     <RepositoryReference Include="arcade" />
     <RepositoryReference Include="runtime" />
+    <RepositoryReference Include="msbuild" />
+    <RepositoryReference Include="roslyn" />
   </ItemGroup>
 
 </Project>
