@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Completion;
 
@@ -23,7 +21,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("FormTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("FormTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("form"))
                 .BoundAttributeDescriptor(attribute => attribute
@@ -58,7 +56,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("FormTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("FormTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("form"))
                 .BoundAttributeDescriptor(attribute => attribute
@@ -95,7 +93,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("FormTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("FormTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("form")
                     .RequireAttributeDescriptor(builder =>
@@ -140,7 +138,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("repeat")))
@@ -149,7 +147,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(bool).FullName)
                     .PropertyName("Visible"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
@@ -187,7 +185,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("repeat")))
@@ -196,7 +194,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(bool).FullName)
                     .PropertyName("Visible"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
@@ -236,7 +234,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("repeat")))
@@ -245,7 +243,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(bool).FullName)
                     .PropertyName("Visible"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("class")
@@ -284,12 +282,12 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("repeat")))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("*")
                     .RequireAttributeDescriptor(attribute => attribute.Name("class")))
@@ -323,7 +321,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("repeat")))
@@ -336,7 +334,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(bool).FullName)
                     .PropertyName("Visible"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("*")
                     .RequireAttributeDescriptor(attribute => attribute.Name("class")))
@@ -374,7 +372,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
@@ -385,7 +383,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(bool).FullName)
                     .PropertyName("Visible"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("*")
                     .RequireAttributeDescriptor(attribute => attribute.Name("class")))
@@ -394,7 +392,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
                     .TypeName(typeof(string).FullName)
                     .PropertyName("Class"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("StyleTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("StyleTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("visible")
@@ -430,7 +428,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("CustomTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CustomTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("custom"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
@@ -466,7 +464,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("CustomTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CustomTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("custom"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
@@ -500,7 +498,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .BoundAttributeDescriptor(attribute => attribute
                     .Name("repeat")
@@ -558,7 +556,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("div")
                     .RequireAttributeDescriptor(attribute => attribute.Name("special")))
@@ -591,7 +589,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("MyTableTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("MyTableTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("table")
                     .RequireAttributeDescriptor(attribute => attribute.Name("special")))
@@ -623,7 +621,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BindAttribute", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BindAttribute", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
                 .BoundAttributeDescriptor(builder =>
                 {
@@ -660,16 +658,16 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("Test"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("TestAssembly.Test"))
-                .Metadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
+                .IsFullyQualifiedNameMatch(true)
                 .Build(),
-            TagHelperDescriptorBuilder.Create("Test2TagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("Test2TagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("Test2Assembly.Test"))
-                .Metadata(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch)
+                .IsFullyQualifiedNameMatch(true)
                 .Build(),
         ];
 
@@ -699,11 +697,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("MyTableTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("MyTableTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("my-table"))
                 .TagOutputHint("table")
                 .Build(),
-            TagHelperDescriptorBuilder.Create("MyTrTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("MyTrTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("my-tr"))
                 .TagOutputHint("tr")
                 .Build(),
@@ -736,10 +734,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("CatchAllTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CatchAllTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .Build(),
         ];
@@ -771,10 +769,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("SuperLiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("SuperLiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("superli"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .Build(),
         ];
@@ -807,11 +805,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("MyliTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("MyliTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("myli"))
                 .SetCaseSensitive()
                 .Build(),
-            TagHelperDescriptorBuilder.Create("MYLITagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("MYLITagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("MYLI"))
                 .SetCaseSensitive()
                 .Build(),
@@ -845,11 +843,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("LITagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LITagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("LI"))
                 .SetCaseSensitive()
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .SetCaseSensitive()
                 .Build(),
@@ -882,10 +880,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("SuperLiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("SuperLiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("superli"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("CatchAll", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CatchAll", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build(),
         ];
@@ -916,10 +914,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("SuperLiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("SuperLiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("superli"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("CatchAll", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CatchAll", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build(),
         ];
@@ -951,12 +949,12 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BoldTagHelper1", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldTagHelper1", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("b"))
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("bold"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("BoldTagHelper2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldTagHelper2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .Build(),
         ];
@@ -988,10 +986,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("LiTagHelper1", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper1", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .Build(),
         ];
@@ -1018,14 +1016,14 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("SuperLiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("SuperLiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("superli"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .TagOutputHint("strong")
                 .Build(),
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build(),
         ];
@@ -1053,11 +1051,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .TagOutputHint("li")
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .TagOutputHint("strong")
                 .Build(),
@@ -1086,10 +1084,10 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("LiTagHelper1", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper1", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("LiTagHelper2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("LiTagHelper2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("li").RequireParentTag("ol"))
                 .Build(),
         ];
@@ -1116,11 +1114,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("Tag1", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("Tag1", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("outer-child-tag"))
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("child-tag").RequireParentTag("parent-tag"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("Tag2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("Tag2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("parent-tag"))
                 .AllowChildTag("child-tag")
                 .Build(),
@@ -1152,11 +1150,11 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("Tag1", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("Tag1", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("outer-child-tag"))
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("child-tag").RequireParentTag("parent-tag"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("Tag2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("Tag2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("parent-tag"))
                 .AllowChildTag("child-tag")
                 .Build(),
@@ -1187,7 +1185,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("CatchAll", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("CatchAll", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .AllowChildTag("b")
                 .AllowChildTag("bold")
@@ -1217,7 +1215,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BoldParent", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldParent", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .AllowChildTag("b")
                 .AllowChildTag("bold")
@@ -1249,7 +1247,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BoldParent", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldParent", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .AllowChildTag("b")
                 .AllowChildTag("bold")
@@ -1282,7 +1280,7 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BoldParent", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldParent", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .AllowChildTag("b")
                 .AllowChildTag("bold")
@@ -1317,13 +1315,13 @@ public class LegacyTagHelperCompletionServiceTest(ITestOutputHelper testOutput) 
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("BoldParentCatchAll", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldParentCatchAll", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .AllowChildTag("strong")
                 .AllowChildTag("div")
                 .AllowChildTag("b")
                 .Build(),
-            TagHelperDescriptorBuilder.Create("BoldParent", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("BoldParent", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .AllowChildTag("b")
                 .AllowChildTag("bold")

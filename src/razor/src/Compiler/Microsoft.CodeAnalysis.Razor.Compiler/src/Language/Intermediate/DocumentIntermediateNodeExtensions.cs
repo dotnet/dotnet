@@ -56,18 +56,22 @@ public static class DocumentIntermediateNodeExtensions
         return null;
     }
 
-    public static ImmutableArray<IntermediateNodeReference> FindDirectiveReferences(this DocumentIntermediateNode node, DirectiveDescriptor directive)
+    public static ImmutableArray<IntermediateNodeReference<DirectiveIntermediateNode>> FindDirectiveReferences(
+        this DocumentIntermediateNode node, DirectiveDescriptor directive)
     {
         ArgHelper.ThrowIfNull(node);
         ArgHelper.ThrowIfNull(directive);
 
-        using var results = new PooledArrayBuilder<IntermediateNodeReference>();
+        using var results = new PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>>();
         node.CollectDirectiveReferences(directive, ref results.AsRef());
 
         return results.ToImmutableAndClear();
     }
 
-    internal static void CollectDirectiveReferences(this DocumentIntermediateNode document, DirectiveDescriptor directive, ref PooledArrayBuilder<IntermediateNodeReference> references)
+    internal static void CollectDirectiveReferences(
+        this DocumentIntermediateNode document,
+        DirectiveDescriptor directive,
+        ref PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>> references)
     {
         using var stack = new PooledArrayBuilder<(IntermediateNode node, IntermediateNode parent)>();
 
@@ -80,7 +84,7 @@ public static class DocumentIntermediateNodeExtensions
             if (node is DirectiveIntermediateNode directiveNode &&
                 directiveNode.Directive == directive)
             {
-                references.Add(new IntermediateNodeReference(parent, node));
+                references.Add(new(directiveNode, parent));
             }
 
             var children = node.Children;
@@ -93,18 +97,20 @@ public static class DocumentIntermediateNodeExtensions
         }
     }
 
-    public static ImmutableArray<IntermediateNodeReference> FindDescendantReferences<TNode>(this DocumentIntermediateNode document)
+    public static ImmutableArray<IntermediateNodeReference<TNode>> FindDescendantReferences<TNode>(this DocumentIntermediateNode document)
         where TNode : IntermediateNode
     {
         ArgHelper.ThrowIfNull(document);
 
-        using var results = new PooledArrayBuilder<IntermediateNodeReference>();
-        document.CollectDescendantReferences<TNode>(ref results.AsRef());
+        using var results = new PooledArrayBuilder<IntermediateNodeReference<TNode>>();
+        document.CollectDescendantReferences(ref results.AsRef());
 
         return results.ToImmutableAndClear();
     }
 
-    internal static void CollectDescendantReferences<TNode>(this DocumentIntermediateNode document, ref PooledArrayBuilder<IntermediateNodeReference> references)
+    internal static void CollectDescendantReferences<TNode>(
+        this DocumentIntermediateNode document,
+        ref PooledArrayBuilder<IntermediateNodeReference<TNode>> references)
         where TNode : IntermediateNode
     {
         // Use a post-order traversal because references are used to replace nodes, and thus
@@ -124,9 +130,9 @@ public static class DocumentIntermediateNodeExtensions
             if (visited)
             {
                 // We've already visited the children, so process this node.
-                if (node is TNode && parent != null)
+                if (node is TNode typedNode && parent != null)
                 {
-                    references.Add(new IntermediateNodeReference(parent, node));
+                    references.Add(new(typedNode, parent));
                 }
             }
             else

@@ -41,15 +41,15 @@ public class IntermediateNodeWriter :
         var entries = new List<string>()
         {
             string.Join(" ", node.Modifiers),
-            node.ClassName,
+            node.Name,
             node.BaseType is { } baseType ? $"{baseType.BaseType.Content}{baseType.GreaterThan?.Content}{baseType.ModelType?.Content}{baseType.LessThan?.Content}" : "",
             string.Join(", ", node.Interfaces.Select(i => i.Content))
         };
 
         // Avoid adding the type parameters to the baseline if they aren't present.
-        if (node.TypeParameters != null && node.TypeParameters.Count > 0)
+        if (!node.TypeParameters.IsDefaultOrEmpty)
         {
-            entries.Add(string.Join(", ", node.TypeParameters.Select(p => p.ParameterName)));
+            entries.Add(string.Join(", ", node.TypeParameters.Select(p => p.Name.Content)));
         }
 
         WriteContentNode(node, entries.ToArray());
@@ -94,7 +94,7 @@ public class IntermediateNodeWriter :
 
     public override void VisitFieldDeclaration(FieldDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, string.Join(" ", node.Modifiers), node.FieldType, node.FieldName);
+        WriteContentNode(node, string.Join(" ", node.Modifiers), node.Type, node.Name);
     }
 
     public override void VisitHtmlAttribute(HtmlAttributeIntermediateNode node)
@@ -109,12 +109,12 @@ public class IntermediateNodeWriter :
 
     public override void VisitNamespaceDeclaration(NamespaceDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, node.Content);
+        WriteContentNode(node, node.Name);
     }
 
     public override void VisitMethodDeclaration(MethodDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, string.Join(" ", node.Modifiers), node.ReturnType, node.MethodName);
+        WriteContentNode(node, string.Join(" ", node.Modifiers), node.ReturnType, node.Name);
     }
 
     public override void VisitUsingDirective(UsingDirectiveIntermediateNode node)
@@ -194,7 +194,7 @@ public class IntermediateNodeWriter :
 
     public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)
     {
-        WriteContentNode(node, node.PropertyType.Content, node.PropertyName, node.PropertyExpression);
+        WriteContentNode(node, node.Type.Content, node.Name, node.ExpressionBody);
     }
 
     void IExtensionIntermediateNodeVisitor<RouteAttributeExtensionNode>.VisitExtension(RouteAttributeExtensionNode node)

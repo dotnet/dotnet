@@ -112,7 +112,8 @@ internal static class ComponentDiagnosticFactory
             "The attribute '{0}' was matched by multiple bind attributes. Duplicates:{1}",
             RazorDiagnosticSeverity.Error);
 
-    public static RazorDiagnostic CreateBindAttribute_Duplicates(SourceSpan? source, string attribute, TagHelperDirectiveAttributeIntermediateNode[] attributes)
+    public static RazorDiagnostic CreateBindAttribute_Duplicates(
+        SourceSpan? source, string attribute, IEnumerable<TagHelperDirectiveAttributeIntermediateNode> attributes)
         => RazorDiagnostic.Create(
             BindAttribute_Duplicates,
             source,
