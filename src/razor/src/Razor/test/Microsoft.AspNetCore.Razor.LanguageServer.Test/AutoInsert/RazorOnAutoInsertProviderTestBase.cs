@@ -69,6 +69,6 @@ public abstract class RazorOnAutoInsertProviderTestBase(ITestOutputHelper testOu
             });
         });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKindValue, importSources: default, tagHelpers);
+        return projectEngine.Process(sourceDocument, fileKindValue, importSources: default, tagHelpers);
     }
 }

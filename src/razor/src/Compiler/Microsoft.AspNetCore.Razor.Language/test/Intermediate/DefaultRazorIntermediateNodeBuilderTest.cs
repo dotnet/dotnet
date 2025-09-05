@@ -209,7 +209,7 @@ public class DefaultRazorIntermediateNodeBuilderTest
 
     private class BasicIntermediateNode : IntermediateNode
     {
-        public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+        public override IntermediateNodeCollection Children { get; } = [];
 
         public override void Accept(IntermediateNodeVisitor visitor)
         {

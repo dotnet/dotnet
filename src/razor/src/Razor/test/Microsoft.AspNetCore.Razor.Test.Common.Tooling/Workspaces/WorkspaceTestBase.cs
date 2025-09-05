@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Razor.ProjectEngineHost;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
 using Xunit.Abstractions;
@@ -69,9 +68,6 @@ public abstract class WorkspaceTestBase(ITestOutputHelper testOutput) : ToolingT
             return _languageServerFeatureOptions;
         }
     }
-
-    private protected RazorCompilerOptions CompilerOptions
-        => LanguageServerFeatureOptions.ToCompilerOptions();
 
     private protected override TestProjectSnapshotManager CreateProjectSnapshotManager()
         => CreateProjectSnapshotManager(ProjectEngineFactoryProvider, LanguageServerFeatureOptions);

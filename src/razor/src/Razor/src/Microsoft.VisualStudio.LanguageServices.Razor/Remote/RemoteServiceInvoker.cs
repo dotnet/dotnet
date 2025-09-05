@@ -180,7 +180,6 @@ internal sealed class RemoteServiceInvoker(
                 var initParams = new RemoteClientInitializationOptions
                 {
                     UseRazorCohostServer = _languageServerFeatureOptions.UseRazorCohostServer,
-                    UsePreciseSemanticTokenRanges = _languageServerFeatureOptions.UsePreciseSemanticTokenRanges,
                     HtmlVirtualDocumentSuffix = _languageServerFeatureOptions.HtmlVirtualDocumentSuffix,
                     ReturnCodeActionAndRenamePathsWithPrefixedSlash = _languageServerFeatureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
                     SupportsFileManipulation = _languageServerFeatureOptions.SupportsFileManipulation,

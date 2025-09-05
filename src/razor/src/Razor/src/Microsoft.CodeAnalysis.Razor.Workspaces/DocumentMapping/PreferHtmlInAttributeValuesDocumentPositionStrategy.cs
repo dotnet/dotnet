@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Razor.Protocol;
 namespace Microsoft.CodeAnalysis.Razor.DocumentMapping;
 
 // The main reason for this service is auto-insert of empty double quotes when a user types
-// equals "=" after Blazor component attribute. We think this is Razor (correctly I guess)
+// equals "=" after Blazor component attribute. We think this is C# (correctly I guess)
 // and wouldn't forward auto-insert request to HTML in this case. By essentially overriding
 // language info here we allow the request to be sent over to HTML where it will insert empty
 // double-quotes as it would for any other attribute value
@@ -25,7 +25,7 @@ internal sealed class PreferHtmlInAttributeValuesDocumentPositionInfoStrategy : 
         var positionInfo = DefaultDocumentPositionInfoStrategy.Instance.GetPositionInfo(mappingService, codeDocument, hostDocumentIndex);
 
         var absolutePosition = positionInfo.HostDocumentIndex;
-        if (positionInfo.LanguageKind != RazorLanguageKind.Razor ||
+        if (positionInfo.LanguageKind != RazorLanguageKind.CSharp ||
             absolutePosition < 1)
         {
             return positionInfo;
@@ -42,7 +42,7 @@ internal sealed class PreferHtmlInAttributeValuesDocumentPositionInfoStrategy : 
         if (owner is MarkupTagHelperAttributeSyntax { EqualsToken: { IsMissing: false } equalsToken } &&
             equalsToken.EndPosition == positionInfo.HostDocumentIndex)
         {
-            return positionInfo with { LanguageKind = RazorLanguageKind.Html };
+            return new DocumentPositionInfo(RazorLanguageKind.Html, codeDocument.Source.Text.GetPosition(absolutePosition), absolutePosition);
         }
 
         return positionInfo;
