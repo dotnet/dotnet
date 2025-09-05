@@ -7,7 +7,7 @@ namespace Razor.Diagnostics.Analyzers;
 
 internal static class Extensions
 {
-    public static Diagnostic CreateDiagnostic(this IOperation operation, DiagnosticDescriptor rule)
+    public static Diagnostic CreateDiagnostic(this IOperation operation, DiagnosticDescriptor rule, params object?[]? messageArgs)
     {
         var location = operation.Syntax.GetLocation();
 
@@ -16,6 +16,6 @@ internal static class Extensions
             location = Location.None;
         }
 
-        return Diagnostic.Create(rule, location);
+        return Diagnostic.Create(rule, location, messageArgs);
     }
 }

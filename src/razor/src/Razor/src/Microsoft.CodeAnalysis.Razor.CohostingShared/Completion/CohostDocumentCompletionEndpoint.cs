@@ -53,6 +53,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
     private readonly IClientCapabilitiesService _clientCapabilitiesService = clientCapabilitiesService;
     private readonly ISnippetCompletionItemProvider? _snippetCompletionItemProvider = snippetCompletionItemProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = new(languageServerFeatureOptions);
+    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly IHtmlRequestInvoker _requestInvoker = requestInvoker;
     private readonly CompletionListCache _completionListCache = completionListCache;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
@@ -142,7 +143,8 @@ internal sealed class CohostDocumentCompletionEndpoint(
         var razorCompletionOptions = new RazorCompletionOptions(
             SnippetsSupported: true, // always true in non-legacy Razor, always false in legacy Razor
             AutoInsertAttributeQuotes: clientSettings.AdvancedSettings.AutoInsertAttributeQuotes,
-            CommitElementsWithSpace: clientSettings.AdvancedSettings.CommitElementsWithSpace);
+            CommitElementsWithSpace: clientSettings.AdvancedSettings.CommitElementsWithSpace,
+            UseVsCodeCompletionCommitCharacters: _languageServerFeatureOptions.UseVsCodeCompletionCommitCharacters);
         using var _ = HashSetPool<string>.GetPooledObject(out var existingHtmlCompletions);
 
         if (_triggerAndCommitCharacters.IsValidHtmlTrigger(completionContext))
