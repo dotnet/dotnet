@@ -48,7 +48,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         };
 
         _defaultCompletionContext = new VSInternalCompletionContext();
-        _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        _razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
     }
 
     private static IRazorCompletionItemProvider[] GetCompletionProviders()
@@ -518,7 +518,7 @@ public class RazorCompletionListProviderTest : LanguageServerTestBase
         var codeDocument = CreateCodeDocument("<test  ", documentPath, [tagHelper]);
 
         // Set up desired options
-        var razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true);
+        var razorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
 
         var completionFactsService = new LspRazorCompletionFactsService(GetCompletionProviders());
         var provider = new RazorCompletionListProvider(completionFactsService, _completionListCache, LoggerFactory);

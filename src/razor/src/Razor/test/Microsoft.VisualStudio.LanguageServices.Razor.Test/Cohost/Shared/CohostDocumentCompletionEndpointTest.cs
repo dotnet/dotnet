@@ -697,7 +697,37 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             autoInsertAttributeQuotes: false);
     }
 
-    private async Task VerifyCompletionListAsync(
+    [Fact]
+    public async Task TagHelperAttributes_NoCommitChars_VSCode()
+    {
+        UpdateClientInitializationOptions(c =>
+        {
+            c.UseVsCodeCompletionCommitCharacters = true;
+            return c;
+        });
+
+        var list = await VerifyCompletionListAsync(
+            input: """
+                This is a Razor document.
+
+                <EditForm $$></EditForm>
+
+                The end.
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Explicit,
+                TriggerKind = CompletionTriggerKind.Invoked
+            },
+            expectedItemLabels: ["FormName", "OnValidSubmit", "@...", "style"],
+            htmlItemLabels: ["style"],
+            autoInsertAttributeQuotes: false,
+            useVsCodeCompletionCommitCharacters: true);
+
+        Assert.All(list.Items, item => Assert.DoesNotContain("=", item.CommitCharacters ?? []));
+    }
+
+    private async Task<RazorVSInternalCompletionList> VerifyCompletionListAsync(
         TestCode input,
         VSInternalCompletionContext completionContext,
         string[] expectedItemLabels,
@@ -710,6 +740,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         string? expectedResolvedItemDescription = null,
         bool autoInsertAttributeQuotes = true,
         bool commitElementsWithSpace = true,
+        bool useVsCodeCompletionCommitCharacters = false,
         RazorFileKind? fileKind = null)
     {
         var document = CreateProjectAndRazorDocument(input.Text, fileKind);
@@ -746,6 +777,8 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         snippetCompletionItemProvider.SnippetCache.Update(SnippetLanguage.Html, snippetInfos);
 #endif
 
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions(useVsCodeCompletionCommitCharacters: useVsCodeCompletionCommitCharacters);
+
         var completionListCache = new CompletionListCache();
         var endpoint = new CohostDocumentCompletionEndpoint(
             IncompatibleProjectService,
@@ -753,7 +786,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             ClientSettingsManager,
             ClientCapabilitiesService,
             snippetCompletionItemProvider,
-            TestLanguageServerFeatureOptions.Instance,
+            languageServerFeatureOptions,
             requestInvoker,
             completionListCache,
             NoOpTelemetryReporter.Instance,
@@ -805,21 +838,21 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             Assert.False(result.Items.Any(item => item.InsertText?.Contains("\"$0\"") ?? false));
         }
 
-        if (itemToResolve is null)
+        if (itemToResolve is not null)
         {
-            return;
+            // In the real world the client will send us back the data for the item to resolve, but in tests its easier if we just set it here.
+            // We clone the item first though, to ensure us setting the data doesn't hide a bug in our caching logic, around wrapping" the data.
+            var item = Assert.Single(result.Items.Where(i => i.Label == itemToResolve));
+            item = JsonSerializer.Deserialize<VSInternalCompletionItem>(JsonSerializer.SerializeToElement(item, JsonHelpers.JsonSerializerOptions), JsonHelpers.JsonSerializerOptions)!;
+            item.Data ??= result.Data ?? result.ItemDefaults?.Data;
+
+            Assert.NotNull(item);
+            Assert.NotNull(expectedResolvedItemDescription);
+
+            await VerifyCompletionResolveAsync(document, completionListCache, item, expected, expectedResolvedItemDescription);
         }
 
-        // In the real world the client will send us back the data for the item to resolve, but in tests its easier if we just set it here.
-        // We clone the item first though, to ensure us setting the data doesn't hide a bug in our caching logic, around wrapping" the data.
-        var item = Assert.Single(result.Items.Where(i => i.Label == itemToResolve));
-        item = JsonSerializer.Deserialize<VSInternalCompletionItem>(JsonSerializer.SerializeToElement(item, JsonHelpers.JsonSerializerOptions), JsonHelpers.JsonSerializerOptions)!;
-        item.Data ??= result.Data ?? result.ItemDefaults?.Data;
-
-        Assert.NotNull(item);
-        Assert.NotNull(expectedResolvedItemDescription);
-
-        await VerifyCompletionResolveAsync(document, completionListCache, item, expected, expectedResolvedItemDescription);
+        return result;
     }
 
     private async Task VerifyCompletionResolveAsync(CodeAnalysis.TextDocument document, CompletionListCache completionListCache, VSInternalCompletionItem item, string? expected, string expectedResolvedItemDescription)

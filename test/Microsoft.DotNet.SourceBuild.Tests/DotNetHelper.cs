@@ -79,9 +79,10 @@ internal class DotNetHelper
             OutputHelper,
             configureCallback: (process) => configureProcess(process, workingDirectory),
             millisecondTimeout: millisecondTimeout);
-        
-        if (expectedExitCode != null) {
-            ExecuteHelper.ValidateExitCode(executeResult, (int) expectedExitCode);
+
+        if (expectedExitCode != null)
+        {
+            ExecuteHelper.ValidateExitCode(executeResult, (int)expectedExitCode);
         }
 
         void configureProcess(Process process, string? workingDirectory)
@@ -137,7 +138,7 @@ internal class DotNetHelper
         return projectDirectory;
     }
 
-    public void ExecutePublish(string projectName, DotNetTemplate template, bool? selfContained = null, string? rid = null, bool trimmed = false, bool readyToRun = false)
+    public void ExecutePublish(string projectName, DotNetTemplate template, bool? selfContained = null, string? rid = null)
     {
         string options = GetRestoreAdditionalProjectSourcesPropertyOption() ?? string.Empty;
         string binlogDifferentiator = string.Empty;
@@ -152,16 +153,6 @@ internal class DotNetHelper
                 {
                     options += $" -r {rid}";
                     binlogDifferentiator += $"-{rid}";
-                }
-                if (trimmed)
-                {
-                    options += " /p:PublishTrimmed=true";
-                    binlogDifferentiator += "-trimmed";
-                }
-                if (readyToRun)
-                {
-                    options += " /p:PublishReadyToRun=true";
-                    binlogDifferentiator += "-R2R";
                 }
             }
         }
@@ -188,9 +179,6 @@ internal class DotNetHelper
         }
     }
 
-    public void ExecuteRun(string projectName) =>
-        ExecuteCmd($"run {GetBinLogOption(projectName, "run")}", GetProjectDirectory(projectName));
-
     public void ExecuteRunWeb(string projectName, DotNetTemplate template)
     {
         int expectedExitCode = 143; // Expected exit code of a process terminated by `kill -s TERM`
@@ -205,9 +193,6 @@ internal class DotNetHelper
 
     public void ExecuteWebDll(string projectName, string workingDirectory, DotNetTemplate template) =>
         ExecuteWeb(projectName, $"{projectName}.dll", workingDirectory, template, expectedExitCode: 0);
-
-    public void ExecuteTest(string projectName) =>
-        ExecuteCmd($"test {GetBinLogOption(projectName, "test")}", GetProjectDirectory(projectName));
 
     private void ExecuteWeb(string projectName, string args, string workingDirectory, DotNetTemplate template, int expectedExitCode)
     {
@@ -260,11 +245,6 @@ internal class DotNetHelper
     }
 
     private static string GetProjectDirectory(string projectName) => Path.Combine(ProjectsDirectory, projectName);
-
-    // Complex publish requires a portable RID, which is not available on all architectures. It's also not supported from non-official builds
-    // because it requires packages produced by the Microsoft build which are not available.
-    public static bool ShouldPublishComplex() =>
-        !string.Equals(Config.TargetArchitecture,"ppc64le") && !string.Equals(Config.TargetArchitecture,"s390x") && Config.IsOfficialBuild;
 
     private class WebAppValidator
     {
