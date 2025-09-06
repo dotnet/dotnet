@@ -40,7 +40,7 @@ public static class FileKinds
 
         var fileName = Path.GetFileName(filePath);
 
-        if (string.Equals(ComponentMetadata.ImportsFileName, fileName, StringComparison.Ordinal))
+        if (string.Equals(ComponentHelpers.ImportsFileName, fileName, StringComparison.Ordinal))
         {
             fileKind = RazorFileKind.ComponentImport;
             return true;

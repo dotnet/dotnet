@@ -2,45 +2,73 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public sealed partial class TagHelperDescriptorBuilder : TagHelperObjectBuilder<TagHelperDescriptor>
 {
-    private string? _kind;
+    private TagHelperFlags _flags;
+    private TagHelperKind _kind;
     private string? _name;
     private string? _assemblyName;
-
+    private TypeNameObject _typeNameObject;
     private DocumentationObject _documentationObject;
-    private MetadataHolder _metadata;
+    private MetadataObject? _metadataObject;
 
     private TagHelperDescriptorBuilder()
     {
     }
 
-    internal TagHelperDescriptorBuilder(string kind, string name, string assemblyName)
+    internal TagHelperDescriptorBuilder(TagHelperKind kind, string name, string assemblyName)
         : this()
     {
-        _kind = kind ?? throw new ArgumentNullException(nameof(kind));
+        _kind = kind;
         _name = name ?? throw new ArgumentNullException(nameof(name));
         _assemblyName = assemblyName ?? throw new ArgumentNullException(nameof(assemblyName));
     }
 
     public static TagHelperDescriptorBuilder Create(string name, string assemblyName)
-        => new(TagHelperConventions.DefaultKind, name, assemblyName);
+        => new(TagHelperKind.ITagHelper, name, assemblyName);
 
-    public static TagHelperDescriptorBuilder Create(string kind, string name, string assemblyName)
+    public static TagHelperDescriptorBuilder Create(TagHelperKind kind, string name, string assemblyName)
         => new(kind, name, assemblyName);
 
-    public string Kind => _kind.AssumeNotNull();
+    public TagHelperKind Kind => _kind;
+    public RuntimeKind RuntimeKind { get; set; }
+
     public string Name => _name.AssumeNotNull();
     public string AssemblyName => _assemblyName.AssumeNotNull();
     public string? DisplayName { get; set; }
     public string? TagOutputHint { get; set; }
-    public bool CaseSensitive { get; set; }
+
+    public string? TypeName
+    {
+        get => _typeNameObject.FullName;
+        set => _typeNameObject = TypeNameObject.From(value);
+    }
+
+    public string? TypeNamespace => _typeNameObject.Namespace;
+    public string? TypeNameIdentifier => _typeNameObject.Name;
+
+    public bool CaseSensitive
+    {
+        get => _flags.IsFlagSet(TagHelperFlags.CaseSensitive);
+        set => _flags.UpdateFlag(TagHelperFlags.CaseSensitive, value);
+    }
+
+    public bool IsFullyQualifiedNameMatch
+    {
+        get => _flags.IsFlagSet(TagHelperFlags.IsFullyQualifiedNameMatch);
+        set => _flags.UpdateFlag(TagHelperFlags.IsFullyQualifiedNameMatch, value);
+    }
+
+    public bool ClassifyAttributesOnly
+    {
+        get => _flags.IsFlagSet(TagHelperFlags.ClassifyAttributesOnly);
+        set => _flags.UpdateFlag(TagHelperFlags.ClassifyAttributesOnly, value);
+    }
 
     public string? Documentation
     {
@@ -48,12 +76,27 @@ public sealed partial class TagHelperDescriptorBuilder : TagHelperObjectBuilder<
         set => _documentationObject = new(value);
     }
 
-    public IDictionary<string, string?> Metadata => _metadata.MetadataDictionary;
+    public void SetMetadata(MetadataObject metadataObject)
+    {
+        _metadataObject = metadataObject;
+    }
 
-    public void SetMetadata(MetadataCollection metadata) => _metadata.SetMetadataCollection(metadata);
+    public MetadataObject MetadataObject => _metadataObject ?? MetadataObject.None;
 
-    public bool TryGetMetadataValue(string key, [NotNullWhen(true)] out string? value)
-        => _metadata.TryGetMetadataValue(key, out value);
+    internal void SetTypeName(TypeNameObject typeName)
+    {
+        _typeNameObject = typeName;
+    }
+
+    public void SetTypeName(string fullName, string? typeNamespace, string? typeNameIdentifier)
+    {
+        _typeNameObject = TypeNameObject.From(fullName, typeNamespace, typeNameIdentifier);
+    }
+
+    public void SetTypeName(INamedTypeSymbol namedType)
+    {
+        _typeNameObject = TypeNameObject.From(namedType);
+    }
 
     public TagHelperObjectBuilderCollection<AllowedChildTagDescriptor, AllowedChildTagDescriptorBuilder> AllowedChildTags { get; }
         = new(AllowedChildTagDescriptorBuilder.Pool);
@@ -112,42 +155,25 @@ public sealed partial class TagHelperDescriptorBuilder : TagHelperObjectBuilder<
 
     private protected override TagHelperDescriptor BuildCore(ImmutableArray<RazorDiagnostic> diagnostics)
     {
-        _metadata.AddIfMissing(TagHelperMetadata.Runtime.Name, TagHelperConventions.DefaultKind);
-        var metadata = _metadata.GetMetadataCollection();
-
         return new TagHelperDescriptor(
+            _flags,
             Kind,
+            RuntimeKind,
             Name,
             AssemblyName,
             GetDisplayName(),
+            _typeNameObject,
             _documentationObject,
             TagOutputHint,
-            CaseSensitive,
             TagMatchingRules.ToImmutable(),
             BoundAttributes.ToImmutable(),
             AllowedChildTags.ToImmutable(),
-            metadata,
+            MetadataObject,
             diagnostics);
     }
 
     internal string GetDisplayName()
     {
-        return DisplayName ?? GetTypeName() ?? Name;
-
-        string? GetTypeName()
-        {
-            return TryGetMetadataValue(TagHelperMetadata.Common.TypeName, out var value)
-                ? value
-                : null;
-        }
-    }
-
-    internal MetadataBuilder GetMetadataBuilder(string? runtimeName = null)
-    {
-        var metadataBuilder = new MetadataBuilder();
-
-        metadataBuilder.Add(TagHelperMetadata.Runtime.Name, runtimeName ?? TagHelperConventions.DefaultKind);
-
-        return metadataBuilder;
+        return DisplayName ?? TypeName ?? Name;
     }
 }

@@ -31,9 +31,11 @@ internal abstract class RazorFilePathToContentTypeProviderBase(
     private bool UseLSPEditor(string filePath)
     {
         // When cohosting is on, it's on for all non .NET Framework projects, regardless of feature flags or
-        // project capabilities.
+        // project capabilities. If the file is not in a project (e.g. loose files, left side of diff), we
+        // also want to use the LSP editor, even though the .NET capability check would fail.
         if (_options.UseRazorCohostServer &&
-            _lspEditorFeatureDetector.IsDotNetCoreProject(filePath))
+            _lspEditorFeatureDetector.IsDotNetCoreProject(filePath) is { } check &&
+            (!check.IsInProject || check.HasCapability))
         {
             return true;
         }

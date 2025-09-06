@@ -27,6 +27,8 @@ public class TaskListTests(ITestOutputHelper testOutputHelper) : AbstractRazorEd
             }
             """, ControlledHangMitigatingCancellationToken);
 
+        await TestServices.TaskList.WaitForTaskDescriptorsAsync(ControlledHangMitigatingCancellationToken);
+
         var tasks = await TestServices.TaskList.WaitForTasksAsync(expectedCount: 2, ControlledHangMitigatingCancellationToken);
 
         Assert.NotNull(tasks);
