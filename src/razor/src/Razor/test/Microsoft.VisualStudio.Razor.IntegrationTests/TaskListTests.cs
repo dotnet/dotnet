@@ -10,7 +10,7 @@ namespace Microsoft.VisualStudio.Razor.IntegrationTests;
 
 public class TaskListTests(ITestOutputHelper testOutputHelper) : AbstractRazorEditorTest(testOutputHelper)
 {
-    [IdeFact(Skip = "https://github.com/dotnet/razor/issues/12142")]
+    [IdeFact]
     public async Task ShowsTasks()
     {
         // Arrange
@@ -26,6 +26,8 @@ public class TaskListTests(ITestOutputHelper testOutputHelper) : AbstractRazorEd
                 // TODO: Fill in more code
             }
             """, ControlledHangMitigatingCancellationToken);
+
+        await TestServices.TaskList.WaitForTaskDescriptorsAsync(ControlledHangMitigatingCancellationToken);
 
         var tasks = await TestServices.TaskList.WaitForTasksAsync(expectedCount: 2, ControlledHangMitigatingCancellationToken);
 

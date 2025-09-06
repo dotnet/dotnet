@@ -59,7 +59,7 @@ internal class VSCodeRemoteServicesInitializer(
             SupportsFileManipulation = _featureOptions.SupportsFileManipulation,
             ShowAllCSharpCodeActions = _featureOptions.ShowAllCSharpCodeActions,
             SupportsSoftSelectionInCompletion = _featureOptions.SupportsSoftSelectionInCompletion,
-            UseVsCodeCompletionTriggerCharacters = _featureOptions.UseVsCodeCompletionTriggerCharacters,
+            UseVsCodeCompletionCommitCharacters = _featureOptions.UseVsCodeCompletionCommitCharacters,
         }, cancellationToken).ConfigureAwait(false);
 
         await service.InitializeLSPAsync(new RemoteClientLSPInitializationOptions
