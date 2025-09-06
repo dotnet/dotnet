@@ -7,6 +7,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkPackageVersion>10.0.0-beta.25454.107</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetBuildTasksTemplatingPackageVersion>10.0.0-beta.25454.107</MicrosoftDotNetBuildTasksTemplatingPackageVersion>
     <MicrosoftDotNetCMakeSdkPackageVersion>10.0.0-beta.25454.107</MicrosoftDotNetCMakeSdkPackageVersion>
     <MicrosoftDotNetGenFacadesPackageVersion>10.0.0-beta.25454.107</MicrosoftDotNetGenFacadesPackageVersion>
     <MicrosoftDotNetHelixSdkPackageVersion>10.0.0-beta.25454.107</MicrosoftDotNetHelixSdkPackageVersion>
@@ -35,6 +36,7 @@ This file should be imported by eng/Versions.props
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
     <MicrosoftDotNetArcadeSdkVersion>$(MicrosoftDotNetArcadeSdkPackageVersion)</MicrosoftDotNetArcadeSdkVersion>
+    <MicrosoftDotNetBuildTasksTemplatingVersion>$(MicrosoftDotNetBuildTasksTemplatingPackageVersion)</MicrosoftDotNetBuildTasksTemplatingVersion>
     <MicrosoftDotNetCMakeSdkVersion>$(MicrosoftDotNetCMakeSdkPackageVersion)</MicrosoftDotNetCMakeSdkVersion>
     <MicrosoftDotNetGenFacadesVersion>$(MicrosoftDotNetGenFacadesPackageVersion)</MicrosoftDotNetGenFacadesVersion>
     <MicrosoftDotNetHelixSdkVersion>$(MicrosoftDotNetHelixSdkPackageVersion)</MicrosoftDotNetHelixSdkVersion>
