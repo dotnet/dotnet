@@ -28,7 +28,7 @@ internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBa
 
         foreach (var candidate in candidates)
         {
-            var (parent, node) = candidate;
+            var (node, parent) = candidate;
 
             parent.AddDiagnostic(ComponentDiagnosticFactory.Create_TemplateInvalidLocation(node.Source));
 
@@ -53,7 +53,7 @@ internal class ComponentTemplateDiagnosticPass : ComponentIntermediateNodePassBa
                                 TagHelperPropertyIntermediateNode or // Inside malformed ref attribute
                                 TagHelperDirectiveAttributeIntermediateNode) // Inside a directive attribute
                 {
-                    _candidates.Add(new IntermediateNodeReference(Parent, node));
+                    _candidates.Add(new IntermediateNodeReference(node, Parent.AssumeNotNull()));
 
                     // We found a candidate and can stop looking. There's no need to report multiple diagnostics for the same node.
                     break;

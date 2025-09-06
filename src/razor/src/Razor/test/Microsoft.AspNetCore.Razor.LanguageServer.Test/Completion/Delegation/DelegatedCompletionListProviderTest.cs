@@ -22,7 +22,8 @@ public class DelegatedCompletionListProviderTest : CompletionTestBase
     private static readonly RazorCompletionOptions s_defaultRazorCompletionOptions = new(
         SnippetsSupported: true,
         AutoInsertAttributeQuotes: true,
-        CommitElementsWithSpace: true);
+        CommitElementsWithSpace: true,
+        UseVsCodeCompletionCommitCharacters: false);
 
     private static readonly VSInternalClientCapabilities s_clientCapabilities = new();
 

@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.Extensions.Internal;
 
 namespace Microsoft.CodeAnalysis.Razor.Settings;
 
@@ -54,4 +56,35 @@ internal sealed record ClientAdvancedSettings(bool FormatOnType,
                                                                 LogLevel.Warning,
                                                                 FormatOnPaste: true,
                                                                 TaskListDescriptors: []);
+
+    public bool Equals(ClientAdvancedSettings? other)
+    {
+        return other is not null &&
+            FormatOnType == other.FormatOnType &&
+            AutoClosingTags == other.AutoClosingTags &&
+            AutoInsertAttributeQuotes == other.AutoInsertAttributeQuotes &&
+            ColorBackground == other.ColorBackground &&
+            CodeBlockBraceOnNextLine == other.CodeBlockBraceOnNextLine &&
+            CommitElementsWithSpace == other.CommitElementsWithSpace &&
+            SnippetSetting == other.SnippetSetting &&
+            LogLevel == other.LogLevel &&
+            FormatOnPaste == other.FormatOnPaste &&
+            TaskListDescriptors.SequenceEqual(other.TaskListDescriptors);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = HashCodeCombiner.Start();
+        hash.Add(FormatOnType);
+        hash.Add(AutoClosingTags);
+        hash.Add(AutoInsertAttributeQuotes);
+        hash.Add(ColorBackground);
+        hash.Add(CodeBlockBraceOnNextLine);
+        hash.Add(CommitElementsWithSpace);
+        hash.Add(SnippetSetting);
+        hash.Add(LogLevel);
+        hash.Add(FormatOnPaste);
+        hash.Add(TaskListDescriptors);
+        return hash;
+    }
 }

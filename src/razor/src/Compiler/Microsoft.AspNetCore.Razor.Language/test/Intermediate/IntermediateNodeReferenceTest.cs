@@ -23,7 +23,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node3);
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act
         reference.InsertAfter(node2);
@@ -45,7 +45,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node2);
 
-        var reference = new IntermediateNodeReference(parent, node2);
+        var reference = new IntermediateNodeReference(node2, parent);
 
         // Act
         reference.InsertAfter(node3);
@@ -68,7 +68,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node4);
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act
         reference.InsertAfter(new[] { node2, node3 });
@@ -91,7 +91,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node2);
 
-        var reference = new IntermediateNodeReference(parent, node2);
+        var reference = new IntermediateNodeReference(node2, parent);
 
         // Act
         reference.InsertAfter(new[] { node3, node4 });
@@ -113,7 +113,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node3);
 
-        var reference = new IntermediateNodeReference(parent, node3);
+        var reference = new IntermediateNodeReference(node3, parent);
 
         // Act
         reference.InsertBefore(node2);
@@ -135,7 +135,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node2);
         parent.Children.Add(node3);
 
-        var reference = new IntermediateNodeReference(parent, node2);
+        var reference = new IntermediateNodeReference(node2, parent);
 
         // Act
         reference.InsertBefore(node1);
@@ -158,7 +158,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node1);
         parent.Children.Add(node4);
 
-        var reference = new IntermediateNodeReference(parent, node4);
+        var reference = new IntermediateNodeReference(node4, parent);
 
         // Act
         reference.InsertBefore(new[] { node2, node3 });
@@ -181,7 +181,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node3);
         parent.Children.Add(node4);
 
-        var reference = new IntermediateNodeReference(parent, node3);
+        var reference = new IntermediateNodeReference(node3, parent);
 
         // Act
         reference.InsertBefore(new[] { node1, node2 });
@@ -204,7 +204,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node3);
         parent.Children.Add(node2);
 
-        var reference = new IntermediateNodeReference(parent, node3);
+        var reference = new IntermediateNodeReference(node3, parent);
 
         // Act
         reference.Remove();
@@ -228,7 +228,7 @@ public class IntermediateNodeReferenceTest
         parent.Children.Add(node4);
         parent.Children.Add(node3);
 
-        var reference = new IntermediateNodeReference(parent, node4);
+        var reference = new IntermediateNodeReference(node4, parent);
 
         // Act
         reference.Replace(node2);
@@ -311,7 +311,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertAfter(new BasicIntermediateNode("_")));
@@ -326,7 +326,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertAfter(new[] { new BasicIntermediateNode("_") }));
@@ -341,7 +341,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertBefore(new BasicIntermediateNode("_")));
@@ -356,7 +356,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertBefore(new[] { new BasicIntermediateNode("_") }));
@@ -371,7 +371,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.Remove());
@@ -386,7 +386,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.Replace(new BasicIntermediateNode("_")));
@@ -401,7 +401,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertAfter(new BasicIntermediateNode("_")));
@@ -416,7 +416,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertAfter(new[] { new BasicIntermediateNode("_") }));
@@ -431,7 +431,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertBefore(new BasicIntermediateNode("_")));
@@ -446,7 +446,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.InsertBefore(new[] { new BasicIntermediateNode("_") }));
@@ -461,7 +461,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.Remove());
@@ -476,7 +476,7 @@ public class IntermediateNodeReferenceTest
 
         var node1 = new BasicIntermediateNode("Node1");
 
-        var reference = new IntermediateNodeReference(parent, node1);
+        var reference = new IntermediateNodeReference(node1, parent);
 
         // Act & Assert
         var exception = Assert.Throws<InvalidOperationException>(() => reference.Replace(new BasicIntermediateNode("_")));

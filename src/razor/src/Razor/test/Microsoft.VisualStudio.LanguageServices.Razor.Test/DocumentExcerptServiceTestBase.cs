@@ -42,7 +42,7 @@ public abstract class DocumentExcerptServiceTestBase(ITestOutputHelper testOutpu
     private (IDocumentSnapshot primary, Document secondary) InitializeDocument(SourceText sourceText)
     {
         var state = ProjectState
-            .Create(_hostProject, LanguageServerFeatureOptions.ToCompilerOptions(), ProjectEngineFactoryProvider)
+            .Create(_hostProject, ProjectEngineFactoryProvider)
             .AddDocument(_hostDocument, sourceText);
 
         var project = new ProjectSnapshot(state);
