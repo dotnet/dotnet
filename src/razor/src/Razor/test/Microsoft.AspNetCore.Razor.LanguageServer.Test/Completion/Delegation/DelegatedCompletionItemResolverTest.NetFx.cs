@@ -60,7 +60,8 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
     private static readonly RazorCompletionOptions s_defaultRazorCompletionOptions = new(
         SnippetsSupported: true,
         AutoInsertAttributeQuotes: true,
-        CommitElementsWithSpace: true);
+        CommitElementsWithSpace: true,
+        UseVsCodeCompletionCommitCharacters: false);
 
     private readonly DelegatedCompletionParams _csharpCompletionParams;
     private readonly DelegatedCompletionParams _htmlCompletionParams;

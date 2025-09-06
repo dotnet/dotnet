@@ -39,7 +39,7 @@ internal class VSCodeLanguageServerFeatureOptions(RazorClientServerManagerProvid
     public override bool UpdateBuffersForClosedDocuments => true;
     public override bool DelegateToCSharpOnDiagnosticPublish => true;
     public override bool SupportsSoftSelectionInCompletion => false;
-    public override bool UseVsCodeCompletionTriggerCharacters => true;
+    public override bool UseVsCodeCompletionCommitCharacters => true;
 
     // User configurable options
     public override bool UseRazorCohostServer => _useRazorCohostServer;
