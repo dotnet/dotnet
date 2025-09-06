@@ -69,6 +69,7 @@ This file should be imported by eng/Versions.props
     <MicrosoftExtensionsObjectPoolPackageVersion>10.0.0-rc.1.25414.103</MicrosoftExtensionsObjectPoolPackageVersion>
     <MicrosoftFSharpCompilerPackageVersion>14.0.100-preview7.25414.103</MicrosoftFSharpCompilerPackageVersion>
     <MicrosoftJSInteropPackageVersion>10.0.0-rc.1.25414.103</MicrosoftJSInteropPackageVersion>
+    <MicrosoftNetBuildServerUtilsVersion>5.0.0-2.25414.103</MicrosoftNetBuildServerUtilsVersion>
     <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25414.103</MicrosoftNetCompilersToolsetPackageVersion>
     <MicrosoftNetCompilersToolsetFrameworkPackageVersion>5.0.0-2.25414.103</MicrosoftNetCompilersToolsetFrameworkPackageVersion>
     <MicrosoftNETHostModelPackageVersion>10.0.0-rc.1.25414.103</MicrosoftNETHostModelPackageVersion>
