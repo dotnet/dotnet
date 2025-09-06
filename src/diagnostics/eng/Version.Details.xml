@@ -1,11 +1,11 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="diagnostics" Sha="619d5633513d1b31c528db4360833fce52f51829" BarId="280198" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="9.0.8">
+    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="9.0.8" Pinned="True">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha />
     </Dependency>
-    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8">
+    <Dependency Name="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" Pinned="True">
       <Uri>https://github.com/dotnet/runtime</Uri>
       <Sha />
     </Dependency>
@@ -17,7 +17,7 @@
       <Uri>https://github.com/microsoft/clrmd</Uri>
       <Sha>f11663fc2e71ddd0869deb528047f0f476a0e346</Sha>
     </Dependency>
-    <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1">
+    <Dependency Name="System.CommandLine" Version="2.0.0-beta5.25210.1" Pinned="True">
       <Uri>https://github.com/dotnet/command-line-api</Uri>
       <Sha>e9b0511d7f1128e2bc3be7a658a2a4ea977e602d</Sha>
     </Dependency>
