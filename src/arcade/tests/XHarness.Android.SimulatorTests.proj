@@ -11,7 +11,7 @@
     <XHarnessAndroidProject Include="$(MSBuildThisFileDirectory)XHarness/XHarness.TestApks.proj">
       <AdditionalProperties>XHarnessTestX86=true;XHarnessTestX86_64=true</AdditionalProperties>
     </XHarnessAndroidProject>
-    <HelixTargetQueue Include="ubuntu.1804.amd64.android.29.open"/>
+    <HelixTargetQueue Include="ubuntu.2204.amd64.android.29.open"/>
   </ItemGroup>
 
   <Target Name="Pack"/>
