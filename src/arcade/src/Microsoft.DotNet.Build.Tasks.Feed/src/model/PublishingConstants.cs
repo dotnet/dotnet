@@ -729,6 +729,26 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 symbolTargetType: PublicAndInternalSymbolTargets,
                 filenamesToExclude: FilenamesToExclude),
 
+            // .NET 10 Eng,
+            new TargetChannelConfig(
+                id: 8394,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "eng/net10" },
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                filenamesToExclude: FilenamesToExclude),
+
+            // .NET 10 Eng - Validation,
+            new TargetChannelConfig(
+                id: 8395,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: new List<string>() { "eng/net10validation" },
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: PublicAndInternalSymbolTargets,
+                flatten: false),
+
             // .NET 10 Workload Release,
             new TargetChannelConfig(
                 id: 5174,
