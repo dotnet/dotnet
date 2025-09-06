@@ -1601,7 +1601,11 @@ Tool '{1}' (version '{2}') was successfully installed. Entry is added to the man
   </data>
   <data name="PropertyDirectiveMissingParts" xml:space="preserve">
     <value>The property directive needs to have two parts separated by '=' like '#:property PropertyName=PropertyValue': {0}</value>
-    <comment>{0} is the file path and line number.</comment>
+    <comment>{0} is the file path and line number.{Locked="#:property"}</comment>
+  </data>
+  <data name="StaticGraphRestoreNotSupported" xml:space="preserve">
+    <value>Static graph restore is not supported for file-based apps. Remove the '#:property' at {0}.</value>
+    <comment>{0} is the file path and line number.{Locked="#:property"}</comment>
   </data>
   <data name="InvalidDirectiveName" xml:space="preserve">
     <value>The directive at '{2}' should contain a name without special characters and an optional value separated by '{1}' like '#:{0} Name{1}Value'.</value>
@@ -2640,5 +2644,26 @@ Proceed?</value>
   </data>
   <data name="PackCmdVersion" xml:space="preserve">
     <value>VERSION</value>
+  </data>
+  <data name="CmdMinimumExpectedTestsDescription" xml:space="preserve">
+    <value>Specifies the minimum number of tests that are expected to run.</value>
+  </data>
+  <data name="DotnetTestPipeOverlapping" xml:space="preserve">
+    <value>'dotnet' unexpectedly received overlapping messages from the 'dotnet test' named pipe.</value>
+  </data>
+  <data name="DotnetTestPipeIncompleteSize" xml:space="preserve">
+    <value>'dotnet' unexpectedly received less than 4 bytes from the 'dotnet test' named pipe.</value>
+  </data>
+  <data name="InternalLoopAsyncDidNotExitSuccessfullyErrorMessage" xml:space="preserve">
+    <value>Method '{0}' did not exit successfully</value>
+  </data>
+  <data name="DotnetTestPipeFailureHasHandshake" xml:space="preserve">
+    <value>Error disposing 'NamedPipeServer' corresponding to handshake:</value>
+  </data>
+  <data name="DotnetTestPipeFailureWithoutHandshake" xml:space="preserve">
+    <value>Error disposing 'NamedPipeServer', and no handshake was found.</value>
+  </data>
+  <data name="DotnetTestIncompatibleHandshakeVersion" xml:space="preserve">
+    <value>Supported protocol versions sent by Microsoft.Testing.Platform are '{0}'. The SDK supports '{1}', which is incompatible.</value>
   </data>
 </root>
