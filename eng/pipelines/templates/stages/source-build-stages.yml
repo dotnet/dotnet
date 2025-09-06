@@ -174,18 +174,6 @@ stages:
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: 'SB_{0}_Mono_Offline_MsftSdk'
-            distro: centos
-            targetArchitecture: x64
-            buildFromArchive: true             # ✅
-            enablePoison: false                # 🚫
-            runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
-            useSystemLibraries: false          # 🚫
-            withPreviousSDK: false             # 🚫
-            disableSigning: true               # ✅
-            createSourceArtifacts: false       # 🚫
-
           - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: fedora
             targetArchitecture: x64
@@ -222,16 +210,3 @@ stages:
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'
-
-          - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
-            distro: centos
-            targetArchitecture: x64
-            buildFromArchive: true             # ✅
-            enablePoison: false                # 🚫
-            runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
-            useSystemLibraries: false          # 🚫
-            withPreviousSDK: false             # 🚫
-            disableSigning: true               # ✅
-            createSourceArtifacts: false       # 🚫
-            reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
