@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -56,20 +57,25 @@ internal sealed class RemoteDiagnosticsService(in ServiceArgs args) : RazorDocum
         JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo,
         JsonSerializableDocumentId documentId,
         ImmutableArray<string> taskListDescriptors,
+        LspDiagnostic[] csharpTaskItems,
         CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
             documentId,
-            context => GetTaskListDiagnosticsAsync(context, taskListDescriptors, cancellationToken),
+            context => GetTaskListDiagnosticsAsync(context, taskListDescriptors, csharpTaskItems, cancellationToken),
             cancellationToken);
 
-    private static async ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
+    private async ValueTask<ImmutableArray<LspDiagnostic>> GetTaskListDiagnosticsAsync(
         RemoteDocumentContext context,
         ImmutableArray<string> taskListDescriptors,
+        LspDiagnostic[] csharpTaskItems,
         CancellationToken cancellationToken)
     {
         var codeDocument = await context.GetCodeDocumentAsync(cancellationToken).ConfigureAwait(false);
 
-        return TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, taskListDescriptors);
+        using var diagnostics = new PooledArrayBuilder<LspDiagnostic>();
+        diagnostics.AddRange(TaskListDiagnosticProvider.GetTaskListDiagnostics(codeDocument, taskListDescriptors));
+        diagnostics.AddRange(_translateDiagnosticsService.MapDiagnostics(RazorLanguageKind.CSharp, csharpTaskItems, context.Snapshot, codeDocument));
+        return diagnostics.ToImmutableAndClear();
     }
 }
