@@ -33,7 +33,7 @@ internal class ConfigurableLanguageServerFeatureOptions : LanguageServerFeatureO
     public override bool IncludeProjectKeyInGeneratedFilePath => _includeProjectKeyInGeneratedFilePath ?? _defaults.IncludeProjectKeyInGeneratedFilePath;
     public override bool UseRazorCohostServer => _useRazorCohostServer ?? _defaults.UseRazorCohostServer;
     public override bool SupportsSoftSelectionInCompletion => false;
-    public override bool UseVsCodeCompletionTriggerCharacters => true;
+    public override bool UseVsCodeCompletionCommitCharacters => true;
 
     // Note: This option is defined in the negative because the default behavior should be to add documents to misc files project
     // when the language server is initialized. Adding the option at the command-line should disable that behavior.
