@@ -7,12 +7,22 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Utilities;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 internal readonly struct TypeNameObject
 {
-    private static readonly ImmutableArray<string> s_knownTypeNames;
+    private readonly struct TypeNameInfo(string fullName, string? @namespace, string? name, string? alias)
+    {
+        public string FullName { get; } = fullName;
+        public string? Namespace { get; } = @namespace;
+        public string? Name { get; } = name;
+        public string? Alias { get; } = alias;
+    }
+
+    private static readonly ImmutableArray<TypeNameInfo> s_knownTypeNames;
     private static readonly FrozenDictionary<string, byte> s_typeNameToIndex;
 
     private static readonly int s_booleanIndex;
@@ -20,7 +30,7 @@ internal readonly struct TypeNameObject
 
     static TypeNameObject()
     {
-        var knownTypeNames = ImmutableArray.CreateBuilder<string>();
+        var knownTypeNames = ImmutableArray.CreateBuilder<TypeNameInfo>();
         var typeNameToIndex = new Dictionary<string, byte>(StringComparer.Ordinal);
 
         Add<object>("object");
@@ -49,10 +59,14 @@ internal readonly struct TypeNameObject
 
         int Add<T>(string? alias = null)
         {
-            var fullName = typeof(T).FullName!;
             Debug.Assert(knownTypeNames.Count < byte.MaxValue, "Too many known type names to fit in a byte index.");
+
+            var fullName = typeof(T).FullName!;
+            var @namespace = typeof(T).Namespace;
+            var name = typeof(T).Name;
+
             var index = (byte)knownTypeNames.Count;
-            knownTypeNames.Add(fullName);
+            knownTypeNames.Add(new(fullName, @namespace, name, alias));
             typeNameToIndex.Add(fullName, index);
 
             if (alias is not null)
@@ -65,14 +79,14 @@ internal readonly struct TypeNameObject
     }
 
     private readonly byte? _index;
-    private readonly string? _stringValue;
+    private readonly TypeNameInfo? _info;
 
     public TypeNameObject(byte index)
     {
         Debug.Assert(index >= 0 && index < s_knownTypeNames.Length);
 
         _index = index;
-        _stringValue = null;
+        _info = null;
     }
 
     public TypeNameObject(string? stringValue)
@@ -80,37 +94,130 @@ internal readonly struct TypeNameObject
         Debug.Assert(stringValue is null || !s_typeNameToIndex.ContainsKey(stringValue));
 
         _index = null;
-        _stringValue = stringValue;
+        _info = new(stringValue!, @namespace: null, name: null, alias: null);
     }
 
-    public bool IsNull => _index is null && _stringValue is null;
+    private TypeNameObject(TypeNameInfo info, byte? index)
+    {
+        _index = index;
+        _info = info;
+    }
+
+    public bool IsNull => _index is null && _info is null;
 
     public byte? Index => _index;
-    public string? StringValue => _stringValue;
 
-    public static TypeNameObject From(string? typeName)
+    public static TypeNameObject From(string? fullName)
     {
-        if (typeName is null)
+        if (fullName is null)
         {
             return default;
         }
 
-        return s_typeNameToIndex.TryGetValue(typeName, out var index)
-            ? new(index)
-            : new(typeName);
+        return From(fullName, namespaceName: null, name: null);
+    }
+
+    public static TypeNameObject From(string fullName, string? namespaceName, string? name)
+    {
+        if (s_typeNameToIndex.TryGetValue(fullName, out var index))
+        {
+            var info = s_knownTypeNames[index];
+            return new(info, index);
+        }
+
+        return new(new(fullName, namespaceName, name, alias: null), index: null);
+    }
+
+    public static TypeNameObject From<T>()
+        => From(typeof(T));
+
+    public static TypeNameObject From(Type type)
+    {
+        var fullName = type.FullName!;
+
+        if (s_typeNameToIndex.TryGetValue(fullName, out var index))
+        {
+            var info = s_knownTypeNames[index];
+            return new(info, index);
+        }
+
+        var @namespace = type.Namespace;
+        var name = type.Name;
+
+        return new(new(fullName, @namespace, name, alias: null), index: null);
+    }
+
+    public static TypeNameObject From(INamedTypeSymbol namedTypeSymbol)
+    {
+        var fullName = namedTypeSymbol.GetFullName();
+
+        if (s_typeNameToIndex.TryGetValue(fullName, out var index))
+        {
+            var info = s_knownTypeNames[index];
+            return new(info, index);
+        }
+
+        var @namespace = namedTypeSymbol.ContainingNamespace.GetFullName();
+        var name = namedTypeSymbol.Name;
+
+        return new(new(fullName, @namespace, name, alias: null), index: null);
     }
 
     public bool IsBoolean => _index == s_booleanIndex;
     public bool IsString => _index == s_stringIndex;
 
-    public readonly string? GetTypeName()
+    public readonly string? FullName
     {
-        if (_index is byte index)
+        get
         {
-            return s_knownTypeNames[index];
-        }
+            if (_info is { FullName: var fullName })
+            {
+                return fullName;
+            }
 
-        return _stringValue;
+            if (_index is byte index)
+            {
+                return s_knownTypeNames[index].FullName;
+            }
+
+            return null;
+        }
+    }
+
+    public readonly string? Namespace
+    {
+        get
+        {
+            if (_info is { Namespace: var @namespace })
+            {
+                return @namespace;
+            }
+
+            if (_index is byte index)
+            {
+                return s_knownTypeNames[index].Namespace;
+            }
+
+            return null;
+        }
+    }
+
+    public readonly string? Name
+    {
+        get
+        {
+            if (_info is { Name: var name })
+            {
+                return name;
+            }
+
+            if (_index is byte index)
+            {
+                return s_knownTypeNames[index].Name;
+            }
+
+            return null;
+        }
     }
 
     public void AppendToChecksum(in Checksum.Builder builder)
@@ -119,9 +226,11 @@ internal readonly struct TypeNameObject
         {
             builder.AppendData(index);
         }
-        else if (_stringValue is string fullName)
+        else if (_info is TypeNameInfo info)
         {
-            builder.AppendData(fullName);
+            builder.AppendData(info.FullName);
+            builder.AppendData(info.Namespace);
+            builder.AppendData(info.Name);
         }
         else
         {

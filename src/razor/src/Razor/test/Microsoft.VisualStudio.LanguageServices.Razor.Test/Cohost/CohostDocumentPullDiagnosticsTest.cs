@@ -20,6 +20,19 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
     [Fact]
+    public Task NoDiagnostics()
+        => VerifyDiagnosticsAsync("""
+            <div></div>
+
+            @code
+            {
+                public void IJustMetYou()
+                {
+                }
+            }
+            """);
+
+    [Fact]
     public Task CSharp()
         => VerifyDiagnosticsAsync("""
             <div></div>
@@ -425,15 +438,10 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 }];
 
         Assert.NotNull(result);
+        var report = Assert.Single(result);
+        Assert.NotNull(report);
 
-        if (result is [{ Diagnostics: null }])
-        {
-            // No diagnostics found, make sure none were expected
-            AssertEx.Equal(input.OriginalInput, input.Text);
-            return;
-        }
-
-        var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
+        var markers = report.Diagnostics.SelectMany(d =>
             new[] {
                 (index: inputText.GetTextSpan(d.Range).Start, text: $"{{|{d.Code!.Value.Second}:"),
                 (index: inputText.GetTextSpan(d.Range).End, text:"|}")
