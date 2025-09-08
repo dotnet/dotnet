@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)OnAutoInsert\CohostOnAutoInsertTriggerCharacterProviders.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorAnalyzerAssemblyRedirector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorSourceGeneratedDocumentSpanMappingService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RazorSourceGeneratorLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Rename\CohostRenameEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SignatureHelp\CohostSignatureHelpEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FoldingRange\CohostFoldingRangeEndpoint.cs" />
@@ -46,7 +47,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentPublisher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlDocumentSynchronizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\HtmlRequestInvokerExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)HtmlDocumentServices\IHtmlRequestInvoker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InlayHints\CohostInlayHintResolveEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRazorCohostStartupService.cs" />

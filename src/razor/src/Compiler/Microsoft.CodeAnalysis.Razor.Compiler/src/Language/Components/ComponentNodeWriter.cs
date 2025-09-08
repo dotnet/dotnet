@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
@@ -15,11 +16,16 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateTargetExtension
 {
     private readonly RazorLanguageVersion _version;
+    protected readonly ScopeStack ScopeStack = new();
 
     protected ComponentNodeWriter(RazorLanguageVersion version)
     {
         _version = version;
     }
+
+    public BuilderVariableName BuilderVariableName => ScopeStack.BuilderVariableName;
+    public RenderModeVariableName RenderModeVariableName => ScopeStack.RenderModeVariableName;
+    public FormNameVariableName FormNameVariableName => ScopeStack.FormNameVariableName;
 
     protected virtual bool CanUseAddComponentParameter(CodeRenderingContext context)
     {
@@ -134,11 +140,9 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
         for (var i = 0; i < parameters.Count; i++)
         {
-            if (!string.IsNullOrEmpty(parameters[i].SeqName))
+            if (parameters[i].SeqName is SeqName seqName)
             {
-                writer.Write("int ");
-                writer.Write(parameters[i].SeqName);
-                writer.Write(", ");
+                writer.Write($"int {seqName}, ");
             }
 
             writer.Write(parameters[i].TypeName);
@@ -168,14 +172,15 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         context.CodeWriter.Write(");");
         context.CodeWriter.WriteLine();
 
-        string renderModeParameterName = null;
+        ParameterName? renderModeParameterName = null;
+
         foreach (var parameter in parameters)
         {
             switch (parameter.Source)
             {
                 case ComponentAttributeIntermediateNode attribute:
                     context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, GetAddComponentParameterMethodName(context));
-                    context.CodeWriter.Write(parameter.SeqName);
+                    context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
                     WriteComponentAttributeName(context, attribute, allowNameof);
                     context.CodeWriter.Write(", ");
@@ -191,7 +196,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
                 case SplatIntermediateNode:
                     context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, ComponentsApi.RenderTreeBuilder.AddMultipleAttributes);
-                    context.CodeWriter.Write(parameter.SeqName);
+                    context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 
                     context.CodeWriter.Write(parameter.ParameterName);
@@ -200,7 +205,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
                 case ComponentChildContentIntermediateNode childContent:
                     context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, GetAddComponentParameterMethodName(context));
-                    context.CodeWriter.Write(parameter.SeqName);
+                    context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 
                     context.CodeWriter.Write($"\"{childContent.AttributeName}\"");
@@ -223,10 +228,10 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
                 case ReferenceCaptureIntermediateNode capture:
                     context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, capture.IsComponentCapture ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture);
-                    context.CodeWriter.Write(parameter.SeqName);
+                    context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 
-                    var cast = capture.IsComponentCapture ? $"({capture.ComponentCaptureTypeName})" : string.Empty;
+                    var cast = capture.IsComponentCapture ? $"({capture.FieldTypeName})" : string.Empty;
                     context.CodeWriter.Write($"(__value) => {{ {parameter.ParameterName}({cast}__value); }}");
                     context.CodeWriter.WriteEndMethodInvocation();
                     break;
@@ -244,9 +249,9 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             }
         }
 
-        if (renderModeParameterName is not null)
+        if (renderModeParameterName is ParameterName parameterName)
         {
-            WriteAddComponentRenderMode(context, ComponentsApi.RenderTreeBuilder.BuilderParameter, renderModeParameterName);
+            WriteAddComponentRenderMode(context, BuilderVariableName.Default, parameterName);
         }
 
         context.CodeWriter.WriteInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, ComponentsApi.RenderTreeBuilder.CloseComponent);
@@ -341,7 +346,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
 
         static string serializeTypeParameter(BoundAttributeDescriptor attribute)
         {
-            if (attribute.Metadata.TryGetValue(ComponentMetadata.Component.TypeParameterWithAttributesKey, out var withAttributes))
+            if (attribute.Metadata is TypeParameterMetadata { NameWithAttributes: string withAttributes })
             {
                 return withAttributes;
             }
@@ -366,7 +371,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             {
                 var attributeSourceSpan = (SourceSpan)(attribute.PropertySpan ?? attribute.OriginalAttributeSpan);
                 var requiresEscaping = attribute.PropertyName.IdentifierRequiresEscaping();
-                using (context.CodeWriter.BuildEnhancedLinePragma(attributeSourceSpan, context, characterOffset: requiresEscaping ? 1 : 0))
+                using (context.BuildEnhancedLinePragma(attributeSourceSpan, characterOffset: requiresEscaping ? 1 : 0))
                 {
                     context.CodeWriter.WriteIdentifierEscapeIfNeeded(attribute.PropertyName);
                     context.CodeWriter.WriteLine(attribute.PropertyName);
@@ -413,17 +418,17 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     }
                 }
 
-                p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: true, attribute));
+                p.Add(new TypeInferenceMethodParameter(new(p.Count), typeName, new(p.Count), usedForTypeInference: true, attribute));
             }
             else if (child is SplatIntermediateNode splat)
             {
                 var typeName = ComponentsApi.AddMultipleAttributesTypeFullName;
-                p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: false, splat));
+                p.Add(new TypeInferenceMethodParameter(new(p.Count), typeName, new(p.Count), usedForTypeInference: false, splat));
             }
             else if (child is RenderModeIntermediateNode renderMode)
             {
                 var typeName = ComponentsApi.IComponentRenderMode.FullTypeName;
-                p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: false, renderMode));
+                p.Add(new TypeInferenceMethodParameter(new(p.Count), typeName, new(p.Count), usedForTypeInference: false, renderMode));
             }
         }
 
@@ -434,18 +439,18 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             {
                 typeName = childContent.BoundAttribute.GetGloballyQualifiedTypeName();
             }
-            p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", typeName, $"__arg{p.Count}", usedForTypeInference: false, childContent));
+            p.Add(new TypeInferenceMethodParameter(new(p.Count), typeName, new(p.Count), usedForTypeInference: false, childContent));
         }
 
         foreach (var capture in node.Component.SetKeys)
         {
-            p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", "object", $"__arg{p.Count}", usedForTypeInference: false, capture));
+            p.Add(new TypeInferenceMethodParameter(new(p.Count), "object", new(p.Count), usedForTypeInference: false, capture));
         }
 
         foreach (var capture in node.Component.Captures)
         {
             // The capture type name should already contain the global:: prefix.
-            p.Add(new TypeInferenceMethodParameter($"__seq{p.Count}", capture.TypeName, $"__arg{p.Count}", usedForTypeInference: false, capture));
+            p.Add(new TypeInferenceMethodParameter(new(p.Count), capture.TypeName, new(p.Count), usedForTypeInference: false, capture));
         }
 
         // Insert synthetic args for cascaded type inference at the start of the list
@@ -455,7 +460,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             var i = 0;
             foreach (var cascadingGenericType in node.ReceivesCascadingGenericTypes)
             {
-                p.Insert(i, new TypeInferenceMethodParameter(null, cascadingGenericType.ValueType, $"__syntheticArg{i}", usedForTypeInference: true, cascadingGenericType));
+                p.Insert(i, new TypeInferenceMethodParameter(null, cascadingGenericType.ValueType, new(i, isSynthetic: true), usedForTypeInference: true, cascadingGenericType));
                 i++;
             }
         }
@@ -463,7 +468,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         return p;
     }
 
-    protected static void UseCapturedCascadingGenericParameterVariable(ComponentIntermediateNode node, TypeInferenceMethodParameter parameter, string variableName)
+    protected static void UseCapturedCascadingGenericParameterVariable(ComponentIntermediateNode node, TypeInferenceMethodParameter parameter, TypeInferenceArgName variableName)
     {
         // If this captured variable corresponds to a generic type we want to cascade to
         // descendants, supply that info to descendants
@@ -488,16 +493,9 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         return expression == "default" || expression.StartsWith("default(", StringComparison.Ordinal);
     }
 
-    protected static void WriteAddComponentRenderMode(CodeRenderingContext context, string builderName, string variableName)
-    {
-        context.CodeWriter.Write(builderName);
-        context.CodeWriter.Write(".");
-        context.CodeWriter.Write(ComponentsApi.RenderTreeBuilder.AddComponentRenderMode);
-        context.CodeWriter.Write("(");
-        context.CodeWriter.Write(variableName);
-        context.CodeWriter.Write(");");
-        context.CodeWriter.WriteLine();
-    }
+    protected static void WriteAddComponentRenderMode<T>(CodeRenderingContext context, BuilderVariableName builderName, T renderModeName)
+        where T : IWriteableValue
+        => context.CodeWriter.WriteLine($"{builderName}.{ComponentsApi.RenderTreeBuilder.AddComponentRenderMode}({renderModeName});");
 
     protected static void WriteGloballyQualifiedTypeName(CodeRenderingContext context, ComponentAttributeIntermediateNode node)
     {
@@ -528,15 +526,63 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
         }
     }
 
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    protected internal readonly struct SeqName(int index) : IWriteableValue
+    {
+        public void WriteTo(CodeWriter writer)
+        {
+            writer.Write("__seq");
+            writer.WriteIntegerLiteral(index);
+        }
+
+        internal string GetDebuggerDisplay()
+            => $"__seq{index}";
+    }
+
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    protected internal readonly struct ParameterName(int index, bool isSynthetic = false) : IWriteableValue
+    {
+        public void WriteTo(CodeWriter writer)
+        {
+            if (isSynthetic)
+            {
+                writer.Write("__syntheticArg");
+            }
+            else
+            {
+                writer.Write("__arg");
+            }
+
+            writer.WriteIntegerLiteral(index);
+        }
+
+        internal string GetDebuggerDisplay()
+            => isSynthetic ? $"__syntheticArg{index}" : $"__arg{index}";
+    }
+
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    protected internal readonly struct TypeInferenceArgName(int depth, ParameterName parameterName) : IWriteableValue
+    {
+        public void WriteTo(CodeWriter writer)
+        {
+            writer.Write("__typeInferenceArg_");
+            writer.WriteIntegerLiteral(depth);
+            writer.Write($"_{parameterName}");
+        }
+
+        internal string GetDebuggerDisplay()
+            => $"__typeInferenceArg_{depth}_{parameterName.GetDebuggerDisplay()}";
+    }
+
     protected class TypeInferenceMethodParameter
     {
-        public string SeqName { get; private set; }
-        public string TypeName { get; private set; }
-        public string ParameterName { get; private set; }
-        public bool UsedForTypeInference { get; private set; }
+        public SeqName? SeqName { get; }
+        public string TypeName { get; }
+        public ParameterName ParameterName { get; }
+        public bool UsedForTypeInference { get; }
         public object Source { get; private set; }
 
-        public TypeInferenceMethodParameter(string seqName, string typeName, string parameterName, bool usedForTypeInference, object source)
+        public TypeInferenceMethodParameter(SeqName? seqName, string typeName, ParameterName parameterName, bool usedForTypeInference, object source)
         {
             SeqName = seqName;
             TypeName = typeName;
@@ -545,19 +591,14 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             Source = source;
         }
 
-        public void ReplaceSourceWithCapturedVariable(string variableName)
+        public void ReplaceSourceWithCapturedVariable(TypeInferenceArgName variableName)
         {
             Source = new TypeInferenceCapturedVariable(variableName);
         }
     }
 
-    protected class TypeInferenceCapturedVariable
+    protected sealed class TypeInferenceCapturedVariable(TypeInferenceArgName variableName)
     {
-        public string VariableName { get; private set; }
-
-        public TypeInferenceCapturedVariable(string variableName)
-        {
-            VariableName = variableName;
-        }
+        public TypeInferenceArgName VariableName { get; } = variableName;
     }
 }

@@ -95,7 +95,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                     continue;
                 }
 
-                if (!TryAddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor) && attributeDescriptor.Parameters.Length > 0)
+                if (!TryAddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor, razorCompletionOptions) && attributeDescriptor.Parameters.Length > 0)
                 {
                     // This attribute has parameters and the base attribute name (@bind) is already satisfied. We need to check if there are any valid
                     // parameters left to be provided, if so, we need to still represent the base attribute name in the completion list.
@@ -105,7 +105,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                         if (!attributes.Any(name => TagHelperMatchingConventions.SatisfiesBoundAttributeWithParameter(parameterDescriptor, name, attributeDescriptor)))
                         {
                             // This bound attribute parameter has not had a completion entry added for it, re-represent the base attribute name in the completion list
-                            AddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor);
+                            AddCompletion(attributeDescriptor.Name, attributeDescriptor, descriptor, razorCompletionOptions);
                             break;
                         }
                     }
@@ -113,7 +113,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
 
                 if (!attributeDescriptor.IndexerNamePrefix.IsNullOrEmpty())
                 {
-                    TryAddCompletion(attributeDescriptor.IndexerNamePrefix + "...", attributeDescriptor, descriptor);
+                    TryAddCompletion(attributeDescriptor.IndexerNamePrefix + "...", attributeDescriptor, descriptor, razorCompletionOptions);
                 }
             }
         }
@@ -128,7 +128,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             // Strip off the @ from the insertion text. This change is here to align the insertion text with the
             // completion hooks into VS and VSCode. Basically, completion triggers when `@` is typed so we don't
             // want to insert `@bind` because `@` already exists.
-            if (SpanExtensions.StartsWith(insertTextSpan, '@'))
+            if (insertTextSpan.StartsWith('@'))
             {
                 insertTextSpan = insertTextSpan[1..];
             }
@@ -197,7 +197,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             return false;
         }
 
-        bool TryAddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor)
+        bool TryAddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor, RazorCompletionOptions razorCompletionOptions)
         {
             if (selectedAttributeName != attributeName &&
                 attributes.Any(attributeName, static (name, attributeName) => name == attributeName))
@@ -207,11 +207,11 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 return false;
             }
 
-            AddCompletion(attributeName, boundAttributeDescriptor, tagHelperDescriptor);
+            AddCompletion(attributeName, boundAttributeDescriptor, tagHelperDescriptor, razorCompletionOptions);
             return true;
         }
 
-        void AddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor)
+        void AddCompletion(string attributeName, BoundAttributeDescriptor boundAttributeDescriptor, TagHelperDescriptor tagHelperDescriptor, RazorCompletionOptions razorCompletionOptions)
         {
             if (!attributeCompletions.TryGetValue(attributeName, out var attributeDetails))
             {
@@ -222,7 +222,7 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
             (var attributeDescriptions, var commitCharacters) = attributeDetails;
 
             var indexerCompletion = attributeName.EndsWith("...", StringComparison.Ordinal);
-            var tagHelperTypeName = tagHelperDescriptor.GetTypeName();
+            var tagHelperTypeName = tagHelperDescriptor.TypeName;
             var descriptionInfo = BoundAttributeDescriptionInfo.From(boundAttributeDescriptor, isIndexer: indexerCompletion, tagHelperTypeName);
             attributeDescriptions.Add(descriptionInfo);
 
@@ -232,7 +232,11 @@ internal class DirectiveAttributeCompletionItemProvider : DirectiveAttributeComp
                 return;
             }
 
-            commitCharacters.Add("=");
+            if (!razorCompletionOptions.UseVsCodeCompletionCommitCharacters)
+            {
+                // We don't add "=" as a commit character when using VSCode trigger characters.
+                commitCharacters.Add("=");
+            }
 
             var spaceAdded = commitCharacters.Contains(" ");
             var colonAdded = commitCharacters.Contains(":");

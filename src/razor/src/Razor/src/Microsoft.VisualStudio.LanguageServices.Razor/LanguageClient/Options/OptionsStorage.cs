@@ -32,6 +32,7 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
     private ImmutableArray<string> _taskListDescriptors = [];
     private ISettingsReader? _unifiedSettingsReader;
     private IDisposable? _unifiedSettingsSubscription;
+    private bool _changedBeforeSubscription;
 
     public bool FormatOnType
     {
@@ -111,15 +112,22 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
             _unifiedSettingsReader = unifiedSettingsManager.GetReader();
             _unifiedSettingsSubscription = _unifiedSettingsReader.SubscribeToChanges(OnUnifiedSettingsChanged, SettingsNames.AllSettings.Select(s => s.UnifiedName).ToArray());
 
-            await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, synchronousServiceProvider);
+            await GetTaskListDescriptorsAsync(joinableTaskContext.Factory, serviceProvider);
         });
+
+        // NotifyChange waits for the initialize task to be finished, but we still want to notify once we've
+        // done loading, so do it in a background continuation.
+        _initializeTask.Task.ContinueWith(t =>
+        {
+            NotifyChange();
+        }, TaskScheduler.Default).Forget();
     }
 
-    private async Task GetTaskListDescriptorsAsync(JoinableTaskFactory jtf, SVsServiceProvider synchronousServiceProvider)
+    private async Task GetTaskListDescriptorsAsync(JoinableTaskFactory jtf, IAsyncServiceProvider serviceProvider)
     {
         await jtf.SwitchToMainThreadAsync();
 
-        var taskListService = synchronousServiceProvider.GetService<IVsTaskList, IVsCommentTaskInfo>();
+        var taskListService = await serviceProvider.GetServiceAsync<IVsTaskList, IVsCommentTaskInfo>();
         if (taskListService is null)
         {
             return;
@@ -148,6 +156,13 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
         await _initializeTask.JoinAsync();
 
         _changed += (_, args) => changed(args.Settings);
+
+        // Since initialize happens async, we don't want our subscribers to miss the initial update, so trigger it now, since we know
+        // initialization is done.
+        if (_changedBeforeSubscription)
+        {
+            changed(GetAdvancedSettings());
+        }
     }
 
     private EventHandler<ClientAdvancedSettingsChangedEventArgs>? _changed;
@@ -194,7 +209,15 @@ internal class OptionsStorage : IAdvancedSettingsStorage, IDisposable
     private void NotifyChange()
     {
         _initializeTask.Join();
-        _changed?.Invoke(this, new ClientAdvancedSettingsChangedEventArgs(GetAdvancedSettings()));
+
+        if (_changed is null)
+        {
+            _changedBeforeSubscription = true;
+        }
+        else
+        {
+            _changed?.Invoke(this, new ClientAdvancedSettingsChangedEventArgs(GetAdvancedSettings()));
+        }
     }
 
     private void OnUnifiedSettingsChanged(SettingsUpdate update)

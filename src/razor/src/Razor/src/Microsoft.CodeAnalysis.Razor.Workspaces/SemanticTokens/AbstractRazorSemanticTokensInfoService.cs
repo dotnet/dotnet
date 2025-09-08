@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
@@ -23,7 +22,6 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     IDocumentMappingService documentMappingService,
     ISemanticTokensLegendService semanticTokensLegendService,
     ICSharpSemanticTokensProvider csharpSemanticTokensProvider,
-    LanguageServerFeatureOptions languageServerFeatureOptions,
     ILogger logger)
     : IRazorSemanticTokensInfoService
 {
@@ -32,7 +30,6 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly ISemanticTokensLegendService _semanticTokensLegendService = semanticTokensLegendService;
     private readonly ICSharpSemanticTokensProvider _csharpSemanticTokensProvider = csharpSemanticTokensProvider;
-    private readonly LanguageServerFeatureOptions _languageServerFeatureOptions = languageServerFeatureOptions;
     private readonly ILogger _logger = logger;
 
     public async Task<int[]?> GetSemanticTokensAsync(
@@ -46,7 +43,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
         var amount = semanticTokens is null ? "no" : (semanticTokens.Length / TokenSize).ToString(Thread.CurrentThread.CurrentCulture);
 
-        _logger.LogInformation($"Returned {amount} semantic tokens for span {span} in {documentContext.Uri}.");
+        _logger.LogDebug($"Returned {amount} semantic tokens for span {span} in {documentContext.Uri}.");
 
         if (semanticTokens is not null)
         {
@@ -142,32 +139,12 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
         CancellationToken cancellationToken)
     {
         var generatedDocument = codeDocument.GetRequiredCSharpDocument();
-        ImmutableArray<LinePositionSpan> csharpRanges;
 
-        // When the feature flag is enabled we try to get a list of precise ranges for the C# code embedded in the Razor document.
-        // The feature flag allows to make calls to Roslyn using multiple smaller and disjoint ranges of the document
-        if (_languageServerFeatureOptions.UsePreciseSemanticTokenRanges)
+        // Get a list of precise ranges for the C# code embedded in the Razor document.
+        if (!TryGetSortedCSharpRanges(codeDocument, razorSpan, out var csharpRanges))
         {
-            if (!TryGetSortedCSharpRanges(codeDocument, razorSpan, out csharpRanges))
-            {
-                // There's no C# in the range.
-                return ImmutableArray<SemanticRange>.Empty;
-            }
-        }
-        else
-        {
-            // When the feature flag is disabled, we fallback to computing a single range for the entire document.
-            // This single range is the minimal range that contains all of the C# code in the document.
-            // We'll try to call into the mapping service to map to the projected range for us. If that doesn't work,
-            // we'll try to find the minimal range ourselves.
-            if (!_documentMappingService.TryMapToCSharpDocumentRange(generatedDocument, razorSpan, out var csharpRange) &&
-                !codeDocument.TryGetMinimalCSharpRange(razorSpan, out csharpRange))
-            {
-                // There's no C# in the range.
-                return ImmutableArray<SemanticRange>.Empty;
-            }
-
-            csharpRanges = [csharpRange];
+            // There's no C# in the range.
+            return ImmutableArray<SemanticRange>.Empty;
         }
 
         _logger.LogDebug($"Requesting C# semantic tokens for host version {documentContext.Snapshot.Version}, correlation ID {correlationId}, and the server thinks there are {codeDocument.GetCSharpSourceText().Lines.Count} lines of C#");

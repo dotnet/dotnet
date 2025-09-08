@@ -45,7 +45,7 @@ internal static class TestRazorFormattingService
 
         var hostServicesProvider = new DefaultHostServicesProvider();
 
-        var service = new RazorFormattingService(mappingService, hostServicesProvider, languageServerFeatureOptions, loggerFactory);
+        var service = new RazorFormattingService(mappingService, hostServicesProvider, loggerFactory);
         var accessor = service.GetTestAccessor();
         accessor.SetDebugAssertsEnabled(debugAssertsEnabled);
 

@@ -1,12 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
@@ -16,25 +13,22 @@ public class ViewComponentTagHelperTargetExtensionTest
     public void WriteViewComponentTagHelper_GeneratesViewComponentTagHelper()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder
-            .Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .Metadata(
-                TypeName("__Generated__TagCloudViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+        var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
+            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata()
+            {
+                Name = "TagCloud"
+            })
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32")
-                .Metadata(PropertyName("Foo")))
+                .PropertyName("Foo"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
             .Build();
 
         var extension = new ViewComponentTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var node = new ViewComponentTagHelperIntermediateNode()
-        {
-            ClassName = "__Generated__TagCloudViewComponentTagHelper",
-            TagHelper = tagHelper
-        };
+        var node = new ViewComponentTagHelperIntermediateNode("__Generated__TagCloudViewComponentTagHelper", tagHelper);
 
         // Act
         extension.WriteViewComponentTagHelper(context, node);
@@ -70,26 +64,23 @@ public class __Generated__TagCloudViewComponentTagHelper : Microsoft.AspNetCore.
     public void WriteViewComponentTagHelper_GeneratesViewComponentTagHelper_WithIndexer()
     {
         // Arrange
-        var tagHelper = TagHelperDescriptorBuilder
-            .Create(ViewComponentTagHelperConventions.Kind, "TestTagHelper", "TestAssembly")
-            .Metadata(
-                TypeName("__Generated__TagCloudViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "TagCloud"))
+        var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
+            .TypeName("__Generated__TagCloudViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata()
+            {
+                Name = "TagCloud"
+            })
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
-                .Metadata(PropertyName("Tags"))
+                .PropertyName("Tags")
                 .AsDictionaryAttribute("foo-", "System.Int32"))
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tagcloud"))
             .Build();
 
         var extension = new ViewComponentTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var node = new ViewComponentTagHelperIntermediateNode()
-        {
-            ClassName = "__Generated__TagCloudViewComponentTagHelper",
-            TagHelper = tagHelper
-        };
+        var node = new ViewComponentTagHelperIntermediateNode("__Generated__TagCloudViewComponentTagHelper", tagHelper);
 
         // Act
         extension.WriteViewComponentTagHelper(context, node);

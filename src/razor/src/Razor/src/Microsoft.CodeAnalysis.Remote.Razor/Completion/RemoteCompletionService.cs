@@ -204,6 +204,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
         VSInternalCompletionList? completionList = null;
         using (_telemetryReporter.TrackLspRequest(Methods.TextDocumentCompletionName, Constants.ExternalAccessServerName, TelemetryThresholds.CompletionSubLSPTelemetryThreshold, correlationId))
         {
+#pragma warning disable CS0618 // Type or member is obsolete. Fixed in https://github.com/dotnet/razor/pull/12079
             completionList = await ExternalAccess.Razor.Cohost.Handlers.Completion.GetCompletionListAsync(
                 generatedDocument,
                 mappedLinePosition,
@@ -212,6 +213,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionSetting,
                 cancellationToken)
                 .ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         if (completionList is null)
@@ -328,12 +330,14 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
             var clientCapabilities = _clientCapabilitiesService.ClientCapabilities;
             var completionListSetting = clientCapabilities.TextDocument?.Completion;
+#pragma warning disable CS0618 // Type or member is obsolete. Fixed in https://github.com/dotnet/razor/pull/12079
             var result = await ExternalAccess.Razor.Cohost.Handlers.Completion.ResolveCompletionItemAsync(
                 request,
                 generatedDocument,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionListSetting ?? new(),
                 cancellationToken).ConfigureAwait(false);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
 
