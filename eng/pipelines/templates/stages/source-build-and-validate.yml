@@ -25,6 +25,10 @@ parameters:
   type: boolean
   default: false
 
+- name: extraProperties
+  type: string
+  default: ''
+
 stages:
 - stage: VMR_SourceOnly_Build
   displayName: VMR Source-Only Build
@@ -111,7 +115,9 @@ stages:
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
-          extraProperties: /p:DotNetSourceOnlyPublishArtifacts=true
+          extraProperties: ${{ leg.extraProperties }} /p:DotNetSourceOnlyPublishArtifacts=true
+        ${{ else }}:
+          extraProperties: ${{ leg.extraProperties }}
 
 - ${{ if and(parameters.isBuiltFromVmr, ne(variables['Build.Reason'], 'PullRequest'), eq(parameters.useMicrosoftBuildAssetsForTests, true)) }}:
   - stage: VMR_SourceOnly_Validation
@@ -178,6 +184,7 @@ stages:
           enablePoison: ${{ leg.enablePoison }}
           skipBuild: true
           extraProperties: >
+            ${{ leg.extraProperties }}
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs

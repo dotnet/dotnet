@@ -11,6 +11,8 @@
          Workaround https://github.com/dotnet/source-build/issues/4003 by disabling VSTestUseMSBuildOutput -->
     <VSTestUseMSBuildOutput>false</VSTestUseMSBuildOutput>
     <SetRuntimeConfigOptionsDependsOn Condition="'$(SkipPrepareSdkArchive)' != 'true'"></SetRuntimeConfigOptionsDependsOn>
+    <DotNetSkipTestsRequiringMicrosoftArtifacts Condition="'$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == '' and '$(IsOfficialBuild)' == 'false'">true</DotNetSkipTestsRequiringMicrosoftArtifacts>
+    <DotNetSkipTestsRequiringMicrosoftArtifacts Condition="'$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == ''">false</DotNetSkipTestsRequiringMicrosoftArtifacts>
   </PropertyGroup>
 
   <ItemGroup>
@@ -83,6 +85,9 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).IsOfficialBuild">
         <Value>$(OfficialBuild)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SkipTestsRequiringMicrosoftArtifacts">
+        <Value>$(DotNetSkipTestsRequiringMicrosoftArtifacts)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

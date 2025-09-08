@@ -24,6 +24,8 @@ parameters:
   - lite
   # run everything
   - full
+  # run source build outer loop (Mono jobs)
+  - source-build-outer-loop
 
 # True when build is running from dotnet/dotnet directly
 - name: isBuiltFromVmr
@@ -97,16 +99,17 @@ parameters:
   default: false
 
 stages:
-- template: vmr-verticals.yml
-  parameters:
-    desiredSigning: ${{ parameters.desiredSigning }}
-    isOfficialBuild: ${{ parameters.isOfficialBuild }}
-    desiredIbc: ${{ parameters.desiredIbc }}
-    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
-    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    scope: ${{ parameters.scope }}
-    verifications: ${{ parameters.verifications }}
-    excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+- ${{ if notin(parameters.scope, 'source-build-outer-loop') }}:
+  - template: vmr-verticals.yml
+    parameters:
+      desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      desiredIbc: ${{ parameters.desiredIbc }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      scope: ${{ parameters.scope }}
+      verifications: ${{ parameters.verifications }}
+      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets

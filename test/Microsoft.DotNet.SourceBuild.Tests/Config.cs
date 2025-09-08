@@ -26,6 +26,11 @@ internal static class Config
     public static string? SourceBuiltArtifactsPath => (string)AppContext.GetData(ConfigSwitchPrefix + nameof(SourceBuiltArtifactsPath))!;
     public static string? RestoreAdditionalProjectSources => (string?)AppContext.GetData(ConfigSwitchPrefix + nameof(RestoreAdditionalProjectSources));
     public static bool IsOfficialBuild => bool.TryParse((string)AppContext.GetData(ConfigSwitchPrefix + nameof(IsOfficialBuild))!, out bool isOfficialBuild) && isOfficialBuild;
+    public static bool SkipTestsRequiringMicrosoftArtifacts =>
+        bool.TryParse(
+            (string)AppContext.GetData(ConfigSwitchPrefix + nameof(SkipTestsRequiringMicrosoftArtifacts))!,
+            out bool skipTestsRequiringMicrosoftArtifacts)
+        && skipTestsRequiringMicrosoftArtifacts;
 
     // Indicates whether the tests are being run in the context of a CI pipeline
     public static bool RunningInCI => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_CI")) ||

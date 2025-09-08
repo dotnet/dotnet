@@ -1,0 +1,62 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - release/*.0.1xx-preview*
+    - internal/release/*.0.1xx*
+
+variables:
+- name: skipComponentGovernanceDetection
+  value: true
+
+- name: Codeql.Enabled
+  value: false
+
+- template: /eng/common/templates-official/variables/pool-providers.yml@self
+- template: /eng/pipelines/templates/variables/vmr-build.yml@self
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    featureFlags:
+      incrementalSDLBinaryAnalysis: true
+    sdl:
+      sourceAnalysisPool:
+        name: $(DncEngInternalBuildPool)
+        image: 1es-windows-2022
+        os: windows
+
+      spotBugs:
+        enabled: false
+
+      codeql:
+        compiled:
+          enabled: false
+        runSourceLanguagesInSourceAnalysis: false
+        tsaEnabled: false
+      binskim:
+        enabled: false
+      policheck:
+        enabled: false
+      tsa:
+        enabled: false
+
+    containers:
+      ${{ variables.centOSStreamContainerName }}:
+        image: ${{ variables.centOSStreamContainerImage }}
+        options: ${{ variables.defaultContainerOptions }}
+
+    stages:
+    - template: /eng/pipelines/templates/stages/vmr-build.yml@self
+      parameters:
+        isOfficialBuild: false
+        scope: source-build-outer-loop
+    
