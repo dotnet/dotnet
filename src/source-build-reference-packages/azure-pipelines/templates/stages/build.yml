@@ -16,6 +16,10 @@ stages:
           artifacts: true
           manifests: true
       enableSourceBuild: true
+      sourceBuildParameters:
+        cgIgnoreDirectories:
+        - src/referencePackages
+        - artifacts/source-build/self
   - template: /azure-pipelines/templates/jobs/generatescript-tests.yml
     parameters:
       imageOs: windows
