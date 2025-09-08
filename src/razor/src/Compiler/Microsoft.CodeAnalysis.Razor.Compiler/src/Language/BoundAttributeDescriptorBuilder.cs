@@ -56,7 +56,7 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
 
     public string? TypeName
     {
-        get => _typeNameObject.FullName;
+        get => _typeNameObject.GetTypeName();
         set => _typeNameObject = TypeNameObject.From(value);
     }
 
@@ -76,7 +76,7 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
 
     public string? IndexerValueTypeName
     {
-        get => _indexerTypeNameObject.FullName;
+        get => _indexerTypeNameObject.GetTypeName();
         set => _indexerTypeNameObject = TypeNameObject.From(value);
     }
 
@@ -174,7 +174,11 @@ public sealed partial class BoundAttributeDescriptorBuilder : TagHelperObjectBui
             return DisplayName;
         }
 
-        var parentTypeName = _parent.TypeName;
+        if (!_parent.TryGetMetadataValue(TagHelperMetadata.Common.TypeName, out var parentTypeName))
+        {
+            parentTypeName = null;
+        }
+
         var propertyName = PropertyName;
 
         if (TypeName != null &&

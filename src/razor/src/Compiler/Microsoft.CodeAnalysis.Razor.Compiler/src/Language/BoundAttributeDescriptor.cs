@@ -20,7 +20,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
     public BoundAttributeFlags Flags => _flags;
     public string Name { get; }
     public string PropertyName { get; }
-    public string TypeName => TypeNameObject.FullName.AssumeNotNull();
+    public string TypeName => TypeNameObject.GetTypeName().AssumeNotNull();
     public string DisplayName { get; }
     public string? ContainingType { get; }
 
@@ -31,7 +31,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
     internal DocumentationObject DocumentationObject { get; }
 
     public string? IndexerNamePrefix { get; }
-    public string? IndexerTypeName => IndexerTypeNameObject.FullName;
+    public string? IndexerTypeName => IndexerTypeNameObject.GetTypeName();
 
     public bool CaseSensitive => _flags.IsFlagSet(BoundAttributeFlags.CaseSensitive);
     public bool HasIndexer => _flags.IsFlagSet(BoundAttributeFlags.HasIndexer);
@@ -58,7 +58,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         string displayName,
         string? containingType,
         ImmutableArray<BoundAttributeParameterDescriptor> parameters,
-        MetadataObject metadata,
+        MetadataObject metadataObject,
         ImmutableArray<RazorDiagnostic> diagnostics)
         : base(diagnostics)
     {
@@ -73,7 +73,7 @@ public sealed class BoundAttributeDescriptor : TagHelperObject<BoundAttributeDes
         DisplayName = displayName;
         ContainingType = containingType;
         Parameters = parameters.NullToEmpty();
-        Metadata = metadata;
+        Metadata = metadataObject;
 
         foreach (var parameter in Parameters)
         {
