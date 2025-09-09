@@ -69,6 +69,7 @@
     <StrongNameSignInfo Include="StrongName" PublicKeyToken="b03f5f7f11d50a3a" CertificateName="Microsoft400" />
     <!-- Do not include specific key files if full assembly signing is not supported, as they will not be usable when we sign. -->
     <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\Open.snk" PublicKeyToken="cc7b13ffcd2ddd51" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
+    <StrongNameSignInfo Include="$(MSBuildThisFileDirectory)snk\AspNetCore.snk" PublicKeyToken="adb9793829ddae60" CertificateName="Microsoft400" Condition="'$(FullAssemblySigningSupported)' != 'false'" />
 
     <!--
       Map of file extensions to default certificate name. Files with these extensions are
