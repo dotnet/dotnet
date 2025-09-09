@@ -18,7 +18,8 @@
     <DownloadFile
       Uri="$(NuGetExeDownloadUrl)"
       DestinationPath="$(NuGetExeFile)"
-      Overwrite="true" />
+      Overwrite="true"
+      Retries="5" />
   </Target>
 
   <Target Name="AcquireNuGetExeCore"

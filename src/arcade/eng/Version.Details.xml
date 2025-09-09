@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
-  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="c4dc56079d959dbdb7fc27ea8ad7f95194885923" BarId="280214" />
+  <Source Uri="https://github.com/dotnet/dotnet" Mapping="arcade" Sha="3e92251978ce669b493f159048932e690306a3bf" BarId="281912" />
   <ProductDependencies>
   </ProductDependencies>
   <ToolsetDependencies>
@@ -20,21 +20,21 @@
       <Uri>https://github.com/dotnet/templating</Uri>
       <Sha>43b5827697e501c442eb75ffff832cd4df2514fe</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="10.0.0-beta.25430.1">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25455.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>6122520523105dacdd702177a76c9f6b982fd759</Sha>
+      <Sha>0a31c47ca9260204693307c442ff13e3f4d2aeb5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="10.0.0-beta.25430.1">
+    <Dependency Name="Microsoft.DotNet.Helix.Sdk" Version="11.0.0-beta.25455.5">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>6122520523105dacdd702177a76c9f6b982fd759</Sha>
+      <Sha>0a31c47ca9260204693307c442ff13e3f4d2aeb5</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25451.2">
+    <Dependency Name="Microsoft.DotNet.ProductConstructionService.Client" Version="1.1.0-beta.25455.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>23cc79af39796692c667de5f64f8803e8a592e22</Sha>
+      <Sha>305bf8eab2a778f22fb3325cff5841091c6c64c8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25451.2">
+    <Dependency Name="Microsoft.DotNet.DarcLib" Version="1.1.0-beta.25455.2">
       <Uri>https://github.com/dotnet/arcade-services</Uri>
-      <Sha>23cc79af39796692c667de5f64f8803e8a592e22</Sha>
+      <Sha>305bf8eab2a778f22fb3325cff5841091c6c64c8</Sha>
     </Dependency>
     <Dependency Name="Microsoft.DotNet.XHarness.CLI" Version="10.0.0-prerelease.25427.1">
       <Uri>https://github.com/dotnet/xharness</Uri>

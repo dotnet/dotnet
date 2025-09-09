@@ -19,13 +19,15 @@ internal class RazorCompletionEndpoint(
     CompletionListProvider completionListProvider,
     CompletionTriggerAndCommitCharacters triggerAndCommitCharacters,
     ITelemetryReporter telemetryReporter,
-    RazorLSPOptionsMonitor optionsMonitor)
+    RazorLSPOptionsMonitor optionsMonitor,
+    LanguageServerFeatureOptions featureOptions)
     : IRazorRequestHandler<CompletionParams, RazorVSInternalCompletionList?>, ICapabilitiesProvider
 {
     private readonly CompletionListProvider _completionListProvider = completionListProvider;
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = triggerAndCommitCharacters;
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
     private readonly RazorLSPOptionsMonitor _optionsMonitor = optionsMonitor;
+    private readonly LanguageServerFeatureOptions _featureOptions = featureOptions;
 
     private VSInternalClientCapabilities? _clientCapabilities;
 
@@ -75,7 +77,8 @@ internal class RazorCompletionEndpoint(
             var razorCompletionOptions = new RazorCompletionOptions(
                 SnippetsSupported: true,
                 AutoInsertAttributeQuotes: options.AutoInsertAttributeQuotes,
-                CommitElementsWithSpace: options.CommitElementsWithSpace);
+                CommitElementsWithSpace: options.CommitElementsWithSpace,
+                UseVsCodeCompletionCommitCharacters: _featureOptions.UseVsCodeCompletionCommitCharacters);
 
             var result = await _completionListProvider
                 .GetCompletionListAsync(
