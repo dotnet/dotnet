@@ -137,7 +137,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
     }
 
-    protected TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
     {
         // We simulate a miscellaneous file project by not having a project file path.
         var projectFilePath = miscellaneousFile ? null : TestProjectData.SomeProject.FilePath;
