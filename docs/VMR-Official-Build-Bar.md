@@ -30,8 +30,8 @@ Evaluate each of the questions in order. You reach the end without answering "ye
   - These jobs produce assets used by distro partners to bootstrap their builds. They can't ship without them.
 
 - **Scenario Tests**
- - Scenario tests aren't required to produce shippign assets.
- - These tests **do** validate the basic quality of the build. A failure means that the build is not shippable. They're also quick and reliable.
+  - Scenario tests aren't required to produce shipping assets.
+  - These tests **do** validate the basic quality of the build. A failure means that the build is not shippable. They're also quick and reliable.
 
 
 ### Example: Process That Does Not Meet the Bar
