@@ -142,7 +142,6 @@ extends:
         desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
         scope: ${{ parameters.buildScope }}
         isOfficialBuild: false
-        featureBand: ${{ parameters.featureBand }}
         # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
         # Will exclude runtime-dependent jobs when either of the following are true:
         #   - 'Detect By Branch Name' was selected for the feature band: branch is not main and does not contain '.1xx' but does end with 'xx'.
