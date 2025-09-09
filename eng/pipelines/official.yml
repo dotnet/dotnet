@@ -99,7 +99,7 @@ extends:
         # This is of the form: <pattern>;<pattern>
         # +:f| - Include glob
         # -:f| - Exclude glob
-        analyzeTargetGlob: +:f|eng\**\*.props;+:f|**\artifacts\bin\**\*.dll;+:f|**\artifacts\bin\**\*.exe;-:f|**\artifacts\bin\**\msdia140.dll;-:f|**\artifacts\bin\**\pgort140.dll;-:f|**\artifacts\bin\*Tests\**;-:f|**\Microsoft.NET.Runtime.Emscripten**\tools\**;-:f|**\CodeCoverage\**;-:f|**\artifacts\bin\**\capstone.dll;-:f|**\Microsoft.EsrpClient\**;
+        analyzeTargetGlob: +:f|eng\**\*.props;+:f|**\artifacts\bin\**\*.dll;+:f|**\artifacts\bin\**\*.exe;-:f|**\artifacts\bin\**\msdia140.dll;-:f|**\artifacts\bin\**\pgort140.dll;-:f|**\artifacts\bin\*Tests\**;-:f|**\Microsoft.NET.Runtime.Emscripten**\tools\**;-:f|**\CodeCoverage\**;-:f|**\artifacts\bin\**\capstone.dll;-:f|**\Microsoft.EsrpClient\**;-:f|**\artifacts\bin\**\SuperFileCheck\**\llvm-mca.exe;-:f|**\artifacts\bin\**\SuperFileCheck\**\FileCheck.exe;
       policheck:
         enabled: true
       tsa:
