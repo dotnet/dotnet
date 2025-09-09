@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Diagnostics;
@@ -19,6 +18,19 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
+    [Fact]
+    public Task NoDiagnostics()
+        => VerifyDiagnosticsAsync("""
+            <div></div>
+
+            @code
+            {
+                public void IJustMetYou()
+                {
+                }
+            }
+            """);
+
     [Fact]
     public Task CSharp()
         => VerifyDiagnosticsAsync("""
@@ -396,6 +408,10 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
 
+            // TODO: This isn't C#
+
+            TODO: Nor is this
+
             <div>
 
                 @*{|TODO: TODO: This does |}*@
@@ -403,6 +419,11 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 @* TODONT: This doesn't *@
 
             </div>
+
+            @code {
+                // This looks different because Roslyn only reports zero width ranges for task lists
+                // {|TODO:|}TODO: Write some C# code too
+            }
             """,
             taskListRequest: true);
 
@@ -425,22 +446,18 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
                 }];
 
         Assert.NotNull(result);
+        var report = Assert.Single(result);
+        Assert.NotNull(report);
 
-        if (result is [{ Diagnostics: null }])
-        {
-            // No diagnostics found, make sure none were expected
-            AssertEx.Equal(input.OriginalInput, input.Text);
-            return;
-        }
-
-        var markers = result!.SelectMany(d => d.Diagnostics.AssumeNotNull()).SelectMany(d =>
+        var markers = report.Diagnostics.SelectMany(d =>
             new[] {
                 (index: inputText.GetTextSpan(d.Range).Start, text: $"{{|{d.Code!.Value.Second}:"),
                 (index: inputText.GetTextSpan(d.Range).End, text:"|}")
             });
 
         var testOutput = input.Text;
-        foreach (var (index, text) in markers.OrderByDescending(i => i.index))
+        // Ordering by text last means start tags get sorted before end tags, for zero width ranges
+        foreach (var (index, text) in markers.OrderByDescending(i => i.index).ThenByDescending(i => i.text))
         {
             testOutput = testOutput.Insert(index, text);
         }
