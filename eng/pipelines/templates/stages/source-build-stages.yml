@@ -64,7 +64,7 @@ stages:
         ### Source-build verification legs ###
 
         # Stage 1 leg is built in full scope, or lite when any of the `source-build-` verifications are requested.
-        - buildNameFormat: '{0}_Online_MsftSdk'
+        - buildNameFormat: 'SB_{0}_Online_MsftSdk'
           distro: centos
           targetArchitecture: x64
           buildFromArchive: false            # 🚫
@@ -73,10 +73,11 @@ stages:
           useMonoRuntime: false              # 🚫
           useSystemLibraries: false          # 🚫
           withPreviousSDK: false             # 🚫
+          createSourceArtifacts: true        # ✅
 
         - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
-          - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
+          - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -85,12 +86,13 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            reuseBuildArtifactsFrom: '{0}_Online_MsftSdk_x64'
+            createSourceArtifacts: false       # 🚫
+            reuseBuildArtifactsFrom: 'SB_{0}_Online_MsftSdk_x64'
 
         ### Additional legs for full build ###
         - ${{ if in(parameters.scope, 'full') }}:
 
-          - buildNameFormat: '{0}_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: ubuntu
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -100,8 +102,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Offline_PreviousSourceBuiltSdk'
+          - buildNameFormat: 'SB_{0}_Offline_PreviousSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -110,8 +113,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: almalinux
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -120,8 +124,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: alpine
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -130,8 +135,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: true             # ✅
@@ -140,8 +146,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Online_PreviousSourceBuiltSdk'
+          - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -150,18 +157,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: true              # ✅
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Mono_Offline_MsftSdk'
-            distro: centos
-            targetArchitecture: x64
-            buildFromArchive: true             # ✅
-            enablePoison: false                # 🚫
-            runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
-            useSystemLibraries: false          # 🚫
-            withPreviousSDK: false             # 🚫
-
-          - buildNameFormat: '{0}_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
             distro: fedora
             targetArchitecture: x64
             buildFromArchive: true             # ✅
@@ -170,8 +168,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: true           # ✅
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}Arm64_Offline_MsftSdk'
+          - buildNameFormat: 'SB_{0}Arm64_Offline_MsftSdk'
             distro: ubuntu
             targetArchitecture: arm64
             buildFromArchive: false            # 🚫
@@ -180,8 +179,9 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
+            createSourceArtifacts: false       # 🚫
 
-          - buildNameFormat: '{0}_Offline_CurrentSourceBuiltSdk'
+          - buildNameFormat: 'SB_{0}_Offline_CurrentSourceBuiltSdk'
             distro: fedora
             targetArchitecture: x64
             buildFromArchive: false            # 🚫
@@ -190,15 +190,5 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            reuseBuildArtifactsFrom: '{0}_Offline_MsftSdk_x64'
-
-          - buildNameFormat: '{0}_Mono_Offline_CurrentSourceBuiltSdk'
-            distro: centos
-            targetArchitecture: x64
-            buildFromArchive: true             # ✅
-            enablePoison: false                # 🚫
-            runOnline: false                   # 🚫
-            useMonoRuntime: true               # ✅
-            useSystemLibraries: false          # 🚫
-            withPreviousSDK: false             # 🚫
-            reuseBuildArtifactsFrom: '{0}_Mono_Offline_MsftSdk_x64'
+            createSourceArtifacts: false       # 🚫
+            reuseBuildArtifactsFrom: 'SB_{0}_Offline_MsftSdk_x64'

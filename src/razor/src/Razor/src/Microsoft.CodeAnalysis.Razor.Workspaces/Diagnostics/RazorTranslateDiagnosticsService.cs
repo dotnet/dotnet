@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -112,7 +113,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return filteredDiagnostics;
     }
 
-    private LspDiagnostic[] MapDiagnostics(
+    internal LspDiagnostic[] MapDiagnostics(
         RazorLanguageKind languageKind,
         LspDiagnostic[] diagnostics,
         IDocumentSnapshot documentSnapshot,
