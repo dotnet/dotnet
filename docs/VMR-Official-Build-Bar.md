@@ -12,7 +12,7 @@ To establish clear criteria and a decision-making framework for determining whic
 
 ## Description of the Bar
 
-Processes that do not contribute to the essential production or validation of shipping assets, or that introduce unnecessary delays, flakiness, or complexity, should be excluded. The goal is that we should never stage (ready for release) any failed build. *Note that this does not mean that a green build is ready for release. Plenty of additional validation processes may be performed (e.g. VS insertion, CTI signoff et.)*. Any process excluded from the official build must have a compensating mechanism to ensure its results are still considered before shipping or sign-off.
+Processes that do not contribute to the essential production or validation of shipping assets, or that introduce unnecessary delays, flakiness, or complexity, should be excluded. The goal is that we should never stage (ready for release) any failed build. *Note that this does not mean that a green build is ready for release. Plenty of additional validation processes may be performed (e.g. VS insertion, CTI signoff etc.)*. Any process excluded from the official build must have a compensating mechanism to ensure its results are still considered before shipping or sign-off.
 
 ## Rubric
 
