@@ -24,7 +24,7 @@ Evaluate each of the questions in order. You reach the end without answering "ye
 
 ## Examples
 
-### Example: Processes That Meets the Bar
+### Example: Processes That Meet the Bar
 
 - **Source-build CentOS jobs**
   - These jobs produce assets used by distro partners to bootstrap their builds. They can't ship without them.
