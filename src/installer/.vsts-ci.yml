@@ -54,8 +54,8 @@ extends:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:alpine-3.22-amd64
       azureLinux30:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net8.0-build-amd64
-      cblMariner20Fpm:
-        image: mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-fpm
+      azureLinux30fpm:
+        image: mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net8.0-fpm-amd64
       centosStream9:
         image: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream9
       debian12:
@@ -283,7 +283,7 @@ extends:
           parameters:
             agentOs: Linux
             jobName: Build_Linux_Portable_Rpm_Release_x64
-            container: cblMariner20Fpm
+            container: azureLinux30fpm
             buildConfiguration: Release
             buildArchitecture: x64
             # Do not publish zips and tarballs. The linux-x64 binaries are
@@ -295,7 +295,7 @@ extends:
           parameters:
             agentOs: Linux
             jobName: Build_Linux_Portable_Rpm_Release_Arm64
-            container: cblMariner20Fpm
+            container: azureLinux30fpm
             buildConfiguration: Release
             buildArchitecture: arm64
             runtimeIdentifier: 'linux-arm64'
