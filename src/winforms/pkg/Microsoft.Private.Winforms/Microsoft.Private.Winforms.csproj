@@ -138,7 +138,7 @@
   </PropertyGroup>
 
   <Target Name="GenerateTransportPropsFile"
-          Condition="'@(ProjectReference)' != '"
+          Condition="'@(ProjectReference)' != ''"
           DependsOnTargets="BuildOnlySettings;ResolveReferences"
           Inputs="$(MSBuildThisFileFullPath);$(TransportPropsFileInputPath)"
           Outputs="$(TransportPropsFileOutputPath)">
