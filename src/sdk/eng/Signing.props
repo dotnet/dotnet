@@ -86,12 +86,7 @@
     <FileSignInfo Include="StreamJsonRpc.dll" CertificateName="MicrosoftSHA2" />
 
     <!-- Roslyn apphosts -->
-    <FileSignInfo Include="csc" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Include="vbc" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Include="VBCSCompiler" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Include="csc.exe" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Include="vbc.exe" CertificateName="$(DotNetCertificateName)" />
-    <FileSignInfo Include="VBCSCompiler.exe" CertificateName="$(DotNetCertificateName)" />
+    <FileSignInfo Condition="'$(TargetsOSX)' == 'true'" Include="csc;vbc;VBCSCompiler" CertificateName="MacDeveloperHarden" />
   </ItemGroup>
 
   <!-- Filter out any test packages from ItemsToSign -->
