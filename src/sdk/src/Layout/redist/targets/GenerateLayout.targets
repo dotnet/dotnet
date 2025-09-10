@@ -41,6 +41,12 @@
                       WriteOnlyWhenDifferent="true" />
   </Target>
 
+  <ItemGroup>
+    <_RoslynAppHost Include="$(OutputPath)Roslyn\bincore\csc.dll" />
+    <_RoslynAppHost Include="$(OutputPath)Roslyn\bincore\vbc.dll" />
+    <_RoslynAppHost Include="$(OutputPath)Roslyn\bincore\VBCSCompiler.dll" />
+  </ItemGroup>
+
   <Target Name="PublishRoslyn">
     <PropertyGroup>
       <RoslynPackagePath>$(NuGetPackageRoot)microsoft.net.compilers.toolset\$(MicrosoftNetCompilersToolsetVersion)\tasks\netcore\</RoslynPackagePath>
@@ -59,6 +65,12 @@
     <Copy SourceFiles="@(RoslynFile)"
           DestinationFiles="@(RoslynFile->'$(OutputPath)Roslyn\%(RecursiveDir)%(Filename)%(Extension)')"
           SkipUnchangedFiles="true" />
+
+    <CreateAppHost AppHostSourcePath="$(NuGetPackageRoot)\microsoft.netcore.app.host.$(SharedFrameworkRid)\$(MicrosoftNETCoreAppHostPackageVersion)\runtimes\$(SharedFrameworkRid)\native\apphost$(ExeExtension)"
+                   AppHostDestinationPath="%(_RoslynAppHost.RootDir)%(_RoslynAppHost.Directory)%(_RoslynAppHost.Filename)$(ExeExtension)"
+                   AppBinaryName="%(_RoslynAppHost.Filename)%(_RoslynAppHost.Extension)"
+                   IntermediateAssembly="%(_RoslynAppHost.FullPath)"
+                   EnableMacOSCodeSign="$(RuntimeIdentifier.StartsWith('osx'))" />
   </Target>
 
   <Target Name="PublishNETAnalyzers">
@@ -495,6 +507,7 @@
 
     <Exec Command="find $(OutputPath) -type d -exec chmod 755 {} \;" />
     <Exec Command="find $(OutputPath) -type f -exec chmod 644 {} \;" />
+    <Exec Command="chmod 755 %(_RoslynAppHost.RootDir)%(_RoslynAppHost.Directory)%(_RoslynAppHost.Filename)$(ExeExtension)" />
   </Target>
 
   <Target Name="DeleteSymbolsFromPublishDir" DependsOnTargets="GenerateCliRuntimeConfigurationFiles">
