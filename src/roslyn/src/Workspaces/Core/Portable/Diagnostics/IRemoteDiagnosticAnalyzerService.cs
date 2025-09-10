@@ -14,6 +14,9 @@ namespace Microsoft.CodeAnalysis.Diagnostics;
 
 internal interface IRemoteDiagnosticAnalyzerService
 {
+    ValueTask<ImmutableArray<DiagnosticData>> ForceRunCodeAnalysisDiagnosticsAsync(
+        Checksum solutionChecksum, ProjectId projectId, CancellationToken cancellationToken);
+
     /// <summary>
     /// Returns the analyzers that are candidates to be de-prioritized to
     /// <see cref="CodeActionRequestPriority.Low"/> priority for improvement in analyzer
@@ -35,14 +38,18 @@ internal interface IRemoteDiagnosticAnalyzerService
         bool logPerformanceInfo,
         CancellationToken cancellationToken);
 
-    ValueTask<ImmutableArray<DiagnosticData>> ProduceProjectDiagnosticsAsync(
+    ValueTask<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsAsync(
         Checksum solutionChecksum, ProjectId projectId,
-        ImmutableHashSet<string> analyzerIds,
-        ImmutableHashSet<string>? diagnosticIds,
         ImmutableArray<DocumentId> documentIds,
+        ImmutableHashSet<string>? diagnosticIds,
+        AnalyzerFilter analyzerFilter,
         bool includeLocalDocumentDiagnostics,
-        bool includeNonLocalDocumentDiagnostics,
-        bool includeProjectNonLocalResult,
+        CancellationToken cancellationToken);
+
+    ValueTask<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsAsync(
+        Checksum solutionChecksum, ProjectId projectId,
+        ImmutableHashSet<string>? diagnosticIds,
+        AnalyzerFilter analyzerFilter,
         CancellationToken cancellationToken);
 
     ValueTask<ImmutableArray<DiagnosticData>> GetSourceGeneratorDiagnosticsAsync(Checksum solutionChecksum, ProjectId projectId, CancellationToken cancellationToken);
@@ -54,10 +61,7 @@ internal interface IRemoteDiagnosticAnalyzerService
         Checksum solutionChecksum, CancellationToken cancellationToken);
 
     ValueTask<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptorData>>> GetDiagnosticDescriptorsPerReferenceAsync(
-        Checksum solutionChecksum, CancellationToken cancellationToken);
-
-    ValueTask<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptorData>>> GetDiagnosticDescriptorsPerReferenceAsync(
-        Checksum solutionChecksum, ProjectId projectId, CancellationToken cancellationToken);
+        Checksum solutionChecksum, ProjectId? projectId, CancellationToken cancellationToken);
 }
 
 [DataContract]

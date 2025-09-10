@@ -19,6 +19,24 @@ namespace Microsoft.CodeAnalysis.Diagnostics;
 
 internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerService
 {
+    public async Task<ImmutableArray<DiagnosticData>> ForceRunCodeAnalysisDiagnosticsAsync(
+        Project project, CancellationToken cancellationToken)
+    {
+        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var descriptors = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
+                project,
+                (service, solution, cancellationToken) => service.ForceRunCodeAnalysisDiagnosticsAsync(
+                    solution, project.Id, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+            return descriptors.HasValue ? descriptors.Value : [];
+        }
+
+        // Otherwise, fallback to computing in proc.
+        return await ForceRunCodeAnalysisDiagnosticsInProcessAsync(project, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ImmutableArray<DiagnosticDescriptor>> GetDiagnosticDescriptorsAsync(
         Solution solution, ProjectId projectId, AnalyzerReference analyzerReference, string language, CancellationToken cancellationToken)
     {
@@ -83,14 +101,16 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
         return builder.ToImmutableArray();
     }
 
-    public async Task<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>> GetDiagnosticDescriptorsPerReferenceAsync(Solution solution, CancellationToken cancellationToken)
+    public async Task<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>> GetDiagnosticDescriptorsPerReferenceAsync(
+        Solution solution, ProjectId? projectId, CancellationToken cancellationToken)
     {
         var client = await RemoteHostClient.TryGetClientAsync(solution.Services, cancellationToken).ConfigureAwait(false);
         if (client is not null)
         {
             var map = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptorData>>>(
                 solution,
-                (service, solution, cancellationToken) => service.GetDiagnosticDescriptorsPerReferenceAsync(solution, cancellationToken),
+                (service, solution, cancellationToken) => service.GetDiagnosticDescriptorsPerReferenceAsync(
+                    solution, projectId, cancellationToken),
                 cancellationToken).ConfigureAwait(false);
             if (!map.HasValue)
                 return ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>.Empty;
@@ -100,27 +120,8 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
                 kvp => kvp.Value.SelectAsArray(d => d.ToDiagnosticDescriptor()));
         }
 
-        return solution.SolutionState.Analyzers.GetDiagnosticDescriptorsPerReference(this._analyzerInfoCache);
-    }
-
-    public async Task<ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>> GetDiagnosticDescriptorsPerReferenceAsync(Project project, CancellationToken cancellationToken)
-    {
-        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
-        if (client is not null)
-        {
-            var map = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptorData>>>(
-                project,
-                (service, solution, cancellationToken) => service.GetDiagnosticDescriptorsPerReferenceAsync(solution, project.Id, cancellationToken),
-                cancellationToken).ConfigureAwait(false);
-            if (!map.HasValue)
-                return ImmutableDictionary<string, ImmutableArray<DiagnosticDescriptor>>.Empty;
-
-            return map.Value.ToImmutableDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.SelectAsArray(d => d.ToDiagnosticDescriptor()));
-        }
-
-        return project.Solution.SolutionState.Analyzers.GetDiagnosticDescriptorsPerReference(this._analyzerInfoCache, project);
+        return solution.SolutionState.Analyzers.GetDiagnosticDescriptorsPerReference(
+            this._analyzerInfoCache, solution.GetProject(projectId));
     }
 
     public async Task<ImmutableArray<DiagnosticAnalyzer>> GetDeprioritizationCandidatesAsync(
@@ -144,40 +145,46 @@ internal sealed partial class DiagnosticAnalyzerService : IDiagnosticAnalyzerSer
         return await GetDeprioritizationCandidatesInProcessAsync(project, analyzers, cancellationToken).ConfigureAwait(false);
     }
 
-    internal async Task<ImmutableArray<DiagnosticData>> ProduceProjectDiagnosticsAsync(
+    public async Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsAsync(
+        Project project, ImmutableArray<DocumentId> documentIds, ImmutableHashSet<string>? diagnosticIds, AnalyzerFilter analyzerFilter, bool includeLocalDocumentDiagnostics, CancellationToken cancellationToken)
+    {
+        var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
+        if (client is not null)
+        {
+            var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
+                project,
+                (service, solution, cancellationToken) => service.GetDiagnosticsForIdsAsync(
+                    solution, project.Id, documentIds, diagnosticIds, analyzerFilter, includeLocalDocumentDiagnostics, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
+            return result.HasValue ? result.Value : [];
+        }
+
+        return await GetDiagnosticsForIdsInProcessAsync(
+            project, documentIds, diagnosticIds,
+            analyzerFilter,
+            includeLocalDocumentDiagnostics,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsAsync(
         Project project,
-        ImmutableArray<DiagnosticAnalyzer> analyzers,
         ImmutableHashSet<string>? diagnosticIds,
-        ImmutableArray<DocumentId> documentIds,
-        bool includeLocalDocumentDiagnostics,
-        bool includeNonLocalDocumentDiagnostics,
-        bool includeProjectNonLocalResult,
+        AnalyzerFilter analyzerFilter,
         CancellationToken cancellationToken)
     {
         var client = await RemoteHostClient.TryGetClientAsync(project, cancellationToken).ConfigureAwait(false);
         if (client is not null)
         {
-            var analyzerIds = analyzers.Select(a => a.GetAnalyzerId()).ToImmutableHashSet();
             var result = await client.TryInvokeAsync<IRemoteDiagnosticAnalyzerService, ImmutableArray<DiagnosticData>>(
                 project,
-                (service, solution, cancellationToken) => service.ProduceProjectDiagnosticsAsync(
-                    solution, project.Id, analyzerIds, diagnosticIds, documentIds,
-                    includeLocalDocumentDiagnostics, includeNonLocalDocumentDiagnostics, includeProjectNonLocalResult,
-                    cancellationToken),
+                (service, solution, cancellationToken) => service.GetProjectDiagnosticsForIdsAsync(
+                    solution, project.Id, diagnosticIds, analyzerFilter, cancellationToken),
                 cancellationToken).ConfigureAwait(false);
-            if (!result.HasValue)
-                return [];
-
-            return result.Value;
+            return result.HasValue ? result.Value : [];
         }
 
-        // Fallback to proccessing in proc.
-        return await ProduceProjectDiagnosticsInProcessAsync(
-            project, analyzers, diagnosticIds, documentIds,
-            includeLocalDocumentDiagnostics,
-            includeNonLocalDocumentDiagnostics,
-            includeProjectNonLocalResult,
-            cancellationToken).ConfigureAwait(false);
+        return await GetProjectDiagnosticsForIdsInProcessAsync(
+            project, diagnosticIds, analyzerFilter, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<ImmutableArray<DiagnosticData>> ComputeDiagnosticsAsync(
