@@ -1,8 +1,8 @@
 schemaVersion: 0.0.1
 isProduction: true
 accountableOwners:
-  service: d0ebbe59-0779-4466-8280-a0ff9cab5550
+  service: ba6482c0-a714-4764-bf92-f4e4475a34e1
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\\NET Tools Prague\\MSBuild"
+    path: "DevDiv\\Entity Framework"
