@@ -1127,7 +1127,6 @@ void InitThreadManager()
 
     }
     else
-#endif // !FEATURE_PORTABLE_HELPERS
     {
 #ifdef TARGET_X86
         JIT_WriteBarrierEAX_Loc = (void*)RhpAssignRefEAX;
