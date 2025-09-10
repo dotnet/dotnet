@@ -32,7 +32,7 @@ public class SourceBuiltArtifactsTests : SdkTests
             Utilities.ExtractTarball(Config.SourceBuiltArtifactsPath, outputDir, ".version");
 
             string[] versionLines = File.ReadAllLines(Path.Combine(outputDir, ".version"));
-            Assert.Equal(2, versionLines.Length);
+            Assert.Equal(5, versionLines.Length);
 
             // Verify the commit SHA, it will likely be either a valid commit SHA or an unknown commit SHA, depending on
             // the state of the repository and git installation.
@@ -47,7 +47,7 @@ public class SourceBuiltArtifactsTests : SdkTests
 
             // Verify the SDK version
 
-            string sdkVersion = versionLines[1];
+            string sdkVersion = versionLines[3];
 
             // Find the expected SDK version by getting it from the source built SDK
             DirectoryInfo sdkDir = new DirectoryInfo(Path.Combine(Config.DotNetDirectory, "sdk"));
