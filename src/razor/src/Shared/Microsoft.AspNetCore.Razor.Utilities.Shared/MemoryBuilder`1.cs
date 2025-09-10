@@ -152,3 +152,46 @@ internal ref struct MemoryBuilder<T>
         }
     }
 }
+
+/// <summary>
+///  Encapsulates a method that operates on a <see cref="MemoryBuilder{T}"/> and an argument, typically for building content.
+/// </summary>
+/// <typeparam name="T">
+///  The type of elements in the memory builder.
+/// </typeparam>
+/// <typeparam name="TArg">
+///  The type of the argument passed to the delegate.
+/// </typeparam>
+/// <param name="builder">
+///  A reference to the memory builder to operate on.
+/// </param>
+/// <param name="arg">
+///  The argument to pass to the delegate.
+/// </param>
+/// <returns>
+///  A string result from the operation.
+/// </returns>
+internal delegate void MemoryBuilderAction<T, in TArg>(ref MemoryBuilder<T> builder, TArg arg);
+
+/// <summary>
+///  Encapsulates a method that operates on a <see cref="MemoryBuilder{T}"/> and an argument, returning a result of type <typeparamref name="TResult"/>.
+/// </summary>
+/// <typeparam name="T">
+///  The type of elements in the memory builder.
+/// </typeparam>
+/// <typeparam name="TArg">
+///  The type of the argument passed to the delegate.
+/// </typeparam>
+/// <typeparam name="TResult">
+///  The type of the result returned by the delegate.
+/// </typeparam>
+/// <param name="builder">
+///  A reference to the memory builder to operate on.
+/// </param>
+/// <param name="arg">
+///  The argument to pass to the delegate.
+/// </param>
+/// <returns>
+///  A result of type <typeparamref name="TResult"/> from the operation.
+/// </returns>
+internal delegate TResult MemoryBuilderFunc<T, in TArg, out TResult>(ref MemoryBuilder<T> builder, TArg arg);
