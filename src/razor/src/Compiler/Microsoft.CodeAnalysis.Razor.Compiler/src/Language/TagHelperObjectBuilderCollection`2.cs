@@ -62,6 +62,10 @@ public sealed partial class TagHelperObjectBuilderCollection<TObject, TBuilder> 
         {
             return ImmutableArray<TObject>.Empty;
         }
+        else if (builders.Count == 1)
+        {
+            return [builders[0].Build()];
+        }
 
         using var result = new PooledArrayBuilder<TObject>(capacity: builders.Count);
         using var set = new PooledHashSet<TObject>(capacity: builders.Count);
