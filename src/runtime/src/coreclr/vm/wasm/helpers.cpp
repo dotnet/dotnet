@@ -215,21 +215,6 @@ EXTERN_C FCDECL0(void, JIT_PollGC)
     PORTABILITY_ASSERT("JIT_PollGC is not implemented on wasm");
 }
 
-extern "C" FCDECL2(VOID, JIT_WriteBarrier, Object **dst, Object *ref)
-{
-    PORTABILITY_ASSERT("JIT_WriteBarrier is not implemented on wasm");
-}
-
-extern "C" FCDECL2(VOID, JIT_CheckedWriteBarrier, Object **dst, Object *ref)
-{
-    PORTABILITY_ASSERT("JIT_CheckedWriteBarrier is not implemented on wasm");
-}
-
-extern "C" void STDCALL JIT_ByRefWriteBarrier()
-{
-    PORTABILITY_ASSERT("JIT_ByRefWriteBarrier is not implemented on wasm");
-}
-
 void InitJITHelpers1()
 {
     /* no-op WASM-TODO do we need to do anything for the interpreter? */
@@ -292,21 +277,6 @@ extern "C" void ThisPtrRetBufPrecodeWorker()
     PORTABILITY_ASSERT("ThisPtrRetBufPrecodeWorker is not implemented on wasm");
 }
 
-extern "C" FCDECL2(VOID, RhpAssignRef, Object **dst, Object *ref)
-{
-    PORTABILITY_ASSERT("RhpAssignRef is not implemented on wasm");
-}
-
-extern "C" FCDECL2(VOID, RhpCheckedAssignRef, Object **dst, Object *ref)
-{
-    PORTABILITY_ASSERT("RhpCheckedAssignRef is not implemented on wasm");
-}
-
-extern "C" FCDECL2(VOID, RhpByRefAssignRef, Object **dst, Object *ref)
-{
-    PORTABILITY_ASSERT("RhpByRefAssignRef is not implemented on wasm");
-}
-
 extern "C" void RhpInterfaceDispatchAVLocation1()
 {
     PORTABILITY_ASSERT("RhpInterfaceDispatchAVLocation1 is not implemented on wasm");
@@ -345,72 +315,6 @@ extern "C" void RhpInterfaceDispatchAVLocation64()
 extern "C" void RhpVTableOffsetDispatchAVLocation()
 {
     PORTABILITY_ASSERT("RhpVTableOffsetDispatchAVLocation is not implemented on wasm");
-}
-
-EXTERN_C FCDECL2(Object*, RhpNewVariableSizeObject, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR size)
-{
-    PORTABILITY_ASSERT("RhpNewVariableSizeObject is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL1(Object*, RhpNewMaybeFrozen, CORINFO_CLASS_HANDLE typeHnd_)
-{
-    PORTABILITY_ASSERT("RhpNewMaybeFrozen is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL2(Object*, RhpNewArrayFast, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR size)
-{
-    PORTABILITY_ASSERT("RhpNewArrayFast is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL2(Object*, RhpNewPtrArrayFast, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR size)
-{
-    PORTABILITY_ASSERT("RhpNewPtrArrayFast is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL2(Object*, RhpNewArrayFastAlign8, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR size)
-{
-    PORTABILITY_ASSERT("RhpNewArrayFastAlign8 is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL1(Object*, RhpNewFastAlign8, CORINFO_CLASS_HANDLE typeHnd_)
-{
-    PORTABILITY_ASSERT("RhpNewFastAlign8 is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL1(Object*, RhpNewFastMisalign, CORINFO_CLASS_HANDLE typeHnd_)
-{
-    PORTABILITY_ASSERT("RhpNewFastMisalign is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL1(Object*, RhpNewFast, CORINFO_CLASS_HANDLE typeHnd_)
-{
-    PORTABILITY_ASSERT("RhpNewFast is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL1(Object*, RhpNew, CORINFO_CLASS_HANDLE typeHnd_)
-{
-    PORTABILITY_ASSERT("RhpNew is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL2(Object*, RhpNewArrayMaybeFrozen, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR size)
-{
-    PORTABILITY_ASSERT("RhpNewArrayMaybeFrozen is not implemented on wasm");
-    return nullptr;
-}
-
-EXTERN_C FCDECL2(Object*, RhNewString, CORINFO_CLASS_HANDLE typeHnd_, INT_PTR stringLength)
-{
-    PORTABILITY_ASSERT("RhNewString is not implemented on wasm");
-    return nullptr;
 }
 
 extern "C" void STDCALL ThePreStubPatchLabel(void)
@@ -481,21 +385,21 @@ extern "C" int32_t mono_wasm_browser_entropy(uint8_t* buffer, int32_t bufferLeng
     return -1;
 }
 
-void InvokeManagedMethod(MethodDesc *pMD, int8_t *pArgs, int8_t *pRet, PCODE target)
-{
-    PORTABILITY_ASSERT("Attempted to execute non-interpreter code from interpreter on wasm, this is not yet implemented");
-}
-
-void InvokeUnmanagedMethod(MethodDesc *targetMethod, int8_t *stack, InterpMethodContextFrame *pFrame, int32_t callArgsOffset, int32_t returnOffset, PCODE callTarget)
-{
-    PORTABILITY_ASSERT("Attempted to execute unmanaged code from interpreter on wasm, this is not yet implemented");
-}
-
 void InvokeCalliStub(PCODE ftn, void* cookie, int8_t *pArgs, int8_t *pRet)
 {
     _ASSERTE(ftn != (PCODE)NULL);
     _ASSERTE(cookie != NULL);
 
+    PCODE actualFtn = (PCODE)PortableEntryPoint::GetActualCode(ftn);
+    ((void(*)(PCODE, int8_t*, int8_t*))cookie)(actualFtn, pArgs, pRet);
+}
+
+void InvokeUnmanagedCalli(PCODE ftn, void *cookie, int8_t *pArgs, int8_t *pRet)
+{
+    _ASSERTE(ftn != (PCODE)NULL);
+    _ASSERTE(cookie != NULL);
+
+    // WASMTODO: Reconcile calling conventions.
     ((void(*)(PCODE, int8_t*, int8_t*))cookie)(ftn, pArgs, pRet);
 }
 
@@ -616,6 +520,7 @@ namespace
         BYTE callConv = sig.GetCallingConvention();
         switch (callConv)
         {
+            case IMAGE_CEE_CS_CALLCONV_DEFAULT:
             case IMAGE_CEE_CS_CALLCONV_C:
             case IMAGE_CEE_CS_CALLCONV_STDCALL:
             case IMAGE_CEE_CS_CALLCONV_FASTCALL:
@@ -669,4 +574,19 @@ LPVOID GetCookieForCalliSig(MetaSig metaSig)
     }
 
     return thunk;
+}
+
+void InvokeManagedMethod(MethodDesc *pMD, int8_t *pArgs, int8_t *pRet, PCODE target)
+{
+    MetaSig sig(pMD);
+    void* cookie = GetCookieForCalliSig(sig);
+
+    _ASSERTE(cookie != NULL);
+
+    InvokeCalliStub(target, cookie, pArgs, pRet);
+}
+
+void InvokeUnmanagedMethod(MethodDesc *targetMethod, int8_t *pArgs, int8_t *pRet, PCODE callTarget)
+{
+    PORTABILITY_ASSERT("Attempted to execute unmanaged code from interpreter on wasm, this is not yet implemented");
 }
