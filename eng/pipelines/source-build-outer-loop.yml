@@ -59,4 +59,3 @@ extends:
       parameters:
         isOfficialBuild: false
         scope: source-build-outer-loop
-    
