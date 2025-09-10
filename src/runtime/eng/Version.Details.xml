@@ -49,7 +49,7 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>c4dc56079d959dbdb7fc27ea8ad7f95194885923</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-10.0.100.Transport" Version="10.0.100-rc.1.25420.121">
+    <Dependency Name="Microsoft.NET.Workload.Emscripten.Current.Manifest-11.0.100.Transport" Version="10.0.100-rc.1.25420.121">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>c4dc56079d959dbdb7fc27ea8ad7f95194885923</Sha>
     </Dependency>
