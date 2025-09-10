@@ -67,10 +67,10 @@
       "commitSha": "24e112427932b7d75907feecd7baa792ffbe72d8"
     },
     {
-      "barId": 282167,
+      "barId": 282406,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "3b0d715b270e2d0ecdc6c7e7b8918ae711a68a1d"
+      "commitSha": "94695f93110a4605b0bf88a8e2c5cf1612baee4f"
     },
     {
       "barId": 281892,
@@ -79,10 +79,10 @@
       "commitSha": "a70b5c16d07b7cba6c4955034a0c5957c86eb6e5"
     },
     {
-      "barId": 282138,
+      "barId": 282358,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "6883bb253dc5a7682f934ddfe1d840f3e3819c8d"
+      "commitSha": "9b915620ac95c77dad75cdaca43d2d8e0ee8e895"
     },
     {
       "barId": 277711,
@@ -133,10 +133,10 @@
       "commitSha": "e2dc1b239ab7828c6ccf3395db5f6e72af652549"
     },
     {
-      "barId": 282250,
+      "barId": 282305,
       "path": "winforms",
       "remoteUri": "https://github.com/dotnet/winforms",
-      "commitSha": "2a4c19b3198a9c14117db6bc251c12887f5f1e57"
+      "commitSha": "a4af28226c229a2a9f2f15bf26b11f5fd4ad83d7"
     },
     {
       "barId": 279896,
