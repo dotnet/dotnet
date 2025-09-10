@@ -108,7 +108,8 @@ stages:
         useMonoRuntime: ${{ leg.useMonoRuntime }}
         useSystemLibraries: ${{ leg.useSystemLibraries }}
         withPreviousSDK: ${{ leg.withPreviousSDK }}
-        
+        createSourceArtifacts: ${{ leg.createSourceArtifacts }}
+
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
           extraProperties: /p:DotNetSourceOnlyPublishArtifacts=true
