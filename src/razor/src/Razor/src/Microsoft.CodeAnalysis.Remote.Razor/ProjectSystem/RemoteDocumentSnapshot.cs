@@ -69,10 +69,7 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
             return _codeDocument;
         }
 
-        // TODO: What happens if we can't get the document? (https://github.com/dotnet/razor/issues/11522)
-        var document = await ProjectSnapshot.GetCodeDocumentAsync(this, cancellationToken).ConfigureAwait(false)
-            ?? throw new InvalidOperationException("Could not get the code document");
-
+        var document = await ProjectSnapshot.GetRequiredCodeDocumentAsync(this, cancellationToken).ConfigureAwait(false);
         return InterlockedOperations.Initialize(ref _codeDocument, document);
     }
 
@@ -95,9 +92,7 @@ internal sealed class RemoteDocumentSnapshot : IDocumentSnapshot
             return _generatedDocument;
         }
 
-        var generatedDocument = await ProjectSnapshot.GetGeneratedDocumentAsync(this, cancellationToken).ConfigureAwait(false)
-            ?? throw new InvalidOperationException("Could not get the generated document"); // TODO: what happens if we can't get the generated document?
-
+        var generatedDocument = await ProjectSnapshot.GetRequiredGeneratedDocumentAsync(this, cancellationToken).ConfigureAwait(false);
         return InterlockedOperations.Initialize(ref _generatedDocument, generatedDocument);
     }
 
