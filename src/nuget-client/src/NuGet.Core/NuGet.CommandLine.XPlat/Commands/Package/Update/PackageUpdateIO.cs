@@ -112,7 +112,6 @@ internal class PackageUpdateIO : IPackageUpdateIO
         var restoreContext = new RestoreArgs()
         {
             CacheContext = cacheContext,
-            LockFileVersion = LockFileFormat.Version,
             Log = restoreLogger,
             MachineWideSettings = new XPlatMachineWideSetting(),
             GlobalPackagesFolder = globalPackagesFolder,
@@ -138,9 +137,16 @@ internal class PackageUpdateIO : IPackageUpdateIO
         await RestoreRunner.CommitAsync(((RestoreResult)restorePreviewResult).RestoreResultPair, CancellationToken.None);
     }
 
-    public void UpdatePackageReference(PackageSpec updatedPackageSpec, IPackageUpdateIO.RestoreResult restorePreviewResult, List<NuGetFramework> packageTfms, PackageToUpdate packageToUpdate, ILogger logger)
+    public void UpdatePackageReference(PackageSpec updatedPackageSpec, IPackageUpdateIO.RestoreResult restorePreviewResult, List<string> packageTfmAliases, PackageToUpdate packageToUpdate, ILogger logger)
     {
         PackageDependency packageDependency = new PackageDependency(packageToUpdate.Id, packageToUpdate.NewVersion);
+
+        List<NuGetFramework> packageTfms = new List<NuGetFramework>(packageTfmAliases.Count);
+        foreach (var alias in packageTfmAliases)
+        {
+            var targetFramework = updatedPackageSpec.TargetFrameworks.Single(tfm => tfm.TargetAlias == alias);
+            packageTfms.Add(targetFramework.FrameworkName);
+        }
 
         if (!AddPackageReferenceCommandRunner.TryFindResolvedVersion(packageTfms,
             packageDependency.Id,

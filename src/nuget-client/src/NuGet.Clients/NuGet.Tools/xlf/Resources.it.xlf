@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_CategoryShortcut">
         <source>nuget</source>
-        <target state="translated">nuget</target>
+        <target state="translated">NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
         <source>Search NuGet packages</source>
-        <target state="translated">Ricerca pacchetti NuGet</target>
+        <target state="translated">Cerca pacchetti NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_DisplayText">
@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Queste impostazioni sono archiviate in %NuGet.Config% file</target>
+        <target state="translated">Queste impostazioni sono archiviate nei file %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Consentire connessioni non sicure</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Cancella risorse locali NuGet</target>
+        <target state="translated">Cancella risorse locali di NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

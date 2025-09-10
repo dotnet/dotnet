@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">無効なパッケージ ID: '{0}'。</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">ソース '{0}' にアクセスするときに、サーバーが HTTP「403 アクセス不可」で応答しました。サーバーが身元を認証したものの、要求されたリソースにアクセスするためのアクセス許可がないことを示します。このリソースを表示するためのアクセス許可を持つ資格情報を提供してください。</target>

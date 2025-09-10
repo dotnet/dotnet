@@ -59,12 +59,12 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_CategoryShortcut">
         <source>nuget</source>
-        <target state="translated">nuget</target>
+        <target state="translated">NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
         <source>Search NuGet packages</source>
-        <target state="translated">NuGet パッケージを検索する</target>
+        <target state="translated">NuGet パッケージの検索</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_DisplayText">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">'{0}' と一致する NuGet パッケージをオンラインで検索します</target>
+        <target state="translated">'{0}' に一致する NuGet パッケージをオンラインで検索</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -114,12 +114,12 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">プロジェクトはproject.jsonベースではないため、移行の対象ではありません。</target>
+        <target state="translated">プロジェクトは project.json ベースではないため、移行に対し適格ではありません。</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">これらの設定は %NuGet.Config% 個のファイルに格納されています</target>
+        <target state="translated">これらの設定は %NuGet.Config% ファイルに格納されます</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">安全ではない接続を許可する</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">NuGet ローカル リソースのクリア</target>
+        <target state="translated">NuGet ローカル リソースをクリア</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

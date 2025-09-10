@@ -231,7 +231,7 @@ stages:
       parameters:
         displayName: Unit Tests on MacOS (.NET 9.0)
         osName: MacOS
-        vmImage: macos-latest
+        vmImage: macos-14
         testType: Unit
         testTargetFramework: net9.0
 
@@ -244,7 +244,7 @@ stages:
       parameters:
         displayName: Functional Tests on MacOS (.NET 9.0)
         osName: MacOS
-        vmImage: macos-latest
+        vmImage: macos-14
         testType: Functional
         testTargetFramework: net9.0
         timeoutInMinutes: 30

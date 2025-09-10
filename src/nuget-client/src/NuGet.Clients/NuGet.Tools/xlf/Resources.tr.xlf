@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSourceName_Missing">
         <source>A name must be provided.</source>
-        <target state="translated">Bir ad sağlanmalı.</target>
+        <target state="translated">Bir ad sağlanmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSourceUriHostname_Missing">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
         <source>Search NuGet packages</source>
-        <target state="translated">NuGet paketlerinde ara</target>
+        <target state="translated">NuGet paketlerini ara</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_DisplayText">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi Ara</target>
+        <target state="translated">'{0}' ile eşleşen NuGet Paketlerini Çevrimiçi ara</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -114,12 +114,12 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Proje, proje tabanlı olmadığından geçiş için project.json değil.</target>
+        <target state="translated">Proje, project.json tabanlı olmadığından geçiş için uygun değildir.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Bu ayarlar %NuGet.Config% dosyada depolanır</target>
+        <target state="translated">Bu ayarlar %NuGet.Config% dosyalarında depolanır</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Güvenli Olmayan Bağlantılara İzin Ver</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">

@@ -34,12 +34,12 @@
       </trans-unit>
       <trans-unit id="InvalidPortableFrameworksDueToHyphen">
         <source>Invalid portable frameworks '{0}'. A hyphen may not be in any of the portable framework names.</source>
-        <target state="translated">無効で移植可能なフレームワーク '{0}'。移植可能なフレームワーク名にハイフンは使用できません。</target>
+        <target state="translated">無効なポータブル フレームワーク '{0}'。ポータブル フレームワーク名にハイフンは使用できません。</target>
         <note>{0} is the invalid portable framework string.</note>
       </trans-unit>
       <trans-unit id="MissingPortableFrameworks">
         <source>Invalid portable frameworks for '{0}'. A portable framework must have at least one framework in the profile.</source>
-        <target state="translated">'{0}' の無効で移植可能なフレームワーク。移植可能なフレームワークには、プロファイルに少なくとも 1 つのフレームワークが必要です。</target>
+        <target state="translated">'{0}' の無効なポータブル フレームワーク。ポータブル フレームワークには、プロファイルに少なくとも 1 つのフレームワークが必要です。</target>
         <note>{0} is the invalid portable framework string.</note>
       </trans-unit>
     </body>

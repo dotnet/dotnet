@@ -81,6 +81,7 @@ namespace NuGet.Configuration.Test
                 CertificateStoreName = StoreName.My;
                 CertificateFindBy = X509FindType.FindByIssuerName;
                 CertificateFindValue = "Contoso";
+                CertificateBytes = CreateCertificate();
                 Certificate = GetCertificate();
                 File.WriteAllText(ConfigFile,
                                   $@"
@@ -106,6 +107,7 @@ namespace NuGet.Configuration.Test
 
             public string PackageSourceName { get; }
             public TestDirectory WorkingPath { get; }
+            private byte[] CertificateBytes { get; set; }
 
             public void Dispose()
             {
@@ -123,7 +125,7 @@ namespace NuGet.Configuration.Test
 
             public void SetupCertificateFile()
             {
-                File.WriteAllBytes(CertificateAbsoluteFilePath, Certificate.RawData);
+                File.WriteAllBytes(CertificateAbsoluteFilePath, CertificateBytes);
             }
 
             public void SetupCertificateInStorage()
@@ -153,9 +155,9 @@ namespace NuGet.Configuration.Test
             private X509Certificate2 GetCertificate()
             {
 #if NET9_0_OR_GREATER
-                return X509CertificateLoader.LoadPkcs12(CreateCertificate(), CertificatePassword);
+                return X509CertificateLoader.LoadPkcs12(CertificateBytes, CertificatePassword);
 #else
-                return new X509Certificate2(CreateCertificate(), CertificatePassword);
+                return new X509Certificate2(CertificateBytes, CertificatePassword);
 #endif
             }
 

@@ -4,32 +4,32 @@
     <body>
       <trans-unit id="AddedPackageToFolder">
         <source>Added package '{0}' to folder '{1}'</source>
-        <target state="translated">已將封裝 '{0}' 加入資料夾 '{1}'</target>
+        <target state="translated">已將套件 '{0}' 加入資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToFolderFromSource">
         <source>Added package '{0}' to folder '{1}' from source '{2}'</source>
-        <target state="translated">已從來源 '{2}' 將套件 '{0}' 新增到資料夾 '{1}'。</target>
+        <target state="translated">已從來源 '{2}' 將套件 '{0}' 新增到資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddedPackageToPackagesConfig">
         <source>Added package '{0}' to '{1}'</source>
-        <target state="translated">已將封裝 '{0}' 加入 '{1}'</target>
+        <target state="translated">已將套件 '{0}' 加入 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageToFolder">
         <source>Adding package '{0}' to folder '{1}'</source>
-        <target state="translated">正在將封裝 '{0}' 加入資料夾 '{1}'</target>
+        <target state="translated">正在將套件 '{0}' 加入資料夾 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageWithOnlyDependencies">
         <source>Adding package '{0}', which only has dependencies, to project '{1}'.</source>
-        <target state="translated">正在將封裝 '{0}' (只有相依性) 加入專案 '{1}'。</target>
+        <target state="translated">正在將套件 '{0}' (只有相依性) 加入專案 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="AddingPackageWithOnlyToolsGroup">
         <source>Adding package '{0}', which only has tools group, to project '{1}'</source>
-        <target state="translated">正在將封裝 '{0}' (只有工具群組) 加入專案 '{1}'</target>
+        <target state="translated">正在將套件 '{0}' (只有工具群組) 加入專案 '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Cannot_Be_Null_Or_Empty">
@@ -64,7 +64,7 @@
       </trans-unit>
       <trans-unit id="Debug_AddedFileToFolder">
         <source>Added file '{0}' to folder '{1}'.</source>
-        <target state="translated">已將檔案 '{0}' 加入資料夾 '{1}' 中。</target>
+        <target state="translated">已將檔案 '{0}' 加入資料夾 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
@@ -89,7 +89,7 @@
       </trans-unit>
       <trans-unit id="Debug_TargetFrameworkInfoPrefix">
         <source>For adding package '{0}' to project '{1}' that targets '{2}'.</source>
-        <target state="translated">為了將封裝 '{0}' 加入以 '{2}' 為目標的專案 '{1}'。</target>
+        <target state="translated">為了將套件 '{0}' 加入以 '{2}' 為目標的專案 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="DependencyDoesNotHaveValidVersion">
@@ -259,12 +259,12 @@
       </trans-unit>
       <trans-unit id="PackageHasDependent">
         <source>Unable to uninstall '{0}' because '{1}' depends on it.</source>
-        <target state="translated">無法解除安裝 '{0}'，因為 '{1}' 相依於它。</target>
+        <target state="translated">因為 '{1}' 相依於它，所以無法解除安裝 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageHasDependents">
         <source>Unable to uninstall '{0}' because '{1}' depend on it.</source>
-        <target state="translated">無法解除安裝 '{0}'，因為 '{1}' 相依於它。</target>
+        <target state="translated">因為 '{1}' 相依於它，所以無法解除安裝 '{0}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageNotFound">
@@ -331,17 +331,17 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' 不能是空值。</target>
+        <target state="translated">「{0}」不得為 Null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RemovedPackageFromFolder">
         <source>Removed package '{0}' from folder '{1}'</source>
-        <target state="translated">已從資料夾 '{1}' 中移除封裝 '{0}'</target>
+        <target state="translated">已從資料夾 '{1}' 中移除套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovedPackageFromPackagesConfig">
         <source>Removed package '{0}' from '{1}'</source>
-        <target state="translated">已從 '{1}' 中移除封裝 '{0}'</target>
+        <target state="translated">已從 '{1}' 中移除套件 '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="RemovingPackageFromFolder">
@@ -386,7 +386,7 @@
       </trans-unit>
       <trans-unit id="RestoringPackage">
         <source>Restoring NuGet package {0}.</source>
-        <target state="translated">還原 NuGet 套件 {0}。</target>
+        <target state="translated">正在還原 NuGet 套件 {0}。</target>
         <note />
       </trans-unit>
       <trans-unit id="RetrievingPackageStart">
@@ -421,7 +421,7 @@
       </trans-unit>
       <trans-unit id="UnableToFindCompatibleItems">
         <source>Could not install package '{0}'. You are trying to install this package into a project that targets '{1}', but the package does not contain any assembly references or content files that are compatible with that framework. For more information, contact the package author.</source>
-        <target state="translated">無法安裝套件 '{0}'。您正嘗試將此套件安裝到以 '{1}' 為目標的專案，但該套件不包含任何與架構相容的組件參照或內容檔案。如需詳細資訊，請聯繫套件作者。</target>
+        <target state="translated">無法安裝封裝 '{0}'。您正嘗試將此封裝安裝到以 '{1}' 為目標的專案，但該封裝不包含任何與架構相容的組件參考或內容檔。如需詳細資訊，請連絡封裝作者。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnableToFindPathInLookupOrList">
@@ -481,7 +481,7 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">目錄 '{0}' 不是空的。正在略過...</target>
+        <target state="translated">目錄 '{0}' 不是空的。略過中...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_ErrorFindingRepository">
@@ -497,7 +497,7 @@
       </trans-unit>
       <trans-unit id="Warning_FileModified">
         <source>Skipping '{0}' because it was modified.</source>
-        <target state="translated">略過 '{0}'，因為它已遭到修改。</target>
+        <target state="translated">正在略過 '{0}'，因為它已經過修改。</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_PackageWithKnownVulnerability">
@@ -510,7 +510,7 @@
       </trans-unit>
       <trans-unit id="Warning_RollingBack">
         <source>Install failed. Rolling back...</source>
-        <target state="translated">安裝失敗。正在復原...</target>
+        <target state="translated">安裝失敗。復原中...</target>
         <note />
       </trans-unit>
       <trans-unit id="XdtError">

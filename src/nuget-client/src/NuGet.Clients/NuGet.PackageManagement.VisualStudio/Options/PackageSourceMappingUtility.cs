@@ -18,40 +18,18 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             {
                 foreach (PackagePatternItem patternItem in sourceItem.Patterns)
                 {
-                    if (!packageSourceMappingDictionary.ContainsKey(patternItem.Pattern))
+                    if (packageSourceMappingDictionary.TryGetValue(patternItem.Pattern, out var packageSourceContextInfos))
                     {
-                        packageSourceMappingDictionary[patternItem.Pattern] = new List<PackageSourceContextInfo>();
+                        packageSourceContextInfos.Add(new PackageSourceContextInfo(sourceItem.Key));
                     }
-                    packageSourceMappingDictionary[patternItem.Pattern].Add(new PackageSourceContextInfo(sourceItem.Key));
+                    else
+                    {
+                        packageSourceMappingDictionary[patternItem.Pattern] = [new PackageSourceContextInfo(sourceItem.Key)];
+                    }
                 }
             }
 
             return packageSourceMappingDictionary;
-        }
-
-        /// <summary>
-        /// For existing package source mappings configured with package sources which don't exist, keep those invalid package source mappings in place.
-        /// Add any <paramref name="originalPackageSourceMappings"/> configured with package sources not in <paramref name="existingPackageSources"/>
-        /// back into <paramref name="sourceNamesToPackagePatterns"/>.
-        /// </summary>
-        internal static void PreserveInvalidPackageSourceMappings(
-            Dictionary<string, List<PackagePatternItem>> sourceNamesToPackagePatterns,
-            IReadOnlyList<PackageSource> existingPackageSources,
-            IReadOnlyList<PackageSourceMappingSourceItem> originalPackageSourceMappings)
-        {
-            HashSet<string> configuredPackageSourceNames = existingPackageSources
-                .Select(packageSource => packageSource.Name)
-                .ToHashSet<string>();
-
-            foreach (PackageSourceMappingSourceItem originalMapping in originalPackageSourceMappings)
-            {
-                string originalSourceName = originalMapping.Key;
-                if (!configuredPackageSourceNames.Contains(originalSourceName, StringComparer.OrdinalIgnoreCase))
-                {
-                    // Keep this invalid package source mapping.
-                    AddOrUpdateSourceWithPackagePatterns(sourceNamesToPackagePatterns, originalMapping.Patterns, originalSourceName);
-                }
-            }
         }
 
         internal static List<PackageSourceMappingSourceItem> ConvertPackageIdAndSourcesToSourceMappingSourceItems(

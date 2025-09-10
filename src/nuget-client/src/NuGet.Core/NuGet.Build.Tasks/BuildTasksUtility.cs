@@ -226,7 +226,6 @@ namespace NuGet.Build.Tasks
                         var restoreContext = new RestoreArgs()
                         {
                             CacheContext = cacheContext,
-                            LockFileVersion = LockFileFormat.Version,
                             // 'dotnet restore' fails on slow machines (https://github.com/NuGet/Home/issues/6742)
                             // The workaround is to pass the '--disable-parallel' option.
                             // We apply the workaround by default when the system has 1 cpu.

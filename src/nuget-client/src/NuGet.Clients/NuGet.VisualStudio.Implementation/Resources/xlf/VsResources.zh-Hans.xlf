@@ -305,17 +305,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">无法将所有必需程序包添加到项目。以下程序包无法从“{0}”安装:</target>
+        <target state="translated">无法将所有必需的程序包添加到项目。以下程序包无法从“{0}”安装:</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">预安装的程序包具有对缺失扩展的引用。找不到 ID 为“{0}”的扩展。</target>
+        <target state="translated">预安装的程序包具有对缺少的扩展的引用。找不到 ID 为“{0}”的扩展。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">预安装的程序包具有对缺失注册表值的引用。在“{1}”下找不到名称为“{0}”的注册表项。</target>
+        <target state="translated">预安装的程序包具有对缺少的注册表值的引用。在“{1}”下找不到名称为“{0}”的注册表项。</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -350,7 +350,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">“{0}”不能为 null。</target>
+        <target state="translated">‘{0}’ 不得为 null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
@@ -360,12 +360,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">项目模板列出一个或多个 "id" 或 "version" 属性值缺失、为空或无效的程序包。需要这两个属性，并且其值必须有效。</target>
+        <target state="translated">项目模板列出一个或多个程序包，这些程序包的 "id" 或 "version" 属性的值缺失、为空或无效。"id" 和 "version" 属性均为必需属性，并且必须具有有效值。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
         <source>The "repository" attribute of the package element has an invalid value: '{0}'. Valid values are: 'template' or 'extension'.</source>
-        <target state="translated">程序包元素的 "repository" 属性值无效:“{0}”。有效值为 "template" 或 "extension"。</target>
+        <target state="translated">程序包元素的 "repository" 属性的值“{0}”无效。有效值为 "template" 或 "extension"。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
@@ -375,17 +375,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">项目模板已配置为使用特定于扩展的程序包存储库，但是扩展 ID 尚未指定。使用 "repositoryId" 属性可指定该扩展 ID。</target>
+        <target state="translated">项目模板已配置为使用特定于扩展的程序包存储库，但是尚未指定扩展 ID。使用 "repositoryId" 属性可指定扩展 ID。</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">项目模板已配置为使用注册表提供的程序包存储库，但是注册表值名称尚未指定。使用 "keyName" 属性可指定注册表值。</target>
+        <target state="translated">项目模板已配置为使用注册表提供的程序包存储库，但是尚未指定注册表值名称。使用 "keyName" 属性可指定注册表值。</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">
         <source>Unable to find package '{0}'.</source>
-        <target state="translated">无法找到程序包“{0}”。</target>
+        <target state="translated">找不到程序包“{0}”。</target>
         <note />
       </trans-unit>
     </body>

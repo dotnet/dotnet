@@ -23,6 +23,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
     public class PackageSourcesPageTests : NuGetExternalSettingsProviderTests<PackageSourcesPage>
     {
         private IEnumerable<PackageSource> _packageSources;
+        private IEnumerable<PackageSource> _savedPackageSources;
         private int _countEnablePackageSourceCalled = 0;
         private int _countDisablePackageSourceCalled = 0;
 
@@ -31,6 +32,7 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             sp.Reset();
             NuGetUIThreadHelper.SetCustomJoinableTaskFactory(ThreadHelper.JoinableTaskFactory);
             _packageSources = Enumerable.Empty<PackageSource>();
+            _savedPackageSources = Enumerable.Empty<PackageSource>();
         }
 
         protected override PackageSourcesPage CreateInstance(VSSettings? vsSettings)
@@ -38,6 +40,13 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             Mock<IPackageSourceProvider> mockedPackageSourceProvider = new Mock<IPackageSourceProvider>();
             mockedPackageSourceProvider.Setup(packageSourceProvider => packageSourceProvider.LoadPackageSources())
                 .Returns(_packageSources);
+
+            mockedPackageSourceProvider.Setup(packageSourceProvider =>
+                packageSourceProvider.SavePackageSources(It.IsAny<IEnumerable<PackageSource>>()))
+                    .Callback<IEnumerable<PackageSource>>(sources =>
+                    {
+                        _savedPackageSources = sources;
+                    });
 
             mockedPackageSourceProvider.Setup(packageSourceProvider =>
                 packageSourceProvider.EnablePackageSource(It.IsAny<string>()))
@@ -299,6 +308,79 @@ namespace NuGet.PackageManagement.VisualStudio.Test.Options
             _countDisablePackageSourceCalled.Should().Be(expectedDisableCount);
             result.Should().NotBeNull();
             result.Should().BeOfType<ExternalSettingOperationResult.Success>();
+        }
+
+        /// <summary>
+        /// NuGet's implementation does not validate uniqueness of sources, and therefore allows a duplicate to become
+        /// enabled. The Unified Settings registration.json enforces uniqueness by the declaration:
+        /// <code>"uniqueness": "caseInsensitive"</code>
+        /// </summary>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task SetValueAsync_EnableDuplicateSource_ReturnsSuccessResultTaskAsync(bool isEnabled)
+        {
+            // Arrange
+            string sourceName1 = "unitTestingSourceName1";
+            string sourceUrl1 = "https://testsource1.com";
+            bool isSource1Enabled = !isEnabled;
+
+            string sourceName2 = "unitTestingSourceName2";
+            string sourceUrl2 = sourceUrl1;
+            bool isSource2Enabled = isEnabled;
+
+            var packageSource1 = new PackageSource(sourceUrl1, sourceName1, isSource1Enabled);
+            var packageSource2 = new PackageSource(sourceUrl2, sourceName2, isSource2Enabled);
+
+            // Configure 2 existing package sources
+            _packageSources =
+            [
+                packageSource1,
+                packageSource2
+            ];
+
+            PackageSourcesPage instance = CreateInstance(_vsSettings);
+
+            // Configure Unified Settings input to Toggle IsEnabled state on the disabled source.
+            Dictionary<string, object> packageSourceDictionary1 = new Dictionary<string, object>();
+            packageSourceDictionary1[PackageSourcesPage.MonikerPackageSourceId] = sourceName1;
+            packageSourceDictionary1[PackageSourcesPage.MonikerSourceName] = sourceName1;
+            packageSourceDictionary1[PackageSourcesPage.MonikerSourceUrl] = sourceUrl1;
+            packageSourceDictionary1[PackageSourcesPage.MonikerIsEnabled] = isEnabled; // Toggle the first source.
+            packageSourceDictionary1[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
+
+            Dictionary<string, object> packageSourceDictionary2 = new Dictionary<string, object>();
+            packageSourceDictionary2[PackageSourcesPage.MonikerPackageSourceId] = sourceName2;
+            packageSourceDictionary2[PackageSourcesPage.MonikerSourceName] = sourceName2;
+            packageSourceDictionary2[PackageSourcesPage.MonikerSourceUrl] = sourceUrl2;
+            packageSourceDictionary2[PackageSourcesPage.MonikerIsEnabled] = isSource2Enabled;
+            packageSourceDictionary2[PackageSourcesPage.MonikerAllowInsecureConnections] = false;
+
+            IList<IDictionary<string, object>> packageSourceDictionaryList =
+                new List<IDictionary<string, object>>(capacity: 2)
+                {
+                    packageSourceDictionary1,
+                    packageSourceDictionary2
+                };
+
+            // Act
+            ExternalSettingOperationResult resultSetValue = await instance.SetValueAsync(
+                PackageSourcesPage.MonikerPackageSources,
+                packageSourceDictionaryList,
+                CancellationToken.None);
+
+            // Assert
+
+            // The first package source should have its IsEnabled updated.
+            packageSource1.IsEnabled = isEnabled;
+
+            resultSetValue.Should().NotBeNull();
+            resultSetValue.Should().BeOfType<ExternalSettingOperationResult.Success>();
+
+            var savedPackageSources = _savedPackageSources.ToList();
+            savedPackageSources.Count.Should().Be(2);
+            savedPackageSources.Should().Contain(packageSource1);
+            savedPackageSources.Should().Contain(packageSource2);
         }
     }
 }

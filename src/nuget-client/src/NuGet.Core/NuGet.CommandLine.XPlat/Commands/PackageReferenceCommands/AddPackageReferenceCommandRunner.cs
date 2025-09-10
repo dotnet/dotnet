@@ -421,7 +421,6 @@ namespace NuGet.CommandLine.XPlat
                 var restoreContext = new RestoreArgs()
                 {
                     CacheContext = cacheContext,
-                    LockFileVersion = LockFileFormat.Version,
                     Log = packageReferenceArgs.Logger,
                     MachineWideSettings = new XPlatMachineWideSetting(),
                     GlobalPackagesFolder = packageReferenceArgs.PackageDirectory,

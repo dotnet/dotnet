@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">Buscar online paquetes NuGet que coincidan con '{0}'</target>
+        <target state="translated">Buscar en línea paquetes NuGet que coincidan con '{0}'</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -114,22 +114,22 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">El proyecto no es apto para la migración porque no está basado en project.json.</target>
+        <target state="translated">El proyecto no es apto para la migración porque no se basa en project.json.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Esta configuración se almacena en %NuGet.Config% de archivos</target>
+        <target state="translated">Esta configuración se almacena en archivos %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
         <source>Solution is not saved. Please save your solution before managing NuGet packages.</source>
-        <target state="translated">No se ha guardado la solución. Guarde la solución antes de administrar los paquetes NuGet.</target>
+        <target state="translated">No se guardó la solución. Guarde la solución antes de administrar los paquetes NuGet.</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Permitir conexiones no seguras</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">

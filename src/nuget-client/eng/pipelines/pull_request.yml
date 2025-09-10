@@ -1,11 +1,4 @@
 parameters:
-- name: NuGetLocalizationType
-  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
-  type: string
-  default: Full
-  values:
-  - Full
-  - Pseudo
 - name: RunBuildForPublishing
   displayName: Build bits for publishing
   type: boolean
@@ -37,7 +30,7 @@ parameters:
 - name: RunMonoTestsOnMac
   displayName: Run Mono tests on Mac
   type: boolean
-  default: true
+  default: false
 - name: RunStaticAnalysis
   displayName: Run static analysis
   type: boolean
@@ -93,7 +86,6 @@ extends:
     stages:
     - template: /eng/pipelines/templates/pipeline.yml@self
       parameters:
-        NuGetLocalizationType: ${{parameters.NuGetLocalizationType}}
         RunBuildForPublishing: ${{parameters.RunBuildForPublishing}}
         RunCrossFrameworkTestsOnWindows: ${{parameters.RunCrossFrameworkTestsOnWindows}}
         RunUnitTestsOnWindows: ${{parameters.RunUnitTestsOnWindows}}

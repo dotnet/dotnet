@@ -21,11 +21,6 @@ namespace NuGet.Tests.Apex
 
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
-        public NuGetUITestCase()
-            : base()
-        {
-        }
-
         [TestMethod]
         [Timeout(DefaultTimeout)]
         public async Task SearchPackageFromUI()

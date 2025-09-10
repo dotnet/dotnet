@@ -165,7 +165,6 @@ namespace NuGet.Packaging.Test
             SigningTestUtility.VerifySerialNumber(testIssuerSerial.SerialNumber, essCertIdV2.IssuerSerial.SerialNumber);
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public void Read_WithValidInput_ReturnsEssCertId()
         {
@@ -186,7 +185,6 @@ namespace NuGet.Packaging.Test
                 SigningTestUtility.VerifySerialNumber(testIssuerSerial.SerialNumber, essCertIdV2.IssuerSerial.SerialNumber);
             }
         }
-#endif
 
         private static byte[] Encode(TestEssCertIdV2 testEssCertIdV2)
         {

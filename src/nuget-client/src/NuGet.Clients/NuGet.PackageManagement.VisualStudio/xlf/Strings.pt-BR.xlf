@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">O valor deve ser maior ou igual a {0}.</target>
+        <target state="translated">O valor deve ser maior que ou igual a {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigErrorDialogBoxTitle">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">O projeto '{0}' não é compatível</target>
+        <target state="translated">O projeto '{0}' não tem suporte</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddGacReference">
@@ -73,17 +73,17 @@
       </trans-unit>
       <trans-unit id="Debug_RemoveReference">
         <source>Removed reference '{0}' from project '{1}'</source>
-        <target state="translated">Referência removida '{0}' do projeto '{1}'</target>
+        <target state="translated">Referência '{0}' removida da pasta '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFile">
         <source>Removed file '{0}'</source>
-        <target state="translated">Arquivo removido '{0}'</target>
+        <target state="translated">Arquivo '{0}' removido</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFileFromFolder">
         <source>Removed file '{0}' from folder '{1}'</source>
-        <target state="translated">Arquivo removido '{0}' da pasta '{1}'</target>
+        <target state="translated">Arquivo '{0}' removido da pasta '{1}'</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_RemovedFolder">
@@ -93,7 +93,7 @@
       </trans-unit>
       <trans-unit id="Error_FailedToCreateParentFolder">
         <source>Failed to create parent folder for file '{0}' in project {1}.</source>
-        <target state="translated">Falha ao criar a pasta pai para o arquivo '{0}' no projeto {1}.</target>
+        <target state="translated">Falha ao criar pasta pai para o arquivo '{0}' no projeto {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_FileNotExists">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
-        <source>The source specified is invalid.</source>
-        <target state="translated">A origem especificada é inválida.</target>
+        <source>A valid local or remote path must be specified.</source>
+        <target state="translated">Um caminho local ou remoto válido deve ser especificado.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -164,7 +164,7 @@
       </trans-unit>
       <trans-unit id="FailedToRemoveReference">
         <source>Case insensitive search for reference '{0}', to be removed, returned more than 1 match. Request could not be performed.</source>
-        <target state="translated">Pesquisa diferencia maiúsculas de minúsculas para a referência '{0}'; para ser removido, retornou mais de 1 correspondência. Não foi possível executar a solicitação.</target>
+        <target state="translated">A pesquisa que não diferencia maiúsculas de minúsculas para referência de '{0}', a ser removida, retornou mais de 1 correspondência. A solicitação não pôde ser executada.</target>
         <note />
       </trans-unit>
       <trans-unit id="FailedToUpdateBindingRedirects">
@@ -181,6 +181,16 @@
         <source>The {0} MSBuild property could not be found for project '{1}'.</source>
         <target state="translated">A propriedade {0} do MSBuild não foi encontrada para o projeto '{1}'.</target>
         <note>{0} is the name of the property that was not set.  {1} is the full path to the project.</note>
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Started">
+        <source>Migrating project.json project...</source>
+        <target state="translated">Migrando o projeto project.json...</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="Migrating_ProjectJson_Succeeded">
+        <source>Migration Succeeded</source>
+        <target state="translated">Migração Bem-sucedida</target>
+        <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
         <source>Path '{0}' to existing file is not found on disk. Cannot add to project '{1}'</source>
@@ -204,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' não pode ser nulo.</target>
+        <target state="translated">"{0}" não pode ser nulo.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -261,22 +271,22 @@
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
         <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
-        <target state="translated">Falha ao remover diretórios de pacote que foram marcados para exclusão no reinício do Visual Studio: {0}</target>
+        <target state="translated">Não foi possível remover os diretórios de pacote que estavam marcados para excluir no reinício do Visual Studio: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
         <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
-        <target state="translated">Falha ao remover o diretório de pacote '{0}' que foi marcado para exclusão no reinício do Visual Studio.</target>
+        <target state="translated">Não foi possível remover o diretório do pacote '{0}' que estava marcado para excluir no reinício do Visual Studio.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
         <source>Failed to find match for removing reference '{0}'.</source>
-        <target state="translated">Falha ao localizar a correspondência para remover a referência '{0}'.</target>
+        <target state="translated">Falha ao encontrar correspondência para remoção da referência '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
         <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
-        <target state="translated">Falha ao marcar o diretório de pacote '{0}' para exclusão no reinício do Visual Studio: {1}</target>
+        <target state="translated">Não foi possível marcar o diretório do pacote '{0}' para excluir no reinício do Visual Studio: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">

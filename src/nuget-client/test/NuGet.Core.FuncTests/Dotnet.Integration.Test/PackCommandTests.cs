@@ -167,9 +167,9 @@ namespace Dotnet.Integration.Test
                 _dotnetFixture.CreateDotnetNewProject(Path.Combine(testDirectory.Path, reference2Folder), referencedProject2, "classlib", testOutputHelper: _testOutputHelper);
 
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"new sln -n {solutionName}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
 
                 var projectFile = Path.Combine(testDirectory.Path, projectFileRelativ);
                 using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
@@ -223,9 +223,9 @@ namespace Dotnet.Integration.Test
                 _dotnetFixture.CreateDotnetNewProject(Path.Combine(testDirectory.Path, reference2Folder), referencedProject2, "classlib", testOutputHelper: _testOutputHelper);
 
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"new sln -n {solutionName}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
 
                 var projectFile = Path.Combine(testDirectory.Path, projectFileRelativ);
                 using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
@@ -3292,9 +3292,9 @@ namespace ClassLibrary
                 _dotnetFixture.CreateDotnetNewProject(Path.Combine(testDirectory.Path, rederence2Folder), referencedProject2, "classlib -f netstandard2.0", testOutputHelper: _testOutputHelper);
 
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"new sln -n {solutionName}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
-                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.sln add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {projectFileRelativ}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject1RelativDir}", testOutputHelper: _testOutputHelper);
+                _dotnetFixture.RunDotnetExpectSuccess(testDirectory.Path, $"sln {solutionName}.slnx add {referencedProject2RelativDir}", testOutputHelper: _testOutputHelper);
 
                 var projectFile = Path.Combine(testDirectory.Path, projectFileRelativ);
                 using (var stream = new FileStream(projectFile, FileMode.Open, FileAccess.ReadWrite))
@@ -4818,7 +4818,7 @@ namespace ClassLibrary
         [PlatformTheory(Platform.Windows)]
         [InlineData("Microsoft.NETCore.App", "true", "netcoreapp3.0", "", "netcoreapp3.0")]
         [InlineData("Microsoft.NETCore.App", "false", "netcoreapp3.0", "", "")]
-        [InlineData("Microsoft.WindowsDesktop.App", "true", "netstandard2.1;netcoreapp3.0", "netcoreapp3.0", "netcoreapp3.0")]
+        [InlineData("Microsoft.WindowsDesktop.App", "true", "netstandard2.0;netcoreapp3.0", "netcoreapp3.0", "netcoreapp3.0")]
         [InlineData("Microsoft.WindowsDesktop.App;Microsoft.AspNetCore.App", "true;true", "netcoreapp3.0", "netcoreapp3.0", "netcoreapp3.0")]
         [InlineData("Microsoft.WindowsDesktop.App.WPF;Microsoft.WindowsDesktop.App.WindowsForms", "true;false", "netcoreapp3.0", "", "netcoreapp3.0")]
         public void PackCommand_PackProject_PacksFrameworkReferences(string frameworkReferences, string packForFrameworkRefs, string targetFrameworks, string conditionalFramework, string expectedTargetFramework)
@@ -6325,7 +6325,7 @@ namespace ClassLibrary
         }
 
         [PlatformFact(Platform.Windows)]
-        public async Task DotnetPack_WithMultiTargetedProject_WhenDirectPackageIsPartiallyPrunable_DoesNotIncludeAsADependency()
+        public async Task DotnetPack_WithMultiTargetedProject_WhenDirectPackageIsPartiallyPrunable_IncludesAsADependency()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var tfm = "net472;netstandard2.1";
@@ -6389,8 +6389,9 @@ namespace ClassLibrary
             dependencyGroups[0].TargetFramework.Should().Be(NuGetFramework.Parse("net472"));
             dependencyGroups[0].Packages.Should().HaveCount(1);
             dependencyGroups[0].Packages.Single().Id.Should().Be("Z");
-            dependencyGroups[1].Packages.Should().HaveCount(1);
-            dependencyGroups[1].Packages.Single().Id.Should().Be("Z");
+            dependencyGroups[1].Packages.Should().HaveCount(2);
+            dependencyGroups[1].Packages.First().Id.Should().Be("X");
+            dependencyGroups[1].Packages.Last().Id.Should().Be("Z");
         }
     }
 }

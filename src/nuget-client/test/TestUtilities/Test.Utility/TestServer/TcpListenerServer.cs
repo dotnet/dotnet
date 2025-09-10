@@ -71,9 +71,6 @@ namespace NuGet.Test.Server
                 CancellationToken.None);
         }
 
-        public TcpListenerServer()
-        { }
-
         private static X509Certificate2 GenerateSelfSignedCertificate()
         {
             using (var rsa = RSA.Create(2048))

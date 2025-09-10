@@ -83,7 +83,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">La restauración basada en gráficos estáticos ha encontrado una excepción no controlada. Envíe una incidencia a https://github.com/NuGet/Home. La excepción fue:
+        <target state="translated">La restauración basada en gráficos estáticos ha encontrado una excepción no controlada. Envíe una incidencia a https://github.com/NuGet/Home.  La excepción fue:
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>

@@ -16,7 +16,6 @@ namespace NuGet.ProjectModel
     public class LockFileFormat
     {
         public static readonly int Version = 3;
-        public static readonly string LockFileName = "project.lock.json";
         // If this is ever renamed, you should also rename NoOpRestoreUtilities.NoOpCacheFileName to keep them in sync.
         public static readonly string AssetsFileName = "project.assets.json";
 

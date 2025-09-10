@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="CommandLine_Warning">
         <source>WARNING: {0}</source>
-        <target state="translated">AVERTISSEMENT : {0}</target>
+        <target state="translated">AVERTISSEMENT : {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">Le pack 'project.json' est désactivé dans la version actuelle de NuGet et sera définitivement supprimé dans une version ultérieure.
-Envisagez de migrer '{0}' vers « PackageReference » et d’utiliser les cibles du pack.
-Vous pouvez définir la variable d’environnement '{1}' sur 'true' pour réactiver temporairement cette fonctionnalité.</target>
+        <target state="translated">Le pack « project.json » est désactivé dans la version actuelle de NuGet et sera définitivement supprimé dans une version ultérieure.
+Envisagez de migrer « {0} » vers « PackageReference » et d’utiliser les cibles du pack.
+Vous pouvez définir la variable d’environnement « {1} » sur « true » pour réactiver temporairement cette fonctionnalité.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -752,7 +752,7 @@ Vous pouvez définir la variable d’environnement '{1}' sur 'true' pour réacti
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
         <target state="translated">Restauration des packages NuGet...
-Pour empêcher NuGet de télécharger des packages pendant la génération, ouvrez la boîte de dialogue des options Visual Studio, cliquez sur le nœud Gestionnaire de package NuGet et décochez '{0}'.</target>
+Pour empêcher NuGet de télécharger des packages pendant la génération, ouvrez la boîte de dialogue des options Visual Studio, cliquez sur le nœud Gestionnaire de package NuGet et décochez « {0} ».</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
