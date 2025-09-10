@@ -132,4 +132,25 @@
   <data name="Project_does_not_belong_to_this_solution" xml:space="preserve">
     <value>Project does not belong to this solution.</value>
   </data>
+  <data name="Generator_run_result_did_not_contain_a_code_document" xml:space="preserve">
+    <value>Generator run result did not contain a code document for '{0}'.</value>
+  </data>
+  <data name="Couldnt_get_the_source_generated_document_for_hint_name" xml:space="preserve">
+    <value>Couldn't get the source generated document for hint name '{0}' that we got from the generator run result.</value>
+  </data>
+  <data name="Couldnt_get_a_source_generator_run_result" xml:space="preserve">
+    <value>Couldn't get a source generator run result for project '{0}'.</value>
+  </data>
+  <data name="Razor_source_generator_reference_incorrect" xml:space="preserve">
+    <value>Razor source generator is referenced from '{0}' but we are expecting '{1}', for project '{2}'.</value>
+  </data>
+  <data name="Razor_source_generator_is_not_referenced" xml:space="preserve">
+    <value>Razor source generator is not referenced or no run result found for project '{0}'.</value>
+  </data>
+  <data name="Razor_source_generator_did_not_produce_a_host_output" xml:space="preserve">
+    <value>Razor source generator did not produce a host output for project '{0}': {1}</value>
+  </data>
+  <data name="Razor_source_generator_host_output_is_not_RazorGeneratorResult" xml:space="preserve">
+    <value>Razor source generator host output is not of type RazorGeneratorResult for project '{0}': {1}</value>
+  </data>
 </root>
