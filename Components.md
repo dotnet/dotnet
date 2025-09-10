@@ -40,7 +40,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/razor`  
 *[dotnet/razor@44568f7](https://github.com/dotnet/razor/tree/44568f7817cd7c6daf90c9340c64c3b69277b7f6)*
 - `src/roslyn`  
-*[dotnet/roslyn@c216ec2](https://github.com/dotnet/roslyn/tree/c216ec2e7afe169f936c7bfcb9e3bfb66391825c)*
+*[dotnet/roslyn@7527324](https://github.com/dotnet/roslyn/tree/75273243e5beb19c5e2ae8e58999b21b451c22fe)*
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@16865ea](https://github.com/dotnet/roslyn-analyzers/tree/16865ea61910500f1022ad2b96c499e5df02c228)*
 - `src/runtime`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0898abb](https://github.com/dotnet/scenario-tests/tree/0898abbb5899ef400b8372913c2320295798a687)*
 - `src/sdk`  
-*[dotnet/sdk@e8b7100](https://github.com/dotnet/sdk/tree/e8b7100870bb100d4a4b1dee4e62e0b37dea412e)*
+*[dotnet/sdk@f75f6b7](https://github.com/dotnet/sdk/tree/f75f6b7bb28ec8d18adae6ca2bff03e711986f42)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -80,7 +80,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
     - `src/source-build-externals/src/xunit/tools/media`  
     *[xunit/media@5738b6e](https://github.com/xunit/media/tree/5738b6e86f08e0389c4392b939c20e3eca2d9822)*
 - `src/source-build-reference-packages`  
-*[dotnet/source-build-reference-packages@debb7d9](https://github.com/dotnet/source-build-reference-packages/tree/debb7d95fdef37a06bee91a09b5246a690b76087)*
+*[dotnet/source-build-reference-packages@745de7d](https://github.com/dotnet/source-build-reference-packages/tree/745de7d839fdd3b5884d72e953badcfb15493d13)*
 - `src/sourcelink`  
 *[dotnet/sourcelink@4e17620](https://github.com/dotnet/sourcelink/tree/4e176206614b345352885b55491aeb51bf77526b)*
 - `src/symreader`  
