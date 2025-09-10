@@ -85,7 +85,7 @@ stages:
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
-          
+
           - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
             distro: centos
             targetArchitecture: x64
