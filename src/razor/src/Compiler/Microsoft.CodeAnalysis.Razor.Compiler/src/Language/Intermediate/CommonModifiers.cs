@@ -26,6 +26,10 @@ internal static class CommonModifiers
     public static ImmutableArray<string> Private { get; } = [
         GetText(CSharpSyntaxKind.PrivateKeyword)];
 
+    public static ImmutableArray<string> PrivateReadOnly { get; } = [
+        GetText(CSharpSyntaxKind.PrivateKeyword),
+        GetText(CSharpSyntaxKind.ReadOnlyKeyword)];
+
     public static ImmutableArray<string> PrivateSealed { get; } = [
         GetText(CSharpSyntaxKind.PrivateKeyword),
         GetText(CSharpSyntaxKind.SealedKeyword)];
@@ -44,6 +48,11 @@ internal static class CommonModifiers
         GetText(CSharpSyntaxKind.PublicKeyword),
         GetText(CSharpSyntaxKind.AsyncKeyword),
         GetText(CSharpSyntaxKind.OverrideKeyword)];
+
+    public static ImmutableArray<string> PublicOverrideAsync { get; } = [
+        GetText(CSharpSyntaxKind.PublicKeyword),
+        GetText(CSharpSyntaxKind.OverrideKeyword),
+        GetText(CSharpSyntaxKind.AsyncKeyword)];
 
     public static ImmutableArray<string> PublicPartial { get; } = [
         GetText(CSharpSyntaxKind.PublicKeyword),
