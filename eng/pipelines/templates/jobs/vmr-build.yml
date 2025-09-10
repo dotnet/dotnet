@@ -424,7 +424,7 @@ jobs:
           downloadDir="$(sourcesPath)/prereqs/packages/archive/"
 
           echo "Downloading source-built SDK from $archiveUrl..."
-          (cd "$downloadDir" && curl --retry 5 -O "$archiveUrl")
+          (cd "$downloadDir" && curl --retry 5 --retry-all-errors -O "$archiveUrl")
         else
           echo "$notFoundMessage"
           exit 1

@@ -61,7 +61,8 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         public bool Equals(SourceGeneratorProjectItem? other)
         {
             if (other is null ||
-                CssScope != other.CssScope)
+                CssScope != other.CssScope ||
+                PhysicalPath != other.PhysicalPath)
             {
                 return false;
             }

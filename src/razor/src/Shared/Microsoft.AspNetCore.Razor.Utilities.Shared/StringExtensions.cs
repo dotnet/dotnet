@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
-
-#if !NET
 using Microsoft.AspNetCore.Razor;
-#endif
 
 namespace System;
 
@@ -553,6 +550,74 @@ internal static class StringExtensions
 #else
         return text.Length > 0 && text[^1] == value;
 #endif
+    }
+
+    extension(string)
+    {
+        /// <summary>
+        ///  Builds a string using a <see cref="MemoryBuilder{T}"/> of <see cref="ReadOnlyMemory{T}"/> of <see cref="char"/>
+        ///  through the specified action delegate.
+        /// </summary>
+        /// <typeparam name="TState">
+        ///  The type of the state object passed to the action.
+        /// </typeparam>
+        /// <param name="state">
+        ///  The state object to pass to the action delegate.
+        /// </param>
+        /// <param name="action">
+        ///  The delegate that operates on the memory builder to construct the string content.
+        /// </param>
+        /// <returns>
+        ///  A string built from the chunks added to the memory builder by the action delegate.
+        /// </returns>
+        public static string Build<TState>(TState state, MemoryBuilderAction<ReadOnlyMemory<char>, TState> action)
+        {
+            var builder = new MemoryBuilder<ReadOnlyMemory<char>>();
+            try
+            {
+                action(ref builder, state);
+                return builder.CreateString();
+            }
+            finally
+            {
+                builder.Dispose();
+            }
+        }
+
+        /// <summary>
+        ///  Attempts to build a string using a <see cref="MemoryBuilder{T}"/> of <see cref="ReadOnlyMemory{T}"/> of <see cref="char"/>
+        ///  through the specified function delegate.
+        /// </summary>
+        /// <typeparam name="TState">
+        ///  The type of the state object passed to the function.
+        /// </typeparam>
+        /// <param name="state">
+        ///  The state object to pass to the function delegate.
+        /// </param>
+        /// <param name="func">
+        ///  The delegate that operates on the memory builder and returns a boolean indicating success.
+        /// </param>
+        /// <returns>
+        ///  A string built from the chunks added to the memory builder if the function returns <see langword="true"/>;
+        ///  otherwise, <see langword="null"/>.
+        /// </returns>
+        public static string? TryBuild<TState>(TState state, MemoryBuilderFunc<ReadOnlyMemory<char>, TState, bool> func)
+        {
+            var builder = new MemoryBuilder<ReadOnlyMemory<char>>();
+            try
+            {
+                if (func(ref builder, state))
+                {
+                    return builder.CreateString();
+                }
+
+                return null;
+            }
+            finally
+            {
+                builder.Dispose();
+            }
+        }
     }
 
 #if !NET
