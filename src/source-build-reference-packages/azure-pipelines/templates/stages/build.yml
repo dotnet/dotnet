@@ -17,6 +17,10 @@ stages:
     container: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-stream8
     steps:
     - template: ${{ parameters.engCommonTemplatesDir }}/steps/source-build.yml
+      parameters:
+        componentGovernanceIgnoreDirectories:
+        - src/referencePackages
+        - artifacts/sb
 
     - script: $(Build.SourcesDirectory)/test.sh
       displayName: Run Tests
