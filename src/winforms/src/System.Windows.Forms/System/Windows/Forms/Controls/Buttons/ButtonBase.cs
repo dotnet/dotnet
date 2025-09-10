@@ -261,9 +261,7 @@ public abstract partial class ButtonBase : Control, ICommandBindingTargetProvide
     {
         get
         {
-#pragma warning disable WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             SetStyle(ControlStyles.ApplyThemingImplicitly, true);
-#pragma warning restore WFO5001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
             CreateParams cp = base.CreateParams;
 
@@ -1202,6 +1200,23 @@ public abstract partial class ButtonBase : Control, ICommandBindingTargetProvide
 
         // Call base last, so if it invokes any listeners that disable the button, we don't have to recheck.
         base.OnKeyDown(kevent);
+    }
+
+    internal bool BackColorSet { get; set; }
+    internal bool ForeColorSet { get; set; }
+
+    protected override void OnForeColorChanged(EventArgs e)
+    {
+        base.OnForeColorChanged(e);
+        ForeColorSet = ShouldSerializeForeColor();
+        UpdateOwnerDraw();
+    }
+
+    protected override void OnBackColorChanged(EventArgs e)
+    {
+        base.OnBackColorChanged(e);
+        BackColorSet = ShouldSerializeBackColor();
+        UpdateOwnerDraw();
     }
 
     /// <summary>

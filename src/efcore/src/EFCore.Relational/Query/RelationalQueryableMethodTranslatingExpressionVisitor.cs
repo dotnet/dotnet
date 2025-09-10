@@ -297,7 +297,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             {
                 ColumnExpression c => c.Name,
                 JsonScalarExpression jsonScalar
-                    => jsonScalar.Path.LastOrDefault(s => s.PropertyName is not null).PropertyName
+                    => jsonScalar.Path.Select(s => s.PropertyName).LastOrDefault()
                     ?? GenerateTableAlias(jsonScalar.Json),
                 ScalarSubqueryExpression scalarSubquery => scalarSubquery.Subquery.Projection[0].Alias,
 
@@ -578,7 +578,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             }
 
             // Otherwise, attempt to translate as Any since that passes through Where predicate translation. This will e.g. take care of
-            // entity , which e.g. does entity equality/containment for entities with composite keys.
+            // entity, which e.g. does entity equality/containment for entities with composite keys.
             var anyLambdaParameter = Expression.Parameter(item.Type, "p");
             var anyLambda = Expression.Lambda(
                 Infrastructure.ExpressionExtensions.CreateEqualsExpression(anyLambdaParameter, item),
@@ -924,30 +924,30 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
         var outerKey = RemapLambdaBody(outer, outerKeySelector);
         var innerKey = RemapLambdaBody(inner, innerKeySelector);
 
-        if (outerKey is NewExpression { Arguments.Count: > 0 } outerNew)
+        if (outerKey is not NewExpression { Arguments.Count: > 0 } outerNew)
         {
-            var innerNew = (NewExpression)innerKey;
-
-            SqlExpression? result = null;
-            for (var i = 0; i < outerNew.Arguments.Count; i++)
-            {
-                var joinPredicate = CreateJoinPredicate(outerNew.Arguments[i], innerNew.Arguments[i]);
-                result = result == null
-                    ? joinPredicate
-                    : _sqlExpressionFactory.AndAlso(result, joinPredicate);
-            }
-
-            if (outerNew.Arguments.Count == 1)
-            {
-                result = _sqlExpressionFactory.AndAlso(
-                    result!,
-                    CreateJoinPredicate(Expression.Constant(true), Expression.Constant(true)));
-            }
-
-            return result!;
+            return CreateJoinPredicate(outerKey, innerKey);
         }
 
-        return CreateJoinPredicate(outerKey, innerKey);
+        var innerNew = (NewExpression)innerKey;
+
+        SqlExpression? result = null;
+        for (var i = 0; i < outerNew.Arguments.Count; i++)
+        {
+            var joinPredicate = CreateJoinPredicate(outerNew.Arguments[i], innerNew.Arguments[i]);
+            result = result == null
+                ? joinPredicate
+                : _sqlExpressionFactory.AndAlso(result, joinPredicate);
+        }
+
+        if (outerNew.Arguments.Count == 1)
+        {
+            result = _sqlExpressionFactory.AndAlso(
+                result!,
+                CreateJoinPredicate(Expression.Constant(true), Expression.Constant(true)));
+        }
+
+        return result!;
     }
 
     private SqlExpression CreateJoinPredicate(Expression outerKey, Expression innerKey)
@@ -1814,7 +1814,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
                 if (TryGetJsonQueryExpression(shaper, out var jsonQueryExpression))
                 {
-                    var newJsonQueryExpression = jsonQueryExpression.BindRelationship(navigation);
+                    var newJsonQueryExpression = jsonQueryExpression.BindStructuralProperty(navigation);
 
                     Debug.Assert(!navigation.IsOnDependent, "JSON navigations should always be from principal do dependent");
 

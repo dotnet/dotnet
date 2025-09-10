@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language.Legacy;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.LegacyEditor.Razor.Parsing;
 
@@ -41,8 +40,8 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
     {
         // Arrange
         var edit = (TestEdit)objectEdit;
-        var builder = TagHelperDescriptorBuilder.Create("PTagHelper", "TestAssembly");
-        builder.Metadata(TypeName("PTagHelper"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly");
+        builder.TypeName = "PTagHelper";
         builder.TagMatchingRule(rule => rule.TagName = "p");
         var descriptors = new[]
         {
@@ -102,20 +101,20 @@ public class RazorSyntaxTreePartialParserTest(ITestOutputHelper testOutput) : To
         // Arrange
         var edit = (TestEdit)editObject;
         var partialParseResult = (PartialParseResultInternal)partialParseResultObject;
-        var builder = TagHelperDescriptorBuilder.Create("PTagHelper", "Test");
-        builder.Metadata(TypeName("PTagHelper"));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "Test");
+        builder.TypeName = "PTagHelper";
         builder.TagMatchingRule(rule => rule.TagName = "p");
         builder.BindAttribute(attribute =>
         {
             attribute.Name = "obj-attr";
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(PropertyName("ObjectAttribute"));
+            attribute.PropertyName = "ObjectAttribute";
         });
         builder.BindAttribute(attribute =>
         {
             attribute.Name = "str-attr";
             attribute.TypeName = typeof(string).FullName;
-            attribute.SetMetadata(PropertyName("StringAttribute"));
+            attribute.PropertyName = "StringAttribute";
         });
         var descriptors = new[] { builder.Build() };
         var projectEngine = CreateProjectEngine(tagHelpers: descriptors);

@@ -1,0 +1,545 @@
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Project>
+
+  <UsingTask TaskName="WixToolset.HeatTasks.HeatDirectory" AssemblyFile="$(WixHeatBinDir)\WixToolset.HeatTasks.dll" />
+
+  <!--
+    The following targets use MSBuild Exec tasks to invoke WiX 5 toolset commands directly.
+    Note: WiX 5 supports SDK-style wixproj projects, which may allow for tighter integration in the future.
+  -->
+
+  <!--
+    Locate WiX tools.
+  -->
+  <Target Name="_AcquireWix">
+    <PropertyGroup>
+      <WixpackWorkingDir>$(IntermediateOutputPath)/wixpackcontents/</WixpackWorkingDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <_WixIntermediateOutputPath>$(BaseIntermediateOutputPath)wix</_WixIntermediateOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <WixObjDir>$(IntermediateOutputPath)/wix/</WixObjDir>
+      <WixObjDir Condition="'$(RuntimeIdentifier)' == ''">$(IntermediateOutputPath)/$(InstallerRuntimeIdentifier)/wix/</WixObjDir>
+      <MsiArch>$(InstallerTargetArchitecture)</MsiArch>
+    </PropertyGroup>
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.Wix'."
+      Condition="!Exists('$(PkgMicrosoft_Wix)')" />
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.WixToolset.Heat'."
+      Condition="!Exists('$(PkgMicrosoft_WixToolset_Heat)')" />
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.WixToolset.UI.wixext'."
+      Condition="!Exists('$(PkgMicrosoft_WixToolset_UI_wixext)')" />
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.WixToolset.Dependency.wixext'."
+      Condition="!Exists('$(PkgMicrosoft_WixToolset_Dependency_wixext)')" />
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.WixToolset.Util.wixext'."
+      Condition="!Exists('$(PkgMicrosoft_WixToolset_Util_wixext)')" />
+
+    <Error
+      Text="WiX tools not found. Please install package 'Microsoft.WixToolset.Bal.wixext'."
+      Condition="!Exists('$(PkgMicrosoft_WixToolset_Bal_wixext)')" />
+
+    <PropertyGroup>
+      <WixExeDir>$(PkgMicrosoft_Wix)\tools\net6.0\any\</WixExeDir>
+      <WixExtensionsDir>wixext5</WixExtensionsDir>
+      <WixUIExtensionDir>$(PkgMicrosoft_WixToolset_UI_wixext)\$(WixExtensionsDir)\</WixUIExtensionDir>
+      <WixDependencyExtensionDir>$(PkgMicrosoft_WixToolset_Dependency_wixext)\$(WixExtensionsDir)\</WixDependencyExtensionDir>
+      <WixUtilExtensionDir>$(PkgMicrosoft_WixToolset_Util_wixext)\$(WixExtensionsDir)\</WixUtilExtensionDir>
+      <WixBalExtensionDir>$(PkgMicrosoft_WixToolset_Bal_wixext)\$(WixExtensionsDir)\</WixBalExtensionDir>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="_GenerateMsiVersionString">
+    <PropertyGroup>
+      <VersionPadding Condition="'$(VersionPadding)'==''">5</VersionPadding>
+      <!-- Using the following default comparison date will produce versions that align with our internal build system. -->
+      <VersionComparisonDate Condition="'$(VersionComparisonDate)'==''">1996-04-01</VersionComparisonDate>
+    </PropertyGroup>
+
+    <GenerateCurrentVersion
+      SeedDate="$([System.DateTime]::Now.ToString(yyyy-MM-dd))"
+      OfficialBuildId="$(OfficialBuildId)"
+      ComparisonDate="$(VersionComparisonDate)"
+      Padding="$(VersionPadding)">
+      <Output PropertyName="BuildNumberMajor" TaskParameter="GeneratedVersion" />
+      <Output PropertyName="BuildNumberMinor" TaskParameter="GeneratedRevision" />
+    </GenerateCurrentVersion>
+
+    <GenerateMsiVersion
+      Major="$(MajorVersion)"
+      Minor="$(MinorVersion)"
+      Patch="$(PatchVersion)"
+      BuildNumberMajor="$(BuildNumberMajor)"
+      BuildNumberMinor="$(BuildNumberMinor)">
+      <Output TaskParameter="MsiVersion" PropertyName="MsiVersionString" />
+    </GenerateMsiVersion>
+  </Target>
+
+  <!--
+    Generate bundle upgrade code. This code needs to be constant within a product band for upgrades.
+  -->
+  <Target Name="GetBundleUpgradeCode"
+          DependsOnTargets="GetWixBuildConfiguration"
+          Condition="
+            '$(GenerateExeBundle)' == 'true' and
+            '$(UpgradeCode)' == ''">
+    <Error
+      Condition="'$(BundleInstallerUpgradeCodeSeed)' == ''"
+      Text="BundleInstallerUpgradeCodeSeed not defined. Required to produce a stable bundle upgrade code." />
+
+    <PropertyGroup>
+      <BundleInstallerOutputGuidString>$(BundleInstallerUpgradeCodeSeed) $(MajorVersion).$(MinorVersion) $(RuntimeIdentifier)</BundleInstallerOutputGuidString>
+    </PropertyGroup>
+
+    <GenerateGuidFromName Name="$(BundleInstallerOutputGuidString)">
+      <Output TaskParameter="GeneratedGuid" PropertyName="UpgradeCode" />
+    </GenerateGuidFromName>
+  </Target>
+
+  <!--
+    If UpgradeCode isn't already set, generate one based on installer full path.
+  -->
+  <Target Name="_GetUpgradeCode"
+          DependsOnTargets="GetWixBuildConfiguration"
+          Condition="'$(UpgradeCode)' == ''">
+
+    <PropertyGroup>
+      <MsiUpgradeCodeSeed Condition="'$(MsiUpgradeCodeSeed)' == ''">$(_OutInstallerFile)</MsiUpgradeCodeSeed>
+    </PropertyGroup>
+
+    <GenerateGuidFromName Name="$(MsiUpgradeCodeSeed)">
+      <Output TaskParameter="GeneratedGuid" PropertyName="UpgradeCode" />
+    </GenerateGuidFromName>
+  </Target>
+
+  <Target Name="_UseProductWixProject">
+    <ItemGroup>
+      <WixExtensions Include="$(WixUIExtensionDir)\WixToolset.UI.wixext.dll" />
+      <WixExtensions Include="$(WixDependencyExtensionDir)\WixToolset.Dependency.wixext.dll" />
+      <WixExtensions Include="$(WixUtilExtensionDir)\WixToolset.Util.wixext.dll" />
+
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/product.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/dotnethome_x64.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/provider.wxs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="UseBundleWixProject" DependsOnTargets="GenerateBundleThemeVariables">
+    <ItemGroup>
+      <WixExtensions Include="$(WixBalExtensionDir)\WixToolset.BootstrapperApplications.wixext.dll" />
+      <WixExtensions Include="$(WixDependencyExtensionDir)\WixToolset.Dependency.wixext.dll" />
+      <WixExtensions Include="$(WixUtilExtensionDir)\WixToolset.Util.wixext.dll" />
+
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/bundle.wxs" />
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)bundle/upgradePolicies.wxs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateBundleThemeVariables" Condition="'@(WixThemeVariable)' != ''">
+    <ItemGroup>
+      <_WixThemeIncludeLine Include="&lt;?xml version=&quot;1.0&quot;?&gt;" />
+      <_WixThemeIncludeLine Include="&lt;Include&gt;" />
+      <_WixThemeIncludeLine Include="@(WixThemeVariable->'&lt;Variable Name=&quot;%(Identity)&quot; Value=&quot;%(Value)&quot; /&gt;')"/>
+      <_WixThemeIncludeLine Include="&lt;/Include&gt;" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_WixThemeFile>$(IntermediateOutputPath)wix/wixtheme.wxi</_WixThemeFile>
+    </PropertyGroup>
+    <WriteLinesToFile Lines="@(_WixThemeIncludeLine)" File="$(_WixThemeFile)" Overwrite="true" Encoding="UTF-8" />
+  </Target>
+
+  <Target Name="PublishFilesForWixInstaller">
+    <PropertyGroup>
+      <FilesOutputPathRoot>$(IntermediateOutputPath)o/</FilesOutputPathRoot>
+      </PropertyGroup>
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="PublishToDisk"
+             Properties="OutputPath=$(FilesOutputPathRoot)"
+             RemoveProperties="@(_GlobalPropertiesToRemoveForPublish)" />
+  </Target>
+
+  <Target Name="GetInstallerWixConfiguration"
+          DependsOnTargets="_UseProductWixProject;PublishFilesForWixInstaller"
+          Condition="'$(GenerateExeBundle)' != 'true'">
+    <ItemGroup>
+      <DirectoryToHarvest
+        Include="$(FilesOutputPathRoot)"
+        Condition="'$(UseCustomDirectoryHarvesting)' != 'true'"
+        Name="install-files"
+        SubstituteVar="PackSrc"
+        ComponentGroupName="InstallFiles"
+        DirectoryRef="DOTNETHOME" />
+      <CandleVariables Include="$(OutputFilesCandleVariable)" Value="$(FilesOutputPathRoot)"
+                       Condition="'$(UseCustomDirectoryHarvesting)' == 'true' and '$(OutputFilesCandleVariable)' != ''" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IncludeWerRelatedKeys)' == 'true'">
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/werrelatedkeys.wxs" />
+      <CandleVariables Include="WerRelatedKeys" Value="true" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IncludeBreadcrumbStoreFolder)' == 'true'">
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/breadcrumbstorefolder.wxs" />
+      <CandleVariables Include="BreadcrumbStoreFolder" Value="true" />
+    </ItemGroup>
+  
+    <ItemGroup Condition="'$(WixIncludeRegistryKeys)' == 'true'">
+      <WixSrcFile Include="$(MSBuildThisFileDirectory)product/registrykeys.wxs" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetBundleWixConfiguration"
+          Condition="'$(GenerateExeBundle)' == 'true'"
+          DependsOnTargets="
+            UseBundleWixProject;
+            GetBundledMsiFiles">
+    <Error Text="A bundle theme directory property must be specified with the BundleThemeDirectory property."
+           Condition="'$(BundleThemeDirectory)' == ''" />
+      
+    <PropertyGroup>
+      <WixInstallerIconFile Condition="'$(WixInstallerIconFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnet.ico</WixInstallerIconFile>
+      <WixInstallerPngLogoFile Condition="'$(WixInstallerPngLogoFile)' == ''">$(MSBuildThisFileDirectory)..\resources\DotNetLogo_256x.png</WixInstallerPngLogoFile>
+      <WixInstallerLogoFile Condition="'$(WixInstallerLogoFile)' == ''">$(MSBuildThisFileDirectory)..\resources\dotnetlogo.bmp</WixInstallerLogoFile>
+      <WixBootstrapperFlavor Condition="'$(WixBootstrapperFlavor)' == ''">Foundation</WixBootstrapperFlavor>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <LocFile Include="$(BundleThemeDirectory)\theme\**\bundle.wxl" />
+      <LocDirName Include="$([System.String]::new('%(LocFile.RecursiveDir)').TrimEnd('\'))" />
+
+      <CandleVariables Include="MajorVersion" Value="$(MajorVersion)" />
+      <CandleVariables Include="MinorVersion" Value="$(MinorVersion)" />
+      <CandleVariables Include="DisplayVersion" Value="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumberMajor)" />
+      <CandleVariables Include="LcidList" Value="@(LocDirName)" />
+      <CandleVariables Include="BundleThmDir" Value="$(BundleThemeDirectory)" />
+
+      <CandleVariables Include="DotNetIcoFile" Value="$(WixInstallerIconFile)" />
+      <CandleVariables Include="DotNetDummyEulaFile" Value="$(MSBuildThisFileDirectory)bundle\dummyEula.rtf" />
+      <CandleVariables Include="DotNetLogoBmpFile" Value="$(WixInstallerLogoFile)" />
+      <CandleVariables Include="DotNetLogoPngFile" Value="$(WixInstallerPngLogoFile)" />
+      <CandleVariables Include="BootstrapperApplicationFlavor" Value="$(WixBootstrapperFlavor)" />
+      <CandleVariables Include="WixThemeFile" Value="$(_WixThemeFile)" Condition="'$(_WixThemeFile)' != ''" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_OutInstallerFile>$(_InstallerFile)</_OutInstallerFile>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Set up information to pass to WiX, depending on the type of installer being created. -->
+  <Target Name="GetWixBuildConfiguration"
+          DependsOnTargets="
+            _AcquireWix;
+            _GetInstallerProperties;
+            _GenerateMsiVersionString;
+            GetInstallerWixConfiguration;
+            GetBundleWixConfiguration">
+    <PropertyGroup>
+      <_OutInstallerFile Condition="'$(_OutInstallerFile)' == ''">$(_InstallerFile)</_OutInstallerFile>
+    </PropertyGroup>
+    <PropertyGroup>
+      <!--
+        Native arm64 MSI packages require version 500 of MSI database schema, see:
+        https://docs.microsoft.com/en-us/windows/win32/msi/using-64-bit-windows-installer-packages
+      -->
+      <WixInstallerVersion Condition="'$(WixInstallerVersion)' == '' and '$(MsiArch)' == 'arm64'">500</WixInstallerVersion>
+      <WixInstallerVersion Condition="'$(WixInstallerVersion)' == ''">200</WixInstallerVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <CandleVariables Include="MicrosoftEula" Value="$(MSBuildThisFileDirectory)eula.rtf" />
+      <CandleVariables Include="InstallerVersion" Value="$(WixInstallerVersion)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Ensure MSIs are built and signed (if necessary), then obtain all paths to MSIs to bundle from
+    the bundle references.
+  -->
+  <Target Name="GetBundledMsiFiles" DependsOnTargets="_GetBundledComponentInstallers">
+    <ItemGroup>
+      <CandleVariables Include="ChainedDotNetPackageFiles" Value="@(_BundledComponents)" />
+      <WixSrcFile Include="$(_BundledComponentsPackageGroupWxsPath)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RunHeatHarvester"
+          Condition="'@(DirectoryToHarvest)' != ''"
+          DependsOnTargets="GetWixBuildConfiguration">
+    <ItemGroup>
+      <DirectoryToHarvest
+        WixSourceFile="$(WixObjDir)%(Name).wxs" />
+
+      <CandleVariables Include="InstallFiles" Value="true" />
+    </ItemGroup>
+
+    <HeatDirectory
+      Directory="%(DirectoryToHarvest.Identity)"
+      NoLogo="true"
+      Template="fragment"
+      SuppressRegistry="true"
+      AutogenerateGuids="true"
+      PreprocessorVariable="var.%(DirectoryToHarvest.SubstituteVar)"
+      ComponentGroupName="%(DirectoryToHarvest.ComponentGroupName)"
+      SuppressRootDirectory="true"
+      DirectoryRefId="%(DirectoryToHarvest.DirectoryRef)"
+      OutputFile="%(DirectoryToHarvest.WixSourceFile)"
+      AdditionalOptions="$(AdditionalHeatArgs)" />
+
+    <!--
+      Currently FileElementToStabilize assumes a single DirectoryToHarvest. If there were multiple,
+      the task would expect exactly one match in each file, which isn't likely to be the case. But,
+      there is no known scenario to have multiple DirectoryToHarvest and use FileElementToStabilize.
+    -->
+    <StabilizeWixFileId
+      Condition="'@(HeatOutputFileElementToStabilize)' != ''"
+      SourceFile="%(DirectoryToHarvest.WixSourceFile)"
+      OutputFile="%(DirectoryToHarvest.WixSourceFile)"
+      FileElementToStabilize="@(HeatOutputFileElementToStabilize)" />
+
+    <ItemGroup>
+      <WixSrcFile Include="@(DirectoryToHarvest->'%(WixSourceFile)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RunLightLinker"
+          DependsOnTargets="
+            GetWixBuildConfiguration;
+            GetBundleUpgradeCode;
+            _GetUpgradeCode;
+            _GenerateMsiVersionString;
+            RunHeatHarvester">
+    <PropertyGroup>
+      <WixDependencyKeyName Condition="'$(WixDependencyKeyName)' == ''">$(InstallerName.Replace('-', '_'))</WixDependencyKeyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <CandleVariables Include="SharedWixDir" Value="$(MSBuildThisFileDirectory.TrimEnd('\'))" />
+      <CandleVariables Include="DependencyKeyName" Value="$(WixDependencyKeyName)" />
+
+      <CandleVariables Include="%(DirectoryToHarvest.SubstituteVar)" Value="%(DirectoryToHarvest.Identity)" />
+
+      <CandleVariables Include="ExtraComponentGroupRefIds" Value="@(WixExtraComponentGroupRefId)" Condition="'@(WixExtraComponentGroupRefId)' != ''" />
+      <CandleVariables Include="RegKeyProductName" Value="$(RegKeyProductName)" Condition="'$(RegKeyProductName)' != ''" />
+
+      <CandleVariables Include="ProductMoniker" Value="$(ProductBrandName)" />
+      <CandleVariables Include="BuildVersion" Value="$(MsiVersionString)" />
+      <CandleVariables Include="NugetVersion" Value="$(Version)" />
+      <CandleVariables Include="InstallerPlatform" Value="$(MsiArch)" />
+      <CandleVariables Include="TargetArchitectureDescription" Value="$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart)" />
+      <CandleVariables Include="UpgradeCode" Value="$(UpgradeCode)" />
+      <CandleVariables Include="MajorUpgradeSchedule" Value="$(MajorUpgradeSchedule)" Condition="'$(MajorUpgradeSchedule)' != ''" />
+
+      <!-- If this is a cross-arch MSI, add target arch to the dependency key for uniqueness. -->
+      <CandleVariables Include="CrossArchContentsPlatformPart" Value="$(CrossArchContentsBuildPart.Replace('-', '_'))" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_wixArgs></_wixArgs>
+      <_wixArgs>$(_wixArgs) -wx</_wixArgs>
+      <_wixArgs>$(_wixArgs) -nologo</_wixArgs>
+      <_wixArgs>$(_wixArgs) -culture en-us</_wixArgs>
+      <_wixArgs>$(_wixArgs) -arch $(MsiArch)</_wixArgs>
+      <_wixArgs>$(_wixArgs) -out "$(_OutInstallerFile)"</_wixArgs>
+
+      <_wixArgs>$(_wixArgs) @(WixExtensions -> '-ext %(Identity)', ' ')</_wixArgs>
+      <_wixArgs>$(_wixArgs) @(CandleVariables -> '-d %(Identity)="%(Value)"', ' ')</_wixArgs>
+      <_wixArgs>$(_wixArgs) @(WixSrcFile -> '"%(FullPath)"', ' ')</_wixArgs>
+
+      <_wixArgs>$(_wixArgs) $(AdditionalCandleArgs)</_wixArgs>
+      <_wixArgs>$(_wixArgs) $(AdditionalLightArgs)</_wixArgs>
+      
+      <_wixCommand>wix.exe build $(_wixArgs)</_wixCommand>
+    </PropertyGroup>
+
+    <!--
+      Run wix.exe with retries. This hardens against interference by Windows Defender by giving
+      Defender time to catch up. Wix creates a file then immediately moves it, which fails when
+      Defender is holding it open. Uses a small base time because it resolves itself quickly and we
+      don't want to delay the build very long if it's an actual build authoring error.
+    -->
+    <ExecWithRetries
+      Command="$(_wixCommand)"
+      WorkingDirectory="$(WixExeDir)"
+      StandardOutputImportance="normal"
+      IgnoreStandardErrorWarningFormat="true"
+      RetryDelayBase="2" />
+
+    <!-- TODO this fails on preprocessor directives -->
+    <CreateWixBuildWixpack
+      Cultures="en-us"
+      DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
+      Extensions="@(WixExtensions)"
+      InstallerFile="$(_OutInstallerFile)"
+      InstallerPlatform="$(MsiArch)"
+      IntermediateDirectory="$(IntermediateOutputPath)en-us"
+      OutputFolder="$(ArtifactsNonShippingPackagesDir)"
+      SourceFiles="@(WixSrcFile)"
+      WixpackWorkingDir="$(WixpackWorkingDir)">
+      <Output TaskParameter="OutputFile" PropertyName="_wixCommandPackageNameOutput" />
+    </CreateWixBuildWixpack>
+  </Target>
+
+  <!--
+    Entry point for an MSBuild call: creates NuGet packages suitable for VS insertion.
+  -->
+  <Target Name="GenerateVSInsertionNupkg"
+          DependsOnTargets="
+            GetInstallerGenerationFlags;
+            GenerateCurrentArchVSInsertionNupkg;
+            GenerateCrossArchVSInsertionNupkg" />
+
+  <Target Name="GenerateCurrentArchVSInsertionNupkg"
+          Condition="'$(GenerateMSI)' == 'true'">
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+              Targets="CreateWixInstaller"
+              Properties="GenerateMSI=true"
+              RemoveProperties="GenerateCrossArchMsi">
+      <Output TaskParameter="TargetOutputs" PropertyName="_ComponentMsiFile" />
+    
+    </MSBuild>
+    
+    <!--
+      Run the nupkg creation code with IsShipping=false to use prerelease versions: this package
+      must not be stable to avoid mutation conflicts, even though the project itself may be shipping
+      and therefore stabilized.
+
+      Also pass in the path to the MSI file to pack up because its file name is based on
+      stabilization status.
+    -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="GenerateVSInsertionNupkgCore"
+      Properties="
+        IsShipping=false;
+        ComponentMsiFile=$(_ComponentMsiFile)" />
+  </Target>
+
+  <Target Name="GenerateCrossArchVSInsertionNupkg"
+          Condition="'$(GenerateCrossArchMsi)' == 'true'"
+          DependsOnTargets="
+            _GetInstallerProperties;
+            GenerateCrossArchVSInsertionNupkgPerArch" />
+
+  <Target Name="GenerateCrossArchVSInsertionNupkgPerArch"
+          Condition="'@(CrossArchMsiToBuild)' != ''"
+          Inputs="%(CrossArchMsiToBuild.Identity)"
+          Outputs="batching-on-CrossArchMsiToBuild">
+    <!--
+      Get the cross-arch MSI to pack into an insertion package. Do this separately from the
+      GenerateVSInsertionNupkgCore call because IsShipping influences the file name.
+    -->
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="CreateCrossArchWixInstaller"
+      Properties="
+        GenerateCrossArchMsi=true;
+        InstallerTargetArchitecture=%(CrossArchMsiToBuild.Identity);
+        CrossArchContentsArch=$(TargetArchitecture)"
+      RemoveProperties="GenerateMSI">
+      <Output TaskParameter="TargetOutputs" PropertyName="CrossArchMsiFile" />
+    </MSBuild>
+
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="GenerateVSInsertionNupkgCore"
+      Properties="
+        InstallerTargetArchitecture=%(CrossArchMsiToBuild.Identity);
+        CrossArchContentsArch=$(TargetArchitecture);
+        IsShipping=false;
+        ComponentMsiFile=$(CrossArchMsiFile)" />
+  </Target>
+
+  <!--
+    Acquire NuGet.exe, if not present.
+  -->
+  <Target Name="_AcquireNuGetExe">
+    <MSBuild
+      Projects="$(MSBuildThisFileDirectory)..\acquisition\acquire-nuget-exe\acquire-nuget-exe.proj"
+      Targets="AcquireNuGetExeCore"
+      Properties="BaseIntermediateOutputPath=$(BaseIntermediateOutputPath);
+                  RepoRoot=$(RepoRoot)">
+      <Output TaskParameter="TargetOutputs" PropertyName="NuGetExeFile" />
+    </MSBuild>
+  </Target>
+  
+  <Target Name="GenerateVSInsertionNupkgCore"
+          DependsOnTargets="
+            _GetTargetOSArchInfo;
+            _AcquireWix;
+            _AcquireNuGetExe;
+            _GetInstallerProperties;
+            GetWixBuildConfiguration">
+    <PropertyGroup>
+      <VSInsertionComponentName>VS.Redist.Common.$(VSInsertionShortComponentName).$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart).$(MajorVersion).$(MinorVersion)</VSInsertionComponentName>
+      <NupkgOutputFile>$(ArtifactsNonShippingPackagesDir)$(VSInsertionComponentName).$(Version).nupkg</NupkgOutputFile>
+
+      <!-- Work around NuGet silently ignoring nuspec files in PackTask by changing extension. https://github.com/NuGet/Home/issues/8637 -->
+      <MangledNuspecFile>$(MSBuildThisFileDirectory)vs\VS.Redist.Common.Component.nuspec.txt</MangledNuspecFile>
+      <VsInsertionNuspecFile>$(IntermediateOutputPath)vs\VS.Redist.Common.Component.nuspec</VsInsertionNuspecFile>
+
+      <PackProperties />
+      <PackProperties>$(PackProperties)COMPONENT_MSI=$(ComponentMsiFile);</PackProperties>
+      <PackProperties>$(PackProperties)ARCH=$(MsiArch);</PackProperties>
+      <PackProperties>$(PackProperties)COMPONENT_NAME=$(VSInsertionComponentName);</PackProperties>
+      <PackProperties>$(PackProperties)FRIENDLY_NAME=$(ProductBrandName);</PackProperties>
+      <PackProperties>$(PackProperties)PROJECT_URL=$(RepositoryUrl);</PackProperties>
+
+      <PackArgs />
+      <PackArgs>$(PackArgs) $(VsInsertionNuspecFile)</PackArgs>
+      <PackArgs>$(PackArgs) -Version $(Version)</PackArgs>
+      <PackArgs>$(PackArgs) -OutputDirectory $(ArtifactsNonShippingPackagesDir)</PackArgs>
+      <PackArgs>$(PackArgs) -NoDefaultExcludes</PackArgs>
+      <PackArgs>$(PackArgs) -NoPackageAnalysis</PackArgs>
+      <PackArgs>$(PackArgs) -Properties "$(PackProperties)"</PackArgs>
+    </PropertyGroup>
+
+    <Copy SourceFiles="$(MangledNuspecFile)" DestinationFiles="$(VsInsertionNuspecFile)" />
+
+    <Exec Command="$(NuGetExeFile) pack $(PackArgs)" StandardOutputImportance="normal" />
+
+    <Error
+      Condition="!Exists('$(NupkgOutputFile)')"
+      Text="Failed to find VS insertion nupkg after pack command. Expected '$(NupkgOutputFile)'" />
+
+    <Message Text="$(MSBuildProjectName) -> $(NupkgOutputFile)" Importance="High" />
+  </Target>
+
+  <Target Name="ExtractEngineBundle"
+          DependsOnTargets="
+            GetInstallerGenerationFlags;
+            GetWixBuildConfiguration">
+    <Exec
+      Condition="'$(GenerateExeBundle)' == 'true'"
+      Command="wix.exe burn detach $(_OutInstallerFile) -engine $(ExeBundleInstallerEngineFile)"
+      WorkingDirectory="$(WixExeDir)" />
+  </Target>
+
+  <Target Name="ReattachEngineToBundle"
+          DependsOnTargets="
+            GetInstallerGenerationFlags;
+            GetWixBuildConfiguration">
+    <Exec
+      Condition="'$(GenerateExeBundle)' == 'true'"
+      Command="wix.exe burn reattach $(_OutInstallerFile) -engine $(ExeBundleInstallerEngineFile) -o $(_OutInstallerFile)"
+      WorkingDirectory="$(WixExeDir)" />
+  </Target>
+
+  <Target Name="GetOutputWixInstallerFile"
+          DependsOnTargets="GetWixBuildConfiguration"
+          Returns="$(_OutInstallerFile)"/>
+
+</Project>

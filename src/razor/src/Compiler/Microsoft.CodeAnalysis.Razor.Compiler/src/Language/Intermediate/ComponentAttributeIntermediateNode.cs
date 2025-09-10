@@ -81,10 +81,9 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AttributeStructure = propertyNode.AttributeStructure;
         BoundAttribute = propertyNode.BoundAttribute;
         OriginalAttributeSpan = propertyNode.OriginalAttributeSpan;
-        PropertyName = propertyNode.BoundAttribute.GetPropertyName();
+        PropertyName = propertyNode.BoundAttribute.PropertyName;
         Source = propertyNode.Source;
-        TagHelper = propertyNode.TagHelper;
-        TypeName = propertyNode.BoundAttribute.IsWeaklyTyped() ? null : propertyNode.BoundAttribute.TypeName;
+        TypeName = propertyNode.BoundAttribute.IsWeaklyTyped ? null : propertyNode.BoundAttribute.TypeName;
 
         for (var i = 0; i < propertyNode.Children.Count; i++)
         {
@@ -94,55 +93,51 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
         AddDiagnosticsFromNode(propertyNode);
     }
 
-    public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeIntermediateNode directiveAttributeNode)
+    private ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeIntermediateNode node, bool addChildren)
     {
-        if (directiveAttributeNode == null)
+        AttributeName = node.AttributeName;
+        AttributeStructure = node.AttributeStructure;
+        BoundAttribute = node.BoundAttribute;
+        OriginalAttributeSpan = node.OriginalAttributeSpan;
+        PropertyName = node.BoundAttribute.PropertyName;
+        Source = node.Source;
+        TypeName = node.BoundAttribute.IsWeaklyTyped
+            ? null
+            : node.BoundAttribute.TypeName;
+
+        if (addChildren)
         {
-            throw new ArgumentNullException(nameof(directiveAttributeNode));
+            Children.AddRange(node.Children);
         }
 
-        AttributeName = directiveAttributeNode.AttributeName;
-        AttributeStructure = directiveAttributeNode.AttributeStructure;
-        BoundAttribute = directiveAttributeNode.BoundAttribute;
-        OriginalAttributeSpan = directiveAttributeNode.OriginalAttributeSpan;
-        PropertyName = directiveAttributeNode.BoundAttribute.GetPropertyName();
-        Source = directiveAttributeNode.Source;
-        TagHelper = directiveAttributeNode.TagHelper;
-        TypeName = directiveAttributeNode.BoundAttribute.IsWeaklyTyped() ? null : directiveAttributeNode.BoundAttribute.TypeName;
-
-        for (var i = 0; i < directiveAttributeNode.Children.Count; i++)
-        {
-            Children.Add(directiveAttributeNode.Children[i]);
-        }
-
-        AddDiagnosticsFromNode(directiveAttributeNode);
+        AddDiagnosticsFromNode(node);
     }
 
-    public ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeParameterIntermediateNode directiveAttributeParameterNode)
+    private ComponentAttributeIntermediateNode(TagHelperDirectiveAttributeParameterIntermediateNode node, bool addChildren)
     {
-        if (directiveAttributeParameterNode == null)
+        AttributeName = node.AttributeNameWithoutParameter;
+        AttributeStructure = node.AttributeStructure;
+        BoundAttribute = node.BoundAttribute;
+        OriginalAttributeSpan = node.OriginalAttributeSpan;
+        PropertyName = node.BoundAttributeParameter.PropertyName;
+        Source = node.Source;
+        TypeName = node.BoundAttributeParameter.TypeName;
+
+        if (addChildren)
         {
-            throw new ArgumentNullException(nameof(directiveAttributeParameterNode));
+            Children.AddRange(node.Children);
         }
 
-        AttributeName = directiveAttributeParameterNode.AttributeNameWithoutParameter;
-        AttributeStructure = directiveAttributeParameterNode.AttributeStructure;
-        BoundAttribute = directiveAttributeParameterNode.BoundAttribute;
-        OriginalAttributeSpan = directiveAttributeParameterNode.OriginalAttributeSpan;
-        PropertyName = directiveAttributeParameterNode.BoundAttributeParameter.PropertyName;
-        Source = directiveAttributeParameterNode.Source;
-        TagHelper = directiveAttributeParameterNode.TagHelper;
-        TypeName = directiveAttributeParameterNode.BoundAttributeParameter.TypeName;
-
-        for (var i = 0; i < directiveAttributeParameterNode.Children.Count; i++)
-        {
-            Children.Add(directiveAttributeParameterNode.Children[i]);
-        }
-
-        AddDiagnosticsFromNode(directiveAttributeParameterNode);
+        AddDiagnosticsFromNode(node);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public static ComponentAttributeIntermediateNode From(TagHelperDirectiveAttributeIntermediateNode node, bool addChildren)
+        => new(node, addChildren);
+
+    public static ComponentAttributeIntermediateNode From(TagHelperDirectiveAttributeParameterIntermediateNode node, bool addChildren)
+        => new(node, addChildren);
+
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public string AttributeName { get; set; }
 
@@ -152,7 +147,7 @@ public sealed class ComponentAttributeIntermediateNode : IntermediateNode
 
     public string PropertyName { get; set; }
 
-    public TagHelperDescriptor TagHelper { get; set; }
+    public TagHelperDescriptor TagHelper => BoundAttribute?.Parent;
 
     public string TypeName { get; set; }
 

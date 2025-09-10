@@ -75,14 +75,11 @@ variables:
   - name: officialBuildProperties
     value: ''
 
-- ${{ if eq(parameters.buildSourceOnly, true) }}:
-  - name: signEnabled
-    value: false
-- ${{ elseif eq(parameters.desiredSigning, 'Signed (Real)') }}:
+- ${{ if eq(parameters.desiredSigning, 'Signed (Real)') }}:
   - name: signEnabled
     value: true
   - name: signType
-    value: Real
+    value: real
   - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: signDacEnabled
       value: true
@@ -93,7 +90,7 @@ variables:
   - name: signEnabled
     value: true
   - name: signType
-    value: Test
+    value: test
   - name: signDacEnabled
     value: false
 - ${{ elseif eq(parameters.desiredSigning, 'Signed (Dry Run)') }}:
@@ -282,7 +279,6 @@ variables:
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
   - name: poolImage_Mac
-    value: macos-latest-internal
+    value: macos-14-arm64
   - name: poolImage_Windows
     value: windows.vs2022preview.amd64
-

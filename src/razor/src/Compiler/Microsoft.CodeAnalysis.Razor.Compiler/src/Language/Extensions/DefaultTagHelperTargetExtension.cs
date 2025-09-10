@@ -4,8 +4,8 @@
 #nullable disable
 
 using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
@@ -15,11 +15,9 @@ namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
 internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetExtension
 {
-    private static readonly string[] FieldUnintializedModifiers = { "0649", };
-
-    private static readonly string[] FieldUnusedModifiers = { "0169", };
-
-    private static readonly string[] PrivateModifiers = new string[] { "private" };
+    private static readonly ImmutableArray<string> s_fieldUninitializedModifiers = ["0649"];
+    private static readonly ImmutableArray<string> s_fieldUnusedModifiers = ["0169"];
+    private static readonly ImmutableArray<string> s_privateModifiers = ["private"];
 
     public string RunnerVariableName { get; set; } = "__tagHelperRunner";
 
@@ -233,7 +231,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
                     .WriteParameterSeparator()
                     .WriteStringLiteral(node.AttributeName)
                     .WriteParameterSeparator()
-                    .Write(valuePieceCount.ToString(CultureInfo.InvariantCulture))
+                    .WriteIntegerLiteral(valuePieceCount)
                     .WriteParameterSeparator()
                     .Write(attributeValueStyleParameter)
                     .WriteEndMethodInvocation();
@@ -309,7 +307,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
                         .WriteStartMethodInvocation(FormatInvalidIndexerAssignmentMethodName)
                         .WriteStringLiteral(node.AttributeName)
                         .WriteParameterSeparator()
-                        .WriteStringLiteral(node.TagHelper.GetTypeName())
+                        .WriteStringLiteral(node.TagHelper.TypeName)
                         .WriteParameterSeparator()
                         .WriteStringLiteral(node.PropertyName)
                         .WriteEndMethodInvocation(endLine: false)   // End of method call
@@ -377,7 +375,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
                 var firstMappedChild = node.Children.FirstOrDefault(child => child.Source != null) as IntermediateNode;
                 var valueStart = firstMappedChild?.Source;
 
-                using (context.CodeWriter.BuildLinePragma(node.Source, context))
+                using (context.BuildLinePragma(node.Source))
                 {
                     var accessor = GetPropertyAccessor(node);
                     var assignmentPrefixLength = accessor.Length + " = ".Length;
@@ -470,7 +468,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
     public void WriteTagHelperRuntime(CodeRenderingContext context, DefaultTagHelperRuntimeIntermediateNode node)
     {
         context.CodeWriter.WriteLine("#line hidden");
-        context.CodeWriter.WriteField(FieldUnintializedModifiers, PrivateModifiers, ExecutionContextTypeName, ExecutionContextVariableName);
+        context.CodeWriter.WriteField(s_fieldUninitializedModifiers, s_privateModifiers, ExecutionContextTypeName, ExecutionContextVariableName);
 
         context.CodeWriter
             .Write("private ")
@@ -483,7 +481,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
 
         if (!context.Options.DesignTime)
         {
-            context.CodeWriter.WriteField(FieldUnusedModifiers, PrivateModifiers, "string", StringValueBufferVariableName);
+            context.CodeWriter.WriteField(s_fieldUnusedModifiers, s_privateModifiers, "string", StringValueBufferVariableName);
 
             var backedScopeManageVariableName = "__backed" + ScopeManagerVariableName;
             context.CodeWriter
@@ -567,7 +565,7 @@ internal sealed class DefaultTagHelperTargetExtension : IDefaultTagHelperTargetE
             }
             else
             {
-                using (context.CodeWriter.BuildEnhancedLinePragma(token.Source, context))
+                using (context.BuildEnhancedLinePragma(token.Source))
                 {
                     context.CodeWriter.Write(token.Content);
                 }

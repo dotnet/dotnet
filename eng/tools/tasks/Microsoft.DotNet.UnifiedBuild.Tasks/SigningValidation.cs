@@ -108,23 +108,33 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
             var manifestsDir = Path.Combine(artifactDirectory, "manifests");
             if (!Directory.Exists(manifestsDir))
             {
-                continue;
+                Log.LogMessage(MessageImportance.High,
+                    $"   No manifests in '{artifactDirectory}' to parse for files to sign check. " +
+                    $"All files defined in the directory will be included...");
+                filesToSignCheck.AddRange(Directory.EnumerateFiles(artifactDirectory, "*", SearchOption.AllDirectories)
+                    .Select(file => (artifactDirectory, Path.GetRelativePath(artifactDirectory, file))));
             }
-            foreach (string manifest in Directory.EnumerateFiles(manifestsDir, "*.xml", SearchOption.AllDirectories))
+            else
             {
-                using (Stream xmlStream = File.OpenRead(manifest))
+                Log.LogMessage(MessageImportance.High,
+                    $"   Parsing manifests in '{manifestsDir}' for files to sign check. " +
+                    $"All blobs and packages defined in the manifests will be included...");
+                foreach (string manifest in Directory.EnumerateFiles(manifestsDir, "*.xml", SearchOption.AllDirectories))
                 {
-                    XDocument doc = XDocument.Load(xmlStream);
+                    using (Stream xmlStream = File.OpenRead(manifest))
+                    {
+                        XDocument doc = XDocument.Load(xmlStream);
 
-                    // Extract blobs
-                    filesToSignCheck.AddRange(doc.Descendants("Blob")
-                        .Where(blob => IsReleaseShipping(blob) && IsExternallyVisible(blob))
-                        .Select(blob => (artifactDirectory, ExtractAttribute(blob, "PipelineArtifactPath"))));
+                        // Extract blobs
+                        filesToSignCheck.AddRange(doc.Descendants("Blob")
+                            .Where(blob => IsReleaseShipping(blob) && IsExternallyVisible(blob))
+                            .Select(blob => (artifactDirectory, ExtractAttribute(blob, "PipelineArtifactPath"))));
 
-                    // Extract packages
-                    filesToSignCheck.AddRange(doc.Descendants("Package")
-                        .Where(pkg => IsReleaseShipping(pkg) && IsExternallyVisible(pkg))
-                        .Select(pkg => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
+                        // Extract packages
+                        filesToSignCheck.AddRange(doc.Descendants("Package")
+                            .Where(pkg => IsReleaseShipping(pkg) && IsExternallyVisible(pkg))
+                            .Select(pkg => (artifactDirectory, ExtractAttribute(pkg, "PipelineArtifactPath"))));
+                    }
                 }
             }
         }

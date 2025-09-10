@@ -58,12 +58,6 @@ parameters:
   type: boolean
   default: false
 
-  # Remove with https://github.com/dotnet/source-build/issues/5288
-- name: enableCoreDumpGeneration
-  displayName: True when core dump generation should be enabled
-  type: boolean
-  default: false
-
 # Overrides the rid that is produced by the build.
 - name: targetRid
   type: string
@@ -117,6 +111,11 @@ parameters:
 
 # Use the previous version's SDK to build the current one
 - name: withPreviousSDK
+  type: boolean
+  default: false
+
+# Create and publish the source artifacts
+- name: createSourceArtifacts
   type: boolean
   default: false
 
@@ -231,9 +230,8 @@ jobs:
 
   ### Basic arguments
   - name: cleanArgument
-    # Don't clean-while-building on OSs that have enough disk space to keep
-    # intermediates for compliance scanners.
-    ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(parameters.targetOS, 'osx')) }}:
+    # Don't clean-while-building on internal builds to keep intermediates for compliance scanners.
+    ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       value: ''
     ${{ else }}:
       ${{ if eq(parameters.targetOS, 'windows') }}:
@@ -281,7 +279,9 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - name: signArguments
       value: $(commandPrefix)sign
-    - ${{ if eq(parameters.signType, 'DryRun') }}:
+    # MB test signing is not supported on non-Windows platforms for now.
+    # In those cases, force to dryrun.
+    - ${{ if or(eq(parameters.signType, 'DryRun'), and(ne(parameters.targetOS, 'windows'), eq(parameters.signType, 'Test'))) }}:
       # The _SignType variable is used by microbuild installation
       - name: _SignType
         value: ''
@@ -431,18 +431,13 @@ jobs:
         fi
       displayName: Setup Previously Source-Built SDK
 
-  # https://github.com/dotnet/dotnet/issues/1758
-  # After a re-boostrap:
-  # - Uncomment the line below, replacing the one after it.
-  # - Uncomment the two parameter lines at the end of the template parameters.
-  # - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
-  - ${{ if and(eq(parameters.sign, 'True'), eq(parameters.signType, 'Real')) }}:
+  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
       parameters:
         enableMicrobuild: true
         enableMicrobuildForMacAndLinux: true
-        # ${{ if ne(parameters.signType, 'Real') }}:
-        #   microbuildUseESRP: false
+        ${{ if ne(parameters.signType, 'Real') }}:
+          microbuildUseESRP: false
 
   # When building internal, authenticate to internal feeds that may be in use
   # We do not need these for source-only builds
@@ -503,6 +498,10 @@ jobs:
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
   - ${{ else }}:
+    - ${{ if or(eq(parameters.targetOS, 'osx'), eq(parameters.targetOS, 'ios'), eq(parameters.targetOS, 'iossimulator'), eq(parameters.targetOS, 'tvos'), eq(parameters.targetOS, 'tvossimulator'), eq(parameters.targetOS, 'maccatalyst')) }}:
+      - script: |
+          xcrun simctl runtime delete all
+        displayName: Reclaim disk space from unused simulator runtimes
     - ${{ if eq(parameters.targetOS, 'osx') }}:
       - script: |
           $(sourcesPath)/eng/common/native/install-dependencies.sh osx
@@ -523,7 +522,11 @@ jobs:
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
+            # Don't use --no-artifacts because it will prevent the shared components archive from being
+            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
+            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
+            # to use at the expected location.
+            customPrepArgs="${customPrepArgs} --no-sdk"
             prepSdk=false
           fi
 
@@ -548,8 +551,15 @@ jobs:
 
           customEnvVars=""
           customPreBuildArgs=""
-          customBuildArgs="$(baseArguments) $(signArguments) $(_SignDiagnosticFilesArgs)"
-          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(signProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+          customBuildArgs="$(baseArguments)"
+          extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
+
+          # We shouldn't pass signing arguments to the build script when building source-only
+          # because signing source-built artifacts happens post-build.
+          if [[ '${{ parameters.buildSourceOnly }}' != 'True' ]]; then
+            customBuildArgs="$customBuildArgs $(signArguments) $(_SignDiagnosticFilesArgs)"
+            extraBuildProperties="$extraBuildProperties $(signProperties)"
+          fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --online"
@@ -564,6 +574,17 @@ jobs:
           if [[ '${{ parameters.buildFromArchive }}' == 'True' ]]; then
             customBuildArgs="$customBuildArgs --source-repository https://github.com/dotnet/dotnet"
             customBuildArgs="$customBuildArgs --source-version $(git -C "$(vmrPath)" rev-parse HEAD)"
+            if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+              # Do not enable source artifact creation when not building from a git repo.
+              # We strip the .git/ directory when building from archive,
+              # so it's not possible to create the artifacts in that mode.
+              echo "Cannot create source artifacts when building from archive."
+              exit 1
+            fi
+          fi
+          
+          if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
+            extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
           fi
 
           if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
@@ -584,12 +605,6 @@ jobs:
             if [[ '${{ parameters.targetArchitecture }}' != 'wasm' ]]; then
               extraBuildProperties="$extraBuildProperties /p:CrossBuild=true"
             fi
-          fi
-
-          # Temporarily enable core dump generation to diagnose https://github.com/dotnet/source-build/issues/5288
-          if [[ '${{ parameters.enableCoreDumpGeneration }}' == 'True' ]]; then
-            echo "$(sourcesPath)artifacts/log/core.%e.%p" | sudo tee /proc/sys/kernel/core_pattern
-            ulimit -c unlimited
           fi
 
           buildArgs="$(additionalBuildArgs) $customBuildArgs $extraBuildProperties"
@@ -662,11 +677,28 @@ jobs:
         displayName: Run Tests
         timeoutInMinutes: ${{ variables.runTestsTimeout }}
 
-  - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.buildSourceOnly, 'True'), eq(variables['System.TeamProject'], 'internal')) }}:
-    - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
-      parameters:
-        enableMicrobuild: true
-        enableMicrobuildForMacAndLinux: true
+  - ${{ if eq(parameters.sign, 'True') }}:
+    - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
+      - script: |
+          . eng/common/tools.sh
+
+          sign_properties="$(signProperties) $(_SignDiagnosticFilesArgs)"
+
+          MSBuild -restore eng/sign-source-built-artifacts.proj \
+            /p:SignProperties=$sign_properties \
+            /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) \
+            /p:OfficialBuildId=$(Build.BuildNumber) \
+            /bl:artifacts/log/outer-sign-source-built-artifacts.binlog
+        displayName: Sign Source-Built Artifacts
+        workingDirectory: $(Build.SourcesDirectory)
+        env:
+          SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+      - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/cleanup-microbuild.yml
+        parameters:
+          enableMicrobuild: true
+          enableMicrobuildForMacAndLinux: true
 
   - task: CopyFiles@2
     displayName: Prepare BuildLogs staging directory
@@ -753,3 +785,4 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
+

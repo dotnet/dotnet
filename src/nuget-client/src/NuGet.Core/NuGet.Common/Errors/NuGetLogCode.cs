@@ -139,6 +139,11 @@ namespace NuGet.Common
         NU1016 = 1016,
 
         /// <summary>
+        /// Invalid package Id.
+        /// </summary>
+        NU1017 = 1017,
+
+        /// <summary>
         /// Unable to resolve package, generic message for unknown type constraints.
         /// </summary>
         NU1100 = 1100,

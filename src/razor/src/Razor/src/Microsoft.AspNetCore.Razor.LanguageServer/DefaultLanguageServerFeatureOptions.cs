@@ -31,15 +31,11 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool IncludeProjectKeyInGeneratedFilePath => false;
 
-    public override bool UsePreciseSemanticTokenRanges => false;
-
     public override bool UseRazorCohostServer => false;
-
-    public override bool UseNewFormattingEngine => true;
 
     public override bool SupportsSoftSelectionInCompletion => true;
 
-    public override bool UseVsCodeCompletionTriggerCharacters => false;
+    public override bool UseVsCodeCompletionCommitCharacters => false;
 
     public override bool DoNotInitializeMiscFilesProjectFromWorkspace => false;
 }

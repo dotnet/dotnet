@@ -1,0 +1,35 @@
+﻿<Include 
+  xmlns="http://wixtoolset.org/schemas/v4/wxs"
+  xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <?ifndef MajorUpgradeSchedule?>
+    <?define MajorUpgradeSchedule = afterInstallInitialize?>
+  <?endif?>
+
+  <MajorUpgrade DowngradeErrorMessage="$(var.DowngradeErrorMessage)" Schedule="$(var.MajorUpgradeSchedule)"/>
+
+  <MediaTemplate CompressionLevel="high" EmbedCab="yes" />
+
+  <Feature 
+    Id="Provider"
+    AllowAbsent="no"
+    AllowAdvertise="no"
+    Description="Used for Ref Counting"
+    Display="hidden"
+    Level="1"
+    InstallDefault="local"
+    Title="RefCounting"
+    TypicalDefault="install">
+    <ComponentRef Id="$(var.DependencyKeyId)" />
+  </Feature>
+
+  <Property Id="MSIFASTINSTALL" Value="7" />
+
+  <WixVariable Id="WixUILicenseRtf" Value="$(var.MicrosoftEula)" />
+
+  <Property Id="WIXUI_INSTALLDIR" Value="DOTNETHOME"/>
+  <ui:WixUI Id="WixUI_InstallDir" />
+
+  <BroadcastEnvironmentChange xmlns="http://wixtoolset.org/schemas/v4/wxs/util" />
+
+</Include>

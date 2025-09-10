@@ -22,7 +22,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 {
     [Theory]
     [CombinatorialData]
-    public async Task Razor(bool colorBackground, bool precise, bool supportsVSExtensions)
+    public async Task Razor(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
     {
         var input = """
             @page "/"
@@ -63,12 +63,12 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, precise, supportsVSExtensions);
+        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task Legacy(bool colorBackground, bool precise, bool supportsVSExtensions)
+    public async Task Legacy(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
     {
         var input = """
             @page "/"
@@ -91,12 +91,12 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, precise, supportsVSExtensions, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task Legacy_Compatibility(bool colorBackground, bool precise, bool supportsVSExtensions)
+    public async Task Legacy_Compatibility(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
     {
         // Same test as above, but with only the things that work in FUSE and non-FUSE, to prevent regressions
 
@@ -116,18 +116,18 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, precise, supportsVSExtensions, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,
-        bool precise,
         bool supportsVSExtensions,
+        bool miscellaneousFile,
         RazorFileKind? fileKind = null,
         [CallerMemberName] string? testName = null)
     {
-        var document = CreateProjectAndRazorDocument(input, fileKind);
+        var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
         var legend = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions);
@@ -143,9 +143,6 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
                 TokenModifiers = legend.TokenModifiers.All,
             };
         });
-
-        // Update the client initialization options to control the precise ranges option
-        UpdateClientInitializationOptions(c => c with { UsePreciseSemanticTokenRanges = precise });
 
         var clientSettingsManager = new ClientSettingsManager([], null, null);
         clientSettingsManager.Update(ClientAdvancedSettings.Default with { ColorBackground = colorBackground });
@@ -166,6 +163,11 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         if (colorBackground)
         {
             testName += "_with_background";
+        }
+
+        if (miscellaneousFile)
+        {
+            testName += "_misc_file";
         }
 
         var baselineFileName = $@"TestFiles\SemanticTokens\{testName}.txt";
