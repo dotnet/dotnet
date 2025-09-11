@@ -47,8 +47,6 @@ namespace NuGet.Commands
 
         public bool InConflict { get; }
 
-        public string Name { get; }
-
         public string TargetGraphName { get; }
 
         // TODO: Move conflicts to AnalyzeResult
@@ -74,7 +72,6 @@ namespace NuGet.Commands
             RuntimeGraph = runtimeGraph;
             Framework = framework;
             Graphs = graphs;
-            Name = FrameworkRuntimePair.GetName(Framework, RuntimeIdentifier);
             TargetGraphName = FrameworkRuntimePair.GetTargetGraphName(Framework, RuntimeIdentifier);
 
 

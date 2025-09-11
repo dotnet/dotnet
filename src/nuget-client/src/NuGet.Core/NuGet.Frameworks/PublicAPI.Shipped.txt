@@ -282,7 +282,6 @@ static NuGet.Frameworks.FrameworkNameHelpers.GetPortableProfileNumberString(int 
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersion(string? versionString) -> System.Version!
 static NuGet.Frameworks.FrameworkNameHelpers.GetVersionString(System.Version! version) -> string!
 static NuGet.Frameworks.FrameworkRangeComparer.Instance.get -> NuGet.Frameworks.FrameworkRangeComparer!
-static NuGet.Frameworks.FrameworkRuntimePair.GetName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.FrameworkRuntimePair.GetTargetGraphName(NuGet.Frameworks.NuGetFramework! framework, string? runtimeIdentifier) -> string!
 static NuGet.Frameworks.NuGetFramework.Parse(string! folderName) -> NuGet.Frameworks.NuGetFramework!
 static NuGet.Frameworks.NuGetFramework.Parse(string! folderName, NuGet.Frameworks.IFrameworkNameProvider! mappings) -> NuGet.Frameworks.NuGetFramework!
