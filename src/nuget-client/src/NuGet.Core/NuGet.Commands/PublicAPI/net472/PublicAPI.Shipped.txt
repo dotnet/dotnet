@@ -481,8 +481,6 @@ NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.get -> bool?
 NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.set -> void
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.get -> bool
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.set -> void
-NuGet.Commands.RestoreArgs.LockFileVersion.get -> int?
-NuGet.Commands.RestoreArgs.LockFileVersion.set -> void
 ~NuGet.Commands.RestoreArgs.Log.get -> NuGet.Common.ILogger
 ~NuGet.Commands.RestoreArgs.Log.set -> void
 ~NuGet.Commands.RestoreArgs.MachineWideSettings.get -> NuGet.Configuration.IMachineWideSettings

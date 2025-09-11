@@ -672,7 +672,6 @@ static readonly NuGet.ProjectModel.LockFile.DirectorySeparatorChar -> char
 ~static readonly NuGet.ProjectModel.LockFileContentFile.OutputPathProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileContentFile.PPOutputPathProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileFormat.AssetsFileName -> string
-~static readonly NuGet.ProjectModel.LockFileFormat.LockFileName -> string
 static readonly NuGet.ProjectModel.LockFileFormat.Version -> int
 ~static readonly NuGet.ProjectModel.LockFileItem.AliasesProperty -> string
 ~static readonly NuGet.ProjectModel.LockFileRuntimeTarget.AssetTypeProperty -> string

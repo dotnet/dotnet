@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">Ungültige Paket-ID: `{0}`.</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -267,12 +267,12 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="NupkgPath_Invalid">
         <source>'{0}' is not a valid nupkg file.</source>
-        <target state="translated">"{0}" ist keine gültige NUPGK-Datei.</target>
+        <target state="translated">"{0}" ist keine gültige NUPKG-Datei.</target>
         <note />
       </trans-unit>
       <trans-unit id="NupkgPath_InvalidEx">
         <source>'{0}' is not a valid nupkg file. Error: '{1}'.</source>
-        <target state="translated">"{0}" ist keine gültige NUPGK-Datei. Fehler: "{1}".</target>
+        <target state="translated">"{0}" ist keine gültige NUPKG-Datei. Fehler: "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="OneOrMoreUrisMustBeSpecified">
