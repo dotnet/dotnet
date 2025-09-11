@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor.Compiler.Language.Extensions;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -61,33 +63,6 @@ internal class ViewComponentTypeVisitor : SymbolVisitor
             return false;
         }
 
-        if (symbol.DeclaredAccessibility != Accessibility.Public ||
-            symbol.IsAbstract ||
-            symbol.IsGenericType ||
-            AttributeIsDefined(symbol, _nonViewComponentAttribute))
-        {
-            return false;
-        }
-
-        return symbol.Name.EndsWith(ViewComponentTypes.ViewComponentSuffix, StringComparison.Ordinal) ||
-            AttributeIsDefined(symbol, _viewComponentAttribute);
-    }
-
-    private static bool AttributeIsDefined(INamedTypeSymbol? type, INamedTypeSymbol? queryAttribute)
-    {
-        if (type == null || queryAttribute == null)
-        {
-            return false;
-        }
-
-        foreach (var attribute in type.GetAttributes())
-        {
-            if (SymbolEqualityComparer.Default.Equals(attribute.AttributeClass, queryAttribute))
-            {
-                return true;
-            }
-        }
-
-        return AttributeIsDefined(type.BaseType, queryAttribute);
+        return symbol.IsViewComponent(_viewComponentAttribute, _nonViewComponentAttribute);
     }
 }
