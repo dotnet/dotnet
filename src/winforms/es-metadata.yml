@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\\NET Tools\\Winforms\\Runtime\\Core"
+    path: "DevDiv\NET Tools\Winforms\Runtime\Core"

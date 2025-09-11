@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\\NET Fundamentals\\.NET Acquisition\\Source-build-reference-packages"
+    path: "DevDiv\NET Fundamentals\.NET Acquisition\Source-build-reference-packages"

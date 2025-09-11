@@ -1,8 +1,8 @@
 schemaVersion: 0.0.1
 isProduction: true
 accountableOwners:
-  service: 4cac191f-8b27-4d55-abee-2eafb6470803
+  service: 8d20dc36-68f2-41f9-94fe-c3cd15ce04bd
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\\.NET Shared"
+    path: "DevDiv\.NET Shared\VMR"

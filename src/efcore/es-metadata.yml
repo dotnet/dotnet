@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\\Entity Framework"
+    path: "DevDiv\Entity Framework"
