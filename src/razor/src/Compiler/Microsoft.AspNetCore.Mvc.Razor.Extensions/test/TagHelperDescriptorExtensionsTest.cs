@@ -17,7 +17,7 @@ public class TagHelperDescriptorExtensionsTest
         var tagHelper = CreateTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.IsViewComponentKind();
+        var result = tagHelper.IsViewComponentKind;
 
         // Assert
         Assert.False(result);
@@ -30,33 +30,33 @@ public class TagHelperDescriptorExtensionsTest
         var tagHelper = CreateViewComponentTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.IsViewComponentKind();
+        var result = tagHelper.IsViewComponentKind;
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void GetViewComponentName_ReturnsNull_ForNonVCTHDescriptor()
+    public void ViewComponentName_ReturnsNull_ForNonVCTHDescriptor()
     {
         //Arrange
         var tagHelper = CreateTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.GetViewComponentName();
+        var result = tagHelper.ViewComponentName;
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void GetViewComponentName_ReturnsName_ForVCTHDescriptor()
+    public void ViewComponentName_ReturnsName_ForVCTHDescriptor()
     {
         // Arrange
         var tagHelper = CreateViewComponentTagHelperDescriptor("ViewComponentName");
 
         // Act
-        var result = tagHelper.GetViewComponentName();
+        var result = tagHelper.ViewComponentName;
 
         // Assert
         Assert.Equal("ViewComponentName", result);

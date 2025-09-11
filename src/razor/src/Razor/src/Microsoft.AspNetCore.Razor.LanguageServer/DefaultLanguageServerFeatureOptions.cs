@@ -35,7 +35,7 @@ internal class DefaultLanguageServerFeatureOptions : LanguageServerFeatureOption
 
     public override bool SupportsSoftSelectionInCompletion => true;
 
-    public override bool UseVsCodeCompletionTriggerCharacters => false;
+    public override bool UseVsCodeCompletionCommitCharacters => false;
 
     public override bool DoNotInitializeMiscFilesProjectFromWorkspace => false;
 }

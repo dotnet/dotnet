@@ -1,9 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
@@ -25,17 +23,6 @@ public abstract partial class TagHelperCollector<T>
         _targetSymbol = targetSymbol;
     }
 
-    private static bool MightContainTagHelpers(IAssemblySymbol assembly)
-    {
-        // In order to contain tag helpers, components, or anything else we might want to find,
-        // the assembly must start with "Microsoft.AspNetCore." or reference an assembly that
-        // starts with "Microsoft.AspNetCore."
-
-        return assembly.Name.StartsWith("Microsoft.AspNetCore.", StringComparison.Ordinal) ||
-               assembly.Modules.First().ReferencedAssemblies.Any(
-                   a => a.Name.StartsWith("Microsoft.AspNetCore.", StringComparison.Ordinal));
-    }
-
     protected abstract void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results);
 
     public void Collect(TagHelperDescriptorProviderContext context)
@@ -52,17 +39,17 @@ public abstract partial class TagHelperCollector<T>
             {
                 if (_compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
                 {
-                    if (!MightContainTagHelpers(assembly))
-                    {
-                        continue;
-                    }
-
                     // Check to see if we already have tag helpers cached for this assembly
                     // and use the cached versions if we do. Roslyn shares PE assembly symbols
                     // across compilations, so this ensures that we don't produce new tag helpers
                     // for the same assemblies over and over again.
 
-                    var cache = s_perAssemblyCaches.GetOrCreateValue(assembly);
+                    var cache = s_perAssemblyCaches.GetValue(assembly, static assembly => new Cache(assembly));
+
+                    if (!cache.MightContainTagHelpers)
+                    {
+                        continue;
+                    }
 
                     var includeDocumentation = context.IncludeDocumentation;
                     var excludeHidden = context.ExcludeHidden;

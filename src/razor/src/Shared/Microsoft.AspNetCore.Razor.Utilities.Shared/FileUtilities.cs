@@ -38,8 +38,11 @@ internal static class FileUtilities
         //   git:/c:/Users/dawengie/source/repos/razor01/Pages/Index.cshtml?%7B%22path%22:%22c:%5C%5CUsers%5C%5Cdawengie%5C%5Csource%5C%5Crepos%5C%5Crazor01%5C%5CPages%5C%5CIndex.cshtml%22,%22ref%22:%22~%22%7D
         //
         // Given colons and question marks are unlikely, or illegal, file path characters the risk of false positives here is hopefully low.
-        if (filePath.IndexOf(":/") > 0 &&
-           filePath.IndexOf('?') is int realPathEnd and > 0)
+        // Normalized paths from the LSP editor project system could trigger this, because "C:\Goo" would become "C:/Goo", but thats not
+        // what we're looking for, and it would be surprising for those paths to have a question mark in them after the drive letter.
+        if (filePath.IndexOf(":/") is int colonSlash and > 0 &&
+           filePath.IndexOf('?') is int realPathEnd &&
+           realPathEnd > colonSlash)
         {
             return filePath[..realPathEnd];
         }

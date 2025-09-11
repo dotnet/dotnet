@@ -43,7 +43,7 @@ internal abstract class AbstractRazorSemanticTokensInfoService(
 
         var amount = semanticTokens is null ? "no" : (semanticTokens.Length / TokenSize).ToString(Thread.CurrentThread.CurrentCulture);
 
-        _logger.LogInformation($"Returned {amount} semantic tokens for span {span} in {documentContext.Uri}.");
+        _logger.LogDebug($"Returned {amount} semantic tokens for span {span} in {documentContext.Uri}.");
 
         if (semanticTokens is not null)
         {
