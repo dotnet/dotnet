@@ -46,10 +46,8 @@ public class SourceBuiltArtifactsTests : SdkTests
             }
 
             // Verify that .version file is the same as the SDK's .version file.
-
             string sbVersionFileContent = File.ReadAllText(sbVersionFilePath);
 
-            // Find the expected SDK version by getting it from the source built SDK
             DirectoryInfo sdkDir = new DirectoryInfo(Path.Combine(Config.DotNetDirectory, "sdk"));
             string sdkVersionPath = sdkDir.GetFiles(".version", SearchOption.AllDirectories).Single().FullName;
             string sdkVersionFileContent = File.ReadAllText(Path.Combine(outputDir, sdkVersionPath));
