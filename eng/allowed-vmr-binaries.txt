@@ -5,8 +5,6 @@
 # Import the allowed souce-build binaries (a stricter set).
 import:allowed-sb-binaries.txt
 
-MicroBuild/
-
 **/testCert*.pfx
 **/TestCert*.pfx
 
