@@ -74,6 +74,7 @@ extends:
   parameters:
     featureFlags:
       incrementalSDLBinaryAnalysis: true
+      autoEnableRoslynWithNewRuleset: false
     sdl:
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)
