@@ -37,4 +37,61 @@
 
   </Target>
 
+  <Target Name="DownloadMergedManifest"
+          BeforeTargets="Build"
+          Condition="'$(DotNetBuildSourceOnly)' != 'true' and '$(DotNetBuildSharedComponents)' != 'true'"
+          Inputs="$(RepositoryEngineeringDir)Versions.props"
+          Outputs="$(SharedMergedManifest)">
+
+    <!-- 
+      Extract official build ID from package version that represents the SDK version of the 1xx build.
+      Input: package version (e.g., "10.0.100-preview.7.25377.103")
+      Output: official build ID (e.g., "20250727.3")
+      
+      The package version format includes VersionSuffixDateStamp and VersionSuffixBuildOfTheDay in the prerelease suffix.
+      We extract these values and reverse the date calculation to get the original official build ID.
+    -->
+    <PropertyGroup Condition="'$(MicrosoftNETSdkVersion)' != ''">
+      <!-- Split the package version to get the prerelease part after the dash -->
+      <_PrereleasePart>$(MicrosoftNETSdkVersion.Split('-')[1])</_PrereleasePart>
+      
+      <!-- Split the prerelease part by dots to get individual segments -->
+      <!-- Example: "preview.7.25377.103" -> ["preview", "7", "25377", "103"] -->
+      <!-- We want the last two segments: "25377" (VersionSuffixDateStamp) and "103" (VersionSuffixBuildOfTheDay) -->
+      
+      <!-- Use LastIndexOf to find the last two dot-separated segments -->
+      <_LastDotIndex>$(_PrereleasePart.LastIndexOf('.'))</_LastDotIndex>
+      <_ExtractedVersionSuffixBuildOfTheDay>$(_PrereleasePart.Substring($([MSBuild]::Add($(_LastDotIndex), 1))))</_ExtractedVersionSuffixBuildOfTheDay>
+      
+      <!-- Get the part before the last dot, then find the second-to-last segment -->
+      <_BeforeLastDot>$(_PrereleasePart.Substring(0, $(_LastDotIndex)))</_BeforeLastDot>
+      <_SecondLastDotIndex>$(_BeforeLastDot.LastIndexOf('.'))</_SecondLastDotIndex>
+      <_ExtractedVersionSuffixDateStamp>$(_BeforeLastDot.Substring($([MSBuild]::Add($(_SecondLastDotIndex), 1))))</_ExtractedVersionSuffixDateStamp>
+      
+      <!-- Reverse the SHORT_DATE calculation: yy * 1000 + mm * 50 + dd = VersionSuffixDateStamp -->
+      <_ReversedYY>$([MSBuild]::Divide($(_ExtractedVersionSuffixDateStamp), 1000))</_ReversedYY>
+      <_Remainder1>$([MSBuild]::Subtract($(_ExtractedVersionSuffixDateStamp), $([MSBuild]::Multiply($(_ReversedYY), 1000))))</_Remainder1>
+      <_ReversedMM>$([MSBuild]::Divide($(_Remainder1), 50))</_ReversedMM>
+      <_ReversedDD>$([MSBuild]::Subtract($(_Remainder1), $([MSBuild]::Multiply($(_ReversedMM), 50))))</_ReversedDD>
+      
+      <!-- Format components with leading zeros -->
+      <_FormattedYY>$(_ReversedYY.PadLeft(2, $([System.Convert]::ToChar(`0`))))</_FormattedYY>
+      <_FormattedMM>$(_ReversedMM.PadLeft(2, $([System.Convert]::ToChar(`0`))))</_FormattedMM>
+      <_FormattedDD>$(_ReversedDD.PadLeft(2, $([System.Convert]::ToChar(`0`))))</_FormattedDD>
+      
+      <!-- The revision is the VersionSuffixBuildOfTheDay modulo 100 -->
+      <_RevisionFromBuildOfDay>$([MSBuild]::Modulo($(_ExtractedVersionSuffixBuildOfTheDay), 100))</_RevisionFromBuildOfDay>
+      
+      <!-- Reconstruct OfficialBuildId in format 20yymmdd.r -->
+      <_CalculatedOfficialBuildId>20$(_FormattedYY)$(_FormattedMM)$(_FormattedDD).$(_RevisionFromBuildOfDay)</_CalculatedOfficialBuildId>
+    </PropertyGroup>
+
+    <Error Text="Unable to calculate official build ID of 1xx build for SDK version '$(MicrosoftNETSdkVersion)'."
+           Condition="'$(_CalculatedOfficialBuildId)' == ''" />
+
+    <DownloadFile SourceUrl="https://dotnetbuilds.blob.core.windows.net/public/assets/manifests/dotnet-dotnet/$(_CalculatedOfficialBuildId)/MergedManifest.xml"
+                  DestinationFolder="$([System.IO.Path]::GetDirectoryName($(SharedMergedManifest)))"
+                  DestinationFileName="$([System.IO.Path]::GetFileName($(SharedMergedManifest)))"
+                  Retries="3" />
+  </Target>
 </Project>

@@ -14,8 +14,7 @@
     <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
                       Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'" />
     
-    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj"
-                      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj" />
     
     <!-- Pre-build: Init tools-->
     <ProjectReference Include="$(RepositoryEngineeringDir)init-cross-build.proj"
