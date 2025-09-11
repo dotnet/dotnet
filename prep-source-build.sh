@@ -141,6 +141,30 @@ function GetXmlPropertyValue {
   echo "$value"
 }
 
+# Helper to download a file with retries
+function DownloadWithRetries {
+  local url="$1"
+  local targetDir="$2"
+  (
+    cd "$targetDir" &&
+    for i in {1..5}; do
+      if curl -fL --retry 5 -O "$url"; then
+        return 0
+      else
+        case $? in
+          18)
+            sleep 3
+            ;;
+          *)
+            return 1
+            ;;
+        esac
+      fi
+    done
+    return 1
+  )
+}
+
 function DownloadArchive {
   local label="$1"
   local propertyName="$2"
@@ -175,8 +199,7 @@ function DownloadArchive {
   fi
 
   echo "  Downloading $label from $archiveUrl..."
-  mkdir -p "$outputDir"
-  if ! curl -fL --retry 5 --retry-all-errors -o "$outputDir/$(basename "$archiveUrl")" "$archiveUrl"; then
+  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
     echo "  ERROR: Failed to download $archiveUrl"
     exit 1
   fi
