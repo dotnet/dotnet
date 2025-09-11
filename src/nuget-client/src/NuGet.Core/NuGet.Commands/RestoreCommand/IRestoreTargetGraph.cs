@@ -12,8 +12,6 @@ namespace NuGet.Commands
 {
     public interface IRestoreTargetGraph
     {
-        string Name { get; }
-
         string TargetGraphName { get; }
 
         /// <summary>

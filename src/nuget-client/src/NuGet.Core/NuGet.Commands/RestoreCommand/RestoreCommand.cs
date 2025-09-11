@@ -1635,7 +1635,7 @@ namespace NuGet.Commands
                     checkResults.Add(res);
                     if (res.Success)
                     {
-                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.Name));
+                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.TargetGraphName));
                     }
                     else
                     {
