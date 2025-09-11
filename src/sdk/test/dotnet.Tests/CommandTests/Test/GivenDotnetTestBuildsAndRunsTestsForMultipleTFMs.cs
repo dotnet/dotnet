@@ -27,7 +27,7 @@ namespace Microsoft.DotNet.Cli.Test.Tests
 
             CommandResult result = new DotnetTestCommand(Log, disableNewOutput: false)
                                     .WithWorkingDirectory(testInstance.Path)
-                                    .Execute(TestingPlatformOptions.ConfigurationOption.Name, configuration);
+                                    .Execute(MicrosoftTestingPlatformOptions.ConfigurationOption.Name, configuration);
 
             if (!TestContext.IsLocalized())
             {
@@ -66,7 +66,7 @@ namespace Microsoft.DotNet.Cli.Test.Tests
 
             CommandResult result = new DotnetTestCommand(Log, disableNewOutput: false)
                                     .WithWorkingDirectory(testInstance.Path)
-                                    .Execute(TestingPlatformOptions.ConfigurationOption.Name, configuration);
+                                    .Execute(MicrosoftTestingPlatformOptions.ConfigurationOption.Name, configuration);
 
             if (!TestContext.IsLocalized())
             {
@@ -156,20 +156,19 @@ namespace Microsoft.DotNet.Cli.Test.Tests
 
             CommandResult result = new DotnetTestCommand(Log, disableNewOutput: false)
                                     .WithWorkingDirectory(testInstance.Path)
-                                    .Execute(TestingPlatformOptions.ConfigurationOption.Name, configuration,
+                                    .Execute(MicrosoftTestingPlatformOptions.ConfigurationOption.Name, configuration,
                                     CommonOptions.ArchitectureOption.Name, arch);
 
             if (!TestContext.IsLocalized())
             {
-                result.StdOut
-                    .Should().Contain("Test run summary: Failed!")
-                    .And.Contain("total: 14")
-                    .And.Contain("succeeded: 3")
-                    .And.Contain("failed: 8")
-                    .And.Contain("skipped: 3");
+                result.StdOut.Should().Contain("error NETSDK1134: Building a solution with a specific RuntimeIdentifier is not supported. If you would like to publish for a single RID, specify the RID at the individual project level instead.");
+            }
+            else
+            {
+                result.StdOut.Should().Contain("NETSDK1134");
             }
 
-            result.ExitCode.Should().Be(ExitCodes.AtLeastOneTestFailed);
+            result.ExitCode.Should().Be(ExitCodes.GenericFailure);
         }
 
         //  https://github.com/dotnet/sdk/issues/49665
@@ -185,7 +184,7 @@ namespace Microsoft.DotNet.Cli.Test.Tests
 
             CommandResult result = new DotnetTestCommand(Log, disableNewOutput: false)
                                     .WithWorkingDirectory(testInstance.Path)
-                                    .Execute(TestingPlatformOptions.ConfigurationOption.Name, configuration);
+                                    .Execute(MicrosoftTestingPlatformOptions.ConfigurationOption.Name, configuration);
 
             if (!TestContext.IsLocalized())
             {
