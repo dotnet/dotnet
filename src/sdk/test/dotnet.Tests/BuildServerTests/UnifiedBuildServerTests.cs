@@ -52,6 +52,11 @@ public sealed class UnifiedBuildServerTests(ITestOutputHelper output) : SdkTest(
         string roslynLogText = File.ReadAllText(roslynLog);
         Log.WriteLine(roslynLogText);
 
+        roslynLogText.Should()
+            .Contain("Client requested shutdown: BuildServerUtility")
+            .And.Contain("Shutting down server")
+            .And.Contain("End ListenAndDispatchConnections");
+
         result.Should().Pass()
             .And.HaveStdOutContaining("VBCSCompiler")
             .And.NotHaveStdErr();
