@@ -30,8 +30,12 @@ public class SourceBuiltArtifactsTests : SdkTests
         {
             // Extract the .version file
             Utilities.ExtractTarball(Config.SourceBuiltArtifactsPath, outputDir, ".version");
+            string sbVersionFilePath = Path.Combine(outputDir, ".version");
 
-            string[] versionLines = File.ReadAllLines(Path.Combine(outputDir, ".version"));
+            string[] versionLines = File.ReadAllLines(sbVersionFilePath);
+
+            // Verify the expected number of lines in .version file.
+            // Ensures that the test fails if SDK changes the .version file format.
             Assert.Equal(5, versionLines.Length);
 
             // Verify the commit SHA, it will likely be either a valid commit SHA or an unknown commit SHA, depending on
@@ -45,17 +49,16 @@ public class SourceBuiltArtifactsTests : SdkTests
                 Assert.False(commitSha.Equals("unknown commit SHA", StringComparison.OrdinalIgnoreCase));
             }
 
-            // Verify the SDK version
+            // Verify that .version file is the same as the SDK's .version file.
 
-            string sdkVersion = versionLines[3];
+            string sbVersionFileContent = File.ReadAllText(sbVersionFilePath);
 
             // Find the expected SDK version by getting it from the source built SDK
             DirectoryInfo sdkDir = new DirectoryInfo(Path.Combine(Config.DotNetDirectory, "sdk"));
             string sdkVersionPath = sdkDir.GetFiles(".version", SearchOption.AllDirectories).Single().FullName;
-            string[] sdkVersionLines = File.ReadAllLines(Path.Combine(outputDir, sdkVersionPath));
-            string expectedSdkVersion = sdkVersionLines[3];  // Get the unique, non-stable, SDK version
+            string sdkVersionFileContent = File.ReadAllText(Path.Combine(outputDir, sdkVersionPath));
 
-            Assert.Equal(expectedSdkVersion, sdkVersion);
+            Assert.Equal(sdkVersionFileContent, sbVersionFileContent);
         }
         finally
         {
