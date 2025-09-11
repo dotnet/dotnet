@@ -15,8 +15,6 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 // Based on the DesignTimeNodeWriter from Razor repo.
 internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 {
-    private readonly ScopeStack _scopeStack = new ScopeStack();
-
     private const string DesignTimeVariable = "__o";
 
     public ComponentDesignTimeNodeWriter(RazorLanguageVersion version) : base(version)
@@ -70,7 +68,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.BuildLinePragma(sourceSpan, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.AddSourceMappingFor(node);
                 context.CodeWriter.WriteUsing(node.Content);
@@ -112,7 +110,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         if (node.Source != null)
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            using (context.BuildLinePragma(node.Source.Value))
             {
                 var offset = DesignTimeVariable.Length + " = ".Length;
 
@@ -171,54 +169,39 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteCSharpCode(CodeRenderingContext context, CSharpCodeIntermediateNode node)
     {
-        var isWhitespaceStatement = true;
+        var isWhiteSpace = true;
 
         foreach (var child in node.Children)
         {
-            if (child is not IntermediateToken token || !string.IsNullOrWhiteSpace(token.Content))
+            if (child is not CSharpIntermediateToken token || !token.Content.IsNullOrWhiteSpace())
             {
-                isWhitespaceStatement = false;
+                isWhiteSpace = false;
                 break;
             }
         }
 
-        IDisposable? linePragmaScope = null;
-        if (node.Source != null)
+        // Don't write whitespace if there is no line mapping for it.
+        if (isWhiteSpace && node.Source is null)
         {
-            if (!isWhitespaceStatement)
-            {
-                linePragmaScope = context.CodeWriter.BuildLinePragma(node.Source.Value, context);
-            }
-
-            context.CodeWriter.WritePadding(0, node.Source.Value, context);
-        }
-        else if (isWhitespaceStatement)
-        {
-            // Don't write whitespace if there is no line mapping for it.
             return;
         }
 
-        foreach (var child in node.Children)
-        {
-            if (child is CSharpIntermediateToken token)
-            {
-                context.AddSourceMappingFor(token);
-                context.CodeWriter.Write(token.Content);
-            }
-            else
-            {
-                // There may be something else inside the statement like an extension node.
-                context.RenderNode(child);
-            }
-        }
+        var writer = context.CodeWriter;
 
-        if (linePragmaScope != null)
+        if (node.Source is SourceSpan nodeSource && !isWhiteSpace)
         {
-            linePragmaScope.Dispose();
+            using (context.BuildLinePragma(nodeSource))
+            {
+                writer.WritePadding(0, nodeSource, context);
+                RenderCSharpCode(context, node);
+            }
         }
         else
         {
-            context.CodeWriter.WriteLine();
+            writer.WritePadding(0, node.Source, context);
+
+            RenderCSharpCode(context, node);
+            writer.WriteLine();
         }
     }
 
@@ -322,7 +305,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         }
 
         context.CodeWriter
-            .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{nameof(ComponentsApi.RenderTreeBuilder.AddAttribute)}")
+            .WriteStartMethodInvocation($"{BuilderVariableName}.{nameof(ComponentsApi.RenderTreeBuilder.AddAttribute)}")
             .Write("-1")
             .WriteParameterSeparator()
             .WriteStringLiteral(key);
@@ -330,7 +313,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     protected override void BeginWriteAttribute(CodeRenderingContext context, IntermediateNode expression)
     {
-        context.CodeWriter.WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddAttribute}");
+        context.CodeWriter.WriteStartMethodInvocation($"{BuilderVariableName}.{ComponentsApi.RenderTreeBuilder.AddAttribute}");
         context.CodeWriter.Write("-1");
         context.CodeWriter.WriteParameterSeparator();
 
@@ -454,7 +437,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                     WriteTypeInferenceMethodParameterInnards(context, parameter);
                     context.CodeWriter.Write(", out var ");
 
-                    var variableName = $"__typeInferenceArg_{_scopeStack.Depth}_{parameter.ParameterName}";
+                    var variableName = new TypeInferenceArgName(ScopeStack.Depth, parameter.ParameterName);
                     context.CodeWriter.Write(variableName);
 
                     UseCapturedCascadingGenericParameterVariable(node, parameter, variableName);
@@ -485,7 +468,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             context.CodeWriter.Write(node.TypeInferenceNode.MethodName);
             context.CodeWriter.Write("(");
 
-            context.CodeWriter.Write(_scopeStack.BuilderVarName);
+            context.CodeWriter.Write(BuilderVariableName);
             context.CodeWriter.Write(", ");
 
             context.CodeWriter.Write("-1");
@@ -494,7 +477,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             {
                 context.CodeWriter.Write(", ");
 
-                if (!string.IsNullOrEmpty(parameter.SeqName))
+                if (parameter.SeqName != null)
                 {
                     context.CodeWriter.Write("-1");
                     context.CodeWriter.Write(", ");
@@ -542,7 +525,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // the "usings directive is unnecessary" message.
         // Looks like:
         // __o = typeof(SomeNamespace.SomeComponent);
-        using (context.CodeWriter.BuildLinePragma(node.Source.AssumeNotNull(), context))
+        using (context.BuildLinePragma(node.Source.AssumeNotNull()))
         {
             context.CodeWriter.Write(DesignTimeVariable);
             context.CodeWriter.Write(" = ");
@@ -560,7 +543,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 if (!node.TagName.Contains("."))
                 {
                     // The tag is not fully qualified
-                    context.CodeWriter.Write(node.Component.GetTypeNamespace());
+                    context.CodeWriter.Write(node.Component.TypeNamespace.AssumeNotNull());
                     context.CodeWriter.Write(".");
                 }
                 context.CodeWriter.Write(node.TagName);
@@ -608,13 +591,23 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 // The value should be populated before we use it, because we emit code for creating ancestors
                 // first, and that's where it's populated. However if this goes wrong somehow, we don't want to
                 // throw, so use a fallback
-                var valueExpression = syntheticArg.ValueExpression ?? "default";
-                context.CodeWriter.Write(valueExpression);
-                if (!context.Options.SuppressNullabilityEnforcement && IsDefaultExpression(valueExpression))
+                if (syntheticArg.ValueExpression is IWriteableValue writeableValue)
                 {
-                    context.CodeWriter.Write("!");
+                    writeableValue.WriteTo(context.CodeWriter);
                 }
+                else
+                {
+                    var valueExpression = syntheticArg.ValueExpression as string ?? "default";
+                    context.CodeWriter.Write(valueExpression);
+
+                    if (!context.Options.SuppressNullabilityEnforcement && IsDefaultExpression(valueExpression))
+                    {
+                        context.CodeWriter.Write("!");
+                    }
+                }
+
                 break;
+
             case TypeInferenceCapturedVariable capturedVariable:
                 context.CodeWriter.Write(capturedVariable.VariableName);
                 break;
@@ -664,9 +657,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        if (node.BoundAttribute.Metadata.TryGetValue(ComponentMetadata.Component.InitOnlyProperty, out var isInitOnlyValue) &&
-            bool.TryParse(isInitOnlyValue, out var isInitOnly) &&
-            isInitOnly)
+        if (node.BoundAttribute.Metadata is PropertyMetadata { IsInitOnlyProperty: true })
         {
             // If a component property is init only then the code we generate for it won't compile.
             return;
@@ -719,7 +710,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.Write(".");
         context.CodeWriter.WriteLine();
 
-        using (context.CodeWriter.BuildLinePragma(attributeSourceSpan, context))
+        using (context.BuildLinePragma(attributeSourceSpan))
         {
             context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
             context.CodeWriter.WriteIdentifierEscapeIfNeeded(node.PropertyName);
@@ -940,15 +931,15 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // ((__builder73) => { ... })
         // OR
         // ((person) => (__builder73) => { })
-        _scopeStack.OpenComponentScope(
-            context,
-            node.AttributeName,
-            node.IsParameterized ? node.ParameterName : null);
-        for (var i = 0; i < node.Children.Count; i++)
+        var parameterName = node.IsParameterized ? node.ParameterName : null;
+
+        using (ScopeStack.OpenComponentScope(context,  parameterName))
         {
-            context.RenderNode(node.Children[i]);
+            foreach (var child in node.Children)
+            {
+                context.RenderNode(child);
+            }
         }
-        _scopeStack.CloseScope(context);
     }
 
     public override void WriteComponentTypeArgument(CodeRenderingContext context, ComponentTypeArgumentIntermediateNode node)
@@ -991,9 +982,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // Looks like:
         //
         // (__builder73) => { ... }
-        _scopeStack.OpenTemplateScope(context);
-        context.RenderChildren(node);
-        _scopeStack.CloseScope(context);
+        using (ScopeStack.OpenTemplateScope(context))
+        {
+            context.RenderChildren(node);
+        }
     }
 
     public override void WriteSetKey(CodeRenderingContext context, SetKeyIntermediateNode node)
@@ -1014,8 +1006,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         var codeWriter = context.CodeWriter;
 
-        codeWriter
-            .WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.SetKey}");
+        codeWriter.WriteStartMethodInvocation($"{BuilderVariableName}.{ComponentsApi.RenderTreeBuilder.SetKey}");
         WriteSetKeyInnards(context, node);
         codeWriter.WriteEndMethodInvocation();
     }
@@ -1047,7 +1038,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // Looks like:
         //
         // __builder.AddMultipleAttributes(2, ...);
-        context.CodeWriter.WriteStartMethodInvocation($"{_scopeStack.BuilderVarName}.{ComponentsApi.RenderTreeBuilder.AddMultipleAttributes}");
+        context.CodeWriter.WriteStartMethodInvocation($"{BuilderVariableName}.{ComponentsApi.RenderTreeBuilder.AddMultipleAttributes}");
         context.CodeWriter.Write("-1");
         context.CodeWriter.WriteParameterSeparator();
 
@@ -1158,19 +1149,15 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
     {
         // Looks like:
         // __o = (global::Microsoft.AspNetCore.Components.IComponentRenderMode)(expression);
+        context.CodeWriter.Write($"{DesignTimeVariable} = (global::{ComponentsApi.IComponentRenderMode.FullTypeName})(");
+
         WriteCSharpCode(context, new CSharpCodeIntermediateNode
         {
-            Children =
-            {
-                IntermediateNodeFactory.CSharpToken($"{DesignTimeVariable} = (global::{ComponentsApi.IComponentRenderMode.FullTypeName})("),
-                new CSharpCodeIntermediateNode
-                {
-                    Source = node.Source,
-                    Children = { node.Children[0] }
-                },
-                IntermediateNodeFactory.CSharpToken(");")
-            }
+            Source = node.Source,
+            Children = { node.Children[0] }
         });
+
+        context.CodeWriter.WriteLine(");");
     }
 
     private static void WriteCSharpTokens(CodeRenderingContext context, ImmutableArray<CSharpIntermediateToken> tokens)
@@ -1194,7 +1181,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        using (context.CodeWriter.BuildLinePragma(token.Source, context))
+        using (context.BuildLinePragma(token.Source))
         {
             context.CodeWriter.WritePadding(0, token.Source.Value, context);
             context.AddSourceMappingFor(token);

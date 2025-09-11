@@ -12,9 +12,7 @@ using Xunit.Abstractions;
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
 /// <summary>
-/// Web project create, build, run, publish scenario tests.
-/// <see cref="BaseScenarioTests"/> for related basic scenarios.
-/// They are encapsulated in a separate testclass so that they can be run in parallel.
+/// Web project create, build, run, publish scenario tests not covered by the scenario-tests repo.
 /// </summary>
 public class WebScenarioTests : SdkTests
 {
@@ -28,21 +26,12 @@ public class WebScenarioTests : SdkTests
 
     private static IEnumerable<TestScenario> GetScenarios()
     {
-        foreach (DotNetLanguage language in new[] { DotNetLanguage.CSharp, DotNetLanguage.FSharp })
-        {
-            yield return new(nameof(WebScenarioTests), language, DotNetTemplate.Web,    DotNetActions.Build | DotNetActions.Run | (DotNetHelper.ShouldPublishComplex() ? DotNetActions.PublishComplex : DotNetActions.None));
-            yield return new(nameof(WebScenarioTests), language, DotNetTemplate.Mvc,    DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish) { NoHttps = true };
-            yield return new(nameof(WebScenarioTests), language, DotNetTemplate.WebApi, DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
-        }
-
-        yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.Razor,         DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
-        yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.WebApp,        DotNetActions.PublishSelfContained, VerifyRuntimePacksForSelfContained);
-        yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.Worker);
+        yield return new(nameof(WebScenarioTests), DotNetTemplate.WebApp, DotNetActions.PublishSelfContained, VerifyRuntimePacksForSelfContained);
 
         // Blazor test is only run on official builds because it requires packages produced by the Microsoft build which are not available.
         if (Config.IsOfficialBuild)
         {
-            yield return new(nameof(WebScenarioTests), DotNetLanguage.CSharp, DotNetTemplate.BlazorWasm,    DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
+            yield return new(nameof(WebScenarioTests), DotNetTemplate.BlazorWasm, DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
         }
     }
 

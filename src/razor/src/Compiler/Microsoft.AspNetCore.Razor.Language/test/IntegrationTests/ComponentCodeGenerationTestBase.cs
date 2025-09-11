@@ -11077,6 +11077,35 @@ namespace New.Test
         CompileToAssembly(generated);
     }
 
+    [IntegrationTestFact]
+    public void NamespaceWithSurrogatePair()
+    {
+        DefaultRootNamespace = "test𝔸namespace";
+
+        AdditionalSyntaxTrees.Add(Parse("""
+            
+            using Microsoft.AspNetCore.Components;
+            namespace test_namespace
+            {
+                public class Component1 : ComponentBase { }
+                namespace Shared
+                {
+                    public class Component2 : ComponentBase { }
+                }
+            }
+            """));
+
+        var generated = CompileToCSharp("""
+            <h1>Generated</h1>
+            <Component1 />
+            <Shared.Component2 />
+            """);
+
+        AssertDocumentNodeMatchesBaseline(generated.CodeDocument);
+        AssertCSharpDocumentMatchesBaseline(generated.CodeDocument);
+        CompileToAssembly(generated);
+    }
+
     #endregion
 
     #region "CSS scoping"

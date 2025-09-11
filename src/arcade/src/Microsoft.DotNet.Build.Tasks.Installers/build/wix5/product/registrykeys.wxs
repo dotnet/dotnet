@@ -1,0 +1,22 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <?include "..\variables.wxi" ?>
+
+  <Fragment>
+    <ComponentGroup Id="AuthoredRegistryKeys">
+      <Component Id="SetupRegistry_x86" Directory="TARGETDIR" Bitness="always32" Guid="f1dc3d97-93c5-4f3b-baa3-24e6a84a2e15" >
+        <RegistryKey Root="HKLM" Key="SOFTWARE\dotnet\Setup\InstalledVersions\$(var.Platform)\$(var.RegKeyProductName)">
+
+          <?ifdef RegKeyNugetVersionExistence?>
+            <RegistryValue Action="write" Name="$(var.NugetVersion)" Type="integer" Value="1" KeyPath="yes"/>
+          <?endif?>
+
+          <?ifdef RegKeyNugetVersionValue?>
+            <RegistryValue Action="write" Name="Version" Type="string" Value="$(var.NugetVersion)" KeyPath="yes"/>
+          <?endif?>
+
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

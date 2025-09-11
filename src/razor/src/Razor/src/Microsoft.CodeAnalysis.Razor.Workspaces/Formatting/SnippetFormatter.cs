@@ -1,9 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.Formatting;
@@ -24,7 +24,9 @@ internal static class SnippetFormatter
         var amountToAddToCSharpIndentation = razorAndHtmlContributionsToIndentation - formattingSpan.MinCSharpIndentLevel;
 
         var snippetSourceText = SourceText.From(snippetText);
-        List<TextChange> indentationChanges = new();
+
+        using var indentationChanges = new PooledArrayBuilder<TextChange>();
+
         // Adjust each line, skipping the first since it must start at the snippet keyword.
         foreach (var line in snippetSourceText.Lines.Skip(1))
         {
@@ -49,7 +51,7 @@ internal static class SnippetFormatter
             indentationChanges.Add(textChange);
         }
 
-        var newSnippetSourceText = snippetSourceText.WithChanges(indentationChanges);
+        var newSnippetSourceText = snippetSourceText.WithChanges(indentationChanges.ToImmutable());
         newSnippetText = newSnippetSourceText.ToString();
         return true;
     }

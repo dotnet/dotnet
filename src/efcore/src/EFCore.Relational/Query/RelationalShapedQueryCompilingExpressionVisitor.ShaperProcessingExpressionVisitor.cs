@@ -628,11 +628,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                                 var shaperResult = CreateJsonShapers(
                                     shaper.StructuralType,
+                                    shaper.Type,
                                     shaper.IsNullable,
                                     jsonReaderDataVariable,
                                     keyValuesParameter,
                                     containerEntityExpression: null,
-                                    relationship: null);
+                                    structuralProperty: null);
 
                                 var visitedShaperResult = Visit(shaperResult);
                                 var visitedShaperResultParameter = Parameter(visitedShaperResult.Type);
@@ -674,8 +675,10 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                         childProjectionInfo.Navigation.TargetEntityType,
                                         childProjectionInfo.Navigation.IsCollection);
 
+                                    var targetEntityType = childProjectionInfo.Navigation.TargetEntityType;
                                     var shaperResult = CreateJsonShapers(
-                                        childProjectionInfo.Navigation.TargetEntityType,
+                                        targetEntityType,
+                                        targetEntityType.ClrType,
                                         nullable: true,
                                         jsonReaderDataVariable,
                                         keyValuesParameter,
@@ -758,14 +761,14 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 case CollectionResultExpression
                     {
                         QueryExpression: ProjectionBindingExpression projectionBindingExpression,
-                        Relationship: { } relationship,
+                        StructuralProperty: { } structuralProperty,
                     } collectionResult
                     when GetProjectionIndex(projectionBindingExpression) is JsonProjectionInfo jsonProjectionInfo:
                 {
-                    var relatedStructuralType = relationship switch
+                    ITypeBase relatedStructuralType = structuralProperty switch
                     {
-                        IComplexProperty complexProperty => (ITypeBase)complexProperty.ComplexType,
-                        INavigation navigation => navigation.TargetEntityType,
+                        IComplexProperty p => p.ComplexType,
+                        INavigation n => n.TargetEntityType,
 
                         _ => throw new UnreachableException()
                     };
@@ -784,11 +787,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                     var shaperResult = CreateJsonShapers(
                         relatedStructuralType,
+                        structuralProperty.ClrType,
                         nullable: true,
                         jsonReaderDataVariable,
                         keyValuesParameter,
                         containerEntityExpression: null,
-                        relationship);
+                        structuralProperty);
 
                     var visitedShaperResult = Visit(shaperResult);
 
@@ -943,7 +947,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 outerIdentifierLambdaCompiled,
                                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                     navigation,
-                                    LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(navigation),
+                                    LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(navigation),
                                     navigation.Name + "Navigation",
                                     typeof(INavigationBase)),
                                 navigation.IsShadowProperty()
@@ -1007,7 +1011,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 innerShaper,
                                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                     inverseNavigation,
-                                    LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(inverseNavigation),
+                                    LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(inverseNavigation),
                                     (inverseNavigation?.Name ?? "null") + "InverseNavigation",
                                     typeof(INavigationBase)),
                                 GenerateFixup(includingEntityClrType, relatedEntityClrType, navigation, inverseNavigation),
@@ -1081,7 +1085,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 parentIdentifierLambdaCompiled,
                                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                     navigation,
-                                    LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(navigation),
+                                    LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(navigation),
                                     navigation.Name + "Navigation",
                                     typeof(INavigationBase)),
                                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
@@ -1129,7 +1133,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                         : typeof(Action<QueryContext, IExecutionStrategy, SplitQueryResultCoordinator>)),
                                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                     inverseNavigation,
-                                    LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(inverseNavigation),
+                                    LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(inverseNavigation),
                                     (inverseNavigation?.Name ?? "null") + "InverseNavigation",
                                     typeof(INavigationBase)),
                                 GenerateFixup(includingEntityClrType, relatedEntityClrType, navigation, inverseNavigation),
@@ -1151,8 +1155,10 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                 includeExpression.Navigation.TargetEntityType,
                                 includeExpression.Navigation.IsCollection);
 
+                            var targetEntityType = includeExpression.Navigation.TargetEntityType;
                             var shaperResult = CreateJsonShapers(
-                                includeExpression.Navigation.TargetEntityType,
+                                targetEntityType,
+                                targetEntityType.ClrType,
                                 nullable: true,
                                 jsonReaderDataVariable,
                                 keyValuesParameter,
@@ -1185,12 +1191,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                             navigationExpression,
                             _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                 navigation,
-                                LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(navigation),
+                                LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(navigation),
                                 navigation.Name + "Navigation",
                                 typeof(INavigation)),
                             _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
                                 inverseNavigation,
-                                LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(inverseNavigation),
+                                LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(inverseNavigation),
                                 (inverseNavigation?.Name ?? "null") + "InverseNavigation",
                                 typeof(INavigation)),
                             GenerateFixup(includingType, relatedEntityType, navigation, inverseNavigation),
@@ -1563,11 +1569,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
         private Expression CreateJsonShapers(
             ITypeBase structuralType,
+            Type clrType,
             bool nullable,
             ParameterExpression jsonReaderDataParameter,
             Expression? keyValuesParameter,
             Expression? containerEntityExpression,
-            IPropertyBase? relationship)
+            IPropertyBase? structuralProperty)
         {
             var jsonReaderDataShaperLambdaParameter = Parameter(typeof(JsonReaderData));
             // TODO: Use ISnapshot instead #26544
@@ -1593,32 +1600,32 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             var innerFixupMap = new Dictionary<string, LambdaExpression>();
             var trackingInnerFixupMap = new Dictionary<string, LambdaExpression>();
 
-            // Go over all relationships (complex properties and navigations - if we're an (owned) entity), which represent JSON
+            // Go over all structural properties (complex properties and navigations - if we're an (owned) entity), which represent JSON
             // nested types; generate shapers and fixup to wire the materialized related instance into the parent's property.
             // Note that we need to build entity shapers and fixup separately; we don't know the order in which data comes, so
             // we need to read through everything before we can do fixup safely
-            IEnumerable<IPropertyBase> nestedRelationships = structuralType.GetComplexProperties();
+            IEnumerable<IPropertyBase> nestedStructuralProperties = structuralType.GetComplexProperties();
 
             if (structuralType is IEntityType entityType)
             {
-                nestedRelationships = nestedRelationships.Concat(
+                nestedStructuralProperties = nestedStructuralProperties.Concat(
                     entityType.GetNavigations()
                         .Where(n => n.TargetEntityType.IsMappedToJson()
                             && n.ForeignKey.IsOwnership
                             && n == n.ForeignKey.PrincipalToDependent));
             }
 
-            foreach (var nestedRelationship in nestedRelationships)
+            foreach (var nestedStructuralProperty in nestedStructuralProperties)
             {
                 Check.DebugAssert(
-                    nestedRelationship is not INavigation ownedNavigation || !ownedNavigation.IsOnDependent,
+                    nestedStructuralProperty is not INavigation ownedNavigation || !ownedNavigation.IsOnDependent,
                     "JSON navigations should always be from principal do dependent");
 
                 Check.DebugAssert(
-                    nestedRelationship is not IComplexProperty { ComplexType: var complexType } || complexType.IsMappedToJson(),
+                    nestedStructuralProperty is not IComplexProperty { ComplexType: var complexType } || complexType.IsMappedToJson(),
                     "Non-JSON complex type within JSON complex type");
 
-                var (relatedStructuralType, inverseNavigation, isRelationshipNullable) = nestedRelationship switch
+                var (relatedStructuralType, inverseNavigation, isStructuralPropertyNullable) = nestedStructuralProperty switch
                 {
                     INavigation n => ((ITypeBase)n.TargetEntityType, n.Inverse, !n.ForeignKey.IsRequiredDependent),
                     IComplexProperty cp => (cp.ComplexType, null, cp.IsNullable),
@@ -1628,27 +1635,28 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                 var innerShaper = CreateJsonShapers(
                     relatedStructuralType,
-                    nullable || isRelationshipNullable,
+                    nestedStructuralProperty.ClrType,
+                    nullable || isStructuralPropertyNullable,
                     jsonReaderDataShaperLambdaParameter,
                     keyValuesShaperLambdaParameter,
                     containerEntityExpression: null,
-                    nestedRelationship);
+                    nestedStructuralProperty);
 
                 var navigationJsonPropertyName = relatedStructuralType.GetJsonPropertyName()!;
                 innerShapersMap[navigationJsonPropertyName] = innerShaper;
 
-                if (nestedRelationship.IsCollection)
+                if (nestedStructuralProperty.IsCollection)
                 {
                     var shaperEntityParameter = Parameter(structuralType.ClrType);
-                    var ownedNavigationType = nestedRelationship.GetMemberInfo(forMaterialization: true, forSet: true).GetMemberType();
+                    var ownedNavigationType = nestedStructuralProperty.GetMemberInfo(forMaterialization: true, forSet: true).GetMemberType();
                     var shaperCollectionParameter = Parameter(ownedNavigationType);
                     var expressions = new List<Expression>();
                     var expressionsForTracking = new List<Expression>();
 
-                    if (!nestedRelationship.IsShadowProperty())
+                    if (!nestedStructuralProperty.IsShadowProperty())
                     {
                         expressions.Add(
-                            shaperEntityParameter.MakeMemberAccess(nestedRelationship.GetMemberInfo(forMaterialization: true, forSet: true))
+                            shaperEntityParameter.MakeMemberAccess(nestedStructuralProperty.GetMemberInfo(forMaterialization: true, forSet: true))
                                 .Assign(shaperCollectionParameter));
 
                         expressionsForTracking.Add(
@@ -1660,7 +1668,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                             typeof(ShaperProcessingExpressionVisitor).GetMethod(nameof(Any))!,
                                             shaperCollectionParameter))),
                                 shaperEntityParameter
-                                    .MakeMemberAccess(nestedRelationship.GetMemberInfo(forMaterialization: true, forSet: true))
+                                    .MakeMemberAccess(nestedStructuralProperty.GetMemberInfo(forMaterialization: true, forSet: true))
                                     .Assign(shaperCollectionParameter)));
                     }
 
@@ -1709,8 +1717,8 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 {
                     var fixup = GenerateReferenceFixupForJson(
                         structuralType.ClrType,
-                        nestedRelationship.ClrType,
-                        nestedRelationship,
+                        nestedStructuralProperty.ClrType,
+                        nestedStructuralProperty,
                         inverseNavigation);
 
                     // With tracking queries, the change tracker performs entity fixup, so we only need to handle fixup in the shaper for
@@ -1757,10 +1765,10 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 // (since we are guaranteed that the parent already exists) - for nested JSON materialization we need to do fixup at the end
                 // because we are streaming the data and don't know if we get the parent json object before the child
                 // (in case parent ctor takes some parameters and they are read as last thing in the JSON)
-                Check.DebugAssert(relationship is not null, "relationship shouldn't be null when including.");
+                Check.DebugAssert(structuralProperty is not null, "Structural properties shouldn't be null when including.");
 
-                var declaringClrType = relationship.DeclaringType.ClrType;
-                var relatedClrType = relationship switch
+                var declaringClrType = structuralProperty.DeclaringType.ClrType;
+                var relatedClrType = structuralProperty switch
                 {
                     INavigation n => n.TargetEntityType.ClrType,
                     IComplexProperty cp => cp.ComplexType.ClrType,
@@ -1768,17 +1776,17 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 };
 
                 var fixup = GenerateFixup(
-                    relationship.DeclaringType.ClrType,
+                    structuralProperty.DeclaringType.ClrType,
                     relatedClrType,
-                    relationship,
-                    relationship is INavigation navigation ? navigation.Inverse : null);
+                    structuralProperty,
+                    structuralProperty is INavigation navigation ? navigation.Inverse : null);
 
                 // inheritance scenario - navigation/complex property defined on derived
                 var includingEntityExpression = containerEntityExpression.Type != declaringClrType
                     ? Convert(containerEntityExpression, declaringClrType)
                     : containerEntityExpression;
 
-                if (relationship.IsCollection)
+                if (structuralProperty.IsCollection)
                 {
                     var includeJsonEntityCollectionMethodCall =
                         Call(
@@ -1788,7 +1796,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                             jsonReaderDataParameter,
                             includingEntityExpression,
                             shaperLambda,
-                            GetOrCreateCollectionObjectLambda(declaringClrType, relationship),
+                            GetOrCreateCollectionObjectLambda(declaringClrType, structuralProperty),
                             fixup,
                             // Perform fixup only for non-tracking queries - for tracking queries the change tracker does fixup.
                             // Note that for complex JSON types we also perform fixup, even for tracking queries.
@@ -1821,13 +1829,13 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                         includeJsonEntityReferenceMethodCall);
             }
 
-            if (relationship is { IsCollection: true })
+            if (structuralProperty is { IsCollection: true })
             {
-                var collectionClrType = relationship.GetMemberInfo(forMaterialization: true, forSet: true).GetMemberType();
+                var collectionClrType = structuralProperty.GetMemberInfo(forMaterialization: true, forSet: true).GetMemberType();
                 var materializeJsonEntityCollectionMethodCall =
                     Call(
                         MaterializeJsonEntityCollectionMethodInfo.MakeGenericMethod(
-                            relationship switch
+                            structuralProperty switch
                             {
                                 INavigation n => n.TargetEntityType.ClrType,
                                 IComplexProperty cp => cp.ComplexType.ClrType,
@@ -1838,25 +1846,23 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                         keyValuesParameter,
                         jsonReaderDataParameter,
                         _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
-                            relationship,
-                            LiftableConstantExpressionHelpers.BuildRelationshipAccessLambda(relationship),
-                            relationship.Name + "Relationship",
+                            structuralProperty,
+                            LiftableConstantExpressionHelpers.BuildStructuralPropertyAccessLambda(structuralProperty),
+                            structuralProperty.Name + "StructuralProperty",
                             typeof(IPropertyBase)),
                         shaperLambda);
 
                 return materializeJsonEntityCollectionMethodCall;
             }
 
-
             // Return the materializer for this JSON object, including null checks which would return null.
             MethodInfo method;
 
-            if (relationship is not null && Nullable.GetUnderlyingType(relationship.ClrType) is { } underlyingType)
+            if (Nullable.GetUnderlyingType(clrType) is { } underlyingType)
             {
-                // The association property into which we're assigning has a nullable value type, so generate
-                // a materializer that returns that nullable value type (note that the shaperLambda that
-                // we pass itself always returns a non-nullable value (the null checks are outside of it.))
-                Check.DebugAssert(nullable, "On non-nullable relationship but the relationship's ClrType is Nullable<T>");
+                // We need to project out a nullable value type. Note that the shaperLambda that we pass itself always returns a
+                // non-nullable value (the null checks are outside of it.))
+                Check.DebugAssert(nullable, "On non-nullable structural property but the property's ClrType is Nullable<T>");
                 Check.DebugAssert(underlyingType == structuralType.ClrType);
 
                 method = MaterializeJsonNullableValueStructuralTypeMethodInfo.MakeGenericMethod(structuralType.ClrType);
@@ -2538,11 +2544,12 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
 
                         var shaperResult = CreateJsonShapers(
                             complexType,
+                            complexProperty.ClrType,
                             nullable: shaper.IsNullable || complexProperty.IsNullable,
                             jsonReaderDataVariable,
                             keyValuesParameter: null, // For owned entities only
                             containerEntityExpression: instanceVariable,
-                            relationship: complexProperty);
+                            structuralProperty: complexProperty);
 
                         var visitedShaperResult = Visit(shaperResult);
                         expressions.Add(visitedShaperResult);
@@ -2780,19 +2787,19 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
         private LambdaExpression GenerateFixup(
             Type structuralClrType,
             Type relatedStructuralClrType,
-            IPropertyBase relationship,
+            IPropertyBase structuralProperty,
             INavigationBase? inverseNavigation)
         {
             var entityParameter = Parameter(structuralClrType);
             var relatedEntityParameter = Parameter(relatedStructuralClrType);
             var expressions = new List<Expression>();
 
-            if (!relationship.IsShadowProperty())
+            if (!structuralProperty.IsShadowProperty())
             {
                 expressions.Add(
-                    relationship.IsCollection
-                        ? AddToCollectionRelationship(entityParameter, relatedEntityParameter, relationship)
-                        : AssignStructuralProperty(entityParameter, relatedEntityParameter, relationship));
+                    structuralProperty.IsCollection
+                        ? AddToCollectionStructuralProperty(entityParameter, relatedEntityParameter, structuralProperty)
+                        : AssignStructuralProperty(entityParameter, relatedEntityParameter, structuralProperty));
             }
 
             if (inverseNavigation != null
@@ -2800,7 +2807,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             {
                 expressions.Add(
                     inverseNavigation.IsCollection
-                        ? AddToCollectionRelationship(relatedEntityParameter, entityParameter, inverseNavigation)
+                        ? AddToCollectionStructuralProperty(relatedEntityParameter, entityParameter, inverseNavigation)
                         : AssignStructuralProperty(relatedEntityParameter, entityParameter, inverseNavigation));
             }
 
@@ -2810,20 +2817,20 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
         private static LambdaExpression GenerateReferenceFixupForJson(
             Type clrType,
             Type relatedClrType,
-            IPropertyBase relationship,
+            IPropertyBase structuralProperty,
             INavigationBase? inverseNavigation)
         {
             var entityParameter = Parameter(clrType);
             var relatedEntityParameter = Parameter(relatedClrType);
             var expressions = new List<Expression>();
 
-            if (!relationship.IsShadowProperty())
+            if (!structuralProperty.IsShadowProperty())
             {
                 expressions.Add(
                     AssignStructuralProperty(
                         entityParameter,
                         relatedEntityParameter,
-                        relationship));
+                        structuralProperty));
             }
 
             if (inverseNavigation != null
@@ -2873,7 +2880,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
             return structuralType.MakeMemberAccess(setter).Assign(assignee);
         }
 
-        private Expression GetOrCreateCollectionObjectLambda(Type entityType, IPropertyBase relationship)
+        private Expression GetOrCreateCollectionObjectLambda(Type entityType, IPropertyBase structuralProperty)
         {
             var prm = Parameter(entityType);
 
@@ -2882,9 +2889,9 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                     typeof(void),
                     Call(
                         _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
-                            relationship.GetCollectionAccessor(),
-                            LiftableConstantExpressionHelpers.BuildClrCollectionAccessorLambda(relationship),
-                            relationship.Name + "RelationshipCollectionAccessor",
+                            structuralProperty.GetCollectionAccessor(),
+                            LiftableConstantExpressionHelpers.BuildClrCollectionAccessorLambda(structuralProperty),
+                            structuralProperty.Name + "StructuralPropertyCollectionAccessor",
                             typeof(IClrCollectionAccessor)),
                         CollectionAccessorGetOrCreateMethodInfo,
                         prm,
@@ -2892,15 +2899,15 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                 prm);
         }
 
-        private Expression AddToCollectionRelationship(
+        private Expression AddToCollectionStructuralProperty(
             ParameterExpression entity,
             ParameterExpression relatedEntity,
-            IPropertyBase relationship)
+            IPropertyBase structuralProperty)
             => Call(
                 _parentVisitor.Dependencies.LiftableConstantFactory.CreateLiftableConstant(
-                    relationship.GetCollectionAccessor(),
-                    LiftableConstantExpressionHelpers.BuildClrCollectionAccessorLambda(relationship),
-                    relationship.Name + "RelationshipCollectionAccessor",
+                    structuralProperty.GetCollectionAccessor(),
+                    LiftableConstantExpressionHelpers.BuildClrCollectionAccessorLambda(structuralProperty),
+                    structuralProperty.Name + "StructuralPropertyCollectionAccessor",
                     typeof(IClrCollectionAccessor)),
                 CollectionAccessorAddMethodInfo,
                 entity,
@@ -3481,7 +3488,7 @@ public partial class RelationalShapedQueryCompilingExpressionVisitor
                                     nameof(QueryTrackingBehavior.NoTrackingWithIdentityResolution)));
 
                         case JsonProjectionInfo jsonCollectionProjectionInfo
-                            when collectionResultExpression.Relationship is INavigation navigation:
+                            when collectionResultExpression.StructuralProperty is INavigation navigation:
                         {
                             var jsonEntityType = navigation.TargetEntityType;
 

@@ -29,9 +29,9 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
 
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
-            if (node.TagHelper.IsRefTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.Ref)
             {
                 reference.Replace(RewriteUsage(@class, reference.Parent, node));
             }
@@ -53,7 +53,7 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
         var componentTagHelper = (parent as ComponentIntermediateNode)?.Component;
         if (componentTagHelper != null)
         {
-            return new ReferenceCaptureIntermediateNode(identifierToken, componentTagHelper.GetTypeName());
+            return new ReferenceCaptureIntermediateNode(identifierToken, componentTagHelper.TypeName);
         }
         else
         {

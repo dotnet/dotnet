@@ -395,7 +395,16 @@ if [[ "$sourceOnly" == "true" ]]; then
     }
 
     GIT_DIR="$scriptroot/.git"
-    if [ -f "$GIT_DIR/index" ]; then # We check for index because if outside of git, we create config and HEAD manually
+    # Check if exist .git file
+    if [ -f "$GIT_DIR" ]; then
+      if ! grep -iq '^gitdir: ' "$GIT_DIR"; then
+        echo "ERROR: $GIT_DIR exist, but does not contain a valid 'gitdir:' pointer."
+        exit 1
+      else
+        GIT_DIR=$(grep '^gitdir: ' "$GIT_DIR" | awk -F'gitdir: ' '{ print $2 }')
+      fi
+    fi
+    if [ -f "$GIT_DIR/config" ] && [ -f "$GIT_DIR/HEAD" ]; then # We check for config/HEAD because if outside of git, we create config and HEAD manually
       if [ -n "$sourceRepository" ] || [ -n "$sourceVersion" ] || [ -n "$releaseManifest" ]; then
         echo "ERROR: Source Link arguments cannot be used in a git repository"
         exit 1
@@ -457,8 +466,8 @@ if [[ "$sourceOnly" == "true" ]]; then
     fi
   fi
 
-  if [ ! -d "$scriptroot/.git" ]; then
-    echo "ERROR: $scriptroot is not a git repository."
+  if [ ! -e "$scriptroot/.git" ]; then
+    echo "ERROR: $scriptroot is not a git repository/worktree."
     exit 1
   fi
 

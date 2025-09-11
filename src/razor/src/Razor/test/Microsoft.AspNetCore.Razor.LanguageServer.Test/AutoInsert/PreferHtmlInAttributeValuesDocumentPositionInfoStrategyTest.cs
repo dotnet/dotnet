@@ -1,7 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -28,7 +27,7 @@ public class PreferHtmlInAttributeValuesDocumentPositionInfoStrategyTest(ITestOu
         @using Microsoft.AspNetCore.Components.Forms
         <InputText ValueChanged="$$"></InputText>
         """,
-        RazorLanguageKind.Razor)]
+        RazorLanguageKind.CSharp)]
     [InlineData(
         """
         @page "/"

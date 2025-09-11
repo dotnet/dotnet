@@ -3,7 +3,6 @@
 
 using System.Composition;
 using System.Runtime.CompilerServices;
-using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -12,11 +11,10 @@ namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 [Shared]
 [Export(typeof(RemoteSnapshotManager))]
 [method: ImportingConstructor]
-internal sealed class RemoteSnapshotManager(LanguageServerFeatureOptions languageServerFeatureOptions, IFilePathService filePathService, ITelemetryReporter telemetryReporter)
+internal sealed class RemoteSnapshotManager(IFilePathService filePathService, ITelemetryReporter telemetryReporter)
 {
     private static readonly ConditionalWeakTable<Solution, RemoteSolutionSnapshot> s_solutionToSnapshotMap = new();
 
-    public RazorCompilerOptions CompilerOptions { get; } = languageServerFeatureOptions.ToCompilerOptions();
     public IFilePathService FilePathService { get; } = filePathService;
     public ITelemetryReporter TelemetryReporter { get; } = telemetryReporter;
 

@@ -322,4 +322,362 @@ public class ReadOnlyListExtensionsTest
         var actual = enumerable.SelectAsArray(static (x, index) => x + index);
         Assert.Equal<int>(expected, actual);
     }
+
+    [Fact]
+    public void AsEnumerable_Basic()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable());
+
+        Assert.Equal([1, 2, 3, 4, 5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_Basic_EmptyList()
+    {
+        IReadOnlyList<int> list = [];
+
+        var result = Enumerate(list.AsEnumerable());
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStart()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 2));
+
+        Assert.Equal([3, 4, 5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStart_StartAtEnd()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 5));
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStart_StartAtZero()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 0));
+
+        Assert.Equal([1, 2, 3, 4, 5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStartIndex_FromStart()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(^3)); // Last 3 elements
+
+        Assert.Equal([3, 4, 5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStartIndex_FromEnd()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(^1)); // Last element
+
+        Assert.Equal([5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithRange()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(1..4)); // Elements at indices 1, 2, 3
+
+        Assert.Equal([2, 3, 4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithRange_FromEnd()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(^3..^1)); // Last 3 elements excluding the very last
+
+        Assert.Equal([3, 4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithRange_EntireRange()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(..)); // Entire range
+
+        Assert.Equal([1, 2, 3, 4, 5], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStartAndCount()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 1, count: 3));
+
+        Assert.Equal([2, 3, 4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStartAndCount_ZeroCount()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 2, count: 0));
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void AsEnumerable_WithStartAndCount_SingleElement()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 3, count: 1));
+
+        Assert.Equal([4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_Reversed()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable().Reversed());
+
+        Assert.Equal([5, 4, 3, 2, 1], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_Reversed_WithRange()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(list.AsEnumerable(start: 1, count: 3).Reversed());
+
+        Assert.Equal([4, 3, 2], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_Reversed_EmptyList()
+    {
+        IReadOnlyList<int> list = [];
+
+        var result = Enumerate(list.AsEnumerable().Reversed());
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void AsEnumerable_EnumeratorReset()
+    {
+        IReadOnlyList<int> list = [1, 2, 3];
+        var enumerable = list.AsEnumerable();
+        var enumerator = enumerable.GetEnumerator();
+
+        // First enumeration
+        var firstPass = new List<int>();
+        while (enumerator.MoveNext())
+        {
+            firstPass.Add(enumerator.Current);
+        }
+
+        Assert.Equal([1, 2, 3], firstPass);
+
+        // Reset and enumerate again
+        enumerator.Reset();
+
+        var secondPass = new List<int>();
+        while (enumerator.MoveNext())
+        {
+            secondPass.Add(enumerator.Current);
+        }
+
+        Assert.Equal([1, 2, 3], secondPass);
+    }
+
+    [Fact]
+    public void AsEnumerable_ReverseEnumeratorReset()
+    {
+        IReadOnlyList<int> list = [1, 2, 3];
+        var enumerable = list.AsEnumerable().Reversed();
+        var enumerator = enumerable.GetEnumerator();
+
+        // First enumeration
+        var firstPass = new List<int>();
+        while (enumerator.MoveNext())
+        {
+            firstPass.Add(enumerator.Current);
+        }
+
+        Assert.Equal([3, 2, 1], firstPass);
+
+        // Reset and enumerate again
+        enumerator.Reset();
+
+        var secondPass = new List<int>();
+        while (enumerator.MoveNext())
+        {
+            secondPass.Add(enumerator.Current);
+        }
+
+        Assert.Equal([3, 2, 1], secondPass);
+    }
+
+    [Fact]
+    public void AsEnumerable_ImmutableArray()
+    {
+        ImmutableArray<int> array = [1, 2, 3, 4, 5];
+        IReadOnlyList<int> list = array;
+
+        var result = Enumerate(list.AsEnumerable(start: 1, count: 3));
+
+        Assert.Equal([2, 3, 4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_CustomReadOnlyList()
+    {
+        CustomReadOnlyList custom = [1, 2, 3, 4, 5];
+
+        var result = Enumerate(custom.AsEnumerable(start: 1, count: 3));
+
+        Assert.Equal([2, 3, 4], result);
+    }
+
+    [Fact]
+    public void AsEnumerable_NullList_ThrowsArgumentNullException()
+    {
+        IReadOnlyList<int> list = null!;
+
+        Assert.Throws<ArgumentNullException>(() => list.AsEnumerable());
+        Assert.Throws<ArgumentNullException>(() => list.AsEnumerable(start: 0));
+        Assert.Throws<ArgumentNullException>(() => list.AsEnumerable(^1));
+        Assert.Throws<ArgumentNullException>(() => list.AsEnumerable(0..3));
+        Assert.Throws<ArgumentNullException>(() => list.AsEnumerable(start: 0, count: 1));
+    }
+
+    [Fact]
+    public void AsEnumerable_NegativeStart_ThrowsArgumentOutOfRangeException()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: -5, count: 2));
+    }
+
+    [Fact]
+    public void AsEnumerable_NegativeCount_ThrowsArgumentOutOfRangeException()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 0, count: -1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 2, count: -3));
+    }
+
+    [Fact]
+    public void AsEnumerable_StartOutOfRange_ThrowsArgumentOutOfRangeException()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 6));
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 10, count: 1));
+    }
+
+    [Fact]
+    public void AsEnumerable_StartPlusCountExceedsLength_ThrowsArgumentOutOfRangeException()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 3, count: 3)); // 3 + 3 = 6 > 5
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 0, count: 6)); // 0 + 6 = 6 > 5
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 5, count: 1)); // 5 + 1 = 6 > 5
+    }
+
+    [Fact]
+    public void AsEnumerable_ValidRangeAtBoundaries_Succeeds()
+    {
+        IReadOnlyList<int> list = [1, 2, 3, 4, 5];
+
+        // Valid boundary cases that should not throw
+        var result1 = list.AsEnumerable(start: 0, count: 0); // Empty range at start
+        Assert.Empty(Enumerate(result1));
+
+        var result2 = list.AsEnumerable(start: 5, count: 0); // Empty range at end
+        Assert.Empty(Enumerate(result2));
+
+        var result3 = list.AsEnumerable(start: 0, count: 5); // Full range
+        Assert.Equal([1, 2, 3, 4, 5], Enumerate(result3));
+
+        var result4 = list.AsEnumerable(start: 4, count: 1); // Last element
+        Assert.Equal([5], Enumerate(result4));
+    }
+
+    [Fact]
+    public void AsEnumerable_EmptyList_ValidArguments_Succeeds()
+    {
+        IReadOnlyList<int> list = [];
+
+        // These should not throw on empty list
+        var result1 = list.AsEnumerable();
+        Assert.Empty(Enumerate(result1));
+
+        var result2 = list.AsEnumerable(start: 0);
+        Assert.Empty(Enumerate(result2));
+
+        var result3 = list.AsEnumerable(start: 0, count: 0);
+        Assert.Empty(Enumerate(result3));
+
+        var result4 = list.AsEnumerable(..);
+        Assert.Empty(Enumerate(result4));
+    }
+
+    [Fact]
+    public void AsEnumerable_EmptyList_InvalidArguments_ThrowsArgumentOutOfRangeException()
+    {
+        IReadOnlyList<int> list = [];
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 0, count: 1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => list.AsEnumerable(start: 1, count: 0));
+    }
+
+    private static T[] Enumerate<T>(ReadOnlyListExtensions.Enumerable<T> enumerable)
+    {
+        var result = new List<T>();
+
+        foreach (var item in enumerable)
+        {
+            result.Add(item);
+        }
+
+        return [.. result];
+    }
+
+    private static T[] Enumerate<T>(ReadOnlyListExtensions.Enumerable<T>.ReversedEnumerable enumerable)
+    {
+        var result = new List<T>();
+
+        foreach (var item in enumerable)
+        {
+            result.Add(item);
+        }
+
+        return [.. result];
+    }
 }

@@ -162,12 +162,11 @@ if ($AddInternalFlow) {
 
 Write-Host "Making default channels for SDK repos"
 MakeDefaultChannel https://github.com/dotnet/sdk $SdkBranch $SdkChannel
-MakeDefaultChannel https://github.com/dotnet/roslyn-analyzers $SdkBranch $SdkChannel
 MakeDefaultChannel https://github.com/dotnet/templating $SdkBranch $SdkChannel
 
 if ($AddInternalFlow) {
     # Because of where internal fixes tend to be, we eliminate some leaves in the sdk graph
-    # and flow them through the normal public channels: templating, roslyn-analyzers
+    # and flow them through the normal public channels: templating
     Write-Host "Making default channels for SDK repos"
     MakeDefaultChannel https://dev.azure.com/dnceng/internal/_git/dotnet-sdk $InternalSdkBranch $InternalSdkChannel
     MakeDefaultChannel https://dev.azure.com/dnceng/internal/_git/dotnet-templating $InternalSdkBranch $InternalSdkChannel
@@ -190,7 +189,6 @@ if ($AddInternalFlow) {
 
 Write-Host "Adding arcade flow to repos not building in the VMR"
 AddArcadeFlow https://dev.azure.com/dnceng/internal/_git/dotnet-wpf-int $RuntimeBranch
-AddArcadeFlow https://github.com/dotnet/icu "dotnet/$RuntimeBranch"
 
 Write-Host "Adding non-VMR runtime flow"
 AddPackageOnlyFlow https://dev.azure.com/dnceng/internal/_git/dotnet-wpf-int $RuntimeChannel https://github.com/dotnet/wpf $RuntimeBranch EveryBuild
@@ -223,14 +221,12 @@ if ($AddInternalFlow) {
 }
 
 Write-Host "Add VMR sdk repo forward flow"
-AddForwardFlow https://github.com/dotnet/roslyn-analyzers $SdkChannel $publicVMR roslyn-analyzers $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/templating $SdkChannel $publicVMR templating $SdkBranch EveryBuild
 # SDK is batched so that it batches alongside NuGet for a cohesive set of changes.
 AddBatchedForwardFlow https://github.com/dotnet/sdk $SdkChannel $publicVMR sdk $SdkBranch EveryBuild
 
 if ($AddInternalFlow) {
     Write-Host "Adding internal VMR sdk repo forward flow"
-    AddForwardFlow https://dev.azure.com/dnceng/internal/_git/dotnet-roslyn-analyzers $InternalSdkChannel $internalVMR roslyn-analyzers $InternalSdkBranch EveryBuild
     AddForwardFlow https://dev.azure.com/dnceng/internal/_git/dotnet-sdk $InternalSdkChannel $internalVMR sdk $InternalSdkBranch EveryBuild
     AddForwardFlow https://dev.azure.com/dnceng/internal/_git/dotnet-templating $InternalSdkChannel $internalVMR templating $InternalSdkBranch EveryBuild
     
@@ -239,10 +235,7 @@ if ($AddInternalFlow) {
 }
 
 Write-Host "Adding tooling repo VMR forward flow"
-# NuGet is special in that it flows into the SDK and then batched source into the VMR
-# Change to traditional flow when https://github.com/dotnet/arcade-services/issues/4665 is resolved
-AddPackageOnlyFlow https://github.com/nuget/nuget.client $VSChannel https://github.com/dotnet/sdk $SdkBranch EveryBuild
-AddBatchedForwardFlow https://github.com/nuget/nuget.client $VSChannel $publicVMR nuget-client $SdkBranch EveryBuild
+AddForwardFlow https://github.com/nuget/nuget.client $VSChannel $publicVMR nuget-client $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/roslyn $VSChannel $publicVMR roslyn $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/fsharp $VSChannel $publicVMR fsharp $SdkBranch EveryBuild
 AddForwardFlow https://github.com/dotnet/msbuild $VSChannel $publicVMR msbuild $SdkBranch EveryBuild
@@ -255,6 +248,9 @@ if ($AddInternalFlow) {
     throw "NYI"
 }
 
+Write-Host "Adding VMR->repo package flow"
+AddPackageOnlyFlow https://github.com/dotnet/dotnet $SdkBranch https://github.com/dotnet/icu "dotnet/$RuntimeBranch" None
+
 Write-Host "Adding VMR->repo backflow."
 # Only repos that branch for a release get backflow
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/runtime runtime $RuntimeBranch EveryBuild
@@ -264,7 +260,6 @@ AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/emsdk emsdk $R
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/windowsdesktop windowsdesktop $RuntimeBranch EveryBuild
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/winforms winforms $RuntimeBranch EveryBuild
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/wpf wpf $RuntimeBranch EveryBuild
-AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/roslyn-analyzers templating $SdkBranch EveryBuild
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/sdk sdk $SdkBranch EveryBuild
 AddBackwardsFlow $publicVMR $SdkChannel https://github.com/dotnet/templating templating $SdkBranch EveryBuild
 

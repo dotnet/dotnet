@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using MessagePack;
 using MessagePack.Resolvers;
-using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Resolvers;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization;
 
@@ -54,7 +52,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var descriptor = CreateTagHelperDescriptor(
-            kind: TagHelperConventions.DefaultKind,
+            kind: TagHelperKind.ITagHelper,
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
@@ -62,7 +60,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -79,7 +77,6 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
-                builder.Metadata("foo", "bar");
             });
 
         var expectedResult = new TagHelperDeltaResult(
@@ -101,7 +98,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var descriptor = CreateTagHelperDescriptor(
-            kind: ViewComponentTagHelperConventions.Kind,
+            kind: TagHelperKind.ViewComponent,
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
@@ -109,7 +106,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -126,7 +123,6 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             configureAction: builder =>
             {
                 builder.AllowChildTag("allowed-child-one");
-                builder.Metadata("foo", "bar");
             });
 
         var expectedResult = new TagHelperDeltaResult(
@@ -148,7 +144,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var descriptor = CreateTagHelperDescriptor(
-            kind: TagHelperConventions.DefaultKind,
+            kind: TagHelperKind.ITagHelper,
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
@@ -156,7 +152,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("string"),
             ],
             ruleBuilders:
@@ -170,7 +166,6 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
                     .RequireParentTag("parent-name"),
             ],
             configureAction: builder => builder.AllowChildTag("allowed-child-one")
-                .Metadata("foo", "bar")
                 .AddDiagnostic(RazorDiagnostic.Create(
                     new RazorDiagnosticDescriptor("id", "Test Message", RazorDiagnosticSeverity.Error), new SourceSpan(null, 10, 20, 30, 40))));
 
@@ -193,7 +188,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     {
         // Arrange
         var descriptor = CreateTagHelperDescriptor(
-            kind: TagHelperConventions.DefaultKind,
+            kind: TagHelperKind.ITagHelper,
             tagName: "tag-name",
             typeName: "type name",
             assemblyName: "assembly name",
@@ -201,13 +196,13 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             [
                 builder => builder
                     .Name("test-attribute")
-                    .Metadata(PropertyName("TestAttribute"))
+                    .PropertyName("TestAttribute")
                     .TypeName("SomeEnum")
                     .AsEnum()
                     .Documentation("Summary"),
                 builder => builder
                     .Name("test-attribute2")
-                    .Metadata(PropertyName("TestAttribute2"))
+                    .PropertyName("TestAttribute2")
                     .TypeName("SomeDictionary")
                     .AsDictionaryAttribute("dict-prefix-", "string"),
             ],
@@ -219,7 +214,6 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
             ],
             configureAction: builder => builder
                 .AllowChildTag("allowed-child-one")
-                .Metadata("foo", "bar")
                 .TagOutputHint("Hint"));
 
         var expectedResult = new TagHelperDeltaResult(
@@ -237,7 +231,7 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
     }
 
     private static TagHelperDescriptor CreateTagHelperDescriptor(
-        string kind,
+        TagHelperKind kind,
         string tagName,
         string typeName,
         string assemblyName,
@@ -245,8 +239,8 @@ public class TagHelperDeltaResultSerializationTest(ITestOutputHelper testOutput)
         IEnumerable<Action<TagMatchingRuleDescriptorBuilder>>? ruleBuilders = null,
         Action<TagHelperDescriptorBuilder>? configureAction = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(kind, typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(kind, typeName, assemblyName);
+        builder.TypeName = typeName;
 
         if (attributes != null)
         {

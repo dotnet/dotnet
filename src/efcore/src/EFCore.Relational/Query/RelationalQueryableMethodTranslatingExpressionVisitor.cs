@@ -578,7 +578,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
             }
 
             // Otherwise, attempt to translate as Any since that passes through Where predicate translation. This will e.g. take care of
-            // entity , which e.g. does entity equality/containment for entities with composite keys.
+            // entity, which e.g. does entity equality/containment for entities with composite keys.
             var anyLambdaParameter = Expression.Parameter(item.Type, "p");
             var anyLambda = Expression.Lambda(
                 Infrastructure.ExpressionExtensions.CreateEqualsExpression(anyLambdaParameter, item),
@@ -1814,7 +1814,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor : Que
 
                 if (TryGetJsonQueryExpression(shaper, out var jsonQueryExpression))
                 {
-                    var newJsonQueryExpression = jsonQueryExpression.BindRelationship(navigation);
+                    var newJsonQueryExpression = jsonQueryExpression.BindStructuralProperty(navigation);
 
                     Debug.Assert(!navigation.IsOnDependent, "JSON navigations should always be from principal do dependent");
 

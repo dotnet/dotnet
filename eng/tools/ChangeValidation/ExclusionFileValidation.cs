@@ -105,7 +105,7 @@ internal class ExclusionFileValidation : IValidationStep
 
     private async Task<List<string>> GetExclusionPatterns()
     {
-        await _dependencyTracker.RefreshMetadata();
+        await _dependencyTracker.RefreshMetadataAsync();
 
         var sourceMappings = _dependencyTracker.Mappings;
 

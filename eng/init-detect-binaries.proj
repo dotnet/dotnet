@@ -12,18 +12,25 @@
 
   <PropertyGroup>
     <BinariesMode Condition="'$(BinariesMode)' == ''">Validate</BinariesMode>
-    <AllowedBinariesFile Condition="'$(AllowedBinariesFile)' == ''">$(RepositoryEngineeringDir)allowed-vmr-binaries.txt</AllowedBinariesFile>
+    <AllowedVmrBinariesFile>$(RepositoryEngineeringDir)allowed-vmr-binaries.txt</AllowedVmrBinariesFile>
+    <AllowedSbBinariesFile>$(RepositoryEngineeringDir)allowed-sb-binaries.txt</AllowedSbBinariesFile>
+    <AllowedBinariesFile Condition="'$(AllowedBinariesFile)' == ''">$(AllowedVmrBinariesFile)</AllowedBinariesFile>
   </PropertyGroup>
 
   <Target Name="DetectBinaries"
           DependsOnTargets="ResolveProjectReferences"
-          BeforeTargets="Build">
+          BeforeTargets="Build"
+          Condition="'$(SkipBinaryScan)' != 'true'"
+          Inputs="$(AllowedBinariesFile);$(AllowedVmrBinariesFile);$(AllowedSbBinariesFile);$(BinaryToolKitAssembly)"
+          Outputs="$(BaseIntermediateOutputPath)DetectBinaries$(BinariesMode).complete">
 
     <BinaryToolTask
       Mode="$(BinariesMode)"
       TargetDirectory="$(RepoRoot)"
       AllowedBinariesFile="$(AllowedBinariesFile)"
       OutputReportDirectory="$(BinariesReportDir)" />
+
+    <WriteLinesToFile File="$(BaseIntermediateOutputPath)DetectBinaries$(BinariesMode).complete" Overwrite="true" />
   </Target>
 
 </Project>

@@ -53,6 +53,7 @@ stages:
   displayName: VMR Validation
   dependsOn:
   - VMR_Vertical_Build
+  - VMR_SourceOnly_Build
   variables:
   - template: ../variables/vmr-build.yml
     parameters:
@@ -85,7 +86,7 @@ stages:
         reuseBuildArtifactsFrom:
         - Windows_x64
         - AzureLinux_x64_Cross_arm64
-  - ${{ if eq(variables.signEnabled, 'true') }}:
+  - ${{ if eq(variables.signType, 'real') }}:
     - job: ValidateSigning_Windows
       displayName: Validate Signing - Windows
       pool: ${{ parameters.pool_Windows }}

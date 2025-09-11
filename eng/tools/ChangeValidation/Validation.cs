@@ -93,19 +93,16 @@ internal static class Validation
             throw new ArgumentException("Cannot determine PR target branch.");
         }
 
-        // Create a git reference to the PR head commit
-        await pm.ExecuteGit(repoPath, ["fetch", "origin", $"refs/pull/{prNumber}/head:pr-head"]);
+        // Create a git reference to the original branching-off point of the PR branch from the target branch
+        await pm.ExecuteGit(repoPath, "fetch", "origin", $"refs/pull/{prNumber}/merge:pr-merge");
 
-        string mergeBaseCommit = (await pm.ExecuteGit(repoPath, ["merge-base", "pr-head", targetBranch])).StandardOutput.Trim();
-
-        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", mergeBaseCommit, "pr-head"])).StandardOutput.Trim();
+        var diffOutput = (await pm.ExecuteGit(repoPath, ["diff", "--name-only", targetBranch, "pr-merge"])).StandardOutput.Trim();
 
         var changedFiles = diffOutput
             .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             .Select(f => f.Replace('\\', '/').Trim())
             .ToImmutableList();
 
-        Console.WriteLine($"Merge base commit is {mergeBaseCommit}");
         Console.WriteLine($"Found modifications to {changedFiles.Count} file(s) in PR head branch");
 
         return new PrInfo(targetBranch, changedFiles);

@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class RenderModeIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

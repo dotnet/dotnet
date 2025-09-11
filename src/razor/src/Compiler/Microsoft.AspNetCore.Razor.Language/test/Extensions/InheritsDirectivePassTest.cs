@@ -55,6 +55,6 @@ public class InheritsDirectivePassTest : RazorProjectEngineTestBase
             node => Assert.IsType<ClassDeclarationIntermediateNode>(node));
 
         var @class = (ClassDeclarationIntermediateNode)@namespace.Children[0];
-        Assert.Equal("Hello<World[]>", @class.BaseType.BaseType.Content);
+        Assert.Equal("Hello<World[]>", @class.BaseType?.BaseType.Content);
     }
 }

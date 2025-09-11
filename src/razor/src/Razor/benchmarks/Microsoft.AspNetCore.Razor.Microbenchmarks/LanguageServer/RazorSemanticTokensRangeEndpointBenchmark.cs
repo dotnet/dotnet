@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -131,11 +130,10 @@ public class RazorSemanticTokensRangeEndpointBenchmark : RazorLanguageServerBenc
     internal class TestCustomizableRazorSemanticTokensInfoService : RazorSemanticTokensInfoService
     {
         public TestCustomizableRazorSemanticTokensInfoService(
-            LanguageServerFeatureOptions languageServerFeatureOptions,
             IDocumentMappingService documentMappingService,
             RazorSemanticTokensLegendService razorSemanticTokensLegendService,
             ILoggerFactory loggerFactory)
-            : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, languageServerFeatureOptions, loggerFactory)
+            : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, loggerFactory)
         {
         }
 

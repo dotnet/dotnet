@@ -118,6 +118,7 @@
     <CommonArgs Condition="'$(OfficialBuildId)' != ''">$(CommonArgs) /p:OfficialBuildId=$(OfficialBuildId)</CommonArgs>
     <CommonArgs Condition="'$(OfficialBuilder)' != ''">$(CommonArgs) /p:OfficialBuilder="$(OfficialBuilder)"</CommonArgs>
     <CommonArgs Condition="'$(ForceDryRunSigning)' != ''">$(CommonArgs) /p:ForceDryRunSigning=$(ForceDryRunSigning)</CommonArgs>
+    <CommonArgs Condition="'$(DotNetSignType)' != ''">$(CommonArgs) /p:DotNetSignType=$(DotNetSignType)</CommonArgs>
 
     <CommonArgs>$(CommonArgs) /p:DotNetPackageVersionPropsPath=$(PackageVersionPropsPath)</CommonArgs>
 
@@ -219,7 +220,7 @@
                                 Group="ARCADE"
                                 Version="$(ArcadeBootstrapVersion)"
                                 Location="$(BootstrapPackagesDir)microsoft.dotnet.arcade.sdk/$(ArcadeBootstrapVersion)" />
-    <!-- Make the WindowsDesktop SDK override opt-in for repos that need it. -->
+    <!-- Make the WindowsDesktop SDK override opt-in for repos that need it. Keep this line until the VMR updates to a new SDK. -->
     <WindowsDesktopSdkOverride Include="Microsoft.Net.Sdk.WindowsDesktop" Group="WINDOWS_DESKTOP" Location="$(ToolsDir)EmptySdk" Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
   </ItemGroup>
 
