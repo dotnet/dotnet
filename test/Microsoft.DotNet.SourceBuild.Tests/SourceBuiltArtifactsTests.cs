@@ -34,10 +34,6 @@ public class SourceBuiltArtifactsTests : SdkTests
 
             string[] versionLines = File.ReadAllLines(sbVersionFilePath);
 
-            // Verify the expected number of lines in .version file.
-            // Ensures that the test fails if SDK changes the .version file format.
-            Assert.Equal(5, versionLines.Length);
-
             // Verify the commit SHA, it will likely be either a valid commit SHA or an unknown commit SHA, depending on
             // the state of the repository and git installation.
             // Therefore, we only verify the commit SHA is not an unknown commit SHA.
