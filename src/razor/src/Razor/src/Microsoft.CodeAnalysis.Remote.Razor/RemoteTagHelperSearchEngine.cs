@@ -18,12 +18,12 @@ internal sealed class RemoteTagHelperSearchEngine : ITagHelperSearchEngine
 {
     public async Task<LspLocation?> TryLocateTagHelperDefinitionAsync(TagHelperDescriptor boundTagHelper, BoundAttributeDescriptor? boundAttribute, IDocumentSnapshot documentSnapshot, ISolutionQueryOperations solutionQueryOperations, CancellationToken cancellationToken)
     {
-        if (boundTagHelper.IsComponentTagHelper)
+        if (boundTagHelper.Kind == TagHelperKind.Component)
         {
             return null;
         }
 
-        var typeName = boundTagHelper.GetTypeName();
+        var typeName = boundTagHelper.TypeName;
         if (typeName is null)
         {
             return null;
@@ -41,8 +41,7 @@ internal sealed class RemoteTagHelperSearchEngine : ITagHelperSearchEngine
         foreach (var type in compilation.GetTypesByMetadataName(typeName))
         {
             var locations = type.Locations;
-            if (boundAttribute is not null &&
-                boundAttribute.GetPropertyName() is { } propertyName &&
+            if (boundAttribute is { PropertyName: string propertyName } &&
                 type.GetMembers(propertyName) is [{ } property])
             {
                 locations = property.Locations;

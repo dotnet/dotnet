@@ -11,12 +11,12 @@ internal class DirectiveRemovalOptimizationPass : IntermediateNodePassBase, IRaz
 
     protected override void ExecuteCore(RazorCodeDocument codeDocument, DocumentIntermediateNode documentNode)
     {
-        foreach (var nodeReference in documentNode.FindDescendantReferences<DirectiveIntermediateNode>())
+        foreach (var reference in documentNode.FindDescendantReferences<DirectiveIntermediateNode>())
         {
             // Lift the diagnostics in the directive node up to the document node.
-            documentNode.AddDiagnosticsFromNode(nodeReference.Node);
+            documentNode.AddDiagnosticsFromNode(reference.Node);
 
-            nodeReference.Remove();
+            reference.Remove();
         }
     }
 }

@@ -84,11 +84,6 @@
         <target state="translated">イベント ハンドラー '{0}' の生成</target>
         <note />
       </trans-unit>
-      <trans-unit id="IncompatibleProject_MiscFiles">
-        <source>The Razor editor utilizes the Razor Source Generator. {0} appears to not be part of any project, so the source generator is not present and the editing experience will be limited. No more messages will be logged for this scenario.</source>
-        <target state="translated">Razor エディターは Razor ソース ジェネレーターを利用します。{0} はどのプロジェクトにも含まれていないように見えるので、ソース ジェネレーターが存在せず、編集エクスペリエンスが制限されます。このシナリオでは、これ以上メッセージはログに記録されません。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="IncompatibleProject_NoAdditionalFiles">
         <source>The Razor editor utilizes the Razor Source Generator, which requires *.razor and *.cshtml files to be AdditionalFiles in the project. {0} appears to come from '{1}', which has no Razor documents that are AdditionalFiles, so the editing experience will be limited. Is it using the Razor SDK? No more messages will be logged for this project.</source>
         <target state="translated">Razor エディターは Razor ソース ジェネレーターを利用します。これには、*.razor および *.cshtml ファイルがプロジェクトの AddedFiles である必要があります。{0} は、'{1}' から取得されたようですが、これには AddedFiles である Razor ドキュメントがないため、編集エクスペリエンスが制限されます。Razor SDK を使用していますか?このプロジェクトのメッセージはこれ以上ログに記録されません。</target>

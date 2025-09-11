@@ -25,10 +25,7 @@
           Outputs="$(BaseIntermediateOutputPath)UpdateSharedComponentsArtifacts.complete">
 
     <ItemGroup>
-      <_BootstrapPackagesFilenames Include="@(SharedComponentFilteredPackages)">
-        <PackagePath>$(SharedComponentsArtifactsPath)$([System.IO.Path]::GetFileName('%(PipelineArtifactPath)'))</PackagePath>
-      </_BootstrapPackagesFilenames>
-      <_BootstrapPackagesToDelete Include="@(_BootstrapPackagesFilenames->'%(PackagePath)')" />
+      <_BootstrapPackagesToDelete Include="@(SharedComponentFilteredPackages->'%(PackagePath)')" />
     </ItemGroup>
     <!-- Delete bootstrap packages that shouldn't be included. For example, the Microsoft.NETCore.Platforms package can
         exist in the shared components from two different origins: SBRP and runtime. Since non-1xx branches have their

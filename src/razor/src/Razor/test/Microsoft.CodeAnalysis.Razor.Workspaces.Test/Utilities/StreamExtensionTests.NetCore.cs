@@ -74,7 +74,7 @@ public class StreamExtensionTests(ITestOutputHelper testOutputHelper) : ToolingT
             "TestConfiguration",
             ImmutableArray<RazorExtension>.Empty);
 
-        var tagHelper = TagHelperDescriptorBuilder.Create("TypeName", "AssemblyName")
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TypeName", "AssemblyName")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tag-name"))
             .Build();
 

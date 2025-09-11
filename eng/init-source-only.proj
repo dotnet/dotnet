@@ -64,7 +64,7 @@
   </Target>  
 
   <Target Name="UnpackSharedComponentsPrereqsArchive"
-          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == ''"
+          Condition="'$(SharedComponentsPrereqsArchiveFile)' != '' and '$(CustomSharedComponentsArtifactsPath)' == '' and '$(DotNetSourceOnlyTestOnly)' != 'true'"
           Inputs="$(SharedComponentsPrereqsArchiveFile)"
           Outputs="$(BaseIntermediateOutputPath)UnpackSharedComponentsPrereqsArchive.complete">
 

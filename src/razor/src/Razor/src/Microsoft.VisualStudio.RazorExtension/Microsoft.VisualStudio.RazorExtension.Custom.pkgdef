@@ -50,23 +50,10 @@
 "Title"="Experimental Razor project multi-targeting support (requires restart)"
 "PreviewPaneChannels"="*"
 
-[$RootKey$\FeatureFlags\Razor\LSP\UsePreciseSemanticTokenRanges]
-"Description"="Use precise semantic token ranges when requesting semantic token information on razor files. Note: This is experimental, some actions may not apply correctly, or at all!"
-"Value"=dword:00000000
-"Title"="Use precise semantic token ranges when requesting semantic token information on Razor files (requires restart)"
-"PreviewPaneChannels"="*"
-"VisibleToInternalUsersOnlyChannels"="*"
-
 [$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
 "Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
-"Value"=dword:00000000
-"Title"="Use Roslyn Cohost server for Razor (requires restart)"
-"PreviewPaneChannels"="*"
-
-[$RootKey$\FeatureFlags\Razor\LSP\UseNewFormattingEngine]
-"Description"="Enables the new Razor formatting engine, which provides formatting results that more closely match C# formatting."
 "Value"=dword:00000001
-"Title"="Use the new Razor formatting engine in the IDE (requires restart)"
+"Title"="Use Roslyn Cohost server for Razor (requires restart)"
 "PreviewPaneChannels"="*"
 
 // CacheTag value should be changed when registration file changes

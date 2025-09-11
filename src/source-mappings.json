@@ -74,10 +74,6 @@
             "defaultRemote": "https://github.com/dotnet/roslyn"
         },
         {
-            "name": "roslyn-analyzers",
-            "defaultRemote": "https://github.com/dotnet/roslyn-analyzers"
-        },
-        {
             "name": "runtime",
             "defaultRemote": "https://github.com/dotnet/runtime"
         },

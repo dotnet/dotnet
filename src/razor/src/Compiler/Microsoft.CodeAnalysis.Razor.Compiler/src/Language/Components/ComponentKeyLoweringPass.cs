@@ -29,9 +29,9 @@ internal class ComponentKeyLoweringPass : ComponentIntermediateNodePassBase, IRa
 
         foreach (var reference in references)
         {
-            var node = (TagHelperDirectiveAttributeIntermediateNode)reference.Node;
+            var node = reference.Node;
 
-            if (node.TagHelper.IsKeyTagHelper())
+            if (node.TagHelper.Kind == TagHelperKind.Key)
             {
                 reference.Replace(RewriteUsage(reference.Parent, node));
             }

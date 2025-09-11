@@ -77,6 +77,8 @@
   <PropertyGroup>
     <TargetFramework>$(NetToolCurrent)</TargetFramework>
     <NETCORE_ENGINEERING_TELEMETRY>Publish</NETCORE_ENGINEERING_TELEMETRY>
+    <!-- Do not treat warnings as errors, so that we can surface audit issues. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <Target Name="Execute">

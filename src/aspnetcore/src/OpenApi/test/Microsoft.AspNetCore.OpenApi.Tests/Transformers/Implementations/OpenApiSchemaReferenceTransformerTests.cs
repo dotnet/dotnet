@@ -501,10 +501,7 @@ public class OpenApiSchemaReferenceTransformerTests : OpenApiDocumentServiceTest
             serializedSchema = writer.ToString();
             Assert.Equal("""
             {
-                "type": [
-                    "null",
-                    "object"
-                ],
+                "type": "object",
                 "properties": {
                     "address": {
                         "$ref": "#/components/schemas/AddressDto"
@@ -519,10 +516,7 @@ public class OpenApiSchemaReferenceTransformerTests : OpenApiDocumentServiceTest
             serializedSchema = writer.ToString();
             Assert.Equal("""
             {
-                "type": [
-                    "null",
-                    "object"
-                ],
+                "type": "object",
                 "properties": {
                     "relatedLocation": {
                         "$ref": "#/components/schemas/LocationDto"
@@ -985,7 +979,10 @@ public class OpenApiSchemaReferenceTransformerTests : OpenApiDocumentServiceTest
 
             // Check secondaryUser property (nullable RefProfile)
             var secondaryUserSchema = requestSchema.Properties!["secondaryUser"];
-            Assert.Equal("RefProfile", ((OpenApiSchemaReference)secondaryUserSchema).Reference.Id);
+            Assert.NotNull(secondaryUserSchema.OneOf);
+            Assert.Collection(secondaryUserSchema.OneOf,
+                item => Assert.Equal(JsonSchemaType.Null, item.Type),
+                item => Assert.Equal("RefProfile", ((OpenApiSchemaReference)item).Reference.Id));
 
             // Verify the RefProfile schema has a User property that references RefUser
             var userPropertySchema = primaryUserSchema.Properties!["user"];
@@ -998,10 +995,130 @@ public class OpenApiSchemaReferenceTransformerTests : OpenApiDocumentServiceTest
             Assert.Contains("email", userSchemaContent.Properties?.Keys ?? []);
 
             // Both properties should reference the same RefProfile schema
+            var secondaryUserSchemaRef = secondaryUserSchema.OneOf.Last();
             Assert.Equal(((OpenApiSchemaReference)primaryUserSchema).Reference.Id,
-                        ((OpenApiSchemaReference)secondaryUserSchema).Reference.Id);
+                        ((OpenApiSchemaReference)secondaryUserSchemaRef).Reference.Id);
 
             Assert.Equal(["RefProfile", "RefUser", "Subscription"], document.Components!.Schemas!.Keys.OrderBy(x => x));
+            Assert.All(document.Components.Schemas.Values, item => Assert.False(item.Type?.HasFlag(JsonSchemaType.Null)));
+        });
+    }
+
+    // Test for: https://github.com/dotnet/aspnetcore/issues/63503
+    [Fact]
+    public async Task HandlesCircularReferencesRegardlessOfPropertyOrder_SelfFirst()
+    {
+        var builder = CreateBuilder();
+        builder.MapPost("/", (DirectCircularModelSelfFirst dto) => { });
+
+        // Assert
+        await VerifyOpenApiDocument(builder, document =>
+        {
+            Assert.NotNull(document.Components?.Schemas);
+            var schema = document.Components.Schemas["DirectCircularModelSelfFirst"];
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
+            Assert.NotNull(schema.Properties);
+            Assert.Collection(schema.Properties,
+                property =>
+                {
+                    Assert.Equal("self", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                    Assert.Equal("#/components/schemas/DirectCircularModelSelfFirst", reference.Reference.ReferenceV3);
+                },
+                property =>
+                {
+                    Assert.Equal("referenced", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                });
+
+            // Verify that it does not result in an empty schema for a referenced schema
+            var referencedSchema = document.Components.Schemas["ReferencedModel"];
+            Assert.NotNull(referencedSchema.Properties);
+            Assert.NotEmpty(referencedSchema.Properties);
+            var idProperty = Assert.Single(referencedSchema.Properties);
+            Assert.Equal("id", idProperty.Key);
+            var idPropertySchema = Assert.IsType<OpenApiSchema>(idProperty.Value);
+            Assert.Equal(JsonSchemaType.Integer, idPropertySchema.Type);
+        });
+    }
+
+    // Test for: https://github.com/dotnet/aspnetcore/issues/63503
+    [Fact]
+    public async Task HandlesCircularReferencesRegardlessOfPropertyOrder_SelfLast()
+    {
+        var builder = CreateBuilder();
+        builder.MapPost("/", (DirectCircularModelSelfLast dto) => { });
+
+        await VerifyOpenApiDocument(builder, document =>
+        {
+            Assert.NotNull(document.Components?.Schemas);
+            var schema = document.Components.Schemas["DirectCircularModelSelfLast"];
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
+            Assert.NotNull(schema.Properties);
+            Assert.Collection(schema.Properties,
+                property =>
+                {
+                    Assert.Equal("referenced", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                },
+                property =>
+                {
+                    Assert.Equal("self", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                    Assert.Equal("#/components/schemas/DirectCircularModelSelfLast", reference.Reference.ReferenceV3);
+                });
+
+            // Verify that it does not result in an empty schema for a referenced schema
+            var referencedSchema = document.Components.Schemas["ReferencedModel"];
+            Assert.NotNull(referencedSchema.Properties);
+            Assert.NotEmpty(referencedSchema.Properties);
+            var idProperty = Assert.Single(referencedSchema.Properties);
+            Assert.Equal("id", idProperty.Key);
+            var idPropertySchema = Assert.IsType<OpenApiSchema>(idProperty.Value);
+            Assert.Equal(JsonSchemaType.Integer, idPropertySchema.Type);
+        });
+    }
+
+    // Test for: https://github.com/dotnet/aspnetcore/issues/63503
+    [Fact]
+    public async Task HandlesCircularReferencesRegardlessOfPropertyOrder_MultipleSelf()
+    {
+        var builder = CreateBuilder();
+        builder.MapPost("/", (DirectCircularModelMultiple dto) => { });
+
+        await VerifyOpenApiDocument(builder, document =>
+        {
+            Assert.NotNull(document.Components?.Schemas);
+            var schema = document.Components.Schemas["DirectCircularModelMultiple"];
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
+            Assert.NotNull(schema.Properties);
+            Assert.Collection(schema.Properties,
+                property =>
+                {
+                    Assert.Equal("selfFirst", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                    Assert.Equal("#/components/schemas/DirectCircularModelMultiple", reference.Reference.ReferenceV3);
+                },
+                property =>
+                {
+                    Assert.Equal("referenced", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                },
+                property =>
+                {
+                    Assert.Equal("selfLast", property.Key);
+                    var reference = Assert.IsType<OpenApiSchemaReference>(property.Value);
+                    Assert.Equal("#/components/schemas/DirectCircularModelMultiple", reference.Reference.ReferenceV3);
+                });
+
+            // Verify that it does not result in an empty schema for a referenced schema
+            var referencedSchema = document.Components.Schemas["ReferencedModel"];
+            Assert.NotNull(referencedSchema.Properties);
+            Assert.NotEmpty(referencedSchema.Properties);
+            var idProperty = Assert.Single(referencedSchema.Properties);
+            Assert.Equal("id", idProperty.Key);
+            var idPropertySchema = Assert.IsType<OpenApiSchema>(idProperty.Value);
+            Assert.Equal(JsonSchemaType.Integer, idPropertySchema.Type);
         });
     }
 
@@ -1060,6 +1177,31 @@ public class OpenApiSchemaReferenceTransformerTests : OpenApiDocumentServiceTest
     {
         public string Name { get; set; } = "";
         public string Email { get; set; } = "";
+    }
+
+    // Test models for issue 63503
+    private class DirectCircularModelSelfFirst
+    {
+        public DirectCircularModelSelfFirst Self { get; set; } = null!;
+        public ReferencedModel Referenced { get; set; } = null!;
+    }
+
+    private class DirectCircularModelSelfLast
+    {
+        public ReferencedModel Referenced { get; set; } = null!;
+        public DirectCircularModelSelfLast Self { get; set; } = null!;
+    }
+
+    private class DirectCircularModelMultiple
+    {
+        public DirectCircularModelMultiple SelfFirst { get; set; } = null!;
+        public ReferencedModel Referenced { get; set; } = null!;
+        public DirectCircularModelMultiple SelfLast { get; set; } = null!;
+    }
+
+    private class ReferencedModel
+    {
+        public int Id { get; set; }
     }
 }
 #nullable restore

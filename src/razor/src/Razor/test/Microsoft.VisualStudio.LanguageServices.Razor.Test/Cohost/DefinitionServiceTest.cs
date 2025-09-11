@@ -61,7 +61,7 @@ public class DefinitionServiceTest(ITestOutputHelper testOutputHelper) : CohostE
 
     private async Task VerifyDefinitionAsync(TestCode input, TestCode expectedDocument, params (string fileName, string contents)[]? additionalFiles)
     {
-        var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles);
+        var document = CreateProjectAndRazorDocument(input.Text, RazorFileKind.Component, additionalFiles: additionalFiles);
 
         var service = OOPExportProvider.GetExportedValue<IDefinitionService>();
         var snapshotManager = OOPExportProvider.GetExportedValue<RemoteSnapshotManager>();

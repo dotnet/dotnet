@@ -132,7 +132,7 @@ internal sealed class OpenApiSchemaService(
                     }
                 }
             }
-
+            schema.PruneNullTypeForComponentizedTypes();
             return schema;
         }
     };
@@ -281,7 +281,17 @@ internal sealed class OpenApiSchemaService(
         {
             foreach (var property in schema.Properties)
             {
-                schema.Properties[property.Key] = ResolveReferenceForSchema(document, property.Value, rootSchemaId);
+                var resolvedProperty = ResolveReferenceForSchema(document, property.Value, rootSchemaId);
+                if (property.Value is OpenApiSchema targetSchema &&
+                    targetSchema.Metadata?.TryGetValue(OpenApiConstants.NullableProperty, out var isNullableProperty) == true &&
+                    isNullableProperty is true)
+                {
+                    schema.Properties[property.Key] = resolvedProperty.CreateOneOfNullableWrapper();
+                }
+                else
+                {
+                    schema.Properties[property.Key] = resolvedProperty;
+                }
             }
         }
 
@@ -327,7 +337,7 @@ internal sealed class OpenApiSchemaService(
             if (schema.Metadata.TryGetValue(OpenApiConstants.SchemaId, out var schemaId) &&
                 schemaId is string schemaIdString)
             {
-                return document.AddOpenApiSchemaByReference(schemaIdString, schema);
+                return new OpenApiSchemaReference(schemaIdString, document);
             }
             var relativeSchemaId = $"#/components/schemas/{rootSchemaId}{refIdString.Replace("#", string.Empty)}";
             return new OpenApiSchemaReference(relativeSchemaId, document);

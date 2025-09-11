@@ -5,13 +5,14 @@ using Microsoft.Arcade.Common;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
 using Microsoft.DotNet.Build.Manifest;
-#if !NET472_OR_GREATER
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -213,8 +214,17 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
 
         public int NonStreamingPublishingMaxClients {get; set;}
 
+        /// <summary>
+        /// Whether to enforce production channel validation rules.
+        /// If true, validation failures prevent builds from being published (Fail).
+        /// If false, validation failures are reported as warnings but builds are allowed to be published (AuditOnlyFailure).
+        /// Default: false (audit mode)
+        /// </summary>
+        public bool EnforceProduction { get; set; } = false;
+
         private IBuildModelFactory _buildModelFactory;
         private IFileSystem _fileSystem;
+        private ITargetChannelValidator _targetChannelValidator;
 
         private PublishingConstants.BuildQuality _buildQuality;
 
@@ -227,14 +237,53 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
             collection.TryAddSingleton<INupkgInfoFactory, NupkgInfoFactory>();
             collection.TryAddSingleton<IPackageArchiveReaderFactory, PackageArchiveReaderFactory>();
             collection.TryAddSingleton<IFileSystem, FileSystem>();
+            
+            // Register ProductionChannelValidator with the specified validation mode
+            collection.TryAddSingleton<ITargetChannelValidator>(provider =>
+            {
+                var buildInfoService = provider.GetRequiredService<IProductionChannelValidatorBuildInfoService>();
+                var branchClassificationService = provider.GetRequiredService<IBranchClassificationService>();
+                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger<ProductionChannelValidator>();
+                
+                // Convert EnforceProduction boolean to ValidationMode enum
+                var validationMode = EnforceProduction ? ValidationMode.Enforce : ValidationMode.Audit;
+                
+                return new ProductionChannelValidator(buildInfoService, branchClassificationService, logger, validationMode);
+            });
+            
+            // Add logging services
+            collection.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug));
+            
+            // Register AzureDevOpsService with proper authentication
+            collection.TryAddSingleton<IProductionChannelValidatorBuildInfoService>(provider =>
+            {
+                var httpClient = provider.GetRequiredService<HttpClient>();
+                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger<AzureDevOpsService>();
+                return new AzureDevOpsService(httpClient, logger, AzdoApiToken);
+            });
+            
+            // Register BranchClassificationService with proper authentication
+            collection.TryAddSingleton<IBranchClassificationService>(provider =>
+            {
+                var httpClient = provider.GetRequiredService<HttpClient>();
+                var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger<BranchClassificationService>();
+                return new BranchClassificationService(httpClient, logger, AzdoApiToken);
+            });
+            
+            collection.TryAddSingleton<HttpClient>();
             collection.TryAddSingleton(Log);
         }
 
         public bool ExecuteTask(IBuildModelFactory buildModelFactory,
-            IFileSystem fileSystem)
+            IFileSystem fileSystem,
+            ITargetChannelValidator targetChannelValidator)
         {
             _buildModelFactory = buildModelFactory;
             _fileSystem = fileSystem;
+            _targetChannelValidator = targetChannelValidator;
 
             return ExecuteAsync().GetAwaiter().GetResult();
         }
@@ -358,7 +407,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 SymbolPublishingExclusionsFile = this.SymbolPublishingExclusionsFile,
                 PublishSpecialClrFiles = this.PublishSpecialClrFiles,
                 BuildQuality = this.BuildQuality,
-                ArtifactsBasePath =  this.ArtifactsBasePath,
+                ArtifactsBasePath = this.ArtifactsBasePath,
                 AzdoApiToken = this.AzdoApiToken,
                 BuildId = this.BuildId,
                 AzureDevOpsProject = this.AzureProject,
@@ -368,7 +417,9 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 SymbolRequestProject = this.SymbolRequestProject,
                 UseStreamingPublishing = this.UseStreamingPublishing,
                 StreamingPublishingMaxClients = this.StreamingPublishingMaxClients,
-                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients
+                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients,
+                EnforceProduction = this.EnforceProduction,
+                TargetChannelValidator = _targetChannelValidator
             };
         }
 
@@ -416,14 +467,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                 SymbolRequestProject = this.SymbolRequestProject,
                 UseStreamingPublishing = this.UseStreamingPublishing,
                 StreamingPublishingMaxClients = this.StreamingPublishingMaxClients,
-                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients
+                NonStreamingPublishingMaxClients = this.NonStreamingPublishingMaxClients,
+                EnforceProduction = this.EnforceProduction,
+                TargetChannelValidator = _targetChannelValidator
             };
         }
     }
 }
-#else
-public class PublishArtifactsInManifest : Microsoft.Build.Utilities.Task
-{
-    public override bool Execute() => throw new System.NotSupportedException("PublishArtifactsInManifest depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-}
-#endif

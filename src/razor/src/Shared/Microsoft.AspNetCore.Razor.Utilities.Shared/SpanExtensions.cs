@@ -5,17 +5,17 @@
 using System.Runtime.InteropServices;
 #endif
 
+#if !NET9_0_OR_GREATER
 using System.Runtime.CompilerServices;
+#endif
 
 namespace System;
 
 internal static class SpanExtensions
 {
+#if !NET8_0_OR_GREATER
     public static unsafe void Replace(this ReadOnlySpan<char> source, Span<char> destination, char oldValue, char newValue)
     {
-#if NET8_0_OR_GREATER
-        source.Replace<char>(destination, oldValue, newValue);
-#else
         var length = source.Length;
         if (length == 0)
         {
@@ -35,14 +35,10 @@ internal static class SpanExtensions
             var original = Unsafe.Add(ref src, i);
             Unsafe.Add(ref dst, i) = original == oldValue ? newValue : original;
         }
-#endif
     }
 
     public static unsafe void Replace(this Span<char> span, char oldValue, char newValue)
     {
-#if NET8_0_OR_GREATER
-        span.Replace<char>(oldValue, newValue);
-#else
         var length = span.Length;
         if (length == 0)
         {
@@ -60,9 +56,10 @@ internal static class SpanExtensions
                 slot = newValue;
             }
         }
-#endif
     }
+#endif
 
+#if !NET9_0_OR_GREATER
     /// <summary>
     /// Determines whether the specified value appears at the start of the span.
     /// </summary>
@@ -71,11 +68,7 @@ internal static class SpanExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool StartsWith<T>(this ReadOnlySpan<T> span, T value)
         where T : IEquatable<T>? =>
-#if NET9_0_OR_GREATER
-        MemoryExtensions.StartsWith(span, value);
-#else
         span.Length != 0 && (span[0]?.Equals(value) ?? (object?)value is null);
-#endif
 
     /// <summary>
     /// Determines whether the specified value appears at the end of the span.
@@ -85,9 +78,50 @@ internal static class SpanExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool EndsWith<T>(this ReadOnlySpan<T> span, T value)
         where T : IEquatable<T>? =>
-#if NET9_0_OR_GREATER
-        MemoryExtensions.EndsWith(span, value);
-#else
         span.Length != 0 && (span[^1]?.Equals(value) ?? (object?)value is null);
 #endif
+
+    extension<T>(Span<T> span)
+    {
+        public ReversedEnumerable<T> Reversed => new(span);
+    }
+
+    extension<T>(ReadOnlySpan<T> span)
+    {
+        public ReversedEnumerable<T> Reversed => new(span);
+    }
+
+    public readonly ref struct ReversedEnumerable<T>(ReadOnlySpan<T> span)
+    {
+        private readonly ReadOnlySpan<T> _span = span;
+
+        public ReverseEnumerator<T> GetEnumerator() => new(_span);
+    }
+
+    public ref struct ReverseEnumerator<T>(ReadOnlySpan<T> span)
+    {
+        private readonly ReadOnlySpan<T> _span = span;
+        private int _index = span.Length - 1;
+        private T _current = default!;
+
+        public readonly T Current => _current;
+
+        public bool MoveNext()
+        {
+            if (_index >= 0)
+            {
+                _current = _span[_index];
+                _index--;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Reset()
+        {
+            _index = _span.Length - 1;
+            _current = default!;
+        }
+    }
 }

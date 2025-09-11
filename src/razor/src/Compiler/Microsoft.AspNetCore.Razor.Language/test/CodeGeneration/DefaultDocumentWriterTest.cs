@@ -135,7 +135,7 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new NamespaceDeclarationIntermediateNode()
         {
-            Content = "TestNamespace",
+            Name = "TestNamespace",
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
@@ -172,14 +172,14 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers = { "internal" },
+            Modifiers = ["internal"],
             BaseType = new BaseTypeWithModel("TestBase"),
-            Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory. CSharpToken("IBar")],
+            Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
             TypeParameters = [
-                new TypeParameter() { ParameterName = "TKey" },
-                new TypeParameter() { ParameterName = "TValue" },
+                new("TKey"),
+                new("TValue")
             ],
-            ClassName = "TestClass"
+            Name = "TestClass"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
@@ -215,14 +215,14 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers = { "internal" },
+            Modifiers = ["internal"],
             BaseType = new BaseTypeWithModel("TestBase"),
             Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
             TypeParameters = [
-                new TypeParameter() { ParameterName = "TKey" },
-                new TypeParameter() { ParameterName = "TValue" },
+                new("TKey"),
+                new("TValue")
             ],
-            ClassName = "TestClass",
+            Name = "TestClass",
             NullableContext = true
         });
 
@@ -261,14 +261,14 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new ClassDeclarationIntermediateNode()
         {
-            Modifiers = { "internal" },
+            Modifiers = ["internal"],
             BaseType = new BaseTypeWithModel("TestBase"),
             Interfaces = [IntermediateNodeFactory.CSharpToken("IFoo"), IntermediateNodeFactory.CSharpToken("IBar")],
             TypeParameters = [
-                new TypeParameter() { ParameterName = "TKey", Constraints = "where TKey : class" },
-                new TypeParameter() { ParameterName = "TValue", Constraints = "where TValue : class" },
+                new("TKey", "where TKey : class"),
+                new("TValue", "where TValue : class")
             ],
-            ClassName = "TestClass"
+            Name = "TestClass"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
@@ -306,22 +306,12 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new MethodDeclarationIntermediateNode()
         {
-            Modifiers = { "internal", "virtual", "async", },
-            MethodName = "TestMethod",
-            Parameters =
-            {
-                new MethodParameter()
-                {
-                    Modifiers = { "readonly", "ref" },
-                    ParameterName = "a",
-                    TypeName = "int"
-                },
-                new MethodParameter()
-                {
-                    ParameterName = "b",
-                    TypeName = "string"
-                }
-            },
+            Modifiers = ["internal", "virtual", "async"],
+            Name = "TestMethod",
+            Parameters = [
+                new(name: "a", type: "int", modifiers: ["readonly", "ref"]),
+                new(name: "b", type: "string")
+            ],
             ReturnType = "string"
         });
 
@@ -360,9 +350,9 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new FieldDeclarationIntermediateNode()
         {
-            Modifiers = { "internal", "readonly", },
-            FieldName = "_foo",
-            FieldType = "string",
+            Modifiers = ["internal", "readonly"],
+            Name = "_foo",
+            Type = "string",
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();
@@ -396,10 +386,10 @@ public class DefaultDocumentWriterTest
         var builder = IntermediateNodeBuilder.Create(document);
         builder.Add(new PropertyDeclarationIntermediateNode()
         {
-            Modifiers = { "internal", "virtual", },
-            PropertyName = "Foo",
-            PropertyType = IntermediateNodeFactory.CSharpToken("string"),
-            PropertyExpression = "default"
+            Modifiers = ["internal", "virtual"],
+            Name = "Foo",
+            Type = IntermediateNodeFactory.CSharpToken("string"),
+            ExpressionBody = "default"
         });
 
         var codeDocument = TestRazorCodeDocument.CreateEmpty();

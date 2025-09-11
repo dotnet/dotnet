@@ -94,12 +94,6 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     WixpackWorkingDir = Path.Combine(Path.GetTempPath(), "WixpackTemp", Guid.NewGuid().ToString().Split('-')[0]);
                 }
 
-                _wixprojDir = string.Empty;
-                if (!_defineConstantsDictionary.TryGetValue("ProjectDir", out _wixprojDir))
-                {
-                    throw new InvalidOperationException("ProjectDir not defined in DefineConstants. Task cannot proceed.");
-                }
-
                 _installerFilename = Path.GetFileName(InstallerFile);
 
                 if (Directory.Exists(WixpackWorkingDir))
@@ -108,15 +102,22 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
                 Directory.CreateDirectory(WixpackWorkingDir);
 
-                // Copy wixproj file - fail if ProjectPath is not defined
-                if (_defineConstantsDictionary.TryGetValue("ProjectPath", out var projectPath))
+                if (_defineConstantsDictionary.TryGetValue("ProjectDir", out _wixprojDir))
                 {
-                    string destPath = Path.Combine(WixpackWorkingDir, Path.GetFileName(projectPath));
-                    File.Copy(projectPath, destPath, overwrite: true);
+                    // Copy wixproj file - fail if ProjectPath is not defined
+                    if (_defineConstantsDictionary.TryGetValue("ProjectPath", out var projectPath))
+                    {
+                        string destPath = Path.Combine(WixpackWorkingDir, Path.GetFileName(projectPath));
+                        File.Copy(projectPath, destPath, overwrite: true);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("ProjectPath not defined in DefineConstants. Task cannot proceed.");
+                    }
                 }
                 else
                 {
-                    throw new InvalidOperationException("ProjectPath not defined in DefineConstants. Task cannot proceed.");
+                    _wixprojDir = string.Empty;
                 }
 
                 CopyIncludeSearchPathsContents();
@@ -493,6 +494,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 // Copy the sourceFile to WixpackWorkingDir
                 var copiedXmlPath = Path.Combine(WixpackWorkingDir, Path.GetFileName(xmlPath));
                 File.Copy(xmlPath, copiedXmlPath, overwrite: true);
+                string sourceFileFolder = Path.GetDirectoryName(xmlPath);
 
                 // First preprocess the source file to remove non-applicable include files.
                 // We defer ingestion of variables, until all variables from include files
@@ -501,7 +503,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 PreprocessWixSourceFile(copiedXmlPath);
 
                 // Ingest variables after file preprocessing
-                ProcessAllReferencedIncludeFiles(copiedXmlPath);
+                ProcessAllReferencedIncludeFiles(copiedXmlPath, sourceFileFolder);
                 IngestDefineVariablesFromWixFile(copiedXmlPath);
 
                 try
@@ -550,7 +552,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
                                     string pattern = source.Substring(startIdx, source.IndexOf(')', startIdx + 2) - startIdx + 1);
 
-                                    source = GetAbsoluteSourcePath(source);
+                                    source = GetAbsoluteSourcePath(source, sourceFileFolder);
 
                                     var parts = source.Split([$"\\{pattern}\\"], StringSplitOptions.None);
                                     if (parts.Length < 2)
@@ -584,7 +586,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                                         id = Path.GetFileName(source);
                                     }
 
-                                    CopySourceFile(id, source);
+                                    CopySourceFile(id, source, sourceFileFolder);
 
                                     // Update the original attribute to "<id>\\<filename>"
                                     var newSourceValue = $"{id}\\{Path.GetFileName(source)}";
@@ -609,7 +611,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         /// in the wixpack working directory.
         /// </summary>
         /// <param name="file"></param>
-        private void ProcessAllReferencedIncludeFiles(string file)
+        private void ProcessAllReferencedIncludeFiles(string file, string relativeRoot)
         {
             string content = File.ReadAllText(file);
 
@@ -620,13 +622,13 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 if (match.Groups.Count > 1)
                 {
                     string filename = match.Groups[1].Value.Trim('\"');
-                    string includeFilePath = GetAbsoluteSourcePath(filename);
+                    string includeFilePath = GetAbsoluteSourcePath(ResolvePath(filename), relativeRoot);
                     if (File.Exists(includeFilePath))
                     {
                         // Copy the include file, update the source file with new path
                         // and ingest the variables.
                         string id = Path.GetFileName(includeFilePath);
-                        string path = CopySourceFile(id, includeFilePath);
+                        string path = CopySourceFile(id, includeFilePath, relativeRoot);
                         ProcessIncludeFile(path);
                         content = content.Replace(filename, $"{id}\\{id}");
                     }
@@ -634,13 +636,16 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                     {
                         // Include file could be in IncludeSearchPaths and already copied and processed.
                         bool foundInSearchPath = false;
-                        foreach (var searchPath in IncludeSearchPaths)
+                        if (IncludeSearchPaths != null)
                         {
-                            var potentialPath = Path.Combine(WixpackWorkingDir, searchPath, Path.GetFileName(includeFilePath));
-                            if (File.Exists(potentialPath))
+                            foreach (var searchPath in IncludeSearchPaths)
                             {
-                                foundInSearchPath = true;
-                                break;
+                                var potentialPath = Path.Combine(WixpackWorkingDir, searchPath, Path.GetFileName(includeFilePath));
+                                if (File.Exists(potentialPath))
+                                {
+                                    foundInSearchPath = true;
+                                    break;
+                                }
                             }
                         }
 
@@ -891,7 +896,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
                     if (keepBlock)
                     {
-                        output.Append(input.Substring(blockStart, blockEnd - blockStart));
+                        string selectedContent = input.Substring(blockStart, blockEnd - blockStart);
+                        output.Append(selectedContent);
+
+                        // Ingest variables from the selected content asap as
+                        // variables could be referenced in subsequent blocks or conditions.
+                        IngestDefineVariablesFromString(selectedContent);
                     }
                     pos = endifStart + 9; // Move past <?endif?>
                 }
@@ -950,9 +960,17 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
             if (varName.StartsWith("var.", StringComparison.OrdinalIgnoreCase))
             {
-                _defineVariablesDictionary.TryGetValue(varName.Substring(4), out actualValue);
+                varName = varName.Substring(4);
+                _defineVariablesDictionary.TryGetValue(varName, out actualValue);
             }
-            else
+            else if (varName.StartsWith("sys.", StringComparison.OrdinalIgnoreCase))
+            {
+                varName = varName.Substring(4);
+                _systemVariablesDictionary.TryGetValue(varName, out actualValue);
+            }
+
+            // Fallback to _defineConstantsDictionary if not found in variables
+            if (actualValue == null || actualValue == "")
             {
                 _defineConstantsDictionary.TryGetValue(varName, out actualValue);
             }
@@ -970,12 +988,12 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
         }
 
-        private string CopySourceFile(string fileId, string source)
+        private string CopySourceFile(string fileId, string source, string relativeRoot = "")
         {
             var destDir = Path.Combine(WixpackWorkingDir, fileId);
             Directory.CreateDirectory(destDir);
 
-            source = GetAbsoluteSourcePath(source);
+            source = GetAbsoluteSourcePath(source, relativeRoot);
 
             if (File.Exists(source))
             {
@@ -1045,12 +1063,14 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             }
         }
 
-        private string GetAbsoluteSourcePath(string source)
+        private string GetAbsoluteSourcePath(string source, string relativeRoot = "")
         {
             // If the source is relative, resolve it against the project directory
             if (!Path.IsPathRooted(source))
             {
-                return Path.Combine(_wixprojDir, source);
+                return string.IsNullOrEmpty(relativeRoot) ?
+                    Path.Combine(_wixprojDir, source) :
+                    Path.Combine(relativeRoot, source);
             }
 
             return source;

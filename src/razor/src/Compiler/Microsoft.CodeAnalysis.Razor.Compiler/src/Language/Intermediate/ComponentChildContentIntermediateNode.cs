@@ -15,7 +15,7 @@ public sealed class ComponentChildContentIntermediateNode : IntermediateNode
 
     public BoundAttributeDescriptor BoundAttribute { get; set; }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public bool IsParameterized => BoundAttribute?.IsParameterizedChildContentProperty() ?? false;
 

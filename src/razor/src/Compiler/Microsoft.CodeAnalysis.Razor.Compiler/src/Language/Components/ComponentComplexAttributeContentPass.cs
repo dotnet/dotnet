@@ -34,12 +34,12 @@ internal class ComponentComplexAttributeContentPass : ComponentIntermediateNodeP
         for (var i = node.Children.Count - 1; i >= 0; i--)
         {
             if (node.Children[i] is TagHelperPropertyIntermediateNode propertyNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, propertyNode, propertyNode.AttributeName);
             }
             else if (node.Children[i] is TagHelperHtmlAttributeIntermediateNode htmlNode &&
-                node.TagHelpers.Any(t => t.IsComponentTagHelper))
+                node.TagHelpers.Any(t => t.Kind == TagHelperKind.Component))
             {
                 ProcessAttribute(node, htmlNode, htmlNode.AttributeName);
             }

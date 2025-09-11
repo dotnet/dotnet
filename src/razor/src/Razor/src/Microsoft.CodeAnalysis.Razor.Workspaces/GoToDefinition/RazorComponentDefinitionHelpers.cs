@@ -73,7 +73,7 @@ internal static class RazorComponentDefinitionHelpers
             return false;
         }
 
-        if ((!ignoreComponentAttributes || !boundTagHelper.IsComponentTagHelper) &&
+        if ((!ignoreComponentAttributes || boundTagHelper.Kind != TagHelperKind.Component) &&
             tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
         {
             // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
