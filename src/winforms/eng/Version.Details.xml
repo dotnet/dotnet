@@ -87,6 +87,10 @@ Note: if the Uri is a new place, you will need to add a subscription from that p
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>6aa198961529f21ef27468ccc4b7fca56859e268</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.Build.Tasks.Templating" Version="11.0.0-beta.25458.105">
+      <Uri>https://github.com/dotnet/dotnet</Uri>
+      <Sha>6aa198961529f21ef27468ccc4b7fca56859e268</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.DotNet.GenFacades" Version="11.0.0-beta.25458.105">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>6aa198961529f21ef27468ccc4b7fca56859e268</Sha>
