@@ -173,7 +173,6 @@ public class CohostInlayHintEndpointTest(ITestOutputHelper testOutputHelper) : C
             """);
 
     [Fact]
-    [System.ComponentModel.Description("Desc")]
     public Task AttributeDirective()
        => VerifyInlayHintsAsync(
            input: """
