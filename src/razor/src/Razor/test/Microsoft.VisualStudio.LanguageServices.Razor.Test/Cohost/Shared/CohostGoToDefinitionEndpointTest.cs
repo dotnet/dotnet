@@ -430,8 +430,7 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentDefinitionName, htmlResponse)]);
 
-        var filePathService = new VisualStudioFilePathService(FeatureOptions);
-        var endpoint = new CohostGoToDefinitionEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, filePathService);
+        var endpoint = new CohostGoToDefinitionEndpoint(IncompatibleProjectService, RemoteServiceInvoker, requestInvoker, FilePathService);
 
         var textDocumentPositionParams = new TextDocumentPositionParams
         {
