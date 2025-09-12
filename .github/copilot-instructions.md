@@ -116,7 +116,10 @@ Most sub-repositories can be built independently:
 ```bash
 cd src/command-line-api
 ./build.sh  # Takes ~45 seconds - verified working
+./build.sh --test  # May fail due to .NET version mismatches in VMR environment
 ```
+
+**Note on testing in VMR:** Individual repository tests may fail due to .NET version mismatches between the test target frameworks and the VMR's .NET SDK version. This is expected behavior in the VMR environment.
 
 **Use VMR-local .NET SDK:**
 Each sub-repository may download its own .NET SDK to `.dotnet/` directory. The VMR also has a shared SDK at the root level in `.dotnet/`.
@@ -143,7 +146,31 @@ Each sub-repository may download its own .NET SDK to `.dotnet/` directory. The V
    cd src/[repository-name] && ./build.sh --test
    ```
 
-4. **Follow sub-repository validation steps** as specified in their copilot instructions.
+### Manual Validation Scenarios
+
+**ALWAYS test these scenarios after making changes to ensure the VMR SDK works correctly:**
+
+1. **Basic SDK functionality test:**
+   ```bash
+   # Use the VMR-built SDK to create and run a simple app
+   mkdir -p /tmp/vmr-validation && cd /tmp/vmr-validation
+   /home/runner/work/dotnet/dotnet/.dotnet/dotnet new console -n TestApp
+   cd TestApp
+   /home/runner/work/dotnet/dotnet/.dotnet/dotnet run
+   # Expected output: "Hello, World!"
+   ```
+
+2. **SDK version verification:**
+   ```bash
+   /home/runner/work/dotnet/dotnet/.dotnet/dotnet --version
+   # Should match version in global.json (currently 10.0.100-rc.1.25420.111)
+   ```
+
+3. **Build verification for changes in specific repositories:**
+   ```bash
+   cd src/[changed-repository]
+   ./build.sh  # Should complete successfully
+   ```
 
 ### Known Issues and Limitations
 
@@ -170,14 +197,17 @@ Each sub-repository may download its own .NET SDK to `.dotnet/` directory. The V
    - Individual sub-repository builds often work when VMR build fails
    - Consider using Docker-based builds for full VMR builds
 
-4. **NuGet restore failures:**
+4. **Individual repository test failures due to .NET version mismatches:**
+   - Tests may target .NET 8.0 but VMR uses .NET 10.0-rc
+   - This is expected behavior in the VMR environment  
+   - Tests work correctly in individual repository development environments
+
+5. **NuGet restore failures:**
    - Check that all prerequisites are installed
    - Verify network connectivity to NuGet feeds
    - Review `NuGet.config` for proper feed configuration
-
 **When builds fail:**
 1. Check that all prerequisites are installed using the commands above
-2. Review the specific error messages in build logs under `artifacts/log/`
 3. Try building individual sub-repositories instead of full VMR
 4. Consider using Docker-based builds as documented in README.md
 5. Refer to individual repository build instructions in `src/*/docs/`
@@ -208,9 +238,11 @@ git clone https://github.com/dotnet/dotnet .
 **CRITICAL - NEVER CANCEL these operations:**
 - `./prep-source-build.sh` - **5-6 minutes** ✓ Verified working
 - Individual sub-repository builds (e.g., `src/command-line-api/build.sh`) - **30 seconds to 5 minutes** ✓ Verified working  
+- Individual sub-repository tests - **10-30 seconds** ⚠️ May fail due to .NET version mismatches
 - `./build.sh --clean-while-building` - **45-60 minutes** ⚠️ May fail due to version conflicts
 - `./build.sh -sb --clean-while-building` - **90+ minutes** ⚠️ May fail due to missing dependencies
 - `./build.sh --test` - **30+ minutes**
+- Manual validation scenarios - **1-2 minutes** ✓ Verified working
 
 **Always set timeouts with significant buffer:**
 - Build commands: **120+ minutes timeout**
@@ -219,10 +251,24 @@ git clone https://github.com/dotnet/dotnet .
 
 ### SDK Usage After Build
 
-**Once built, use the local SDK:**
+**Once prep-source-build.sh completes, use the local SDK:**
 ```bash
-export PATH="$(pwd)/artifacts/assets/Release:$PATH"
-# Or extract and install the built SDK tarball
+# The VMR SDK is automatically available at:
+./.dotnet/dotnet --version  # Shows: 10.0.100-rc.1.25420.111
+
+# Create new projects:
+./.dotnet/dotnet new console -n MyApp
+
+# Build and run applications:
+cd MyApp && ../.dotnet/dotnet run
+```
+
+**For full VMR builds (if successful), extract and install the SDK:**
+```bash
+# Extract the built SDK tarball (if build completed)
+mkdir -p $HOME/vmr-sdk
+tar zxf artifacts/assets/Release/dotnet-sdk-10.0.100-*.tar.gz -C $HOME/vmr-sdk
+export PATH="$HOME/vmr-sdk:$PATH"
 ```
 
 ## Key Principles
