@@ -271,13 +271,23 @@ tar zxf artifacts/assets/Release/dotnet-sdk-10.0.100-*.tar.gz -C $HOME/vmr-sdk
 export PATH="$HOME/vmr-sdk:$PATH"
 ```
 
-## Key Principles
+## Key Principles for Coding Agents
 
-- **Always validate commands before suggesting them**
-- **Never cancel long-running builds or tests**
-- **Use sub-repository instructions for specific component work**
-- **Expect build complexity and potential failures**
-- **Set generous timeouts for all operations**
-- **Clean while building to manage disk space**
+- **ALWAYS validate commands before suggesting them to users**
+- **NEVER cancel long-running builds or tests - wait for completion**
+- **Use sub-repository instructions when working in src/ directories** 
+- **Set timeouts of 120+ minutes for VMR builds, 45+ minutes for tests**
+- **Expect VMR-level builds to fail - focus on individual repository workflows**
+- **Use --clean-while-building to manage disk space effectively**
+- **Test changes with manual validation scenarios before claiming success**
+
+## Success Criteria
+
+A coding agent working in this repository has succeeded when:
+1. ✅ Commands complete without cancellation due to timeouts
+2. ✅ Individual repository builds work for the changed components  
+3. ✅ Manual validation scenarios pass (SDK creates and runs apps)
+4. ✅ All timeout warnings are heeded and proper buffers used
+5. ✅ Sub-repository copilot instructions are consulted for component-specific work
 
 For the latest information and troubleshooting, refer to the main README.md and docs/ directory.
