@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 282327,
+      "barId": 282819,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "e7357d6000fb383b01fd37b972a3b55904267da7"
+      "commitSha": "eaeefbd9f29d54c1543459f7624aecddb06d9c7e"
     },
     {
       "barId": 282674,
@@ -67,10 +67,10 @@
       "commitSha": "56f4657d7585ec12b61c623756ca4b2b810c4863"
     },
     {
-      "barId": 282718,
+      "barId": 282857,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "bf274acd963920e40bd009fa992c75db04c63b7e"
+      "commitSha": "34bcb6b4b58087a7f0f54293b5bdab30284eb66b"
     },
     {
       "barId": 281892,
@@ -115,10 +115,10 @@
       "commitSha": "9994998c0b0fab5efd5cbe2e13a3ea74f4e8e6e1"
     },
     {
-      "barId": 278461,
+      "barId": 282842,
       "path": "templating",
       "remoteUri": "https://github.com/dotnet/templating",
-      "commitSha": "b67630f060f02a6f5ef7cfcea731dce0d13e1ad6"
+      "commitSha": "3f70fab3c46906ecfa3544bd2705c63ce1c5b47d"
     },
     {
       "barId": 280001,
