@@ -792,7 +792,7 @@ Pokud chcete NuGetu ve stahování balíčků během sestavování zabránit, ot
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">Použijí se pověření z konfigurace. UserName: {0}</target>
+        <target state="translated">Pomocí přihlašovacích údajů z konfigurace. Uživatelské jméno: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

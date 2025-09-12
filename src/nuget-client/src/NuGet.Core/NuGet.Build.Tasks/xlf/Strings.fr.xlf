@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageDownload_OnlyExactVersionsAreAllowed">
         <source>Package '{0} {1}' does not have an exact version like '[1.0.0]'. Only exact versions are allowed with PackageDownload.</source>
-        <target state="translated">Le paquet '{0}' {1} n'a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
+        <target state="translated">Le paquet '{0}' {1} n’a pas de version exacte comme '[1.0.0]'. Seules les versions exactes sont autorisées avec PackageDownload.</target>
         <note>0 - The package that does not have an exact version. Do not translate 'PackageDownload'. 1 - the version string that's not exact.</note>
       </trans-unit>
       <trans-unit id="Error_PackagesConfigParseError">
@@ -65,7 +65,7 @@
       <trans-unit id="Error_StaticGraphRestoreArgumentsParsingFailedExceptionReadingStream">
         <source>An error occurred parsing command-line arguments in static graph-based restore as an exception occurred reading the standard input stream, {0} Please file an issue at https://github.com/NuGet/Home
 {1}</source>
-        <target state="translated">Une erreur s’est produite lors de l’analyse des arguments de ligne de commande dans la restauration statique basée sur des graphiques, car une exception s’est produite lors de la lecture du flux d’entrée standard, {0} Envoyez un problème à https://github.com/NuGet/Home
+        <target state="translated">Désolé, une erreur s’est produite lors de l’analyse des arguments de ligne de commande dans la restauration statique basée sur des graphiques, car une exception s’est produite lors de la lecture du flux d’entrée standard, {0} Envoyez un problème à https://github.com/NuGet/Home
 {1}</target>
         <note>0 - The exception message
 1 - The string representation of the exception</note>
@@ -83,7 +83,7 @@
       <trans-unit id="Error_StaticGraphUnhandledException">
         <source>Static graph-based restore encountered an unhandled exception. Please file an issue at https://github.com/NuGet/Home.  The exception was:
 {0}</source>
-        <target state="translated">Une restauration statique basée sur un graphique a rencontré une exception non prise en charge. Entrez un problème au niveau de https://github.com/NuGet/Home. L’exception était :
+        <target state="translated">Une restauration statique basée sur un graphique a rencontré une exception non prise en charge. Entrez un problème au niveau de https://github.com/NuGet/Home.  L’exception était :
 {0}</target>
         <note>0 - The exception as a string.</note>
       </trans-unit>

@@ -70,7 +70,7 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">El proyecto {0} no existe en la caché de sistema del proyecto.</target>
+        <target state="translated">El proyecto {0} no existe en la memoria caché del sistema del proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidNetStandardFramework">
@@ -305,17 +305,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_FailedToInstallPackage">
         <source>Could not add all required packages to the project. The following packages failed to install from '{0}':</source>
-        <target state="translated">No se pudieron agregar todos los paquetes requeridos al proyecto. Los siguientes paquetes no se pudieron instalar desde '{0}':</target>
+        <target state="translated">No se pudieron agregar todos los paquetes necesarios al proyecto. No se pudieron instalar los siguientes paquetes desde '{0}':</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidExtensionId">
         <source>The preinstalled packages have a reference to a missing Extension. Could not find an Extension with ID '{0}'.</source>
-        <target state="translated">Los paquetes preinstalados tienen una referencia a una extensión que falta. No se pudo encontrar un extensión con el identificador '{0}'.</target>
+        <target state="translated">Los paquetes preinstalados tienen una referencia a una extensión que falta. No se encontró ninguna extensión con el id. '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_InvalidRegistryValue">
         <source>The preinstalled packages have a reference to a missing Registry value. Could not find a Registry key with name '{0}' under '{1}'.</source>
-        <target state="translated">Los paquetes preinstalados tienen una referencia a un valor de registro que falta. No se pudo encontrar una clave de registro con el identificador '{0}'. '{1}'.</target>
+        <target state="translated">Los paquetes preinstalados tienen una referencia a un valor de registro que falta. No se encontró ninguna clave de registro con el nombre '{0}' en '{1}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_PackageInstallStatus">
@@ -325,12 +325,12 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PreinstalledPackages_RegistryKeyError">
         <source>The preinstalled packages are configured to use a Registry-provided package repository but there was an error accessing Registry key '{0}'.</source>
-        <target state="translated">Los paquetes preinstalados están configurados para usar un repositorio de paquetes proporcionado por el registro pero se produjo un error al obtener acceso a la clave de registro '{0}'.</target>
+        <target state="translated">Los paquetes preinstalados están configurados para usar un repositorio de paquetes del Registro, pero se produjo un error al acceder a la clave de Registro '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="PreinstalledPackages_VersionConflict">
         <source>Attempting to install version '{1}' of '{0}' but the project already includes a different version. Skipping...</source>
-        <target state="translated">Intentando instalar la versión '{1}' de '{0}' pero el proyecto ya incluye otra versión diferente. Omitiendo...</target>
+        <target state="translated">Se está intentando instalar la versión '{1}' de '{0}', pero el proyecto ya incluye una versión diferente. Omitiendo...</target>
         <note />
       </trans-unit>
       <trans-unit id="ProjectReferenceBrowseObjectClassName">
@@ -350,17 +350,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' no puede ser nulo.</target>
+        <target state="translated">'{0}' no puede ser null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_ErrorDialogTitle">
         <source>Package Installation Error</source>
-        <target state="translated">Error de instalación del paquete</target>
+        <target state="translated">Error en la instalación del paquete</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidPackageElementAttributes">
         <source>The project template lists one or more packages with missing, empty, or invalid values for the "id" or "version" attributes. Both attributes are required and must have valid values.</source>
-        <target state="translated">En la plantilla del proyecto se enumeran uno o varios paquetes con valores vacíos, no válidos o inexistentes para los atributos "id" o "version". Ambos atributos son obligatorios y deben tener valores válidos.</target>
+        <target state="translated">La plantilla del proyecto enumera uno o más paquetes con valores que faltan, están vacíos o no son válidos para los atributos "id" o "version". Ambos atributos son necesarios y deben tener valores válidos.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidRepositoryAttribute">
@@ -370,17 +370,17 @@ The string representation of the user's input framework name.</note>
       </trans-unit>
       <trans-unit id="TemplateWizard_InvalidWizardRunKind">
         <source>This template wizard can only be applied to single-project or project-item templates.</source>
-        <target state="translated">Este asistente para plantillas solo se puede aplicar a plantillas de proyecto único o de elemento de proyecto.</target>
+        <target state="translated">Este asistente para plantillas solo se puede aplicar a plantillas de un solo proyecto o de elemento de proyecto.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingExtensionId">
         <source>The project template is configured to use an Extension-specific package repository but the Extension ID has not been specified. Use the "repositoryId" attribute to specify the Extension ID.</source>
-        <target state="translated">La plantilla de proyecto está configurada para usar un repositorio de paquetes específico de la extensión pero no se ha especificado el identificador de la extensión. Use el atributo "repositoryId" para especificar el identificador de la extensión.</target>
+        <target state="translated">La plantilla de proyecto está configurada para usar un repositorio de paquetes específico de extensión, pero el id. de extensión no se ha especificado. Use el atributo "repositoryId" para especificar el id. de extensión.</target>
         <note />
       </trans-unit>
       <trans-unit id="TemplateWizard_MissingRegistryKeyName">
         <source>The project template is configured to use a Registry-provided package repository but the Registry value name has not been specified. Use the "keyName" attribute to specify the Registry value.</source>
-        <target state="translated">La plantilla de proyecto está configurada para usar un repositorio de paquetes proporcionado por el registro pero no se ha especificado el nombre del valor de registro. Use el atributo "keyName" para especificar el valor de registro.</target>
+        <target state="translated">La plantilla de proyecto está configurada para usar un repositorio de paquetes del Registro, pero el nombre del valor del registro no se ha especificado. Use el atributo "keyName" para especificar el valor del Registro.</target>
         <note />
       </trans-unit>
       <trans-unit id="UnknownPackage">
