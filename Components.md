@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0898abb](https://github.com/dotnet/scenario-tests/tree/0898abbb5899ef400b8372913c2320295798a687)*
 - `src/sdk`  
-*[dotnet/sdk@b3b89b6](https://github.com/dotnet/sdk/tree/b3b89b6ae5d7c1422406deb66e9c2b33d58d3822)*
+*[dotnet/sdk@eebf2c2](https://github.com/dotnet/sdk/tree/eebf2c25e478cec369f144564185d1ef40a49eb0)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
