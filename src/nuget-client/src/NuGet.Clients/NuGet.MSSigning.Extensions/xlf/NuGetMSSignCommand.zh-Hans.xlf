@@ -108,7 +108,7 @@ nuget mssign MyPackage.nupkg -Timestamper https://foo.bar -CertificateFile foo.p
       </trans-unit>
       <trans-unit id="MSSignCommandUsageSummary">
         <source>&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</source>
-        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContainer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</target>
+        <target state="translated">&lt;package_path&gt; -Timestamper &lt;timestamp_server_url&gt; -CertificateFile &lt;p7b_file_path&gt; -CSPName &lt;cryptographic_service _provider_name&gt;  -KeyContianer &lt;key_container_guid&gt;  -CertificateFingerprint &lt;certificate_fingerprint&gt;</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="RepoSignCommandDescription">

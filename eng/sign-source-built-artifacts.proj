@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.Build.Traversal">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(TasksDir)Microsoft.DotNet.UnifiedBuild.Tasks\Microsoft.DotNet.UnifiedBuild.Tasks.csproj" />
+  </ItemGroup>
+
+  <UsingTask TaskName="Microsoft.DotNet.UnifiedBuild.Tasks.SignSourceBuiltArtifacts" AssemblyFile="$(MicrosoftDotNetUnifiedBuildTasksAssembly)" TaskFactory="TaskHostFactory" />
+
+  <Target Name="SignSourceBuiltArtifacts"
+      DependsOnTargets="GetSignableSourceBuiltAssets"
+      BeforeTargets="Build">
+
+    <SignSourceBuiltArtifacts
+      DotNetEngDirectory="$(RepositoryEngineeringDir)"
+      SignableSourceBuiltAssets="@(SignableSourceBuiltAsset)"
+      LogsDirectory="$(ArtifactsLogDir)"
+      SignProperties="$(SignProperties)"
+      OfficialBuildId="$(OfficialBuildId)" />
+  </Target>
+
+  <Target Name="GetSignableSourceBuiltAssets"
+    DependsOnTargets="ResolveProjectReferences"
+    BeforeTargets="Build">
+
+    <!-- We always publish when building the VMR, so we need to define these properties to ensure that we're pulling the source-build artifacts from the correct locations -->
+    <!-- Keep in line with the properties defined in $(RepositoryEngineeringDir)Publishing.props -->
+    <PropertyGroup>
+      <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
+      <ArtifactsPublishStagingDir>$(ArtifactsStagingDir)/artifacts</ArtifactsPublishStagingDir>
+      <SourceBuiltAssetsDir>$(ArtifactsPublishStagingDir)/assets/$(Configuration)</SourceBuiltAssetsDir>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <SourceBuiltSdkTarballName>dotnet-sdk</SourceBuiltSdkTarballName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <!-- Sdk tarball -->
+      <SignableSourceBuiltSdkTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSdkTarballName)-*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSdkTarball)" />
+
+      <!-- PSB artifacts -->
+      <SignableSourceBuiltArtifactsTarball Include="$(SourceBuiltAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltArtifactsTarball)" />
+
+      <!-- Source tarball and zipball -->
+      <!-- Uncomment once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
+      <!-- <SignableSourceBuiltSourceArtifact Include="$(SourceBuiltAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
+      <SignableSourceBuiltAsset Include="@(SignableSourceBuiltSourceArtifact)" /> -->
+    </ItemGroup>
+
+    <Error Text="$(SourceBuiltSdkTarballName) artifact count is @(SignableSourceBuiltSdkTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltSdkTarball->Count()) != 1"/>
+    <Error Text="$(SourceBuiltArtifactsTarballName) artifact count is @(SignableSourceBuiltArtifactsTarball->Count()) and should be 1" Condition="@(SignableSourceBuiltArtifactsTarball->Count()) != 1"/>
+    <!-- Enable once https://github.com/dotnet/arcade/issues/16034 has been resolved. -->
+    <!-- <Error Text="$(SourceBuiltSourceArtifactName) artifact count is @(SignableSourceBuiltSourceArtifact->Count()) and should be 2" Condition="@(SignableSourceBuiltSourceArtifact->Count()) != 2"/> -->
+  </Target>
+
+</Project>
