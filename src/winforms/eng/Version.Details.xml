@@ -91,6 +91,7 @@ Note: if the Uri is a new place, you will need to add a subscription from that p
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>13a7588dc6e538cc938ea1277a37f756a80c7f03</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.DotNet.GenFacades" Version="10.0.0-beta.25459.101">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>13a7588dc6e538cc938ea1277a37f756a80c7f03</Sha>
     </Dependency>
