@@ -9,23 +9,17 @@ using Microsoft.CodeAnalysis.CodeRefactorings;
 namespace Microsoft.CodeAnalysis.UnifiedSuggestions;
 
 /// <summary>
-/// Similar to SuggestedAction, but in a location that can be used by
+/// Similar to CodeRefactoringSuggestedAction, but in a location that can be used by
 /// both local Roslyn and LSP.
 /// </summary>
-internal abstract class UnifiedSuggestedAction(
+internal sealed class UnifiedSuggestedActionWithNestedFlavors(
     CodeAction codeAction,
     CodeActionPriority codeActionPriority,
     object provider,
+    UnifiedSuggestedActionSet? fixAllFlavors,
     CodeRefactoringKind? codeRefactoringKind,
     ImmutableArray<Diagnostic> diagnostics)
+    : UnifiedSuggestedAction(codeAction, codeActionPriority, provider, codeRefactoringKind, diagnostics)
 {
-    public object Provider { get; } = provider;
-
-    public CodeAction OriginalCodeAction { get; } = codeAction;
-
-    public CodeActionPriority CodeActionPriority { get; } = codeActionPriority;
-
-    public CodeRefactoringKind? CodeRefactoringKind { get; } = codeRefactoringKind;
-
-    public ImmutableArray<Diagnostic> Diagnostics { get; } = diagnostics;
+    public UnifiedSuggestedActionSet? FixAllFlavors { get; } = fixAllFlavors;
 }
