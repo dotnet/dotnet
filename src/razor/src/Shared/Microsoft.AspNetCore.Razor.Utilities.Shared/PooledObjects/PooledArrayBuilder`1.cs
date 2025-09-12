@@ -670,29 +670,10 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     }
 
     public readonly T[] ToArray()
-    {
-        if (TryGetBuilder(out var builder))
-        {
-            return builder.ToArray();
-        }
-
-        return _inlineCount switch
-        {
-            0 => [],
-            1 => [_element0],
-            2 => [_element0, _element1],
-            3 => [_element0, _element1, _element2],
-            _ => [_element0, _element1, _element2, _element3]
-        };
-    }
+        => ImmutableCollectionsMarshal.AsArray(ToImmutable()).AssumeNotNull();
 
     public T[] ToArrayAndClear()
-    {
-        var result = ToArray();
-        Clear();
-
-        return result;
-    }
+        => ImmutableCollectionsMarshal.AsArray(ToImmutableAndClear()).AssumeNotNull();
 
     public void Push(T item)
     {

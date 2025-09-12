@@ -53,8 +53,6 @@ namespace NuGet.Commands
 
         public PackageSaveMode PackageSaveMode { get; set; } = PackageSaveMode.Defaultv3;
 
-        public int? LockFileVersion { get; set; }
-
         public bool? ValidateRuntimeAssets { get; set; }
 
         public bool HideWarningsAndErrors { get; set; } = false;
@@ -211,10 +209,7 @@ namespace NuGet.Commands
                 request.IsLowercasePackagesDirectory = IsLowercaseGlobalPackagesFolder.Value;
             }
 
-            if (LockFileVersion.HasValue && LockFileVersion.Value > 0)
-            {
-                request.LockFileVersion = LockFileVersion.Value;
-            }
+            request.LockFileVersion = LockFileFormat.Version;
 
             // Run runtime asset checks for project.json, and for other types if enabled.
             if (ValidateRuntimeAssets == null)

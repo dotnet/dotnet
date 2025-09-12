@@ -9,6 +9,7 @@ internal static class CSSErrorCodes
     public const string UnrecognizedBlockType = "CSS002";
     public const string MissingClassNameAfterDot = "CSS008";
     public const string MissingOpeningBrace = "CSS023";
+    public const string MissingPropertyName = "CSS024";
     public const string MissingPropertyValue = "CSS025";
     public const string MissingSelectorAfterCombinator = "CSS029";
     public const string MissingSelectorBeforeCombinatorCode = "CSS031";

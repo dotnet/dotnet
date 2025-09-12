@@ -727,7 +727,7 @@ namespace NuGet.Commands
             bool isPruningEnabledGlobally = false;
             foreach (var item in targetFrameworkInfos)
             {
-                if (IsPropertyTrue(item, "_RestorePackagePruningDefault"))
+                if (IsPropertyTrue(item, "RestorePackagePruningDefault"))
                 {
                     isPruningEnabledGlobally = true;
                     break;

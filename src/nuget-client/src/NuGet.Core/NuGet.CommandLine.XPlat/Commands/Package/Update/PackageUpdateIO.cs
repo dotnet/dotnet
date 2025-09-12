@@ -112,7 +112,6 @@ internal class PackageUpdateIO : IPackageUpdateIO
         var restoreContext = new RestoreArgs()
         {
             CacheContext = cacheContext,
-            LockFileVersion = LockFileFormat.Version,
             Log = restoreLogger,
             MachineWideSettings = new XPlatMachineWideSetting(),
             GlobalPackagesFolder = globalPackagesFolder,
