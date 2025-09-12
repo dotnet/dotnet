@@ -2,12 +2,18 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Core\Portable\CommitHashAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Core\Portable\InternalUtilities\Debug.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Core\Portable\InternalUtilities\PlatformInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\BuildProtocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\BuildServerConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\CompilerServerLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\NamedPipeUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\NativeMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\RuntimeHostInfo.cs" />
+  </ItemGroup>
+  <!--
+    Some files are already included in BuildServerUtils source package so we cannot include them in the BuildClient source package
+    (because some consumers need both packages and there would be conflicts if they included the same files).
+  -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'Microsoft.CodeAnalysis.BuildClient.Package'">
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Core\Portable\InternalUtilities\PlatformInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)..\..\Compilers\Shared\NamedPipeUtil.cs" />
   </ItemGroup>
 </Project>

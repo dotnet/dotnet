@@ -23,9 +23,9 @@ namespace Microsoft.CodeAnalysis
         // Size of the buffers to use: 64K
         private const int PipeBufferSize = 0x10000;
 
-        private static string GetPipeNameOrPath(string pipeName)
+        private static string GetPipeNameOrPath(string pipeName, bool convertPipeNameToPath)
         {
-            if (PlatformInformation.IsUnix)
+            if (convertPipeNameToPath && PlatformInformation.IsUnix)
             {
                 // If we're on a Unix machine then named pipes are implemented using Unix Domain Sockets.
                 // Most Unix systems have a maximum path length limit for Unix Domain Sockets, with
@@ -44,12 +44,12 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Create a client for the current user only.
         /// </summary>
-        internal static NamedPipeClientStream CreateClient(string serverName, string pipeName, PipeDirection direction, PipeOptions options)
-            => new NamedPipeClientStream(serverName, GetPipeNameOrPath(pipeName), direction, options | CurrentUserOption);
+        internal static NamedPipeClientStream CreateClient(string serverName, string pipeName, PipeDirection direction, PipeOptions options, bool convertPipeNameToPath = true)
+            => new NamedPipeClientStream(serverName, GetPipeNameOrPath(pipeName, convertPipeNameToPath), direction, options | CurrentUserOption);
 
         /// <summary>
         /// Does the client of "pipeStream" have the same identity and elevation as we do? The <see cref="CreateClient"/> and 
-        /// <see cref="CreateServer(string, PipeDirection?)" /> methods will already guarantee that the identity of the client and server are the 
+        /// <see cref="CreateServer(string, PipeDirection?, bool)" /> methods will already guarantee that the identity of the client and server are the 
         /// same. This method is attempting to validate that the elevation level is the same between both ends of the 
         /// named pipe (want to disallow low priv session sending compilation requests to an elevated one).
         /// </summary>
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis
         /// <summary>
         /// Create a server for the current user only
         /// </summary>
-        internal static NamedPipeServerStream CreateServer(string pipeName, PipeDirection? pipeDirection = null)
+        internal static NamedPipeServerStream CreateServer(string pipeName, PipeDirection? pipeDirection = null, bool convertPipeNameToPath = true)
         {
             var pipeOptions = PipeOptions.Asynchronous | PipeOptions.WriteThrough;
             return CreateServer(
@@ -91,7 +91,8 @@ namespace Microsoft.CodeAnalysis
                 PipeTransmissionMode.Byte,
                 pipeOptions,
                 PipeBufferSize,
-                PipeBufferSize);
+                PipeBufferSize,
+                convertPipeNameToPath);
         }
 
 #if NET472
@@ -113,9 +114,10 @@ namespace Microsoft.CodeAnalysis
             PipeTransmissionMode transmissionMode,
             PipeOptions options,
             int inBufferSize,
-            int outBufferSize) =>
+            int outBufferSize,
+            bool convertPipeNameToPath) =>
             new NamedPipeServerStream(
-                GetPipeNameOrPath(pipeName),
+                GetPipeNameOrPath(pipeName, convertPipeNameToPath),
                 direction,
                 maxNumberOfServerInstances,
                 transmissionMode,
@@ -185,9 +187,10 @@ namespace Microsoft.CodeAnalysis
             PipeTransmissionMode transmissionMode,
             PipeOptions options,
             int inBufferSize,
-            int outBufferSize) =>
+            int outBufferSize,
+            bool convertPipeNameToPath) =>
             new NamedPipeServerStream(
-                GetPipeNameOrPath(pipeName),
+                GetPipeNameOrPath(pipeName, convertPipeNameToPath),
                 direction,
                 maxNumberOfServerInstances,
                 transmissionMode,
