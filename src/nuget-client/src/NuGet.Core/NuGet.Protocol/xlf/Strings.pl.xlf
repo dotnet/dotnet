@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">Nieprawidłowy identyfikator pakietu: „{0}”.</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">Adres „{0}” to zduplikowany adres URL, który został już pobrany i spowoduje wystąpienie zależności cyklicznej. Popraw dane na serwerze.</target>
+        <target state="translated">Adres „{0}” to zduplikowany adres url, który został już pobrany i spowoduje wystąpienie zależności cyklicznej. Popraw dane na serwerze.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

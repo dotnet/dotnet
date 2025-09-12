@@ -61,16 +61,16 @@
       "commitSha": "610aa6fdc1ab787670d0ba2db53a4546ae63a874"
     },
     {
-      "barId": 280776,
+      "barId": 282531,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "24e112427932b7d75907feecd7baa792ffbe72d8"
+      "commitSha": "388b7f56e39f255e14e2912d4c4a2c5be07d79c3"
     },
     {
-      "barId": 282515,
+      "barId": 282718,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "40db6c3626b34bea3d8b1385df7c5f287b8cb0b6"
+      "commitSha": "bf274acd963920e40bd009fa992c75db04c63b7e"
     },
     {
       "barId": 281892,

@@ -453,24 +453,10 @@ namespace NuGet.PackageManagement.VisualStudio
 
             var isSupported = false;
 
-            if (await _featureFlagService.IsFeatureEnabledAsync(NuGetFeatureFlagConstants.NuGetSolutionCacheInitilization))
+            var ivsSolution = await _asyncVSSolution.GetValueAsync();
+            if (IsSolutionOpenFromVSSolution(ivsSolution))
             {
-                var ivsSolution = await _asyncVSSolution.GetValueAsync();
-                if (IsSolutionOpenFromVSSolution(ivsSolution))
-                {
-                    return VsHierarchyUtility.AreAnyLoadedProjectsNuGetCompatible(ivsSolution);
-                }
-            }
-            else
-            {
-                // first check with DTE, and if we find any supported project, then return immediately.
-                var dte = await _dte.GetValueAsync();
-
-                foreach (Project project in await EnvDTESolutionUtility.GetAllEnvDTEProjectsAsync(dte))
-                {
-                    isSupported = true;
-                    break;
-                }
+                return VsHierarchyUtility.AreAnyLoadedProjectsNuGetCompatible(ivsSolution);
             }
 
             return isSupported;
@@ -801,54 +787,28 @@ namespace NuGet.PackageManagement.VisualStudio
                 {
                     try
                     {
-                        if (await _featureFlagService.IsFeatureEnabledAsync(NuGetFeatureFlagConstants.NuGetSolutionCacheInitilization))
+                        IVsSolution ivsSolution = await _asyncVSSolution.GetValueAsync();
+                        foreach (var hierarchy in VsHierarchyUtility.GetAllLoadedProjects(ivsSolution))
                         {
-                            IVsSolution ivsSolution = await _asyncVSSolution.GetValueAsync();
-                            foreach (var hierarchy in VsHierarchyUtility.GetAllLoadedProjects(ivsSolution))
+                            try
                             {
-                                try
+                                IVsProjectAdapter vsProjectAdapter = await _vsProjectAdapterProvider.CreateAdapterForFullyLoadedProjectAsync(hierarchy);
+                                NuGetProject nuGetProject = await AddVsProjectAdapterToCacheAsync(vsProjectAdapter);
+
+                                if (nuGetProject is ProjectJsonNuGetProject projectJsonNuGetProject)
                                 {
-                                    IVsProjectAdapter vsProjectAdapter = await _vsProjectAdapterProvider.CreateAdapterForFullyLoadedProjectAsync(hierarchy);
-                                    NuGetProject nuGetProject = await AddVsProjectAdapterToCacheAsync(vsProjectAdapter);
-
-                                    if (nuGetProject is ProjectJsonNuGetProject projectJsonNuGetProject)
-                                    {
-                                        await MigrateProjectJsonAsync(projectJsonNuGetProject, hierarchy, vsProjectAdapter);
-                                    }
-
+                                    await MigrateProjectJsonAsync(projectJsonNuGetProject, hierarchy, vsProjectAdapter);
                                 }
-                                catch (Exception e)
-                                {
-                                    // Ignore failed projects.
-                                    _logger.LogWarning($"The project {VsHierarchyUtility.GetProjectPath(hierarchy)} failed to initialize as a NuGet project.");
-                                    _logger.LogError(e.ToString());
-                                }
-
-                                // Consider that the cache is initialized only when there are any projects to add.
-                                _cacheInitialized = true;
                             }
-                        }
-                        else
-                        {
-                            var dte = await _dte.GetValueAsync();
-
-                            foreach (var project in await EnvDTESolutionUtility.GetAllEnvDTEProjectsAsync(dte))
+                            catch (Exception e)
                             {
-                                try
-                                {
-                                    var vsProjectAdapter = await _vsProjectAdapterProvider.CreateAdapterForFullyLoadedProjectAsync(project);
-                                    await AddVsProjectAdapterToCacheAsync(vsProjectAdapter);
-                                }
-                                catch (Exception e)
-                                {
-                                    // Ignore failed projects.
-                                    _logger.LogWarning($"The project {project.Name} failed to initialize as a NuGet project.");
-                                    _logger.LogError(e.ToString());
-                                }
-
-                                // Consider that the cache is initialized only when there are any projects to add.
-                                _cacheInitialized = true;
+                                // Ignore failed projects.
+                                _logger.LogWarning($"The project {VsHierarchyUtility.GetProjectPath(hierarchy)} failed to initialize as a NuGet project.");
+                                _logger.LogError(e.ToString());
                             }
+
+                            // Consider that the cache is initialized only when there are any projects to add.
+                            _cacheInitialized = true;
                         }
 
                         await SetDefaultProjectNameAsync();

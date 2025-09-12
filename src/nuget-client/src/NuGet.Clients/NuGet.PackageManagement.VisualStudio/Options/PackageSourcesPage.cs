@@ -222,9 +222,6 @@ namespace NuGet.PackageManagement.VisualStudio.Options
                     packageSources.Add(packageSource);
                 }
 
-                // Throw any validation errors before saving.
-                PackageSourceValidator.ValidateUniquenessOrThrow(packageSources);
-
                 _packageSourceProvider.SavePackageSources(packageSources);
 
                 hasAnyHiddenPropertyChanged = hasAnyPackageSourceNameChanged;
