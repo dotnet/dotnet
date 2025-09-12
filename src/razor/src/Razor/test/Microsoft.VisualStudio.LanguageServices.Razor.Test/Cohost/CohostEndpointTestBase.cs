@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Composition;
 using Microsoft.VisualStudio.Razor.Settings;
@@ -22,10 +23,12 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 {
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private IClientSettingsManager? _clientSettingsManager;
+    private IFilePathService? _filePathService;
 
     private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected TestRemoteServiceInvoker TestRemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
+    private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
 
     /// <summary>
     /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
@@ -40,6 +43,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         AddDisposable(_remoteServiceInvoker);
 
         _clientSettingsManager = new ClientSettingsManager([], null, null);
+
+        _filePathService = new VisualStudioFilePathService(FeatureOptions);
     }
 
     private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()

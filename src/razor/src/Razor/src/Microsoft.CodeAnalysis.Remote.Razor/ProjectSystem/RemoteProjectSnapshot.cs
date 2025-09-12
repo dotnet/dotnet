@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -61,7 +60,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        var generatorResult = await GetRazorGeneratorResultAsync(throwIfNotFound: false, cancellationToken).ConfigureAwait(false);
         if (generatorResult is null)
             return [];
 
@@ -141,30 +140,24 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return false;
     }
 
-    internal async Task<RazorCodeDocument?> GetCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    internal async Task<RazorCodeDocument> GetRequiredCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (generatorResult is null)
-        {
-            return null;
-        }
+        var generatorResult = await GetRazorGeneratorResultAsync(throwIfNotFound: true, cancellationToken).ConfigureAwait(false);
 
-        return generatorResult.GetCodeDocument(documentSnapshot.FilePath);
+        return generatorResult.AssumeNotNull().GetCodeDocument(documentSnapshot.FilePath)
+            ?? throw new InvalidOperationException(SR.FormatGenerator_run_result_did_not_contain_a_code_document(documentSnapshot.FilePath));
     }
 
-    internal async Task<SourceGeneratedDocument?> GetGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    internal async Task<SourceGeneratedDocument> GetRequiredGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (generatorResult is null)
-        {
-            return null;
-        }
+        var generatorResult = await GetRazorGeneratorResultAsync(throwIfNotFound: true, cancellationToken).ConfigureAwait(false);
 
-        var hintName = generatorResult.GetHintName(documentSnapshot.FilePath);
+        var hintName = generatorResult.AssumeNotNull().GetHintName(documentSnapshot.FilePath);
 
         var generatedDocument = await _project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken).ConfigureAwait(false);
 
-        return generatedDocument ?? throw new InvalidOperationException("Couldn't get the source generated document for a hint name that we got from the generator?");
+        return generatedDocument
+            ?? throw new InvalidOperationException(SR.FormatCouldnt_get_the_source_generated_document_for_hint_name(hintName));
     }
 
     public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedDocumentUriAsync(Uri generatedDocumentUri, CancellationToken cancellationToken)
@@ -179,7 +172,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
-        var runResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        var runResult = await GetRazorGeneratorResultAsync(throwIfNotFound: false, cancellationToken).ConfigureAwait(false);
         if (runResult is null)
         {
             return null;
@@ -192,7 +185,7 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async Task<TextDocument?> TryGetRazorDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
-        var runResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
+        var runResult = await GetRazorGeneratorResultAsync(throwIfNotFound: false, cancellationToken).ConfigureAwait(false);
         if (runResult is null)
         {
             return null;
@@ -204,31 +197,60 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
                 : null;
     }
 
-    private async Task<RazorGeneratorResult?> GetRazorGeneratorResultAsync(CancellationToken cancellationToken)
+    private async Task<RazorGeneratorResult?> GetRazorGeneratorResultAsync(bool throwIfNotFound, CancellationToken cancellationToken)
     {
         var result = await _project.GetSourceGeneratorRunResultAsync(cancellationToken).ConfigureAwait(false);
         if (result is null)
         {
+            if (throwIfNotFound)
+            {
+                throw new InvalidOperationException(SR.FormatCouldnt_get_a_source_generator_run_result(_project.Name));
+            }
+
             return null;
         }
 
         var runResult = result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Assembly.Location == typeof(RazorSourceGenerator).Assembly.Location);
         if (runResult.Generator is null)
         {
+            if (throwIfNotFound)
+            {
+                if (result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Name == "Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator").Generator is { } wrongGenerator)
+                {
+                    // Wrong ALC?
+                    throw new InvalidOperationException(SR.FormatRazor_source_generator_reference_incorrect(wrongGenerator.GetGeneratorType().Assembly.Location, typeof(RazorSourceGenerator).Assembly.Location, _project.Name));
+                }
+                else
+                {
+                    throw new InvalidOperationException(SR.FormatRazor_source_generator_is_not_referenced(_project.Name));
+                }
+            }
+
             return null;
         }
 
 #pragma warning disable RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        if (!runResult.HostOutputs.TryGetValue(nameof(RazorGeneratorResult), out var objectResult) || objectResult is not RazorGeneratorResult generatorResult)
+        if (!runResult.HostOutputs.TryGetValue(nameof(RazorGeneratorResult), out var objectResult))
+#pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         {
-            Debug.Fail($"""
-                No RazorGeneratorResult found in host outputs for project '{_project.Name}':
-                {string.Join(Environment.NewLine, runResult.Diagnostics)}
-                """);
+            if (throwIfNotFound)
+            {
+                throw new InvalidOperationException(SR.FormatRazor_source_generator_did_not_produce_a_host_output(_project.Name, string.Join(Environment.NewLine, runResult.Diagnostics)));
+            }
 
             return null;
         }
-#pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+
+        if (objectResult is not RazorGeneratorResult generatorResult)
+        {
+            if (throwIfNotFound)
+            {
+                // Wrong ALC?
+                throw new InvalidOperationException(SR.FormatRazor_source_generator_host_output_is_not_RazorGeneratorResult(_project.Name, string.Join(Environment.NewLine, runResult.Diagnostics)));
+            }
+
+            return null;
+        }
 
         return generatorResult;
     }

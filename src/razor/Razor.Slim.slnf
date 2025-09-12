@@ -33,6 +33,7 @@
       "src\\Razor\\test\\Microsoft.CodeAnalysis.Remote.Razor.Test\\Microsoft.CodeAnalysis.Remote.Razor.Test.csproj",
       "src\\Razor\\test\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test\\Microsoft.VisualStudio.LanguageServer.ContainedLanguage.Test.csproj",
       "src\\Razor\\test\\Microsoft.VisualStudio.LanguageServices.Razor.Test\\Microsoft.VisualStudio.LanguageServices.Razor.Test.csproj",
+      "src\\Razor\\test\\Microsoft.VisualStudioCode.RazorExtension.Test\\Microsoft.VisualStudioCode.RazorExtension.Test.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Test.Common\\Microsoft.AspNetCore.Razor.Test.Common.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test\\Microsoft.AspNetCore.Razor.Utilities.Shared.Test.csproj",
       "src\\Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared\\Microsoft.AspNetCore.Razor.Utilities.Shared.csproj",

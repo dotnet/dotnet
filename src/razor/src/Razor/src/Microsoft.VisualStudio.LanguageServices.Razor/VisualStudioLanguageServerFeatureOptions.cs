@@ -44,7 +44,7 @@ internal class VisualStudioLanguageServerFeatureOptions : LanguageServerFeatureO
         _useRazorCohostServer = new Lazy<bool>(() =>
         {
             var featureFlags = (IVsFeatureFlags)Package.GetGlobalService(typeof(SVsFeatureFlags));
-            var useRazorCohostServer = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseRazorCohostServer, defaultValue: false);
+            var useRazorCohostServer = featureFlags.IsFeatureEnabled(WellKnownFeatureFlagNames.UseRazorCohostServer, defaultValue: true);
             return useRazorCohostServer;
         });
     }
