@@ -345,6 +345,10 @@ if [ "$removeBinaries" == true ]; then
     psbDir=$workingDir
   fi
 
+  # Set up SDK overrides for offline builds
+  source "$REPO_ROOT/eng/common/setup-offline-sdks.sh"
+  SetupOfflineSdks "$REPO_ROOT" "$packagesArchiveDir" "$psbDir"
+
   "$dotnetSdk/dotnet" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
     "/p:BinariesMode=Clean" \
