@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\NET Fundamentals\NET Partners\WPF\Security\SDL"
+    path: DevDiv\NET Fundamentals\NET Partners\WPF\Security\SDL

@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\NET Runtime\Diagnostics\SDL"
+    path: DevDiv\NET Runtime\Diagnostics\SDL

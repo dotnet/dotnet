@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: "DevDiv\NET Runtime\WebAssembly"
+    path: DevDiv\NET Runtime\WebAssembly
