@@ -376,6 +376,40 @@ public class CohostDocumentPullDiagnosticsTest(ITestOutputHelper testOutputHelpe
     }
 
     [Fact]
+    public Task FilterPropertyNameInCss()
+    {
+        TestCode input = """
+            <div style="{|CSS024:/|}****/"></div>
+            <div style="@(someBool ? "width: 100%" : "width: 50%")">
+
+            </div>
+
+            @code
+            {
+                private bool someBool = false;
+            }
+            """;
+
+        return VerifyDiagnosticsAsync(input,
+            htmlResponse: [new VSInternalDiagnosticReport
+            {
+                Diagnostics =
+                [
+                    new LspDiagnostic
+                    {
+                        Code = CSSErrorCodes.MissingPropertyName,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("/"), 1))
+                    },
+                    new LspDiagnostic
+                    {
+                        Code = CSSErrorCodes.MissingPropertyName,
+                        Range = SourceText.From(input.Text).GetRange(new TextSpan(input.Text.IndexOf("@"), 1))
+                    },
+                ]
+            }]);
+    }
+
+    [Fact]
     public Task CombinedAndNestedDiagnostics()
         => VerifyDiagnosticsAsync("""
             @using System.Threading.Tasks;
