@@ -309,7 +309,9 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     /// </summary>
     private (string command, string arguments) GetSignCheckCommandAndArguments()
     {
-        string sdkTaskScript = Path.Combine(DotNetRootDirectory, "eng", "common", "sdk-task");
+        // Target sdk-task scripts from Arcade to catch and fix issues with the scripts between releases
+        // This reduces our exposure to known issues in the local VMR copy and improves build reliability during the VMR bootstrap window.
+        string sdkTaskScript = Path.Combine(DotNetRootDirectory, "src", "arcade", "eng", "common", "sdk-task");
 
         string argumentsTemplate =
             $"'{sdkTaskScript}.$scriptExtension$' " +
