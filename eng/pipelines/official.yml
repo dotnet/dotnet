@@ -75,6 +75,8 @@ extends:
     featureFlags:
       binskimScanAllExtensions: true
       incrementalSDLBinaryAnalysis: true
+      autoEnablePREfastWithNewRuleset: false
+      autoEnableRoslynWithNewRuleset: false
     sdl:
       sourceAnalysisPool:
         name: $(DncEngInternalBuildPool)

@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: 0eaea886-0e70-402f-92aa-ed69849c2707
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: DevDiv\NuGet\NuGet Clients
