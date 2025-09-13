@@ -2,7 +2,7 @@
     "instanceUrl": "https://devdiv.visualstudio.com/",
     "template": "TFSDEVDIV",
     "projectName": "DEVDIV",
-    "areaPath": "DevDiv\\ASP.NET Core",
+    "areaPath": "DevDiv\\Net Tools\\WebTools",
     "iterationPath": "DevDiv",
     "notificationAliases": [ "aspnetcore-build@microsoft.com" ],
     "repositoryName":"xdt",
