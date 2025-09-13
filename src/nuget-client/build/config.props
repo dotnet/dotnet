@@ -28,7 +28,7 @@
     <VsTargetMajorVersion Condition="'$(VsTargetMajorVersion)' == ''">$([MSBuild]::Add(11, $(MajorNuGetVersion)))</VsTargetMajorVersion>
     <VsTargetBranch Condition="'$(VsTargetBranch)' == '' And '$(IsEscrowMode)' != 'true'">main</VsTargetBranch>
     <VsTargetChannel Condition="'$(VsTargetChannel)' == '' And '$(IsEscrowMode)' != 'true'">int.$(VsTargetBranch)</VsTargetChannel>
-    <VsTargetChannelForTests Condition="'$(VsTargetChannelForTests)' == ''">int.$(VsTargetBranch)</VsTargetChannelForTests>
+    <VsTargetChannelForTests Condition="'$(VsTargetChannelForTests)' == '' And '$(IsEscrowMode)' != 'true'">int.$(VsTargetBranch)</VsTargetChannelForTests>
 
     <!-- NuGet SDK VS package Semantic Version -->
     <NuGetSdkVsSemanticVersion>$(VsTargetMajorVersion).$(MinorNuGetVersion).$(PatchNuGetVersion)</NuGetSdkVsSemanticVersion>

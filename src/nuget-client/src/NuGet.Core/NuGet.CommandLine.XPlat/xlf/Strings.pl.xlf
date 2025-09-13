@@ -886,10 +886,35 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
         <target state="translated">Ścieżka do pliku projektu lub rozwiązania albo katalogu.</target>
         <note />
       </trans-unit>
+      <trans-unit id="PackageUpdateCommand_VulnerableOptionDescription">
+        <source>Upgrade packages with known vulnerabilities.</source>
+        <target state="new">Upgrade packages with known vulnerabilities.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
         <source>All packages are already up to date.</source>
         <target state="translated">Wszystkie pakiety są już aktualne.</target>
         <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AllVersionsHaveAdvisories">
+        <source>All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</source>
+        <target state="new">All versions of package {0} have security advisories. Unable to find a non-vulnerable version to update to.</target>
+        <note>{0}: package id</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AlreadyUpToDate">
+        <source>All packages are up to date</source>
+        <target state="new">All packages are up to date</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditDisabled">
+        <source>This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="new">This command requires NuGetAudit to be enabled at this time. See https://aka.ms/nuget/audit for more information.</target>
+        <note>{Locked="NuGetAudit"}{Locked="dotnet package update"}</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_AuditModeIsDirect">
+        <source>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</source>
+        <target state="new">NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</target>
+        <note>{Locked="NuGetAuditMode"}</note>
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
         <source>Updated {0} packages in {1} scanned packages.</source>
@@ -905,6 +930,11 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       <trans-unit id="PackageUpdate_LoadingDGSpec">
         <source>Loading Project(s).</source>
         <target state="translated">Ładowanie projektów.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="PackageUpdate_NoVulnerablePackages">
+        <source>No upgradable packages have known vulnerabilities.</source>
+        <target state="new">No upgradable packages have known vulnerabilities.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
@@ -923,8 +953,8 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_UpdatedMessage">
-        <source>Updated {0} {1} to {2}.</source>
-        <target state="translated">Zaktualizowano {0} {1} do {2}.</target>
+        <source>Updating {0} {1} to {2}.</source>
+        <target state="new">Updating {0} {1} to {2}.</target>
         <note>{0}: package id
 {1}: existing version
 {2}: new version</note>
@@ -933,6 +963,11 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
         <source>Updating outdated packages in {0}.</source>
         <target state="translated">Aktualizowanie nieaktualnych pakietów w {0}.</target>
         <note>{0}: the project or solution that is being updated</note>
+      </trans-unit>
+      <trans-unit id="PackageUpdate_UpdatingVulnerablePackages">
+        <source>Updating packages with security advisories in {0}</source>
+        <target state="new">Updating packages with security advisories in {0}</target>
+        <note>{0} - the project/solution being checked</note>
       </trans-unit>
       <trans-unit id="PrereleaseVersionsAvailable">
         <source>There are no stable versions available, {0} is the best available. Consider adding the --prerelease option</source>

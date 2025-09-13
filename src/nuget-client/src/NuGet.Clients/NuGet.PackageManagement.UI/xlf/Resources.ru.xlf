@@ -905,16 +905,15 @@
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
-        <target state="needs-review-translation">Сбой очистки хранилища NuGet в {0}. 
-Ошибка: {1}
-Дополнительная справка: https://aka.ms/troubleshoot_nuget_cache.</target>
+        <target state="translated">Сбой очистки хранилища NuGet в {0}. 
+Ошибка: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
         <source>For more information, see</source>
-        <target state="new">For more information, see</target>
+        <target state="translated">Подробнее см. на странице</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">

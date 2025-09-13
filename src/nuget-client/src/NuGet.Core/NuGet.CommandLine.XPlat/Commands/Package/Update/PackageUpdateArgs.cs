@@ -8,7 +8,7 @@ using NuGet.Common;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package.Update
 {
-    internal class PackageUpdateArgs
+    internal record PackageUpdateArgs
     {
         public required string Project { get; init; }
 
@@ -17,5 +17,7 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
         public required bool Interactive { get; init; }
 
         public required LogLevel LogLevel { get; init; }
+
+        public required bool Vulnerable { get; init; }
     }
 }

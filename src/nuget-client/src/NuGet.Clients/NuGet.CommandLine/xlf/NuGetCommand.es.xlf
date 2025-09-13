@@ -993,7 +993,7 @@ nuget sign MyPackage.nupkg -CertificateFingerprint certificate_fingerprint -Outp
       </trans-unit>
       <trans-unit id="SignCommandNoCertificateException">
         <source>No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</source>
-        <target state="new">No certificate was provided. For a list of accepted ways to provide a certificate, please visit https://docs.nuget.org/docs/reference/command-line-reference</target>
+        <target state="translated">No se encontró el archivo de certificado. Para obtener una lista de las formas aceptadas de proporcionar un certificado, visite https://docs.nuget.org/docs/reference/command-line-reference</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandNoPackageException">

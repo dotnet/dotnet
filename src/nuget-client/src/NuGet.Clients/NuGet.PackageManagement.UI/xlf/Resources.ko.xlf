@@ -905,16 +905,15 @@
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
-        <target state="needs-review-translation">{0}에서 NuGet 스토리지를 지우지 못했습니다. 
-오류: {1}
-자세한 도움말은 https://aka.ms/troubleshoot_nuget_cache를 참조하세요.</target>
+        <target state="translated">{0}에 NuGet 스토리지를 지우지 못했습니다. 
+오류: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
         <source>For more information, see</source>
-        <target state="new">For more information, see</target>
+        <target state="translated">자세한 내용은 다음을 참조하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
