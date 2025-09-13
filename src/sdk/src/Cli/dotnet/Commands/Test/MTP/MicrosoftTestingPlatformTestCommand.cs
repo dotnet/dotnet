@@ -1,9 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.CommandLine;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.DotNet.Cli.Commands.Test.Terminal;
 using Microsoft.DotNet.Cli.Extensions;
 using Microsoft.TemplateEngine.Cli.Commands;
@@ -12,10 +11,10 @@ namespace Microsoft.DotNet.Cli.Commands.Test;
 
 internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHelp, ICommandDocument
 {
-    private TerminalTestReporter _output;
+    private TerminalTestReporter? _output;
     private byte _cancelled;
 
-    public MicrosoftTestingPlatformTestCommand(string name, string description = null) : base(name, description)
+    public MicrosoftTestingPlatformTestCommand(string name, string? description = null) : base(name, description)
     {
         TreatUnmatchedTokensAsErrors = false;
     }
@@ -42,8 +41,7 @@ internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHel
         ValidationUtility.ValidateSolutionOrProjectOrDirectoryOrModulesArePassedCorrectly(parseResult);
 
         int degreeOfParallelism = GetDegreeOfParallelism(parseResult);
-        bool filterModeEnabled = parseResult.HasOption(MicrosoftTestingPlatformOptions.TestModulesFilterOption);
-        var testOptions = new TestOptions(filterModeEnabled, IsHelp: isHelp, IsDiscovery: parseResult.HasOption(MicrosoftTestingPlatformOptions.ListTestsOption));
+        var testOptions = new TestOptions(IsHelp: isHelp, IsDiscovery: parseResult.HasOption(MicrosoftTestingPlatformOptions.ListTestsOption));
 
         InitializeOutput(degreeOfParallelism, parseResult, testOptions);
 
@@ -51,12 +49,11 @@ internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHel
 
         BuildOptions buildOptions = MSBuildUtility.GetBuildOptions(parseResult, degreeOfParallelism);
 
-        var actionQueue = InitializeActionQueue(degreeOfParallelism, testOptions, buildOptions);
-
-        var msBuildHandler = new MSBuildHandler(buildOptions, actionQueue, _output);
-
-        if (testOptions.HasFilterMode)
+        bool filterModeEnabled = parseResult.HasOption(MicrosoftTestingPlatformOptions.TestModulesFilterOption);
+        TestApplicationActionQueue actionQueue;
+        if (filterModeEnabled)
         {
+            actionQueue = new TestApplicationActionQueue(degreeOfParallelism, buildOptions, testOptions, _output, OnHelpRequested);
             var testModulesFilterHandler = new TestModulesFilterHandler(actionQueue, _output);
             if (!testModulesFilterHandler.RunWithTestModulesFilter(parseResult))
             {
@@ -65,12 +62,18 @@ internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHel
         }
         else
         {
+            var msBuildHandler = new MSBuildHandler(buildOptions, _output);
             if (!msBuildHandler.RunMSBuild())
             {
                 return ExitCode.GenericFailure;
             }
 
-            if (!msBuildHandler.EnqueueTestApplications())
+            // NOTE: Don't create TestApplicationActionQueue before RunMSBuild.
+            // The constructor will do Task.Run calls matching the degree of parallelism, and if we did that before the build, that can
+            // be slowing us down unnecessarily.
+            // Alternatively, if we can enqueue right after every project evaluation without waiting all evaluations to be done, we can enqueue early.
+            actionQueue = new TestApplicationActionQueue(degreeOfParallelism, buildOptions, testOptions, _output, OnHelpRequested);
+            if (!msBuildHandler.EnqueueTestApplications(actionQueue))
             {
                 return ExitCode.GenericFailure;
             }
@@ -91,15 +94,6 @@ internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHel
         return exitCode;
     }
 
-    private TestApplicationActionQueue InitializeActionQueue(int degreeOfParallelism, TestOptions testOptions, BuildOptions buildOptions)
-    {
-        return new TestApplicationActionQueue(degreeOfParallelism, buildOptions, testOptions, _output, async (TestApplication testApp) =>
-        {
-            testApp.HelpRequested += OnHelpRequested;
-            return await testApp.RunAsync();
-        });
-    }
-
     private void SetupCancelKeyPressHandler()
     {
         Console.CancelKeyPress += (s, e) =>
@@ -110,6 +104,7 @@ internal partial class MicrosoftTestingPlatformTestCommand : Command, ICustomHel
         };
     }
 
+    [MemberNotNull(nameof(_output))]
     private void InitializeOutput(int degreeOfParallelism, ParseResult parseResult, TestOptions testOptions)
     {
         var console = new SystemConsole();
