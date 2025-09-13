@@ -121,7 +121,7 @@ To prevent NuGet from restoring packages during build, open the Visual Studio Op
       </trans-unit>
       <trans-unit id="RestoringPackages">
         <source>Restoring NuGet packages...</source>
-        <target state="translated">Восстановление пакетов NuGet...</target>
+        <target state="translated">Идет восстановление пакетов NuGet…</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">

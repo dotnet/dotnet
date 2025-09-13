@@ -13,7 +13,7 @@ namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 /// </summary>
 internal interface IDefinitionService
 {
-    Task<LspLocation?> GetDefinitionAsync(
+    Task<LspLocation[]?> GetDefinitionAsync(
         IDocumentSnapshot documentSnapshot,
         DocumentPositionInfo positionInfo,
         ISolutionQueryOperations solutionQueryOperations,

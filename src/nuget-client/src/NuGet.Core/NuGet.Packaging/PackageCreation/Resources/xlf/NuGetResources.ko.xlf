@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="Manifest_IdMaxLengthExceeded">
         <source>Id must not exceed 100 characters.</source>
-        <target state="translated">Id는 100자를 초과하면 안 됩니다.</target>
+        <target state="translated">ID는 100자를 초과하면 안 됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="Manifest_InvalidMinClientVersion">

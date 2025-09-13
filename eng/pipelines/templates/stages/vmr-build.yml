@@ -32,6 +32,7 @@ parameters:
   type: boolean
   default: true
 
+# True when the build is a build run from the production pipeline
 - name: isOfficialBuild
   type: boolean
   default: false
@@ -142,6 +143,7 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       scope: ${{ parameters.scope }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       verifications: ${{ parameters.verifications }}
