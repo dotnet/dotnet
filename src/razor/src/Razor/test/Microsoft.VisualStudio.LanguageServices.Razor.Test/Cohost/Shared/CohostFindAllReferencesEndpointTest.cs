@@ -17,9 +17,8 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHelper) : CohostEndpointTestBase(testOutputHelper)
 {
-    [Theory]
-    [CombinatorialData]
-    public Task FindCSharpMember(bool supportsVSExtensions)
+    [Fact]
+    public Task FindCSharpMember()
         => VerifyFindAllReferencesAsync("""
             @{
                 string M()
@@ -33,12 +32,10 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             @code {
                 private const string [|$$MyName|] = "David";
             }
-            """,
-            supportsVSExtensions);
+            """);
 
-    [Theory]
-    [CombinatorialData]
-    public async Task ComponentAttribute(bool supportsVSExtensions)
+    [Fact]
+    public async Task ComponentAttribute()
     {
         TestCode input = """
             <SurveyPrompt [|Ti$$tle|]="InputValue" />
@@ -56,13 +53,12 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             }
             """;
 
-        await VerifyFindAllReferencesAsync(input, supportsVSExtensions,
+        await VerifyFindAllReferencesAsync(input,
             (FilePath("SurveyPrompt.razor"), surveyPrompt));
     }
 
-    [Theory]
-    [CombinatorialData]
-    public async Task OtherCSharpFile(bool supportsVSExtensions)
+    [Fact]
+    public async Task OtherCSharpFile()
     {
         TestCode input = """
             @code
@@ -86,18 +82,12 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             }
             """;
 
-        await VerifyFindAllReferencesAsync(input, supportsVSExtensions,
+        await VerifyFindAllReferencesAsync(input,
             (FilePath("OtherClass.cs"), otherClass));
     }
 
-    private async Task VerifyFindAllReferencesAsync(TestCode input, bool supportsVSExtensions, params (string fileName, TestCode testCode)[]? additionalFiles)
+    private async Task VerifyFindAllReferencesAsync(TestCode input, params (string fileName, TestCode testCode)[] additionalFiles)
     {
-        UpdateClientLSPInitializationOptions(c =>
-        {
-            c.ClientCapabilities.SupportsVisualStudioExtensions = supportsVSExtensions;
-            return c;
-        });
-
         var document = CreateProjectAndRazorDocument(input.Text, additionalFiles: [.. additionalFiles.Select(f => (f.fileName, f.testCode.Text))]);
         var inputText = await document.GetTextAsync(DisposalToken);
         var position = inputText.GetPosition(input.Position);
@@ -123,7 +113,6 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
         {
             if (result.TryGetFirst(out var referenceItem))
             {
-                Assert.True(supportsVSExtensions);
                 if (referenceItem.DisplayPath is not null)
                 {
                     Assert.False(referenceItem.DisplayPath.EndsWith(".g.cs"));
@@ -133,10 +122,6 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
                 {
                     Assert.False(referenceItem.DocumentName.EndsWith(".g.cs"));
                 }
-            }
-            else
-            {
-                Assert.False(supportsVSExtensions);
             }
         }
 
@@ -171,7 +156,7 @@ public class CohostFindAllReferencesEndpointTest(ITestOutputHelper testOutputHel
             return string.Join("", classifiedText.Runs.Select(s => s.Text));
         }
 
-        return referenceItem.Text.AssumeNotNull().ToString();
+        return referenceItem.Text.AssumeNotNull().ToString()!;
     }
 
     private static LspLocation GetLocation(SumType<VSInternalReferenceItem, LspLocation> r)
