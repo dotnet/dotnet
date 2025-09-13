@@ -257,7 +257,7 @@
       </trans-unit>
       <trans-unit id="Error_NotOneRepositoryCounterSignature">
         <source>The package signature contains multiple repository countersignatures.</source>
-        <target state="translated">套件簽章包含多個存放庫副署。</target>
+        <target state="translated">套件特徵標記包含多個存放庫副署。</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_RepositorySettings_UnsignedPackage">
@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">'{0}' 不能是空值。</target>
+        <target state="translated">'{0}' 不得為 Null。</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="RangeOutOfBoundsForArray">

@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="AddPkg_All">
         <source>all</source>
-        <target state="new">all</target>
+        <target state="translated">wszystkie</target>
         <note />
       </trans-unit>
       <trans-unit id="AddPkg_Description">
@@ -84,7 +84,7 @@
       </trans-unit>
       <trans-unit id="AllowInsecureConnections_Description">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Umożliwia wypychanie do źródeł HTTP (niezabezpieczone).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApiKey_Description">
@@ -164,12 +164,12 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessage">
         <source>{0} (y/N)</source>
-        <target state="translated">{0} (y/N) </target>
+        <target state="translated">{0} (y/N)</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
         <source>y</source>
-        <target state="translated">y</target>
+        <target state="translated">t</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_CurrentUICulture">
@@ -246,12 +246,12 @@
       </trans-unit>
       <trans-unit id="Error_AddPkgProjectReference">
         <source>Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</source>
-        <target state="new">Failed to add a PackageReference for '{0}'. A ProjectReference with the same name already exists and a package with the same name cannot be added to the project.</target>
+        <target state="translated">Nie można dodać elementu PackageReference dla identyfikatora „{0}”. Element ProjectReference o tej samej nazwie już istnieje i nie można dodać pakietu o tej samej nazwie do projektu.</target>
         <note>{0} - PackageId</note>
       </trans-unit>
       <trans-unit id="Error_AddPkgUnresolved">
         <source>Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</source>
-        <target state="new">Unable to find a resolved package for '{0}'. This is a tooling error. Please file an issue at https://github.com/NuGet/Home.</target>
+        <target state="translated">Nie można odnaleźć rozpoznanego pakietu dla identyfikatora „{0}”. To jest błąd obsługi narzędzia. Zgłoś problem w witrynie https://github.com/NuGet/Home.</target>
         <note>{0} Package Id</note>
       </trans-unit>
       <trans-unit id="Error_AddPkg_CentralPackageVersions_EmptyVersionOverride">
@@ -324,7 +324,7 @@ Do not translate "PackageVersion"</note>
         <source>You are running the '{0}' operation with 'HTTP' sources: {1}
 NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allowInsecureConnections' to true in your NuGet.Config file. Refer to https://aka.ms/nuget-https-everywhere for more information.</source>
         <target state="translated">Uruchamiasz operację „{0}” ze źródłami „HTTP”: {1}
-Narzędzie NuGet wymaga źródeł protokołu HTTPS. Aby użyć źródeł HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
+Menedżer NuGet wymaga źródeł HTTPS. Aby użyć źródeł HTTP, musisz wyraźnie ustawić właściwość „allowInsecureConnections” na wartość true w pliku NuGet.Config. Aby uzyskać więcej informacji, sprawdź witrynę https://aka.ms/nuget-https-everywhere.</target>
         <note>0 - The command name. Ex. Push/Delete. 1 - list of server uris</note>
       </trans-unit>
       <trans-unit id="Error_InvalidCultureInfo">
@@ -888,7 +888,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_AllPackagesAlreadyUpToDate">
         <source>All packages are already up to date.</source>
-        <target state="new">All packages are already up to date.</target>
+        <target state="translated">Wszystkie pakiety są już aktualne.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_FinalSummary">
@@ -909,7 +909,7 @@ Aby uzyskać więcej informacji, odwiedź stronę https://docs.nuget.org/docs/re
       </trans-unit>
       <trans-unit id="PackageUpdate_PackageArgumentDescription">
         <source>Package reference in the form of a package identifier like 'Newtonsoft.Json' or package identifier and version separated by '@' like 'Newtonsoft.Json@13.0.3'.</source>
-        <target state="translated">Odwołanie do pakietu w postaci identyfikatora pakietu, takiego jak „Newtonsoft.Json” lub identyfikator pakietu i wersja rozdzielone znakiem „@”, na przykład „Newtonsoft.Json@13.0.3”.</target>
+        <target state="translated">Odwołanie do pakietu w postaci identyfikatora pakietu, takiego jak „Newtonsoft.Json”, lub identyfikatora pakietu i wersji rozdzielonych znakiem „@”, na przykład „Newtonsoft.Json@13.0.3”.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageUpdate_PreviewRestore">

@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="AddPackage_SuccessfullyAdded">
         <source>Successfully added package '{0}' to feed '{1}'.</source>
-        <target state="translated">已成功將套件 '{0}' 新增到摘要 '{1}'.</target>
+        <target state="translated">已成功將套件 '{0}' 新增到摘要 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="ArgumentCannotBeNullOrEmpty">
@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="Error_Invalid_package_id">
         <source>Invalid package id : `{0}`.</source>
-        <target state="new">Invalid package id : `{0}`.</target>
+        <target state="translated">無效的套件識別碼 : `{0}`。</target>
         <note>0 - package id.</note>
       </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
@@ -492,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}' 是已經下載的重複 URL，會造成循環相依性。請從伺服器修正此情形。</target>
+        <target state="translated">'{0}' 是已經下載的重複 url，會造成循環相依性。請從伺服器修正此情形。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">
