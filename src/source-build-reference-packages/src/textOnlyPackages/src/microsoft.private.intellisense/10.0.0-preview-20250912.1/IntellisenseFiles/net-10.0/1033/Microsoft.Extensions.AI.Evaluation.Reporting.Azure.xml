@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Extensions.AI.Evaluation.Reporting.Azure</name>
+  </assembly>
+  <members>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageReportingConfiguration">
+      <summary>
+            Contains factory method for creating a <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" /> that persists
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s to Azure Storage and also uses the storage to cache AI responses.</summary>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageReportingConfiguration.Create(Azure.Storage.Files.DataLake.DataLakeDirectoryClient,System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.IEvaluator},Microsoft.Extensions.AI.Evaluation.ChatConfiguration,System.Boolean,System.Nullable{System.TimeSpan},System.Collections.Generic.IEnumerable{System.String},System.String,System.Func{Microsoft.Extensions.AI.Evaluation.EvaluationMetric,Microsoft.Extensions.AI.Evaluation.EvaluationMetricInterpretation},System.Collections.Generic.IEnumerable{System.String})">
+      <summary>
+            Creates a <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" /> that persists <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s to Azure Storage
+            and also uses the storage to cache AI responses.</summary>
+      <param name="client">
+            A <see cref="T:Azure.Storage.Files.DataLake.DataLakeDirectoryClient" /> with access to an Azure Storage container under which the
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s and all cached AI responses should be stored.</param>
+      <param name="evaluators">
+            The set of <see cref="T:Microsoft.Extensions.AI.Evaluation.IEvaluator" />s that should be invoked to evaluate AI responses.</param>
+      <param name="chatConfiguration">
+            A <see cref="T:Microsoft.Extensions.AI.Evaluation.ChatConfiguration" /> that specifies the <see cref="T:Microsoft.Extensions.AI.IChatClient" /> that is used by AI-based
+            <paramref name="evaluators" /> included in the returned <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" />. Can be omitted if
+            none of the included <paramref name="evaluators" /> are AI-based.</param>
+      <param name="enableResponseCaching">
+        <see langword="true" /> to enable caching of AI responses; <see langword="false" /> otherwise.</param>
+      <param name="timeToLiveForCacheEntries">
+            An optional <see cref="T:System.TimeSpan" /> that specifies the maximum amount of time that cached AI responses should
+            survive in the cache before they are considered expired and evicted.</param>
+      <param name="cachingKeys">
+            An optional collection of unique strings that should be hashed when generating the cache keys for cached AI
+            responses. See <see cref="P:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration.CachingKeys" /> for more information about this concept.</param>
+      <param name="executionName">
+            The name of the current execution. See <see cref="P:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName" /> for more information about this
+            concept. Uses a fixed default value <c>"Default"</c> if omitted.</param>
+      <param name="evaluationMetricInterpreter">
+            An optional function that can be used to override <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetricInterpretation" />s for
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" />s returned from evaluations that use the returned
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" />. The supplied function can either return a new
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetricInterpretation" /> for any <see cref="T:Microsoft.Extensions.AI.Evaluation.EvaluationMetric" /> that is supplied to it, or
+            return <see langword="null" /> if the <see cref="P:Microsoft.Extensions.AI.Evaluation.EvaluationMetric.Interpretation" /> should be left unchanged.</param>
+      <param name="tags">
+            A optional set of text tags applicable to all <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun" />s created using the returned
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" />.</param>
+      <returns>
+            A <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ReportingConfiguration" /> that persists <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s to Azure Storage
+            and also uses Azure Storage to cache AI responses.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResponseCacheProvider">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.IEvaluationResponseCacheProvider" /> that returns an <see cref="T:Microsoft.Extensions.Caching.Distributed.IDistributedCache" /> that can cache AI
+            responses for a particular <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun" /> under an Azure Storage container.</summary>
+      <param name="client">
+            A <see cref="T:Azure.Storage.Files.DataLake.DataLakeDirectoryClient" /> with access to an Azure Storage container under which the cached AI
+            responses should be stored.</param>
+      <param name="timeToLiveForCacheEntries">
+            An optional <see cref="T:System.TimeSpan" /> that specifies the maximum amount of time that cached AI responses should
+            survive in the cache before they are considered expired and evicted.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResponseCacheProvider.#ctor(Azure.Storage.Files.DataLake.DataLakeDirectoryClient,System.Nullable{System.TimeSpan})">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.IEvaluationResponseCacheProvider" /> that returns an <see cref="T:Microsoft.Extensions.Caching.Distributed.IDistributedCache" /> that can cache AI
+            responses for a particular <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun" /> under an Azure Storage container.</summary>
+      <param name="client">
+            A <see cref="T:Azure.Storage.Files.DataLake.DataLakeDirectoryClient" /> with access to an Azure Storage container under which the cached AI
+            responses should be stored.</param>
+      <param name="timeToLiveForCacheEntries">
+            An optional <see cref="T:System.TimeSpan" /> that specifies the maximum amount of time that cached AI responses should
+            survive in the cache before they are considered expired and evicted.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResponseCacheProvider.DeleteExpiredCacheEntriesAsync(System.Threading.CancellationToken)">
+      <summary>Deletes expired cache entries for all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref>s.</summary>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>A <xref data-throw-if-not-resolved="true" uid="System.Threading.Tasks.ValueTask"></xref> that represents the asynchronous operation.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResponseCacheProvider.GetCacheAsync(System.String,System.String,System.Threading.CancellationToken)">
+      <summary>Returns an <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.Caching.Distributed.IDistributedCache"></xref> that caches all the AI responses associated with the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref> with the supplied <code data-dev-comment-type="paramref">scenarioName</code> and
+<code data-dev-comment-type="paramref">iterationName</code>.</summary>
+      <param name="scenarioName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>.</param>
+      <param name="iterationName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>An <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.Caching.Distributed.IDistributedCache"></xref> that caches all the AI responses associated with the
+<xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref> with the supplied <code data-dev-comment-type="paramref">scenarioName</code> and
+<code data-dev-comment-type="paramref">iterationName</code>.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResponseCacheProvider.ResetAsync(System.Threading.CancellationToken)">
+      <summary>Deletes cached AI responses for all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref>s.</summary>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>A <xref data-throw-if-not-resolved="true" uid="System.Threading.Tasks.ValueTask"></xref> that represents the asynchronous operation.</returns>
+    </member>
+    <member name="T:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.IEvaluationResultStore" /> implementation that stores <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s under an Azure
+            Storage container.</summary>
+      <param name="client">
+            A <see cref="T:Azure.Storage.Files.DataLake.DataLakeDirectoryClient" /> with access to an Azure Storage container under which the
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s should be stored.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.#ctor(Azure.Storage.Files.DataLake.DataLakeDirectoryClient)">
+      <summary>
+            An <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.IEvaluationResultStore" /> implementation that stores <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s under an Azure
+            Storage container.</summary>
+      <param name="client">
+            A <see cref="T:Azure.Storage.Files.DataLake.DataLakeDirectoryClient" /> with access to an Azure Storage container under which the
+            <see cref="T:Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult" />s should be stored.</param>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.DeleteResultsAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
+      <summary>Deletes <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s for <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref>s filtered by the specified
+<code data-dev-comment-type="paramref">executionName</code>, <code data-dev-comment-type="paramref">scenarioName</code>, and <code data-dev-comment-type="paramref">iterationName</code> from
+the store.</summary>
+      <param name="executionName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>s are considered.</param>
+      <param name="scenarioName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>s that are in scope based on the specified
+<code data-dev-comment-type="paramref">executionName</code> filter are considered.</param>
+      <param name="iterationName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref>s that are in scope based on the specified
+<code data-dev-comment-type="paramref">executionName</code>, and <code data-dev-comment-type="paramref">scenarioName</code> filters are considered.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>A <xref data-throw-if-not-resolved="true" uid="System.Threading.Tasks.ValueTask"></xref> that represents the asynchronous operation.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.GetIterationNamesAsync(System.String,System.String,System.Threading.CancellationToken)">
+      <summary>Gets the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref>s present in the scenario with the specified
+<code data-dev-comment-type="paramref">scenarioName</code> under the execution with the specified <code data-dev-comment-type="paramref">executionName</code>.</summary>
+      <param name="executionName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>.</param>
+      <param name="scenarioName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref>s present in the scenario with the specified
+<code data-dev-comment-type="paramref">scenarioName</code> under the execution with the specified <code data-dev-comment-type="paramref">executionName</code>.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.GetLatestExecutionNamesAsync(System.Nullable{System.Int32},System.Threading.CancellationToken)">
+      <summary>Gets the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>s of the most recent <code data-dev-comment-type="paramref">count</code> executions from
+the store (ordered from most recent to least recent).</summary>
+      <param name="count">The number of <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>s to retrieve.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>s of the most recent <code data-dev-comment-type="paramref">count</code> executions from the
+store (ordered from most recent to least recent).</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.GetScenarioNamesAsync(System.String,System.Threading.CancellationToken)">
+      <summary>Gets the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>s present in the execution with the specified
+<code data-dev-comment-type="paramref">executionName</code>.</summary>
+      <param name="executionName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>s present in the execution with the specified
+<code data-dev-comment-type="paramref">executionName</code>.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.ReadResultsAsync(System.String,System.String,System.String,System.Threading.CancellationToken)">
+      <summary>Returns <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s for <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun"></xref>s filtered by the specified
+<code data-dev-comment-type="paramref">executionName</code>, <code data-dev-comment-type="paramref">scenarioName</code>, and <code data-dev-comment-type="paramref">iterationName</code> from
+the store.</summary>
+      <param name="executionName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ExecutionName"></xref>s are considered.</param>
+      <param name="scenarioName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.ScenarioName"></xref>s that are in scope based on the specified
+<code data-dev-comment-type="paramref">executionName</code> filter are considered.</param>
+      <param name="iterationName">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref> by which the <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s should be filtered.
+If omitted, all <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRun.IterationName"></xref>s that are in scope based on the specified
+<code data-dev-comment-type="paramref">executionName</code>, and <code data-dev-comment-type="paramref">scenarioName</code> filters are considered.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>The matching <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s.</returns>
+    </member>
+    <member name="M:Microsoft.Extensions.AI.Evaluation.Reporting.Storage.AzureStorageResultStore.WriteResultsAsync(System.Collections.Generic.IEnumerable{Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult},System.Threading.CancellationToken)">
+      <summary>Writes the supplied <code data-dev-comment-type="paramref">results</code>s to the store.</summary>
+      <param name="results">The <xref data-throw-if-not-resolved="true" uid="Microsoft.Extensions.AI.Evaluation.Reporting.ScenarioRunResult"></xref>s to be written.</param>
+      <param name="cancellationToken">A <xref data-throw-if-not-resolved="true" uid="System.Threading.CancellationToken"></xref> that can cancel the operation.</param>
+      <returns>A <xref data-throw-if-not-resolved="true" uid="System.Threading.Tasks.ValueTask"></xref> that represents the asynchronous operation.</returns>
+    </member>
+  </members>
+</doc>
