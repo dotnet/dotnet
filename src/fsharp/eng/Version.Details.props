@@ -6,17 +6,17 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftBuildPackageVersion>17.15.0-preview-25462-102</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildFrameworkPackageVersion>17.15.0-preview-25462-102</MicrosoftBuildFrameworkPackageVersion>
-    <MicrosoftBuildTasksCorePackageVersion>17.15.0-preview-25462-102</MicrosoftBuildTasksCorePackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>17.15.0-preview-25462-102</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25462.102</MicrosoftDotNetArcadeSdkPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25462.102</SystemCollectionsImmutablePackageVersion>
-    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25462.102</SystemComponentModelCompositionPackageVersion>
-    <SystemCompositionPackageVersion>10.0.0-rc.1.25462.102</SystemCompositionPackageVersion>
-    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25462.102</SystemDiagnosticsDiagnosticSourcePackageVersion>
-    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25462.102</SystemReflectionMetadataPackageVersion>
-    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25462.102</SystemThreadingTasksDataflowPackageVersion>
+    <MicrosoftBuildPackageVersion>17.15.0-preview-25463-101</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>17.15.0-preview-25463-101</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildTasksCorePackageVersion>17.15.0-preview-25463-101</MicrosoftBuildTasksCorePackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>17.15.0-preview-25463-101</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetArcadeSdkPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25463.101</SystemCollectionsImmutablePackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25463.101</SystemComponentModelCompositionPackageVersion>
+    <SystemCompositionPackageVersion>10.0.0-rc.1.25463.101</SystemCompositionPackageVersion>
+    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25463.101</SystemDiagnosticsDiagnosticSourcePackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25463.101</SystemReflectionMetadataPackageVersion>
+    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25463.101</SystemThreadingTasksDataflowPackageVersion>
     <!-- _git/dotnet-optimization dependencies -->
     <optimizationlinuxarm64MIBCRuntimePackageVersion>1.0.0-prerelease.25453.1</optimizationlinuxarm64MIBCRuntimePackageVersion>
     <optimizationlinuxx64MIBCRuntimePackageVersion>1.0.0-prerelease.25453.1</optimizationlinuxx64MIBCRuntimePackageVersion>
