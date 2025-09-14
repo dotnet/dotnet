@@ -3,13 +3,15 @@
 
 #nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine.Parsing;
+using System.Diagnostics.CodeAnalysis;
 using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package.Update
 {
-    internal record Package
+    internal record Package : IEqualityComparer<Package>
     {
         public required string Id { get; init; }
         public required VersionRange? VersionRange { get; init; }
@@ -58,6 +60,34 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
             }
 
             return packages;
+        }
+
+        public bool Equals(Package? x, Package? y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
+            if (!x.Id.Equals(y.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return VersionRangeComparer.Default.Equals(x.VersionRange, y.VersionRange);
+        }
+
+        public int GetHashCode([DisallowNull] Package obj)
+        {
+            HashCode hash = new HashCode();
+            hash.Add(obj.Id, StringComparer.OrdinalIgnoreCase);
+            hash.Add(obj.VersionRange);
+            return hash.ToHashCode();
         }
     }
 }
