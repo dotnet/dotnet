@@ -905,16 +905,15 @@
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
-        <target state="needs-review-translation">La pulizia dell'archiviazione NuGet non è riuscita in {0}. 
-Errore: {1}
-Per altre informazioni, vedi https://aka.ms/troubleshoot_nuget_cache.</target>
+        <target state="translated">La pulizia dell'archiviazione NuGet non è riuscita in {0}. 
+Errore: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
         <source>For more information, see</source>
-        <target state="new">For more information, see</target>
+        <target state="translated">Per altre informazioni, vedi</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">

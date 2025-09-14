@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +24,7 @@ internal interface IPackageUpdateIO
     /// </summary>
     /// <param name="project">The project or solution requested.</param>
     /// <returns>A DependencyGraphSpec representing the restore inputs.</returns>
-    DependencyGraphSpec GetDependencyGraphSpec(string project);
+    DependencyGraphSpec? GetDependencyGraphSpec(string project);
 
     /// <summary>
     /// Loads settings from the specified project directory.
@@ -74,5 +76,7 @@ internal interface IPackageUpdateIO
         /// Was the preview restore operation successful
         /// </summary>
         public abstract bool Success { get; }
+
+        public abstract LockFile? AssetsFile { get; }
     }
 }
