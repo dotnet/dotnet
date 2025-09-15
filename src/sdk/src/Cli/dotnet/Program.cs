@@ -238,7 +238,7 @@ public class Program
             // We don't care about the actual SDK resolution, just the global.json information,
             // so just pass empty string as executable directory for resolution.
             // NativeWrapper.SdkResolutionResult result = NativeWrapper.NETCoreSdkResolverNativeWrapper.ResolveSdk(string.Empty, Environment.CurrentDirectory);
-            globalJsonState = result.GlobalJsonState;
+            // globalJsonState = result.GlobalJsonState;
         }
 
         TelemetryEventEntry.SendFiltered(Tuple.Create(parseResult, performanceData, globalJsonState));
