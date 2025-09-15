@@ -1,0 +1,12 @@
+{
+  "files": [
+    {
+      "path": "src/Microsoft.DotNet.Build.Tasks.Installers/build/deb-package-tool/templates/debian/copyright",
+      "detected_license_expression": "mit AND unknown-license-reference"
+    },
+    {
+      "path": "src/Microsoft.DotNet.Build.Tasks.Installers/build/rpm_templates/copyright",
+      "detected_license_expression": "mit AND unknown-license-reference"
+    }
+  ]
+}
