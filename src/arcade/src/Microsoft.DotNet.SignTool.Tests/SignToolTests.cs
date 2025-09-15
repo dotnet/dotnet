@@ -500,7 +500,7 @@ namespace Microsoft.DotNet.SignTool.Tests
             string layout = Path.Combine(tempDir, "layout");
             Directory.CreateDirectory(layout);
 
-            ZipData.ExtractRpmPayloadContents(rpmPackage, layout);
+            ZipData.ExtractRpmPayloadContents(log: null, rpmPackage, layout);
 
             // Checks:
             // Expected files are present

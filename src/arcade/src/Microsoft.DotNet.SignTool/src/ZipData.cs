@@ -664,7 +664,7 @@ namespace Microsoft.DotNet.SignTool
             {
                 string relativePath = entry.Name; // lgtm [cs/zipslip] Archive from trusted source
 
-                // The relative path ocassionally ends with a '/', which is not a valid path given that the path is a file.
+                // The relative path occasionally ends with a '/', which is not a valid path given that the path is a file.
                 // Remove the following workaround once https://github.com/dotnet/arcade/issues/15384 is resolved.
                 if (relativePath.EndsWith("/"))
                 {
@@ -686,7 +686,10 @@ namespace Microsoft.DotNet.SignTool
 
             while (archive.GetNextEntry() is CpioEntry entry)
             {
-                yield return new ZipDataEntry(entry.Name, entry.DataStream);
+                yield return new ZipDataEntry(entry.Name, entry.DataStream)
+                {
+                    UnixFileMode = entry.Mode & CpioEntry.FilePermissionMask,
+                };
             }
         }
 
@@ -697,7 +700,7 @@ namespace Microsoft.DotNet.SignTool
             Directory.CreateDirectory(workingDir);
             string layout = Path.Combine(workingDir, "layout");
             Directory.CreateDirectory(layout);
-            ExtractRpmPayloadContents(FileSignInfo.FullPath, layout);
+            ExtractRpmPayloadContents(log, FileSignInfo.FullPath, layout);
 
             // Update signed files in layout
             foreach (var signedPart in NestedParts.Values)
@@ -708,10 +711,10 @@ namespace Microsoft.DotNet.SignTool
             // Create payload.cpio
             string payload = Path.Combine(workingDir, "payload.cpio");
 
-            RunExternalProcess("bash", $"-c \"find . -depth ! -wholename '.' -print  | cpio -H newc -o --quiet > '{payload}'\"", out string _, layout);
+            RunExternalProcess(log, "bash", $"-c \"find . -depth ! -wholename '.' -print  | cpio -H newc -o --quiet > '{payload}'\"", out string _, layout);
 
             // Collect file types for all files in layout
-            RunExternalProcess("bash", $"-c \"find . -depth ! -wholename '.'  -exec file {{}} \\;\"", out string output, layout);
+            RunExternalProcess(log, "bash", $"-c \"find . -depth ! -wholename '.'  -exec file {{}} \\;\"", out string output, layout);
             ITaskItem[] rawPayloadFileKinds =
                 output.Split('\n', StringSplitOptions.RemoveEmptyEntries)
                       .Select(t => new TaskItem(t))
@@ -772,7 +775,7 @@ namespace Microsoft.DotNet.SignTool
             return RpmPackage.Read(stream).Header.Entries;
         }
 
-        internal static void ExtractRpmPayloadContents(string rpmPackage, string layout)
+        internal static void ExtractRpmPayloadContents(TaskLoggingHelper log, string rpmPackage, string layout)
         {
             foreach (var entry in ReadRpmContainerEntries(rpmPackage))
             {
@@ -782,18 +785,28 @@ namespace Microsoft.DotNet.SignTool
                 if (entry != null)
                 {
                     entry.WriteToFile(outputPath);
+
+                    // Set file mode if not the default.
+                    if (entry.UnixFileMode is { } mode and not /* 0644 */ 420)
+                    {
+                        RunExternalProcess(log, "bash", $"""
+                            -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
+                            """, out string _, layout);
+                    }
                 }
             }
         }
 
-        private static bool RunExternalProcess(string cmd, string args, out string output, string workingDir = null)
+        private static bool RunExternalProcess(TaskLoggingHelper log, string cmd, string args, out string output, string workingDir = null)
         {
+            log?.LogMessage(MessageImportance.Low, $"Running command: '{cmd}' {args}");
+
             ProcessStartInfo psi = new()
             {
                 FileName = cmd,
                 Arguments = args,
                 RedirectStandardOutput = true,
-                RedirectStandardError = false,
+                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WorkingDirectory = workingDir
@@ -802,6 +815,17 @@ namespace Microsoft.DotNet.SignTool
             using Process process = Process.Start(psi);
             output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+
+            string stderr = process.StandardError.ReadToEnd();
+            if (!string.IsNullOrWhiteSpace(stderr))
+            {
+                log?.LogMessage(MessageImportance.Low, $"  Stderr: {stderr}");
+            }
+
+            if (process.ExitCode != 0)
+            {
+                log?.LogMessage(MessageImportance.Low, $"  Exit code: {process.ExitCode}");
+            }
 
             return process.ExitCode == 0;
         }
