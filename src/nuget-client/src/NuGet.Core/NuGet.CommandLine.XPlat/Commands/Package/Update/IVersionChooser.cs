@@ -3,9 +3,11 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
+using NuGet.Protocol.Model;
 using NuGet.Versioning;
 
 namespace NuGet.CommandLine.XPlat.Commands.Package.Update
@@ -15,6 +17,13 @@ namespace NuGet.CommandLine.XPlat.Commands.Package.Update
         Task<NuGetVersion?> GetLatestVersionAsync(
             string packageId,
             ILogger logger,
+            CancellationToken cancellationToken);
+
+        Task<NuGetVersion?> GetNonVulnerableAsync(
+            string packageId,
+            NuGetVersion minVersion,
+            ILogger logger,
+            IReadOnlyList<IReadOnlyDictionary<string, IReadOnlyList<PackageVulnerabilityInfo>>> knownVulnerabilities,
             CancellationToken cancellationToken);
     }
 }

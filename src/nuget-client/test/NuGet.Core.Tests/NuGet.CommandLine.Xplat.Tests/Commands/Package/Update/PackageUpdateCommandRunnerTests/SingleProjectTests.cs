@@ -276,7 +276,8 @@ public class SingleProjectTests
                 new Pkg { Id = "Test.Package", VersionRange = new VersionRange(new NuGetVersion("1.2.3")) }
             },
             Interactive = false,
-            LogLevel = LogLevel.Information
+            LogLevel = LogLevel.Information,
+            Vulnerable = false,
         };
         var loggerMock = new Mock<ILoggerWithColor>();
         ILoggerWithColor logger = loggerMock.Object;
@@ -298,6 +299,32 @@ public class SingleProjectTests
         exitCode.Should().Be(3);
     }
 
+    [Fact]
+    public async Task ProjectWithAuditDisabled_UpdateVulnerableShowsErrorMessage()
+    {
+        // Arrange
+        var packageSpec = new TestPackageSpecFactory(builder =>
+        {
+            builder.WithProperty("TargetFramework", "net9.0")
+                   .WithProperty("NuGetAudit", "false");
+        }).Build();
+        var packagesToUpdate = new List<Pkg>();
+
+        TestData testData = InitTest(packagesToUpdate, packageSpec);
+        testData = testData with
+        {
+            CommandArgs = testData.CommandArgs with { Vulnerable = true }
+        };
+
+        // Act
+        int exitCode = await RunCommand(testData, CancellationToken.None);
+
+        // Assert
+        exitCode.Should().Be(PackageUpdateCommandRunner.ExitCodes.InvalidArgs);
+        testData.LoggerMock.Verify(x => x.LogError(It.Is<string>(s => s.Contains(Strings.PackageUpdate_AuditDisabled))),
+            Times.Once);
+    }
+
     private TestData InitTest(IReadOnlyList<Pkg> packagesToUpdate, PackageSpec project, bool restoreSuccessful = true)
     {
         var commandArgs = new PackageUpdateArgs
@@ -305,7 +332,8 @@ public class SingleProjectTests
             Project = project.FilePath,
             Packages = packagesToUpdate,
             Interactive = false,
-            LogLevel = LogLevel.Information
+            LogLevel = LogLevel.Information,
+            Vulnerable = false,
         };
 
         var loggerMock = new Mock<ILoggerWithColor>();

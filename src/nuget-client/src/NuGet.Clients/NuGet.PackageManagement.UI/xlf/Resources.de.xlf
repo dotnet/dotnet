@@ -905,16 +905,15 @@
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
 Error: {1}</source>
-        <target state="needs-review-translation">Fehler beim Löschen des NuGet-Speicher bei {0}. 
-Fehler: {1}
-Weitere Informationen finden Sie unter https://aka.ms/troubleshoot_nuget_cache.</target>
+        <target state="translated">Fehler beim Löschen des NuGet-Speichers bei {0}. 
+Fehler: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
         <source>For more information, see</source>
-        <target state="new">For more information, see</target>
+        <target state="translated">Weitere Informationen finden Sie unter</target>
         <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
