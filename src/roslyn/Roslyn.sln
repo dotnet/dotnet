@@ -729,6 +729,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Buil
 EndProject
 Project("{9a19103f-16f7-4668-be54-9a1e7a4f7556}") = "Microsoft.CodeAnalysis.SemanticSearch.Extensions", "src\Tools\SemanticSearch\Extensions\Microsoft.CodeAnalysis.SemanticSearch.Extensions.csproj", "{66C8265C-2C79-F259-9807-3E97CA586F1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Net.BuildServerUtils", "src\NuGet\Microsoft.Net.BuildServerUtils\Microsoft.Net.BuildServerUtils.csproj", "{608CC556-EF9A-00C0-3CD8-7889C0F4635A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1803,6 +1805,10 @@ Global
 		{66C8265C-2C79-F259-9807-3E97CA586F1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66C8265C-2C79-F259-9807-3E97CA586F1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66C8265C-2C79-F259-9807-3E97CA586F1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{608CC556-EF9A-00C0-3CD8-7889C0F4635A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{608CC556-EF9A-00C0-3CD8-7889C0F4635A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{608CC556-EF9A-00C0-3CD8-7889C0F4635A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{608CC556-EF9A-00C0-3CD8-7889C0F4635A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2144,6 +2150,7 @@ Global
 		{5399BBCC-417F-C710-46DE-EB0C0074C34D} = {A41D1B99-F489-4C43-BBDF-96D61B19A6B9}
 		{5E4F7448-B00B-4F5B-859F-6ED0354253D5} = {C52D8057-43AF-40E6-A01B-6CDBB7301985}
 		{66C8265C-2C79-F259-9807-3E97CA586F1E} = {52ABB0E4-C3A1-4897-B51B-18EDA83F5D20}
+		{608CC556-EF9A-00C0-3CD8-7889C0F4635A} = {C52D8057-43AF-40E6-A01B-6CDBB7301985}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {604E6B91-7BC0-4126-AE07-D4D2FEFC3D29}
