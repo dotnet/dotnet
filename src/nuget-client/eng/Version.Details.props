@@ -6,18 +6,18 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftBuildPackageVersion>17.15.0-preview-25463-101</MicrosoftBuildPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetXliffTasksPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftWebXdtPackageVersion>3.2.0-preview.25463.101</MicrosoftWebXdtPackageVersion>
-    <SystemCommandLinePackageVersion>2.0.0-rc.1.25463.101</SystemCommandLinePackageVersion>
-    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25463.101</SystemComponentModelCompositionPackageVersion>
-    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25463.101</SystemFormatsAsn1PackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25463.101</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25463.101</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25463.101</SystemSecurityCryptographyXmlPackageVersion>
+    <MicrosoftBuildPackageVersion>17.15.0-preview-25464-102</MicrosoftBuildPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25464.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25464.102</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftWebXdtPackageVersion>3.2.0-preview.25464.102</MicrosoftWebXdtPackageVersion>
+    <SystemCommandLinePackageVersion>2.0.0-rc.1.25464.102</SystemCommandLinePackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25464.102</SystemComponentModelCompositionPackageVersion>
+    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25464.102</SystemFormatsAsn1PackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25464.102</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25464.102</SystemSecurityCryptographyProtectedDataPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25464.102</SystemSecurityCryptographyXmlPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>

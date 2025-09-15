@@ -6,28 +6,28 @@
       <Uri>https://dev.azure.com/devdiv/DevDiv/_git/vs-code-coverage</Uri>
       <Sha>5877eadeb2d78c45d3bb1996f74b8a96f2e4a1da</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.25463.101">
+    <Dependency Name="Microsoft.Diagnostics.NETCore.Client" Version="0.2.0-preview.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="Microsoft.Extensions.DependencyModel" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
     <!-- Necessary for source-build. This allows the live version of the package to be used by source-build. -->
-    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="Microsoft.Extensions.FileSystemGlobbing" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25463.101">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>

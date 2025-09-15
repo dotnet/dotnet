@@ -6,41 +6,41 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftBclAsyncInterfacesPackageVersion>10.0.0-rc.1.25463.101</MicrosoftBclAsyncInterfacesPackageVersion>
-    <MicrosoftCodeAnalysisPackageVersion>5.0.0-2.25463.101</MicrosoftCodeAnalysisPackageVersion>
-    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.0.0-2.25463.101</MicrosoftCodeAnalysisAnalyzersPackageVersion>
-    <MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>5.0.0-2.25463.101</MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>
-    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.100-rc.2.25463.101</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
-    <MicrosoftDiaSymReaderPackageVersion>2.2.0-beta.25463.101</MicrosoftDiaSymReaderPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25463.101</MicrosoftDotNetXliffTasksPackageVersion>
-    <MicrosoftExtensionsConfigurationPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsConfigurationPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftExtensionsLoggingPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsLoggingPackageVersion>
-    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
-    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsLoggingConsolePackageVersion>
-    <MicrosoftExtensionsOptionsPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsOptionsPackageVersion>
-    <MicrosoftExtensionsPrimitivesPackageVersion>10.0.0-rc.1.25463.101</MicrosoftExtensionsPrimitivesPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25463.101</MicrosoftNetCompilersToolsetPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25463.101</SystemCollectionsImmutablePackageVersion>
-    <SystemCommandLinePackageVersion>2.0.0-rc.1.25463.101</SystemCommandLinePackageVersion>
-    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25463.101</SystemComponentModelCompositionPackageVersion>
-    <SystemCompositionPackageVersion>10.0.0-rc.1.25463.101</SystemCompositionPackageVersion>
-    <SystemConfigurationConfigurationManagerPackageVersion>10.0.0-rc.1.25463.101</SystemConfigurationConfigurationManagerPackageVersion>
-    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25463.101</SystemDiagnosticsDiagnosticSourcePackageVersion>
-    <SystemDiagnosticsEventLogPackageVersion>10.0.0-rc.1.25463.101</SystemDiagnosticsEventLogPackageVersion>
-    <SystemIOHashingPackageVersion>10.0.0-rc.1.25463.101</SystemIOHashingPackageVersion>
-    <SystemIOPipelinesPackageVersion>10.0.0-rc.1.25463.101</SystemIOPipelinesPackageVersion>
-    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25463.101</SystemReflectionMetadataPackageVersion>
-    <SystemResourcesExtensionsPackageVersion>10.0.0-rc.1.25463.101</SystemResourcesExtensionsPackageVersion>
-    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25463.101</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityPermissionsPackageVersion>10.0.0-rc.1.25463.101</SystemSecurityPermissionsPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>10.0.0-rc.1.25463.101</SystemTextEncodingsWebPackageVersion>
-    <SystemTextJsonPackageVersion>10.0.0-rc.1.25463.101</SystemTextJsonPackageVersion>
-    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25463.101</SystemThreadingTasksDataflowPackageVersion>
-    <SystemWindowsExtensionsPackageVersion>10.0.0-rc.1.25463.101</SystemWindowsExtensionsPackageVersion>
+    <MicrosoftBclAsyncInterfacesPackageVersion>10.0.0-rc.1.25464.102</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftCodeAnalysisPackageVersion>5.0.0-2.25464.102</MicrosoftCodeAnalysisPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzersPackageVersion>5.0.0-2.25464.102</MicrosoftCodeAnalysisAnalyzersPackageVersion>
+    <MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>5.0.0-2.25464.102</MicrosoftCodeAnalysisAnalyzerUtilitiesPackageVersion>
+    <MicrosoftCodeAnalysisNetAnalyzersPackageVersion>10.0.100-rc.2.25464.102</MicrosoftCodeAnalysisNetAnalyzersPackageVersion>
+    <MicrosoftDiaSymReaderPackageVersion>2.2.0-beta.25464.102</MicrosoftDiaSymReaderPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25464.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25464.102</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25464.102</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftExtensionsConfigurationPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsConfigurationPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsDependencyInjectionPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsLoggingPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsLoggingPackageVersion>
+    <MicrosoftExtensionsLoggingAbstractionsPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsLoggingAbstractionsPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <MicrosoftExtensionsOptionsPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsOptionsPackageVersion>
+    <MicrosoftExtensionsPrimitivesPackageVersion>10.0.0-rc.1.25464.102</MicrosoftExtensionsPrimitivesPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25464.102</MicrosoftNetCompilersToolsetPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25464.102</SystemCollectionsImmutablePackageVersion>
+    <SystemCommandLinePackageVersion>2.0.0-rc.1.25464.102</SystemCommandLinePackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25464.102</SystemComponentModelCompositionPackageVersion>
+    <SystemCompositionPackageVersion>10.0.0-rc.1.25464.102</SystemCompositionPackageVersion>
+    <SystemConfigurationConfigurationManagerPackageVersion>10.0.0-rc.1.25464.102</SystemConfigurationConfigurationManagerPackageVersion>
+    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25464.102</SystemDiagnosticsDiagnosticSourcePackageVersion>
+    <SystemDiagnosticsEventLogPackageVersion>10.0.0-rc.1.25464.102</SystemDiagnosticsEventLogPackageVersion>
+    <SystemIOHashingPackageVersion>10.0.0-rc.1.25464.102</SystemIOHashingPackageVersion>
+    <SystemIOPipelinesPackageVersion>10.0.0-rc.1.25464.102</SystemIOPipelinesPackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25464.102</SystemReflectionMetadataPackageVersion>
+    <SystemResourcesExtensionsPackageVersion>10.0.0-rc.1.25464.102</SystemResourcesExtensionsPackageVersion>
+    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25464.102</SystemSecurityCryptographyProtectedDataPackageVersion>
+    <SystemSecurityPermissionsPackageVersion>10.0.0-rc.1.25464.102</SystemSecurityPermissionsPackageVersion>
+    <SystemTextEncodingsWebPackageVersion>10.0.0-rc.1.25464.102</SystemTextEncodingsWebPackageVersion>
+    <SystemTextJsonPackageVersion>10.0.0-rc.1.25464.102</SystemTextJsonPackageVersion>
+    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25464.102</SystemThreadingTasksDataflowPackageVersion>
+    <SystemWindowsExtensionsPackageVersion>10.0.0-rc.1.25464.102</SystemWindowsExtensionsPackageVersion>
     <!-- dotnet/runtime dependencies -->
     <MicrosoftExtensionsOptionsConfigurationExtensionPackageVersion>8.0.0</MicrosoftExtensionsOptionsConfigurationExtensionPackageVersion>
   </PropertyGroup>

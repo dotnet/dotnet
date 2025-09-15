@@ -2,49 +2,49 @@
 <Dependencies>
   <Source Uri="https://github.com/dotnet/dotnet" Mapping="fsharp" Sha="8ea69c337be69385ff7eb44b2a54db78010110d8" BarId="282240" />
   <ProductDependencies>
-    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25463-101">
+    <Dependency Name="Microsoft.Build" Version="17.15.0-preview-25464-102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Framework" Version="17.15.0-preview-25463-101">
+    <Dependency Name="Microsoft.Build.Framework" Version="17.15.0-preview-25464-102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.15.0-preview-25463-101">
+    <Dependency Name="Microsoft.Build.Tasks.Core" Version="17.15.0-preview-25464-102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.15.0-preview-25463-101">
+    <Dependency Name="Microsoft.Build.Utilities.Core" Version="17.15.0-preview-25464-102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.Reflection.Metadata" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.Reflection.Metadata" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.ComponentModel.Composition" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.Composition" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.Composition" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.Collections.Immutable" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.Collections.Immutable" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.Threading.Tasks.Dataflow" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.Threading.Tasks.Dataflow" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
-    <Dependency Name="System.Diagnostics.DiagnosticSource" Version="10.0.0-rc.1.25463.101">
+    <Dependency Name="System.Diagnostics.DiagnosticSource" Version="10.0.0-rc.1.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25463.101">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="11.0.0-beta.25464.102">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>99827afdd78bdf14d3b0434d684c321fe6212554</Sha>
     </Dependency>
