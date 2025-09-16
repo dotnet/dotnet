@@ -127,6 +127,7 @@ stages:
         ${{ if eq(leg.disableSigning, false) }}:
           sign: ${{ variables.signEnabled }}
           signType: ${{ variables.signType }}
+        excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
         
         # We only want to publish SB artifacts for each distinct distro/version/arch combination
         ${{ if and(endsWith(leg.buildNameFormat, 'Offline_MsftSdk'), not(contains(leg.buildNameFormat, '_Mono_'))) }}:
@@ -155,12 +156,14 @@ stages:
             container:
               name: ${{ variables.centOSStreamContainerName }}
               image: ${{ variables.centOSStreamContainerImage }}
+            artifactsRid: ${{ variables.centOSStreamX64Rid }}
           # Fedora
           ${{ elseif eq(leg.distro, 'fedora') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.fedoraName) }}_Validation
             container:
               name: ${{ variables.fedoraContainerName }}
               image: ${{ variables.fedoraContainerImage }}
+            artifactsRid: ${{ variables.fedoraX64Rid }}
           # Ubuntu
           ${{ elseif eq(leg.distro, 'ubuntu') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.ubuntuName) }}_Validation
@@ -168,16 +171,19 @@ stages:
               container:
                 name: ${{ variables.ubuntuArmContainerName }}
                 image: ${{ variables.ubuntuArmContainerImage }}
+              artifactsRid: ${{ variables.ubuntuArm64Rid }}
             ${{ else }}:
               container:
                 name: ${{ variables.ubuntuContainerName }}
                 image: ${{ variables.ubuntuContainerImage }}
+              artifactsRid: ${{ variables.ubuntuX64Rid }}
           # AlmaLinux
           ${{ elseif eq(leg.distro, 'almalinux') }}:
             buildName: ${{ format(leg.buildNameFormat, variables.almaLinuxName) }}_Validation
             container:
               name: ${{ variables.almaLinuxContainerName }}
               image: ${{ variables.almaLinuxContainerImage }}
+            artifactsRid: ${{ variables.almaLinuxX64Rid }}
             targetRid: ${{ variables.almaLinuxX64Rid }}
           # Alpine
           ${{ elseif eq(leg.distro, 'alpine') }}:
@@ -185,6 +191,7 @@ stages:
             container:
               name: ${{ variables.alpineContainerName }}
               image: ${{ variables.alpineContainerImage }}
+            artifactsRid: ${{ variables.alpineX64Rid }}
             targetRid: ${{ variables.alpineX64Rid }}
 
           targetArchitecture: ${{ leg.targetArchitecture }}
@@ -203,6 +210,7 @@ stages:
             /p:DotNetSourceOnlyTestOnly=true
             /p:ExtraRestoreSourcePath=$(Pipeline.Workspace)/msft-pkgs
             /p:RestoreAdditionalProjectSources=$(Pipeline.Workspace)/msft-pkgs
+          excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
           
           testInitSteps:
           # Ensure the artifacts staging directory exists so that even if no files get placed there, it won't fail
