@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <MsftPath Condition="'$(MsftPath)' == ''">msft</MsftPath>
+    <SbPath Condition="'$(SbPath)' == ''">sb</SbPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" Version="10.0.100-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MsftDlls Include="$(MsftPath)\**\*.dll" />
+    <SbDlls Include="$(SbPath)\**\*.dll" />
+  </ItemGroup>
+
+  <UsingTask TaskName="ValidateAssembliesTask"
+             AssemblyFile="$(PkgMicrosoft_DotNet_ApiCompat_Task)/tools/net/Microsoft.DotNet.ApiCompat.Task.dll" />
+
+  <Target Name="RunApiCompat" DependsOnTargets="Restore">
+    <ValidateAssembliesTask
+      LeftAssemblies="@(MsftDlls)"
+      RightAssemblies="@(SbDlls)"
+      RoslynAssembliesPath=" " />
+  </Target>
+</Project>
