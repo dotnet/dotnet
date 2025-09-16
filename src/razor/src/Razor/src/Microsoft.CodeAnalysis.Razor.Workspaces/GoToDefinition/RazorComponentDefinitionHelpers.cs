@@ -2,12 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Syntax;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
@@ -19,15 +22,15 @@ using RazorSyntaxToken = Microsoft.AspNetCore.Razor.Language.Syntax.SyntaxToken;
 
 namespace Microsoft.CodeAnalysis.Razor.GoToDefinition;
 
+internal sealed record BoundTagHelperResult(TagHelperDescriptor ElementDescriptor, BoundAttributeDescriptor? AttributeDescriptor);
+
 internal static class RazorComponentDefinitionHelpers
 {
     public static bool TryGetBoundTagHelpers(
         RazorCodeDocument codeDocument, int absoluteIndex, bool ignoreComponentAttributes, ILogger logger,
-        [NotNullWhen(true)] out TagHelperDescriptor? boundTagHelper,
-        [MaybeNullWhen(true)] out BoundAttributeDescriptor? boundAttribute)
+        out ImmutableArray<BoundTagHelperResult> descriptors)
     {
-        boundTagHelper = null;
-        boundAttribute = null;
+        descriptors = default;
 
         var root = codeDocument.GetRequiredSyntaxRoot();
 
@@ -66,47 +69,63 @@ internal static class RazorComponentDefinitionHelpers
             return false;
         }
 
-        boundTagHelper = binding.Descriptors.FirstOrDefault(static d => !d.IsAttributeDescriptor());
-        if (boundTagHelper is null)
-        {
-            logger.LogInformation($"Could not locate bound TagHelperDescriptor.");
-            return false;
-        }
+        using var descriptorsBuilder = new PooledArrayBuilder<BoundTagHelperResult>();
 
-        if ((!ignoreComponentAttributes || boundTagHelper.Kind != TagHelperKind.Component) &&
-            tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
+        foreach (var boundTagHelper in binding.Descriptors.Where(d => !d.IsAttributeDescriptor()))
         {
-            // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
-            // as if the user wants to go to the attribute definition.
-            // ie: <Component attribute$$></Component>
-            var selectedAttribute = startTag.Attributes.FirstOrDefault(a => a.Span.Contains(absoluteIndex) || a.Span.End == absoluteIndex);
-
-            // If we're on an attribute then just validate against the attribute name
-            switch (selectedAttribute)
+            var requireAttributeMatch = false;
+            if ((!ignoreComponentAttributes || boundTagHelper.Kind != TagHelperKind.Component) &&
+                tagHelperNode is MarkupTagHelperStartTagSyntax startTag)
             {
-                case MarkupTagHelperAttributeSyntax attribute:
-                    // Normal attribute, ie <Component attribute=value />
-                    nameSpan = attribute.Name.Span;
-                    propertyName = attribute.TagHelperAttributeInfo.Name;
-                    break;
+                // Include attributes where the end index also matches, since GetSyntaxNodeAsync will consider that the start tag but we behave
+                // as if the user wants to go to the attribute definition.
+                // ie: <Component attribute$$></Component>
+                var selectedAttribute = startTag.Attributes.FirstOrDefault(absoluteIndex, static (a, absoluteIndex) => a.Span.Contains(absoluteIndex) || a.Span.End == absoluteIndex);
 
-                case MarkupMinimizedTagHelperAttributeSyntax minimizedAttribute:
-                    // Minimized attribute, ie <Component attribute />
-                    nameSpan = minimizedAttribute.Name.Span;
-                    propertyName = minimizedAttribute.TagHelperAttributeInfo.Name;
-                    break;
+                requireAttributeMatch = selectedAttribute is not null;
+
+                // If we're on an attribute then just validate against the attribute name
+                switch (selectedAttribute)
+                {
+                    case MarkupTagHelperAttributeSyntax attribute:
+                        // Normal attribute, ie <Component attribute=value />
+                        nameSpan = attribute.Name.Span;
+                        propertyName = attribute.TagHelperAttributeInfo.Name;
+                        break;
+
+                    case MarkupMinimizedTagHelperAttributeSyntax minimizedAttribute:
+                        // Minimized attribute, ie <Component attribute />
+                        nameSpan = minimizedAttribute.Name.Span;
+                        propertyName = minimizedAttribute.TagHelperAttributeInfo.Name;
+                        break;
+                }
             }
+
+            if (!nameSpan.IntersectsWith(absoluteIndex))
+            {
+                logger.LogInformation($"Tag name or attributes' span does not intersect with index, {absoluteIndex}.");
+                continue;
+            }
+
+            var boundAttribute = propertyName is not null
+                ? boundTagHelper.BoundAttributes.FirstOrDefault(propertyName, static (a, propertyName) => a.Name == propertyName)
+                : null;
+
+            if (requireAttributeMatch && boundAttribute is null)
+            {
+                // The user is on an attribute, but we couldn't find a matching BoundAttributeDescriptor.
+                continue;
+            }
+
+            descriptorsBuilder.Add(new BoundTagHelperResult(boundTagHelper, boundAttribute));
         }
 
-        if (!nameSpan.IntersectsWith(absoluteIndex))
+        if (descriptorsBuilder.Count == 0)
         {
-            logger.LogInformation($"Tag name or attributes' span does not intersect with index, {absoluteIndex}.");
             return false;
         }
 
-        boundAttribute = propertyName is not null
-            ? boundTagHelper.BoundAttributes.FirstOrDefault(a => a.Name?.Equals(propertyName, StringComparison.Ordinal) == true)
-            : null;
+        descriptors = descriptorsBuilder.ToImmutableAndClear();
 
         return true;
 
