@@ -12,12 +12,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
-using Task = System.Threading.Tasks.Task;
+using Microsoft.DotNet.UnifiedBuild.Tasks.Services;
+using BuildTask = Microsoft.Build.Utilities.Task;
 
 namespace Microsoft.DotNet.UnifiedBuild.Tasks;
 
-public class SigningValidation : Microsoft.Build.Utilities.Task
+public class SigningValidation : BuildTask
 {
     /// <summary>
     /// Directory where the blobs and packages were downloaded to
@@ -58,13 +60,16 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     /// </summary>
     private static readonly string _signCheckFilesDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), "SignCheckFiles");
 
+    private const string _signCheckBinLogFileName = "signing-validation.binlog";
     private const string _signCheckExclusionsFileName = "SignCheckExclusionsFile.txt";
     private const string _signCheckStdoutLogFileName = "signcheck.log";
     private const string _signCheckStderrLogFileName = "signcheck.error.log";
     private const string _signCheckResultsXmlFileName = "signcheck.xml";
     private const int _signCheckTimeout = 60 * 60 * 1000 * 2; // 2 hours
 
-    public override bool Execute()
+    public override bool Execute() =>  ExecuteAsync().GetAwaiter().GetResult();
+
+    private async Task<bool> ExecuteAsync()
     {
         try
         {
@@ -72,7 +77,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
 
             PrepareFilesToSignCheck();
 
-            RunSignCheck();
+            await RunSignCheckAsync();
 
             ProcessSignCheckResults();
 
@@ -184,56 +189,33 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
     /// <summary>
     /// Runs the signcheck task on the specified package base path
     /// </summary>
-    private void RunSignCheck()
+    private async Task RunSignCheckAsync()
     {
-        using (var process = new Process())
+        (string command, string arguments) = GetSignCheckCommandAndArguments();
+        Log.LogMessage(MessageImportance.High, $"Running SignCheck...");
+
+        var processService = new ProcessService(Log, timeout: _signCheckTimeout);
+        ProcessResult result = await processService.RunProcessAsync(
+            command,
+            arguments,
+            printOutput: false);
+
+        string errorLog = GetLogPath(_signCheckStderrLogFileName);
+        string errorLogContent = File.Exists(errorLog) ? File.ReadAllText(errorLog).Trim() : string.Empty;
+        if (result.ExitCode != 0 || !string.IsNullOrWhiteSpace(errorLogContent))
         {
-            (string command, string arguments) = GetSignCheckCommandAndArguments();
-
-            process.StartInfo = new ProcessStartInfo()
-            {
-                FileName = command,
-                Arguments = arguments,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-            };
-
-            // SignCheck writes console output to log files and the output stream.
-            // To avoid cluttering the console, redirect the output to empty handlers.
-            process.OutputDataReceived += (sender, args) => { };
-            process.ErrorDataReceived += (sender, args) => { };
-
-            Log.LogMessage(MessageImportance.High, $"Running SignCheck...");
-
-            process.Start();
-
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            bool hasExited = process.WaitForExit(_signCheckTimeout);
-            if (!hasExited)
-            {
-                throw new TimeoutException($"SignCheck timed out after {_signCheckTimeout / 1000} seconds.");
-            }
-
-            string errorLog = GetLogPath(_signCheckStderrLogFileName);
-            string errorLogContent = File.Exists(errorLog) ? File.ReadAllText(errorLog).Trim() : string.Empty;
-            if (process.ExitCode != 0 || !string.IsNullOrWhiteSpace(errorLogContent))
-            {
-                // We don't want to throw here because SignCheck will fail for unsigned files
-                Log.LogError($"SignCheck failed with exit code {process.ExitCode}: {errorLogContent}");
-            }
-
-            string stdoutLog = GetLogPath(_signCheckStdoutLogFileName);
-            string stdoutLogContent = File.Exists(stdoutLog) ? File.ReadAllText(stdoutLog).Trim() : string.Empty;
-            if (!string.IsNullOrWhiteSpace(stdoutLogContent) && stdoutLogContent.Contains("No files were processed"))
-            {
-                Log.LogError("SignCheck did not process any files.");
-            }
-
-            Log.LogMessage(MessageImportance.High, $"SignCheck completed.");
+            // We don't want to throw here because SignCheck will fail for unsigned files
+            Log.LogError($"SignCheck failed with exit code {result.ExitCode}: {errorLogContent}");
         }
+
+        string stdoutLog = GetLogPath(_signCheckStdoutLogFileName);
+        string stdoutLogContent = File.Exists(stdoutLog) ? File.ReadAllText(stdoutLog).Trim() : string.Empty;
+        if (!string.IsNullOrWhiteSpace(stdoutLogContent) && stdoutLogContent.Contains("No files were processed"))
+        {
+            Log.LogError("SignCheck did not process any files.");
+        }
+
+        Log.LogMessage(MessageImportance.High, $"SignCheck completed.");
     }
 
     private void ProcessSignCheckResults()
@@ -322,6 +304,7 @@ public class SigningValidation : Microsoft.Build.Utilities.Task
             $"/p:SignCheckErrorLog='{GetLogPath(_signCheckStderrLogFileName)}' " +
             $"/p:SignCheckResultsXmlFile='{GetLogPath(_signCheckResultsXmlFileName)}' " +
             $"/p:SignCheckExclusionsFile='{GetSignCheckExclusionsFile()}' " +
+            $"/bl:{GetLogPath(_signCheckBinLogFileName)} " +
             $"$additionalArgs$";
 
         string command = string.Empty;
