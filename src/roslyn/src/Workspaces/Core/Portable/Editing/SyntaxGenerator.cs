@@ -846,9 +846,15 @@ public abstract class SyntaxGenerator : ILanguageService
             using var _2 = ArrayBuilder<ISymbol>.GetInstance(out var result);
             foreach (var member in members)
             {
-                // Hide implementation methods
-                if (member is not IMethodSymbol method ||
-                    !implementationsToHide.Contains(method.OriginalDefinition))
+                if (member is IMethodSymbol method)
+                {
+                    // Hide implementation methods
+                    if (!implementationsToHide.Contains(method.OriginalDefinition))
+                    {
+                        result.Add(member);
+                    }
+                }
+                else
                 {
                     result.Add(member);
                 }
