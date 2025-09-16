@@ -1,18 +1,15 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Concurrent;
 using Microsoft.DotNet.Cli.Commands.Test.Terminal;
 using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.DotNet.Cli.Commands.Test;
 
-internal sealed class MSBuildHandler(BuildOptions buildOptions, TestApplicationActionQueue actionQueue, TerminalTestReporter output)
+internal sealed class MSBuildHandler(BuildOptions buildOptions, TerminalTestReporter output)
 {
     private readonly BuildOptions _buildOptions = buildOptions;
-    private readonly TestApplicationActionQueue _actionQueue = actionQueue;
     private readonly TerminalTestReporter _output = output;
 
     private readonly ConcurrentBag<ParallelizableTestModuleGroupWithSequentialInnerModules> _testApplications = [];
@@ -130,7 +127,7 @@ internal sealed class MSBuildHandler(BuildOptions buildOptions, TestApplicationA
         }
     }
 
-    public bool EnqueueTestApplications()
+    public bool EnqueueTestApplications(TestApplicationActionQueue queue)
     {
         if (!_areTestingPlatformApplications)
         {
@@ -139,7 +136,7 @@ internal sealed class MSBuildHandler(BuildOptions buildOptions, TestApplicationA
 
         foreach (var testApp in _testApplications)
         {
-            _actionQueue.Enqueue(testApp);
+            queue.Enqueue(testApp);
         }
         return true;
     }
@@ -169,7 +166,6 @@ internal sealed class MSBuildHandler(BuildOptions buildOptions, TestApplicationA
             foreach (var module in moduleGroup)
             {
                 logMessageBuilder.AppendLine($"{ProjectProperties.ProjectFullPath}: {module.ProjectFullPath}");
-                logMessageBuilder.AppendLine($"{ProjectProperties.IsTestProject}: {module.IsTestProject}");
                 logMessageBuilder.AppendLine($"{ProjectProperties.IsTestingPlatformApplication}: {module.IsTestingPlatformApplication}");
                 logMessageBuilder.AppendLine($"{ProjectProperties.TargetFramework}: {module.TargetFramework}");
                 logMessageBuilder.AppendLine($"{ProjectProperties.RunCommand}: {module.RunProperties.Command}");
