@@ -24,12 +24,15 @@ parameters:
   - lite
   # run everything
   - full
+  # run source build outer loop (Mono jobs)
+  - source-build-outer-loop
 
 # True when build is running from dotnet/dotnet directly
 - name: isBuiltFromVmr
   type: boolean
   default: true
 
+# True when the build is a build run from the production pipeline
 - name: isOfficialBuild
   type: boolean
   default: false
@@ -97,16 +100,17 @@ parameters:
   default: false
 
 stages:
-- template: vmr-verticals.yml
-  parameters:
-    desiredSigning: ${{ parameters.desiredSigning }}
-    isOfficialBuild: ${{ parameters.isOfficialBuild }}
-    desiredIbc: ${{ parameters.desiredIbc }}
-    desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
-    isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
-    scope: ${{ parameters.scope }}
-    verifications: ${{ parameters.verifications }}
-    excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
+- ${{ if notin(parameters.scope, 'source-build-outer-loop') }}:
+  - template: vmr-verticals.yml
+    parameters:
+      desiredSigning: ${{ parameters.desiredSigning }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      desiredIbc: ${{ parameters.desiredIbc }}
+      desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
+      isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      scope: ${{ parameters.scope }}
+      verifications: ${{ parameters.verifications }}
+      excludeRuntimeDependentJobs: ${{ parameters.excludeRuntimeDependentJobs }}
 
 - ${{ if and(parameters.isBuiltFromVmr, eq(parameters.isOfficialBuild, true)) }}:
   - stage: Publish_Build_Assets
@@ -139,6 +143,8 @@ stages:
       pool_LinuxArm64: ${{ parameters.pool_LinuxArm64 }}
       scope: ${{ parameters.scope }}
       isBuiltFromVmr: ${{ parameters.isBuiltFromVmr }}
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
+      desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
       verifications: ${{ parameters.verifications }}
       ${{ if ne(parameters.scope, 'full') }}:

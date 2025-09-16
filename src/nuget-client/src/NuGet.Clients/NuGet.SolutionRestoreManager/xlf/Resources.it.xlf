@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">Errore durante il ripristino dei pacchetti NuGet: {0}</target>
+        <target state="translated">Errore durante il ripristino di pacchetti NuGet: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">

@@ -872,9 +872,28 @@ namespace NuGet.Commands
 
             foreach (var item in items)
             {
-                IEnumerable<PackageDependency> dependencies = item.Data?.Dependencies?
-                    .Where(i => i.ReferenceType == LibraryDependencyReferenceType.Direct) // Ignore transitively pinned dependencies
-                    .Select(dependency => new PackageDependency(dependency.Name, VersionRange.All));
+                IEnumerable<PackageDependency> dependencies;
+                if (item.Data?.Dependencies == null || item.Data.Dependencies.Count == 0)
+                {
+                    // If there are no dependencies, pass null.
+                    // The PackageDependencyInfo constructor will convert this to an empty array.
+                    dependencies = null;
+                }
+                else
+                {
+                    List<PackageDependency> newDependencies = new List<PackageDependency>(item.Data.Dependencies.Count);
+                    foreach (var dependency in item.Data.Dependencies)
+                    {
+                        if (dependency.ReferenceType == LibraryDependencyReferenceType.Direct)
+                        {
+                            newDependencies.Add(new PackageDependency(dependency.Name, VersionRange.All));
+                        }
+                    }
+
+                    // If there are no dependencies, pass null.
+                    // The PackageDependencyInfo constructor will convert this to an empty array.
+                    dependencies = newDependencies.Count == 0 ? null : newDependencies;
+                }
 
                 result.Add(new PackageDependencyInfo(item.Key.Name, item.Key.Version, dependencies));
             }

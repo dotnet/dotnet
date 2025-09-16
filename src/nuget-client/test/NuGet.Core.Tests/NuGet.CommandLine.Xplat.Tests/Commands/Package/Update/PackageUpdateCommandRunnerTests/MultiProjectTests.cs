@@ -100,7 +100,8 @@ public class MultiProjectTests
             Project = updateTarget,
             Packages = packagesToUpdate,
             Interactive = false,
-            LogLevel = LogLevel.Information
+            LogLevel = LogLevel.Information,
+            Vulnerable = false,
         };
 
         var loggerMock = new Mock<ILoggerWithColor>();
