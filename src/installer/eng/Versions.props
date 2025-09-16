@@ -77,9 +77,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
-    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.120</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.120-servicing.25421.8</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.120-servicing.25421.8</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.121</MicrosoftDotNetCommonItemTemplatesPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.121-servicing.25466.7</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.121-servicing.25466.7</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -126,7 +126,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/msbuild -->
-    <MicrosoftBuildPackageVersion>17.8.36</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion>17.8.42</MicrosoftBuildPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
   <PropertyGroup>
