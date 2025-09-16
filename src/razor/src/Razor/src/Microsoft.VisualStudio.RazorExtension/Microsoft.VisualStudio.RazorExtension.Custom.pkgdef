@@ -52,7 +52,7 @@
 
 [$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
 "Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
-"Value"=dword:00000000
+"Value"=dword:00000001
 "Title"="Use Roslyn Cohost server for Razor (requires restart)"
 "PreviewPaneChannels"="*"
 

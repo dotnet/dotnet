@@ -28,8 +28,8 @@ public class WebScenarioTests : SdkTests
     {
         yield return new(nameof(WebScenarioTests), DotNetTemplate.WebApp, DotNetActions.PublishSelfContained, VerifyRuntimePacksForSelfContained);
 
-        // Blazor test is only run on official builds because it requires packages produced by the Microsoft build which are not available.
-        if (Config.IsOfficialBuild)
+        // Blazor test is only run on builds where Microsoft-built packages are available since it requires WASM packages.
+        if (!Config.SkipTestsRequiringMicrosoftArtifacts)
         {
             yield return new(nameof(WebScenarioTests), DotNetTemplate.BlazorWasm, DotNetActions.Build | DotNetActions.Run | DotNetActions.Publish);
         }

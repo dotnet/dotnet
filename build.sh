@@ -447,13 +447,6 @@ if [[ "$sourceOnly" == "true" ]]; then
             || (echo "ERROR: Failed to find officialBuildId in $releaseManifest" && exit 1)
         SetOfficialBuildId "$officialBuildId"
       fi
-
-      # If branding was not provided, extract it from the release manifest
-      if [[ "$branding" == "" ]]; then
-        branding=$(get_property "$releaseManifest" branding) \
-          || (echo "ERROR: Failed to find branding in $releaseManifest" && exit 1)
-        SetBranding "$branding"
-      fi
     fi
   fi
 

@@ -35,13 +35,12 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private RemoteClientInitializationOptions _clientInitializationOptions;
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
-    private IFilePathService? _filePathService;
 
     private protected abstract IRemoteServiceInvoker RemoteServiceInvoker { get; }
     private protected abstract IClientSettingsManager ClientSettingsManager { get; }
+    private protected abstract IFilePathService FilePathService { get; }
 
     private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
-    private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
     private protected RemoteClientCapabilitiesService ClientCapabilitiesService => OOPExportProvider.GetExportedValue<RemoteClientCapabilitiesService>();
     private protected RemoteSemanticTokensLegendService SemanticTokensLegendService => OOPExportProvider.GetExportedValue<RemoteSemanticTokensLegendService>();
@@ -92,8 +91,6 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         _clientLSPInitializationOptions = GetRemoteClientLSPInitializationOptions();
         UpdateClientLSPInitializationOptions(c => c);
 
-        _filePathService = new RemoteFilePathService(FeatureOptions);
-
         // Force initialization and creation of the remote workspace. It will be filled in later.
         await RemoteWorkspaceProvider.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), DisposalToken);
         _ = RemoteWorkspaceProvider.Instance.GetWorkspace();
@@ -137,7 +134,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         return CreateProjectAndRazorDocument(remoteWorkspace, projectId, miscellaneousFile, documentId, documentFilePath, contents, additionalFiles, inGlobalNamespace);
     }
 
-    protected TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
+    protected static TextDocument CreateProjectAndRazorDocument(CodeAnalysis.Workspace workspace, ProjectId projectId, bool miscellaneousFile, DocumentId documentId, string documentFilePath, string contents, (string fileName, string contents)[]? additionalFiles, bool inGlobalNamespace)
     {
         // We simulate a miscellaneous file project by not having a project file path.
         var projectFilePath = miscellaneousFile ? null : TestProjectData.SomeProject.FilePath;
