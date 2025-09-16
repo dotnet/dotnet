@@ -32,6 +32,9 @@ IFS=$'\n\t'
 source="${BASH_SOURCE[0]}"
 REPO_ROOT="$( cd -P "$( dirname "$0" )" && pwd )"
 
+# Load common helper functions
+source "$REPO_ROOT/eng/download-source-built-archive.sh"
+
 function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
 }
@@ -62,9 +65,6 @@ psbDir=$defaultPsbDir
 
 artifactsBaseFileName="Private.SourceBuilt.Artifacts"
 artifactsTarballPattern="$artifactsBaseFileName.*.tar.gz"
-
-sharedComponentsBaseFileName="Private.SourceBuilt.SharedComponents"
-sharedComponentsTarballPattern="$sharedComponentsBaseFileName.*.tar.gz"
 
 prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
 prebuiltsTarballPattern="$prebuiltsBaseFileName.*.tar.gz"
@@ -127,95 +127,6 @@ while :; do
   shift
 done
 
-# Helper to extract a property value from an XML file
-function GetXmlPropertyValue {
-  local propName="$1"
-  local filePath="$2"
-  local value=""
-  local line pattern
-  line=$(grep -m 1 "<$propName>" "$filePath" || :)
-  pattern="<$propName>(.*)</$propName>"
-  if [[ $line =~ $pattern ]]; then
-    value="${BASH_REMATCH[1]}"
-  fi
-  echo "$value"
-}
-
-# Helper to download a file with retries
-function DownloadWithRetries {
-  local url="$1"
-  local targetDir="$2"
-  (
-    cd "$targetDir" &&
-    for i in {1..5}; do
-      if curl -fL --retry 5 -O "$url"; then
-        return 0
-      else
-        case $? in
-          18)
-            sleep 3
-            ;;
-          *)
-            return 1
-            ;;
-        esac
-      fi
-    done
-    return 1
-  )
-}
-
-function DownloadArchive {
-  local label="$1"
-  local propertyName="$2"
-  local isRequired="$3"
-  local artifactsRid="$4"
-  local outputDir="$5"
-  local destinationFilenamePrefix="${6:-}"
-
-  local packageVersionsPath="$REPO_ROOT/eng/Versions.props"
-  local notFoundMessage="No $label found to download..."
-
-  local archiveVersion
-  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$packageVersionsPath")
-  if [[ -z "$archiveVersion" ]]; then
-    if [ "$isRequired" == true ]; then
-      echo "  ERROR: $notFoundMessage"
-      exit 1
-    else
-      echo "  $notFoundMessage"
-      return
-    fi
-  fi
-
-  local archiveUrl
-  if [[ "$propertyName" == "MicrosoftNETSdkVersion" || "$propertyName" == *Artifacts* ]]; then
-    archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
-  elif [[ "$propertyName" == *Prebuilts* ]]; then
-    archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
-  else
-    echo "  ERROR: Unknown archive property name: $propertyName"
-    exit 1
-  fi
-
-  echo "  Downloading $label from $archiveUrl..."
-  if ! DownloadWithRetries "$archiveUrl" "$outputDir"; then
-    echo "  ERROR: Failed to download $archiveUrl"
-    exit 1
-  fi
-
-  # Rename the file if a destination filename prefix is provided
-  if [[ -n "$destinationFilenamePrefix" ]]; then
-    local downloadedFilename
-    downloadedFilename=$(basename "$archiveUrl")
-    # Extract the suffix from the downloaded filename
-    local suffix="${downloadedFilename#$artifactsBaseFileName}"
-    local newFilename="$destinationFilenamePrefix$suffix"
-    mv "$outputDir/$downloadedFilename" "$outputDir/$newFilename"
-    echo "  Renamed $downloadedFilename to $newFilename"
-  fi
-}
-
 function BootstrapArtifacts {
   DOTNET_SDK_PATH="$REPO_ROOT/.dotnet"
   local tarballDir="$1"
@@ -274,13 +185,6 @@ if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${artifactsTarb
   downloadPsbArtifacts=false
 fi
 
-# Check if shared components archive exists
-downloadSharedComponentsArtifacts=$downloadArtifacts
-if [ "$downloadArtifacts" == true ] && [ -f ${packagesArchiveDir}${sharedComponentsTarballPattern} ]; then
-  echo "  $sharedComponentsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
-  downloadSharedComponentsArtifacts=false
-fi
-
 # Check if Private.SourceBuilt prebuilts archive exists
 if [ "$downloadPrebuilts" == true ] && [ -f ${packagesArchiveDir}${prebuiltsTarballPattern} ]; then
   echo "  $prebuiltsTarballPattern exists in $packagesArchiveDir...it will not be downloaded"
@@ -313,12 +217,7 @@ if [ "$downloadPsbArtifacts" == true ]; then
   fi
 fi
 
-if [ "$downloadSharedComponentsArtifacts" == true ]; then
-  DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "$artifactsRid" "$packagesArchiveDir" "$sharedComponentsBaseFileName"
-fi
-
 if [ "$downloadPrebuilts" == true ]; then
-
   DownloadArchive "prebuilts" "PrivateSourceBuiltPrebuiltsVersion" false "$artifactsRid" "$packagesArchiveDir"
 fi
 
