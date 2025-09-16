@@ -86,7 +86,54 @@ public class SdkContentTests : SdkTests
         }
     }
 
-    private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
+    [ConditionalFact(typeof(SdkContentTests), nameof(IncludeSdkContentTests))]
+    public void CompareMsftToSbAPIs()
+    {
+        Assert.NotNull(Config.MsftSdkTarballPath);
+        Assert.NotNull(Config.SdkTarballPath);
+
+        DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+        try
+        {
+            DirectoryInfo sbSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, SourceBuildSdkType));
+            Utilities.ExtractTarball(Config.SdkTarballPath, sbSdkDir.FullName, OutputHelper);
+
+            DirectoryInfo msftSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, MsftSdkType));
+            Utilities.ExtractTarball(Config.MsftSdkTarballPath, msftSdkDir.FullName, OutputHelper);
+
+            List<string> msftDlls = [];
+            List<string> sbDlls = [];
+
+            foreach (string msftDll in Directory.GetFiles(msftSdkDir.FullName, "*.dll", SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(msftSdkDir.FullName, msftDll);
+                string sbDll = Path.Combine(sbSdkDir.FullName, relativePath);
+                if (!File.Exists(sbDll))
+                {
+                    File.SetAttributes(msftDll, FileAttributes.Normal); // avoid readonly issue
+                    File.Delete(msftDll);
+                }
+                else
+                {
+                    // We do not care about missing files - there is a separate test for that
+                }
+            }
+
+            List<string> cmdArgs = new List<string>();
+            cmdArgs.Add("msbuild");
+            cmdArgs.Add(Path.Combine(BaselineHelper.GetAssetsDirectory(), $"ValidateAssemblies.proj"));
+            cmdArgs.Add($"/p:MsftPath={msftSdkDir.FullName}");
+            cmdArgs.Add($"/p:SbPath={sbSdkDir.FullName}");
+            cmdArgs.Add("/t:RunApiCompat");
+            DotNetHelper.ExecuteCmd(string.Join(" ", cmdArgs));
+        }
+        finally
+        {
+            tempDir.Delete(recursive: true);
+        }
+    }
+
+     private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
     {
         // Remove any excluded files as long as SB SDK's file has the same or greater assembly version compared to the corresponding
         // file in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario
