@@ -80,7 +80,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.Equal(1, listener.SerializeCalls[project2.Id]);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task ProjectAddedAndRemoved_NoTasks()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
