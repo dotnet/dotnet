@@ -16,6 +16,11 @@ parameters:
   type: boolean
   default: true
 
+# True when the build is a build run from the production pipeline
+- name: isOfficialBuild
+  type: boolean
+  default: false
+
 - name: desiredSigning
   type: string
   default: ''
@@ -41,6 +46,7 @@ stages:
   - template: ../variables/vmr-build.yml
     parameters:
       buildSourceOnly: true
+      isOfficialBuild: ${{ parameters.isOfficialBuild }}
       desiredSigning: ${{ parameters.desiredSigning }}
       desiredFinalVersionKind: ${{ parameters.desiredFinalVersionKind }}
   jobs:
