@@ -28,7 +28,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/efcore`  
 *[_git/dotnet-efcore@ddcda41](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GCddcda41d82201cf79bb985068d6495d215b3cf1d)*
 - `src/emsdk`  
-*[dotnet/emsdk@fb8e4a9](https://github.com/dotnet/emsdk/tree/fb8e4a9c44328f916017e4994d5bd24c9115dbbf)*
+*[dotnet/emsdk@2ab3153](https://github.com/dotnet/emsdk/tree/2ab31537e6b375f8563a1d67936236797a56e3fa)*
 - `src/fsharp`  
 *[dotnet/fsharp@47d4e3f](https://github.com/dotnet/fsharp/tree/47d4e3f91e4e5414b6dafbf14288b9c5a798ef99)*
 - `src/msbuild`  
@@ -44,11 +44,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/roslyn-analyzers`  
 *[dotnet/roslyn-analyzers@16865ea](https://github.com/dotnet/roslyn-analyzers/tree/16865ea61910500f1022ad2b96c499e5df02c228)*
 - `src/runtime`  
-*[_git/dotnet-runtime@11f875f](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GC11f875f585b0832c69374a4bd185c9f8626190d6)*
+*[_git/dotnet-runtime@b317337](https://dev.azure.com/dnceng/internal/_git/dotnet-runtime/?version=GCb3173376176f145ed904d9f18f24c062756ada9d)*
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0898abb](https://github.com/dotnet/scenario-tests/tree/0898abbb5899ef400b8372913c2320295798a687)*
 - `src/sdk`  
-*[dotnet/sdk@ec1d47f](https://github.com/dotnet/sdk/tree/ec1d47f82794f6e4861b108dcdddae046f29633c)*
+*[dotnet/sdk@36caf26](https://github.com/dotnet/sdk/tree/36caf26d03a4caa31df542535364b0969afa6332)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
