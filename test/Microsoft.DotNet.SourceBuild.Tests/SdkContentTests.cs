@@ -119,11 +119,19 @@ public class SdkContentTests : SdkTests
                 }
             }
 
+            string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
+            string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
+            string suppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
+            string validateAssembliesProjectFile = Path.Combine(baselinePath, $"ValidateAssemblies.proj");
+            DotNetHelper.ExecuteCmd($"restore {validateAssembliesProjectFile}");
+
             List<string> cmdArgs = new List<string>();
             cmdArgs.Add("msbuild");
-            cmdArgs.Add(Path.Combine(BaselineHelper.GetAssetsDirectory(), $"ValidateAssemblies.proj"));
+            cmdArgs.Add(validateAssembliesProjectFile);
             cmdArgs.Add($"/p:MsftPath={msftSdkDir.FullName}");
             cmdArgs.Add($"/p:SbPath={sbSdkDir.FullName}");
+            //cmdArgs.Add($"/p:UpdatedSuppressionFilePath={updatedSuppressionFilePath}");
+            //cmdArgs.Add($"/p:SuppressionFilePath={suppressionFilePath}");
             cmdArgs.Add("/t:RunApiCompat");
             DotNetHelper.ExecuteCmd(string.Join(" ", cmdArgs));
         }
