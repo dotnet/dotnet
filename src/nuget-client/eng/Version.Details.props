@@ -6,18 +6,18 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftBuildPackageVersion>17.15.0-preview-25465-103</MicrosoftBuildPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25465.103</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25465.103</MicrosoftDotNetXliffTasksPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25465.103</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25465.103</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftWebXdtPackageVersion>3.2.0-preview.25465.103</MicrosoftWebXdtPackageVersion>
-    <SystemCommandLinePackageVersion>2.0.0-rc.1.25465.103</SystemCommandLinePackageVersion>
-    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25465.103</SystemComponentModelCompositionPackageVersion>
-    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25465.103</SystemFormatsAsn1PackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25465.103</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25465.103</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25465.103</SystemSecurityCryptographyXmlPackageVersion>
+    <MicrosoftBuildPackageVersion>18.0.0-preview-25466-104</MicrosoftBuildPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25466.104</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXliffTasksPackageVersion>11.0.0-beta.25466.104</MicrosoftDotNetXliffTasksPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25466.104</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25466.104</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftWebXdtPackageVersion>3.2.0-preview.25466.104</MicrosoftWebXdtPackageVersion>
+    <SystemCommandLinePackageVersion>2.0.0-rc.1.25466.104</SystemCommandLinePackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25466.104</SystemComponentModelCompositionPackageVersion>
+    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25466.104</SystemFormatsAsn1PackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25466.104</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25466.104</SystemSecurityCryptographyProtectedDataPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25466.104</SystemSecurityCryptographyXmlPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
