@@ -9,6 +9,7 @@
     <ArtifactsStagingDir Condition="'$(ArtifactsStagingDir)' == ''">$(ArtifactsDir)/staging/</ArtifactsStagingDir>
     <ArtifactsPublishStagingDir>$(ArtifactsStagingDir)/artifacts</ArtifactsPublishStagingDir>
     <SourceBuiltAssetsDir>$(ArtifactsPublishStagingDir)/assets/$(Configuration)</SourceBuiltAssetsDir>
+    <SourceBuiltPublishAssetsDir>$(SourceBuiltAssetsDir)/source-build</SourceBuiltPublishAssetsDir>
     <SourceBuiltShippingPackagesDir>$(ArtifactsPublishStagingDir)/packages/$(Configuration)/Shipping</SourceBuiltShippingPackagesDir>
     <SourceBuiltNonShippingPackagesDir>$(ArtifactsPublishStagingDir)/packages/$(Configuration)/NonShipping</SourceBuiltNonShippingPackagesDir>
     <SourceBuiltAssetManifestsDir>$(ArtifactsPublishStagingDir)/manifests/$(Configuration)</SourceBuiltAssetManifestsDir>
@@ -122,8 +123,9 @@
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
+        <DotNetReleaseShipping Condition="'$(DotNetSourceOnlyPostBuildSign)' == 'true'">true</DotNetReleaseShipping>
         <Kind>Blob</Kind>
-        <RelativeBlobPath>source-build/%(Filename)%(Extension)</RelativeBlobPath>
+        <RelativeBlobPath>$([System.IO.Path]::GetFileName($(SourceBuiltPublishAssetsDir)))/%(Filename)%(Extension)</RelativeBlobPath>
       </Artifact>
     </ItemGroup>
 
