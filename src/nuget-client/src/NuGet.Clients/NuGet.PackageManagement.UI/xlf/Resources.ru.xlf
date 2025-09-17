@@ -389,7 +389,7 @@
       </trans-unit>
       <trans-unit id="Error_ProjectNotInCache">
         <source>Project {0} does not exist in the project system cache.</source>
-        <target state="translated">Проекта {0} не существует в кэше системы проектов.</target>
+        <target state="translated">Проект {0} не существует в кэше системы проектов.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_SourceMapping_GPF_NotEnabled">
@@ -459,7 +459,7 @@
       </trans-unit>
       <trans-unit id="Hyperlink_ReportAbuse">
         <source>Report Abuse</source>
-        <target state="translated">Сообщение о нарушении</target>
+        <target state="translated">Сообщить о нарушении</target>
         <note />
       </trans-unit>
       <trans-unit id="IgnoreUpgrade">
@@ -509,7 +509,7 @@
       </trans-unit>
       <trans-unit id="Label_Deprecated">
         <source>Deprecated</source>
-        <target state="translated">Нерекомендуемый</target>
+        <target state="translated">Нерекомендуемое</target>
         <note />
       </trans-unit>
       <trans-unit id="Label_DeprecationAlternatePackage">
@@ -849,7 +849,7 @@
       </trans-unit>
       <trans-unit id="PackageRestoreProgressMessage">
         <source>Downloading missing packages...</source>
-        <target state="translated">Идет скачивание недостающих пакетов...</target>
+        <target state="translated">Идет скачивание недостающих пакетов…</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageVersionWithTransitiveOrigins">
@@ -904,14 +904,17 @@
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandFailure">
         <source>NuGet storage clear failed at {0}. 
-Error: {1}
-Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
+Error: {1}</source>
         <target state="translated">Сбой очистки хранилища NuGet в {0}. 
-Ошибка: {1}.
-Дополнительная справка: https://aka.ms/troubleshoot_nuget_cache.</target>
+Ошибка: {1}</target>
         <note>{0} :error message;
 {1}: date and time
 </note>
+      </trans-unit>
+      <trans-unit id="ShowMessage_LocalsCommandMoreInformation">
+        <source>For more information, see</source>
+        <target state="translated">Подробнее см. на странице</target>
+        <note />
       </trans-unit>
       <trans-unit id="ShowMessage_LocalsCommandSuccess">
         <source>NuGet storage cleared at {0}</source>
@@ -1020,7 +1023,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_LoadingReadme">
         <source>Loading README...</source>
-        <target state="translated">Загрузка сведений...</target>
+        <target state="translated">Загрузка файла сведений...</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ManageSettings">
@@ -1045,7 +1048,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="Text_NoReadme">
         <source>There is no README available for the selected package version. For more information please visit [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</source>
-        <target state="translated">Нет доступных сведений сведений для выбранной версии пакета. Дополнительные сведения см. в [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
+        <target state="translated">Нет доступного файла сведений для выбранной версии пакета. Дополнительные сведения см. на странице [aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme).</target>
         <note>{Locked="[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)"} "[aka.ms/nuget/noreadme](https://aka.ms/nuget/noreadme)" this is a URL link and should not be translated</note>
       </trans-unit>
       <trans-unit id="Text_NotAvailableInSource">
@@ -1310,7 +1313,7 @@ Please see https://aka.ms/troubleshoot_nuget_cache for more help.</source>
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptMessage">
         <source>Once started, this action cannot be cancelled.</source>
-        <target state="translated">После запуска это действие невозможно отменить.</target>
+        <target state="translated">После запуска это действие нельзя отменить.</target>
         <note />
       </trans-unit>
       <trans-unit id="VSOptions_Text_ClearLocalsPromptTitle">

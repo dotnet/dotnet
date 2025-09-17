@@ -670,29 +670,10 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
     }
 
     public readonly T[] ToArray()
-    {
-        if (TryGetBuilder(out var builder))
-        {
-            return builder.ToArray();
-        }
-
-        return _inlineCount switch
-        {
-            0 => [],
-            1 => [_element0],
-            2 => [_element0, _element1],
-            3 => [_element0, _element1, _element2],
-            _ => [_element0, _element1, _element2, _element3]
-        };
-    }
+        => ImmutableCollectionsMarshal.AsArray(ToImmutable()).AssumeNotNull();
 
     public T[] ToArrayAndClear()
-    {
-        var result = ToArray();
-        Clear();
-
-        return result;
-    }
+        => ImmutableCollectionsMarshal.AsArray(ToImmutableAndClear()).AssumeNotNull();
 
     public void Push(T item)
     {
@@ -831,6 +812,51 @@ internal partial struct PooledArrayBuilder<T> : IDisposable
 
         return true;
     }
+
+    /// <summary>
+    /// Searches for the specified item.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <returns>The 0-based index where the item was found; or -1 if it could not be found.</returns>
+    public readonly int IndexOf(T item)
+        => IndexOf(item, EqualityComparer<T>.Default);
+
+    /// <summary>
+    /// Searches for the specified item.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <param name="comparer">The equality comparer to use in the search.</param>
+    /// <returns>The 0-based index where the item was found; or -1 if it could not be found.</returns>
+    public readonly int IndexOf(T item, IEqualityComparer<T> comparer)
+    {
+        var n = Count;
+        for (var i = 0; i < n; i++)
+        {
+            if (comparer.Equals(this[i], item))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// Determines whether the specified item exists in this collection.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <returns><c>true</c> if an equal value was found in this collection; <c>false</c> otherwise.</returns>
+    public readonly bool Contains(T item)
+        => Contains(item, EqualityComparer<T>.Default);
+
+    /// <summary>
+    /// Determines whether the specified item exists in this collection.
+    /// </summary>
+    /// <param name="item">The item to search for.</param>
+    /// <param name="comparer">The equality comparer to use in the search.</param>
+    /// <returns><c>true</c> if an equal value was found in this collection; <c>false</c> otherwise.</returns>
+    public readonly bool Contains(T item, IEqualityComparer<T> comparer)
+        => IndexOf(item, comparer) >= 0;
 
     /// <summary>
     ///  Returns the first element in this builder.

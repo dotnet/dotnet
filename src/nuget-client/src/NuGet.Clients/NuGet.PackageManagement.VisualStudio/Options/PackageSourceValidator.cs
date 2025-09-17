@@ -117,6 +117,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         internal static void ValidateUniquenessOrThrow(List<PackageSource> packageSources)
         {
             _ = packageSources ?? throw new ArgumentNullException(nameof(packageSources));
@@ -125,6 +126,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             EnsureUniqueSources(packageSources);
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         private static void EnsureUniqueNames(List<PackageSource> packageSources)
         {
             var seen = new HashSet<string>(
@@ -140,6 +142,7 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             }
         }
 
+        // Currently not used. Follow-up in https://github.com/NuGet/Home/issues/14507.
         private static void EnsureUniqueSources(List<PackageSource> packageSources)
         {
             var seen = new HashSet<string>(

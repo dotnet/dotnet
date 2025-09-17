@@ -252,7 +252,7 @@ namespace NuGet.Commands.Restore.Utility
         {
             foreach (var item in project.TargetFrameworks.NoAllocEnumerate())
             {
-                if (item.Value.IsPropertyTrue("_RestorePackagePruningDefault"))
+                if (item.Value.IsPropertyTrue("RestorePackagePruningDefault"))
                 {
                     return true;
                 }

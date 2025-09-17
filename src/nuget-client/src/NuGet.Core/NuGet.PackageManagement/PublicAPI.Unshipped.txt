@@ -1,2 +1,2 @@
 #nullable enable
-~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagePruningDefault = "_RestorePackagePruningDefault" -> string
+~const NuGet.ProjectManagement.ProjectBuildProperties.RestorePackagePruningDefault = "RestorePackagePruningDefault" -> string
