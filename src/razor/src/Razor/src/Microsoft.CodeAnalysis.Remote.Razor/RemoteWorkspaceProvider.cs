@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor.Api;
@@ -32,9 +33,9 @@ internal sealed class RemoteWorkspaceProvider : IWorkspaceProvider
     /// </summary>
     public static class TestAccessor
     {
-        public async static Task<string?> InitializeRemoteExportProviderBuilderAsync(string localSettingsDirectory, CancellationToken cancellationToken)
+        public async static Task<string?> InitializeRemoteExportProviderBuilderAsync(string localSettingsDirectory, TraceSource traceLogger, CancellationToken cancellationToken)
         {
-            return await RemoteExportProviderBuilder.InitializeAsync(localSettingsDirectory, cancellationToken).ConfigureAwait(false);
+            return await RemoteExportProviderBuilder.InitializeAsync(localSettingsDirectory, traceLogger, cancellationToken).ConfigureAwait(false);
         }
     }
 }
