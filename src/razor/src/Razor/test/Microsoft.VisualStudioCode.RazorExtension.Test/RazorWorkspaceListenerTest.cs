@@ -8,6 +8,7 @@ using System.IO;
 using System.IO.Pipelines;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Utilities;
@@ -56,7 +57,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.Equal(1, listener.SerializeCalls[project2.Id]);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task TwoProjectsAdded_SchedulesTwoTasks()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
@@ -79,7 +80,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.Equal(1, listener.SerializeCalls[project2.Id]);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task ProjectAddedAndRemoved_NoTasks()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
@@ -166,7 +167,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.Equal(1, listener.SerializeCalls[project.Id]);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task DocumentAdded_WithDelay_SchedulesTwoTasks()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);
@@ -209,7 +210,7 @@ public class RazorWorkspaceListenerTest(ITestOutputHelper testOutputHelper) : To
         Assert.Empty(listener.SerializeCalls);
     }
 
-    [Fact]
+    [ConditionalFact(Is.Windows)]
     public async Task TestSerialization()
     {
         using var workspace = new AdhocWorkspace(CodeAnalysis.Host.Mef.MefHostServices.DefaultHost);

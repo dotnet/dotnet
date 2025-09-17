@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,12 +15,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
+using Microsoft.CodeAnalysis.Razor.Protocol;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.CodeAnalysis.Remote.Razor.Logging;
-using Microsoft.CodeAnalysis.Remote.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.NET.Sdk.Razor.SourceGenerators;
 using Microsoft.VisualStudio.Composition;
@@ -35,16 +36,14 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private TestIncompatibleProjectService _incompatibleProjectService = null!;
     private RemoteClientInitializationOptions _clientInitializationOptions;
     private RemoteClientLSPInitializationOptions _clientLSPInitializationOptions;
-    private IFilePathService? _filePathService;
 
     private protected abstract IRemoteServiceInvoker RemoteServiceInvoker { get; }
     private protected abstract IClientSettingsManager ClientSettingsManager { get; }
+    private protected abstract IFilePathService FilePathService { get; }
 
     private protected TestIncompatibleProjectService IncompatibleProjectService => _incompatibleProjectService.AssumeNotNull();
-    private protected IFilePathService FilePathService => _filePathService.AssumeNotNull();
     private protected RemoteLanguageServerFeatureOptions FeatureOptions => OOPExportProvider.GetExportedValue<RemoteLanguageServerFeatureOptions>();
-    private protected RemoteClientCapabilitiesService ClientCapabilitiesService => OOPExportProvider.GetExportedValue<RemoteClientCapabilitiesService>();
-    private protected RemoteSemanticTokensLegendService SemanticTokensLegendService => OOPExportProvider.GetExportedValue<RemoteSemanticTokensLegendService>();
+    private protected RemoteClientCapabilitiesService ClientCapabilitiesService => (RemoteClientCapabilitiesService)OOPExportProvider.GetExportedValue<IClientCapabilitiesService>();
 
     /// <summary>
     /// The export provider for Razor OOP services (not Roslyn)
@@ -92,10 +91,10 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         _clientLSPInitializationOptions = GetRemoteClientLSPInitializationOptions();
         UpdateClientLSPInitializationOptions(c => c);
 
-        _filePathService = new RemoteFilePathService(FeatureOptions);
-
         // Force initialization and creation of the remote workspace. It will be filled in later.
-        await RemoteWorkspaceProvider.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), DisposalToken);
+        var traceSource = new TraceSource("Cohost test remote initialization");
+        traceSource.Listeners.Add(new XunitTraceListener(TestOutputHelper));
+        await RemoteWorkspaceProvider.TestAccessor.InitializeRemoteExportProviderBuilderAsync(Path.GetTempPath(), traceSource, DisposalToken);
         _ = RemoteWorkspaceProvider.Instance.GetWorkspace();
     }
 
@@ -110,8 +109,12 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
     private protected void UpdateClientLSPInitializationOptions(Func<RemoteClientLSPInitializationOptions, RemoteClientLSPInitializationOptions> mutation)
     {
         _clientLSPInitializationOptions = mutation(_clientLSPInitializationOptions);
-        ClientCapabilitiesService.SetCapabilities(_clientLSPInitializationOptions.ClientCapabilities);
-        SemanticTokensLegendService.SetLegend(_clientLSPInitializationOptions.TokenTypes, _clientLSPInitializationOptions.TokenModifiers);
+
+        var lifetimeServices = OOPExportProvider.GetExportedValues<ILspLifetimeService>();
+        foreach (var service in lifetimeServices)
+        {
+            service.OnLspInitialized(_clientLSPInitializationOptions);
+        }
     }
 
     protected virtual TextDocument CreateProjectAndRazorDocument(

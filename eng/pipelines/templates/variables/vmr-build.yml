@@ -41,8 +41,8 @@ variables:
   - name: ibcEnabled
     value: false
 - ${{ elseif or(startsWith(parameters.desiredIBC, 'Default'), eq(parameters.desiredIBC, '')) }}:
-  # Enable IBC on the internal project if the, branch is a release branch
-  - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  # Enable IBC on the internal project if this is an official build of a release branch and is not a source-only build.
+  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: ibcEnabled
       value: true
   # No IBC otherwise.
@@ -80,7 +80,8 @@ variables:
     value: true
   - name: signType
     value: real
-  - ${{ if and(eq(parameters.isOfficialBuild, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
+  # Only sign DACs if this is an official build of a release branch and is not a source-only build.
+  - ${{ if and(eq(parameters.isOfficialBuild, true), ne(parameters.buildSourceOnly, true), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/internal/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
     - name: signDacEnabled
       value: true
   - ${{ else }}:
@@ -120,8 +121,13 @@ variables:
       value: true
     - name: signType
       value: real
-    - name: signDacEnabled
-      value: true
+    # Only sign DACs if this is not a source-only build.
+    - ${{ if ne(parameters.buildSourceOnly, true) }}:
+      - name: signDacEnabled
+        value: true
+    - ${{ else }}:
+      - name: signDacEnabled
+        value: false
   # Do not sign otherwise.
   - ${{ else }}:
     - name: signEnabled
@@ -279,7 +285,6 @@ variables:
   - name: poolName_LinuxArm64
     value: Docker-Linux-Arm-Internal
   - name: poolImage_Mac
-    value: macos-latest-internal
+    value: macos-14-arm64
   - name: poolImage_Windows
     value: windows.vs2022preview.amd64
-

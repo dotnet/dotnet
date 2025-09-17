@@ -3,10 +3,17 @@
 
 using System.Composition;
 using Microsoft.CodeAnalysis.Razor.Protocol;
+using Microsoft.CodeAnalysis.Razor.Remote;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor;
 
 [Shared]
 [Export(typeof(IClientCapabilitiesService))]
-[Export(typeof(RemoteClientCapabilitiesService))]
-internal sealed class RemoteClientCapabilitiesService : AbstractClientCapabilitiesService;
+[Export(typeof(ILspLifetimeService))]
+internal sealed class RemoteClientCapabilitiesService : AbstractClientCapabilitiesService, ILspLifetimeService
+{
+    public void OnLspInitialized(RemoteClientLSPInitializationOptions options)
+    {
+        SetCapabilities(options.ClientCapabilities);
+    }
+}

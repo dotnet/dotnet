@@ -52,15 +52,11 @@ public partial class LinuxInstallerTests : IDisposable
                 $"{DotnetRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetTargetingPackPrefix}{Config.TargetFrameworkVersion}",
                 $"{DotnetApphostPackPrefix}{Config.TargetFrameworkVersion}",
-                NetStandardTargetingPackName,
                 $"{AspNetCoreRuntimePrefix}{Config.TargetFrameworkVersion}",
                 $"{AspNetCoreTargetingPackPrefix}{Config.TargetFrameworkVersion}"
             }
         }
     };
-
-    private static readonly Uri NetStandard21RpmPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.rpm");
-    private static readonly Uri NetStandard21DebPackage = new Uri("https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.0/netstandard-targeting-pack-2.1.0-x64.deb");
 
     // Transform patch versions in 100-199 range by removing leading "1"
     // e.g., 10.0.100-rc.1.25405.108 -> 10.0.0-rc.1.25405.108
@@ -95,8 +91,6 @@ public partial class LinuxInstallerTests : IDisposable
     private const string AspNetCoreRuntimePrefix = "aspnetcore-runtime-";
     private const string AspNetCoreTargetingPackPrefix = "aspnetcore-targeting-pack-";
     private const string DotnetApphostPackPrefix = "dotnet-apphost-pack-";
-    private const string NetStandardTargetingPackPrefix = "netstandard-targeting-pack-";
-    private const string NetStandardTargetingPackName = $"{NetStandardTargetingPackPrefix}2.1";
     private const string DotnetSdkPrefix = "dotnet-sdk-";
 
     public static bool IncludeRpmTests => Config.TestRpmPackages;
@@ -200,7 +194,7 @@ public partial class LinuxInstallerTests : IDisposable
                 File.Copy(rpmPackage, Path.Combine(_contextDir, Path.GetFileName(rpmPackage)));
             }
 
-            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21RpmPackage);
+            await DownloadPackagesAsync(packageArchitecture, packageType);
             _rpmContextInitialized = true;
         }
         else if (!_debContextInitialized)
@@ -211,7 +205,7 @@ public partial class LinuxInstallerTests : IDisposable
                 File.Copy(debPackage, Path.Combine(_contextDir, Path.GetFileName(debPackage)));
             }
 
-            await DownloadPackagesAsync(packageArchitecture, packageType, NetStandard21DebPackage);
+            await DownloadPackagesAsync(packageArchitecture, packageType);
             _debContextInitialized = true;
         }
 
@@ -246,16 +240,11 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    private async Task DownloadPackagesAsync(string packageArchitecture, PackageType packageType, Uri netStandardPackageUri)
+    private async Task DownloadPackagesAsync(string packageArchitecture, PackageType packageType)
     {
         // Collect URLs and file names for downloading
         var downloadsToProcess = new List<(Uri url, string fileName)>();
         
-        if (Config.Architecture == Architecture.X64)
-        {
-            downloadsToProcess.Add((netStandardPackageUri, netStandardPackageUri.Segments.Last()));
-        }
-
         // Since this is for a non-1xx branch, we never produced runtime packages. Download these from
         // the referenced 1xx build instead.
         if (!Config.DotNetBuildSharedComponents)
@@ -437,11 +426,6 @@ public partial class LinuxInstallerTests : IDisposable
         AddPackage(packageList, AspNetCoreRuntimePrefix, packageType);
         AddPackage(packageList, AspNetCoreTargetingPackPrefix, packageType);
         AddPackage(packageList, DotnetApphostPackPrefix, packageType);
-        if (Config.Architecture == Architecture.X64)
-        {
-            // netstandard package exists for x64 only
-            AddPackage(packageList, NetStandardTargetingPackPrefix, packageType);
-        }
         AddPackage(packageList, DotnetSdkPrefix, packageType);
 
         return packageList;
@@ -570,8 +554,8 @@ public partial class LinuxInstallerTests : IDisposable
     {
         foreach (string package in list)
         {
-            // Skip netstandard and runtime-deps packages as they are not expected to have .NET dependencies
-            if (package.StartsWith(NetStandardTargetingPackPrefix) || package.StartsWith(DotnetRuntimeDepsPrefix))
+            // Skip runtime-deps packages as they are not expected to have .NET dependencies
+            if (package.StartsWith(DotnetRuntimeDepsPrefix))
             {
                 continue;
             }
@@ -588,14 +572,6 @@ public partial class LinuxInstallerTests : IDisposable
         List<string> expectedDependencies = _expectedPackageDependencies.ContainsKey(packagePrefix)
             ? _expectedPackageDependencies[packagePrefix]
             : [];
-
-        if (Config.Architecture == Architecture.Arm64 && expectedDependencies.Contains(NetStandardTargetingPackName))
-        {
-            // If we're on Arm64, remove netstandard-targeting-pack-2.1 dependency, as it is x64 only
-            expectedDependencies = expectedDependencies
-                .Where(dep => !dep.StartsWith(NetStandardTargetingPackName))
-                .ToList();
-        }
 
         Assert.Equal(expectedDependencies.OrderBy(x => x), dependencies.OrderBy(x => x));
     }

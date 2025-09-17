@@ -79,6 +79,11 @@ parameters:
   type: boolean
   default: false
 
+# Indicates whether to runtime dependent jobs are excluded in the build (this occurs for non-1xx branches).
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -404,32 +409,15 @@ jobs:
 
   - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
     - script: |
-        set -euo pipefail
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
+      displayName: Download Previously Source-Built SDK
 
-        if [[ '${{ parameters.artifactsRid }}' == '' ]]; then
-           echo "'artifactsRid' is not specified. Cannot download source-built SDK."
-           exit 1
-        fi
-
-        packageVersionsPath="$(sourcesPath)/eng/Versions.props"
-        notFoundMessage="No source-built SDK found to download..."
-
-        echo "Looking for source-built SDK to download..."
-        archiveVersionLine=$(grep -m 1 "<PrivateSourceBuiltSdkVersion>" "$packageVersionsPath" || :)
-        versionPattern="<PrivateSourceBuiltSdkVersion>(.*)</PrivateSourceBuiltSdkVersion>"
-
-        if [[ $archiveVersionLine =~ $versionPattern ]]; then
-          archiveVersion="${BASH_REMATCH[1]}"
-          archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/sdks/dotnet-sdk-$archiveVersion-${{ parameters.artifactsRid }}.tar.gz"
-          downloadDir="$(sourcesPath)/prereqs/packages/archive/"
-
-          echo "Downloading source-built SDK from $archiveUrl..."
-          (cd "$downloadDir" && curl --retry 5 -O "$archiveUrl")
-        else
-          echo "$notFoundMessage"
-          exit 1
-        fi
-      displayName: Setup Previously Source-Built SDK
+  - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+      displayName: Download Shared Component Artifacts
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
@@ -513,20 +501,12 @@ jobs:
           customPrepArgs=""
           prepSdk=true
 
-          if [[ -n '${{ parameters.artifactsRid }}' ]]; then
-            customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
-          fi
-
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
             # Using previous SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            # Don't use --no-artifacts because it will prevent the shared components archive from being
-            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
-            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
-            # to use at the expected location.
-            customPrepArgs="${customPrepArgs} --no-sdk"
+            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
             prepSdk=false
           fi
 
@@ -554,11 +534,18 @@ jobs:
           customBuildArgs="$(baseArguments)"
           extraBuildProperties="$(baseProperties) /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) $(targetProperties) $(buildPassProperties) ${{ parameters.extraProperties }}"
 
-          # We shouldn't pass signing arguments to the build script when building source-only
-          # because signing source-built artifacts happens post-build.
           if [[ '${{ parameters.buildSourceOnly }}' != 'True' ]]; then
+            # We shouldn't pass signing arguments to the build script when building source-only
+            # because signing source-built artifacts happens post-build.
             customBuildArgs="$customBuildArgs $(signArguments) $(_SignDiagnosticFilesArgs)"
             extraBuildProperties="$extraBuildProperties $(signProperties)"
+          else
+            customBuildArgs="$customBuildArgs --source-only"
+            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
+            if [[ '${{ parameters.sign }}' == 'True' ]]; then
+              # Set up for signing source-built artifacts post-build.
+              extraBuildProperties="$extraBuildProperties /p:DotNetSourceOnlyPostBuildSign=true"
+            fi
           fi
 
           if [[ '${{ parameters.runOnline }}' == 'True' ]]; then
@@ -585,11 +572,6 @@ jobs:
           
           if [[ '${{ parameters.createSourceArtifacts }}' == 'True' ]]; then
             extraBuildProperties="$extraBuildProperties /p:CreateSourceArtifacts=true"
-          fi
-
-          if [[ '${{ parameters.buildSourceOnly }}' == 'True' ]]; then
-            customBuildArgs="$customBuildArgs --source-only"
-            extraBuildProperties="$extraBuildProperties /p:ReportSbrpUsage=true"
           fi
 
           if [[ '${{ parameters.useMonoRuntime }}' == 'True' ]]; then
@@ -680,15 +662,23 @@ jobs:
   - ${{ if eq(parameters.sign, 'True') }}:
     - ${{ if eq(parameters.buildSourceOnly, 'true') }}:
       - script: |
-          . eng/common/tools.sh
-
           sign_properties="$(signProperties) $(_SignDiagnosticFilesArgs)"
 
-          MSBuild -restore eng/sign-source-built-artifacts.proj \
-            /p:SignProperties=$sign_properties \
-            /p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory) \
-            /p:OfficialBuildId=$(Build.BuildNumber) \
-            /bl:artifacts/log/outer-sign-source-built-artifacts.binlog
+          customPreBuildArgs=""
+          if [[ '${{ parameters.runOnline }}' == 'False' ]]; then
+            customPreBuildArgs="sudo -E"
+            export MICROBUILDOUTPUTFOLDEROVERRIDE
+          fi
+
+          $customPreBuildArgs bash -c '
+            set -euo pipefail
+            . eng/common/tools.sh
+            MSBuild eng/sign-source-built-artifacts.proj -restore \
+              "/p:SignProperties='"$sign_properties"'" \
+              "/p:ArtifactsStagingDir=$(Build.ArtifactStagingDirectory)" \
+              "/p:OfficialBuildId=$(Build.BuildNumber)" \
+              "/bl:artifacts/log/outer-sign-source-built-artifacts.binlog"
+          '
         displayName: Sign Source-Built Artifacts
         workingDirectory: $(Build.SourcesDirectory)
         env:

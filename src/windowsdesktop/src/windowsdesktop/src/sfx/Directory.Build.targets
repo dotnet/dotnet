@@ -56,10 +56,13 @@
       <!-- Add the RuntimeWindowsDesktopPackageLibrary item information from the Microsoft.Internal.Runtime.WindowsDesktop.Transport package. -->
       <RuntimeWindowsDesktopPackageLibraries>@(RuntimeWindowsDesktopPackageLibrary->'%(PackageId)|%(PackageVersion)', '
 ')</RuntimeWindowsDesktopPackageLibraries>
+      <WinformsWindowsDesktopPackageLibraries>@(WinformsWindowsDesktopPackageLibrary->'%(PackageId)|%(PackageVersion)', '
+')</WinformsWindowsDesktopPackageLibraries>
     </PropertyGroup>
 
     <ItemGroup>
       <CreatePackageOverridesTemplateProperty Include="RuntimeWindowsDesktopPackageLibraries=$(RuntimeWindowsDesktopPackageLibraries)" />
+      <CreatePackageOverridesTemplateProperty Include="WinformsWindowsDesktopPackageLibraries=$(WinformsWindowsDesktopPackageLibraries)" />
     </ItemGroup>
 
     <GenerateFileFromTemplate
