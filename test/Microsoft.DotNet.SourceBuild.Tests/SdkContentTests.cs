@@ -119,6 +119,21 @@ public class SdkContentTests : SdkTests
                 }
             }
 
+            foreach (string sbDll in Directory.GetFiles(sbSdkDir.FullName, "*.dll", SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(sbSdkDir.FullName, sbDll);
+                string msftDll = Path.Combine(msftSdkDir.FullName, relativePath);
+                if (!File.Exists(msftDll))
+                {
+                    File.SetAttributes(sbDll, FileAttributes.Normal); // avoid readonly issue
+                    File.Delete(sbDll);
+                }
+                else
+                {
+                    // We do not care about missing files - there is a separate test for that
+                }
+            }
+
             string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
             string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
             string suppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
@@ -130,8 +145,8 @@ public class SdkContentTests : SdkTests
             cmdArgs.Add(validateAssembliesProjectFile);
             cmdArgs.Add($"/p:MsftPath={msftSdkDir.FullName}");
             cmdArgs.Add($"/p:SbPath={sbSdkDir.FullName}");
-            //cmdArgs.Add($"/p:UpdatedSuppressionFilePath={updatedSuppressionFilePath}");
-            //cmdArgs.Add($"/p:SuppressionFilePath={suppressionFilePath}");
+            cmdArgs.Add($"/p:UpdatedSuppressionFilePath={updatedSuppressionFilePath}");
+            cmdArgs.Add($"/p:SuppressionFilePath={suppressionFilePath}");
             cmdArgs.Add("/t:RunApiCompat");
             DotNetHelper.ExecuteCmd(string.Join(" ", cmdArgs));
         }
