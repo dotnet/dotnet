@@ -22,6 +22,8 @@
       RightAssemblies="@(SbDlls)"
       RoslynAssembliesPath="$(RoslynAssembliesPath)"
       EnableStrictMode="true"
+      GenerateSuppressionFile="true"
+      SuppressionOutputFile="$(UpdatedSuppressionFilePath)"
       SuppressionFiles="$(SuppressionFilePath)" />
   </Target>
 </Project>
