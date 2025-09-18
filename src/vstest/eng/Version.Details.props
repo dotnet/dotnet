@@ -8,11 +8,11 @@ This file should be imported by eng/Versions.props
     <!-- _git/vs-code-coverage dependencies -->
     <MicrosoftInternalCodeCoveragePackageVersion>18.0.0-preview.25408.1</MicrosoftInternalCodeCoveragePackageVersion>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25466.104</MicrosoftDiagnosticsNETCoreClientPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25466.104</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0-rc.1.25466.104</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25466.104</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25466.104</SystemComponentModelCompositionPackageVersion>
+    <MicrosoftDiagnosticsNETCoreClientPackageVersion>0.2.0-preview.25467.108</MicrosoftDiagnosticsNETCoreClientPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25467.108</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0-rc.1.25467.108</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25467.108</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <SystemComponentModelCompositionPackageVersion>10.0.0-rc.1.25467.108</SystemComponentModelCompositionPackageVersion>
     <!-- dotnet/symreader-converter dependencies -->
     <MicrosoftDiaSymReaderConverterPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderConverterPackageVersion>
     <MicrosoftDiaSymReaderPdb2PdbPackageVersion>1.1.0-beta2-19575-01</MicrosoftDiaSymReaderPdb2PdbPackageVersion>
