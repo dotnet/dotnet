@@ -9,6 +9,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Razor;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
@@ -18,11 +19,6 @@ internal class ViewComponentTagHelperDescriptorFactory
     private readonly INamedTypeSymbol _genericTaskSymbol;
     private readonly INamedTypeSymbol _taskSymbol;
     private readonly INamedTypeSymbol _iDictionarySymbol;
-
-    private static readonly SymbolDisplayFormat FullNameTypeDisplayFormat =
-        SymbolDisplayFormat.FullyQualifiedFormat
-            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
-            .WithMiscellaneousOptions(SymbolDisplayFormat.FullyQualifiedFormat.MiscellaneousOptions & (~SymbolDisplayMiscellaneousOptions.UseSpecialTypes));
 
     private static readonly IReadOnlyDictionary<string, string> PrimitiveDisplayTypeNameLookups = new Dictionary<string, string>(StringComparer.Ordinal)
     {
@@ -99,13 +95,13 @@ internal class ViewComponentTagHelperDescriptorFactory
 
         if (methods.Count == 0)
         {
-            diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_CannotFindMethod(type.ToDisplayString(FullNameTypeDisplayFormat));
+            diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_CannotFindMethod(type.GetFullName());
             method = null;
             return false;
         }
         else if (methods.Count > 1)
         {
-            diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_AmbiguousMethods(type.ToDisplayString(FullNameTypeDisplayFormat));
+            diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_AmbiguousMethods(type.GetFullName());
             method = null;
             return false;
         }
@@ -125,7 +121,7 @@ internal class ViewComponentTagHelperDescriptorFactory
             }
             else
             {
-                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_AsyncMethod_ShouldReturnTask(type.ToDisplayString(FullNameTypeDisplayFormat));
+                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_AsyncMethod_ShouldReturnTask(type.GetFullName());
                 method = null;
                 return false;
             }
@@ -135,19 +131,19 @@ internal class ViewComponentTagHelperDescriptorFactory
             // Will invoke synchronously. Method must not return void, Task or Task<T>.
             if (returnType.SpecialType == SpecialType.System_Void)
             {
-                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_ShouldReturnValue(type.ToDisplayString(FullNameTypeDisplayFormat));
+                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_ShouldReturnValue(type.GetFullName());
                 method = null;
                 return false;
             }
             else if (SymbolEqualityComparer.Default.Equals(returnType, _taskSymbol))
             {
-                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_CannotReturnTask(type.ToDisplayString(FullNameTypeDisplayFormat));
+                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_CannotReturnTask(type.GetFullName());
                 method = null;
                 return false;
             }
             else if (returnType.IsGenericType && SymbolEqualityComparer.Default.Equals(returnType.ConstructedFrom, _genericTaskSymbol))
             {
-                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_CannotReturnTask(type.ToDisplayString(FullNameTypeDisplayFormat));
+                diagnostic = RazorExtensionsDiagnosticFactory.CreateViewComponent_SyncMethod_CannotReturnTask(type.GetFullName());
                 method = null;
                 return false;
             }
@@ -204,7 +200,7 @@ internal class ViewComponentTagHelperDescriptorFactory
         foreach (var parameter in methodParameters)
         {
             var lowerKebabName = HtmlConventions.ToHtmlCase(parameter.Name);
-            var typeName = parameter.Type.ToDisplayString(FullNameTypeDisplayFormat);
+            var typeName = parameter.Type.GetFullName();
 
             if (!PrimitiveDisplayTypeNameLookups.TryGetValue(typeName, out var simpleName))
             {
@@ -256,7 +252,7 @@ internal class ViewComponentTagHelperDescriptorFactory
         }
 
         var type = dictionaryType.TypeArguments[1];
-        var typeName = type.ToDisplayString(FullNameTypeDisplayFormat);
+        var typeName = type.GetFullName();
 
         return typeName;
     }
