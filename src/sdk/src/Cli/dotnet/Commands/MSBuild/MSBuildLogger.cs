@@ -23,6 +23,8 @@ public sealed class MSBuildLogger : INodeLogger
     internal const string BuildcheckAcquisitionFailureEventName = "buildcheck/acquisitionfailure";
     internal const string BuildcheckRunEventName = "buildcheck/run";
     internal const string BuildcheckRuleStatsEventName = "buildcheck/rule";
+    internal const string TaskFactoryTelemetryEventName = "projectbuild/tasks/taskfactory";
+    internal const string TasksTelemetryEventName = "projectbuild/tasks";
 
     internal const string SdkTaskBaseCatchExceptionTelemetryEventName = "taskBaseCatchException";
     internal const string PublishPropertiesTelemetryEventName = "PublishProperties";
@@ -157,6 +159,16 @@ public sealed class MSBuildLogger : INodeLogger
                 TrackEvent(telemetry, $"msbuild/{BuildcheckRuleStatsEventName}", args.Properties,
                     toBeHashed: ["RuleId", "CheckFriendlyName"],
                     toBeMeasured: ["TotalRuntimeInMilliseconds"]);
+                break;
+            case TaskFactoryTelemetryEventName:
+                TrackEvent(telemetry, $"msbuild/{TaskFactoryTelemetryEventName}", args.Properties,
+                    toBeHashed: [],
+                    toBeMeasured: []);
+                break;
+            case TasksTelemetryEventName:
+                TrackEvent(telemetry, $"msbuild/{TasksTelemetryEventName}", args.Properties,
+                    toBeHashed: [],
+                    toBeMeasured: []);
                 break;
             // Pass through events that don't need special handling
             case SdkTaskBaseCatchExceptionTelemetryEventName:
