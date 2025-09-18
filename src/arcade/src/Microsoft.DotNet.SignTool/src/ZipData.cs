@@ -333,7 +333,10 @@ namespace Microsoft.DotNet.SignTool
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return new ZipDataEntry(relativePath, stream);
+                    yield return new ZipDataEntry(relativePath, stream)
+                    {
+                        UnixFileMode = GetUnixFileMode(path),
+                    };
                 }
             }
             finally
@@ -413,8 +416,11 @@ namespace Microsoft.DotNet.SignTool
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
-                    using var stream = ignoreContent  ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return new ZipDataEntry(relativePath, stream);
+                    using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
+                    yield return new ZipDataEntry(relativePath, stream)
+                    {
+                        UnixFileMode = GetUnixFileMode(path),
+                    };
                 }
             }
             finally
@@ -645,7 +651,10 @@ namespace Microsoft.DotNet.SignTool
 
                 if (match == null || relativePath.StartsWith(match))
                 {
-                    yield return new ZipDataEntry(relativePath, entry.DataStream);
+                    yield return new ZipDataEntry(relativePath, entry.DataStream)
+                    {
+                        UnixFileMode = entry.Mode & ArEntry.FilePermissionMask,
+                    };
                 }
             }
         }
@@ -772,6 +781,15 @@ namespace Microsoft.DotNet.SignTool
                     -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
                     """, out string _, workingDir);
             }
+        }
+
+        private static uint? GetUnixFileMode(string filePath)
+        {
+#if NET
+            return OperatingSystem.IsWindows() ? null : (uint)File.GetUnixFileMode(filePath);
+#else
+            return null;
+#endif
         }
 
         private static bool RunExternalProcess(TaskLoggingHelper log, string cmd, string args, out string output, string workingDir = null)
