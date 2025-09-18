@@ -766,30 +766,9 @@ namespace Microsoft.DotNet.SignTool
                 if (entry != null)
                 {
                     entry.WriteToFile(outputPath);
-                    SetUnixFileMode(log, entry, outputPath, layout);
+                    SetUnixFileMode(log, entry, outputPath);
                 }
             }
-        }
-#endif
-
-        internal static void SetUnixFileMode(TaskLoggingHelper log, ZipDataEntry entry, string outputPath, string workingDir)
-        {
-            // Set file mode if not the default.
-            if (entry.UnixFileMode is { } mode and not /* 0644 */ 420)
-            {
-                RunExternalProcess(log, "bash", $"""
-                    -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
-                    """, out string _, workingDir);
-            }
-        }
-
-        private static uint? GetUnixFileMode(string filePath)
-        {
-#if NET
-            return OperatingSystem.IsWindows() ? null : (uint)File.GetUnixFileMode(filePath);
-#else
-            return null;
-#endif
         }
 
         private static bool RunExternalProcess(TaskLoggingHelper log, string cmd, string args, out string output, string workingDir = null)
@@ -823,6 +802,28 @@ namespace Microsoft.DotNet.SignTool
             }
 
             return process.ExitCode == 0;
+        }
+#endif
+
+        internal static void SetUnixFileMode(TaskLoggingHelper log, ZipDataEntry entry, string outputPath)
+        {
+#if NET
+            // Set file mode if not the default.
+            if (!OperatingSystem.IsWindows() && entry.UnixFileMode is { } mode and not /* 0644 */ 420)
+            {
+                log.LogMessage(MessageImportance.Low, $"Setting file mode {Convert.ToString(mode, 8)} on: {outputPath}");
+                File.SetUnixFileMode(outputPath, (UnixFileMode)mode);
+            }
+#endif
+        }
+
+        private static uint? GetUnixFileMode(string filePath)
+        {
+#if NET
+            return OperatingSystem.IsWindows() ? null : (uint)File.GetUnixFileMode(filePath);
+#else
+            return null;
+#endif
         }
     }
 }
