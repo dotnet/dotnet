@@ -107,42 +107,13 @@ public partial class SdkContentTests : SdkTests
             DirectoryInfo msftSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, MsftSdkType));
             Utilities.ExtractTarball(Config.MsftSdkTarballPath, msftSdkDir.FullName, OutputHelper);
 
-            List<string> msftDlls = [];
-            List<string> sbDlls = [];
-
-            foreach (string msftDll in Directory.GetFiles(msftSdkDir.FullName, "*.dll", SearchOption.AllDirectories))
-            {
-                string relativePath = Path.GetRelativePath(msftSdkDir.FullName, msftDll);
-                string sbDll = Path.Combine(sbSdkDir.FullName, relativePath);
-                if (!File.Exists(sbDll))
-                {
-                    File.SetAttributes(msftDll, FileAttributes.Normal); // avoid readonly issue
-                    File.Delete(msftDll);
-                }
-                else
-                {
-                    // We do not care about missing files - there is a separate test for that
-                }
-            }
-
-            foreach (string sbDll in Directory.GetFiles(sbSdkDir.FullName, "*.dll", SearchOption.AllDirectories))
-            {
-                string relativePath = Path.GetRelativePath(sbSdkDir.FullName, sbDll);
-                string msftDll = Path.Combine(msftSdkDir.FullName, relativePath);
-                if (!File.Exists(msftDll))
-                {
-                    File.SetAttributes(sbDll, FileAttributes.Normal); // avoid readonly issue
-                    File.Delete(sbDll);
-                }
-                else
-                {
-                    // We do not care about missing files - there is a separate test for that
-                }
-            }
+            // Delete DLLs that don't exist in the other SDK
+            DeleteUnmatchedDlls(msftSdkDir.FullName, sbSdkDir.FullName);
+            DeleteUnmatchedDlls(sbSdkDir.FullName, msftSdkDir.FullName);
 
             string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
-            string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
             string baselineSuppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
+            string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
             string validateAssembliesProjectFile = Path.Combine(baselinePath, $"ValidateAssemblies.proj");
             DotNetHelper.ExecuteCmd($"restore {validateAssembliesProjectFile}");
 
@@ -316,5 +287,19 @@ public partial class SdkContentTests : SdkTests
 
         Regex diffSegmentRegex = new("^@@ .* @@", RegexOptions.Multiline);
         return diffSegmentRegex.Replace(result, "@@ ------------ @@");
+    }
+
+    private static void DeleteUnmatchedDlls(string sourceSdkDir, string targetSdkDir)
+    {
+        foreach (string dll in Directory.GetFiles(sourceSdkDir, "*.dll", SearchOption.AllDirectories))
+        {
+            string relativePath = Path.GetRelativePath(sourceSdkDir, dll);
+            string targetDll = Path.Combine(targetSdkDir, relativePath);
+            if (!File.Exists(targetDll))
+            {
+                File.SetAttributes(dll, FileAttributes.Normal); // avoid readonly issue
+                File.Delete(dll);
+            }
+        }
     }
 }
