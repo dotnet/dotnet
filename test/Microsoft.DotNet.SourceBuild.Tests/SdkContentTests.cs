@@ -17,12 +17,18 @@ using Xunit.Abstractions;
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
 [Trait("Category", "SdkContent")]
-public class SdkContentTests : SdkTests
+public partial class SdkContentTests : SdkTests
 {
     private const string BaselineSubDir = nameof(SdkContentTests);
     private const string MsftSdkType = "msft";
     private const string SourceBuildSdkType = "sb";
     public static bool IncludeSdkContentTests => !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath) && !string.IsNullOrWhiteSpace(Config.SdkTarballPath);
+
+    [GeneratedRegex(@"(<Left>)/.*?(/msft/)")]
+    private static partial Regex LeftMsftRegex { get; }
+
+    [GeneratedRegex(@"(<Right>)/.*?(/sb/)")]
+    private static partial Regex RightSbRegex { get; }
 
     public SdkContentTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
@@ -136,7 +142,7 @@ public class SdkContentTests : SdkTests
 
             string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
             string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
-            string suppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
+            string baselineSuppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
             string validateAssembliesProjectFile = Path.Combine(baselinePath, $"ValidateAssemblies.proj");
             DotNetHelper.ExecuteCmd($"restore {validateAssembliesProjectFile}");
 
@@ -146,9 +152,17 @@ public class SdkContentTests : SdkTests
             cmdArgs.Add($"/p:MsftPath={msftSdkDir.FullName}");
             cmdArgs.Add($"/p:SbPath={sbSdkDir.FullName}");
             cmdArgs.Add($"/p:UpdatedSuppressionFilePath={updatedSuppressionFilePath}");
-            cmdArgs.Add($"/p:SuppressionFilePath={suppressionFilePath}");
+            cmdArgs.Add($"/p:BaselineSuppressionFilePath={baselineSuppressionFilePath}");
             cmdArgs.Add("/t:RunApiCompat");
             DotNetHelper.ExecuteCmd(string.Join(" ", cmdArgs));
+
+            string normalizedBaseline = Path.Combine(tempDir.FullName, "normalized_baselineApiDiff.suppression");
+            File.WriteAllText(normalizedBaseline, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(baselineSuppressionFilePath)));
+
+            string normalizedUpdated = Path.Combine(tempDir.FullName, "normalized_updatedApiDiff.suppression");
+            File.WriteAllText(normalizedUpdated, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(updatedSuppressionFilePath)));
+
+            BaselineHelper.CompareFiles(normalizedBaseline, normalizedUpdated, OutputHelper);
         }
         finally
         {
@@ -156,7 +170,15 @@ public class SdkContentTests : SdkTests
         }
     }
 
-     private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
+    private string NormalizeApiDiffSuppressionFileContent(string content)
+    {
+        content = BaselineHelper.RemoveVersions(content);
+        content = LeftMsftRegex.Replace(content, "$1$2");
+        content = RightSbRegex.Replace(content, "$1$2");
+        return content;
+    }
+
+    private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
     {
         // Remove any excluded files as long as SB SDK's file has the same or greater assembly version compared to the corresponding
         // file in the MSFT SDK. If the version is less, the file will show up in the results as this is not a scenario

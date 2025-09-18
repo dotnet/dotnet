@@ -24,6 +24,6 @@
       EnableStrictMode="true"
       GenerateSuppressionFile="true"
       SuppressionOutputFile="$(UpdatedSuppressionFilePath)"
-      SuppressionFiles="$(SuppressionFilePath)" />
+      SuppressionFiles="$(BaselineSuppressionFilePath)" />
   </Target>
 </Project>
