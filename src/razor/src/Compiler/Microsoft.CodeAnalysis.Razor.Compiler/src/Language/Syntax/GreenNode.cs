@@ -5,6 +5,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -242,11 +243,41 @@ internal abstract class GreenNode
 
     public override string ToString()
     {
+        // If there is only a single value in our slots, then we can just defer to the ToString
+        // implementation on that item, as it may avoid the need to allocate a string
+        if (TryGetSingleSlotValue(out var loneSlotValue))
+        {
+            return loneSlotValue.ToString();
+        }
+
         using var _ = StringWriterPool.GetPooledObject(out var writer);
 
         WriteTo(writer);
 
         return writer.ToString();
+
+        bool TryGetSingleSlotValue([NotNullWhen(true)] out GreenNode result)
+        {
+            result = null;
+
+            var slotCount = SlotCount;
+            for (var i = 0; i < slotCount; i++)
+            {
+                var slotValue = GetSlot(i);
+                if (slotValue is not null)
+                {
+                    if (result is not null)
+                    {
+                        result = null;
+                        return false;
+                    }
+
+                    result = slotValue;
+                }
+            }
+
+            return result is not null;
+        }
     }
 
     public void WriteTo(TextWriter writer)
