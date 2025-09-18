@@ -115,7 +115,7 @@ releaseManifest=''
 sourceRepository=''
 sourceVersion=''
 CUSTOM_PACKAGES_DIR=''
-CUSTOM_SDK_DIR=''
+customSdkDir=''
 packagesDir="$scriptroot/prereqs/packages/"
 packagesArchiveDir="${packagesDir}archive/"
 packagesPreviouslySourceBuiltDir="${packagesDir}previously-source-built/"
@@ -235,15 +235,7 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -with-sdk)
-      CUSTOM_SDK_DIR="$(cd -P "$2" && pwd)"
-      if [ ! -d "$CUSTOM_SDK_DIR" ]; then
-          echo "Custom SDK directory '$CUSTOM_SDK_DIR' does not exist"
-          exit 1
-      fi
-      if [ ! -x "$CUSTOM_SDK_DIR/dotnet" ]; then
-          echo "Custom SDK '$CUSTOM_SDK_DIR/dotnet' does not exist or is not executable"
-          exit 1
-      fi
+      customSdkDir="$(cd -P "$2" && pwd)"
       shift
       ;;
     -prep)
@@ -295,7 +287,8 @@ if [[ "$ci" == true ]]; then
   fi
 fi
 
-. "$scriptroot/eng/common/tools.sh"
+source "$scriptroot/eng/common/tools.sh"
+source "$scriptroot/eng/source-build-toolset-init.sh"
 
 # Default properties
 properties+=( "/p:RepoRoot=$repo_root" )
@@ -314,29 +307,6 @@ if [[ "$test" == true ]]; then
 fi
 
 function Build {
-  # Source-only toolset prep steps
-  if [[ "$sourceOnly" == "true" ]]; then
-    InitializeBuildTool
-
-    initSourceOnlyBinaryLog=""
-    if [[ "$binary_log" == true ]]; then
-      initSourceOnlyBinaryLog="/bl:\"$log_dir/init-source-only.binlog\""
-    fi
-
-    "$_InitializeBuildTool" build-server shutdown --msbuild
-    MSBuild-Core "$scriptroot/eng/init-source-only.proj" $initSourceOnlyBinaryLog "${properties[@]}"
-    # kill off the MSBuild server so that on future invocations we pick up our custom SDK Resolver
-    "$_InitializeBuildTool" build-server shutdown --msbuild
-
-    local bootstrapArcadeDir=$(cat "$scriptroot/artifacts/toolset/bootstrap-sdks.txt" | grep "microsoft.dotnet.arcade.sdk")
-    local arcadeBuildStepsDir="$bootstrapArcadeDir/tools/"
-
-    # Point MSBuild to the custom SDK resolvers folder, so it will pick up our custom SDK Resolver
-    export MSBUILDADDITIONALSDKRESOLVERSFOLDER="$scriptroot/artifacts/toolset/VSSdkResolvers/"
-
-    # Set _InitializeToolset so that eng/common/tools.sh doesn't attempt to restore the arcade toolset again.
-    _InitializeToolset="${arcadeBuildStepsDir}/Build.proj"
-  fi
 
   local bl=""
   if [[ "$binary_log" == true ]]; then
@@ -375,17 +345,6 @@ initDistroRidGlobal "$os" "$arch" ""
 
 # Source-only settings
 if [[ "$sourceOnly" == "true" ]]; then
-  # Don't use the global nuget cache folder when building source-only which
-  # restores prebuilt packages that should never get into the global nuget cache.
-  export NUGET_PACKAGES="$scriptroot/.packages/"
-
-  if [[ "$test" == true ]]; then
-    # Use a custom package cache for tests to make prebuilt detection work.
-    export NUGET_PACKAGES="${NUGET_PACKAGES}tests/"
-  fi
-
-  echo "NuGet packages cache: '${NUGET_PACKAGES}'"
-
   # For build purposes, we need to make sure we have all the SourceLink information
   if [ "$test" != "true" ]; then
     get_property() {
@@ -455,87 +414,8 @@ if [[ "$sourceOnly" == "true" ]]; then
     exit 1
   fi
 
-  # Allow a custom SDK directory to be specified
-  if [ -d "$CUSTOM_SDK_DIR" ]; then
-    export SDK_VERSION=$("$CUSTOM_SDK_DIR/dotnet" --version)
-    export CLI_ROOT="$CUSTOM_SDK_DIR"
-    echo "Using custom bootstrap SDK from '$CLI_ROOT', version '$SDK_VERSION'"
-  else
-    sdkLine=$(grep -m 1 'dotnet' "$scriptroot/global.json")
-    sdkPattern="\"dotnet\" *: *\"(.*)\""
-    if [[ $sdkLine =~ $sdkPattern ]]; then
-      export SDK_VERSION=${BASH_REMATCH[1]}
-      export CLI_ROOT="$scriptroot/.dotnet"
-    fi
-  fi
-
-  # Set _InitializeDotNetCli & DOTNET_INSTALL_DIR so that eng/common/tools.sh doesn't attempt to restore the SDK.
-  export _InitializeDotNetCli="$CLI_ROOT"
-  export DOTNET_INSTALL_DIR="$CLI_ROOT"
-
-  # Find the Arcade SDK version and set env vars for the msbuild sdk resolver
-  packageVersionsPath=''
-
-  if [[ "$CUSTOM_PACKAGES_DIR" != "" && -f "$CUSTOM_PACKAGES_DIR/PackageVersions.props" ]]; then
-    packageVersionsPath="$CUSTOM_PACKAGES_DIR/PackageVersions.props"
-  elif [ -d "$packagesArchiveDir" ]; then
-    sourceBuiltArchive=$(find "$packagesArchiveDir" -maxdepth 1 -name 'Private.SourceBuilt.Artifacts*.tar.gz')
-    if [ -f "${packagesPreviouslySourceBuiltDir}PackageVersions.props" ]; then
-      packageVersionsPath=${packagesPreviouslySourceBuiltDir}PackageVersions.props
-    elif [ -f "$sourceBuiltArchive" ]; then
-      tar -xzf "$sourceBuiltArchive" -C /tmp PackageVersions.props
-      packageVersionsPath=/tmp/PackageVersions.props
-    fi
-  fi
-
-  if [ ! -f "$packageVersionsPath" ]; then
-    echo "Cannot find PackagesVersions.props.  Debugging info:"
-    echo "  Attempted custom PVP path: $CUSTOM_PACKAGES_DIR/PackageVersions.props"
-    echo "  Attempted previously-source-built path: ${packagesPreviouslySourceBuiltDir}PackageVersions.props"
-    echo "  Attempted archive path: $packagesArchiveDir"
-    exit 1
-  fi
-
-  # Extract toolset packages
-
-  # Ensure that by default, the bootstrap version of the toolset SDK is used. Source-build infra
-  # projects use bootstrap toolset SDKs, and would fail to find it in the build. The repo
-  # projects overwrite this so that they use the source-built toolset SDK instad.
-
-  # 1. Microsoft.DotNet.Arcade.Sdk
-  arcadeSdkLine=$(grep -m 1 'MicrosoftDotNetArcadeSdkVersion' "$packageVersionsPath")
-  arcadeSdkPattern="<MicrosoftDotNetArcadeSdkVersion>(.*)</MicrosoftDotNetArcadeSdkVersion>"
-  if [[ $arcadeSdkLine =~ $arcadeSdkPattern ]]; then
-    export ARCADE_BOOTSTRAP_VERSION=${BASH_REMATCH[1]}
-
-    export SOURCE_BUILT_SDK_ID_ARCADE=Microsoft.DotNet.Arcade.Sdk
-    export SOURCE_BUILT_SDK_VERSION_ARCADE=$ARCADE_BOOTSTRAP_VERSION
-    export SOURCE_BUILT_SDK_DIR_ARCADE=${NUGET_PACKAGES}BootstrapPackages/microsoft.dotnet.arcade.sdk/$ARCADE_BOOTSTRAP_VERSION
-  fi
-
-  # 2. Microsoft.Build.NoTargets
-  notargetsSdkLine=$(grep -m 1 'Microsoft.Build.NoTargets' "$scriptroot/global.json")
-  notargetsSdkPattern="\"Microsoft\.Build\.NoTargets\" *: *\"(.*)\""
-  if [[ $notargetsSdkLine =~ $notargetsSdkPattern ]]; then
-    export NOTARGETS_BOOTSTRAP_VERSION=${BASH_REMATCH[1]}
-
-    export SOURCE_BUILT_SDK_ID_NOTARGETS=Microsoft.Build.NoTargets
-    export SOURCE_BUILT_SDK_VERSION_NOTARGETS=$NOTARGETS_BOOTSTRAP_VERSION
-    export SOURCE_BUILT_SDK_DIR_NOTARGETS=${NUGET_PACKAGES}BootstrapPackages/microsoft.build.notargets/$NOTARGETS_BOOTSTRAP_VERSION
-  fi
-
-  # 3. Microsoft.Build.Traversal
-  traversalSdkLine=$(grep -m 1 'Microsoft.Build.Traversal' "$scriptroot/global.json")
-  traversalSdkPattern="\"Microsoft\.Build\.Traversal\" *: *\"(.*)\""
-  if [[ $traversalSdkLine =~ $traversalSdkPattern ]]; then
-    export TRAVERSAL_BOOTSTRAP_VERSION=${BASH_REMATCH[1]}
-
-    export SOURCE_BUILT_SDK_ID_TRAVERSAL=Microsoft.Build.Traversal
-    export SOURCE_BUILT_SDK_VERSION_TRAVERSAL=$TRAVERSAL_BOOTSTRAP_VERSION
-    export SOURCE_BUILT_SDK_DIR_TRAVERSAL=${NUGET_PACKAGES}BootstrapPackages/microsoft.build.traversal/$TRAVERSAL_BOOTSTRAP_VERSION
-  fi
-
-  echo "Found bootstrap versions: SDK $SDK_VERSION, Arcade $ARCADE_BOOTSTRAP_VERSION, NoTargets $NOTARGETS_BOOTSTRAP_VERSION and Traversal $TRAVERSAL_BOOTSTRAP_VERSION"
+  # Initialize source-only toolset (includes custom SDK setup, MSBuild resolver, and source-built resolver)
+  source_only_toolset_init "$customSdkDir" "$CUSTOM_PACKAGES_DIR" "$binary_log" "$test" "${properties[@]}"
 fi
 
 Build
