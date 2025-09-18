@@ -757,15 +757,20 @@ namespace Microsoft.DotNet.SignTool
                 if (entry != null)
                 {
                     entry.WriteToFile(outputPath);
-
-                    // Set file mode if not the default.
-                    if (entry.UnixFileMode is { } mode and not /* 0644 */ 420)
-                    {
-                        RunExternalProcess(log, "bash", $"""
-                            -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
-                            """, out string _, layout);
-                    }
+                    SetUnixFileMode(log, entry, outputPath, layout);
                 }
+            }
+        }
+#endif
+
+        internal static void SetUnixFileMode(TaskLoggingHelper log, ZipDataEntry entry, string outputPath, string workingDir)
+        {
+            // Set file mode if not the default.
+            if (entry.UnixFileMode is { } mode and not /* 0644 */ 420)
+            {
+                RunExternalProcess(log, "bash", $"""
+                    -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
+                    """, out string _, workingDir);
             }
         }
 
@@ -801,6 +806,5 @@ namespace Microsoft.DotNet.SignTool
 
             return process.ExitCode == 0;
         }
-#endif
     }
 }

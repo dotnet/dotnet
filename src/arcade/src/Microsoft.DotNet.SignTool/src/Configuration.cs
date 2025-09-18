@@ -823,6 +823,7 @@ namespace Microsoft.DotNet.SignTool
                             Directory.CreateDirectory(Path.GetDirectoryName(tempPath));
 
                             entry.WriteToFile(tempPath);
+                            ZipData.SetUnixFileMode(_log, entry, tempPath, _pathToContainerUnpackingDirectory);
 
                             _hashToCollisionIdMap.TryGetValue(fileUniqueKey, out string collisionPriorityId);
                             PathWithHash nestedFile = new PathWithHash(tempPath, entry.ContentHash);
