@@ -1,70 +1,76 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language.Components;
 
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class ReferenceCaptureIntermediateNode : IntermediateNode
 {
+    private const string DefaultFieldTypeName = $"global::{ComponentsApi.ElementReference.FullTypeName}";
+    private const string DefaultTypeName = $"global::System.Action<{DefaultFieldTypeName}>";
+
+    private string? _componentCaptureTypeName;
+    private string _fieldTypeName;
+    private string _typeName;
+
+    [MemberNotNullWhen(true, nameof(ComponentCaptureTypeName))]
+    public bool IsComponentCapture { get; }
+
+    public IntermediateToken IdentifierToken { get; }
+
+    /// <remarks>
+    /// This is not <c>global::</c>-prefixed, for that consider using <see cref="FieldTypeName"/> instead.
+    /// </remarks>
+    public string? ComponentCaptureTypeName => _componentCaptureTypeName;
+
+    public string FieldTypeName => _fieldTypeName;
+
+    public string TypeName => _typeName;
+
+    public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
+
     public ReferenceCaptureIntermediateNode(IntermediateToken identifierToken)
     {
-        IdentifierToken = identifierToken ?? throw new ArgumentNullException(nameof(identifierToken));
+        ArgHelper.ThrowIfNull(identifierToken);
+
+        IdentifierToken = identifierToken;
         Source = IdentifierToken.Source;
+
+        _fieldTypeName = DefaultFieldTypeName;
+        _typeName = DefaultTypeName;
     }
 
     public ReferenceCaptureIntermediateNode(IntermediateToken identifierToken, string componentCaptureTypeName)
         : this(identifierToken)
     {
-        if (string.IsNullOrEmpty(componentCaptureTypeName))
-        {
-            throw new ArgumentException("Cannot be null or empty", nameof(componentCaptureTypeName));
-        }
-
         IsComponentCapture = true;
-        ComponentCaptureTypeName = componentCaptureTypeName;
+        UpdateComponentCaptureTypeName(componentCaptureTypeName);
     }
 
-    public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
+    public void UpdateComponentCaptureTypeName(string componentCaptureTypeName)
+    {
+        ArgHelper.ThrowIfNullOrEmpty(componentCaptureTypeName);
 
-    public IntermediateToken IdentifierToken { get; }
+        Debug.Assert(IsComponentCapture);
 
-    public bool IsComponentCapture { get; }
-
-    /// <remarks>
-    /// This is not <c>global::</c>-prefixed, for that consider using <see cref="FieldTypeName"/> instead.
-    /// </remarks>
-    public string ComponentCaptureTypeName { get; set; }
-
-    public string FieldTypeName => IsComponentCapture
-        ? TypeNameHelper.GetGloballyQualifiedNameIfNeeded(ComponentCaptureTypeName)
-        : $"global::{ComponentsApi.ElementReference.FullTypeName}";
-
-    public string TypeName => $"global::System.Action<{FieldTypeName}>";
+        _componentCaptureTypeName = componentCaptureTypeName;
+        _fieldTypeName = TypeNameHelper.GetGloballyQualifiedNameIfNeeded(componentCaptureTypeName);
+        _typeName = $"global::System.Action<{_fieldTypeName}>";
+    }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
         visitor.VisitReferenceCapture(this);
     }
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {
-        if (formatter == null)
-        {
-            throw new ArgumentNullException(nameof(formatter));
-        }
+        formatter.WriteContent(IdentifierToken.Content);
 
-        formatter.WriteContent(IdentifierToken?.Content);
-
-        formatter.WriteProperty(nameof(IdentifierToken), IdentifierToken?.Content);
+        formatter.WriteProperty(nameof(IdentifierToken), IdentifierToken.Content);
         formatter.WriteProperty(nameof(ComponentCaptureTypeName), ComponentCaptureTypeName);
     }
 }
