@@ -215,6 +215,9 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
                     build_property.RazorLangVersion = {FallbackRazorConfiguration.Latest.LanguageVersion}
                     build_property.RazorConfiguration = {FallbackRazorConfiguration.Latest.ConfigurationName}
                     build_property.RootNamespace = {TestProjectData.SomeProject.RootNamespace}
+
+                    # This might suprise you, but by suppressing the source generator here, we're mirroring what happens in the Razor SDK
+                    build_property.SuppressRazorSourceGenerator = true
                     """);
 
             var projectBasePath = Path.GetDirectoryName(projectFilePath).AssumeNotNull();
