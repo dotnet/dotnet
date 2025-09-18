@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Bcl.Cryptography</name>
+  </assembly>
+  <members>
+    <member name="T:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors" />
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.CompositeMLDsa)">
+      <param name="certificate" />
+      <param name="privateKey" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.MLDsa)">
+      <param name="certificate" />
+      <param name="privateKey" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.MLKem)">
+      <param name="certificate" />
+      <param name="privateKey" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.CopyWithPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2,System.Security.Cryptography.SlhDsa)">
+      <param name="certificate" />
+      <param name="privateKey" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetCompositeMLDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetCompositeMLDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLKemPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetMLKemPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetSlhDsaPrivateKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+    <member name="M:System.Security.Cryptography.X509Certificates.X509CertificateKeyAccessors.GetSlhDsaPublicKey(System.Security.Cryptography.X509Certificates.X509Certificate2)">
+      <param name="certificate" />
+    </member>
+  </members>
+</doc>
