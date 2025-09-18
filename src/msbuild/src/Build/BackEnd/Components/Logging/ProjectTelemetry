@@ -97,6 +97,25 @@ namespace Microsoft.Build.BackEnd.Logging
             {
                 // Ignore telemetry logging errors to avoid breaking builds
             }
+            finally
+            {
+                // Reset counts after logging.
+                // ProjectLoggingContext context and, as a result, this class should not be reused between projects builds, 
+                // however it is better to defensively clean up the stats if it ever happens in future.
+                Clean();
+            }
+        }
+        
+        private void Clean()
+        {
+            _assemblyTaskFactoryTasksExecutedCount = 0;
+            _intrinsicTaskFactoryTasksExecutedCount = 0;
+            _codeTaskFactoryTasksExecutedCount = 0;
+            _roslynCodeTaskFactoryTasksExecutedCount = 0;
+            _xamlTaskFactoryTasksExecutedCount = 0;
+            _customTaskFactoryTasksExecutedCount = 0;
+
+            _taskHostTasksExecutedCount = 0;
         }
 
         private Dictionary<string, string> GetTaskFactoryProperties()
