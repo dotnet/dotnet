@@ -1146,7 +1146,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
         Assert.NotNull(typeSymbol);
 
         var expectedDescriptor = CreateTagHelper(
-            @namespace: typeSymbol.ContainingNamespace.ToDisplayString(),
+            @namespace: typeSymbol.ContainingNamespace.GetDefaultDisplayString(),
             typeName: typeSymbol.Name,
             assemblyName: typeSymbol.ContainingAssembly.Identity.Name, static b => b
                 .TagMatchingRule("enumerable"));

@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 282675,
+      "barId": 283561,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "fff7a817fd613de7856451a9b4719809090a7b0d"
+      "commitSha": "2ee9fba87ff1d669ed2ca45e240577f509e72e6e"
     },
     {
       "barId": 283790,
@@ -49,10 +49,10 @@
       "commitSha": "36bb70920a16cdfe30540412069796113d9f3e5c"
     },
     {
-      "barId": 283430,
+      "barId": 283566,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "9fadb2e7ed6811998e812f1c34fc815084c445ae"
+      "commitSha": "24b393cf84588a5f494c6f0ac8ab93b5e29a317b"
     },
     {
       "barId": 283216,
@@ -67,22 +67,22 @@
       "commitSha": "28aa7988271232f1feec583cd7e0144ac8f42ee4"
     },
     {
-      "barId": 283308,
+      "barId": 283661,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "422f88168efd16f31e5a8c4ff049b2ae13d6fea4"
+      "commitSha": "531047be237870e722971a39ec90a2b083ee106e"
     },
     {
-      "barId": 283091,
+      "barId": 283696,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "6ea0a05e20748e980ebc95de2a5584c35f490534"
+      "commitSha": "990c727ee9c68e0cde642bef7c611e7ee8bf63f6"
     },
     {
-      "barId": 283224,
+      "barId": 283608,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "60a735eb6fdf6ad243d1618dedeea6014d70889b"
+      "commitSha": "ebaebee8effb234f1ed276a7753c619df29dbb8d"
     },
     {
       "barId": 277711,
@@ -91,10 +91,10 @@
       "commitSha": "082359066ee0064039b9b1f1f025bdd0507d06de"
     },
     {
-      "barId": 283503,
+      "barId": 283678,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "1634d59e088da38a4decc82d00df2a59efe872ed"
+      "commitSha": "a0aaff7f52071578bd6095e1887a564c19d97caf"
     },
     {
       "barId": 282656,
