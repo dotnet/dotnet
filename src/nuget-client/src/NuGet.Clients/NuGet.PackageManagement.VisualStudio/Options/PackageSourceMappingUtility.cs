@@ -32,31 +32,6 @@ namespace NuGet.PackageManagement.VisualStudio.Options
             return packageSourceMappingDictionary;
         }
 
-        /// <summary>
-        /// For existing package source mappings configured with package sources which don't exist, keep those invalid package source mappings in place.
-        /// Add any <paramref name="originalPackageSourceMappings"/> configured with package sources not in <paramref name="existingPackageSources"/>
-        /// back into <paramref name="sourceNamesToPackagePatterns"/>.
-        /// </summary>
-        internal static void PreserveInvalidPackageSourceMappings(
-            Dictionary<string, List<PackagePatternItem>> sourceNamesToPackagePatterns,
-            IReadOnlyList<PackageSource> existingPackageSources,
-            IReadOnlyList<PackageSourceMappingSourceItem> originalPackageSourceMappings)
-        {
-            HashSet<string> configuredPackageSourceNames = existingPackageSources
-                .Select(packageSource => packageSource.Name)
-                .ToHashSet<string>();
-
-            foreach (PackageSourceMappingSourceItem originalMapping in originalPackageSourceMappings)
-            {
-                string originalSourceName = originalMapping.Key;
-                if (!configuredPackageSourceNames.Contains(originalSourceName, StringComparer.OrdinalIgnoreCase))
-                {
-                    // Keep this invalid package source mapping.
-                    AddOrUpdateSourceWithPackagePatterns(sourceNamesToPackagePatterns, originalMapping.Patterns, originalSourceName);
-                }
-            }
-        }
-
         internal static List<PackageSourceMappingSourceItem> ConvertPackageIdAndSourcesToSourceMappingSourceItems(
             Dictionary<string, List<PackagePatternItem>> sourceNamesToPackagePatterns,
             IReadOnlyList<(string packageIdOrPattern, IEnumerable<string> sources)> packagePatternToSources)

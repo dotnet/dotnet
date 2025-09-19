@@ -1306,7 +1306,7 @@ namespace NuGet.Build.Tasks.Console.Test
                         { "TargetFrameworkIdentifier", ".NETFramework" },
                         { "TargetFrameworkVersion", "v4.7.2" },
                         { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.2" },
-                        { "_RestorePackagePruningDefault", firstDefault },
+                        { "RestorePackagePruningDefault", firstDefault },
                     },
                     new Dictionary<string, IList<IMSBuildItem>>
                     {
@@ -1323,7 +1323,7 @@ namespace NuGet.Build.Tasks.Console.Test
                         { "TargetFrameworkIdentifier", ".NETFramework" },
                         { "TargetFrameworkVersion", "v4.7.1" },
                         { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.1" },
-                        { "_RestorePackagePruningDefault", secondDefault },
+                        { "RestorePackagePruningDefault", secondDefault },
                     },
                     new Dictionary<string, IList<IMSBuildItem>>
                     {
@@ -1339,7 +1339,7 @@ namespace NuGet.Build.Tasks.Console.Test
                         { "TargetFrameworkIdentifier", ".NETFramework" },
                         { "TargetFrameworkVersion", "v4.7.0" },
                         { "TargetFrameworkMoniker", ".NETFramework,Version=v4.7.0" },
-                        { "_RestorePackagePruningDefault", thirdDefault },
+                        { "RestorePackagePruningDefault", thirdDefault },
                     },
                     new Dictionary<string, IList<IMSBuildItem>>
                     {

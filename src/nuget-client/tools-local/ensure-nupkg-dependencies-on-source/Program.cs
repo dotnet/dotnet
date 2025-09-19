@@ -150,6 +150,7 @@ internal class Program
                     else if (versionRange.MinVersion == null)
                     {
                         var message = $"{file.FullName}: dependency {packageDependency.Id} does not have a min version";
+                        messages.Add(message);
                     }
                     else
                     {

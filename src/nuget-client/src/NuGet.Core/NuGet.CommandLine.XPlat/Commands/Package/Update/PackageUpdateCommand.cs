@@ -36,6 +36,10 @@ internal static class PackageUpdateCommand
         projectOption.Description = Strings.PackageUpdateCommand_ProjectOptionDescription;
         command.Options.Add(projectOption);
 
+        var vulnerableOption = new Option<bool>("--vulnerable");
+        vulnerableOption.Description = Strings.PackageUpdateCommand_VulnerableOptionDescription;
+        command.Options.Add(vulnerableOption);
+
         command.Options.Add(interactiveOption);
 
         var verbosityOption = CommonOptions.GetVerbosityOption();
@@ -49,6 +53,7 @@ internal static class PackageUpdateCommand
             bool interactive = args.GetValue(interactiveOption);
             VerbosityEnum verbosity = args.GetValue(verbosityOption) ?? VerbosityEnum.normal;
             LogLevel logLevel = verbosity.ToLogLevel();
+            bool vulnerable = args.GetValue(vulnerableOption);
 
             var commandArgs = new PackageUpdateArgs
             {
@@ -56,6 +61,7 @@ internal static class PackageUpdateCommand
                 Packages = packages,
                 Interactive = interactive,
                 LogLevel = logLevel,
+                Vulnerable = vulnerable,
             };
 
             return await action(commandArgs, cancellationToken);

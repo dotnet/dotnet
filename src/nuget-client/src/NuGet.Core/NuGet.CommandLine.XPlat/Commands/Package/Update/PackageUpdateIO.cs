@@ -1,6 +1,8 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -36,7 +38,7 @@ internal class PackageUpdateIO : IPackageUpdateIO
 
     public ISettings LoadSettings(string projectDirectory) => Settings.LoadDefaultSettings(projectDirectory);
 
-    public DependencyGraphSpec GetDependencyGraphSpec(string project)
+    public DependencyGraphSpec? GetDependencyGraphSpec(string project)
     {
         string tempFile = Path.GetTempFileName();
         try
@@ -78,6 +80,7 @@ internal class PackageUpdateIO : IPackageUpdateIO
             };
 
             using var process = Process.Start(processStartInfo);
+            if (process is null) throw new System.Exception("Unexpected error starting child process. Process.Start returned null.");
             process.WaitForExit();
 
             return process.ExitCode == 0;
@@ -112,7 +115,6 @@ internal class PackageUpdateIO : IPackageUpdateIO
         var restoreContext = new RestoreArgs()
         {
             CacheContext = cacheContext,
-            LockFileVersion = LockFileFormat.Version,
             Log = restoreLogger,
             MachineWideSettings = new XPlatMachineWideSetting(),
             GlobalPackagesFolder = globalPackagesFolder,
@@ -184,5 +186,7 @@ internal class PackageUpdateIO : IPackageUpdateIO
         internal required RestoreResultPair RestoreResultPair { get; init; }
 
         public override bool Success => RestoreResultPair.Result.Success;
+
+        public override LockFile? AssetsFile => RestoreResultPair.Result.LockFile;
     }
 }

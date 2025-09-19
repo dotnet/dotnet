@@ -44,10 +44,6 @@ namespace NuGet.Console.TestContract
             return powershellConsole?.ActiveHostInfo?.WpfConsole;
         }
 
-        public NuGetApexConsoleTestService()
-        {
-        }
-
         public ApexTestConsole GetApexTestConsole()
         {
             var consoleWindow = NuGetUIThreadHelper.JoinableTaskFactory.Run(() => GetPowershellConsole());

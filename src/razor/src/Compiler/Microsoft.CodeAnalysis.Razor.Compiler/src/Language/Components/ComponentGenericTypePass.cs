@@ -382,13 +382,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var capture in node.Captures)
             {
-                if (capture.IsComponentCapture && capture.ComponentCaptureTypeName != null)
+                if (capture.IsComponentCapture)
                 {
-                    capture.ComponentCaptureTypeName = rewriter.Rewrite(capture.ComponentCaptureTypeName);
-                }
-                else if (capture.IsComponentCapture)
-                {
-                    capture.ComponentCaptureTypeName = "System.Object";
+                    capture.UpdateComponentCaptureTypeName(rewriter.Rewrite(capture.ComponentCaptureTypeName));
                 }
             }
 
