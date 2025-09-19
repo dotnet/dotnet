@@ -9,7 +9,7 @@
     "pinned": true
   },
   "msbuild-sdks": {
-    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.25467.108",
+    "Microsoft.DotNet.Arcade.Sdk": "11.0.0-beta.25468.102",
     "Microsoft.Build.NoTargets": "3.7.0"
   }
 }

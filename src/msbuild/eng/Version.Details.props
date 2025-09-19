@@ -6,27 +6,27 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25467.108</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetXUnitExtensionsPackageVersion>11.0.0-beta.25467.108</MicrosoftDotNetXUnitExtensionsPackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25467.108</MicrosoftNetCompilersToolsetPackageVersion>
-    <NuGetBuildTasksPackageVersion>7.0.0-preview.1.46808</NuGetBuildTasksPackageVersion>
-    <SystemCodeDomPackageVersion>10.0.0-rc.1.25467.108</SystemCodeDomPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25467.108</SystemCollectionsImmutablePackageVersion>
-    <SystemConfigurationConfigurationManagerPackageVersion>10.0.0-rc.1.25467.108</SystemConfigurationConfigurationManagerPackageVersion>
-    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25467.108</SystemDiagnosticsDiagnosticSourcePackageVersion>
-    <SystemDiagnosticsEventLogPackageVersion>10.0.0-rc.1.25467.108</SystemDiagnosticsEventLogPackageVersion>
-    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25467.108</SystemFormatsAsn1PackageVersion>
-    <SystemFormatsNrbfPackageVersion>10.0.0-rc.1.25467.108</SystemFormatsNrbfPackageVersion>
-    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25467.108</SystemReflectionMetadataPackageVersion>
-    <SystemReflectionMetadataLoadContextPackageVersion>10.0.0-rc.1.25467.108</SystemReflectionMetadataLoadContextPackageVersion>
-    <SystemResourcesExtensionsPackageVersion>10.0.0-rc.1.25467.108</SystemResourcesExtensionsPackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25467.108</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25467.108</SystemSecurityCryptographyProtectedDataPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25467.108</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextEncodingCodePagesPackageVersion>10.0.0-rc.1.25467.108</SystemTextEncodingCodePagesPackageVersion>
-    <SystemTextJsonPackageVersion>10.0.0-rc.1.25467.108</SystemTextJsonPackageVersion>
-    <SystemThreadingChannelsPackageVersion>10.0.0-rc.1.25467.108</SystemThreadingChannelsPackageVersion>
-    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25467.108</SystemThreadingTasksDataflowPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25468.102</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetXUnitExtensionsPackageVersion>11.0.0-beta.25468.102</MicrosoftDotNetXUnitExtensionsPackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25468.102</MicrosoftNetCompilersToolsetPackageVersion>
+    <NuGetBuildTasksPackageVersion>7.0.0-preview.1.46902</NuGetBuildTasksPackageVersion>
+    <SystemCodeDomPackageVersion>10.0.0-rc.1.25468.102</SystemCodeDomPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25468.102</SystemCollectionsImmutablePackageVersion>
+    <SystemConfigurationConfigurationManagerPackageVersion>10.0.0-rc.1.25468.102</SystemConfigurationConfigurationManagerPackageVersion>
+    <SystemDiagnosticsDiagnosticSourcePackageVersion>10.0.0-rc.1.25468.102</SystemDiagnosticsDiagnosticSourcePackageVersion>
+    <SystemDiagnosticsEventLogPackageVersion>10.0.0-rc.1.25468.102</SystemDiagnosticsEventLogPackageVersion>
+    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25468.102</SystemFormatsAsn1PackageVersion>
+    <SystemFormatsNrbfPackageVersion>10.0.0-rc.1.25468.102</SystemFormatsNrbfPackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25468.102</SystemReflectionMetadataPackageVersion>
+    <SystemReflectionMetadataLoadContextPackageVersion>10.0.0-rc.1.25468.102</SystemReflectionMetadataLoadContextPackageVersion>
+    <SystemResourcesExtensionsPackageVersion>10.0.0-rc.1.25468.102</SystemResourcesExtensionsPackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25468.102</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyProtectedDataPackageVersion>10.0.0-rc.1.25468.102</SystemSecurityCryptographyProtectedDataPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25468.102</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemTextEncodingCodePagesPackageVersion>10.0.0-rc.1.25468.102</SystemTextEncodingCodePagesPackageVersion>
+    <SystemTextJsonPackageVersion>10.0.0-rc.1.25468.102</SystemTextJsonPackageVersion>
+    <SystemThreadingChannelsPackageVersion>10.0.0-rc.1.25468.102</SystemThreadingChannelsPackageVersion>
+    <SystemThreadingTasksDataflowPackageVersion>10.0.0-rc.1.25468.102</SystemThreadingTasksDataflowPackageVersion>
   </PropertyGroup>
   <!--Property group for alternate package version names-->
   <PropertyGroup>
