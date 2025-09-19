@@ -95,37 +95,12 @@ public partial class SdkContentTests : SdkTests
     [ConditionalFact(typeof(SdkContentTests), nameof(IncludeSdkContentTests))]
     public void CompareMsftToSbAPIs()
     {
-        Assert.NotNull(Config.MsftSdkTarballPath);
-        Assert.NotNull(Config.SdkTarballPath);
-
         DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         try
         {
-            DirectoryInfo sbSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, SourceBuildSdkType));
-            Utilities.ExtractTarball(Config.SdkTarballPath, sbSdkDir.FullName, OutputHelper);
-
-            DirectoryInfo msftSdkDir = Directory.CreateDirectory(Path.Combine(tempDir.FullName, MsftSdkType));
-            Utilities.ExtractTarball(Config.MsftSdkTarballPath, msftSdkDir.FullName, OutputHelper);
-
-            // Delete DLLs that don't exist in the other SDK
-            DeleteUnmatchedDlls(msftSdkDir.FullName, sbSdkDir.FullName);
-            DeleteUnmatchedDlls(sbSdkDir.FullName, msftSdkDir.FullName);
-
             string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
             string baselineSuppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
             string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
-            string validateAssembliesProjectFile = Path.Combine(baselinePath, $"ValidateAssemblies.proj");
-            DotNetHelper.ExecuteCmd($"restore {validateAssembliesProjectFile}");
-
-            List<string> cmdArgs = new List<string>();
-            cmdArgs.Add("msbuild");
-            cmdArgs.Add(validateAssembliesProjectFile);
-            cmdArgs.Add($"/p:MsftPath={msftSdkDir.FullName}");
-            cmdArgs.Add($"/p:SbPath={sbSdkDir.FullName}");
-            cmdArgs.Add($"/p:UpdatedSuppressionFilePath={updatedSuppressionFilePath}");
-            cmdArgs.Add($"/p:BaselineSuppressionFilePath={baselineSuppressionFilePath}");
-            cmdArgs.Add("/t:RunApiCompat");
-            DotNetHelper.ExecuteCmd(string.Join(" ", cmdArgs));
 
             string normalizedBaseline = Path.Combine(tempDir.FullName, "normalized_baselineApiDiff.suppression");
             File.WriteAllText(normalizedBaseline, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(baselineSuppressionFilePath)));

@@ -1,29 +1,66 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.Build.NoTargets">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <UpdatedSuppressionFilePath>$(ArtifactsTestResultsDir)updated_ApiDiff.suppression</UpdatedSuppressionFilePath>
+    <BaselineSuppressionFilePath>$(MSBuildThisFileDirectory)ApiDiff.suppression</BaselineSuppressionFilePath>
+    <TestRoot>$([System.IO.Path]::GetTempPath())$([System.IO.Path]::GetRandomFileName())</TestRoot>
+    <MsftPath>$(TestRoot)/msft</MsftPath>
+    <SbPath>$(TestRoot)/sb</SbPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" Version="10.0.100-rc.1.25451.107" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.DotNet.ApiCompat.Task" Version="10.0.100-rc.1.25451.107" />
+    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.ApiCompat.Task" />
+    <PackageReference Include="Microsoft.CodeAnalysis" />
   </ItemGroup>
 
   <UsingTask TaskName="ValidateAssembliesTask"
              AssemblyFile="$(PkgMicrosoft_DotNet_ApiCompat_Task)/tools/net/Microsoft.DotNet.ApiCompat.Task.dll" />
 
-  <Target Name="RunApiCompat" DependsOnTargets="Restore">
+  <Target Name="RunApiCompat" DependsOnTargets="Restore" BeforeTargets="Build">
+    <MakeDir Directories="$(MsftPath)" Condition="!Exists('$(MsftPath)')" />
+    <MakeDir Directories="$(SbPath)" Condition="!Exists('$(SbPath)')" />
+
+    <Exec Command="tar -xzf $(MsftSdkTarballPath) -C $(MsftPath)" />
+    <Exec Command="tar -xzf $(SdkTarballPath) -C $(SbPath)" />
+
     <ItemGroup>
       <MsftDlls Include="$(MsftPath)\**\*.dll" />
       <SbDlls Include="$(SbPath)\**\*.dll" />
     </ItemGroup>
 
+    <!-- Transform to get relative paths for comparison -->
+    <ItemGroup>
+      <DllsFromMsftPath Include="@(MsftDlls)" />
+      <DllsFromSbPath Include="@(SbDlls)" />
+      <DllsFromMsftPath Update="@(DllsFromMsftPath)">
+        <RelativePath>$([MSBuild]::MakeRelative('$(MsftPath)', '%(FullPath)'))</RelativePath>
+      </DllsFromMsftPath>
+      <DllsFromSbPath Update="@(DllsFromSbPath)">
+        <RelativePath>$([MSBuild]::MakeRelative('$(SbPath)', '%(FullPath)'))</RelativePath>
+      </DllsFromSbPath>
+    </ItemGroup>
+
+    <!-- Filter to create two item groups with common DLLs from each directory -->
+    <ItemGroup>
+      <CommonDllsFromMsftPath Include="@(DllsFromMsftPath)" Condition="Exists('$(SbPath)\%(DllsFromMsftPath.RelativePath)')" />
+      <CommonDllsFromSbPath Include="@(DllsFromSbPath)" Condition="Exists('$(MsftPath)\%(DllsFromSbPath.RelativePath)')" />
+    </ItemGroup>
+
     <ValidateAssembliesTask
-      LeftAssemblies="@(MsftDlls)"
-      RightAssemblies="@(SbDlls)"
-      RoslynAssembliesPath="$(RoslynAssembliesPath)"
+      LeftAssemblies="@(CommonDllsFromMsftPath)"
+      RightAssemblies="@(CommonDllsFromSbPath)"
+      RoslynAssembliesPath=" "
       EnableStrictMode="true"
       GenerateSuppressionFile="true"
       SuppressionOutputFile="$(UpdatedSuppressionFilePath)"
       SuppressionFiles="$(BaselineSuppressionFilePath)" />
   </Target>
+
+  <Target Name="CreateManifestResourceNames" />
+  <Target Name="CoreCompile" />
 </Project>
