@@ -371,6 +371,7 @@ namespace Microsoft.DotNet.SignTool
 
                     log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}.");
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
+                    SetUnixFileMode(log, GetUnixFileMode(signedPart.Value.FileSignInfo.FullPath), path);
                 }
 
                 if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", pkgToolPath))
@@ -417,10 +418,7 @@ namespace Microsoft.DotNet.SignTool
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return new ZipDataEntry(relativePath, stream)
-                    {
-                        UnixFileMode = GetUnixFileMode(path),
-                    };
+                    yield return new ZipDataEntry(relativePath, stream);
                 }
             }
             finally
@@ -766,7 +764,7 @@ namespace Microsoft.DotNet.SignTool
                 if (entry != null)
                 {
                     entry.WriteToFile(outputPath);
-                    SetUnixFileMode(log, entry, outputPath);
+                    SetUnixFileMode(log, entry.UnixFileMode, outputPath);
                 }
             }
         }
@@ -805,11 +803,11 @@ namespace Microsoft.DotNet.SignTool
         }
 #endif
 
-        internal static void SetUnixFileMode(TaskLoggingHelper log, ZipDataEntry entry, string outputPath)
+        internal static void SetUnixFileMode(TaskLoggingHelper log, uint? unixFileMode, string outputPath)
         {
 #if NET
             // Set file mode if not the default.
-            if (!OperatingSystem.IsWindows() && entry.UnixFileMode is { } mode and not /* 0644 */ 420)
+            if (!OperatingSystem.IsWindows() && unixFileMode is { } mode and not /* 0644 */ 420)
             {
                 log.LogMessage(MessageImportance.Low, $"Setting file mode {Convert.ToString(mode, 8)} on: {outputPath}");
                 File.SetUnixFileMode(outputPath, (UnixFileMode)mode);
