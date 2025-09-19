@@ -17,7 +17,7 @@ FROM [RootEntity] AS [r]
 """);
     }
 
-    #region Simple properties
+    #region Scalar properties
 
     public override async Task Select_property_on_required_related(QueryTrackingBehavior queryTrackingBehavior)
     {
@@ -107,9 +107,9 @@ FROM [RootEntity] AS [r]
         }
     }
 
-    #endregion Simple properties
+    #endregion Scalar properties
 
-    #region Non-collection
+    #region Structural properties
 
     public override async Task Select_related(QueryTrackingBehavior queryTrackingBehavior)
     {
@@ -210,9 +210,45 @@ LEFT JOIN [RootEntity] AS [r0] ON [r].[RootEntityId] = [r0].[Id]
         }
     }
 
-    #endregion Non-collection
+    public override async Task Select_unmapped_related_scalar_property(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_unmapped_related_scalar_property(queryTrackingBehavior);
 
-    #region Collection
+        if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
+        {
+            AssertSql(
+                """
+SELECT [r].[RequiredRelated], [r].[Id]
+FROM [RootEntity] AS [r]
+""");
+        }
+    }
+
+    public override async Task Select_untranslatable_method_on_related_scalar_property(QueryTrackingBehavior queryTrackingBehavior)
+    {
+        await base.Select_untranslatable_method_on_related_scalar_property(queryTrackingBehavior);
+
+        if (Fixture.UsingJsonType)
+        {
+            AssertSql(
+                """
+SELECT JSON_VALUE([r].[RequiredRelated], '$.Int' RETURNING int)
+FROM [RootEntity] AS [r]
+""");
+        }
+        else
+        {
+            AssertSql(
+                """
+SELECT CAST(JSON_VALUE([r].[RequiredRelated], '$.Int') AS int)
+FROM [RootEntity] AS [r]
+""");
+        }
+    }
+
+    #endregion Structural properties
+
+    #region Structural collection properties
 
     public override async Task Select_related_collection(QueryTrackingBehavior queryTrackingBehavior)
     {
@@ -269,11 +305,12 @@ ORDER BY [r].[Id]
             {
                 AssertSql(
                     """
-SELECT [r].[Id], [r0].[Id], [r0].[Int], [r0].[Name], [r0].[String], [r0].[NestedCollection], [r0].[OptionalNested], [r0].[RequiredNested]
+SELECT [r].[Id], [r0].[Id], [r0].[Int], [r0].[Ints], [r0].[Name], [r0].[String], [r0].[NestedCollection], [r0].[OptionalNested], [r0].[RequiredNested]
 FROM [RootEntity] AS [r]
 CROSS APPLY OPENJSON([r].[RelatedCollection], '$') WITH (
     [Id] int '$.Id',
     [Int] int '$.Int',
+    [Ints] json '$.Ints' AS JSON,
     [Name] nvarchar(max) '$.Name',
     [String] nvarchar(max) '$.String',
     [NestedCollection] json '$.NestedCollection' AS JSON,
@@ -286,11 +323,12 @@ CROSS APPLY OPENJSON([r].[RelatedCollection], '$') WITH (
             {
                 AssertSql(
                     """
-SELECT [r].[Id], [r0].[Id], [r0].[Int], [r0].[Name], [r0].[String], [r0].[NestedCollection], [r0].[OptionalNested], [r0].[RequiredNested]
+SELECT [r].[Id], [r0].[Id], [r0].[Int], [r0].[Ints], [r0].[Name], [r0].[String], [r0].[NestedCollection], [r0].[OptionalNested], [r0].[RequiredNested]
 FROM [RootEntity] AS [r]
 CROSS APPLY OPENJSON([r].[RelatedCollection], '$') WITH (
     [Id] int '$.Id',
     [Int] int '$.Int',
+    [Ints] nvarchar(max) '$.Ints' AS JSON,
     [Name] nvarchar(max) '$.Name',
     [String] nvarchar(max) '$.String',
     [NestedCollection] nvarchar(max) '$.NestedCollection' AS JSON,
@@ -308,17 +346,36 @@ CROSS APPLY OPENJSON([r].[RelatedCollection], '$') WITH (
 
         if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            AssertSql(
-                """
-SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Name], [n].[String]
+            if (Fixture.UsingJsonType)
+            {
+                AssertSql(
+                    """
+SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Ints], [n].[Name], [n].[String]
 FROM [RootEntity] AS [r]
 CROSS APPLY OPENJSON([r].[RequiredRelated], '$.NestedCollection') WITH (
     [Id] int '$.Id',
     [Int] int '$.Int',
+    [Ints] json '$.Ints' AS JSON,
     [Name] nvarchar(max) '$.Name',
     [String] nvarchar(max) '$.String'
 ) AS [n]
 """);
+            }
+            else
+            {
+                AssertSql(
+                    """
+SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Ints], [n].[Name], [n].[String]
+FROM [RootEntity] AS [r]
+CROSS APPLY OPENJSON([r].[RequiredRelated], '$.NestedCollection') WITH (
+    [Id] int '$.Id',
+    [Int] int '$.Int',
+    [Ints] nvarchar(max) '$.Ints' AS JSON,
+    [Name] nvarchar(max) '$.Name',
+    [String] nvarchar(max) '$.String'
+) AS [n]
+""");
+            }
         }
     }
 
@@ -328,21 +385,40 @@ CROSS APPLY OPENJSON([r].[RequiredRelated], '$.NestedCollection') WITH (
 
         if (queryTrackingBehavior is not QueryTrackingBehavior.TrackAll)
         {
-            AssertSql(
-                """
-SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Name], [n].[String]
+            if (Fixture.UsingJsonType)
+            {
+                AssertSql(
+                    """
+SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Ints], [n].[Name], [n].[String]
 FROM [RootEntity] AS [r]
 CROSS APPLY OPENJSON([r].[OptionalRelated], '$.NestedCollection') WITH (
     [Id] int '$.Id',
     [Int] int '$.Int',
+    [Ints] json '$.Ints' AS JSON,
     [Name] nvarchar(max) '$.Name',
     [String] nvarchar(max) '$.String'
 ) AS [n]
 """);
+            }
+            else
+            {
+                AssertSql(
+                    """
+SELECT [r].[Id], [n].[Id], [n].[Int], [n].[Ints], [n].[Name], [n].[String]
+FROM [RootEntity] AS [r]
+CROSS APPLY OPENJSON([r].[OptionalRelated], '$.NestedCollection') WITH (
+    [Id] int '$.Id',
+    [Int] int '$.Int',
+    [Ints] nvarchar(max) '$.Ints' AS JSON,
+    [Name] nvarchar(max) '$.Name',
+    [String] nvarchar(max) '$.String'
+) AS [n]
+""");
+            }
         }
     }
 
-    #endregion Collection
+    #endregion Structural collection properties
 
     #region Multiple
 
