@@ -61,10 +61,10 @@
       "commitSha": "47d4e3f91e4e5414b6dafbf14288b9c5a798ef99"
     },
     {
-      "packageVersion": "17.12.49-preview-25453-01",
+      "packageVersion": "17.12.50-preview-25466-06",
       "path": "msbuild",
-      "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "6be995463a50d9dd400ec9ee1218f82f5a7cc209"
+      "remoteUri": "https://dev.azure.com/devdiv/DevDiv/_git/DotNet-msbuild-Trusted",
+      "commitSha": "728984d96edf07d56918a88b0f37fec6b1dfbbc9"
     },
     {
       "packageVersion": "6.12.4",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "b0a8ca45e0c15e6cda9281ace80536691d8d8f7d"
+      "commitSha": "39ec3214d827194da6d82fd712e40fc5b16eec3e"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
