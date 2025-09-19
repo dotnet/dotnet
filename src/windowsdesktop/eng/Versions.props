@@ -23,7 +23,7 @@
     <!-- nuget -->
     <NugetPackagingVersion>6.2.4</NugetPackagingVersion>
     <!-- runtime -->
-    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.10-servicing.25467.9</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
+    <MicrosoftInternalRuntimeWindowsDesktopTransportVersion>9.0.10-servicing.25467.23</MicrosoftInternalRuntimeWindowsDesktopTransportVersion>
     <MicrosoftNETCoreAppRefVersion>9.0.10</MicrosoftNETCoreAppRefVersion>
     <MicrosoftNETCoreAppRuntimewinx64Version>9.0.10</MicrosoftNETCoreAppRuntimewinx64Version>
     <MicrosoftWin32RegistryAccessControlVersion>9.0.10</MicrosoftWin32RegistryAccessControlVersion>
@@ -59,13 +59,13 @@
     <SystemSpeechVersion>9.0.10</SystemSpeechVersion>
     <SystemTextEncodingCodePagesVersion>9.0.10</SystemTextEncodingCodePagesVersion>
     <SystemThreadingAccessControlVersion>9.0.10</SystemThreadingAccessControlVersion>
-    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.10-servicing.25467.9</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>9.0.10-servicing.25467.23</VSRedistCommonNetCoreSharedFrameworkx6490PackageVersion>
     <!-- wcf -->
     <SystemServiceModelVersion>4.10.3</SystemServiceModelVersion>
     <!-- winforms -->
-    <MicrosoftPrivateWinformsVersion>9.0.10-servicing.25468.2</MicrosoftPrivateWinformsVersion>
+    <MicrosoftPrivateWinformsVersion>9.0.10-servicing.25469.2</MicrosoftPrivateWinformsVersion>
     <SystemDrawingCommonVersion>9.0.10</SystemDrawingCommonVersion>
     <!-- wpf -->
-    <MicrosoftDotNetWpfGitHubVersion>9.0.10-rtm.25468.4</MicrosoftDotNetWpfGitHubVersion>
+    <MicrosoftDotNetWpfGitHubVersion>9.0.10-rtm.25469.4</MicrosoftDotNetWpfGitHubVersion>
   </PropertyGroup>
 </Project>
