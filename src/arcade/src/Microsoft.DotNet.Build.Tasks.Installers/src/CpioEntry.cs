@@ -22,6 +22,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
 
         public const uint Directory = 0x4000;
 
+        public const uint FilePermissionMask = 0xFFF;
+
         public ulong Inode { get; } = inode;
         public string Name { get; } = name;
         public ulong Timestamp { get; } = timestamp;
