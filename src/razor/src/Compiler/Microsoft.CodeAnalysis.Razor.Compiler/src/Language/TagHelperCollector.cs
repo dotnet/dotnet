@@ -44,9 +44,8 @@ public abstract partial class TagHelperCollector<T>
                     // across compilations, so this ensures that we don't produce new tag helpers
                     // for the same assemblies over and over again.
 
-                    var cache = s_perAssemblyCaches.GetValue(assembly, static assembly => new Cache(assembly));
-
-                    if (!cache.MightContainTagHelpers)
+                    var assemblySymbolData = SymbolCache.GetAssemblySymbolData(assembly);
+                    if (!assemblySymbolData.MightContainTagHelpers)
                     {
                         continue;
                     }
@@ -54,6 +53,7 @@ public abstract partial class TagHelperCollector<T>
                     var includeDocumentation = context.IncludeDocumentation;
                     var excludeHidden = context.ExcludeHidden;
 
+                    var cache = s_perAssemblyCaches.GetValue(assembly, static assembly => new Cache());
                     if (!cache.TryGet(includeDocumentation, excludeHidden, out var tagHelpers))
                     {
                         using var _ = ListPool<TagHelperDescriptor>.GetPooledObject(out var referenceTagHelpers);
