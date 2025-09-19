@@ -63,7 +63,10 @@ namespace Microsoft.DotNet.SignTool
                 return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
                 return ReadTarGZipEntries(archivePath)
-                    .Select(entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length));
+                    .Select(static entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length)
+                    {
+                        UnixFileMode = (uint)entry.Mode,
+                    });
 #endif
             }
             else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
@@ -371,7 +374,6 @@ namespace Microsoft.DotNet.SignTool
 
                     log.LogMessage(MessageImportance.Low, $"Copying signed stream from {signedPart.Value.FileSignInfo.FullPath} to {FileSignInfo.FullPath} -> {relativePath}.");
                     File.Copy(signedPart.Value.FileSignInfo.FullPath, path, overwrite: true);
-                    SetUnixFileMode(log, GetUnixFileMode(signedPart.Value.FileSignInfo.FullPath), path);
                 }
 
                 if (!RunPkgProcess(srcPath: extractDir, dstPath: FileSignInfo.FullPath, "pack", pkgToolPath))
@@ -527,7 +529,7 @@ namespace Microsoft.DotNet.SignTool
             string controlArchive;
             try
             {
-                controlArchive = GetUpdatedControlArchive(FileSignInfo.FullPath, dataArchive, tempDir);
+                controlArchive = GetUpdatedControlArchive(log, FileSignInfo.FullPath, dataArchive, tempDir);
             }
             catch(Exception e)
             {
@@ -557,7 +559,7 @@ namespace Microsoft.DotNet.SignTool
         /// <param name="tempDir"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private string GetUpdatedControlArchive(string debianPackage, string dataArchive, string tempDir)
+        private string GetUpdatedControlArchive(TaskLoggingHelper log, string debianPackage, string dataArchive, string tempDir)
         {
             var workingDirGuidSegment = Guid.NewGuid().ToString().Split('-')[0];
 
@@ -573,8 +575,8 @@ namespace Microsoft.DotNet.SignTool
             string controlArchive = Path.Combine(workingDir, entry.RelativePath);
             entry.WriteToFile(controlArchive);
 
-            ExtractTarballContents(dataArchive, dataLayout);
-            ExtractTarballContents(controlArchive, controlLayout);
+            ExtractTarballContents(log, dataArchive, dataLayout);
+            ExtractTarballContents(log, controlArchive, controlLayout);
 
             string sumsFile = Path.Combine(workingDir, "md5sums");
             CreateMD5SumsFile createMD5SumsFileTask = new()
@@ -614,7 +616,7 @@ namespace Microsoft.DotNet.SignTool
             return controlArchive;
         }
 
-        internal static void ExtractTarballContents(string file, string destination, bool skipSymlinks = true)
+        internal static void ExtractTarballContents(TaskLoggingHelper log, string file, string destination, bool skipSymlinks = true)
         {
             foreach (TarEntry tar in ReadTarGZipEntries(file))
             {
@@ -627,8 +629,11 @@ namespace Microsoft.DotNet.SignTool
                 string outputPath = Path.Join(destination, tar.Name);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                using FileStream outputFileStream = File.Create(outputPath);
-                tar.DataStream?.CopyTo(outputFileStream);
+                using (FileStream outputFileStream = File.Create(outputPath))
+                {
+                    tar.DataStream?.CopyTo(outputFileStream);
+                }
+                SetUnixFileMode(log, (uint)tar.Mode, outputPath);
             }
         }
 
