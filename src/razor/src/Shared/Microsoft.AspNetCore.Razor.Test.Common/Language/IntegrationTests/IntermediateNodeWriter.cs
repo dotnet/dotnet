@@ -184,12 +184,12 @@ public class IntermediateNodeWriter :
 
     public override void VisitReferenceCapture(ReferenceCaptureIntermediateNode node)
     {
-        WriteContentNode(node, node.IdentifierToken?.Content);
+        WriteContentNode(node, node.IdentifierToken.Content);
     }
 
     public override void VisitSetKey(SetKeyIntermediateNode node)
     {
-        WriteContentNode(node, node.KeyValueToken?.Content);
+        WriteContentNode(node, node.KeyValueToken.Content);
     }
 
     public override void VisitPropertyDeclaration(PropertyDeclarationIntermediateNode node)

@@ -15,7 +15,6 @@ using Microsoft.VisualStudio.Razor.Debugging;
 using Microsoft.VisualStudio.Razor.LanguageClient.Options;
 using Microsoft.VisualStudio.Razor.Logging;
 using Microsoft.VisualStudio.Razor.Snippets;
-using Microsoft.VisualStudio.RazorExtension.Options;
 using Microsoft.VisualStudio.RazorExtension.Snippets;
 using Microsoft.VisualStudio.RazorExtension.SyntaxVisualizer;
 using Microsoft.VisualStudio.Shell;
@@ -33,7 +32,6 @@ namespace Microsoft.VisualStudio.RazorExtension;
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [ProvideMenuResource("SyntaxVisualizerMenu.ctmenu", 1)]
 [ProvideToolWindow(typeof(SyntaxVisualizerToolWindow))]
-[ProvideLanguageEditorOptionPage(typeof(AdvancedOptionPage), RazorConstants.RazorLSPContentTypeName, category: null, "Advanced", pageNameResourceId: "#1050", keywordListResourceId: 1060)]
 [ProvideSettingsManifest(PackageRelativeManifestFile = @"UnifiedSettings\razor.registration.json")]
 [Guid(PackageGuidString)]
 // We activate cohosting when the first Razor file is opened. This matches the previous behavior where the

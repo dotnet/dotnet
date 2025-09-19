@@ -5,21 +5,35 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 internal static class SymbolExtensions
 {
-    internal static readonly SymbolDisplayFormat FullNameTypeDisplayFormat =
-        SymbolDisplayFormat.FullyQualifiedFormat
-            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)
-            .RemoveMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes);
+    /// <summary>
+    /// Converts the symbol to a string representation. This is the equivalent of calling
+    /// ISymbol.ToDisplayString()
+    /// </summary>
+    /// <returns>A formatted string representation of the symbol.</returns>
+    internal static string GetDefaultDisplayString(this ISymbol typeSymbol)
+        => SymbolCache.GetSymbolData(typeSymbol).GetDefaultDisplayString();
 
-    internal static string GetFullName(this ITypeSymbol typeSymbol)
-        => typeSymbol.ToDisplayString(FullNameTypeDisplayFormat);
+    /// <summary>
+    /// Converts the symbol to a string representation. This is the equivalent of calling
+    /// ISymbol.ToDisplayString(WellKnownSymbolDisplayFormats.FullNameTypeDisplayFormat)
+    /// </summary>
+    /// <returns>A formatted string representation of the symbol.</returns>
+    internal static string GetFullName(this ISymbol typeSymbol)
+        => SymbolCache.GetSymbolData(typeSymbol).GetFullName();
 
-    internal static string GetFullName(this INamespaceSymbol namespaceSymbol)
-        => namespaceSymbol.ToDisplayString(FullNameTypeDisplayFormat);
+    /// <summary>
+    /// Converts the symbol to a string representation. This is the equivalent of calling
+    /// ISymbol.ToDisplayString(WellKnownSymbolDisplayFormats.GloballyQualifiedFullNameTypeDisplayFormat)
+    /// </summary>
+    /// <returns>A formatted string representation of the symbol.</returns>
+    internal static string GetGloballyQualifiedFullName(this ISymbol typeSymbol)
+        => SymbolCache.GetSymbolData(typeSymbol).GetGloballyQualifiedFullName();
 
     internal static bool HasFullName(this AttributeData attribute, string fullName)
         => attribute.AttributeClass is { } attributeClass && attributeClass.HasFullName(fullName);
