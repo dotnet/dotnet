@@ -44,7 +44,6 @@ internal sealed class FetchTagHelpersResultResolver : IFormatterResolver
             BoundAttributeFormatter.Instance,
             BoundAttributeParameterFormatter.Instance,
             DocumentationObjectFormatter.Instance,
-            MetadataCollectionFormatter.Instance,
             MetadataObjectFormatter.Instance,
             RazorDiagnosticFormatter.Instance,
             RequiredAttributeFormatter.Instance,

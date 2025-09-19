@@ -34,6 +34,8 @@ internal static class SymbolExtensions
 
     public static string ToTestDisplayString(this ISymbol symbol)
     {
+#pragma warning disable RS0030 // Do not use banned APIs
         return symbol.ToDisplayString(s_testFormat);
+#pragma warning restore RS0030 // Do not use banned APIs
     }
 }

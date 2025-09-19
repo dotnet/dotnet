@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
@@ -14,15 +13,13 @@ public class DefaultBoundAttributeDescriptorBuilderTest
         // Arrange
         var expectedDisplayName = "ExpectedDisplayName";
 
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
+            .BoundAttributeDescriptor(builder => builder.DisplayName(expectedDisplayName))
+            .Build();
 
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
-        builder.DisplayName(expectedDisplayName);
+        // Act & Assert
+        var descriptor = tagHelper.BoundAttributes[0];
 
-        // Act
-        var descriptor = builder.Build();
-
-        // Assert
         Assert.Equal(expectedDisplayName, descriptor.DisplayName);
     }
 
@@ -30,18 +27,16 @@ public class DefaultBoundAttributeDescriptorBuilderTest
     public void DisplayName_DefaultsToPropertyLookingDisplayName()
     {
         // Arrange
-        var tagHelperBuilder = new TagHelperDescriptorBuilder(TagHelperConventions.DefaultKind, "TestTagHelper", "Test");
-        tagHelperBuilder.Metadata(TypeName("TestTagHelper"));
-
-        var builder = new BoundAttributeDescriptorBuilder(tagHelperBuilder);
-        builder
-            .TypeName(typeof(int).FullName)
-            .PropertyName("SomeProperty");
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
+            .TypeName("TestTagHelper")
+            .BoundAttributeDescriptor(builder => builder
+                .TypeName(typeof(int).FullName)
+                .PropertyName("SomeProperty"))
+            .Build();
 
         // Act
-        var descriptor = builder.Build();
+        var descriptor = tagHelper.BoundAttributes[0];
 
-        // Assert
         Assert.Equal("int TestTagHelper.SomeProperty", descriptor.DisplayName);
     }
 }

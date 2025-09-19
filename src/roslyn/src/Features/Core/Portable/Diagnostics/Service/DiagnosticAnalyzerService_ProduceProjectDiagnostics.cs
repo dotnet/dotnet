@@ -16,11 +16,107 @@ namespace Microsoft.CodeAnalysis.Diagnostics;
 
 internal sealed partial class DiagnosticAnalyzerService
 {
-    public async Task<ImmutableArray<DiagnosticData>> ProduceProjectDiagnosticsInProcessAsync(
+    /// <summary>
+    /// Should only be called from other "InProcess" methods as this loads and realizes the DiagnosticAnalyzers.
+    /// </summary>
+    private ImmutableArray<DiagnosticAnalyzer> GetDiagnosticAnalyzersInProcess(
+       Project project,
+       ImmutableHashSet<string>? diagnosticIds,
+       AnalyzerFilter analyzerFilter)
+    {
+        var analyzersForProject = GetProjectAnalyzers_OnlyCallInProcess(project);
+        return analyzersForProject.WhereAsArray(ShouldIncludeAnalyzer);
+
+        bool ShouldIncludeAnalyzer(DiagnosticAnalyzer analyzer)
+        {
+            if (analyzer.IsCompilerAnalyzer())
+            {
+                if ((analyzerFilter & AnalyzerFilter.CompilerAnalyzer) == 0)
+                    return false;
+            }
+            else
+            {
+                if ((analyzerFilter & AnalyzerFilter.NonCompilerAnalyzer) == 0)
+                    return false;
+            }
+
+            if (!DocumentAnalysisExecutor.IsAnalyzerEnabledForProject(analyzer, project, this._globalOptions))
+                return false;
+
+            if (diagnosticIds != null && _analyzerInfoCache.GetDiagnosticDescriptors(analyzer).All(d => !diagnosticIds.Contains(d.Id)))
+                return false;
+
+            return true;
+        }
+    }
+
+    private Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsInProcessAsync(
         Project project,
+        ImmutableArray<DocumentId> documentIds,
+        ImmutableHashSet<string>? diagnosticIds,
+        AnalyzerFilter analyzerFilter,
+        bool includeLocalDocumentDiagnostics,
+        CancellationToken cancellationToken)
+    {
+        return GetDiagnosticsForIdsInProcessAsync(
+            project, documentIds, diagnosticIds,
+            GetDiagnosticAnalyzersInProcess(project, diagnosticIds, analyzerFilter),
+            includeLocalDocumentDiagnostics, cancellationToken);
+    }
+
+    private Task<ImmutableArray<DiagnosticData>> GetDiagnosticsForIdsInProcessAsync(
+        Project project,
+        ImmutableArray<DocumentId> documentIds,
+        ImmutableHashSet<string>? diagnosticIds,
         ImmutableArray<DiagnosticAnalyzer> analyzers,
+        bool includeLocalDocumentDiagnostics,
+        CancellationToken cancellationToken)
+    {
+        return ProduceProjectDiagnosticsInProcessAsync(
+            project, diagnosticIds,
+            // Ensure we compute and return diagnostics for both the normal docs and the additional docs in this
+            // project if no specific document id was requested.
+            documentIds.IsDefault ? [.. project.DocumentIds, .. project.AdditionalDocumentIds] : documentIds,
+            analyzers,
+            includeLocalDocumentDiagnostics,
+            includeNonLocalDocumentDiagnostics: true,
+            // return diagnostics specific to one project or document
+            includeProjectNonLocalResult: documentIds.IsDefault,
+            cancellationToken);
+    }
+
+    private Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsInProcessAsync(
+        Project project,
+        ImmutableHashSet<string>? diagnosticIds,
+        AnalyzerFilter analyzerFilter,
+        CancellationToken cancellationToken)
+    {
+        return GetProjectDiagnosticsForIdsInProcessAsync(
+            project, diagnosticIds,
+            GetDiagnosticAnalyzersInProcess(project, diagnosticIds, analyzerFilter),
+            cancellationToken);
+    }
+
+    private Task<ImmutableArray<DiagnosticData>> GetProjectDiagnosticsForIdsInProcessAsync(
+        Project project,
+        ImmutableHashSet<string>? diagnosticIds,
+        ImmutableArray<DiagnosticAnalyzer> analyzers,
+        CancellationToken cancellationToken)
+    {
+        return ProduceProjectDiagnosticsInProcessAsync(
+            project, diagnosticIds, documentIds: [],
+            analyzers,
+            includeLocalDocumentDiagnostics: false,
+            includeNonLocalDocumentDiagnostics: false,
+            includeProjectNonLocalResult: true,
+            cancellationToken);
+    }
+
+    private async Task<ImmutableArray<DiagnosticData>> ProduceProjectDiagnosticsInProcessAsync(
+        Project project,
         ImmutableHashSet<string>? diagnosticIds,
         ImmutableArray<DocumentId> documentIds,
+        ImmutableArray<DiagnosticAnalyzer> analyzers,
         bool includeLocalDocumentDiagnostics,
         bool includeNonLocalDocumentDiagnostics,
         bool includeProjectNonLocalResult,
@@ -28,7 +124,7 @@ internal sealed partial class DiagnosticAnalyzerService
     {
         using var _ = ArrayBuilder<DiagnosticData>.GetInstance(out var builder);
 
-        var hostAnalyzerInfo = GetOrCreateHostAnalyzerInfo(project);
+        var hostAnalyzerInfo = GetOrCreateHostAnalyzerInfo_OnlyCallInProcess(project);
         var result = await GetOrComputeDiagnosticAnalysisResultsAsync(analyzers).ConfigureAwait(false);
 
         foreach (var analyzer in analyzers)
@@ -70,26 +166,8 @@ internal sealed partial class DiagnosticAnalyzerService
         async Task<ImmutableDictionary<DiagnosticAnalyzer, DiagnosticAnalysisResult>> GetOrComputeDiagnosticAnalysisResultsAsync(
             ImmutableArray<DiagnosticAnalyzer> analyzers)
         {
-            // If there was a 'ForceAnalyzeProjectAsync' run for this project, we can piggy back off of the
-            // prior computed/cached results as they will be a superset of the results we want.
-            //
-            // Note: the caller will loop over *its* analyzers, grabbing from the full set of data we've cached for
-            // this project, and filtering down further.  So it's ok to return this potentially larger set.
-            //
-            // Note: While ForceAnalyzeProjectAsync should always run with a larger set of analyzers than us
-            // (since it runs all analyzers), we still run a paranoia check that the analyzers we care about are
-            // a subset of that call so that we don't accidentally reuse results that would not correspond to
-            // what we are computing ourselves.
-            if (s_projectToForceAnalysisData.TryGetValue(project.State, out var box) &&
-                analyzers.IsSubsetOf(box.Value.analyzers))
-            {
-                var checksum = await project.GetDiagnosticChecksumAsync(cancellationToken).ConfigureAwait(false);
-                if (box.Value.checksum == checksum)
-                    return box.Value.diagnosticAnalysisResults;
-            }
-
             // Otherwise, just compute for the analyzers we care about.
-            var compilation = await GetOrCreateCompilationWithAnalyzersAsync(
+            var compilation = await GetOrCreateCompilationWithAnalyzers_OnlyCallInProcessAsync(
                 project, analyzers, hostAnalyzerInfo, this.CrashOnAnalyzerException, cancellationToken).ConfigureAwait(false);
 
             var result = await ComputeDiagnosticAnalysisResultsInProcessAsync(

@@ -1,12 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.EntityFrameworkCore.BulkUpdates;
+
 namespace Microsoft.EntityFrameworkCore.Query.Associations;
 
-public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<PoolableDbContext>, IQueryFixtureBase
+public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<PoolableDbContext>,
+    IQueryFixtureBase, IBulkUpdatesFixtureBase
 {
     public virtual bool AreCollectionsOrdered
         => true;
+
+
+    public virtual void UseTransaction(DatabaseFacade facade, IDbContextTransaction transaction)
+        => throw new NotSupportedException();
 
     public AssociationsData Data { get; private set; }
 
@@ -151,6 +158,7 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
 
         Assert.Equal(e.Int, a.Int);
         Assert.Equal(e.String, a.String);
+        Assert.Equal(e.Ints, a.Ints);
     }
 
     private void AssertPreRootEntity(RootReferencingEntity e, RootReferencingEntity a)

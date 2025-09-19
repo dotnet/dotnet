@@ -382,13 +382,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var capture in node.Captures)
             {
-                if (capture.IsComponentCapture && capture.ComponentCaptureTypeName != null)
+                if (capture.IsComponentCapture)
                 {
-                    capture.ComponentCaptureTypeName = rewriter.Rewrite(capture.ComponentCaptureTypeName);
-                }
-                else if (capture.IsComponentCapture)
-                {
-                    capture.ComponentCaptureTypeName = "System.Object";
+                    capture.UpdateComponentCaptureTypeName(rewriter.Rewrite(capture.ComponentCaptureTypeName));
                 }
             }
 
@@ -414,9 +410,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void CreateTypeInferenceMethod(DocumentIntermediateNode documentNode, ComponentIntermediateNode node, List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes)
         {
-            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Content;
+            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Name;
             @namespace = string.IsNullOrEmpty(@namespace) ? "__Blazor" : "__Blazor." + @namespace;
-            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().ClassName;
+            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().Name;
 
             using var genericTypeConstraints = new PooledArrayBuilder<string>();
 
@@ -451,7 +447,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             {
                 namespaceNode = new NamespaceDeclarationIntermediateNode()
                 {
-                    Content = @namespace,
+                    Name = @namespace,
                     IsGenericTyped = true,
                 };
 
@@ -460,17 +456,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             var classNode = namespaceNode.Children
                 .OfType<ClassDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.ClassName == "TypeInference");
+                .FirstOrDefault(n => n.Name == "TypeInference");
             if (classNode == null)
             {
                 classNode = new ClassDeclarationIntermediateNode()
                 {
-                    ClassName = "TypeInference",
-                    Modifiers =
-                        {
-                            "internal",
-                            "static",
-                        },
+                    Name = "TypeInference",
+                    Modifiers = CommonModifiers.InternalStatic
                 };
                 namespaceNode.Children.Add(classNode);
             }

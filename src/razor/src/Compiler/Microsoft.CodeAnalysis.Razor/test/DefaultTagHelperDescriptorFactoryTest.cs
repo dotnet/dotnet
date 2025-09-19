@@ -9,7 +9,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
@@ -116,7 +115,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
         Action<RequiredAttributeDescriptorBuilder> configure)
     {
         // Arrange
-        var expected = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var expected = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule =>
             {
                 rule.Attribute(configure);
@@ -124,7 +123,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
             .Build();
 
         // Act
-        var actual = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var actual = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule =>
             {
                 RequiredAttributeParser.AddRequiredAttributes(requiredAttributes, rule);
@@ -198,7 +197,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
         ImmutableArray<Action<RequiredAttributeDescriptorBuilder>> configures)
     {
         // Arrange
-        var expected = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var expected = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule =>
             {
                 foreach (var configure in configures)
@@ -209,7 +208,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
             .Build();
 
         // Act
-        var actual = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var actual = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule =>
             {
                 RequiredAttributeParser.AddRequiredAttributes(requiredAttributes, rule);
@@ -1147,7 +1146,7 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
         Assert.NotNull(typeSymbol);
 
         var expectedDescriptor = CreateTagHelper(
-            @namespace: typeSymbol.ContainingNamespace.ToDisplayString(),
+            @namespace: typeSymbol.ContainingNamespace.GetDefaultDisplayString(),
             typeName: typeSymbol.Name,
             assemblyName: typeSymbol.ContainingAssembly.Identity.Name, static b => b
                 .TagMatchingRule("enumerable"));
@@ -1625,12 +1624,8 @@ public class DefaultTagHelperDescriptorFactoryTest : TagHelperDescriptorProvider
     {
         var fullName = $"{@namespace}.{typeName}";
 
-        var builder = TagHelperDescriptorBuilder
-            .Create(fullName, assemblyName)
-            .Metadata(
-                TypeName(fullName),
-                TypeNamespace(@namespace),
-                TypeNameIdentifier(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(fullName, assemblyName);
+        builder.SetTypeName(fullName, @namespace, typeName);
 
         configure?.Invoke(builder);
 

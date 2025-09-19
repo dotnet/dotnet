@@ -1067,7 +1067,6 @@ FROM [JsonEntitiesBasic] AS [j]
 """);
     }
 
-    [ConditionalTheory(Skip = "#36628")]
     public override async Task Json_collection_Any_with_predicate(bool async)
     {
         await base.Json_collection_Any_with_predicate(async);
@@ -1078,7 +1077,7 @@ SELECT [j].[Id], [j].[EntityBasicId], [j].[Name], [j].[OwnedCollectionRoot], [j]
 FROM [JsonEntitiesBasic] AS [j]
 WHERE EXISTS (
     SELECT 1
-    FROM OPENJSON([j].[OwnedReferenceRoot], '$.OwnedCollectionBranch') WITH ([OwnedReferenceLeaf] nvarchar(max) '$.OwnedReferenceLeaf' AS JSON) AS [o]
+    FROM OPENJSON([j].[OwnedReferenceRoot], '$.OwnedCollectionBranch') WITH ([OwnedReferenceLeaf] json '$.OwnedReferenceLeaf' AS JSON) AS [o]
     WHERE JSON_VALUE([o].[OwnedReferenceLeaf], '$.SomethingSomething' RETURNING nvarchar(max)) = N'e1_r_c1_r')
 """);
     }
@@ -1121,7 +1120,6 @@ WHERE (
 """);
     }
 
-    [ConditionalTheory(Skip = "#36628")]
     public override async Task Json_collection_OrderByDescending_Skip_ElementAt(bool async)
     {
         await base.Json_collection_OrderByDescending_Skip_ElementAt(async);
@@ -1133,12 +1131,13 @@ FROM [JsonEntitiesBasic] AS [j]
 WHERE (
     SELECT [o0].[c]
     FROM (
-        SELECT JSON_VALUE([o].[OwnedReferenceLeaf], '$.SomethingSomething') AS [c], [o].[Date] AS [c0]
-        FROM OPENJSON(CAST([j].[OwnedReferenceRoot] AS nvarchar(max)), '$.OwnedCollectionBranch') WITH (
+        SELECT JSON_VALUE([o].[OwnedReferenceLeaf], '$.SomethingSomething' RETURNING nvarchar(max)) AS [c], [o].[Date] AS [c0]
+        FROM OPENJSON([j].[OwnedReferenceRoot], '$.OwnedCollectionBranch') WITH (
             [Date] datetime2 '$.Date',
             [Enum] int '$.Enum',
             [Fraction] decimal(18,2) '$.Fraction',
-            [OwnedReferenceLeaf] nvarchar(max) '$.OwnedReferenceLeaf' AS JSON
+            [Id] int '$.Id',
+            [OwnedReferenceLeaf] json '$.OwnedReferenceLeaf' AS JSON
         ) AS [o]
         ORDER BY [o].[Date] DESC
         OFFSET 1 ROWS
@@ -1148,10 +1147,12 @@ WHERE (
 """);
     }
 
-    [ConditionalTheory(Skip = "#36628")]
     public override async Task Json_collection_Distinct_Count_with_predicate(bool async)
     {
-        await base.Json_collection_Distinct_Count_with_predicate(async);
+        // TODO:SQLJSON Json type is not comparable
+        Assert.Equal(
+            "The json data type cannot be selected as DISTINCT because it is not comparable.\nThe json data type cannot be selected as DISTINCT because it is not comparable.",
+            (await Assert.ThrowsAsync<SqlException>(() => base.Json_collection_Distinct_Count_with_predicate(async))).Message);
 
         AssertSql(
             """
@@ -1160,18 +1161,19 @@ FROM [JsonEntitiesBasic] AS [j]
 WHERE (
     SELECT COUNT(*)
     FROM (
-        SELECT DISTINCT [j].[Id], [o].[Date], [o].[Enum], [o].[Enums], [o].[Fraction], [o].[NullableEnum], [o].[NullableEnums], [o].[OwnedCollectionLeaf] AS [c], [o].[OwnedReferenceLeaf] AS [c0]
-        FROM OPENJSON(CAST([j].[OwnedReferenceRoot] AS nvarchar(max)), '$.OwnedCollectionBranch') WITH (
+        SELECT DISTINCT [j].[Id], [o].[Date], [o].[Enum], [o].[Enums], [o].[Fraction], [o].[Id] AS [Id0], [o].[NullableEnum], [o].[NullableEnums], [o].[OwnedCollectionLeaf] AS [c], [o].[OwnedReferenceLeaf] AS [c0]
+        FROM OPENJSON([j].[OwnedReferenceRoot], '$.OwnedCollectionBranch') WITH (
             [Date] datetime2 '$.Date',
             [Enum] int '$.Enum',
             [Enums] nvarchar(max) '$.Enums' AS JSON,
             [Fraction] decimal(18,2) '$.Fraction',
+            [Id] int '$.Id',
             [NullableEnum] int '$.NullableEnum',
             [NullableEnums] nvarchar(max) '$.NullableEnums' AS JSON,
-            [OwnedCollectionLeaf] nvarchar(max) '$.OwnedCollectionLeaf' AS JSON,
-            [OwnedReferenceLeaf] nvarchar(max) '$.OwnedReferenceLeaf' AS JSON
+            [OwnedCollectionLeaf] json '$.OwnedCollectionLeaf' AS JSON,
+            [OwnedReferenceLeaf] json '$.OwnedReferenceLeaf' AS JSON
         ) AS [o]
-        WHERE JSON_VALUE([o].[OwnedReferenceLeaf], '$.SomethingSomething') = N'e1_r_c2_r'
+        WHERE JSON_VALUE([o].[OwnedReferenceLeaf], '$.SomethingSomething' RETURNING nvarchar(max)) = N'e1_r_c2_r'
     ) AS [o0]) = 1
 """);
     }
@@ -1186,7 +1188,7 @@ SELECT [j].[Id], [j].[EntityBasicId], [j].[Name], [j].[OwnedCollectionRoot], [j]
 FROM [JsonEntitiesBasic] AS [j]
 WHERE EXISTS (
     SELECT 1
-    FROM OPENJSON([j].[OwnedCollectionRoot], '$') WITH ([OwnedCollectionBranch] nvarchar(max) '$.OwnedCollectionBranch' AS JSON) AS [o]
+    FROM OPENJSON([j].[OwnedCollectionRoot], '$') WITH ([OwnedCollectionBranch] json '$.OwnedCollectionBranch' AS JSON) AS [o]
     WHERE (
         SELECT COUNT(*)
         FROM OPENJSON([o].[OwnedCollectionBranch], '$') AS [o0]) = 2)
@@ -1365,7 +1367,10 @@ ORDER BY [j].[Id], [o0].[c0]
 
     public override async Task Json_collection_distinct_in_projection(bool async)
     {
-        await base.Json_collection_distinct_in_projection(async);
+        // TODO:SQLJSON Json type is not comparable
+        Assert.Equal(
+            "The json data type cannot be selected as DISTINCT because it is not comparable.\nThe json data type cannot be selected as DISTINCT because it is not comparable.",
+            (await Assert.ThrowsAsync<SqlException>(() => base.Json_collection_distinct_in_projection(async))).Message);
 
         AssertSql(
             """
@@ -1379,8 +1384,8 @@ OUTER APPLY (
         [Names] nvarchar(max) '$.Names' AS JSON,
         [Number] int '$.Number',
         [Numbers] nvarchar(max) '$.Numbers' AS JSON,
-        [OwnedCollectionBranch] nvarchar(max) '$.OwnedCollectionBranch' AS JSON,
-        [OwnedReferenceBranch] nvarchar(max) '$.OwnedReferenceBranch' AS JSON
+        [OwnedCollectionBranch] json '$.OwnedCollectionBranch' AS JSON,
+        [OwnedReferenceBranch] json '$.OwnedReferenceBranch' AS JSON
     ) AS [o]
 ) AS [o0]
 ORDER BY [j].[Id], [o0].[Id0], [o0].[Name], [o0].[Names], [o0].[Number]
@@ -1413,7 +1418,10 @@ ORDER BY [j].[Id], [o0].[c]
 
     public override async Task Json_multiple_collection_projections(bool async)
     {
-        await base.Json_multiple_collection_projections(async);
+        // TODO:SQLJSON Json type is not comparable
+        Assert.Equal(
+            "The json data type cannot be selected as DISTINCT because it is not comparable.\nThe json data type cannot be selected as DISTINCT because it is not comparable.",
+            (await Assert.ThrowsAsync<SqlException>(() => base.Json_multiple_collection_projections(async))).Message);
 
         AssertSql(
             """
@@ -1432,8 +1440,8 @@ OUTER APPLY (
         [Names] nvarchar(max) '$.Names' AS JSON,
         [Number] int '$.Number',
         [Numbers] nvarchar(max) '$.Numbers' AS JSON,
-        [OwnedCollectionBranch] nvarchar(max) '$.OwnedCollectionBranch' AS JSON,
-        [OwnedReferenceBranch] nvarchar(max) '$.OwnedReferenceBranch' AS JSON
+        [OwnedCollectionBranch] json '$.OwnedCollectionBranch' AS JSON,
+        [OwnedReferenceBranch] json '$.OwnedReferenceBranch' AS JSON
     ) AS [o0]
 ) AS [o1]
 OUTER APPLY (
@@ -1452,7 +1460,10 @@ ORDER BY [j].[Id], [o4].[c], [o4].[key], [o1].[Id0], [o1].[Name], [o1].[Names], 
 
     public override async Task Json_branch_collection_distinct_and_other_collection(bool async)
     {
-        await base.Json_branch_collection_distinct_and_other_collection(async);
+        // TODO:SQLJSON Json type is not comparable
+        Assert.Equal(
+            "The json data type cannot be selected as DISTINCT because it is not comparable.\nThe json data type cannot be selected as DISTINCT because it is not comparable.",
+            (await Assert.ThrowsAsync<SqlException>(() => base.Json_branch_collection_distinct_and_other_collection(async))).Message);
 
         AssertSql(
             """
@@ -1468,8 +1479,8 @@ OUTER APPLY (
         [Id] int '$.Id',
         [NullableEnum] int '$.NullableEnum',
         [NullableEnums] nvarchar(max) '$.NullableEnums' AS JSON,
-        [OwnedCollectionLeaf] nvarchar(max) '$.OwnedCollectionLeaf' AS JSON,
-        [OwnedReferenceLeaf] nvarchar(max) '$.OwnedReferenceLeaf' AS JSON
+        [OwnedCollectionLeaf] json '$.OwnedCollectionLeaf' AS JSON,
+        [OwnedReferenceLeaf] json '$.OwnedReferenceLeaf' AS JSON
     ) AS [o]
 ) AS [o0]
 LEFT JOIN [JsonEntitiesBasicForCollection] AS [j0] ON [j].[Id] = [j0].[ParentId]
@@ -2261,14 +2272,13 @@ FROM [JsonEntitiesAllTypes] AS [j]
 """);
     }
 
-    [ConditionalTheory(Skip = "#36627")]
     public override async Task Json_all_types_projection_individual_properties(bool async)
     {
         await base.Json_all_types_projection_individual_properties(async);
 
         AssertSql(
-            """
-SELECT JSON_VALUE([j].[Reference], '$.TestDefaultString') AS [TestDefaultString], JSON_VALUE([j].[Reference], '$.TestMaxLengthString') AS [TestMaxLengthString], CAST(JSON_VALUE([j].[Reference], '$.TestBoolean') AS bit) AS [TestBoolean], CAST(JSON_VALUE([j].[Reference], '$.TestByte') AS tinyint) AS [TestByte], JSON_VALUE([j].[Reference], '$.TestCharacter') AS [TestCharacter], CAST(JSON_VALUE([j].[Reference], '$.TestDateTime') AS datetime2) AS [TestDateTime], CAST(JSON_VALUE([j].[Reference], '$.TestDateTimeOffset') AS datetimeoffset) AS [TestDateTimeOffset], CAST(JSON_VALUE([j].[Reference], '$.TestDecimal') AS decimal(18,3)) AS [TestDecimal], CAST(JSON_VALUE([j].[Reference], '$.TestDouble') AS float) AS [TestDouble], CAST(JSON_VALUE([j].[Reference], '$.TestGuid') AS uniqueidentifier) AS [TestGuid], CAST(JSON_VALUE([j].[Reference], '$.TestInt16') AS smallint) AS [TestInt16], CAST(JSON_VALUE([j].[Reference], '$.TestInt32') AS int) AS [TestInt32], CAST(JSON_VALUE([j].[Reference], '$.TestInt64') AS bigint) AS [TestInt64], CAST(JSON_VALUE([j].[Reference], '$.TestSignedByte') AS smallint) AS [TestSignedByte], CAST(JSON_VALUE([j].[Reference], '$.TestSingle') AS real) AS [TestSingle], CAST(JSON_VALUE([j].[Reference], '$.TestTimeSpan') AS time) AS [TestTimeSpan], CAST(JSON_VALUE([j].[Reference], '$.TestDateOnly') AS date) AS [TestDateOnly], CAST(JSON_VALUE([j].[Reference], '$.TestTimeOnly') AS time) AS [TestTimeOnly], CAST(JSON_VALUE([j].[Reference], '$.TestUnsignedInt16') AS int) AS [TestUnsignedInt16], CAST(JSON_VALUE([j].[Reference], '$.TestUnsignedInt32') AS bigint) AS [TestUnsignedInt32], CAST(JSON_VALUE([j].[Reference], '$.TestUnsignedInt64') AS decimal(20,0)) AS [TestUnsignedInt64], CAST(JSON_VALUE([j].[Reference], '$.TestEnum') AS int) AS [TestEnum], CAST(JSON_VALUE([j].[Reference], '$.TestEnumWithIntConverter') AS int) AS [TestEnumWithIntConverter], CAST(JSON_VALUE([j].[Reference], '$.TestNullableEnum') AS int) AS [TestNullableEnum], CAST(JSON_VALUE([j].[Reference], '$.TestNullableEnumWithIntConverter') AS int) AS [TestNullableEnumWithIntConverter], JSON_VALUE([j].[Reference], '$.TestNullableEnumWithConverterThatHandlesNulls') AS [TestNullableEnumWithConverterThatHandlesNulls]
+"""
+SELECT JSON_VALUE([j].[Reference], '$.TestDefaultString' RETURNING nvarchar(max)) AS [TestDefaultString], JSON_VALUE([j].[Reference], '$.TestMaxLengthString' RETURNING nvarchar(5)) AS [TestMaxLengthString], JSON_VALUE([j].[Reference], '$.TestBoolean' RETURNING bit) AS [TestBoolean], JSON_VALUE([j].[Reference], '$.TestByte' RETURNING tinyint) AS [TestByte], JSON_VALUE([j].[Reference], '$.TestCharacter' RETURNING nvarchar(1)) AS [TestCharacter], JSON_VALUE([j].[Reference], '$.TestDateTime' RETURNING datetime2) AS [TestDateTime], JSON_VALUE([j].[Reference], '$.TestDateTimeOffset' RETURNING datetimeoffset) AS [TestDateTimeOffset], JSON_VALUE([j].[Reference], '$.TestDecimal' RETURNING decimal(18,3)) AS [TestDecimal], JSON_VALUE([j].[Reference], '$.TestDouble' RETURNING float) AS [TestDouble], CAST(JSON_VALUE([j].[Reference], '$.TestGuid') AS uniqueidentifier) AS [TestGuid], JSON_VALUE([j].[Reference], '$.TestInt16' RETURNING smallint) AS [TestInt16], JSON_VALUE([j].[Reference], '$.TestInt32' RETURNING int) AS [TestInt32], JSON_VALUE([j].[Reference], '$.TestInt64' RETURNING bigint) AS [TestInt64], JSON_VALUE([j].[Reference], '$.TestSignedByte' RETURNING smallint) AS [TestSignedByte], JSON_VALUE([j].[Reference], '$.TestSingle' RETURNING real) AS [TestSingle], JSON_VALUE([j].[Reference], '$.TestTimeSpan' RETURNING time) AS [TestTimeSpan], JSON_VALUE([j].[Reference], '$.TestDateOnly' RETURNING date) AS [TestDateOnly], JSON_VALUE([j].[Reference], '$.TestTimeOnly' RETURNING time) AS [TestTimeOnly], JSON_VALUE([j].[Reference], '$.TestUnsignedInt16' RETURNING int) AS [TestUnsignedInt16], JSON_VALUE([j].[Reference], '$.TestUnsignedInt32' RETURNING bigint) AS [TestUnsignedInt32], JSON_VALUE([j].[Reference], '$.TestUnsignedInt64' RETURNING decimal(20,0)) AS [TestUnsignedInt64], JSON_VALUE([j].[Reference], '$.TestEnum' RETURNING int) AS [TestEnum], JSON_VALUE([j].[Reference], '$.TestEnumWithIntConverter' RETURNING int) AS [TestEnumWithIntConverter], JSON_VALUE([j].[Reference], '$.TestNullableEnum' RETURNING int) AS [TestNullableEnum], JSON_VALUE([j].[Reference], '$.TestNullableEnumWithIntConverter' RETURNING int) AS [TestNullableEnumWithIntConverter], JSON_VALUE([j].[Reference], '$.TestNullableEnumWithConverterThatHandlesNulls' RETURNING nvarchar(max)) AS [TestNullableEnumWithConverterThatHandlesNulls]
 FROM [JsonEntitiesAllTypes] AS [j]
 """);
     }
@@ -2467,7 +2477,6 @@ WHERE JSON_VALUE([j].[Reference], '$.TestEnumWithIntConverter' RETURNING int) <>
 """);
     }
 
-    [ConditionalTheory(Skip = "#36627")]
     public override async Task Json_predicate_on_guid(bool async)
     {
         await base.Json_predicate_on_guid(async);

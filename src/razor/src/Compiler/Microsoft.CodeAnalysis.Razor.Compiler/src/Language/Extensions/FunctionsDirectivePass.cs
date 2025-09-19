@@ -20,7 +20,7 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
             return;
         }
 
-        using var directiveNodes = new PooledArrayBuilder<IntermediateNodeReference>();
+        using var directiveNodes = new PooledArrayBuilder<IntermediateNodeReference<DirectiveIntermediateNode>>();
 
         documentNode.CollectDirectiveReferences(FunctionsDirective.Directive, ref directiveNodes.AsRef());
 
@@ -43,7 +43,9 @@ public sealed class FunctionsDirectivePass : IntermediateNodePassBase, IRazorDir
             directiveReference.Remove();
         }
 
-        static int CompareAbsoluteIndices(IntermediateNodeReference n1, IntermediateNodeReference n2)
+        static int CompareAbsoluteIndices(
+            IntermediateNodeReference<DirectiveIntermediateNode> n1,
+            IntermediateNodeReference<DirectiveIntermediateNode> n2)
         {
             return s_nullableIntComparer.Compare(n1.Node.Source?.AbsoluteIndex, n2.Node.Source?.AbsoluteIndex);
         }

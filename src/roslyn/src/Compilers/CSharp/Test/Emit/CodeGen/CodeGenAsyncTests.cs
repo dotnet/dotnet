@@ -20,6 +20,7 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen
 {
+    [CompilerTrait(CompilerFeature.Async)]
     public class CodeGenAsyncTests : EmitMetadataTestBase
     {
         // https://github.com/dotnet/roslyn/issues/79792: Use the real value when possible
@@ -2361,6 +2362,28 @@ class Driver
     public static int Result = -1;
 }";
             CompileAndVerify(source, expectedOutput: "0", options: TestOptions.UnsafeDebugExe, verify: Verification.Passes);
+
+            var comp = CreateRuntimeAsyncCompilation(source);
+            // https://github.com/dotnet/roslyn/issues/79791: Verify runtime async output
+            var verifier = CompileAndVerify(comp, expectedOutput: null, verify: Verification.Fails with
+            {
+                ILVerifyMessage = """
+                    [getBaseMyProp]: Unexpected type on the stack. { Offset = 0x11, Found = Int32, Expected = ref '[System.Runtime]System.Threading.Tasks.Task`1<int32>' }
+                    """
+            });
+
+            verifier.VerifyIL("TestClass.getBaseMyProp()", """
+                {
+                  // Code size       18 (0x12)
+                  .maxstack  1
+                  IL_0000:  ldc.i4.1
+                  IL_0001:  call       "System.Threading.Tasks.Task System.Threading.Tasks.Task.Delay(int)"
+                  IL_0006:  call       "void System.Runtime.CompilerServices.AsyncHelpers.Await(System.Threading.Tasks.Task)"
+                  IL_000b:  ldarg.0
+                  IL_000c:  call       "int Base.MyProp.get"
+                  IL_0011:  ret
+                }
+                """);
         }
 
         [Fact]
@@ -9598,6 +9621,229 @@ class Test1
                 // await Task.Yield();
                 Diagnostic("SYSLIB5007", "Task.Yield()").WithArguments("System.Runtime.CompilerServices.AsyncHelpers").WithLocation(11, 7).WithWarningAsError(true)
             );
+        }
+
+        [Fact]
+        public void MethodImplOptionsAsyncIsBlocked()
+        {
+            var code = """
+                using System.Runtime.CompilerServices;
+                using System.Threading.Tasks;
+
+                class C
+                {
+                    [MethodImpl(MethodImplOptions.Async)]
+                    public static void M1()
+                    {
+                        throw null;
+                    }
+
+                    [MethodImpl(MethodImplOptions.Async)]
+                    public static Task M2()
+                    {
+                        throw null;
+                    }
+
+                    [MethodImpl(MethodImplOptions.Async)]
+                    public static async Task M3()
+                    {
+                        throw null;
+                    }
+
+                    [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                    public static void M4()
+                    {
+                        throw null;
+                    }
+                }
+                """;
+
+            DiagnosticDescription[] expectedDiagnostics = [
+                // (6,6): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //     [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(6, 6),
+                // (12,6): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //     [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(12, 6),
+                // (18,6): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //     [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(18, 6),
+                // (19,30): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     public static async Task M3()
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "M3").WithLocation(19, 30),
+                // (24,6): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //     [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)").WithLocation(24, 6)
+            ];
+
+            // With runtime async enabled
+            var comp = CreateRuntimeAsyncCompilation(code);
+            comp.VerifyDiagnostics(expectedDiagnostics);
+
+            // With runtime async globally disabled
+            comp = CreateRuntimeAsyncCompilation(code, parseOptions: TestOptions.RegularPreview);
+            comp.VerifyDiagnostics(expectedDiagnostics);
+        }
+
+        [Fact]
+        public void MethodImplOptionsAsyncIsBlocked_AsyncHelpersInCorlibIsExempted()
+        {
+            var code = """
+                namespace System
+                {
+                    public class Attribute { }
+                    public class Object { }
+                    public class ValueType { }
+                    public class Enum { }
+                    public class Void { }
+                    public struct Int32 { }
+                    public class Exception { }
+
+                    namespace Threading.Tasks
+                    {
+                        public class Task { }
+                    }
+
+                    namespace Runtime.CompilerServices
+                    {
+                        public sealed class MethodImplAttribute : Attribute
+                        {
+                            public MethodImplAttribute(MethodImplOptions options) {}
+                        }
+                        public enum MethodImplOptions
+                        {
+                            Unmanaged = 0x0004,
+                            NoInlining = 0x0008,
+                            ForwardRef = 0x0010,
+                            Synchronized = 0x0020,
+                            NoOptimization = 0x0040,
+                            PreserveSig = 0x0080,
+                            AggressiveInlining = 0x0100,
+                            AggressiveOptimization = 0x0200,
+                            Async = 0x2000,
+                            InternalCall = 0x1000
+                        }
+
+                        public class AsyncHelpers
+                        {
+                            [MethodImpl(MethodImplOptions.Async)]
+                            public static void M1()
+                            {
+                                throw null;
+                            }
+
+                            [MethodImpl(MethodImplOptions.Async)]
+                            public static Threading.Tasks.Task M2()
+                            {
+                                throw null;
+                            }
+
+                            [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                            public static void M3()
+                            {
+                                throw null;
+                            }
+                        }
+
+                        public class OtherType
+                        {
+                #line 1000
+                            [MethodImpl(MethodImplOptions.Async)]
+                            public static void M4()
+                            {
+                                throw null;
+                            }
+
+                #line 2000
+                            [MethodImpl(MethodImplOptions.Async)]
+                            public static Threading.Tasks.Task M5()
+                            {
+                                throw null;
+                            }
+
+                #line 3000
+                            [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                            public static void M6()
+                            {
+                                throw null;
+                            }
+                        }
+                    }
+                }
+                """;
+
+            DiagnosticDescription[] expectedDiagnostics = [
+                // (1000,14): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //             [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(1000, 14),
+                // (2000,14): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //             [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(2000, 14),
+                // (3000,14): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //             [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)").WithLocation(3000, 14)
+            ];
+
+            // With runtime async enabled
+            var comp = CreateEmptyCompilation(code, parseOptions: WithRuntimeAsync(TestOptions.RegularPreview));
+            comp.VerifyDiagnostics(expectedDiagnostics);
+
+            // With runtime async globally disabled
+            comp = CreateEmptyCompilation(code, parseOptions: TestOptions.RegularPreview);
+            comp.VerifyDiagnostics(expectedDiagnostics);
+        }
+
+        [Fact]
+        public void MethodImplOptionsAsyncIsBlocked_AsyncHelpersOutOfCorlibIsNotExempted()
+        {
+            var code = """
+                namespace System.Runtime.CompilerServices
+                {
+                    public class AsyncHelpers
+                    {
+                #line 1000
+                        [MethodImpl(MethodImplOptions.Async)]
+                        public static void M1()
+                        {
+                            throw null;
+                        }
+
+                #line 2000
+                        [MethodImpl(MethodImplOptions.Async)]
+                        public static Threading.Tasks.Task M2()
+                        {
+                            throw null;
+                        }
+
+                #line 3000
+                        [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                        public static void M3()
+                        {
+                            throw null;
+                        }
+                    }
+                }
+                """;
+
+            DiagnosticDescription[] expectedDiagnostics = [
+                // (1000,10): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //         [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(1000, 10),
+                // (2000,10): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //         [MethodImpl(MethodImplOptions.Async)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async)").WithLocation(2000, 10),
+                // (3000,10): error CS9330: 'MethodImplAttribute.Async' cannot be manually applied to methods. Mark the method 'async'.
+                //         [MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)]
+                Diagnostic(ErrorCode.ERR_MethodImplAttributeAsyncCannotBeUsed, "MethodImpl(MethodImplOptions.Async | MethodImplOptions.Synchronized)").WithLocation(3000, 10)
+            ];
+
+            // With runtime async enabled
+            var comp = CreateRuntimeAsyncCompilation(code);
+            comp.VerifyDiagnostics(expectedDiagnostics);
+
+            // With runtime async globally disabled
+            comp = CreateRuntimeAsyncCompilation(code, parseOptions: TestOptions.RegularPreview);
+            comp.VerifyDiagnostics(expectedDiagnostics);
         }
     }
 }

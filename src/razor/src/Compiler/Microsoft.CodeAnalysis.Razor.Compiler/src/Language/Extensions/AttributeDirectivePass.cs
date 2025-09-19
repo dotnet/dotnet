@@ -20,7 +20,7 @@ internal class AttributeDirectivePass : IntermediateNodePassBase, IRazorDirectiv
         var classIndex = @namespace.Children.IndexOf(@class);
         foreach (var attribute in documentNode.FindDirectiveReferences(AttributeDirective.Directive))
         {
-            var token = ((DirectiveIntermediateNode)attribute.Node).Tokens.FirstOrDefault();
+            var token = attribute.Node.Tokens.FirstOrDefault();
             if (token != null)
             {
                 var node = new CSharpCodeIntermediateNode

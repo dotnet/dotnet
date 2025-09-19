@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -68,7 +69,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.BuildLinePragma(sourceSpan, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.AddSourceMappingFor(node);
                 context.CodeWriter.WriteUsing(node.Content);
@@ -110,7 +111,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
         if (node.Source != null)
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            using (context.BuildLinePragma(node.Source.Value))
             {
                 var offset = DesignTimeVariable.Length + " = ".Length;
 
@@ -169,54 +170,39 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteCSharpCode(CodeRenderingContext context, CSharpCodeIntermediateNode node)
     {
-        var isWhitespaceStatement = true;
+        var isWhiteSpace = true;
 
         foreach (var child in node.Children)
         {
-            if (child is not IntermediateToken token || !string.IsNullOrWhiteSpace(token.Content))
+            if (child is not CSharpIntermediateToken token || !token.Content.IsNullOrWhiteSpace())
             {
-                isWhitespaceStatement = false;
+                isWhiteSpace = false;
                 break;
             }
         }
 
-        IDisposable? linePragmaScope = null;
-        if (node.Source != null)
+        // Don't write whitespace if there is no line mapping for it.
+        if (isWhiteSpace && node.Source is null)
         {
-            if (!isWhitespaceStatement)
-            {
-                linePragmaScope = context.CodeWriter.BuildLinePragma(node.Source.Value, context);
-            }
-
-            context.CodeWriter.WritePadding(0, node.Source.Value, context);
-        }
-        else if (isWhitespaceStatement)
-        {
-            // Don't write whitespace if there is no line mapping for it.
             return;
         }
 
-        foreach (var child in node.Children)
-        {
-            if (child is CSharpIntermediateToken token)
-            {
-                context.AddSourceMappingFor(token);
-                context.CodeWriter.Write(token.Content);
-            }
-            else
-            {
-                // There may be something else inside the statement like an extension node.
-                context.RenderNode(child);
-            }
-        }
+        var writer = context.CodeWriter;
 
-        if (linePragmaScope != null)
+        if (node.Source is SourceSpan nodeSource && !isWhiteSpace)
         {
-            linePragmaScope.Dispose();
+            using (context.BuildLinePragma(nodeSource))
+            {
+                writer.WritePadding(0, nodeSource, context);
+                RenderCSharpCode(context, node);
+            }
         }
         else
         {
-            context.CodeWriter.WriteLine();
+            writer.WritePadding(0, node.Source, context);
+
+            RenderCSharpCode(context, node);
+            writer.WriteLine();
         }
     }
 
@@ -540,7 +526,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         // the "usings directive is unnecessary" message.
         // Looks like:
         // __o = typeof(SomeNamespace.SomeComponent);
-        using (context.CodeWriter.BuildLinePragma(node.Source.AssumeNotNull(), context))
+        using (context.BuildLinePragma(node.Source.AssumeNotNull()))
         {
             context.CodeWriter.Write(DesignTimeVariable);
             context.CodeWriter.Write(" = ");
@@ -558,7 +544,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                 if (!node.TagName.Contains("."))
                 {
                     // The tag is not fully qualified
-                    context.CodeWriter.Write(node.Component.GetTypeNamespace());
+                    context.CodeWriter.Write(node.Component.TypeNamespace.AssumeNotNull());
                     context.CodeWriter.Write(".");
                 }
                 context.CodeWriter.Write(node.TagName);
@@ -725,7 +711,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.Write(".");
         context.CodeWriter.WriteLine();
 
-        using (context.CodeWriter.BuildLinePragma(attributeSourceSpan, context))
+        using (context.BuildLinePragma(attributeSourceSpan))
         {
             context.CodeWriter.WritePadding(0, attributeSourceSpan, context);
             context.CodeWriter.WriteIdentifierEscapeIfNeeded(node.PropertyName);
@@ -1005,16 +991,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteSetKey(CodeRenderingContext context, SetKeyIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __builder.SetKey(_keyValue);
@@ -1031,25 +1007,12 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         WriteCSharpCode(context, new CSharpCodeIntermediateNode
         {
             Source = node.Source,
-            Children =
-                    {
-                        node.KeyValueToken
-                    }
+            Children = { node.KeyValueToken }
         });
     }
 
     public override void WriteSplat(CodeRenderingContext context, SplatIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __builder.AddMultipleAttributes(2, ...);
@@ -1062,22 +1025,23 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.WriteEndMethodInvocation();
     }
 
-    private void WriteSplatInnards(CodeRenderingContext context, SplatIntermediateNode node, bool canTypeCheck)
+    private static void WriteSplatInnards(CodeRenderingContext context, SplatIntermediateNode node, bool canTypeCheck)
     {
+        var writer = context.CodeWriter;
+
         if (canTypeCheck)
         {
-            context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
-            context.CodeWriter.Write("<");
-            context.CodeWriter.Write(ComponentsApi.AddMultipleAttributesTypeFullName);
-            context.CodeWriter.Write(">");
-            context.CodeWriter.Write("(");
+            writer.Write($"{ComponentsApi.RuntimeHelpers.TypeCheck}<{ComponentsApi.AddMultipleAttributesTypeFullName}>(");
         }
 
-        WriteCSharpTokens(context, GetCSharpTokens(node));
+        using var tokens = new PooledArrayBuilder<CSharpIntermediateToken>();
+        node.CollectDescendantNodes(ref tokens.AsRef());
+
+        WriteCSharpTokens(context, in tokens);
 
         if (canTypeCheck)
         {
-            context.CodeWriter.Write(")");
+            writer.Write(")");
         }
     }
 
@@ -1101,16 +1065,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteReferenceCapture(CodeRenderingContext context, ReferenceCaptureIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __field = default(MyComponent);
@@ -1126,15 +1080,27 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // The runtime node writer moves the call elsewhere. At design time we
             // just want sufficiently similar code that any unknown-identifier or type
             // errors will be equivalent
-            var nullSuppression = !context.Options.SuppressNullabilityEnforcement ? "!" : string.Empty;
+
+            var assignmentText = string.Build((node.FieldTypeName, context.Options.SuppressNullabilityEnforcement), (ref builder, state) =>
+            {
+                builder.Append(" = default(");
+                builder.Append(state.FieldTypeName);
+                builder.Append(")");
+
+                if (!state.SuppressNullabilityEnforcement)
+                {
+                    builder.Append("!");
+                }
+
+                builder.Append(";");
+            });
+
+            var assignmentToken = IntermediateNodeFactory.CSharpToken(assignmentText);
+
             WriteCSharpCode(context, new CSharpCodeIntermediateNode
             {
                 Source = node.Source,
-                Children =
-                {
-                    node.IdentifierToken,
-                    IntermediateNodeFactory.CSharpToken($" = default({node.FieldTypeName}){nullSuppression};")
-                }
+                Children = { node.IdentifierToken, assignmentToken }
             });
         }
         else
@@ -1144,8 +1110,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // (__value) = { _field = (MyComponent)__value; }
             // OR
             // (__value) = { _field = (ElementRef)__value; }
-            const string refCaptureParamName = "__value";
-            using (var lambdaScope = context.CodeWriter.BuildLambda(refCaptureParamName))
+            const string RefCaptureParamName = "__value";
+            const string DefaultAssignment = $" = {RefCaptureParamName};";
+
+            using (context.CodeWriter.BuildLambda(RefCaptureParamName))
             {
                 WriteCSharpCode(context, new CSharpCodeIntermediateNode
                 {
@@ -1153,7 +1121,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                     Children =
                     {
                         node.IdentifierToken,
-                        IntermediateNodeFactory.CSharpToken($" = {refCaptureParamName};")
+                        IntermediateNodeFactory.CSharpToken(DefaultAssignment)
                     }
                 });
             }
@@ -1183,6 +1151,14 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         }
     }
 
+    private static void WriteCSharpTokens(CodeRenderingContext context, ref readonly PooledArrayBuilder<CSharpIntermediateToken> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            WriteCSharpToken(context, token);
+        }
+    }
+
     private static void WriteCSharpToken(CodeRenderingContext context, CSharpIntermediateToken token)
     {
         if (string.IsNullOrWhiteSpace(token.Content))
@@ -1196,7 +1172,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             return;
         }
 
-        using (context.CodeWriter.BuildLinePragma(token.Source, context))
+        using (context.BuildLinePragma(token.Source))
         {
             context.CodeWriter.WritePadding(0, token.Source.Value, context);
             context.AddSourceMappingFor(token);

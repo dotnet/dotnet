@@ -36,7 +36,7 @@ public sealed class DefaultTagHelperPropertyIntermediateNode : ExtensionIntermed
         AddDiagnosticsFromNode(propertyNode);
     }
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public string AttributeName { get; set; }
 
