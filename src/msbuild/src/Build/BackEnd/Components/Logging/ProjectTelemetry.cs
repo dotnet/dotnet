@@ -19,8 +19,12 @@ namespace Microsoft.Build.BackEnd.Logging
         private const string RoslynCodeTaskFactoryTypeName = "Microsoft.Build.Tasks.RoslynCodeTaskFactory";
         private const string XamlTaskFactoryTypeName = "Microsoft.Build.Tasks.XamlTaskFactory";
 
-        private const string TaskFactoryEventName = "projectbuild/tasks/taskfactory";
-        private const string TasksEventName = "projectbuild/tasks";
+        // Important Note: these two telemetry events are not logged directly.
+        // SDK aggregates them per build in https://github.com/dotnet/sdk/blob/main/src/Cli/dotnet/Commands/MSBuild/MSBuildLogger.cs.
+        // Aggregation logic is very basic. Only integer properties are aggregated by summing values. Non-integer properties are ignored.
+        // This means that if we ever add logging non-integer properties for these events, they will not be included in the telemetry.
+        private const string TaskFactoryEventName = "build/tasks/taskfactory";
+        private const string TasksEventName = "build/tasks";
 
         private int _assemblyTaskFactoryTasksExecutedCount = 0;
         private int _intrinsicTaskFactoryTasksExecutedCount = 0;
