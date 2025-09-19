@@ -776,7 +776,7 @@ namespace Microsoft.DotNet.SignTool
 
         private static bool RunExternalProcess(TaskLoggingHelper log, string cmd, string args, out string output, string workingDir = null)
         {
-            log?.LogMessage(MessageImportance.Low, $"Running command: '{cmd}' {args}");
+            log.LogMessage(MessageImportance.Low, $"Running command: '{cmd}' {args}");
 
             ProcessStartInfo psi = new()
             {
@@ -796,12 +796,12 @@ namespace Microsoft.DotNet.SignTool
             string stderr = process.StandardError.ReadToEnd();
             if (!string.IsNullOrWhiteSpace(stderr))
             {
-                log?.LogMessage(MessageImportance.Low, $"  Stderr: {stderr}");
+                log.LogMessage(MessageImportance.Low, $"  Stderr: {stderr}");
             }
 
             if (process.ExitCode != 0)
             {
-                log?.LogMessage(MessageImportance.Low, $"  Exit code: {process.ExitCode}");
+                log.LogMessage(MessageImportance.Low, $"  Exit code: {process.ExitCode}");
             }
 
             return process.ExitCode == 0;
