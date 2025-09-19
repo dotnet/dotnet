@@ -127,3 +127,19 @@ pipelines:
       binary:
         binskim:
           lastModifiedDate: 2025-08-06
+  1525:
+    retail:
+      source:
+        credscan:
+          lastModifiedDate: 2025-09-19
+        eslint:
+          lastModifiedDate: 2025-09-19
+        psscriptanalyzer:
+          lastModifiedDate: 2025-09-19
+        armory:
+          lastModifiedDate: 2025-09-19
+      binary:
+        credscan:
+          lastModifiedDate: 2025-09-19
+        binskim:
+          lastModifiedDate: 2025-09-19
