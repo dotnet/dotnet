@@ -204,42 +204,6 @@ internal static partial class ObjectReaders
             }
         }
 
-        static TypeNameObject ReadTypeNameObject(JsonDataReader reader, string propertyName)
-        {
-            if (!reader.TryReadPropertyName(propertyName))
-            {
-                return default;
-            }
-
-            if (reader.TryReadNull())
-            {
-                return default;
-            }
-
-            if (reader.IsInteger)
-            {
-                var index = reader.ReadByte();
-                return new(index);
-            }
-
-            if (reader.IsObjectStart)
-            {
-                return reader.ReadNonNullObject(static reader =>
-                {
-                    var fullName = reader.ReadNonNullString(nameof(TypeNameObject.FullName));
-                    var namespaceName = reader.ReadStringOrNull(nameof(TypeNameObject.Namespace));
-                    var name = reader.ReadStringOrNull(nameof(TypeNameObject.Name));
-
-                    return TypeNameObject.From(fullName, Cached(namespaceName), Cached(name));
-                });
-            }
-
-            Debug.Assert(reader.IsString);
-
-            var fullName = reader.ReadNonNullString();
-            return new(Cached(fullName));
-        }
-
         static DocumentationObject ReadDocumentationObject(JsonDataReader reader, string propertyName)
         {
             return reader.TryReadPropertyName(propertyName)
@@ -372,9 +336,46 @@ internal static partial class ObjectReaders
     {
         var builder = new ViewComponentMetadata.Builder
         {
-            Name = reader.ReadNonNullString(nameof(ViewComponentMetadata.Name))
+            Name = reader.ReadNonNullString(nameof(ViewComponentMetadata.Name)),
+            OriginalTypeNameObject = ReadTypeNameObject(reader, nameof(ViewComponentMetadata.OriginalTypeName))
         };
 
         return builder.Build();
+    }
+
+    static TypeNameObject ReadTypeNameObject(JsonDataReader reader, string propertyName)
+    {
+        if (!reader.TryReadPropertyName(propertyName))
+        {
+            return default;
+        }
+
+        if (reader.TryReadNull())
+        {
+            return default;
+        }
+
+        if (reader.IsInteger)
+        {
+            var index = reader.ReadByte();
+            return new(index);
+        }
+
+        if (reader.IsObjectStart)
+        {
+            return reader.ReadNonNullObject(static reader =>
+            {
+                var fullName = reader.ReadNonNullString(nameof(TypeNameObject.FullName));
+                var namespaceName = reader.ReadStringOrNull(nameof(TypeNameObject.Namespace));
+                var name = reader.ReadStringOrNull(nameof(TypeNameObject.Name));
+
+                return TypeNameObject.From(fullName, Cached(namespaceName), Cached(name));
+            });
+        }
+
+        Debug.Assert(reader.IsString);
+
+        var fullName = reader.ReadNonNullString();
+        return new(Cached(fullName));
     }
 }

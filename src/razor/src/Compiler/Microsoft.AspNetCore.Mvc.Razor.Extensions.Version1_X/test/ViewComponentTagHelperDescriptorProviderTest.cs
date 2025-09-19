@@ -33,10 +33,7 @@ public class ViewComponentTagHelperDescriptorProviderTest
 
         var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__StringParameterViewComponentTagHelper", TestCompilation.AssemblyName)
             .TypeName("__Generated__StringParameterViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "StringParameter"
-            })
+            .Metadata(new ViewComponentMetadata("StringParameter", TypeNameObject.From("StringParameter")))
             .DisplayName("StringParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
