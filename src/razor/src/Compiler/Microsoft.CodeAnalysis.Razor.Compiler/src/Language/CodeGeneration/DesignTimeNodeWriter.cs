@@ -4,6 +4,7 @@
 #nullable disable
 
 using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -15,7 +16,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
     {
         if (node.Source is { FilePath: not null } sourceSpan)
         {
-            using (context.CodeWriter.BuildLinePragma(sourceSpan, context, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
+            using (context.BuildLinePragma(sourceSpan, suppressLineDefaultAndHidden: !node.AppendLineDefaultAndHidden))
             {
                 context.AddSourceMappingFor(node);
                 context.CodeWriter.WriteUsing(node.Content);
@@ -52,7 +53,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
 
         if (node.Source != null)
         {
-            using (context.CodeWriter.BuildLinePragma(node.Source.Value, context))
+            using (context.BuildLinePragma(node.Source.Value))
             {
                 var offset = DesignTimeDirectivePass.DesignTimeVariable.Length + " = ".Length;
                 context.CodeWriter.WritePadding(offset, node.Source, context);
@@ -98,35 +99,20 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteCSharpCode(CodeRenderingContext context, CSharpCodeIntermediateNode node)
     {
-        IDisposable linePragmaScope = null;
-        if (node.Source != null)
-        {
-            linePragmaScope = context.CodeWriter.BuildLinePragma(node.Source.Value, context);
+        var writer = context.CodeWriter;
 
-            context.CodeWriter.WritePadding(0, node.Source.Value, context);
-        }
-
-        foreach (var child in node.Children)
+        if (node.Source is SourceSpan nodeSource)
         {
-            if (child is CSharpIntermediateToken token)
+            using (context.BuildLinePragma(nodeSource))
             {
-                context.AddSourceMappingFor(token);
-                context.CodeWriter.Write(token.Content);
+                writer.WritePadding(0, nodeSource, context);
+                RenderCSharpCode(context, node);
             }
-            else
-            {
-                // There may be something else inside the statement like an extension node.
-                context.RenderNode(child);
-            }
-        }
-
-        if (linePragmaScope != null)
-        {
-            linePragmaScope.Dispose();
         }
         else
         {
-            context.CodeWriter.WriteLine();
+            RenderCSharpCode(context, node);
+            writer.WriteLine();
         }
     }
 
@@ -160,7 +146,7 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
         var firstChild = node.Children[0];
         if (firstChild.Source != null)
         {
-            using (context.CodeWriter.BuildLinePragma(firstChild.Source.Value, context))
+            using (context.BuildLinePragma(firstChild.Source.Value))
             {
                 var offset = DesignTimeDirectivePass.DesignTimeVariable.Length + " = ".Length;
                 context.CodeWriter.WritePadding(offset, firstChild.Source, context);
@@ -209,38 +195,43 @@ public class DesignTimeNodeWriter : IntermediateNodeWriter
 
     public override void WriteCSharpCodeAttributeValue(CodeRenderingContext context, CSharpCodeAttributeValueIntermediateNode node)
     {
+        var writer = context.CodeWriter;
+
         foreach (var child in node.Children)
         {
             if (child is CSharpIntermediateToken token)
             {
-                IDisposable linePragmaScope = null;
-                var isWhitespaceStatement = string.IsNullOrWhiteSpace(token.Content);
+                var isWhiteSpace = token.Content.IsNullOrWhiteSpace();
 
-                if (token.Source != null)
+                if (token.Source is not SourceSpan tokenSource)
                 {
-                    if (!isWhitespaceStatement)
+                    // Just write non-whitespace tokens when there isn't a source mapping.
+                    if (!isWhiteSpace)
                     {
-                        linePragmaScope = context.CodeWriter.BuildLinePragma(token.Source.Value, context);
+                        Debug.Fail("Why do we have non-whitespace tokens without source mappings?");
+                        writer.WriteLine(token.Content);
                     }
 
-                    context.CodeWriter.WritePadding(0, token.Source.Value, context);
-                }
-                else if (isWhitespaceStatement)
-                {
-                    // Don't write whitespace if there is no line mapping for it.
                     continue;
                 }
 
-                context.AddSourceMappingFor(token);
-                context.CodeWriter.Write(token.Content);
-
-                if (linePragmaScope != null)
+                if (!isWhiteSpace)
                 {
-                    linePragmaScope.Dispose();
+                    // Only use a line pragma for non-whitespace content.
+                    using (context.BuildLinePragma(tokenSource))
+                    {
+                        writer.WritePadding(0, tokenSource, context);
+
+                        context.AddSourceMappingFor(tokenSource);
+                        writer.Write(token.Content);
+                    }
                 }
                 else
                 {
-                    context.CodeWriter.WriteLine();
+                    writer.WritePadding(0, tokenSource, context);
+
+                    context.AddSourceMappingFor(tokenSource);
+                    writer.WriteLine(token.Content);
                 }
             }
             else

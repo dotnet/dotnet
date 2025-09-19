@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">Projekt „{0}” jest nieobsługiwany</target>
+        <target state="translated">Projekt „{0}” nie jest obsługiwany</target>
         <note />
       </trans-unit>
       <trans-unit id="Debug_AddGacReference">
@@ -118,7 +118,7 @@
       </trans-unit>
       <trans-unit id="Error_PackageSource_InvalidSource">
         <source>A valid local or remote path must be specified.</source>
-        <target state="needs-review-translation">Określone źródło jest nieprawidłowe.</target>
+        <target state="translated">Należy określić prawidłową ścieżkę lokalną lub zdalną.</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageSource_UniqueName">
@@ -184,12 +184,12 @@
       </trans-unit>
       <trans-unit id="Migrating_ProjectJson_Started">
         <source>Migrating project.json project...</source>
-        <target state="new">Migrating project.json project...</target>
+        <target state="translated">Trwa przeprowadzanie migracji projektu project.json...</target>
         <note />
       </trans-unit>
       <trans-unit id="Migrating_ProjectJson_Succeeded">
         <source>Migration Succeeded</source>
-        <target state="new">Migration Succeeded</target>
+        <target state="translated">Migracja powiodła się</target>
         <note />
       </trans-unit>
       <trans-unit id="PathToExistingFileNotPresent">
@@ -214,7 +214,7 @@
       </trans-unit>
       <trans-unit id="PropertyCannotBeNull">
         <source>'{0}' cannot be null.</source>
-        <target state="translated">Element „{0}” nie może mieć wartości null.</target>
+        <target state="translated">Właściwość „{0}” nie może mieć wartości null.</target>
         <note>0 - property name</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -266,17 +266,17 @@
       </trans-unit>
       <trans-unit id="Warning_DirectoryNotEmpty">
         <source>Directory '{0}' is not empty. Skipping...</source>
-        <target state="translated">Katalog „{0}” nie jest pusty. Pomijanie...</target>
+        <target state="translated">Katalog „{0}” nie jest pusty. Trwa pomijanie...</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectories">
         <source>Failed to remove package directories that were marked for deletion on Visual Studio restart: {0}</source>
-        <target state="translated">Nie można usunąć katalogów pakietów, które zostały oznaczone do usunięcia przy ponownym uruchomieniu programu Visual Studio: {0}</target>
+        <target state="translated">Nie można usunąć katalogów pakietów oznaczonych do usunięcia po ponownym uruchomieniu programu Visual Studio: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToDeleteMarkedPackageDirectory">
         <source>Failed to remove package directory '{0}' that was marked for deletion on Visual Studio restart.</source>
-        <target state="translated">Nie można usunąć katalogu pakietu „{0}”, który został oznaczony do usunięcia przy ponownym uruchomieniu programu Visual Studio.</target>
+        <target state="translated">Nie można usunąć katalogu pakietów „{0}” oznaczonego do usunięcia po ponownym uruchomieniu programu Visual Studio.</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FailedToFindMatchForRemoveReference">
@@ -286,7 +286,7 @@
       </trans-unit>
       <trans-unit id="Warning_FailedToMarkPackageDirectoryForDeletion">
         <source>Failed to mark package directory '{0}' for deletion on Visual Studio restart: {1}</source>
-        <target state="translated">Nie można oznaczyć katalogu pakietu {0} do usunięcia przy ponownym uruchomieniu programu Visual Studio: {1}</target>
+        <target state="translated">Nie można oznaczyć katalogu pakietów „{0}” do usunięcia po ponownym uruchomieniu programu Visual Studio: {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="Warning_FileAlreadyExists">

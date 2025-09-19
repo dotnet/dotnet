@@ -227,7 +227,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     break;
 
                 case ReferenceCaptureIntermediateNode capture:
-                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, capture.IsComponentCapture ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture);
+                    var methodName = capture.IsComponentCapture
+                        ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture
+                        : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture;
+
+                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, methodName);
                     context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 
@@ -371,7 +375,7 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
             {
                 var attributeSourceSpan = (SourceSpan)(attribute.PropertySpan ?? attribute.OriginalAttributeSpan);
                 var requiresEscaping = attribute.PropertyName.IdentifierRequiresEscaping();
-                using (context.CodeWriter.BuildEnhancedLinePragma(attributeSourceSpan, context, characterOffset: requiresEscaping ? 1 : 0))
+                using (context.BuildEnhancedLinePragma(attributeSourceSpan, characterOffset: requiresEscaping ? 1 : 0))
                 {
                     context.CodeWriter.WriteIdentifierEscapeIfNeeded(attribute.PropertyName);
                     context.CodeWriter.WriteLine(attribute.PropertyName);

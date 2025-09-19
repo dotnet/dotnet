@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="ErrorOccurredRestoringPackages">
         <source>Error occurred while restoring NuGet packages: {0}</source>
-        <target state="translated">還原 NuGet 套件時發生錯誤: {0}。</target>
+        <target state="translated">還原 NuGet 套件時發生錯誤: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="Error_PackageDownload_NoVersion">
@@ -45,7 +45,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">所有套件均已安裝且無需還原。</target>
+        <target state="translated">已安裝所有封裝，因此沒有要還原的項目。</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -74,7 +74,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreCanceled">
         <source>NuGet package restore canceled.</source>
-        <target state="translated">NuGet 套件還原已取消。</target>
+        <target state="translated">已取消 NuGet 套件還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFailedForProject">
@@ -84,7 +84,7 @@ Missing packages: {0}</source>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">NuGet 套件還原已完成。</target>
+        <target state="translated">已完成 NuGet 套件還原。</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">

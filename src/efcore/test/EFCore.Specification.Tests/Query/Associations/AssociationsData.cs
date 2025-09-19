@@ -54,15 +54,22 @@ public class AssociationsData : ISetSource
                     {
                         related.Int = 9;
                         related.String = "bar";
+                        related.Ints = [4, 5, 6, 6];
                         related.RequiredNested.Int = 9;
                         related.RequiredNested.String = "bar";
+                        related.RequiredNested.Ints = [4, 5, 6, 6];
                         related.OptionalNested?.Int = 9;
                         related.OptionalNested?.String = "bar";
+                        if (related.OptionalNested is not null)
+                        {
+                            related.OptionalNested.Ints = [4, 5, 6, 6];
+                        }
 
                         foreach (var nested in related.NestedCollection)
                         {
                             nested.Int = 9;
                             nested.String = "bar";
+                            nested.Ints = [4, 5, 6, 6];
                         }
                     }
                 }),
@@ -90,15 +97,22 @@ public class AssociationsData : ISetSource
                     {
                         related.Int = intValue++;
                         related.String = $"foo{stringValue++}";
+                        related.Ints = [8, 9, intValue++];
                         related.RequiredNested.Int = intValue++;
                         related.RequiredNested.String = $"foo{stringValue++}";
+                        related.RequiredNested.Ints = [8, 9, intValue++];
                         related.OptionalNested?.Int = intValue++;
                         related.OptionalNested?.String = $"foo{stringValue++}";
+                        if (related.OptionalNested is not null)
+                        {
+                            related.OptionalNested.Ints = [8, 9, intValue++];
+                        }
 
                         foreach (var nested in related.NestedCollection)
                         {
                             nested.Int = intValue++;
                             nested.String = $"foo{stringValue++}";
+                            nested.Ints = [8, 9, intValue++];
                         }
                     }
                 }),
@@ -137,6 +151,35 @@ public class AssociationsData : ISetSource
                     e.RelatedCollection.Clear();
                     e.RequiredRelated.NestedCollection.Clear();
                     e.OptionalRelated!.NestedCollection.Clear();
+                }),
+
+            // Entity with all string properties set to a value with special characters
+            CreateRootEntity(
+                id++, description: "With_special_characters", e =>
+                {
+                    SetRelatedValues(e.RequiredRelated);
+
+                    if (e.OptionalRelated is not null)
+                    {
+                        SetRelatedValues(e.OptionalRelated);
+                    }
+
+                    foreach (var related in e.RelatedCollection)
+                    {
+                        SetRelatedValues(related);
+                    }
+
+                    void SetRelatedValues(RelatedType related)
+                    {
+                        related.String = "{ this may/look:like JSON but it [isn't]: ממש ממש לאéèéè }";
+                        related.RequiredNested.String = "{ this may/look:like JSON but it [isn't]: ממש ממש לאéèéè }";
+                        related.OptionalNested?.String = "{ this may/look:like JSON but it [isn't]: ממש ממש לאéèéè }";
+
+                        foreach (var nested in related.NestedCollection)
+                        {
+                            nested.String = "{ this may/look:like JSON but it [isn't]: ממש ממש לאéèéè }";
+                        }
+                    }
                 })
         ];
 
@@ -150,6 +193,7 @@ public class AssociationsData : ISetSource
 
             const int intValue = 8;
             const string stringValue = "foo";
+            List<int> intsValue = [1, 2, 3];
 
             var rootEntity = new RootEntity
             {
@@ -161,19 +205,23 @@ public class AssociationsData : ISetSource
                     Name = $"{shortName}_RequiredRelated",
                     Int = intValue,
                     String = stringValue,
+                    Ints = intsValue,
+
                     RequiredNested = new NestedType
                     {
                         Id = nestedId++,
                         Name = $"{shortName}_RequiredRelated_RequiredNested",
                         Int = intValue,
-                        String = stringValue
+                        String = stringValue,
+                        Ints = intsValue
                     },
                     OptionalNested = new NestedType
                     {
                         Id = nestedId++,
                         Name = $"{shortName}_RequiredRelated_OptionalNested",
                         Int = intValue,
-                        String = stringValue
+                        String = stringValue,
+                        Ints = intsValue
                     },
                     NestedCollection =
                     [
@@ -182,14 +230,16 @@ public class AssociationsData : ISetSource
                             Id = nestedId++,
                             Name = $"{shortName}_RequiredRelated_NestedCollection_1",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = intsValue
                         },
                         new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_RequiredRelated_NestedCollection_2",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = intsValue
                         }
                     ]
                 },
@@ -199,19 +249,23 @@ public class AssociationsData : ISetSource
                     Name = $"{shortName}_OptionalRelated",
                     Int = intValue,
                     String = stringValue,
+                    Ints = [1, 2, 3],
+
                     RequiredNested = new NestedType
                     {
                         Id = nestedId++,
                         Name = $"{shortName}_OptionalRelated_RequiredNested",
                         Int = intValue,
-                        String = stringValue
+                        String = stringValue,
+                        Ints = intsValue
                     },
                     OptionalNested = new NestedType
                     {
                         Id = nestedId++,
                         Name = $"{shortName}_OptionalRelated_OptionalNested",
                         Int = intValue,
-                        String = stringValue
+                        String = stringValue,
+                        Ints = [1, 2, 3]
                     },
                     NestedCollection =
                     [
@@ -220,14 +274,16 @@ public class AssociationsData : ISetSource
                             Id = nestedId++,
                             Name = $"{shortName}_OptionalRelated_NestedCollection_1",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = intsValue.ToList()
                         },
                         new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_OptionalRelated_NestedCollection_2",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = intsValue.ToList()
                         }
                     ]
                 },
@@ -239,19 +295,23 @@ public class AssociationsData : ISetSource
                         Name = $"{shortName}_RelatedCollection_1",
                         Int = intValue,
                         String = stringValue,
+                        Ints = [1, 2, 3],
+
                         RequiredNested = new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_RelatedCollection_1_RequiredNested",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = [1, 2, 3]
                         },
                         OptionalNested = new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_RelatedCollection_1_OptionalNested",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = [1, 2, 3]
                         },
                         NestedCollection =
                         [
@@ -260,14 +320,16 @@ public class AssociationsData : ISetSource
                                 Id = nestedId++,
                                 Name = $"{shortName}_RelatedCollection_1_NestedCollection_1",
                                 Int = intValue,
-                                String = stringValue
+                                String = stringValue,
+                                Ints = [1, 2, 3]
                             },
                             new NestedType
                             {
                                 Id = nestedId++,
                                 Name = $"{shortName}_RelatedCollection_1_NestedCollection_2",
                                 Int = intValue,
-                                String = stringValue
+                                String = stringValue,
+                                Ints = [1, 2, 3]
                             }
                         ]
                     },
@@ -277,19 +339,23 @@ public class AssociationsData : ISetSource
                         Name = $"{shortName}_RelatedCollection_2",
                         Int = intValue,
                         String = stringValue,
+                        Ints = [1, 2, 3],
+
                         RequiredNested = new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_RelatedCollection_2_RequiredNested",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = [1, 2, 3]
                         },
                         OptionalNested = new NestedType
                         {
                             Id = nestedId++,
                             Name = $"{shortName}_RelatedCollection_2_OptionalNested",
                             Int = intValue,
-                            String = stringValue
+                            String = stringValue,
+                            Ints = [1, 2, 3]
                         },
                         NestedCollection =
                         [
@@ -298,14 +364,16 @@ public class AssociationsData : ISetSource
                                 Id = nestedId++,
                                 Name = $"{shortName}_RelatedCollection_2_NestedCollection_1",
                                 Int = intValue,
-                                String = stringValue
+                                String = stringValue,
+                                Ints = [1, 2, 3]
                             },
                             new NestedType
                             {
                                 Id = nestedId++,
                                 Name = $"{shortName}_Root1_RelatedCollection_2_NestedCollection_2",
                                 Int = intValue,
-                                String = stringValue
+                                String = stringValue,
+                                Ints = [1, 2, 3]
                             }
                         ]
                     }
@@ -325,7 +393,7 @@ public class AssociationsData : ISetSource
         var id = 1;
 
         rootReferencingEntities.Add(new RootReferencingEntity { Id = id++, Root = null });
-        foreach (var rootEntity in rootEntities)
+        foreach (var rootEntity in rootEntities.Take(2))
         {
             var rootReferencingEntity = new RootReferencingEntity { Id = id++, Root = rootEntity };
             rootEntity.RootReferencingEntity = rootReferencingEntity;

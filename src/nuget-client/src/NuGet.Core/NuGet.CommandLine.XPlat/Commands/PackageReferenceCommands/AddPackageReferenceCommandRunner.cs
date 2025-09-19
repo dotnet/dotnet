@@ -104,7 +104,7 @@ namespace NuGet.CommandLine.XPlat
             var originalPackageSpec = matchingPackageSpecs.FirstOrDefault();
 
             // Check if the project files are correct for CPM
-            if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !msBuild.AreCentralVersionRequirementsSatisfied(packageReferenceArgs, originalPackageSpec))
+            if (originalPackageSpec.RestoreMetadata.CentralPackageVersionsEnabled && !MSBuildAPIUtility.AreCentralVersionRequirementsSatisfied(packageReferenceArgs, originalPackageSpec))
             {
                 return 1;
             }
@@ -421,7 +421,6 @@ namespace NuGet.CommandLine.XPlat
                 var restoreContext = new RestoreArgs()
                 {
                     CacheContext = cacheContext,
-                    LockFileVersion = LockFileFormat.Version,
                     Log = packageReferenceArgs.Logger,
                     MachineWideSettings = new XPlatMachineWideSetting(),
                     GlobalPackagesFolder = packageReferenceArgs.PackageDirectory,

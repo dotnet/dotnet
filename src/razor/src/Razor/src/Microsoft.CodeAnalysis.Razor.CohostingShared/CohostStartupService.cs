@@ -16,11 +16,11 @@ namespace Microsoft.VisualStudio.Razor.LanguageClient.Cohost;
 
 #pragma warning disable CS0618 // Type or member is obsolete. Will be addressed in https://github.com/dotnet/razor/pull/12079 but Roslyn changes are batched
 [Export(typeof(ICohostStartupService))]
+#pragma warning restore CS0618 // Type or member is obsolete
 [method: ImportingConstructor]
 internal sealed class CohostStartupService(
     [ImportMany] IEnumerable<Lazy<IRazorCohostStartupService>> lazyStartupServices,
     ILoggerFactory loggerFactory) : ICohostStartupService
-#pragma warning restore CS0618 // Type or member is obsolete
 {
     private readonly ImmutableArray<Lazy<IRazorCohostStartupService>> _lazyStartupServices = [.. lazyStartupServices];
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<CohostStartupService>();

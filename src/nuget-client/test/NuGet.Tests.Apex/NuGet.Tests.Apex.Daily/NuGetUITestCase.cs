@@ -21,11 +21,6 @@ namespace NuGet.Tests.Apex.Daily
 
         private readonly SimpleTestPathContext _pathContext = new SimpleTestPathContext();
 
-        public NuGetUITestCase()
-            : base()
-        {
-        }
-
         [TestMethod]
         [DataRow(ProjectTemplate.WebSiteEmpty, ProjectTargetFramework.V48)]
         [DataRow(ProjectTemplate.WebSite, ProjectTargetFramework.V48)]

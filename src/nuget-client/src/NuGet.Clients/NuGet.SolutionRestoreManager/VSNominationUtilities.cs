@@ -338,7 +338,7 @@ namespace NuGet.SolutionRestoreManager
 
         internal static bool IsPruningEnabledGlobally(IReadOnlyList<IVsTargetFrameworkInfo4> tfms)
         {
-            foreach (var value in GetNonEvaluatedPropertyOrNull(tfms, "_RestorePackagePruningDefault", s => s))
+            foreach (var value in GetNonEvaluatedPropertyOrNull(tfms, "RestorePackagePruningDefault", s => s))
             {
                 if (value is not null && MSBuildStringUtility.IsTrue(value))
                 {

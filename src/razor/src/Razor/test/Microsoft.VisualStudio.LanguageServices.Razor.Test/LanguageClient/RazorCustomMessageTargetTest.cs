@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Editor;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
@@ -358,10 +357,8 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         Assert.Equal(expectedCodeAction.Title, result.Title);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task ProvideSemanticTokensAsync_CannotLookupDocument_ReturnsNullAsync(bool isPreciseRange)
+    [Fact]
+    public async Task ProvideSemanticTokensAsync_CannotLookupDocument_ReturnsNullAsync()
     {
         // Arrange
         LSPDocumentSnapshot document;
@@ -395,18 +392,14 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             correlationId: Guid.Empty);
 
         // Act
-        var result = isPreciseRange
-            ? await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken)
-            : await target.ProvideMinimalRangeSemanticTokensAsync(request, DisposalToken);
+        var result = await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken);
 
         // Assert
         Assert.Null(result);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task ProvideSemanticTokensAsync_CannotLookupVirtualDocument_ReturnsNullAsync(bool isPreciseRange)
+    [Fact]
+    public async Task ProvideSemanticTokensAsync_CannotLookupVirtualDocument_ReturnsNullAsync()
     {
         // Arrange
         var testDocUri = new Uri("C:/path/to/file.razor");
@@ -442,18 +435,14 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             correlationId: Guid.Empty);
 
         // Act
-        var result = isPreciseRange
-            ? await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken)
-            : await target.ProvideMinimalRangeSemanticTokensAsync(request, DisposalToken);
+        var result = await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken);
 
         // Assert
         Assert.Null(result);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task ProvideSemanticTokensAsync_ContainsRange_ReturnsSemanticTokens(bool isPreciseRange)
+    [Fact]
+    public async Task ProvideSemanticTokensAsync_ContainsRange_ReturnsSemanticTokens()
     {
         // Arrange
         var testDocUri = new Uri("C:/path/to%20-%20project/file.razor");
@@ -522,19 +511,15 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
             correlationId: Guid.Empty);
 
         // Act
-        var result = isPreciseRange
-            ? await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken)
-            : await target.ProvideMinimalRangeSemanticTokensAsync(request, DisposalToken);
+        var result = await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken);
 
         // Assert
         Assert.Equal(documentVersion, result.HostDocumentSyncVersion);
         Assert.Equal(expectedCSharpResults.Data, result.Tokens);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task ProvideSemanticTokensAsync_EmptyRange_ReturnsNoSemanticTokens(bool isPreciseRange)
+    [Fact]
+    public async Task ProvideSemanticTokensAsync_EmptyRange_ReturnsNoSemanticTokens()
     {
         // Arrange
         var testDocUri = new Uri("C:/path/to%20-%20project/file.razor");
@@ -604,9 +589,7 @@ public class RazorCustomMessageTargetTest : ToolingTestBase
         var expectedResults = new ProvideSemanticTokensResponse(null, documentVersion);
 
         // Act
-        var result = isPreciseRange
-            ? await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken)
-            : await target.ProvideMinimalRangeSemanticTokensAsync(request, DisposalToken);
+        var result = await target.ProvidePreciseRangeSemanticTokensAsync(request, DisposalToken);
 
         // Assert
         Assert.Equal(documentVersion, result.HostDocumentSyncVersion);

@@ -11,7 +11,7 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
     public void Build_DisplayNameIsName_NameComparisonFullMatch()
     {
         // Arrange
-        var builder = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule => rule
                 .RequireAttributeDescriptor(attribute => attribute
                     .Name("asp-action", RequiredAttributeNameComparison.FullMatch)));
@@ -28,7 +28,7 @@ public class DefaultRequiredAttributeDescriptorBuilderTest
     public void Build_DisplayNameIsNameWithDots_NameComparisonPrefixMatch()
     {
         // Arrange
-        var builder = TagHelperDescriptorBuilder.Create(TagHelperConventions.DefaultKind, "TestTagHelper", "Test")
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "Test")
             .TagMatchingRuleDescriptor(rule => rule
                 .RequireAttributeDescriptor(attribute => attribute
                     .Name("asp-route-", RequiredAttributeNameComparison.PrefixMatch)));

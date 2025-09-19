@@ -61,10 +61,5 @@ namespace NuGet.Packaging.Signing
         public override int RSAPublicKeyMinLength => _rsaPublicKeyMinLength;
 
         public override Encoding Encoding => _encoding;
-
-        public SigningSpecificationsV1()
-            : base()
-        {
-        }
     }
 }

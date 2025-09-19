@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;netstandard2.0</TargetFrameworks>
+    <PackageVersion>9.0.8</PackageVersion>
+    <AssemblyName>Microsoft.Extensions.Logging.Abstractions</AssemblyName>
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/9.0.8/Microsoft.Extensions.DependencyInjection.Abstractions.9.0.8.csproj" />
+    <ProjectReference Include="../../system.diagnostics.diagnosticsource/9.0.8/System.Diagnostics.DiagnosticSource.9.0.8.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/9.0.8/Microsoft.Extensions.DependencyInjection.Abstractions.9.0.8.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <ProjectReference Include="../../microsoft.extensions.dependencyinjection.abstractions/9.0.8/Microsoft.Extensions.DependencyInjection.Abstractions.9.0.8.csproj" />
+    <ProjectReference Include="../../system.diagnostics.diagnosticsource/9.0.8/System.Diagnostics.DiagnosticSource.9.0.8.csproj" />
+    <ProjectReference Include="../../system.buffers/4.5.1/System.Buffers.4.5.1.csproj" />
+    <ProjectReference Include="../../system.memory/4.5.5/System.Memory.4.5.5.csproj" />
+  </ItemGroup>
+
+</Project>

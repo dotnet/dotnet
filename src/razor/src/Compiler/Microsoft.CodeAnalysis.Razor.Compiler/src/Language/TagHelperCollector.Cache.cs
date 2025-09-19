@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language;
 public abstract partial class TagHelperCollector<T>
     where T : TagHelperCollector<T>
 {
-    private class Cache
+    private sealed class Cache
     {
         private const int IncludeDocumentation = 1 << 0;
         private const int ExcludeHidden = 1 << 1;

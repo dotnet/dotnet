@@ -4,142 +4,142 @@
     <body>
       <trans-unit id="cmdidAddPackagesForSolution|ButtonText">
         <source>Manage &amp;NuGet Packages for Solution...</source>
-        <target state="new">Manage &amp;NuGet Packages for Solution...</target>
+        <target state="translated">Управление пакетами &amp;NuGet для решения…</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddPackagesForSolution|CommandName">
         <source>cmdidAddPackagesForSolution</source>
-        <target state="new">cmdidAddPackagesForSolution</target>
+        <target state="translated">cmdidAddPackagesForSolution</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddPackages|ButtonText">
         <source>Manage &amp;NuGet Packages...</source>
-        <target state="new">Manage &amp;NuGet Packages...</target>
+        <target state="translated">Управление пакетами &amp;NuGet...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidAddPackages|CommandName">
         <source>cmdidAddPackages</source>
-        <target state="new">cmdidAddPackages</target>
+        <target state="translated">cmdidAddPackages</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidClearHost|ButtonText">
         <source>&amp;Clear Console</source>
-        <target state="new">&amp;Clear Console</target>
+        <target state="translated">&amp;Очистить консоль</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidClearNuGetLocalResources|ButtonText">
         <source>ClearLocals</source>
-        <target state="new">ClearLocals</target>
+        <target state="translated">ClearLocals</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidClearNuGetLocalResources|CommandName">
         <source>cmdidClearNuGetLocalResources</source>
-        <target state="new">cmdidClearNuGetLocalResources</target>
+        <target state="translated">cmdidClearNuGetLocalResources</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidPowerConsole|ButtonText">
         <source>Package Manager C&amp;onsole</source>
-        <target state="new">Package Manager C&amp;onsole</target>
+        <target state="translated">Консол&amp;ь диспетчера пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidProjects|ButtonText">
         <source>Default pro&amp;ject:</source>
-        <target state="new">Default pro&amp;ject:</target>
+        <target state="translated">П&amp;роект по умолчанию:</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidRestorePackages|ButtonText">
         <source>Restore NuGet Packa&amp;ges</source>
-        <target state="new">Restore NuGet Packa&amp;ges</target>
+        <target state="translated">Восстановить пак&amp;еты NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidRestorePackages|CommandName">
         <source>cmdRestorePackages</source>
-        <target state="new">cmdRestorePackages</target>
+        <target state="translated">cmdRestorePackages</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidSourceSettings|ButtonText">
         <source>&amp;Package Manager Settings</source>
-        <target state="new">&amp;Package Manager Settings</target>
+        <target state="translated">&amp;Параметры диспетчера пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidSources|ButtonText">
         <source>Pac&amp;kage source:</source>
-        <target state="new">Pac&amp;kage source:</target>
+        <target state="translated">Источник па&amp;кета:</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidStopHost|ButtonText">
         <source>&amp;Stop command execution</source>
-        <target state="new">&amp;Stop command execution</target>
+        <target state="translated">&amp;Остановить выполнение команды</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpdatePackages|ButtonText">
         <source>U&amp;pdate...</source>
-        <target state="new">U&amp;pdate...</target>
+        <target state="translated">О&amp;бновить...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpdatePackages|CommandName">
         <source>cmdidUpdatePackages</source>
-        <target state="new">cmdidUpdatePackages</target>
+        <target state="translated">cmdidUpdatePackages</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpdatePackage|ButtonText">
         <source>U&amp;pdate...</source>
-        <target state="new">U&amp;pdate...</target>
+        <target state="translated">О&amp;бновить...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpdatePackage|CommandName">
         <source>cmdidUpdatePackage</source>
-        <target state="new">cmdidUpdatePackage</target>
+        <target state="translated">cmdidUpdatePackage</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradeNuGetProject|ButtonText">
         <source>&amp;Migrate packages.config to PackageReference...</source>
-        <target state="new">&amp;Migrate packages.config to PackageReference...</target>
+        <target state="translated">&amp;Перенести packages.config в PackageReference...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradeNuGetProject|CommandName">
         <source>cmdidUpgradeNuGetProject</source>
-        <target state="new">cmdidUpgradeNuGetProject</target>
+        <target state="translated">cmdidUpgradeNuGetProject</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradePackagesConfig|ButtonText">
         <source>&amp;Migrate packages.config to PackageReference...</source>
-        <target state="new">&amp;Migrate packages.config to PackageReference...</target>
+        <target state="translated">&amp;Перенести packages.config в PackageReference...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradePackagesConfig|CommandName">
         <source>cmdidUpgradePackagesConfig</source>
-        <target state="new">cmdidUpgradePackagesConfig</target>
+        <target state="translated">cmdidUpgradePackagesConfig</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradeProjectJsonNuGetProject|ButtonText">
         <source>&amp;Migrate project.json to PackageReference...</source>
-        <target state="new">&amp;Migrate project.json to PackageReference...</target>
+        <target state="translated">&amp;Перенести project.json в PackageReference...</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdidUpgradeProjectJsonNuGetProject|CommandName">
         <source>cmdidUpgradeProjectJsonNuGetProject</source>
-        <target state="new">cmdidUpgradeProjectJsonNuGetProject</target>
+        <target state="translated">cmdidUpgradeProjectJsonNuGetProject</target>
         <note />
       </trans-unit>
       <trans-unit id="idGeneralSettings|ButtonText">
         <source>&amp;Package Manager Settings</source>
-        <target state="new">&amp;Package Manager Settings</target>
+        <target state="translated">&amp;Параметры диспетчера пакетов</target>
         <note />
       </trans-unit>
       <trans-unit id="idGeneralSettings|CommandName">
         <source>cmdidGeneralSettings</source>
-        <target state="new">cmdidGeneralSettings</target>
+        <target state="translated">cmdidGeneralSettings</target>
         <note />
       </trans-unit>
       <trans-unit id="idLibraryPackageManager|ButtonText">
         <source>NuGet Package Ma&amp;nager</source>
-        <target state="new">NuGet Package Ma&amp;nager</target>
+        <target state="translated">&amp;Диспетчер пакетов NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="idToolbar|ButtonText">
         <source>Package Manager Console</source>
-        <target state="new">Package Manager Console</target>
+        <target state="translated">Консоль диспетчера пакетов</target>
         <note />
       </trans-unit>
     </body>

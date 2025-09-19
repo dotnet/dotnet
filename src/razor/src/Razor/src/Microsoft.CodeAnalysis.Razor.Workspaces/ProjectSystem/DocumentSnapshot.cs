@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 
-internal sealed class DocumentSnapshot : IDocumentSnapshot, ILegacyDocumentSnapshot, IDesignTimeCodeGenerator
+internal sealed class DocumentSnapshot : IDocumentSnapshot, ILegacyDocumentSnapshot
 {
     private readonly GeneratedOutputSource _generatedOutputSource;
 
@@ -71,9 +71,6 @@ internal sealed class DocumentSnapshot : IDocumentSnapshot, ILegacyDocumentSnaps
             return codeDocument.GetOrParseCSharpSyntaxTree(cancellationToken);
         }
     }
-
-    public Task<RazorCodeDocument> GenerateDesignTimeOutputAsync(CancellationToken cancellationToken)
-        => CompilationHelpers.GenerateDesignTimeCodeDocumentAsync(this, Project.ProjectEngine, cancellationToken);
 
     #region ILegacyDocumentSnapshot support
 

@@ -192,8 +192,8 @@ nuget client-certs List</target>
       <trans-unit id="ConfigCommandExamples">
         <source>nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
 nuget config HTTP_PROXY</source>
-        <target state="translated">nuget 구성 - HTTP_PROXY=http://127.0.0.1 설정 - HTTP_PROXY.USER=domain\user 설정
-nuget 구성 HTTP_PROXY</target>
+        <target state="translated">nuget config -Set HTTP_PROXY=http://127.0.0.1 -Set HTTP_PROXY.USER=domain\user
+nuget config HTTP_PROXY</target>
         <note>Please don't localize this string</note>
       </trans-unit>
       <trans-unit id="ConfigCommandSetDesc">
@@ -511,7 +511,7 @@ nuget locals global-packages -list</source>
 nuget locals http-cache -clear
 
 nuget locals temp -list
-]D; 
+
 nuget locals global-packages -list</target>
         <note>Please don't localize this string</note>
       </trans-unit>
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">HTTP 원본으로 푸시할 수 있습니다(안전하지 않음).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">프로젝트 잠금 파일이 작성되는 출력 위치입니다. 기본적으로 'PROJECT_ROOT\packages.lock.json'입니다.</target>
+        <target state="translated">프로젝트 잠금 파일이 기록되는 출력 위치입니다. 기본적으로 이는 'PROJECT_ROOT\packages.lock.json'입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -946,9 +946,9 @@ This option should be used when specifying the certificate via -CertificateSubje
         <source>Subject name of the certificate used to search a local certificate store for the certificate. 
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
-        <target state="translated">인증서에 대한 로컬 인증서 저장소를 검색하는 데 사용되는 인증서의 주체 이름입니다. 
-검색은 제공된 값을 사용하여 대소문자를 구분하지 않는 문자열 비교로, 다른 주제 값에 관계없이 해당 문자열을 포함하는 주제 이름을 가진 모든 인증서를 찾습니다.
-인증서 저장소는 -CertificateStoreName 및 -CertificateStoreLocation 옵션으로 지정됩니다.</target>
+        <target state="translated">로컬 인증서 저장소에서 인증서를 검색하는 데 사용되는 인증서의 주체 이름입니다. 
+검색은 제공된 값을 사용하는 대/소문자를 구분하지 않는 문자열 비교로, 다른 주체 값에 관계없이 해당 문자열을 포함하는 주체 이름의 모든 인증서를 찾습니다.
+인증서 저장소는 -CertificateStoreName 및 -CertificateStoreLocation 옵션으로 지정할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">

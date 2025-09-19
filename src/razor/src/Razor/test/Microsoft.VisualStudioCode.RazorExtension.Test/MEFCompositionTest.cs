@@ -22,13 +22,13 @@ public class MEFCompositionTest(ITestOutputHelper testOutputHelper) : ToolingTes
 
         // There are known failures that are satisfied by Microsoft.CodeAnalysis.LanguageServer, which we don't reference
         Assert.Collection(errors,
-            e => AssertEx.Equal("""
+            e => AssertEx.AssertEqualToleratingWhitespaceDifferences("""
                 Microsoft.CodeAnalysis.ExternalAccess.Pythia.PythiaSignatureHelpProvider.ctor(implementation): expected exactly 1 export matching constraints:
                     Contract name: Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api.IPythiaSignatureHelpProviderImplementation
                     TypeIdentityName: Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api.IPythiaSignatureHelpProviderImplementation
                 but found 0.
                 """, e),
-            e => AssertEx.Equal("""
+            e => AssertEx.AssertEqualToleratingWhitespaceDifferences("""
                 Microsoft.VisualStudioCode.RazorExtension.Services.WorkspaceService.ctor(loggerFactory): expected exactly 1 export matching constraints:
                     Contract name: Microsoft.Extensions.Logging.ILoggerFactory
                     TypeIdentityName: Microsoft.Extensions.Logging.ILoggerFactory

@@ -161,7 +161,7 @@ nuget client-certs List</target>
       </trans-unit>
       <trans-unit id="CommandNoHttpCache">
         <source>Disable the use of the HTTP cache and contact all configured package sources for live information.</source>
-        <target state="translated">Отключите использование HTTP-кэша и обратитесь ко всем настроенным источникам пакетов для получения актуальных сведений.</target>
+        <target state="translated">Отключите использование HTTP-кэша и обратитесь ко всем источникам настроенных пакетов для получения актуальных сведений.</target>
         <note />
       </trans-unit>
       <trans-unit id="CommandNoServiceEndpointDescription">
@@ -329,7 +329,7 @@ nuget push -?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Suggestion">
         <source>Type '{0} help &lt;command&gt;' for help on a specific command.</source>
-        <target state="translated">Введите "{0} help &lt;команда&gt;" для получения справки по определенной команде.</target>
+        <target state="translated">Введите "{0} help &lt;command&gt;" для получения справки по определенной команде.</target>
         <note>{0} - executable name: nuget.exe; Don't localize text enclosed in single quotes: '{0} help command'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_Title">
@@ -339,7 +339,7 @@ nuget push -?</target>
       </trans-unit>
       <trans-unit id="HelpCommand_Usage">
         <source>usage: {0} &lt;command&gt; [args] [options]</source>
-        <target state="translated">использование: {0} &lt;команда&gt; [аргументы] [параметры]</target>
+        <target state="translated">использование: {0} &lt;command&gt; [args] [options]</target>
         <note>{0} - executable name: nuget.exe; Don't localize '&lt;command&gt; [args] [options]'</note>
       </trans-unit>
       <trans-unit id="HelpCommand_UsageDetail">
@@ -527,7 +527,7 @@ nuget locals global-packages -list</target>
       </trans-unit>
       <trans-unit id="Log_RestoreNoCacheInformation">
         <source>NoCache is deprecated and has been renamed to NoHttpCache. Please use NoHttpCache instead.</source>
-        <target state="translated">NoCache является неподготовленным и переименован в NoHttpCache. Вместо этого используйте NoHttpCache.</target>
+        <target state="translated">NoCache больше не рекомендуется к использованию и переименован в NoHttpCache. Вместо него используйте NoHttpCache.</target>
         <note>Do not translate NoCache and NoHttpCache</note>
       </trans-unit>
       <trans-unit id="Option_ConfigFile">
@@ -703,7 +703,7 @@ nuget pack foo.nuspec -Version 2.1.0</target>
       </trans-unit>
       <trans-unit id="PushCommandAllowInsecureConnectionsDescription">
         <source>Allows pushing to HTTP sources (insecure).</source>
-        <target state="new">Allows pushing to HTTP sources (insecure).</target>
+        <target state="translated">Разрешает отправку в HTTP-источники (небезопасные).</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandDescription">
@@ -784,7 +784,7 @@ nuget push foo.nupkg -Timeout 360</target>
       </trans-unit>
       <trans-unit id="RestoreCommandLockFilePath">
         <source>Output location where project lock file is written. By default, this is 'PROJECT_ROOT\packages.lock.json'.</source>
-        <target state="translated">Выходное расположение, в которое записывается файл блокировки проекта. По умолчанию это "PROJECT_ROOT\packages.lock.json".</target>
+        <target state="translated">Расположение вывода, куда записывается файл блокировки проекта. По умолчанию это "PROJECT_ROOT\packages.lock.json".</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandLockedMode">
@@ -913,7 +913,7 @@ nuget setapikey 4003d786-cc37-4004-bfdf-c4f3e8ef9b3a -Source http://example.com/
         <source>SHA-256, SHA-384 or SHA-512 fingerprint of the certificate used to search a local certificate store for the certificate.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Отпечаток сертификата SHA-256, SHA-384 или SHA-512, используемый для поиска сертификата в локальном хранилище.
-Хранилище сертификатов можно указать с помощью параметров CertificateStoreName и -CertificateStoreLocation.</target>
+Хранилище сертификатов можно указать с помощью параметров -CertificateStoreName и -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificatePasswordDescription">
@@ -931,15 +931,15 @@ This option can be used to specify the password for the certificate. If no passw
       <trans-unit id="SignCommandCertificateStoreLocationDescription">
         <source>Name of the X.509 certificate store use to search for the certificate. Defaults to "CurrentUser", the X.509 certificate store used by the current user.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Имя хранилища сертификатов X.509, используемого для поиска сертификата. По умолчанию «CurrentUser», хранилище сертификатов X.509, используемое текущим пользователем.
-Этот параметр следует использовать при указании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
+        <target state="translated">Имя хранилища сертификатов X.509, используемое для поиска сертификата. По умолчанию используется "CurrentUser", хранилище сертификатов X.509 для данного пользователя.
+Этот параметр следует использовать при задании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateStoreNameDescription">
         <source>Name of the X.509 certificate store to use to search for the certificate. Defaults to "My", the X.509 certificate store for personal certificates.
 This option should be used when specifying the certificate via -CertificateSubjectName or -CertificateFingerprint options.</source>
-        <target state="translated">Имя хранилища сертификатов X. 509, используемое для поиска сертификата. По умолчанию используется "My", хранилище сертификатов X. 509 для персональных сертификатов.
-Этот параметр следует использовать при задании сертификата с помощью параметров -CertificateSubjectName or -CertificateFingerprint.</target>
+        <target state="translated">Имя хранилища сертификатов X.509, используемое для поиска сертификата. По умолчанию используется "My", хранилище сертификатов X.509 для персональных сертификатов.
+Этот параметр следует использовать при задании сертификата с помощью параметров -CertificateSubjectName или -CertificateFingerprint.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
@@ -947,8 +947,8 @@ This option should be used when specifying the certificate via -CertificateSubje
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values.
 The certificate store can be specified by -CertificateStoreName and -CertificateStoreLocation options.</source>
         <target state="translated">Имя субъекта сертификата, используемое для поиска сертификата в локальном хранилище сертификатов. 
- Поиск представляет собой сравнение строк без учета регистра с использованием предоставленного значения, при котором будут найдены все сертификаты с именем субъекта, содержащим эту строку, независимо от других значений субъекта. 
- Хранилище сертификатов можно указать с помощью параметров -CertificateStoreName и -CertificateStoreLocation.</target>
+Поиск производится сравнением строк без учета регистра с предоставленным значением. Будут обнаружены все сертификаты с именем субъекта, содержащим эту строку, независимо от значений других субъектов.
+Хранилище сертификатов можно указать с помощью параметров -CertificateStoreName и -CertificateStoreLocation.</target>
         <note />
       </trans-unit>
       <trans-unit id="SignCommandDescription">

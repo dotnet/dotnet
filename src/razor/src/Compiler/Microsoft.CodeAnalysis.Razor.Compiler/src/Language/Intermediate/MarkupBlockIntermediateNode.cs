@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class MarkupBlockIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public string Content { get; set; }
 

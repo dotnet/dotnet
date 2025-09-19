@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
+using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language;
@@ -386,23 +387,20 @@ public sealed class RazorProjectEngine
         features.Add(configurationFeature);
         configurationFeature.ConfigureClass.Add((document, @class) =>
         {
-            @class.ClassName = "Template";
-            @class.Modifiers.Add("public");
+            @class.Name = "Template";
+            @class.Modifiers = CommonModifiers.Public;
         });
 
         configurationFeature.ConfigureNamespace.Add((document, @namespace) =>
         {
-            @namespace.Content = "Razor";
+            @namespace.Name = "Razor";
         });
 
         configurationFeature.ConfigureMethod.Add((document, method) =>
         {
-            method.MethodName = "ExecuteAsync";
+            method.Name = "ExecuteAsync";
             method.ReturnType = $"global::{typeof(Task).FullName}";
-
-            method.Modifiers.Add("public");
-            method.Modifiers.Add("async");
-            method.Modifiers.Add("override");
+            method.Modifiers = CommonModifiers.PublicAsyncOverride;
         });
     }
 
@@ -450,7 +448,7 @@ public sealed class RazorProjectEngine
         builder.Features.Add(new ComponentReferenceCaptureLoweringPass());
         builder.Features.Add(new ComponentSplatLoweringPass());
         builder.Features.Add(new ComponentFormNameLoweringPass());
-        builder.Features.Add(new ComponentBindLoweringPass(razorLanguageVersion >= RazorLanguageVersion.Version_7_0));
+        builder.Features.Add(new ComponentBindLoweringPass());
         builder.Features.Add(new ComponentRenderModeLoweringPass());
         builder.Features.Add(new ComponentCssScopePass());
         builder.Features.Add(new ComponentTemplateDiagnosticPass());

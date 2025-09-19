@@ -356,13 +356,13 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
         string? tagHelperDescriptorName = null,
         string? attributeDescriptorPropertyName = null,
         bool isRazorFile = true,
-        bool ignoreComponentAttributes= false)
+        bool ignoreComponentAttributes = false)
     {
         TestFileMarkupParser.GetPosition(content, out content, out var position);
 
         var codeDocument = CreateCodeDocument(content, isRazorFile);
 
-        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, ignoreComponentAttributes, Logger, out var boundTagHelper, out var boundAttribute);
+        var result = RazorComponentDefinitionHelpers.TryGetBoundTagHelpers(codeDocument, position, ignoreComponentAttributes, Logger, out var boundTagHelperResults);
 
         if (tagHelperDescriptorName is null)
         {
@@ -371,6 +371,7 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
         else
         {
             Assert.True(result);
+            var boundTagHelper = Assert.Single(boundTagHelperResults).ElementDescriptor;
             Assert.NotNull(boundTagHelper);
             Assert.Equal(tagHelperDescriptorName, boundTagHelper.Name);
         }
@@ -378,6 +379,7 @@ public class RazorComponentDefinitionHelpersTest(ITestOutputHelper testOutput) :
         if (attributeDescriptorPropertyName is not null)
         {
             Assert.True(result);
+            var boundAttribute = Assert.Single(boundTagHelperResults).AttributeDescriptor;
             Assert.NotNull(boundAttribute);
             Assert.Equal(attributeDescriptorPropertyName, boundAttribute.PropertyName);
         }

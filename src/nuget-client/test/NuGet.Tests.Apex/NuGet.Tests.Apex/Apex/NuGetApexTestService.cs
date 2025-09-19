@@ -25,16 +25,12 @@ using NuGet.VisualStudio.Contracts;
 namespace NuGet.Tests.Apex
 {
     [Export(typeof(NuGetApexTestService))]
-    public class NuGetApexTestService : VisualStudioTestService<VisualStudioMarshallableProxyVerifier>
+    public class NuGetApexTestService : VisualStudioTestService
     {
         [Import]
         private NuGetApexUITestService NuGetApexUITestService { get; set; }
         [Import]
         private NuGetApexConsoleTestService NuGetApexConsoleTestService { get; set; }
-
-        public NuGetApexTestService()
-        {
-        }
 
         /// <summary>
         /// Gets the NuGet IVsPackageInstaller
@@ -230,7 +226,7 @@ namespace NuGet.Tests.Apex
 
         /// <summary>
         /// Get the UI window from the project.
-        /// Note that the UI window is initialized asynchronously, so we have to poll until it loads. 
+        /// Note that the UI window is initialized asynchronously, so we have to poll until it loads.
         /// </summary>
         /// <param name="project">project for which we want to load a UI window</param>
         /// <param name="timeout">Max time to wait for the UI window to load</param>

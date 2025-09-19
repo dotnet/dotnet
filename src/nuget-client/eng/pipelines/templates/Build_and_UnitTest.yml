@@ -109,6 +109,15 @@ steps:
     configuration: "$(BuildConfiguration)"
     msbuildArguments: "/restore:false /target:BuildNoVSIX /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:GitRepositoryRemoteName=github /property:IncludeApex=$(IncludeApex) /binarylogger:$(Build.StagingDirectory)\\binlog\\02.Build.binlog /property:MicroBuild_SigningEnabled=false"
 
+# NuGet.exe embeds its own satellite resources, but satellite resources are built after the main assembly.
+# This means on the first build it's missing the resources, so we have to build nuget.exe a second time.
+- task: MSBuild@1
+  displayName: "Build localized NuGet.exe"
+  inputs:
+    solution: "src\\NuGet.Clients\\NuGet.CommandLine"
+    configuration: "$(BuildConfiguration)"
+    msbuildArguments: "/restore:false /property:BuildProjectReferences=false /property:BuildRTM=$(BuildRTM) /property:BuildNumber=$(BuildNumber) /property:GitRepositoryRemoteName=github /binarylogger:$(Build.StagingDirectory)\\binlog\\02a.Build_NuGet.exe.binlog /property:MicroBuild_SigningEnabled=false"
+
 - task: CodeQL3000Finalize@0
   displayName: Finalize CodeQL
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'true'), eq(variables['Codeql.Enabled'], 'true'))"
