@@ -230,6 +230,38 @@ public class CohostGoToDefinitionEndpointTest(ITestOutputHelper testOutputHelper
     }
 
     [Fact]
+    public async Task ViewComponent()
+    {
+        TestCode expected;
+        var result = await GetGoToDefinitionResultAsync("""
+            @addTagHelper *, SomeProject
+
+            <vc:aut$$hor-view author-id="1234"></vc:author-view>
+            """,
+            fileKind: RazorFileKind.Legacy,
+            additionalFiles:
+                (FileName("AuthorViewComponent.cs"),
+                    (expected = """
+                        using Microsoft.AspNetCore.Mvc;
+
+                        public class [|AuthorViewViewComponent|] : ViewComponent
+                        {
+                            public string Invoke(int authorId)
+                            {
+                                return firstName;
+                            }
+                        }
+                        """).Text));
+
+        Assert.NotNull(result.Value.Second);
+        var locations = result.Value.Second;
+        var location = Assert.Single(locations);
+
+        Assert.Equal(FileUri("AuthorViewComponent.cs"), location.DocumentUri.GetRequiredParsedUri());
+        Assert.Equal(expected.Span, SourceText.From(expected.Text).GetTextSpan(location.Range));
+    }
+
+    [Fact]
     public async Task TagHelper()
     {
         TestCode expected;
