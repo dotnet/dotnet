@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Extensions;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
@@ -990,16 +991,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteSetKey(CodeRenderingContext context, SetKeyIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __builder.SetKey(_keyValue);
@@ -1016,25 +1007,12 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         WriteCSharpCode(context, new CSharpCodeIntermediateNode
         {
             Source = node.Source,
-            Children =
-                    {
-                        node.KeyValueToken
-                    }
+            Children = { node.KeyValueToken }
         });
     }
 
     public override void WriteSplat(CodeRenderingContext context, SplatIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __builder.AddMultipleAttributes(2, ...);
@@ -1047,22 +1025,23 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
         context.CodeWriter.WriteEndMethodInvocation();
     }
 
-    private void WriteSplatInnards(CodeRenderingContext context, SplatIntermediateNode node, bool canTypeCheck)
+    private static void WriteSplatInnards(CodeRenderingContext context, SplatIntermediateNode node, bool canTypeCheck)
     {
+        var writer = context.CodeWriter;
+
         if (canTypeCheck)
         {
-            context.CodeWriter.Write(ComponentsApi.RuntimeHelpers.TypeCheck);
-            context.CodeWriter.Write("<");
-            context.CodeWriter.Write(ComponentsApi.AddMultipleAttributesTypeFullName);
-            context.CodeWriter.Write(">");
-            context.CodeWriter.Write("(");
+            writer.Write($"{ComponentsApi.RuntimeHelpers.TypeCheck}<{ComponentsApi.AddMultipleAttributesTypeFullName}>(");
         }
 
-        WriteCSharpTokens(context, GetCSharpTokens(node));
+        using var tokens = new PooledArrayBuilder<CSharpIntermediateToken>();
+        node.CollectDescendantNodes(ref tokens.AsRef());
+
+        WriteCSharpTokens(context, in tokens);
 
         if (canTypeCheck)
         {
-            context.CodeWriter.Write(")");
+            writer.Write(")");
         }
     }
 
@@ -1086,16 +1065,6 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
 
     public override void WriteReferenceCapture(CodeRenderingContext context, ReferenceCaptureIntermediateNode node)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (node == null)
-        {
-            throw new ArgumentNullException(nameof(node));
-        }
-
         // Looks like:
         //
         // __field = default(MyComponent);
@@ -1111,15 +1080,27 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // The runtime node writer moves the call elsewhere. At design time we
             // just want sufficiently similar code that any unknown-identifier or type
             // errors will be equivalent
-            var nullSuppression = !context.Options.SuppressNullabilityEnforcement ? "!" : string.Empty;
+
+            var assignmentText = string.Build((node.FieldTypeName, context.Options.SuppressNullabilityEnforcement), (ref builder, state) =>
+            {
+                builder.Append(" = default(");
+                builder.Append(state.FieldTypeName);
+                builder.Append(")");
+
+                if (!state.SuppressNullabilityEnforcement)
+                {
+                    builder.Append("!");
+                }
+
+                builder.Append(";");
+            });
+
+            var assignmentToken = IntermediateNodeFactory.CSharpToken(assignmentText);
+
             WriteCSharpCode(context, new CSharpCodeIntermediateNode
             {
                 Source = node.Source,
-                Children =
-                {
-                    node.IdentifierToken,
-                    IntermediateNodeFactory.CSharpToken($" = default({node.FieldTypeName}){nullSuppression};")
-                }
+                Children = { node.IdentifierToken, assignmentToken }
             });
         }
         else
@@ -1129,8 +1110,10 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
             // (__value) = { _field = (MyComponent)__value; }
             // OR
             // (__value) = { _field = (ElementRef)__value; }
-            const string refCaptureParamName = "__value";
-            using (var lambdaScope = context.CodeWriter.BuildLambda(refCaptureParamName))
+            const string RefCaptureParamName = "__value";
+            const string DefaultAssignment = $" = {RefCaptureParamName};";
+
+            using (context.CodeWriter.BuildLambda(RefCaptureParamName))
             {
                 WriteCSharpCode(context, new CSharpCodeIntermediateNode
                 {
@@ -1138,7 +1121,7 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
                     Children =
                     {
                         node.IdentifierToken,
-                        IntermediateNodeFactory.CSharpToken($" = {refCaptureParamName};")
+                        IntermediateNodeFactory.CSharpToken(DefaultAssignment)
                     }
                 });
             }
@@ -1161,6 +1144,14 @@ internal class ComponentDesignTimeNodeWriter : ComponentNodeWriter
     }
 
     private static void WriteCSharpTokens(CodeRenderingContext context, ImmutableArray<CSharpIntermediateToken> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            WriteCSharpToken(context, token);
+        }
+    }
+
+    private static void WriteCSharpTokens(CodeRenderingContext context, ref readonly PooledArrayBuilder<CSharpIntermediateToken> tokens)
     {
         foreach (var token in tokens)
         {

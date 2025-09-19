@@ -3,12 +3,13 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
+using Microsoft.CodeAnalysis;
 
-namespace Microsoft.CodeAnalysis.Razor.Compiler.Language.Extensions;
+namespace Microsoft.AspNetCore.Razor.Language;
 
-internal static partial class INamedTypeSymbolExtensions
+internal partial class SymbolCache
 {
-    private sealed partial class Cache
+    public sealed partial class NamedTypeSymbolData
     {
         private sealed class IsViewComponentResult
         {

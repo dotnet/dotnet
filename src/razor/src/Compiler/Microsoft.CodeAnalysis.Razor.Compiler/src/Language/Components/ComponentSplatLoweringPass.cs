@@ -1,12 +1,11 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run after component lowering pass
     public override int Order => 50;
@@ -20,16 +19,17 @@ internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, I
 
         foreach (var reference in documentNode.FindDescendantReferences<TagHelperDirectiveAttributeIntermediateNode>())
         {
-            var node = reference.Node;
-            if (node.TagHelper.Kind == TagHelperKind.Splat)
+            if (reference.Node.TagHelper.Kind == TagHelperKind.Splat)
             {
-                reference.Replace(RewriteUsage(reference.Parent, node));
+                RewriteUsage(reference);
             }
         }
     }
 
-    private IntermediateNode RewriteUsage(IntermediateNode parent, TagHelperDirectiveAttributeIntermediateNode node)
+    private static void RewriteUsage(IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode> reference)
     {
+        var (node, _) = reference;
+
         var result = new SplatIntermediateNode()
         {
             Source = node.Source,
@@ -37,6 +37,7 @@ internal class ComponentSplatLoweringPass : ComponentIntermediateNodePassBase, I
 
         result.Children.AddRange(node.FindDescendantNodes<CSharpIntermediateToken>());
         result.AddDiagnosticsFromNode(node);
-        return result;
+
+        reference.Replace(result);
     }
 }
