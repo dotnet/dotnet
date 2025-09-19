@@ -36,7 +36,7 @@ internal sealed class RemoteTagHelperSearchEngine : ITagHelperSearchEngine
         {
             if (boundTagHelper.Kind == TagHelperKind.Component)
             {
-                return null;
+                continue;
             }
 
             var location = await TryLocateTagHelperDefinitionAsync(boundTagHelper, boundAttribute, compilation, project.Solution, cancellationToken).ConfigureAwait(false);

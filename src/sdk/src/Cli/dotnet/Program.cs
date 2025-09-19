@@ -237,8 +237,8 @@ public class Program
             // Get the global.json state to report in telemetry along with this command invocation.
             // We don't care about the actual SDK resolution, just the global.json information,
             // so just pass empty string as executable directory for resolution.
-            NativeWrapper.SdkResolutionResult result = NativeWrapper.NETCoreSdkResolverNativeWrapper.ResolveSdk(string.Empty, Environment.CurrentDirectory);
-            globalJsonState = result.GlobalJsonState;
+            // NativeWrapper.SdkResolutionResult result = NativeWrapper.NETCoreSdkResolverNativeWrapper.ResolveSdk(string.Empty, Environment.CurrentDirectory);
+            // globalJsonState = result.GlobalJsonState;
         }
 
         TelemetryEventEntry.SendFiltered(Tuple.Create(parseResult, performanceData, globalJsonState));
@@ -284,6 +284,12 @@ public class Program
                 exitCode = 1;
             }
         }
+
+        TelemetryClient.TrackEvent("command/finish", properties: new Dictionary<string, string>
+                    {
+                        { "exitCode", exitCode.ToString() }
+                    },
+            measurements: new Dictionary<string, double>());
 
         PerformanceLogEventSource.Log.TelemetryClientFlushStart();
         TelemetryClient.Flush();
