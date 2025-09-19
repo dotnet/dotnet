@@ -68,10 +68,10 @@ stages:
                   command: custom
                   arguments: 'locals all -clear'
               - script: "echo ##vso[build.addbuildtag]daily-build"
-                condition: and(notin(variables['Build.Reason'], 'PullRequest'), ne(variables['IsFinalBuild'], 'true'))
+                condition: and(succeeded(), notin(variables['Build.Reason'], 'PullRequest'), ne(variables['IsFinalBuild'], 'true'))
                 displayName: 'Set CI tags'
               - script: "echo ##vso[build.addbuildtag]release-candidate"
-                condition: and(notin(variables['Build.Reason'], 'PullRequest'), eq(variables['IsFinalBuild'], 'true'))
+                condition: and(succeeded(), notin(variables['Build.Reason'], 'PullRequest'), eq(variables['IsFinalBuild'], 'true'))
                 displayName: 'Set CI tags'
               - powershell: SqlLocalDB start
                 displayName: Start LocalDB
