@@ -79,6 +79,11 @@ parameters:
   type: boolean
   default: false
 
+# Indicates whether to runtime dependent jobs are excluded in the build (this occurs for non-1xx branches).
+- name: excludeRuntimeDependentJobs
+  type: boolean
+  default: false
+
 #### SOURCE-ONLY parameters ####
 
 # Instead of building the VMR directly, exports the sources into a tarball and builds from that
@@ -322,8 +327,10 @@ jobs:
     timeoutInMinutes: 720
   ## Currently, CodeQL slows the build down too much
   ## https://github.com/dotnet/source-build/issues/4276
-  ${{ elseif and(parameters.isBuiltFromVmr, startswith(parameters.buildName, 'Windows'), eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  ${{ elseif and(parameters.isBuiltFromVmr, eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     timeoutInMinutes: 720
+  ${{ elseif and(startswith(parameters.buildName, 'OSX'), ne(variables['System.TeamProject'], 'internal')) }}:
+    timeoutInMinutes: 360
   ${{ else }}:
     timeoutInMinutes: 240
 
@@ -404,32 +411,15 @@ jobs:
 
   - ${{ if eq(parameters.withPreviousSDK, 'true') }}:
     - script: |
-        set -euo pipefail
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
+      displayName: Download Previously Source-Built SDK
 
-        if [[ '${{ parameters.artifactsRid }}' == '' ]]; then
-           echo "'artifactsRid' is not specified. Cannot download source-built SDK."
-           exit 1
-        fi
-
-        packageVersionsPath="$(sourcesPath)/eng/Versions.props"
-        notFoundMessage="No source-built SDK found to download..."
-
-        echo "Looking for source-built SDK to download..."
-        archiveVersionLine=$(grep -m 1 "<PrivateSourceBuiltSdkVersion>" "$packageVersionsPath" || :)
-        versionPattern="<PrivateSourceBuiltSdkVersion>(.*)</PrivateSourceBuiltSdkVersion>"
-
-        if [[ $archiveVersionLine =~ $versionPattern ]]; then
-          archiveVersion="${BASH_REMATCH[1]}"
-          archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/sdks/dotnet-sdk-$archiveVersion-${{ parameters.artifactsRid }}.tar.gz"
-          downloadDir="$(sourcesPath)/prereqs/packages/archive/"
-
-          echo "Downloading source-built SDK from $archiveUrl..."
-          (cd "$downloadDir" && curl --retry 5 -O "$archiveUrl")
-        else
-          echo "$notFoundMessage"
-          exit 1
-        fi
-      displayName: Setup Previously Source-Built SDK
+  - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+      displayName: Download Shared Component Artifacts
 
   - ${{ if and(eq(parameters.sign, 'True'), ne(parameters.signType, 'DryRun')) }}:
     - template: ${{ variables['Build.SourcesDirectory'] }}/eng/common/core-templates/steps/install-microbuild.yml
@@ -513,20 +503,12 @@ jobs:
           customPrepArgs=""
           prepSdk=true
 
-          if [[ -n '${{ parameters.artifactsRid }}' ]]; then
-            customPrepArgs="${customPrepArgs} --artifacts-rid ${{ parameters.artifactsRid }}"
-          fi
-
           if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
             # Using previous SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
-            # Don't use --no-artifacts because it will prevent the shared components archive from being
-            # downloaded in non-1xx branches. It's ok to not provide this option since the downloading
-            # of the PSB artifacts will be skipped anyway because we've already manually copied the file
-            # to use at the expected location.
-            customPrepArgs="${customPrepArgs} --no-sdk"
+            customPrepArgs="${customPrepArgs} --no-sdk --no-artifacts"
             prepSdk=false
           fi
 
@@ -795,4 +777,3 @@ jobs:
           PathtoPublish: $(Build.ArtifactStagingDirectory)/artifacts/manifests/${{ parameters.configuration }}/$(Agent.JobName).xml
           ArtifactName: VerticalManifests
         displayName: Publish Vertical Manifest
-
