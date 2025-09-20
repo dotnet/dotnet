@@ -91,6 +91,7 @@ stages:
             withPreviousSDK: false             # 🚫
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
+            extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
           
           - buildNameFormat: 'SB_{0}_Mono_Offline_CurrentSourceBuiltSdk'
             distro: centos
@@ -104,6 +105,7 @@ stages:
             disableSigning: true               # ✅
             createSourceArtifacts: false       # 🚫
             reuseBuildArtifactsFrom: 'SB_{0}_Mono_Offline_MsftSdk_x64'
+            extraProperties: /p:DotNetSkipTestsRequiringMicrosoftArtifacts=true
 
         - ${{ else }}:
 
@@ -117,8 +119,8 @@ stages:
             useMonoRuntime: false              # 🚫
             useSystemLibraries: false          # 🚫
             withPreviousSDK: false             # 🚫
-            disableSigning: false              # 🚫
-            createSourceArtifacts: true        # ✅
+            disableSigning: true               # ✅
+            createSourceArtifacts: false       # 🚫
 
           - ${{ if containsValue(parameters.verifications, 'source-build-stage2') }}:
 
@@ -190,14 +192,14 @@ stages:
             - buildNameFormat: 'SB_{0}_Offline_MsftSdk'
               distro: centos
               targetArchitecture: x64
-              buildFromArchive: true             # ✅
+              buildFromArchive: false            # 🚫
               enablePoison: false                # 🚫
               runOnline: false                   # 🚫
               useMonoRuntime: false              # 🚫
               useSystemLibraries: false          # 🚫
               withPreviousSDK: false             # 🚫
-              disableSigning: true               # ✅
-              createSourceArtifacts: false       # 🚫
+              disableSigning: false              # 🚫
+              createSourceArtifacts: true        # ✅
 
             - buildNameFormat: 'SB_{0}_Online_PreviousSourceBuiltSdk'
               distro: centos

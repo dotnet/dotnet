@@ -20,11 +20,9 @@ using Xunit;
 
 namespace Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen
 {
+    [CompilerTrait(CompilerFeature.Async)]
     public class CodeGenAsyncTests : EmitMetadataTestBase
     {
-        // https://github.com/dotnet/roslyn/issues/79792: Use the real value when possible
-        private const MethodImplAttributes MethodImplOptionsAsync = (MethodImplAttributes)0x2000;
-
         internal static string ExpectedOutput(string output, bool isRuntimeAsync = false)
         {
             return ExecutionConditionUtil.IsMonoOrCoreClr
@@ -331,7 +329,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Equal(["<>c"], test.GetTypeMembers().SelectAsArray(t => t.Name));
             }
         }
@@ -395,7 +393,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 Assert.Empty(test.GetTypeMembers());
             }
         }
@@ -458,7 +456,7 @@ O brave new world...
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Equal(["<>c"], test.GetTypeMembers().SelectAsArray(t => t.Name));
             }
         }
@@ -511,7 +509,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -631,7 +629,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 if (!useValueTask && useGeneric)
                 {
                     AssertEx.Equal(["<>c"], test.GetTypeMembers().SelectAsArray(t => t.Name));
@@ -766,7 +764,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -886,7 +884,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -1018,7 +1016,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -1129,7 +1127,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -1237,7 +1235,7 @@ class Test
             {
                 var test = module.ContainingAssembly.GetTypeByMetadataName("Test");
                 var f = test.GetMethod("F");
-                Assert.Equal(MethodImplOptionsAsync, f.ImplementationAttributes);
+                Assert.Equal(MethodImplAttributes.Async, f.ImplementationAttributes);
                 AssertEx.Empty(test.GetTypeMembers());
             }
         }
@@ -2361,6 +2359,28 @@ class Driver
     public static int Result = -1;
 }";
             CompileAndVerify(source, expectedOutput: "0", options: TestOptions.UnsafeDebugExe, verify: Verification.Passes);
+
+            var comp = CreateRuntimeAsyncCompilation(source);
+            // https://github.com/dotnet/roslyn/issues/79791: Verify runtime async output
+            var verifier = CompileAndVerify(comp, expectedOutput: null, verify: Verification.Fails with
+            {
+                ILVerifyMessage = """
+                    [getBaseMyProp]: Unexpected type on the stack. { Offset = 0x11, Found = Int32, Expected = ref '[System.Runtime]System.Threading.Tasks.Task`1<int32>' }
+                    """
+            });
+
+            verifier.VerifyIL("TestClass.getBaseMyProp()", """
+                {
+                  // Code size       18 (0x12)
+                  .maxstack  1
+                  IL_0000:  ldc.i4.1
+                  IL_0001:  call       "System.Threading.Tasks.Task System.Threading.Tasks.Task.Delay(int)"
+                  IL_0006:  call       "void System.Runtime.CompilerServices.AsyncHelpers.Await(System.Threading.Tasks.Task)"
+                  IL_000b:  ldarg.0
+                  IL_000c:  call       "int Base.MyProp.get"
+                  IL_0011:  ret
+                }
+                """);
         }
 
         [Fact]
