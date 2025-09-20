@@ -7,9 +7,19 @@ using Microsoft.AspNetCore.Razor.Utilities;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions;
 
-public sealed record ViewComponentMetadata() : MetadataObject(MetadataKind.ViewComponent)
+public sealed record ViewComponentMetadata : MetadataObject
 {
-    public required string Name { get; init; }
+    internal ViewComponentMetadata(string name, TypeNameObject originalTypeNameObject)
+        : base(MetadataKind.ViewComponent)
+    {
+        Name = name;
+        OriginalTypeNameObject = originalTypeNameObject;
+    }
+
+    public string Name { get; }
+    internal TypeNameObject OriginalTypeNameObject { get; }
+
+    public string OriginalTypeName => OriginalTypeNameObject.FullName.AssumeNotNull();
 
     internal override bool HasDefaultValue => false;
 
@@ -21,11 +31,9 @@ public sealed record ViewComponentMetadata() : MetadataObject(MetadataKind.ViewC
     public ref struct Builder
     {
         public string? Name { get; set; }
+        internal TypeNameObject? OriginalTypeNameObject { get; set; }
 
         public readonly ViewComponentMetadata Build()
-            => new()
-            {
-                Name = Name.AssumeNotNull()
-            };
+            => new(Name.AssumeNotNull(), OriginalTypeNameObject.AssumeNotNull());
     }
 }
