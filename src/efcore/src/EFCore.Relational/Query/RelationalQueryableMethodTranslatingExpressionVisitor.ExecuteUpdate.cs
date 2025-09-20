@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -89,7 +90,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
                     RemapLambdaBody(source, firstPropertySelector).UnwrapTypeConversion(out _),
                     RelationalDependencies.Model,
                     out var baseExpression)
-                || baseExpression.UnwrapTypeConversion(out _) is not StructuralTypeShaperExpression shaper)
+                || _sqlTranslator.TranslateProjection(baseExpression) is not StructuralTypeShaperExpression shaper)
             {
                 AddTranslationErrorDetails(RelationalStrings.InvalidPropertyInSetProperty(firstPropertySelector));
                 return null;
@@ -270,14 +271,65 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
             var (propertySelector, valueSelector) = setter;
             var propertySelectorBody = RemapLambdaBody(source, propertySelector).UnwrapTypeConversion(out _);
 
-            // The top-most node on the property selector must be a member access; chop it off to get the base expression and member.
-            // We'll bind the member manually below, so as to get the IPropertyBase it represents - that's important for later.
-            if (!IsMemberAccess(propertySelectorBody, QueryCompilationContext.Model, out var baseExpression, out var member)
-                || !_sqlTranslator.TryBindMember(
-                    _sqlTranslator.Visit(baseExpression), member, out var target, out var targetProperty))
+            // First, translate the property selector of the selector (left-hand side).
+            // The top-most node on the property selector must generally be a member access which corresponds to the property
+            // we will be updating (we also support ElementAt over that for indexing into collections).
+            // Later down we'll need the model property, so we can't just translate the entire expression as-is; we instead
+            // specifically recognize member access expressions and manually bind the member access to get the property out.
+            Expression target;
+            IPropertyBase targetProperty;
+
+            switch (propertySelectorBody)
             {
-                AddTranslationErrorDetails(RelationalStrings.InvalidPropertyInSetProperty(propertySelector.Print()));
-                return false;
+                // Regular member access (common case)
+                case var _ when TryTranslateMemberAccess(propertySelectorBody, out var tempTarget, out var tempTargetProperty):
+                    target = tempTarget;
+                    targetProperty = tempTargetProperty;
+                    break;
+
+                // Index access inside collections - we get a property selector with <collection property>.AsQueryable().ElementAt(6)
+                case MethodCallExpression
+                {
+                    Method: { Name: nameof(Enumerable.ElementAt), IsGenericMethod: true } elementAtMethod,
+                    Arguments:
+                    [
+                        MethodCallExpression
+                        {
+                            Method: { Name: nameof(Queryable.AsQueryable), IsGenericMethod: true } asQueryableMethod,
+                            Arguments: [var elementAtSource]
+                        },
+                        _
+                    ]
+                } methodCall
+                    when elementAtMethod.GetGenericMethodDefinition() == QueryableMethods.ElementAt
+                        && asQueryableMethod.GetGenericMethodDefinition() == QueryableMethods.AsQueryable
+                        && TryTranslateMemberAccess(elementAtSource, out var translatedMember, out var tempTargetProperty)
+                        && Visit(methodCall) is Expression tempTarget:
+                    target = tempTarget;
+                    targetProperty = tempTargetProperty;
+                    break;
+
+                default:
+                    AddTranslationErrorDetails(RelationalStrings.InvalidPropertyInSetProperty(propertySelector.Print()));
+                    return false;
+
+                bool TryTranslateMemberAccess(
+                    Expression expression,
+                    [NotNullWhen(true)] out Expression? translation,
+                    [NotNullWhen(true)] out IPropertyBase? property)
+                {
+                    if (IsMemberAccess(expression, QueryCompilationContext.Model, out var baseExpression, out var member)
+                        && _sqlTranslator.TryBindMember(_sqlTranslator.Visit(baseExpression), member, out var target, out var targetProperty))
+                    {
+                        translation = target;
+                        property = targetProperty;
+                        return true;
+                    }
+
+                    translation = null;
+                    property = null;
+                    return false;
+                }
             }
 
             if (targetProperty.DeclaringType is IEntityType entityType && entityType.IsMappedToJson())
@@ -291,7 +343,15 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
             // Call TranslateProjection to unwrap it (need to look into getting rid StructuralTypeReferenceExpression altogether).
             if (target is not CollectionResultExpression)
             {
-                target = _sqlTranslator.TranslateProjection(target);
+                if (_sqlTranslator.TranslateProjection(target) is { } unwrappedTarget)
+                {
+                    target = unwrappedTarget;
+                }
+                else
+                {
+                    AddTranslationErrorDetails(RelationalStrings.InvalidPropertyInSetProperty(propertySelector.Print()));
+                    return false;
+                }
             }
 
             switch (target)
@@ -577,10 +637,17 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
                                         Expression.Constant(property, typeof(IProperty))),
                                     QueryCompilationContext.QueryContextParameter);
 
-                                var newParameterName =
-                                    $"{ExecuteUpdateRuntimeParameterPrefix}{chainExpression.ParameterExpression.Name}_{property.Name}";
+                                var parameterNameBuilder = new StringBuilder(ExecuteUpdateRuntimeParameterPrefix)
+                                    .Append(chainExpression.ParameterExpression.Name);
 
-                                return _queryCompilationContext.RegisterRuntimeParameter(newParameterName, lambda);
+                                foreach (var complexProperty in chainExpression.ComplexPropertyChain)
+                                {
+                                    parameterNameBuilder.Append('_').Append(complexProperty.Name);
+                                }
+
+                                parameterNameBuilder.Append('_').Append(property.Name);
+
+                                return _queryCompilationContext.RegisterRuntimeParameter(parameterNameBuilder.ToString(), lambda);
                             }
 
                             case MemberInitExpression memberInitExpression
@@ -802,6 +869,7 @@ public partial class RelationalQueryableMethodTranslatingExpressionVisitor
     ///     update function.
     /// </param>
     /// <returns>A scalar expression ready to be integrated into an UPDATE statement setter.</returns>
+    [Experimental(EFDiagnostics.ProviderExperimentalApi)] // TODO: This should probably move into the type mappings, #36729
     protected virtual bool TrySerializeScalarToJson(
         JsonScalarExpression target,
         SqlExpression value,

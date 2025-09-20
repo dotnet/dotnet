@@ -46,7 +46,7 @@ public static class RelationalJsonUtilities
 
         writer.Flush();
 
-        return Encoding.UTF8.GetString(stream.ToArray());
+        return Encoding.UTF8.GetString(stream.GetBuffer(), 0, (int)stream.Length);
 
         void WriteJson(Utf8JsonWriter writer, IComplexType complexType, object? value, bool collection)
         {
@@ -92,6 +92,11 @@ public static class RelationalJsonUtilities
                 var propertyValue = property.GetGetter().GetClrValue(objectValue);
                 if (propertyValue is null)
                 {
+                    if (!property.IsNullable)
+                    {
+                        throw new InvalidOperationException(RelationalStrings.NullValueInRequiredJsonProperty(property.Name));
+                    }
+
                     writer.WriteNullValue();
                 }
                 else
@@ -109,6 +114,11 @@ public static class RelationalJsonUtilities
                 writer.WritePropertyName(jsonPropertyName);
 
                 var propertyValue = complexProperty.GetGetter().GetClrValue(objectValue);
+
+                if (propertyValue is null && !complexProperty.IsNullable)
+                {
+                    throw new InvalidOperationException(RelationalStrings.NullValueInRequiredJsonProperty(complexProperty.Name));
+                }
 
                 WriteJson(writer, complexProperty.ComplexType, propertyValue, complexProperty.IsCollection);
             }

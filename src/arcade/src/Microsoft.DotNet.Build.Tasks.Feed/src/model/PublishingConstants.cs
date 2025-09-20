@@ -1263,7 +1263,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSChannelNames: [ "11.0.1xx", "11.0" ],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
-                targetFeeds: DotNet10Feeds,
+                targetFeeds: DotNet11Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
             #endregion
