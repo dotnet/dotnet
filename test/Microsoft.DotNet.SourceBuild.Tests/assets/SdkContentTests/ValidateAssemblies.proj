@@ -51,6 +51,8 @@
       <CommonDllsFromSbPath Include="@(DllsFromSbPath)" Condition="Exists('$(MsftPath)\%(DllsFromSbPath.RelativePath)')" />
     </ItemGroup>
 
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(UpdatedSuppressionFilePath)'))" />
+
     <ValidateAssembliesTask
       LeftAssemblies="@(CommonDllsFromMsftPath)"
       RightAssemblies="@(CommonDllsFromSbPath)"
