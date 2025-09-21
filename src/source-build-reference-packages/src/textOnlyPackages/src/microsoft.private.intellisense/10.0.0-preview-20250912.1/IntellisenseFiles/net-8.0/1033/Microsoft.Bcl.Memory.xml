@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.Bcl.Memory</name>
+  </assembly>
+  <members>
+    <member name="T:System.Buffers.Text.Base64Url">
+      <summary>Converts between binary data and URL-safe ASCII encoded text that's represented in Base64Url characters.</summary>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromChars(System.ReadOnlySpan{System.Char},System.Span{System.Byte},System.Int32@,System.Int32@,System.Boolean)">
+      <summary>Decodes the span of unicode ASCII chars represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains unicode ASCII chars in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <param name="charsConsumed">When this method returns, contains the number of input chars consumed during the operation. This can be used to slice the input for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="isFinalBlock">
+        <para>
+          <see langword="true" /> when the input span contains the entirety of data to encode; <see langword="false" /> when more data may follow,</para>
+        <para>such as when calling in a loop. Calls with <see langword="false" /> should be followed up with another call where this parameter is <see langword="true" /> call. The default is <see langword="true" />.</para>
+      </param>
+      <returns>One of the enumeration values that indicates the success or failure of the operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromChars(System.ReadOnlySpan{System.Char},System.Span{System.Byte})">
+      <summary>Decodes the span of unicode ASCII chars represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains ASCII chars in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <exception cref="T:System.ArgumentException">The buffer in <paramref name="destination" /> is too small to hold the encoded output.</exception>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains a invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>The number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromChars(System.ReadOnlySpan{System.Char})">
+      <summary>Decodes the span of unicode ASCII chars represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains ASCII chars in Base64Url that needs to be decoded.</param>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains a invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>A byte array which contains the result of the decoding operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@,System.Int32@,System.Boolean)">
+      <summary>Decodes the span of UTF-8 encoded text represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains UTF-8 encoded text in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <param name="bytesConsumed">When this method returns, contains the number of input bytes consumed during the operation. This can be used to slice the input for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="isFinalBlock">
+        <para>
+          <see langword="true" /> when the input span contains the entirety of data to encode; <see langword="false" /> when more data may follow,</para>
+        <para>such as when calling in a loop. Calls with <see langword="false" /> should be followed up with another call where this parameter is <see langword="true" /> call. The default is <see langword="true" />.</para>
+      </param>
+      <returns>One of the enumeration values that indicates the success or failure of the operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})">
+      <summary>Decodes the span of UTF-8 encoded text represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains UTF-8 encoded text in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <exception cref="T:System.ArgumentException">The buffer in <paramref name="destination" /> is too small to hold the encoded output.</exception>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains an invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>The number of bytes written into <paramref name="destination" />. This can be used to slice the output for subsequent calls, if necessary.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromUtf8(System.ReadOnlySpan{System.Byte})">
+      <summary>Decodes the span of UTF-8 encoded text represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains UTF-8 encoded text in Base64Url that needs to be decoded.</param>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains an invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>&gt;A byte array which contains the result of the decoding operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.DecodeFromUtf8InPlace(System.Span{System.Byte})">
+      <summary>
+        <para>Decodes the span of UTF-8 encoded text in Base64Url into binary data, in-place.</para>
+        <para>The decoded binary output is smaller than the text data contained in the input (the operation deflates the data).</para>
+      </summary>
+      <param name="buffer">The input span which contains the base 64 text data that needs to be decoded.</param>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="buffer" /> contains an invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>The number of bytes written into <paramref name="buffer" />. This can be used to slice the output for subsequent calls, if necessary.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToChars(System.ReadOnlySpan{System.Byte},System.Span{System.Char},System.Int32@,System.Int32@,System.Boolean)">
+      <summary>Encodes the span of binary data into unicode ASCII chars represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the ASCII chars in Base64Url.</param>
+      <param name="bytesConsumed">&gt;When this method returns, contains the number of input bytes consumed during the operation. This can be used to slice the input for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="charsWritten">&gt;When this method returns, contains the number of chars written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="isFinalBlock">
+        <para>
+          <see langword="true" /> when the input span contains the entirety of data to encode; <see langword="false" /> when more data may follow,</para>
+        <para>such as when calling in a loop, subsequent calls with <see langword="false" /> should end with <see langword="true" /> call. The default is <see langword="true" />.</para>
+      </param>
+      <returns>One of the enumeration values that indicates the success or failure of the operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToChars(System.ReadOnlySpan{System.Byte},System.Span{System.Char})">
+      <summary>Encodes the span of binary data into Unicode ASCII chars represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the ASCII chars in Base64Url.</param>
+      <exception cref="T:System.ArgumentException">The buffer in <paramref name="destination" /> is too small to hold the encoded output.</exception>
+      <returns>The number of bytes written into the destination span. This can be used to slice the output for subsequent calls, if necessary.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToChars(System.ReadOnlySpan{System.Byte})">
+      <summary>Encodes the span of binary data into unicode ASCII chars represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <returns>A char array which contains the result of the operation, i.e. the ASCII chars in Base64Url.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToString(System.ReadOnlySpan{System.Byte})">
+      <summary>Encodes the span of binary data into Unicode string represented as Base64Url ASCII chars.</summary>
+      <param name="source">The input span that contains binary data that needs to be encoded.</param>
+      <returns>A string that contains the result of the operation, i.e. the ASCII string in Base64Url.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@,System.Int32@,System.Boolean)">
+      <summary>Encodes the span of binary data into UTF-8 encoded text represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the UTF-8 encoded text in Base64Url.</param>
+      <param name="bytesConsumed">When this method returns, contains the number of input bytes consumed during the operation. This can be used to slice the input for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <param name="isFinalBlock">
+        <para>
+          <see langword="true" /> when the input span contains the entirety of data to encode; <see langword="false" /> when more data may follow,</para>
+        <para>such as when calling in a loop, subsequent calls with <see langword="false" /> should end with <see langword="true" /> call. The default is <see langword="true" />.</para>
+      </param>
+      <returns>One of the enumeration values that indicates the success or failure of the operation.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})">
+      <summary>Encodes the span of binary data into UTF-8 encoded text represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the UTF-8 encoded text in Base64Url.</param>
+      <exception cref="T:System.ArgumentException">The buffer in <paramref name="destination" /> is too small to hold the encoded output.</exception>
+      <returns>The number of bytes written into the destination span. This can be used to slice the output for subsequent calls, if necessary.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.EncodeToUtf8(System.ReadOnlySpan{System.Byte})">
+      <summary>Encodes the span of binary data into UTF-8 encoded text represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <returns>The output byte array which contains the result of the operation, i.e. the UTF-8 encoded text in Base64Url.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.GetEncodedLength(System.Int32)">
+      <summary>Returns the length (in bytes) of the result if you were to encode binary data within a byte span of size <paramref name="bytesLength" />.</summary>
+      <param name="bytesLength">The size of the input span.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">
+        <paramref name="bytesLength" /> is less than 0 or greater than 1610612733.</exception>
+      <returns>The length (in bytes) of the encoded result.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.GetMaxDecodedLength(System.Int32)">
+      <summary>Returns the maximum length (in bytes) of the result if you were to decode base 64 encoded text from a span of size <paramref name="base64Length" />.</summary>
+      <param name="base64Length">The size of the input span.</param>
+      <exception cref="T:System.ArgumentOutOfRangeException">The specified <paramref name="base64Length" /> is less than 0.</exception>
+      <returns>The maximum length (in bytes) of the decoded result.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.IsValid(System.ReadOnlySpan{System.Byte},System.Int32@)">
+      <summary>Validates that the specified span of UTF-8 text is comprised of valid base-64 encoded data.</summary>
+      <param name="utf8Base64UrlText">A span of UTF-8 text to validate.</param>
+      <param name="decodedLength">If the method returns <see langword="true" />, the number of decoded bytes that will result from decoding the input UTF-8 text.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="utf8Base64UrlText" /> contains a valid, decodable sequence of base-64 encoded data; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.IsValid(System.ReadOnlySpan{System.Byte})">
+      <summary>Validates that the specified span of UTF-8 text is comprised of valid base-64 encoded data.</summary>
+      <param name="utf8Base64UrlText">A span of UTF-8 text to validate.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="utf8Base64UrlText" /> contains a valid, decodable sequence of base-64 encoded data; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.IsValid(System.ReadOnlySpan{System.Char},System.Int32@)">
+      <summary>Validates that the specified span of text is comprised of valid base-64 encoded data.</summary>
+      <param name="base64UrlText">A span of text to validate.</param>
+      <param name="decodedLength">If the method returns <see langword="true" />, the number of decoded bytes that will result from decoding the input text.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="base64UrlText" /> contains a valid, decodable sequence of base-64 encoded data; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.IsValid(System.ReadOnlySpan{System.Char})">
+      <summary>Validates that the specified span of text is comprised of valid base-64 encoded data.</summary>
+      <param name="base64UrlText">A span of text to validate.</param>
+      <returns>
+        <see langword="true" /> if <paramref name="base64UrlText" /> contains a valid, decodable sequence of base-64 encoded data; otherwise, <see langword="false" />.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.TryDecodeFromChars(System.ReadOnlySpan{System.Char},System.Span{System.Byte},System.Int32@)">
+      <summary>Decodes the span of Unicode ASCII chars represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains ASCII chars in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains an invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>
+        <see langword="true" /> if bytes decoded successfully; <see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.TryDecodeFromUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@)">
+      <summary>Decodes the span of UTF-8 encoded text represented as Base64Url into binary data.</summary>
+      <param name="source">The input span which contains UTF-8 encoded text in Base64Url that needs to be decoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the decoded binary data.</param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <exception cref="T:System.FormatException">
+        <para>
+          <paramref name="source" /> contains an invalid Base64Url character,</para>
+        <para>more than two padding characters, or a non white space character among the padding characters.</para>
+      </exception>
+      <returns>
+        <see langword="true" /> if bytes decoded successfully; <see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.TryEncodeToChars(System.ReadOnlySpan{System.Byte},System.Span{System.Char},System.Int32@)">
+      <summary>Encodes the span of binary data into Unicode ASCII chars represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the ASCII chars in Base64Url.</param>
+      <param name="charsWritten">When this method returns, contains the number of chars written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <returns>
+        <see langword="true" /> if chars encoded successfully; <see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.TryEncodeToUtf8(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@)">
+      <summary>Encodes the span of binary data into UTF-8 encoded chars represented as Base64Url.</summary>
+      <param name="source">The input span which contains binary data that needs to be encoded.</param>
+      <param name="destination">The output span which contains the result of the operation, i.e. the UTF-8 encoded text in Base64Url.</param>
+      <param name="bytesWritten">When this method returns, contains the number of chars written into the output span. This can be used to slice the output for subsequent calls, if necessary. This parameter is treated as uninitialized.</param>
+      <returns>
+        <see langword="true" /> if bytes encoded successfully; <see langword="false" /> if <paramref name="destination" /> is too small.</returns>
+    </member>
+    <member name="M:System.Buffers.Text.Base64Url.TryEncodeToUtf8InPlace(System.Span{System.Byte},System.Int32,System.Int32@)">
+      <summary>
+        <para>Encodes the span of binary data (in-place) into UTF-8 encoded text represented as base 64.</para>
+        <para>The encoded text output is larger than the binary data contained in the input (the operation inflates the data).</para>
+      </summary>
+      <param name="buffer">
+        <para>The input span which contains binary data that needs to be encoded.</para>
+        <para>It needs to be large enough to fit the result of the operation.</para>
+      </param>
+      <param name="dataLength">
+        <para>The amount of binary data contained within the buffer that needs to be encoded</para>
+        <para>(and needs to be smaller than the buffer length).</para>
+      </param>
+      <param name="bytesWritten">When this method returns, contains the number of bytes written into the buffer. This parameter is treated as uninitialized.</param>
+      <returns>
+        <see langword="true" /> if bytes encoded successfully; <see langword="false" /> if <paramref name="buffer" /> is too small to fit the result.</returns>
+    </member>
+  </members>
+</doc>
