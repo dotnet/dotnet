@@ -85,7 +85,7 @@ namespace NuGet.CommandLine.Xplat.Tests
             string searchTerm = "term";
             Dictionary<ConsoleColor, string> coloredMessage = new Dictionary<ConsoleColor, string>();
             Mock<ILoggerWithColor> mockLoggerWithColor = new Mock<ILoggerWithColor>();
-            mockLoggerWithColor.Setup(x => x.LogMinimal(It.IsAny<string>(), It.IsAny<ConsoleColor>()))
+            mockLoggerWithColor.Setup(x => x.LogInline(It.IsAny<string>(), It.IsAny<ConsoleColor>()))
                 .Callback<string, ConsoleColor>((message, color) =>
                 {
                     if (!coloredMessage.ContainsKey(color))

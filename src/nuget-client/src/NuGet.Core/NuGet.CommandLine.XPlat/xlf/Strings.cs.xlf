@@ -97,6 +97,11 @@
         <target state="translated">NuGet Command Line</target>
         <note />
       </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="new">Argument cannot be null or empty.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
         <source>Key '{0}' not found.</source>
         <target state="translated">Klíč „{0}“ nebyl nalezen.</target>
@@ -279,6 +284,12 @@
         <target state="translated">Nepodařilo se získat prostředek vyhledávání.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
+      </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
         <target state="translated">Na balíčky {0} se odkazuje implicitně. Obvykle na ně nemusíte odkazovat ze svého projektu nebo ze souboru centrální správy verzí balíčků. Další informace najdete na https://aka.ms/sdkimplicitrefs.</target>
@@ -387,11 +398,10 @@ NuGet vyžaduje zdroje HTTPS. Pokud chcete používat zdroje HTTP, musíte v sou
         <target state="translated">Projekt {0} používá pro balíčky NuGet package.config, ale daný příkaz funguje jen s projekty odkazů na balíčky.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">Projekt {1} neodkazuje na balíček {0}.</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -1290,11 +1300,6 @@ Hledání porovnává řetězce bez rozlišování malých a velkých písmen po
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">Jméno existující důvěryhodné podepisující osoby, která se má odebrat.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">Nepodporované: Projekty používající mapování zdroje balíčku se zatím nepodporují.</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">
