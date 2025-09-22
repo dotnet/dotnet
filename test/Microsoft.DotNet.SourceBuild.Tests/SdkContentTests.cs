@@ -265,18 +265,4 @@ public partial class SdkContentTests : SdkTests
         Regex diffSegmentRegex = new("^@@ .* @@", RegexOptions.Multiline);
         return diffSegmentRegex.Replace(result, "@@ ------------ @@");
     }
-
-    private static void DeleteUnmatchedDlls(string sourceSdkDir, string targetSdkDir)
-    {
-        foreach (string dll in Directory.GetFiles(sourceSdkDir, "*.dll", SearchOption.AllDirectories))
-        {
-            string relativePath = Path.GetRelativePath(sourceSdkDir, dll);
-            string targetDll = Path.Combine(targetSdkDir, relativePath);
-            if (!File.Exists(targetDll))
-            {
-                File.SetAttributes(dll, FileAttributes.Normal); // avoid readonly issue
-                File.Delete(dll);
-            }
-        }
-    }
 }
