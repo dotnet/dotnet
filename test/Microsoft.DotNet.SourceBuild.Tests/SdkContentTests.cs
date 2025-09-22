@@ -30,6 +30,9 @@ public partial class SdkContentTests : SdkTests
     [GeneratedRegex(@"(<Right>)/.*?(/sb/)")]
     private static partial Regex RightSbRegex { get; }
 
+    [GeneratedRegex(@"(,\s*Version=)(0|[1-9]\d*)(\.\d+){2,3}")]
+    private static partial Regex AssemblyVersionRegex { get; }
+
     public SdkContentTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
     /// <Summary>
@@ -121,6 +124,7 @@ public partial class SdkContentTests : SdkTests
         content = BaselineHelper.RemoveVersions(content);
         content = LeftMsftRegex.Replace(content, "$1$2");
         content = RightSbRegex.Replace(content, "$1$2");
+        content = AssemblyVersionRegex.Replace(content, "$1x.y.z");
         return content;
     }
 
