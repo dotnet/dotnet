@@ -10,15 +10,18 @@ public abstract class OwnedJsonRelationalFixtureBase : OwnedNavigationsFixtureBa
     protected override string StoreName
         => "OwnedJsonJsonQueryTest";
 
+    public override void UseTransaction(DatabaseFacade facade, IDbContextTransaction transaction)
+        => facade.UseTransaction(transaction.GetDbTransaction());
+
     protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
     {
         base.OnModelCreating(modelBuilder, context);
 
         modelBuilder.Entity<RootEntity>(b =>
         {
-            b.OwnsOne(e => e.RequiredRelated, rrb => rrb.ToJson());
-            b.OwnsOne(e => e.OptionalRelated, orb => orb.ToJson());
-            b.OwnsMany(e => e.RelatedCollection, orb => orb.ToJson());
+            b.OwnsOne(e => e.RequiredAssociate, rrb => rrb.ToJson());
+            b.OwnsOne(e => e.OptionalAssociate, orb => orb.ToJson());
+            b.OwnsMany(e => e.AssociateCollection, orb => orb.ToJson());
         });
     }
 

@@ -1,11 +1,12 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 namespace Microsoft.AspNetCore.Razor.Language.Components;
 
-internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
+internal sealed class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNodePassBase, IRazorOptimizationPass
 {
     // Run after component lowering pass
     public override int Order => 50;
@@ -17,9 +18,9 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
             return;
         }
 
-        var @namespace = documentNode.FindPrimaryNamespace();
-        var @class = documentNode.FindPrimaryClass();
-        if (@namespace == null || @class == null)
+        var namespaceNode = documentNode.FindPrimaryNamespace();
+        var classNode = documentNode.FindPrimaryClass();
+        if (namespaceNode == null || classNode == null)
         {
             // Nothing to do, bail. We can't function without the standard structure.
             return;
@@ -29,57 +30,50 @@ internal class ComponentReferenceCaptureLoweringPass : ComponentIntermediateNode
 
         foreach (var reference in references)
         {
-            var node = reference.Node;
-
-            if (node.TagHelper.Kind == TagHelperKind.Ref)
+            if (reference.Node.TagHelper.Kind == TagHelperKind.Ref)
             {
-                reference.Replace(RewriteUsage(@class, reference.Parent, node));
+                RewriteUsage(reference);
             }
         }
     }
 
-    private IntermediateNode RewriteUsage(ClassDeclarationIntermediateNode classNode, IntermediateNode parent, TagHelperDirectiveAttributeIntermediateNode node)
+    private static void RewriteUsage(IntermediateNodeReference<TagHelperDirectiveAttributeIntermediateNode> reference)
     {
-        // If we can't get a nonempty attribute name, do nothing because there will
+        var (node, parent) = reference;
+
+        // If we can't get a non-empty attribute name, do nothing because there will
         // already be a diagnostic for empty values
         var identifierToken = DetermineIdentifierToken(node);
-        if (identifierToken == null)
+        if (identifierToken is null)
         {
-            return node;
+            return;
         }
 
         // Determine whether this is an element capture or a component capture, and
         // if applicable the type name that will appear in the resulting capture code
-        var componentTagHelper = (parent as ComponentIntermediateNode)?.Component;
-        if (componentTagHelper != null)
-        {
-            return new ReferenceCaptureIntermediateNode(identifierToken, componentTagHelper.TypeName);
-        }
-        else
-        {
-            return new ReferenceCaptureIntermediateNode(identifierToken);
-        }
+        var referenceCapture = parent as ComponentIntermediateNode is { Component: { } componentTagHelper }
+            ? new ReferenceCaptureIntermediateNode(identifierToken, componentTagHelper.TypeName)
+            : new ReferenceCaptureIntermediateNode(identifierToken);
+
+        reference.Replace(referenceCapture);
     }
 
-    private IntermediateToken? DetermineIdentifierToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
+    private static IntermediateToken? DetermineIdentifierToken(TagHelperDirectiveAttributeIntermediateNode attributeNode)
     {
-        IntermediateToken? foundToken = null;
-
-        if (attributeNode.Children.Count == 1)
+        var foundToken = attributeNode.Children switch
         {
-            if (attributeNode.Children[0] is IntermediateToken token)
-            {
-                foundToken = token;
-            }
-            else if (attributeNode.Children[0] is CSharpExpressionIntermediateNode csharpNode)
-            {
-                if (csharpNode.Children.Count == 1)
-                {
-                    foundToken = csharpNode.Children[0] as IntermediateToken;
-                }
-            }
+            [IntermediateToken token] => token,
+            [CSharpExpressionIntermediateNode { Children: [IntermediateToken token] }] => token,
+            _ => null,
+        };
+
+        if (foundToken is null)
+        {
+            return null;
         }
 
-        return !string.IsNullOrWhiteSpace(foundToken?.Content) ? foundToken : null;
+        return !foundToken.Content.IsNullOrWhiteSpace()
+            ? foundToken
+            : null;
     }
 }

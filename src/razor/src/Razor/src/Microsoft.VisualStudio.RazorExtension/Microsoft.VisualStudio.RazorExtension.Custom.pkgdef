@@ -52,7 +52,7 @@
 
 [$RootKey$\FeatureFlags\Razor\LSP\UseRazorCohostServer]
 "Description"="Uses the Razor language server that is cohosted in Roslyn to provide some Razor tooling functionality."
-"Value"=dword:00000000
+"Value"=dword:00000001
 "Title"="Use Roslyn Cohost server for Razor (requires restart)"
 "PreviewPaneChannels"="*"
 
@@ -61,4 +61,4 @@
 [$RootKey$\SettingsManifests\{13b72f58-279e-49e0-a56d-296be02f0805}]
 @="Microsoft.VisualStudio.RazorExtension.RazorPackage"
 "ManifestPath"="$PackageFolder$\UnifiedSettings\razor.registration.json"
-"CacheTag"=qword:5DE8496A8900B809
+"CacheTag"=qword:91324F976E73CC56

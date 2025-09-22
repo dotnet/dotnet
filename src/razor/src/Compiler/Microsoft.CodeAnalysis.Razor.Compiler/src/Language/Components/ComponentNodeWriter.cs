@@ -227,7 +227,11 @@ internal abstract class ComponentNodeWriter : IntermediateNodeWriter, ITemplateT
                     break;
 
                 case ReferenceCaptureIntermediateNode capture:
-                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, capture.IsComponentCapture ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture);
+                    var methodName = capture.IsComponentCapture
+                        ? ComponentsApi.RenderTreeBuilder.AddComponentReferenceCapture
+                        : ComponentsApi.RenderTreeBuilder.AddElementReferenceCapture;
+
+                    context.CodeWriter.WriteStartInstanceMethodInvocation(ComponentsApi.RenderTreeBuilder.BuilderParameter, methodName);
                     context.CodeWriter.Write(parameter.SeqName.AssumeNotNull());
                     context.CodeWriter.Write(", ");
 

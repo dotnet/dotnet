@@ -1,12 +1,19 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.EntityFrameworkCore.BulkUpdates;
+
 namespace Microsoft.EntityFrameworkCore.Query.Associations;
 
-public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<PoolableDbContext>, IQueryFixtureBase
+public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<PoolableDbContext>,
+    IQueryFixtureBase, IBulkUpdatesFixtureBase
 {
     public virtual bool AreCollectionsOrdered
         => true;
+
+
+    public virtual void UseTransaction(DatabaseFacade facade, IDbContextTransaction transaction)
+        => throw new NotSupportedException();
 
     public AssociationsData Data { get; private set; }
 
@@ -18,23 +25,23 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         {
             [typeof(RootEntity)] = (RootEntity e, RootEntity a)
                 => NullSafeAssert<RootEntity>(e, a, AssertRootEntity),
-            [typeof(RelatedType)] = (RelatedType e, RelatedType a)
-                => NullSafeAssert<RelatedType>(e, a, AssertRelatedType),
-            [typeof(NestedType)] = (NestedType e, NestedType a)
-                => NullSafeAssert<NestedType>(e, a, AssertNestedType),
+            [typeof(AssociateType)] = (AssociateType e, AssociateType a)
+                => NullSafeAssert<AssociateType>(e, a, AssertAssociate),
+            [typeof(NestedAssociateType)] = (NestedAssociateType e, NestedAssociateType a)
+                => NullSafeAssert<NestedAssociateType>(e, a, AssertNestedAssociate),
             [typeof(RootReferencingEntity)] = (RootReferencingEntity e, RootReferencingEntity a)
                 => NullSafeAssert<RootReferencingEntity>(e, a, AssertPreRootEntity),
 
             [typeof(ValueRootEntity)] = (ValueRootEntity e, ValueRootEntity a)
                 => NullSafeAssert<ValueRootEntity>(e, a, AssertValueRootEntity),
-            [typeof(ValueRelatedType)] = (ValueRelatedType e, ValueRelatedType a)
-                => NullSafeAssert<ValueRelatedType>(e, a, AssertValueRelatedType),
-            [typeof(ValueRelatedType?)] = (ValueRelatedType? e, ValueRelatedType? a)
-                => NullSafeAssert<ValueRelatedType>(e, a, AssertValueRelatedType),
+            [typeof(ValueAssociateType)] = (ValueAssociateType e, ValueAssociateType a)
+                => NullSafeAssert<ValueAssociateType>(e, a, AssertValueAssociate),
+            [typeof(ValueAssociateType?)] = (ValueAssociateType? e, ValueAssociateType? a)
+                => NullSafeAssert<ValueAssociateType>(e, a, AssertValueAssociate),
             [typeof(ValueNestedType)] = (ValueNestedType e, ValueNestedType a)
-                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedType),
+                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedAssociate),
             [typeof(ValueNestedType?)] = (ValueNestedType? e, ValueNestedType? a)
-                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedType)
+                => NullSafeAssert<ValueNestedType>(e, a, AssertValueNestedAssociate)
         }.ToDictionary(e => e.Key, e => e.Value);
     }
 
@@ -74,13 +81,13 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
     public virtual IReadOnlyDictionary<Type, object> EntitySorters { get; } = new Dictionary<Type, object>
     {
         { typeof(RootEntity), object? (RootEntity e) => ((RootEntity?)e)?.Id },
-        { typeof(RelatedType), object? (RelatedType e) => ((RelatedType?)e)?.Id },
-        { typeof(NestedType), object? (NestedType e) => ((NestedType?)e)?.Id },
+        { typeof(AssociateType), object? (AssociateType e) => ((AssociateType?)e)?.Id },
+        { typeof(NestedAssociateType), object? (NestedAssociateType e) => ((NestedAssociateType?)e)?.Id },
         { typeof(RootReferencingEntity), object? (RootReferencingEntity e) => ((RootReferencingEntity?)e)?.Id },
 
         { typeof(ValueRootEntity), object? (ValueRootEntity e) => ((ValueRootEntity?)e)?.Id },
-        { typeof(ValueRelatedType), object? (ValueRelatedType e) => e.Id },
-        { typeof(ValueRelatedType?), object? (ValueRelatedType? e) => e?.Id },
+        { typeof(ValueAssociateType), object? (ValueAssociateType e) => e.Id },
+        { typeof(ValueAssociateType?), object? (ValueAssociateType? e) => e?.Id },
         { typeof(ValueNestedType), object? (ValueNestedType e) => e.Id },
         { typeof(ValueNestedType?), object? (ValueNestedType? e) => e?.Id }
     }.ToDictionary(e => e.Key, e => e.Value);
@@ -92,29 +99,29 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
 
-        NullSafeAssert<RelatedType>(e.RequiredRelated, a.RequiredRelated, AssertRelatedType);
-        NullSafeAssert<RelatedType>(e.OptionalRelated, a.OptionalRelated, AssertRelatedType);
+        NullSafeAssert<AssociateType>(e.RequiredAssociate, a.RequiredAssociate, AssertAssociate);
+        NullSafeAssert<AssociateType>(e.OptionalAssociate, a.OptionalAssociate, AssertAssociate);
 
-        if (e.RelatedCollection is not null && a.RelatedCollection is not null)
+        if (e.AssociateCollection is not null && a.AssociateCollection is not null)
         {
-            Assert.Equal(e.RelatedCollection.Count, a.RelatedCollection.Count);
+            Assert.Equal(e.AssociateCollection.Count, a.AssociateCollection.Count);
 
             var (orderedExpected, orderedActual) = AreCollectionsOrdered
-                ? (e.RelatedCollection, a.RelatedCollection)
-                : (e.RelatedCollection.OrderBy(n => n.Id).ToList(), a.RelatedCollection.OrderBy(n => n.Id).ToList());
+                ? (e.AssociateCollection, a.AssociateCollection)
+                : (e.AssociateCollection.OrderBy(n => n.Id).ToList(), a.AssociateCollection.OrderBy(n => n.Id).ToList());
 
-            for (var i = 0; i < e.RelatedCollection.Count; i++)
+            for (var i = 0; i < e.AssociateCollection.Count; i++)
             {
-                AssertRelatedType(orderedExpected[i], orderedActual[i]);
+                AssertAssociate(orderedExpected[i], orderedActual[i]);
             }
         }
         else
         {
-            Assert.Equal(e.RelatedCollection, a.RelatedCollection);
+            Assert.Equal(e.AssociateCollection, a.AssociateCollection);
         }
     }
 
-    protected virtual void AssertRelatedType(RelatedType e, RelatedType a)
+    protected virtual void AssertAssociate(AssociateType e, AssociateType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
@@ -122,8 +129,8 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         Assert.Equal(e.Int, a.Int);
         Assert.Equal(e.String, a.String);
 
-        NullSafeAssert<NestedType>(e.RequiredNested, a.RequiredNested, AssertNestedType);
-        NullSafeAssert<NestedType>(e.OptionalNested, a.OptionalNested, AssertNestedType);
+        NullSafeAssert<NestedAssociateType>(e.RequiredNestedAssociate, a.RequiredNestedAssociate, AssertNestedAssociate);
+        NullSafeAssert<NestedAssociateType>(e.OptionalNestedAssociate, a.OptionalNestedAssociate, AssertNestedAssociate);
 
         if (e.NestedCollection is not null && a.NestedCollection != null)
         {
@@ -135,7 +142,7 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
 
             for (var i = 0; i < e.NestedCollection.Count; i++)
             {
-                AssertNestedType(orderedExpected[i], orderedActual[i]);
+                AssertNestedAssociate(orderedExpected[i], orderedActual[i]);
             }
         }
         else
@@ -144,13 +151,14 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         }
     }
 
-    protected virtual void AssertNestedType(NestedType e, NestedType a)
+    protected virtual void AssertNestedAssociate(NestedAssociateType e, NestedAssociateType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
 
         Assert.Equal(e.Int, a.Int);
         Assert.Equal(e.String, a.String);
+        Assert.Equal(e.Ints, a.Ints);
     }
 
     private void AssertPreRootEntity(RootReferencingEntity e, RootReferencingEntity a)
@@ -165,13 +173,13 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
 
-        AssertValueRelatedType(e.RequiredRelated, a.RequiredRelated);
-        NullSafeAssert<ValueRelatedType>(e.OptionalRelated, a.OptionalRelated, AssertValueRelatedType);
+        AssertValueAssociate(e.RequiredAssociate, a.RequiredAssociate);
+        NullSafeAssert<ValueAssociateType>(e.OptionalAssociate, a.OptionalAssociate, AssertValueAssociate);
 
         // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
     }
 
-    private void AssertValueRelatedType(ValueRelatedType e, ValueRelatedType a)
+    private void AssertValueAssociate(ValueAssociateType e, ValueAssociateType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);
@@ -179,13 +187,13 @@ public abstract class AssociationsQueryFixtureBase : SharedStoreFixtureBase<Pool
         Assert.Equal(e.Int, a.Int);
         Assert.Equal(e.String, a.String);
 
-        AssertValueNestedType(e.RequiredNested, a.RequiredNested);
-        NullSafeAssert<ValueNestedType>(e.OptionalNested, a.OptionalNested, AssertValueNestedType);
+        AssertValueNestedAssociate(e.RequiredNested, a.RequiredNested);
+        NullSafeAssert<ValueNestedType>(e.OptionalNested, a.OptionalNested, AssertValueNestedAssociate);
 
         // TODO: Complete for collection, mind ordering (how is this done elsewhere?)
     }
 
-    private void AssertValueNestedType(ValueNestedType e, ValueNestedType a)
+    private void AssertValueNestedAssociate(ValueNestedType e, ValueNestedType a)
     {
         Assert.Equal(e.Id, a.Id);
         Assert.Equal(e.Name, a.Name);

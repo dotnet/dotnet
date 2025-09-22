@@ -348,7 +348,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
     {
         // Arrange
         var service = CreateTagHelperCompletionProvider();
-        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
         var context = CreateRazorCompletionContext(
             """
                 @addTagHelper *, TestAssembly
@@ -442,7 +442,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
     public void GetCompletionAt_InBody_WithoutSpace_ReturnsCompletions()
     {
         // Arrange
-        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: false);
+        var options = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: false, UseVsCodeCompletionCommitCharacters: false);
         var service = new TagHelperCompletionProvider(CreateTagHelperCompletionService());
 
         var context = CreateRazorCompletionContext(
@@ -840,7 +840,7 @@ public class TagHelperCompletionProviderTest(ITestOutputHelper testOutput) : Tag
                 <test2 int-$$val=''>
                 """,
             isRazorFile: false,
-            options: new(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true),
+            options: new(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false),
             tagHelpers: DefaultTagHelpers);
 
         // Act

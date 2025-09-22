@@ -40,7 +40,7 @@ internal abstract class LanguageServerFeatureOptions
     /// <summary>
     /// Indicates that VSCode-compatible completion trigger character set should be used
     /// </summary>
-    public abstract bool UseVsCodeCompletionTriggerCharacters { get; }
+    public abstract bool UseVsCodeCompletionCommitCharacters { get; }
 
     /// <summary>
     /// Indicates whether the language server's miscellanous files project will be initialized with

@@ -10,22 +10,25 @@ public abstract class ComplexJsonRelationalFixtureBase : ComplexPropertiesFixtur
     protected override string StoreName
         => "ComplexJsonQueryTest";
 
+    public override void UseTransaction(DatabaseFacade facade, IDbContextTransaction transaction)
+        => facade.UseTransaction(transaction.GetDbTransaction());
+
     protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
     {
         base.OnModelCreating(modelBuilder, context);
 
         modelBuilder.Entity<RootEntity>(b =>
         {
-            b.ComplexProperty(e => e.RequiredRelated, rrb => rrb.ToJson());
-            b.ComplexProperty(e => e.OptionalRelated, orb => orb.ToJson());
-            b.ComplexCollection(e => e.RelatedCollection, rcb => rcb.ToJson());
+            b.ComplexProperty(e => e.RequiredAssociate, rrb => rrb.ToJson());
+            b.ComplexProperty(e => e.OptionalAssociate, orb => orb.ToJson());
+            b.ComplexCollection(e => e.AssociateCollection, rcb => rcb.ToJson());
         });
 
         modelBuilder.Entity<ValueRootEntity>(b =>
         {
-            b.ComplexProperty(e => e.RequiredRelated, rrb => rrb.ToJson());
+            b.ComplexProperty(e => e.RequiredAssociate, rrb => rrb.ToJson());
 
-            b.ComplexProperty(e => e.OptionalRelated, orb =>
+            b.ComplexProperty(e => e.OptionalAssociate, orb =>
             {
                 orb.ToJson();
 
@@ -33,7 +36,7 @@ public abstract class ComplexJsonRelationalFixtureBase : ComplexPropertiesFixtur
                 orb.ComplexProperty(r => r.OptionalNested).IsRequired(false);
             });
 
-            b.ComplexCollection(e => e.RelatedCollection, rcb => rcb.ToJson());
+            b.ComplexCollection(e => e.AssociateCollection, rcb => rcb.ToJson());
         });
     }
 

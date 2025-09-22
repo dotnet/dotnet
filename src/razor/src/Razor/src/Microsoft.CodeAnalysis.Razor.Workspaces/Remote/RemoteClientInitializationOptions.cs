@@ -25,6 +25,6 @@ internal struct RemoteClientInitializationOptions
     [JsonPropertyName("supportsSoftSelectionInCompletion")]
     public required bool SupportsSoftSelectionInCompletion { get; set; }
 
-    [JsonPropertyName("useVSCodeCompletionTriggerCharacters")]
-    public required bool UseVsCodeCompletionTriggerCharacters { get; set; }
+    [JsonPropertyName("useVsCodeCompletionCommitCharacters")]
+    public required bool UseVsCodeCompletionCommitCharacters { get; set; }
 }

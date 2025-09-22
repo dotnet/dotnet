@@ -29,10 +29,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
 
         var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__StringParameterViewComponentTagHelper", GetAssemblyName<StringParameterViewComponent>())
             .TypeName("__Generated__StringParameterViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "StringParameter"
-            })
+            .Metadata(new ViewComponentMetadata("StringParameter", TypeNameObject.From("StringParameter")))
             .DisplayName("StringParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -70,10 +67,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
 
         var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__VariousParameterViewComponentTagHelper", GetAssemblyName<VariousParameterViewComponent>())
             .TypeName("__Generated__VariousParameterViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "VariousParameter"
-            })
+            .Metadata(new ViewComponentMetadata("VariousParameter", TypeNameObject.From("VariousParameter")))
             .DisplayName("VariousParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
@@ -119,10 +113,7 @@ public class ViewComponentTagHelperDescriptorFactoryTest
 
         var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__GenericParameterViewComponentTagHelper", GetAssemblyName<GenericParameterViewComponent>())
             .TypeName("__Generated__GenericParameterViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "GenericParameter"
-            })
+            .Metadata(new ViewComponentMetadata("GenericParameter", TypeNameObject.From("GenericParameter")))
             .DisplayName("GenericParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule
