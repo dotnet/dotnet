@@ -97,6 +97,11 @@
         <target state="translated">NuGet Command Line</target>
         <note />
       </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="new">Argument cannot be null or empty.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
         <source>Key '{0}' not found.</source>
         <target state="translated">A chave '{0}' não foi encontrada.</target>
@@ -279,6 +284,12 @@
         <target state="translated">Falha ao obter um recurso de pesquisa.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
+      </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
         <target state="translated">Os pacotes {0} são referenciados implicitamente. Geralmente não é necessário referenciá-los no projeto ou no arquivo de gerenciamento central de versões de pacote. Para obter mais informações, confira https://aka.ms/sdkimplicitrefs</target>
@@ -387,11 +398,10 @@ O NuGet requer fontes HTTPS. Para usar fontes HTTP, você deve definir explicita
         <target state="translated">O projeto '{0}' usa package.config para pacotes do NuGet, enquanto o comando funciona somente com projetos de referência do pacote.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">O pacote {0} não é referenciado pelo projeto {1}</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -1290,11 +1300,6 @@ A pesquisa é uma comparação de cadeia de caracteres que não faz distinção 
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">O nome do signatário confiável existente a ser removido.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">Sem suporte: ainda não há suporte para projetos que usam o Mapeamento de Origem do Pacote</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">

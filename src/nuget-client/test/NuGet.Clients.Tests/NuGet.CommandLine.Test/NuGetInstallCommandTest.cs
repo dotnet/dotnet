@@ -2242,6 +2242,12 @@ namespace NuGet.CommandLine.Test
             File.Exists(a1Nupkg).Should().BeFalse();
         }
 
+        [SkipMono()]
+        public void InstallCommand_WithAuditSource_AndPackageWithVulnerabilities_RaisesWarnings()
+        {
+            NuGetRestoreCommandTest.Command_WithAuditSource_AndPackageWithVulnerabilities_RaisesWarnings("restore");
+        }
+
         public static CommandRunnerResult RunInstall(SimpleTestPathContext pathContext, string input, int expectedExitCode = 0, params string[] additionalArgs)
         {
             var nugetexe = Util.GetNuGetExePath();
