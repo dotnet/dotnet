@@ -63,7 +63,10 @@ namespace Microsoft.DotNet.SignTool
                 return ReadTarGZipEntries(archivePath, tempDir, tarToolPath, ignoreContent);
 #else
                 return ReadTarGZipEntries(archivePath)
-                    .Select(entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length));
+                    .Select(static entry => new ZipDataEntry(entry.Name, entry.DataStream, entry.Length)
+                    {
+                        UnixFileMode = (uint)entry.Mode,
+                    });
 #endif
             }
             else if (FileSignInfo.IsPkg(archivePath) || FileSignInfo.IsAppBundle(archivePath))
@@ -333,7 +336,10 @@ namespace Microsoft.DotNet.SignTool
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
                     using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
-                    yield return new ZipDataEntry(relativePath, stream);
+                    yield return new ZipDataEntry(relativePath, stream)
+                    {
+                        UnixFileMode = GetUnixFileMode(path),
+                    };
                 }
             }
             finally
@@ -413,7 +419,7 @@ namespace Microsoft.DotNet.SignTool
                 foreach (var path in Directory.EnumerateFiles(extractDir, "*.*", SearchOption.AllDirectories))
                 {
                     var relativePath = path.Substring(extractDir.Length + 1).Replace(Path.DirectorySeparatorChar, '/');
-                    using var stream = ignoreContent  ? null : (Stream)File.Open(path, FileMode.Open);
+                    using var stream = ignoreContent ? null : (Stream)File.Open(path, FileMode.Open);
                     yield return new ZipDataEntry(relativePath, stream);
                 }
             }
@@ -523,7 +529,7 @@ namespace Microsoft.DotNet.SignTool
             string controlArchive;
             try
             {
-                controlArchive = GetUpdatedControlArchive(FileSignInfo.FullPath, dataArchive, tempDir);
+                controlArchive = GetUpdatedControlArchive(log, FileSignInfo.FullPath, dataArchive, tempDir);
             }
             catch(Exception e)
             {
@@ -553,7 +559,7 @@ namespace Microsoft.DotNet.SignTool
         /// <param name="tempDir"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private string GetUpdatedControlArchive(string debianPackage, string dataArchive, string tempDir)
+        private string GetUpdatedControlArchive(TaskLoggingHelper log, string debianPackage, string dataArchive, string tempDir)
         {
             var workingDirGuidSegment = Guid.NewGuid().ToString().Split('-')[0];
 
@@ -569,8 +575,8 @@ namespace Microsoft.DotNet.SignTool
             string controlArchive = Path.Combine(workingDir, entry.RelativePath);
             entry.WriteToFile(controlArchive);
 
-            ExtractTarballContents(dataArchive, dataLayout);
-            ExtractTarballContents(controlArchive, controlLayout);
+            ExtractTarballContents(log, dataArchive, dataLayout);
+            ExtractTarballContents(log, controlArchive, controlLayout);
 
             string sumsFile = Path.Combine(workingDir, "md5sums");
             CreateMD5SumsFile createMD5SumsFileTask = new()
@@ -610,7 +616,7 @@ namespace Microsoft.DotNet.SignTool
             return controlArchive;
         }
 
-        internal static void ExtractTarballContents(string file, string destination, bool skipSymlinks = true)
+        internal static void ExtractTarballContents(TaskLoggingHelper log, string file, string destination, bool skipSymlinks = true)
         {
             foreach (TarEntry tar in ReadTarGZipEntries(file))
             {
@@ -623,8 +629,11 @@ namespace Microsoft.DotNet.SignTool
                 string outputPath = Path.Join(destination, tar.Name);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                using FileStream outputFileStream = File.Create(outputPath);
-                tar.DataStream?.CopyTo(outputFileStream);
+                using (FileStream outputFileStream = File.Create(outputPath))
+                {
+                    tar.DataStream?.CopyTo(outputFileStream);
+                }
+                SetUnixFileMode(log, (uint)tar.Mode, outputPath);
             }
         }
 
@@ -645,7 +654,10 @@ namespace Microsoft.DotNet.SignTool
 
                 if (match == null || relativePath.StartsWith(match))
                 {
-                    yield return new ZipDataEntry(relativePath, entry.DataStream);
+                    yield return new ZipDataEntry(relativePath, entry.DataStream)
+                    {
+                        UnixFileMode = entry.Mode & ArEntry.FilePermissionMask,
+                    };
                 }
             }
         }
@@ -757,21 +769,14 @@ namespace Microsoft.DotNet.SignTool
                 if (entry != null)
                 {
                     entry.WriteToFile(outputPath);
-
-                    // Set file mode if not the default.
-                    if (entry.UnixFileMode is { } mode and not /* 0644 */ 420)
-                    {
-                        RunExternalProcess(log, "bash", $"""
-                            -c "chmod {Convert.ToString(mode, 8)} '{outputPath}'"
-                            """, out string _, layout);
-                    }
+                    SetUnixFileMode(log, entry.UnixFileMode, outputPath);
                 }
             }
         }
 
         private static bool RunExternalProcess(TaskLoggingHelper log, string cmd, string args, out string output, string workingDir = null)
         {
-            log?.LogMessage(MessageImportance.Low, $"Running command: '{cmd}' {args}");
+            log.LogMessage(MessageImportance.Low, $"Running command: '{cmd}' {args}");
 
             ProcessStartInfo psi = new()
             {
@@ -791,16 +796,37 @@ namespace Microsoft.DotNet.SignTool
             string stderr = process.StandardError.ReadToEnd();
             if (!string.IsNullOrWhiteSpace(stderr))
             {
-                log?.LogMessage(MessageImportance.Low, $"  Stderr: {stderr}");
+                log.LogMessage(MessageImportance.Low, $"  Stderr: {stderr}");
             }
 
             if (process.ExitCode != 0)
             {
-                log?.LogMessage(MessageImportance.Low, $"  Exit code: {process.ExitCode}");
+                log.LogMessage(MessageImportance.Low, $"  Exit code: {process.ExitCode}");
             }
 
             return process.ExitCode == 0;
         }
 #endif
+
+        internal static void SetUnixFileMode(TaskLoggingHelper log, uint? unixFileMode, string outputPath)
+        {
+#if NET
+            // Set file mode if not the default.
+            if (!OperatingSystem.IsWindows() && unixFileMode is { } mode and not /* 0644 */ 420)
+            {
+                log.LogMessage(MessageImportance.Low, $"Setting file mode {Convert.ToString(mode, 8)} on: {outputPath}");
+                File.SetUnixFileMode(outputPath, (UnixFileMode)mode);
+            }
+#endif
+        }
+
+        private static uint? GetUnixFileMode(string filePath)
+        {
+#if NET
+            return OperatingSystem.IsWindows() ? null : (uint)File.GetUnixFileMode(filePath);
+#else
+            return null;
+#endif
+        }
     }
 }
