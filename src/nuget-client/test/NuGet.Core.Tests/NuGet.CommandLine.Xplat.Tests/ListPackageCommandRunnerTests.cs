@@ -367,5 +367,48 @@ namespace NuGet.CommandLine.Xplat.Tests
                 Assert.Equal(includeTransitivePositives ? 1 : 0, allPackages.First().TransitivePackages.Count());
             }
         }
+
+        [Fact]
+        public async Task GetPackageMetadataAsync_WithEmptyPackageSources_DoesNotThrowDivideByZero()
+        {
+            // Arrange
+            var packages = new FrameworkPackages("net40");
+            var topLevelPackages = new List<InstalledPackageReference>
+            {
+                ListPackageTestHelper.CreateInstalledPackageReference("TestPackage")
+            };
+            packages.TopLevelPackages = topLevelPackages;
+            var allPackages = new List<FrameworkPackages> { packages };
+
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            using TextWriter consoleOut = new StringWriter(output);
+            using TextWriter consoleError = new StringWriter(error);
+
+            // Create ListPackageArgs with empty packageSources list to trigger the divide by zero scenario
+            var listPackageArgs = new ListPackageArgs(
+                path: "",
+                packageSources: new List<PackageSource>(), // Empty package sources - this would cause divide by zero
+                frameworks: new List<string>(),
+                ReportType.Outdated, // This will trigger the code path that calls GetPackageMetadataAsync
+                new ListPackageConsoleRenderer(consoleOut, consoleError),
+                includeTransitive: false,
+                prerelease: false,
+                highestPatch: false,
+                highestMinor: false,
+                auditSources: null,
+                logger: new Mock<ILogger>().Object,
+                CancellationToken.None);
+
+            var listPackageRunner = new ListPackageCommandRunner();
+
+            // Act & Assert - Call the method directly since it's now internal
+            Exception exception = await Record.ExceptionAsync(async () =>
+            {
+                await listPackageRunner.GetPackageMetadataAsync(allPackages, listPackageArgs);
+            });
+
+            Assert.Null(exception);
+        }
     }
 }

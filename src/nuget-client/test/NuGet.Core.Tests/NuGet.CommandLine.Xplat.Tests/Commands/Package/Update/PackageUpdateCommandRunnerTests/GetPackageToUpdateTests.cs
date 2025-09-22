@@ -3,7 +3,7 @@
 
 #nullable enable
 
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +28,9 @@ public class GetPackageToUpdateTests
 {
     private readonly ITestOutputHelper _output;
 
+    private readonly IReadOnlyList<string> _anyPackageSourceMapping = It.IsAny<IReadOnlyList<string>>();
+    private static PackageSourceMapping DisabledPackageSourceMapping => new(new Dictionary<string, IReadOnlyList<string>>());
+
     public GetPackageToUpdateTests(ITestOutputHelper output)
     {
         _output = output;
@@ -50,16 +53,17 @@ public class GetPackageToUpdateTests
             })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
+
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
             [package],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
@@ -89,10 +93,11 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Contoso.Utils", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Contoso.Utils", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("3.4.5"));
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
 
         var sourceCacheContext = new SourceCacheContext();
         var logger = new Mock<ILoggerWithColor>();
@@ -101,9 +106,8 @@ public class GetPackageToUpdateTests
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
             [package],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
@@ -133,16 +137,17 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
+
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
             [package],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
@@ -172,65 +177,25 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Contoso.Utils", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Contoso.Utils", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((NuGetVersion?)null);
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
+
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
             [package],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
         packagesToUpdate.Should().BeEmpty();
         logger.Invocations.Count.Should().BeGreaterThan(0);
-    }
-
-    [Fact]
-    public async Task RequestPackageNotReferencedByProject_ReturnsEmptyAndLogsError()
-    {
-        // Arrange
-        Pkg package = new()
-        {
-            Id = "NotReferenced.Package",
-            VersionRange = new VersionRange(new NuGetVersion("1.2.3"))
-        };
-
-        // Create a package spec that references a different package
-        PackageSpec packageSpec = new TestPackageSpecFactory(builder =>
-        {
-            builder.WithProperty("TargetFramework", "net9.0")
-                   .WithItem("PackageReference", "Contoso.Utils", [new("Version", "1.0.0")]);
-        })
-            .Build();
-
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        var logger = new Mock<ILoggerWithColor>();
-
-        // Act
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
-            [package],
-            packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
-            logger.Object,
-            CancellationToken.None);
-
-        // Assert
-        packagesToUpdate.Should().BeEmpty();
-
-        // Verify that an error was logged
-        logger.Verify(
-            l => l.LogMinimal(
-                It.Is<string>(message => message.Contains("NotReferenced.Package") && message.Contains("not referenced")),
-                It.IsAny<ConsoleColor>()),
-            Times.Once);
     }
 
     [Fact]
@@ -257,10 +222,11 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Fabrikam.Tools", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Fabrikam.Tools", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("2.1.0"));
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
 
         var logger = new Mock<ILoggerWithColor>();
 
@@ -268,9 +234,8 @@ public class GetPackageToUpdateTests
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
             [package1, package2],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
@@ -288,16 +253,10 @@ public class GetPackageToUpdateTests
     }
 
     [Fact]
-    public async Task RequestMultiplePackagesWithOneError_ReturnsEmpty()
+    public async Task RequestPackageUpdateNotReferencedByProject_ReturnsEmpty()
     {
         // Arrange
-        Pkg package1 = new()
-        {
-            Id = "Contoso.Utils",
-            VersionRange = new VersionRange(new NuGetVersion("1.2.3"))
-        };
-
-        Pkg package2 = new()
+        Pkg package = new()
         {
             Id = "NotReferenced.Package",
             VersionRange = new VersionRange(new NuGetVersion("1.0.0"))
@@ -310,21 +269,21 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
+
         var logger = new Mock<ILoggerWithColor>();
 
         // Act
         var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
-            [package1, package2],
+            [package],
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
         packagesToUpdate.Should().BeEmpty();
-        logger.Invocations.Count.Should().BeGreaterThan(0);
     }
 
     [Fact]
@@ -339,33 +298,33 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package1", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package1", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("1.2.3"));
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package2", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package2", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("2.1.0"));
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
 
         var logger = new Mock<ILoggerWithColor>();
 
-        // Act - Pass empty list to trigger "update all packages" behavior
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
-            [],
+        // Act
+        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        packagesToUpdate.Should().HaveCount(2);
+        result.packagesInProject.Should().Be(2);
+        result.packagesToUpdate.Should().HaveCount(2);
 
-        var package1Update = packagesToUpdate.First(p => p.Package.Id == "Test.Package1");
+        var package1Update = result.packagesToUpdate.First(p => p.Package.Id == "Test.Package1");
         package1Update.Package.CurrentVersion.ToString().Should().Be("[1.0.0, )");
         package1Update.Package.NewVersion.ToString().Should().Be("[1.2.3, )");
 
-        var package2Update = packagesToUpdate.First(p => p.Package.Id == "Test.Package2");
+        var package2Update = result.packagesToUpdate.First(p => p.Package.Id == "Test.Package2");
         package2Update.Package.CurrentVersion.ToString().Should().Be("[2.0.0, )");
         package2Update.Package.NewVersion.ToString().Should().Be("[2.1.0, )");
 
@@ -384,29 +343,29 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package1", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package1", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("1.2.3"));
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package2", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package2", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("2.1.0")); // Same as current version
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
 
         var logger = new Mock<ILoggerWithColor>();
 
-        // Act - Pass empty list to trigger "update all packages" behavior
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
-            [],
+        // Act
+        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        packagesToUpdate.Should().HaveCount(1);
+        result.packagesInProject.Should().Be(2);
+        result.packagesToUpdate.Should().HaveCount(1);
 
-        var packageUpdate = packagesToUpdate.First();
+        var packageUpdate = result.packagesToUpdate.First();
         packageUpdate.Package.Id.Should().Be("Test.Package1");
         packageUpdate.Package.CurrentVersion.ToString().Should().Be("[1.0.0, )");
         packageUpdate.Package.NewVersion.ToString().Should().Be("[1.2.3, )");
@@ -426,27 +385,27 @@ public class GetPackageToUpdateTests
         })
             .Build();
 
-        var versionChooser = new Mock<IVersionChooser>(MockBehavior.Strict);
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package1", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        var packageUpdateIO = new Mock<IPackageUpdateIO>(MockBehavior.Strict);
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package1", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("1.2.3")); // Same as current version
-        versionChooser
-            .Setup(v => v.GetLatestVersionAsync("Test.Package2", It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
+        packageUpdateIO
+            .Setup(v => v.GetLatestVersionAsync("Test.Package2", false, _anyPackageSourceMapping, It.IsAny<ILogger>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new NuGetVersion("2.1.0")); // Same as current version
+        packageUpdateIO.Setup(v => v.GetPackageSourceMapping()).Returns(DisabledPackageSourceMapping);
 
         var logger = new Mock<ILoggerWithColor>();
 
-        // Act - Pass empty list to trigger "update all packages" behavior
-        var packagesToUpdate = await PackageUpdateCommandRunner.SelectPackagesToUpdateAsync(
-            [],
+        // Act
+        var result = await PackageUpdateCommandRunner.SelectAllPackagesWithUpdatesAsync(
             packageSpec,
-            versionChooser.Object,
-            NullSettings.Instance,
             logger.Object,
+            packageUpdateIO.Object,
             CancellationToken.None);
 
         // Assert
-        packagesToUpdate.Should().BeEmpty();
+        result.packagesInProject.Should().Be(2);
+        result.packagesToUpdate.Should().BeEmpty();
         logger.Invocations.Count.Should().Be(0);
     }
 }
