@@ -116,7 +116,11 @@ while :; do
       shift
       ;;
     --with-packages)
-      psbDir=$2
+      psbDir="$(cd -P "$2" && pwd)"
+      if [ ! -d "$psbDir" ]; then
+          echo "Custom previously built packages directory '$psbDir' does not exist"
+          exit 1
+      fi
       shift
       ;;
     *)
