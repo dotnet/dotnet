@@ -20,13 +20,10 @@ Reference notes:
 > * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
 > * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
 
-### Additional Runtime Downloads
-
-For runtime-only downloads (without the SDK), you can find additional formats and detailed instructions in the [.NET Runtime dogfooding documentation](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#daily-builds-table). The runtime versions correspond exactly to the SDK versions shown in this table - they are built together and have matching version numbers.
-
 #### Runtime and SDK Relationship
 
-The runtime and SDK builds are aligned within the same release. For any given SDK version listed in the table above, there is a corresponding runtime with the same version number that was built together with that SDK.
+- For the 1xx band, the runtime and SDK are built together in the same build. They will differ on patch version (e.g. SDK version 10.0.100 == runtime patch version 10.0.0). The build suffix (e.g. -rc2.1234.105) suffix will always match.
+- For the 2xx and later bands, the 1xx runtime flows to 2xx+. The version of the runtime that will be used in the 2xx SDK can be found in sdk's [eng/Version.Details.xml file](/src/sdk/eng/Version.Details.xml). Look for the version of the `Microsoft.NETCore.App.Ref` dependency.
 
 #### Manually construct download links:
 
@@ -36,7 +33,7 @@ The runtime and SDK builds are aligned within the same release. For any given SD
 **Runtime example (for dotnet-runtime msi for win-x64):**
 > `https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-win-x64.exe`
 
-Where `<version>` is the same for both SDK and runtime to ensure compatibility. You can get the current version numbers from the version badge links or productCommit files in the table above.
+Where `<version>` is the same for both SDK and runtime. You can get the current version numbers from the version badge links or productCommit files in the table above.
 
 [win-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
 [win-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x64.txt
