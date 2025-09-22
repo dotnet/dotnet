@@ -1,304 +1,304 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!-- https://learn.microsoft.com/dotnet/fundamentals/package-validation/diagnostic-ids -->
 <Suppressions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.IdentityModel.Tokens.EcdhKeyExchangeProvider</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-user-jwts/10.0.0-rc.1.25465.105/tools/net10.0/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-user-jwts/10.0.0-rc.1.25465.105/tools/net10.0/any/Microsoft.IdentityModel.Tokens.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.ExperimentalAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.CollectionBuilderAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.CompilerFeatureRequiredAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.RequiredMemberAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/BuildHost-netcore/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsExternalInit</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
+    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.RequiresLocationAttribute</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
+    <Left>/msft/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.VisualStudio.SolutionPersistence.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Newtonsoft.Json.Serialization.DynamicValueProvider</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.ClientCertificateMethod</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.DelegationRule</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.Http503VerbosityLevel</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysDefaults</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysException</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.HttpSysRequestTimingType</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestDelegationFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestInfoFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestPropertyFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.IHttpSysRequestTimingFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.IServerDelegationFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.RequestQueueMode</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.UrlPrefix</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.HttpSys.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Builder.IISServerOptions</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Http.Features.IServerVariablesFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.IIS.BadHttpRequestException</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.IIS.HttpContextExtensions</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.IIS.IIISEnvironmentFeature</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Microsoft.AspNetCore.Server.IIS.IISServerDefaults</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/shared/Microsoft.AspNetCore.App/10.0.0-rc.1.25465.105/Microsoft.AspNetCore.Server.IIS.dll</Right>
+    <Left>/msft/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Left>
+    <Right>/sb/shared/Microsoft.AspNetCore.App/x.y.z/Microsoft.AspNetCore.Server.IIS.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Microsoft.IdentityModel.Tokens.SignatureProvider.Sign(System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32@)</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-user-jwts/10.0.0-rc.1.25465.105/tools/net10.0/any/Microsoft.IdentityModel.Tokens.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-user-jwts/10.0.0-rc.1.25465.105/tools/net10.0/any/Microsoft.IdentityModel.Tokens.dll</Right>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-user-jwts/x.y.z/tools/netx.y/any/Microsoft.IdentityModel.Tokens.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:System.ComponentModel.Composition.Primitives.ComposablePartException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/System.ComponentModel.Composition.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/System.ComponentModel.Composition.dll</Right>
+    <Left>/msft/sdk/x.y.z/System.ComponentModel.Composition.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.ComponentModel.Composition.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Humanizer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/Humanizer.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/Humanizer.dll</Right>
+    <Target>Humanizer, Version=x.y.z, Culture=neutral, PublicKeyToken=979442b78dfc278e</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Humanizer.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Humanizer.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.Build.Locator, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9dff12846e04bfbd</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/Microsoft.Build.Locator.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/DotnetTools/dotnet-watch/10.0.100-rc.2.25465.105/tools/net10.0/any/Microsoft.Build.Locator.dll</Right>
+    <Target>Microsoft.Build.Locator, Version=x.y.z, Culture=neutral, PublicKeyToken=9dff12846e04bfbd</Target>
+    <Left>/msft/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Left>
+    <Right>/sb/sdk/x.y.z/DotnetTools/dotnet-watch/x.y.z/tools/netx.y/any/Microsoft.Build.Locator.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.ApplicationInsights, Version=2.23.0.29, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Microsoft.ApplicationInsights.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Microsoft.ApplicationInsights.dll</Right>
+    <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=31bf3856ad364e35</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0003</DiagnosticId>
-    <Target>Microsoft.ApplicationInsights, Version=2.23.0.449, Culture=neutral, PublicKeyToken=f23a46de0be5d6f3</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Microsoft.ApplicationInsights.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Microsoft.ApplicationInsights.dll</Right>
+    <Target>Microsoft.ApplicationInsights, Version=x.y.z, Culture=neutral, PublicKeyToken=f23a46de0be5d6f3</Target>
+    <Left>/msft/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Left>
+    <Right>/sb/sdk/x.y.z/Microsoft.ApplicationInsights.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonReader</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Bson.BsonWriter</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.JsonReader</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.JsonTextReader</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.JsonTextWriter</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.JsonValidatingReader</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.JsonWriter</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Linq.JTokenReader</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:Newtonsoft.Json.Linq.JTokenWriter</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
+    <Left>/msft/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Left>
+    <Right>/sb/sdk/x.y.z/Sdks/Microsoft.NET.Sdk.Razor/tools/Newtonsoft.Json.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0008</DiagnosticId>
     <Target>T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo</Target>
-    <Left>/tmp/2bonaimv.uu2/msft/sdk/10.0.100-rc.2.25465.105/System.ComponentModel.Composition.dll</Left>
-    <Right>/tmp/2bonaimv.uu2/sb/sdk/10.0.100-rc.2.25465.105/System.ComponentModel.Composition.dll</Right>
+    <Left>/msft/sdk/x.y.z/System.ComponentModel.Composition.dll</Left>
+    <Right>/sb/sdk/x.y.z/System.ComponentModel.Composition.dll</Right>
   </Suppression>
 </Suppressions>

@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.Build.NoTargets">
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <UpdatedSuppressionFilePath>$(ArtifactsTestResultsDir)updated_ApiDiff.suppression</UpdatedSuppressionFilePath>
+    <UpdatedSuppressionFilePath>$(ArtifactsTestResultsDir)generated_ApiDiff.suppression</UpdatedSuppressionFilePath>
     <BaselineSuppressionFilePath>$(MSBuildThisFileDirectory)ApiDiff.suppression</BaselineSuppressionFilePath>
     <TestRoot>$([System.IO.Path]::GetTempPath())$([System.IO.Path]::GetRandomFileName())</TestRoot>
     <MsftPath>$(TestRoot)/msft</MsftPath>
@@ -63,6 +64,4 @@
       SuppressionFiles="$(BaselineSuppressionFilePath)" />
   </Target>
 
-  <Target Name="CreateManifestResourceNames" />
-  <Target Name="CoreCompile" />
 </Project>

@@ -101,17 +101,15 @@ public partial class SdkContentTests : SdkTests
         DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
         try
         {
-            string baselinePath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir);
-            string baselineSuppressionFilePath = Path.Combine(baselinePath, "ApiDiff.suppression");
-            string updatedSuppressionFilePath = Path.Combine(Config.LogsDirectory, "updated_ApiDiff.suppression");
+            string baselineSuppressionPath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir, "ApiDiff.suppression");
+            string generatedSuppressionPath = Path.Combine(Config.LogsDirectory, "generated_ApiDiff.suppression");
 
-            string normalizedBaseline = Path.Combine(tempDir.FullName, "normalized_baselineApiDiff.suppression");
-            File.WriteAllText(normalizedBaseline, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(baselineSuppressionFilePath)));
+            Assert.True(File.Exists(generatedSuppressionPath), $"Generated API diff suppression file does not exist at path: {generatedSuppressionPath}");
 
-            string normalizedUpdated = Path.Combine(tempDir.FullName, "normalized_updatedApiDiff.suppression");
-            File.WriteAllText(normalizedUpdated, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(updatedSuppressionFilePath)));
+            string updatedSuppressionPath = Path.Combine(Config.LogsDirectory, "updatedApiDiff.suppression");
+            File.WriteAllText(updatedSuppressionPath, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(generatedSuppressionPath)));
 
-            BaselineHelper.CompareFiles(normalizedBaseline, normalizedUpdated, OutputHelper);
+            BaselineHelper.CompareFiles(baselineSuppressionPath, updatedSuppressionPath, OutputHelper);
         }
         finally
         {
