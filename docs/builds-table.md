@@ -20,8 +20,23 @@ Reference notes:
 > * [Host, Host FX Resolver, and Shared Framework](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#nightly-builds-table)
 > * [ASP.NET Core Shared Framework](https://github.com/aspnet/AspNetCore/blob/main/docs/DailyBuilds.md)
 
-#### Manually construct a link to download an SDK msi (example for dotnet-sdk msi for win-x64):
+### Additional Runtime Downloads
+
+For runtime-only downloads (without the SDK), you can find additional formats and detailed instructions in the [.NET Runtime dogfooding documentation](https://github.com/dotnet/runtime/blob/main/docs/project/dogfooding.md#daily-builds-table). The runtime versions correspond exactly to the SDK versions shown in this table - they are built together and have matching version numbers.
+
+#### Runtime and SDK Relationship
+
+The runtime and SDK builds are aligned within the same release. For any given SDK version listed in the table above, there is a corresponding runtime with the same version number that was built together with that SDK.
+
+#### Manually construct download links:
+
+**SDK example (for dotnet-sdk msi for win-x64):**
 > `https://ci.dot.net/public/Sdk/<version>/dotnet-sdk-<version>-win-x64.exe`
+
+**Runtime example (for dotnet-runtime msi for win-x64):**
+> `https://ci.dot.net/public/Runtime/<version>/dotnet-runtime-<version>-win-x64.exe`
+
+Where `<version>` is the same for both SDK and runtime to ensure compatibility. You can get the current version numbers from the version badge links or productCommit files in the table above.
 
 [win-x64-badge-main]: https://aka.ms/dotnet/10.0.1xx/daily/win_x64_Release_version_badge.svg?no-cache
 [win-x64-version-main]: https://aka.ms/dotnet/10.0.1xx/daily/productCommit-win-x64.txt
