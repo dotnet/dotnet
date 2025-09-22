@@ -9,11 +9,18 @@ namespace NuGet.CommandLine.XPlat
     internal interface ILoggerWithColor : ILogger
     {
         /// <summary>
-        /// Logs a minimal level message to the console with the specified text and foreground color. 
-        /// This method writes the message directly without a newline character at the end.
+        /// Logs a minimal level message to the console with the specified text and foreground color.
         /// </summary>
         /// <param name="data">The message text to be logged.</param>
         /// <param name="color">The ConsoleColor value to set the text color.</param>
         void LogMinimal(string data, ConsoleColor color);
+
+        /// <summary>
+        /// Log a message directly to the console with the specified text and foreground color.
+        /// It does not add a newline character at the end of the message.
+        /// </summary>
+        /// <param name="data">The message text to be logged.</param>
+        /// <param name="color">The ConsoleColor value to set the text color.</param>
+        void LogInline(string data, ConsoleColor color);
     }
 }
