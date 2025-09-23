@@ -71,6 +71,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         [Required]
         public ITaskItem[] SourceFiles { get; set; }
 
+        public string[] SuppressSpecificWarnings { get; set; }
+
         [Required]
         public string WixpackWorkingDir { get; set; }
 
@@ -331,6 +333,15 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 foreach (var culture in Cultures)
                 {
                     commandLineArgs.Add($"-culture {culture}");
+                }
+            }
+
+            // Add each Warning from SuppressSpecificWarnings array
+            if (SuppressSpecificWarnings != null && SuppressSpecificWarnings.Length > 0)
+            {
+                foreach (var warning in SuppressSpecificWarnings)
+                {
+                    commandLineArgs.Add($"-sw{warning}");
                 }
             }
 
