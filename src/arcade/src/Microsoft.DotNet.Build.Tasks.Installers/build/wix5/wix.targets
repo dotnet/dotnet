@@ -340,6 +340,7 @@
       <CandleVariables Include="BuildVersion" Value="$(MsiVersionString)" />
       <CandleVariables Include="NugetVersion" Value="$(Version)" />
       <CandleVariables Include="InstallerPlatform" Value="$(MsiArch)" />
+      <CandleVariables Include="Platform" Value="$(MsiArch)" />
       <CandleVariables Include="TargetArchitectureDescription" Value="$(InstallerTargetArchitecture)$(CrossArchContentsBuildPart)" />
       <CandleVariables Include="UpgradeCode" Value="$(UpgradeCode)" />
       <CandleVariables Include="MajorUpgradeSchedule" Value="$(MajorUpgradeSchedule)" Condition="'$(MajorUpgradeSchedule)' != ''" />
@@ -379,7 +380,6 @@
       IgnoreStandardErrorWarningFormat="true"
       RetryDelayBase="2" />
 
-    <!-- TODO this fails on preprocessor directives -->
     <CreateWixBuildWixpack
       Cultures="en-us"
       DefineConstants="@(CandleVariables->'%(Identity)=%(Value)')"
