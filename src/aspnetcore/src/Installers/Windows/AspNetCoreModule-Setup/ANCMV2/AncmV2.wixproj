@@ -5,7 +5,6 @@
     <IsShipping>true</IsShipping>
     <ProjectGuid>f9bacb48-3bd7-4ec2-ae31-664e8703ec12</ProjectGuid>
     <OutputType>Package</OutputType>
-    <OutputName>$(Name)_$(Platform)</OutputName>
     <OutputName>aspnetcoremodule_$(Platform)_en_v2_$(_ProductVersionForInstallers)</OutputName>
     <GenerateRandomNamespaceGuid>true</GenerateRandomNamespaceGuid>
     <SchemaVersion>2.0</SchemaVersion>
