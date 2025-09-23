@@ -8,7 +8,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 
 <!-- component list beginning -->
 - `src/arcade`  
-*[dotnet/arcade@1df8dfd](https://github.com/dotnet/arcade/tree/1df8dfdfc8068e5180687a3079427b120de18eed)*
+*[dotnet/arcade@4bd1c6c](https://github.com/dotnet/arcade/tree/4bd1c6c93b5a3b8bc864d2863469c3f2e489d0af)*
 - `src/aspire`  
 *[_git/dotnet-aspire@48e42f5](https://dev.azure.com/dnceng/internal/_git/dotnet-aspire/?version=GC48e42f59d64d84b404e904996a9ed61f2a17a569)*
 - `src/aspnetcore`  
@@ -32,7 +32,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/fsharp`  
 *[dotnet/fsharp@fc5e9ed](https://github.com/dotnet/fsharp/tree/fc5e9eda234e2b69aa479f4f83faddc31fdd4da7)*
 - `src/installer`  
-*[dotnet/installer@ad3b77d](https://github.com/dotnet/installer/tree/ad3b77db5a3c6f91617021ec6d830e3f5f0e2a19)*
+*[dotnet/installer@daced64](https://github.com/dotnet/installer/tree/daced641bb1d6ebe4974c4632b4c06f615e77576)*
 - `src/msbuild`  
 *[dotnet/msbuild@fda44ee](https://github.com/dotnet/msbuild/tree/fda44ee81fc258f85338d98ac3f6064df9963a3c)*
 - `src/nuget-client`  
