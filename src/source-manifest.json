@@ -49,10 +49,10 @@
       "commitSha": "8414d1e1025bbfaca0829a595d2654836fd0034b"
     },
     {
-      "barId": 283755,
+      "barId": 283955,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "c4001e52c6775e67f2fc851765bdfbfa775d8448"
+      "commitSha": "984837bababb542c616bc05ac56b33eeec933818"
     },
     {
       "barId": 283924,
@@ -73,10 +73,10 @@
       "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
     },
     {
-      "barId": 283227,
+      "barId": 284076,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "b8eec280d71cf99fb2a0771225bbb4932d15eaa1"
+      "commitSha": "a01d4a05fe85952de3db03a745fab6f33e1ba12b"
     },
     {
       "barId": 283851,
