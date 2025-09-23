@@ -6,34 +6,34 @@ This file should be imported by eng/Versions.props
 <Project>
   <PropertyGroup>
     <!-- dotnet/dotnet dependencies -->
-    <MicrosoftBclAsyncInterfacesPackageVersion>10.0.0-rc.1.25469.103</MicrosoftBclAsyncInterfacesPackageVersion>
-    <MicrosoftBuildPackageVersion>18.0.0-preview-25469-103</MicrosoftBuildPackageVersion>
-    <MicrosoftBuildFrameworkPackageVersion>18.0.0-preview-25469-103</MicrosoftBuildFrameworkPackageVersion>
-    <MicrosoftBuildTasksCorePackageVersion>18.0.0-preview-25469-103</MicrosoftBuildTasksCorePackageVersion>
-    <MicrosoftBuildUtilitiesCorePackageVersion>18.0.0-preview-25469-103</MicrosoftBuildUtilitiesCorePackageVersion>
-    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-2.25469.103</MicrosoftCodeAnalysisCSharpPackageVersion>
-    <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.25469.103</MicrosoftDeploymentDotNetReleasesPackageVersion>
-    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25469.103</MicrosoftDotNetArcadeSdkPackageVersion>
-    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25469.103</MicrosoftDotNetHelixSdkPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsDependencyInjectionPackageVersion>
-    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
-    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsDependencyModelPackageVersion>
-    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
-    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
-    <MicrosoftExtensionsHttpPackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsHttpPackageVersion>
-    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.0-rc.1.25469.103</MicrosoftExtensionsLoggingConsolePackageVersion>
-    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25469.103</MicrosoftNetCompilersToolsetPackageVersion>
-    <MicrosoftNETSdkWorkloadManifestReaderPackageVersion>10.0.100-rc.2.25469.103</MicrosoftNETSdkWorkloadManifestReaderPackageVersion>
-    <MicrosoftTemplateEngineAuthoringTasksPackageVersion>11.0.100-alpha.1.25469.103</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
-    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25469.103</SystemCollectionsImmutablePackageVersion>
-    <SystemCommandLinePackageVersion>2.0.0-rc.1.25469.103</SystemCommandLinePackageVersion>
-    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25469.103</SystemFormatsAsn1PackageVersion>
-    <SystemIOPackagingPackageVersion>10.0.0-rc.1.25469.103</SystemIOPackagingPackageVersion>
-    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25469.103</SystemReflectionMetadataPackageVersion>
-    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25469.103</SystemSecurityCryptographyPkcsPackageVersion>
-    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25469.103</SystemSecurityCryptographyXmlPackageVersion>
-    <SystemTextEncodingsWebPackageVersion>10.0.0-rc.1.25469.103</SystemTextEncodingsWebPackageVersion>
-    <SystemTextJsonPackageVersion>10.0.0-rc.1.25469.103</SystemTextJsonPackageVersion>
+    <MicrosoftBclAsyncInterfacesPackageVersion>10.0.0-rc.1.25472.101</MicrosoftBclAsyncInterfacesPackageVersion>
+    <MicrosoftBuildPackageVersion>18.0.0-preview-25472-101</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildFrameworkPackageVersion>18.0.0-preview-25472-101</MicrosoftBuildFrameworkPackageVersion>
+    <MicrosoftBuildTasksCorePackageVersion>18.0.0-preview-25472-101</MicrosoftBuildTasksCorePackageVersion>
+    <MicrosoftBuildUtilitiesCorePackageVersion>18.0.0-preview-25472-101</MicrosoftBuildUtilitiesCorePackageVersion>
+    <MicrosoftCodeAnalysisCSharpPackageVersion>5.0.0-2.25472.101</MicrosoftCodeAnalysisCSharpPackageVersion>
+    <MicrosoftDeploymentDotNetReleasesPackageVersion>2.0.0-preview.1.25472.101</MicrosoftDeploymentDotNetReleasesPackageVersion>
+    <MicrosoftDotNetArcadeSdkPackageVersion>11.0.0-beta.25472.101</MicrosoftDotNetArcadeSdkPackageVersion>
+    <MicrosoftDotNetHelixSdkPackageVersion>11.0.0-beta.25472.101</MicrosoftDotNetHelixSdkPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsDependencyInjectionPackageVersion>
+    <MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsDependencyInjectionAbstractionsPackageVersion>
+    <MicrosoftExtensionsDependencyModelPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsDependencyModelPackageVersion>
+    <MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsFileProvidersAbstractionsPackageVersion>
+    <MicrosoftExtensionsFileSystemGlobbingPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsFileSystemGlobbingPackageVersion>
+    <MicrosoftExtensionsHttpPackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsHttpPackageVersion>
+    <MicrosoftExtensionsLoggingConsolePackageVersion>10.0.0-rc.1.25472.101</MicrosoftExtensionsLoggingConsolePackageVersion>
+    <MicrosoftNetCompilersToolsetPackageVersion>5.0.0-2.25472.101</MicrosoftNetCompilersToolsetPackageVersion>
+    <MicrosoftNETSdkWorkloadManifestReaderPackageVersion>10.0.100-rc.2.25472.101</MicrosoftNETSdkWorkloadManifestReaderPackageVersion>
+    <MicrosoftTemplateEngineAuthoringTasksPackageVersion>11.0.100-alpha.1.25472.101</MicrosoftTemplateEngineAuthoringTasksPackageVersion>
+    <SystemCollectionsImmutablePackageVersion>10.0.0-rc.1.25472.101</SystemCollectionsImmutablePackageVersion>
+    <SystemCommandLinePackageVersion>2.0.0-rc.1.25472.101</SystemCommandLinePackageVersion>
+    <SystemFormatsAsn1PackageVersion>10.0.0-rc.1.25472.101</SystemFormatsAsn1PackageVersion>
+    <SystemIOPackagingPackageVersion>10.0.0-rc.1.25472.101</SystemIOPackagingPackageVersion>
+    <SystemReflectionMetadataPackageVersion>10.0.0-rc.1.25472.101</SystemReflectionMetadataPackageVersion>
+    <SystemSecurityCryptographyPkcsPackageVersion>10.0.0-rc.1.25472.101</SystemSecurityCryptographyPkcsPackageVersion>
+    <SystemSecurityCryptographyXmlPackageVersion>10.0.0-rc.1.25472.101</SystemSecurityCryptographyXmlPackageVersion>
+    <SystemTextEncodingsWebPackageVersion>10.0.0-rc.1.25472.101</SystemTextEncodingsWebPackageVersion>
+    <SystemTextJsonPackageVersion>10.0.0-rc.1.25472.101</SystemTextJsonPackageVersion>
     <!-- _git/dotnet-symuploader dependencies -->
     <MicrosoftSymbolUploaderPackageVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderPackageVersion>
     <MicrosoftSymbolUploaderBuildTaskPackageVersion>2.0.0-preview.1.23470.14</MicrosoftSymbolUploaderBuildTaskPackageVersion>
