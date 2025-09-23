@@ -62,6 +62,8 @@
       GenerateSuppressionFile="true"
       SuppressionOutputFile="$(UpdatedSuppressionFilePath)"
       SuppressionFiles="$(BaselineSuppressionFilePath)" />
+
+    <RemoveDir Directories="$(MsftPath);$(SbPath)" />
   </Target>
 
 </Project>
