@@ -157,6 +157,8 @@ internal partial class RazorProjectSystemInProcess
     {
         if (await IsCohostingActiveAsync(cancellationToken))
         {
+            // In cohosting we don't wait for anything, we just update the Razor doc and assume that Roslyn will do the right things
+            await updater();
             return;
         }
 
