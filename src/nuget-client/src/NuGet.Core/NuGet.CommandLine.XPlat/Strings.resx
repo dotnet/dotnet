@@ -988,9 +988,6 @@ NuGet requires HTTPS sources. To use HTTP sources, you must explicitly set 'allo
   <data name="PackageUpdate_PreviewRestoreFailed" xml:space="preserve">
     <value>Preview restore with updated packages was not successful. Force mode is not yet available.</value>
   </data>
-  <data name="Unsupported_PackageSourceMapping" xml:space="preserve">
-    <value>Unsupported: Projects using Package Source Mapping are not yet supported</value>
-  </data>
   <data name="Error_CouldNotFindPackageVersionForCpmPackage" xml:space="preserve">
     <value>Central Package Management configuration error: Could not find PackageVersion for package {0}</value>
     <comment>0 - a package name
@@ -1006,11 +1003,6 @@ Do not translate "PackageVersion"</comment>
   </data>
   <data name="PackageUpdateCommand_ProjectOptionDescription" xml:space="preserve">
     <value>Path to a project or solution file, or a directory.</value>
-  </data>
-  <data name="Error_PackageNotReferenced" xml:space="preserve">
-    <value>The package {0} is not referenced by project {1}</value>
-    <comment>0 - The package ID
-1 - The project path</comment>
   </data>
   <data name="Warning_AlreadyHighestVersion" xml:space="preserve">
     <value>The package {0} is already referencing the highest version {1} in project {2}</value>
@@ -1099,5 +1091,17 @@ Do not translate "PackageVersion"</comment>
   <data name="PackageUpdate_AuditModeIsDirect" xml:space="preserve">
     <value>NuGetAuditMode is set to direct, which means that transitive packages with known vulnerabilities will not be updated. See https://aka.ms/nuget/audit for more information.</value>
     <comment>{Locked="NuGetAuditMode"}</comment>
+  </data>
+  <data name="Error_PackageSourceMappingNotFound" xml:space="preserve">
+    <value>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</value>
+    <comment>{0} - package id</comment>
+  </data>
+  <data name="Error_CannotUpgradeAutoReferencedPackage" xml:space="preserve">
+    <value>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</value>
+    <comment>{0} - project referencing the package
+{1} - package id</comment>
+  </data>
+  <data name="ArgumentNullOrEmpty" xml:space="preserve">
+    <value>Argument cannot be null or empty.</value>
   </data>
 </root>
