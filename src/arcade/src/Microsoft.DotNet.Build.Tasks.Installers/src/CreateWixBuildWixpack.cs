@@ -419,7 +419,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
             }
 
-            string commandLine = "wix.exe build " + string.Join(" ", commandLineArgs);
+            // The command lines can be quite long, and cmd would reject them. Wix does support
+            // response files, so create a response file (create.rsp) to package alongside.
+            File.WriteAllText(Path.Combine(WixpackWorkingDir, "create.rsp"), string.Join(System.Environment.NewLine, commandLineArgs)); 
+
+            string commandLine = "wix.exe build @create.rsp";
 
             StringBuilder createCmdFileContents = new();
             createCmdFileContents.AppendLine("@echo off");
