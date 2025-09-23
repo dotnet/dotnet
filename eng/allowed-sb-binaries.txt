@@ -9,6 +9,7 @@ artifacts/
 .git/
 .packages/
 prereqs/packages/
+MicroBuild/ # This is introduced in real and test signed CI builds. Remove with https://github.com/dotnet/arcade/issues/15731
 
 **/*.bmp
 **/*.doc

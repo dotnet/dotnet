@@ -15,10 +15,7 @@ public class ViewComponentTagHelperTargetExtensionTest
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
             .TypeName("__Generated__TagCloudViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "TagCloud"
-            })
+            .Metadata(new ViewComponentMetadata("TagCloud", TypeNameObject.From("TagCloud")))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Int32")
@@ -28,11 +25,7 @@ public class ViewComponentTagHelperTargetExtensionTest
 
         var extension = new ViewComponentTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var node = new ViewComponentTagHelperIntermediateNode()
-        {
-            ClassName = "__Generated__TagCloudViewComponentTagHelper",
-            TagHelper = tagHelper
-        };
+        var node = new ViewComponentTagHelperIntermediateNode("__Generated__TagCloudViewComponentTagHelper", tagHelper);
 
         // Act
         extension.WriteViewComponentTagHelper(context, node);
@@ -70,10 +63,7 @@ public class __Generated__TagCloudViewComponentTagHelper : Microsoft.AspNetCore.
         // Arrange
         var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TestTagHelper", "TestAssembly")
             .TypeName("__Generated__TagCloudViewComponentTagHelper")
-            .Metadata(new ViewComponentMetadata()
-            {
-                Name = "TagCloud"
-            })
+            .Metadata(new ViewComponentMetadata("TagCloud", TypeNameObject.From("TagCloud")))
             .BoundAttributeDescriptor(attribute => attribute
                 .Name("Foo")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
@@ -84,11 +74,7 @@ public class __Generated__TagCloudViewComponentTagHelper : Microsoft.AspNetCore.
 
         var extension = new ViewComponentTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
-        var node = new ViewComponentTagHelperIntermediateNode()
-        {
-            ClassName = "__Generated__TagCloudViewComponentTagHelper",
-            TagHelper = tagHelper
-        };
+        var node = new ViewComponentTagHelperIntermediateNode("__Generated__TagCloudViewComponentTagHelper", tagHelper);
 
         // Act
         extension.WriteViewComponentTagHelper(context, node);

@@ -18,22 +18,31 @@ namespace Microsoft.VisualStudio.Razor;
 #pragma warning restore RS0030 // Do not use banned APIs
 internal sealed class RazorAnalyzerAssemblyRedirector() : IRazorAnalyzerAssemblyRedirector
 {
-    private static readonly ImmutableArray<Type> s_compilerAssemblyTypes = [
+    private static readonly ImmutableArray<(string name, string path)> s_compilerAssemblyTypes = [
 
-        typeof(CodeAnalysis.Razor.CompilerFeatures), // Microsoft.CodeAnalysis.Razor.Compiler.dll
-        typeof(AspNetCore.Razor.ArgHelper), // Microsoft.AspNetCore.Razor.Utilities.Shared.dll
+        GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures)), // Microsoft.CodeAnalysis.Razor.Compiler
+        GetRedirectEntry(typeof(CodeAnalysis.Razor.CompilerFeatures), "Microsoft.NET.Sdk.Razor.SourceGenerators"),
+        GetRedirectEntry(typeof(AspNetCore.Razor.ArgHelper)), // Microsoft.AspNetCore.Razor.Utilities.Shared
 
         // The following dependencies will be provided by the Compiler ALC so its not strictly required to redirect them, but we do so for completeness. 
-        typeof(Microsoft.Extensions.ObjectPool.ObjectPool), // Microsoft.Extensions.ObjectPool.dll
-        typeof(ImmutableArray) // System.Collections.Immutable.dll
+        GetRedirectEntry(typeof(Microsoft.Extensions.ObjectPool.ObjectPool)), // Microsoft.Extensions.ObjectPool
+        GetRedirectEntry(typeof(ImmutableArray)) // System.Collections.Immutable
     ];
 
-    private static readonly FrozenDictionary<string, string> s_compilerAssemblyMap = s_compilerAssemblyTypes.ToFrozenDictionary(t => t.Assembly.GetName().Name!, t => GetAssemblyLocation(t.Assembly));
+    private static readonly FrozenDictionary<string, string> s_compilerAssemblyMap = s_compilerAssemblyTypes.ToFrozenDictionary(t => t.name, t => t.path);
 
     public string? RedirectPath(string fullPath)
     {
         var name = Path.GetFileNameWithoutExtension(fullPath);
         return s_compilerAssemblyMap.TryGetValue(name, out var path) ? path : null;
+    }
+
+    private static (string name, string path) GetRedirectEntry(Type type, string? overrideName = null)
+    {
+        return (
+            name: overrideName ?? type.Assembly.GetName().Name!,
+            path: GetAssemblyLocation(type.Assembly)
+            );
     }
 
     private static string GetAssemblyLocation(Assembly assembly)

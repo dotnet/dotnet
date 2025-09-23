@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -13,11 +12,9 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.Utilities;
-using Microsoft.NET.Sdk.Razor.SourceGenerators;
 
 namespace Microsoft.CodeAnalysis.Remote.Razor.ProjectSystem;
 
@@ -61,8 +58,8 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async ValueTask<ImmutableArray<TagHelperDescriptor>> GetTagHelpersAsync(CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (generatorResult is null)
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        if (generatorResult.IsDefault)
             return [];
 
         return [.. generatorResult.TagHelpers];
@@ -72,7 +69,13 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
     {
         if (document.Project != _project)
         {
-            throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
+            // We got asked for a document that doesn't belong to this project, but it could be that we are the result
+            // of re-running the generator (a "retry project") and the document they passed in is from the original project
+            // because it comes from the devenv side, so we can be a little lenient here. Since retry projects only exist
+            // early in a session, we should still catch coding errors with even basic manual testing.
+            document = _project.IsRetryProject() && _project.GetAdditionalDocument(document.Id) is { } retryDocument
+                    ? retryDocument
+                    : throw new ArgumentException(SR.Document_does_not_belong_to_this_project, nameof(document));
         }
 
         if (!document.IsRazorDocument())
@@ -141,30 +144,22 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
         return false;
     }
 
-    internal async Task<RazorCodeDocument?> GetCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    internal async Task<RazorCodeDocument> GetRequiredCodeDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (generatorResult is null)
-        {
-            return null;
-        }
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
 
-        return generatorResult.GetCodeDocument(documentSnapshot.FilePath);
+        Assumed.False(generatorResult.IsDefault);
+
+        return generatorResult.GetRequiredCodeDocument(documentSnapshot.FilePath);
     }
 
-    internal async Task<SourceGeneratedDocument?> GetGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
+    internal async Task<SourceGeneratedDocument> GetRequiredGeneratedDocumentAsync(IDocumentSnapshot documentSnapshot, CancellationToken cancellationToken)
     {
-        var generatorResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (generatorResult is null)
-        {
-            return null;
-        }
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: true, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
 
-        var hintName = generatorResult.GetHintName(documentSnapshot.FilePath);
+        Assumed.False(generatorResult.IsDefault);
 
-        var generatedDocument = await _project.TryGetSourceGeneratedDocumentFromHintNameAsync(hintName, cancellationToken).ConfigureAwait(false);
-
-        return generatedDocument ?? throw new InvalidOperationException("Couldn't get the source generated document for a hint name that we got from the generator?");
+        return await generatorResult.GetRequiredSourceGeneratedDocumentForRazorFilePathAsync(documentSnapshot.FilePath, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedDocumentUriAsync(Uri generatedDocumentUri, CancellationToken cancellationToken)
@@ -179,57 +174,28 @@ internal sealed class RemoteProjectSnapshot : IProjectSnapshot
 
     public async Task<RazorCodeDocument?> TryGetCodeDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
-        var runResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (runResult is null)
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        if (generatorResult.IsDefault)
         {
             return null;
         }
 
-        return runResult.GetFilePath(generatedDocumentHintName) is { } razorFilePath
-            ? runResult.GetCodeDocument(razorFilePath)
+        return generatorResult.GetRazorFilePathFromHintName(generatedDocumentHintName) is { } razorFilePath
+            ? generatorResult.GetCodeDocument(razorFilePath)
             : null;
     }
 
     public async Task<TextDocument?> TryGetRazorDocumentFromGeneratedHintNameAsync(string generatedDocumentHintName, CancellationToken cancellationToken)
     {
-        var runResult = await GetRazorGeneratorResultAsync(cancellationToken).ConfigureAwait(false);
-        if (runResult is null)
+        var generatorResult = await GeneratorRunResult.CreateAsync(throwIfNotFound: false, _project, SolutionSnapshot.SnapshotManager, cancellationToken).ConfigureAwait(false);
+        if (generatorResult.IsDefault)
         {
             return null;
         }
 
-        return runResult.GetFilePath(generatedDocumentHintName) is { } razorFilePath &&
-            _project.Solution.TryGetRazorDocument(razorFilePath, out var razorDocument)
+        return generatorResult.GetRazorFilePathFromHintName(generatedDocumentHintName) is { } razorFilePath &&
+            generatorResult.TryGetRazorDocument(razorFilePath, out var razorDocument)
                 ? razorDocument
                 : null;
-    }
-
-    private async Task<RazorGeneratorResult?> GetRazorGeneratorResultAsync(CancellationToken cancellationToken)
-    {
-        var result = await _project.GetSourceGeneratorRunResultAsync(cancellationToken).ConfigureAwait(false);
-        if (result is null)
-        {
-            return null;
-        }
-
-        var runResult = result.Results.SingleOrDefault(r => r.Generator.GetGeneratorType().Assembly.Location == typeof(RazorSourceGenerator).Assembly.Location);
-        if (runResult.Generator is null)
-        {
-            return null;
-        }
-
-#pragma warning disable RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        if (!runResult.HostOutputs.TryGetValue(nameof(RazorGeneratorResult), out var objectResult) || objectResult is not RazorGeneratorResult generatorResult)
-        {
-            Debug.Fail($"""
-                No RazorGeneratorResult found in host outputs for project '{_project.Name}':
-                {string.Join(Environment.NewLine, runResult.Diagnostics)}
-                """);
-
-            return null;
-        }
-#pragma warning restore RSEXPERIMENTAL004 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-
-        return generatorResult;
     }
 }

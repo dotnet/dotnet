@@ -34,6 +34,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [MemberData(nameof(GetLanguages))]
     [Trait("SkipIfBuild", "CommunityArchitecture")] // Portable assets are not available for community architectures.
     [Trait("SkipIfBuild", "SourceOnlyUnofficialBuild")] // Portable assets are not available for source-only unofficial builds.
+    [Trait("Category", "RequiresPortableAssets")]
     public void VerifyConsoleTemplateComplexPortable(DotNetLanguage language)
     {
         // This uses the wrong portable RID for non linux platforms when running the tests without supplying
@@ -174,6 +175,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
+    [Trait("Category", "RequiresPortableAssets")]
     public void VerifyMVCTemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(
@@ -185,6 +187,7 @@ public class SdkTemplateTests : IClassFixture<ScenarioTestFixture>
     [Theory]
     [InlineData(DotNetLanguage.CSharp)]
     [InlineData(DotNetLanguage.FSharp)]
+    [Trait("Category", "RequiresPortableAssets")]
     public void VerifyWebAPITemplate(DotNetLanguage language)
     {
         var newTest = new SdkTemplateTest(

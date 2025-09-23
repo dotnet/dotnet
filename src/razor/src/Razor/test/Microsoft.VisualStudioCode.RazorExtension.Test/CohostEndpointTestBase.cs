@@ -4,7 +4,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.LanguageServer.Test;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
+using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor;
 using Microsoft.VisualStudio.Composition;
@@ -18,10 +21,13 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
 {
     private IClientSettingsManager? _clientSettingsManager;
     private VSCodeRemoteServiceInvoker? _remoteServiceInvoker;
+    private IFilePathService? _filePathService;
+    private ISemanticTokensLegendService? _semanticTokensLegendService;
 
     private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
-
     private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
+    private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
+    private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
     /// <summary>
     /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
@@ -42,6 +48,10 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         AddDisposable(_remoteServiceInvoker);
 
         _clientSettingsManager = new ClientSettingsManager();
+
+        _filePathService = new VSCodeFilePathService(FeatureOptions);
+
+        _semanticTokensLegendService = new CohostSemanticTokensLegendService(new TestClientCapabilitiesService(new VSInternalClientCapabilities() { SupportsVisualStudioExtensions = false }));
     }
 
     private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()

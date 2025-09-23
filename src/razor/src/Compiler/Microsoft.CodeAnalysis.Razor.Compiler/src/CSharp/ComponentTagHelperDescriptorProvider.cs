@@ -17,11 +17,6 @@ namespace Microsoft.CodeAnalysis.Razor;
 
 internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    private static readonly SymbolDisplayFormat GloballyQualifiedFullNameTypeDisplayFormat =
-        SymbolDisplayFormat.FullyQualifiedFormat
-            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Included)
-            .WithMiscellaneousOptions(SymbolDisplayFormat.FullyQualifiedFormat.MiscellaneousOptions & (~SymbolDisplayMiscellaneousOptions.UseSpecialTypes));
-
     public override void Execute(TagHelperDescriptorProviderContext context)
     {
         ArgHelper.ThrowIfNull(context);
@@ -192,15 +187,15 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 var builder = new PropertyMetadata.Builder();
 
                 pb.Name = property.Name;
-                pb.ContainingType = containingSymbol.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
-                pb.TypeName = property.Type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
+                pb.ContainingType = containingSymbol.GetFullName();
+                pb.TypeName = property.Type.GetFullName();
                 pb.PropertyName = property.Name;
                 pb.IsEditorRequired = property.GetAttributes().Any(
                     static a => a.HasFullName("Microsoft.AspNetCore.Components.EditorRequiredAttribute"));
 
                 pb.CaseSensitive = false;
 
-                builder.GloballyQualifiedTypeName = property.Type.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat);
+                builder.GloballyQualifiedTypeName = property.Type.GetGloballyQualifiedFullName();
 
                 if (kind == PropertyKind.Enum)
                 {
@@ -427,7 +422,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
                 foreach (var constraintType in typeParameter.ConstraintTypes)
                 {
-                    constraints.Add(constraintType.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                    constraints.Add(constraintType.GetGloballyQualifiedFullName());
                 }
 
                 // CS0401: The new() constraint must be the last constraint specified.
@@ -458,7 +453,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                             withAttributes.Append('[');
                         }
 
-                        withAttributes.Append(attribute.AttributeClass.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                        withAttributes.Append(attribute.AttributeClass.GetGloballyQualifiedFullName());
                         withAttributes.Append('(');
 
                         var first = true;
@@ -476,7 +471,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                             if (arg.Kind == TypedConstantKind.Enum)
                             {
                                 withAttributes.Append("unchecked((");
-                                withAttributes.Append(arg.Type!.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                                withAttributes.Append(arg.Type!.GetGloballyQualifiedFullName());
                                 withAttributes.Append(')');
                                 withAttributes.Append(CSharp.SymbolDisplay.FormatPrimitive(arg.Value!, quoteStrings: true, useHexadecimalNumbers: true));
                                 withAttributes.Append(')');

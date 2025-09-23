@@ -35,7 +35,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
 
         var codeDocument = GetCodeDocument(string.Empty);
         _defaultTagHelperContext = codeDocument.GetRequiredTagHelperContext();
-        _defaultRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        _defaultRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
     }
 
     private RazorCodeDocument GetCodeDocument(string content)
@@ -224,7 +224,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     {
         // Arrange
         var owner = GetOwner("<input @$$></input>");
-        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true);
+        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: true, AutoInsertAttributeQuotes: false, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
 
         // Act
         var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions(owner, "@", "input", [], _defaultTagHelperContext, noAutoQuotesRazorCompletionOptions);
@@ -238,7 +238,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     {
         // Arrange
         var owner = GetOwner("<input @$$></input>");
-        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: false, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: false, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
 
         // Act
         var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions(owner, "@", "input", [], _defaultTagHelperContext, noAutoQuotesRazorCompletionOptions);
@@ -252,7 +252,7 @@ public class DirectiveAttributeCompletionItemProviderTest : RazorToolingIntegrat
     {
         // Arrange
         var owner = GetOwner("<input @bi$$nd=\"foo\"></input>");
-        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: false, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true);
+        var noAutoQuotesRazorCompletionOptions = new RazorCompletionOptions(SnippetsSupported: false, AutoInsertAttributeQuotes: true, CommitElementsWithSpace: true, UseVsCodeCompletionCommitCharacters: false);
 
         // Act
         var completions = DirectiveAttributeCompletionItemProvider.GetAttributeCompletions(owner, "@", "input", [], _defaultTagHelperContext, noAutoQuotesRazorCompletionOptions);
