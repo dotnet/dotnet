@@ -114,7 +114,7 @@ sourceOnly=false
 releaseManifest=''
 sourceRepository=''
 sourceVersion=''
-CUSTOM_PACKAGES_DIR=''
+customPackagesDir=''
 customSdkDir=''
 packagesDir="$scriptroot/prereqs/packages/"
 packagesArchiveDir="${packagesDir}archive/"
@@ -218,9 +218,9 @@ while [[ $# > 0 ]]; do
       shift
       ;;
     -with-packages)
-      CUSTOM_PACKAGES_DIR="$(cd -P "$2" && pwd)"
-      if [ ! -d "$CUSTOM_PACKAGES_DIR" ]; then
-          echo "Custom previously built packages directory '$CUSTOM_PACKAGES_DIR' does not exist"
+      customPackagesDir="$(cd -P "$2" && pwd)"
+      if [ ! -d "$customPackagesDir" ]; then
+          echo "Custom previously built packages directory '$customPackagesDir' does not exist"
           exit 1
       fi
       shift
@@ -410,11 +410,11 @@ if [[ "$sourceOnly" == "true" ]]; then
   fi
 
   # Support custom source built package locations
-  if [ "$CUSTOM_PACKAGES_DIR" != "" ]; then
+  if [ "$customPackagesDir" != "" ]; then
     if [ "$test" == "true" ]; then
-      properties+=( "/p:CustomSourceBuiltPackagesPath=$CUSTOM_PACKAGES_DIR" )
+      properties+=( "/p:CustomSourceBuiltPackagesPath=$customPackagesDir" )
     else
-      properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$CUSTOM_PACKAGES_DIR" )
+      properties+=( "/p:CustomPreviouslySourceBuiltPackagesPath=$customPackagesDir" )
     fi
   fi
 
@@ -424,7 +424,7 @@ if [[ "$sourceOnly" == "true" ]]; then
   fi
 
   # Initialize source-only toolset (includes custom SDK setup, MSBuild resolver, and source-built resolver)
-  source_only_toolset_init "$customSdkDir" "$CUSTOM_PACKAGES_DIR" "$binary_log" "$test" "${properties[@]}"
+  source_only_toolset_init "$customSdkDir" "$customPackagesDir" "$binary_log" "$test" "${properties[@]}"
 fi
 
 Build
