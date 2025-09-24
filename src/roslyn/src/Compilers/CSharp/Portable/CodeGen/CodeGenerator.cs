@@ -43,9 +43,6 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         // not 0 when in a protected region with a handler. 
         private int _tryNestingLevel;
 
-        // not 0 when emitting code in a catch filter
-        private int _inCatchFilterLevel;
-
         private readonly SynthesizedLocalOrdinalsDispenser _synthesizedLocalOrdinals = new SynthesizedLocalOrdinalsDispenser();
         private int _uniqueNameId;
 

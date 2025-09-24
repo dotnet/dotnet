@@ -186,7 +186,6 @@ static async IAsyncEnumerable<BuildData> BuildAllAsync(
     var maxParallel = options.MaxParallel;
     var tasks = new List<Task<BuildData>>(capacity: maxParallel);
     var outputSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    var completed = 0;
 
     do
     {
@@ -205,8 +204,7 @@ static async IAsyncEnumerable<BuildData> BuildAllAsync(
 
         var buildData = await completedTask.ConfigureAwait(false);
         yield return buildData;
-        completed++;
-    } while (completed < compilerCalls.Count);
+    } while (index < compilerCalls.Count);
 
     string GetOutputName(CompilerCall compilerCall)
     {

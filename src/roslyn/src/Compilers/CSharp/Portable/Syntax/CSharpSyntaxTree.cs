@@ -791,10 +791,19 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (greenNode.ContainsDiagnostics)
             {
-                return SyntaxTreeDiagnosticEnumerator.EnumerateDiagnostics(this, greenNode, position);
+                return EnumerateDiagnostics(greenNode, position);
             }
 
             return SpecializedCollections.EmptyEnumerable<Diagnostic>();
+        }
+
+        private IEnumerable<Diagnostic> EnumerateDiagnostics(GreenNode node, int position)
+        {
+            var enumerator = new SyntaxTreeDiagnosticEnumerator(this, node, position);
+            while (enumerator.MoveNext())
+            {
+                yield return enumerator.Current;
+            }
         }
 
         /// <summary>

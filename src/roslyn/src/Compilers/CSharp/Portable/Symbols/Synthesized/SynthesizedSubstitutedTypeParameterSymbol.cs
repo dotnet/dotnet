@@ -42,10 +42,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {
-            if (ContainingSymbol.Kind == SymbolKind.NamedType && !PropagateAttributes)
+            if (ContainingSymbol.Kind == SymbolKind.NamedType &&
+                _underlyingTypeParameter.OriginalDefinition is SourceMethodTypeParameterSymbol definition &&
+                ContainingSymbol.ContainingModule == definition.ContainingModule)
             {
-                var definition = _underlyingTypeParameter.OriginalDefinition;
-                if (ContainingSymbol.ContainingModule == definition.ContainingModule)
+                if (!_propagateAttributes)
                 {
                     foreach (CSharpAttributeData attr in definition.GetAttributes())
                     {
@@ -54,6 +55,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             AddSynthesizedAttribute(ref attributes, attr);
                         }
                     }
+                }
+                else
+                {
+                    Debug.Assert(false);
                 }
             }
 
@@ -65,11 +70,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
         }
 
-        private bool PropagateAttributes => _propagateAttributes || ContainingSymbol is SynthesizedMethodBaseSymbol { InheritsBaseMethodAttributes: true };
-
         public override ImmutableArray<CSharpAttributeData> GetAttributes()
         {
-            if (PropagateAttributes)
+            if (_propagateAttributes)
+            {
+                return _underlyingTypeParameter.GetAttributes();
+            }
+
+            if (ContainingSymbol is SynthesizedMethodBaseSymbol { InheritsBaseMethodAttributes: true })
             {
                 return _underlyingTypeParameter.GetAttributes();
             }
