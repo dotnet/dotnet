@@ -7,10 +7,10 @@
       "commitSha": "6275af47ebda0d394d4a5a401b77bc6f2304204a"
     },
     {
-      "barId": 284037,
+      "barId": 284250,
       "path": "aspnetcore",
       "remoteUri": "https://github.com/dotnet/aspnetcore",
-      "commitSha": "07545ad7f10472c54d54eb2aa4b0dbee44f3e795"
+      "commitSha": "b862c38c0df064f649ebd75ff1778a7566f6b956"
     },
     {
       "barId": 279211,
@@ -55,28 +55,28 @@
       "commitSha": "984837bababb542c616bc05ac56b33eeec933818"
     },
     {
-      "barId": 283924,
+      "barId": 284458,
       "path": "msbuild",
       "remoteUri": "https://github.com/dotnet/msbuild",
-      "commitSha": "c4727aaf51e93045250f638db9cdfbbb462a45c8"
+      "commitSha": "cfc92dc28a448476a284e9dbabe29b7de64a44ed"
     },
     {
-      "barId": 284051,
+      "barId": 284434,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "c69588acc9bb46f38370c2b8cdedf57aea5ec904"
+      "commitSha": "28eeb0947095a716b98b5c34454625708cb3ac76"
     },
     {
-      "barId": 284027,
+      "barId": 284251,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "5557fc99abe067640cbdd2f8ade2058e06a87290"
+      "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
     },
     {
-      "barId": 284076,
+      "barId": 284296,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "a01d4a05fe85952de3db03a745fab6f33e1ba12b"
+      "commitSha": "8511481a30e9da5d51b7b3aceb148658d8e557c1"
     },
     {
       "barId": 284531,
