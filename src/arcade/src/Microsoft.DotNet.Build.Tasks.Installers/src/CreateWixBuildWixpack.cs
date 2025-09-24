@@ -194,7 +194,7 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
             // We want to keep original files in wixpack, and only preprocess
             // them for wixpack creation. This ensures that repacking process would not be
             // affected by some unintentional change, or a bug in preprocessor.
-            var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(includeFile));
+            var tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.Copy(includeFile, tempFilePath, overwrite: true);
 
             // We're processing a Wix include file, which contains preprocessor
