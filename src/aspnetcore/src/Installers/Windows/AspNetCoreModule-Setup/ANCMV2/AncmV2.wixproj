@@ -2,11 +2,10 @@
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.WixToolset.Sdk" />
   <PropertyGroup>
-    <Name>AspNetCoreModuleV2</Name>
     <IsShipping>true</IsShipping>
     <ProjectGuid>f9bacb48-3bd7-4ec2-ae31-664e8703ec12</ProjectGuid>
     <OutputType>Package</OutputType>
-    <OutputName>$(Name)_$(Platform)</OutputName>
+    <OutputName>aspnetcoremodule_$(Platform)_en_v2_$(_ProductVersionForInstallers)</OutputName>
     <GenerateRandomNamespaceGuid>true</GenerateRandomNamespaceGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <DisableGuidGeneration>true</DisableGuidGeneration>
@@ -25,7 +24,7 @@
     <Compile Include="$(IIS-Setup)iisca\wix5\iisca.wxs">
       <Link>iisca.wxs</Link>
     </Compile>
-    <EmbeddedResource Include="..\setupstrings.wxl">
+    <EmbeddedResource Include="..\LCID\1033\setupstrings.wxl">
       <Link>setupstrings.wxl</Link>
     </EmbeddedResource>
     <Content Include="$(IIS-Setup)include.wxi">
@@ -49,7 +48,7 @@
   <Import Project="..\build\settings.props" />
 
   <PropertyGroup>
-    <PackageFileName>aspnetcoremodule_$(Platform)_en_v2_$(PackageVersion)$(TargetExt)</PackageFileName>
+    <PackageFileName>$(OutputName)$(TargetExt)</PackageFileName>
     <ProductNameShort>ASP.NET Core Module V2</ProductNameShort>
   </PropertyGroup>
 
