@@ -66,6 +66,7 @@ public enum DataType
     StressMsg,
     StressMsgHeader,
     Object,
+    NativeObjectWrapperObject,
     String,
     MethodDesc,
     MethodDescChunk,
@@ -139,4 +140,6 @@ public enum DataType
     GCHeap,
     Generation,
     CFinalize,
+    HeapSegment,
+    OomHistory,
 }

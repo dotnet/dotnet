@@ -43,5 +43,6 @@
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.WrapWithTag" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteWrapWithTagService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.SpanMapping" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteSpanMappingService+Factory" />
     <ServiceHubService Include="Microsoft.VisualStudio.Razor.CodeLens" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteCodeLensService+Factory" />
+    <ServiceHubService Include="Microsoft.VisualStudio.Razor.DevTools" ClassName="Microsoft.CodeAnalysis.Remote.Razor.RemoteDevToolsService+Factory" />
   </ItemGroup>
 </Project>
