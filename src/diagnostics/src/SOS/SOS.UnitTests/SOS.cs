@@ -24,6 +24,17 @@ public static class SOSTestHelpers
         return TestRunConfiguration.Instance.Configurations.Where((c) => key == null || c.AllSettings.GetValueOrDefault(key) == value).DefaultIfEmpty(TestConfiguration.Empty).Select(c => new[] { c });
     }
 
+    // Configurations skipping desktop framework
+    public static IEnumerable<object[]> GetNetCoreConfigurations()
+    {
+        return TestRunConfiguration.Instance.Configurations
+            // Filter out configurations for specific tests
+            .Where(c => c.AllSettings.GetValueOrDefault("TestName") == null)
+            // Filter for only .NET core configurations
+            .Where(c => c.IsNETCore)
+            .Select(c => new[] { c });
+    }
+
     internal static void SkipIfArm(TestConfiguration config)
     {
         if (config.TargetArchitecture is "arm" or "arm64")
@@ -200,7 +211,25 @@ public class SOS
 
     public static IEnumerable<object[]> Configurations => SOSTestHelpers.GetConfigurations("TestName", value: null);
 
-    [SkippableTheory, MemberData(nameof(Configurations)), Trait("Category", "CDACCompatible")]
+
+    [SkippableTheory, MemberData(nameof(SOSTestHelpers.GetNetCoreConfigurations), MemberType = typeof(SOSTestHelpers))]
+    public async Task VarargPInvokeInteropMD(TestConfiguration config)
+    {
+        if (OS.Kind != OSKind.Windows)
+        {
+            throw new SkipTestException("Test only supports CDB and therefore only runs on Windows");
+        }
+
+        await SOSTestHelpers.RunTest(
+            config,
+            debuggeeName: "VarargPInvokeInteropMD",
+            scriptName: "VarargPInvokeInteropMD.script",
+            Output,
+            testName: "SOS.VarargPInvokeInteropMD",
+            testDump: false);
+    }
+
+    [SkippableTheory, MemberData(nameof(Configurations))]
     public async Task StackTraceSoftwareExceptionFrame(TestConfiguration config)
     {
         if (config.RuntimeFrameworkVersionMajor < 10)
@@ -302,6 +331,13 @@ public class SOS
         {
             throw new SkipTestException("Single file and desktop framework not supported");
         }
+
+        if (config.RuntimeFrameworkVersionMajor == 10)
+        {
+            // The clrstack -i -a command regressed on .NET 10 win-x86, so skip this test for now.
+            SOSTestHelpers.SkipIfWinX86(config);
+        }
+
         await SOSTestHelpers.RunTest(config, debuggeeName: "DynamicMethod", scriptName: "DynamicMethod.script", Output);
     }
 
@@ -398,6 +434,12 @@ public class SOS
     [SkippableTheory, MemberData(nameof(SOSTestHelpers.GetConfigurations), "TestName", "SOS.StackAndOtherTests", MemberType = typeof(SOSTestHelpers))]
     public async Task StackAndOtherTests(TestConfiguration config)
     {
+        if (config.RuntimeFrameworkVersionMajor == 10)
+        {
+            // The clrstack -i -a command regressed on .NET 10 win-x86, so skip this test for now.
+            SOSTestHelpers.SkipIfWinX86(config);
+        }
+
         foreach (TestConfiguration currentConfig in TestRunner.EnumeratePdbTypeConfigs(config))
         {
             // Assumes that SymbolTestDll.dll that is dynamically loaded is the parent directory of the single file app
@@ -636,5 +678,19 @@ public class SOS
             outputHelper?.WriteLine("}");
             outputHelper?.Dispose();
         }
+    }
+    [SkippableTheory, MemberData(nameof(Configurations))]
+    public async Task ClrStackWithNumberOfFrames(TestConfiguration config)
+    {
+        if (config.IsDesktop)
+        {
+            throw new SkipTestException("The behavior of ClrStack -i is not the same on Desktop");
+        }
+        await SOSTestHelpers.RunTest(
+            config,
+            debuggeeName: "DivZero",
+            scriptName: "ClrStackWithNumberOfFrames.script",
+            Output,
+            testTriage: true);
     }
 }

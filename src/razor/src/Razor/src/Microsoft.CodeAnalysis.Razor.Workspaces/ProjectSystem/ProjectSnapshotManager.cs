@@ -28,7 +28,6 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 internal partial class ProjectSnapshotManager : IDisposable
 {
     private readonly IProjectEngineFactoryProvider _projectEngineFactoryProvider;
-    private readonly RazorCompilerOptions _compilerOptions;
     private readonly Dispatcher _dispatcher;
     private readonly ILogger _logger;
     private readonly bool _initialized;
@@ -83,7 +82,6 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// </summary>
     /// <param name="projectEngineFactoryProvider">The <see cref="IProjectEngineFactoryProvider"/> to
     /// use when creating <see cref="ProjectState"/>.</param>
-    /// <param name="compilerOptions">Options used to control Razor compilation.</param>
     /// <param name="featureOptions">The <see cref="LanguageServerFeatureOptions"/> to use.</param>
     /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to use.</param>
     /// <param name="initializer">An optional callback to set up the initial set of projects and documents.
@@ -91,13 +89,11 @@ internal partial class ProjectSnapshotManager : IDisposable
     /// will not be sent.</param>
     public ProjectSnapshotManager(
         IProjectEngineFactoryProvider projectEngineFactoryProvider,
-        RazorCompilerOptions compilerOptions,
         LanguageServerFeatureOptions featureOptions,
         ILoggerFactory loggerFactory,
         Action<Updater>? initializer = null)
     {
         _projectEngineFactoryProvider = projectEngineFactoryProvider;
-        _compilerOptions = compilerOptions;
         _dispatcher = new(featureOptions, loggerFactory);
         _logger = loggerFactory.GetOrCreateLogger(GetType());
 
@@ -366,7 +362,7 @@ internal partial class ProjectSnapshotManager : IDisposable
             return false;
         }
 
-        var state = ProjectState.Create(hostProject, _compilerOptions, _projectEngineFactoryProvider);
+        var state = ProjectState.Create(hostProject, _projectEngineFactoryProvider);
 
         var newEntry = new Entry(state);
 

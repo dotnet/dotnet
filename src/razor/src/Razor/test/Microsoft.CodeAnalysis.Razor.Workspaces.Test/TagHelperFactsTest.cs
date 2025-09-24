@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.VisualStudio.Editor.Razor;
 
@@ -22,7 +21,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build()
         ];
@@ -41,7 +40,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule =>
                     rule
                         .RequireTagName("a")
@@ -58,7 +57,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
                         .PropertyName("AspRoute")
                         .AsDictionaryAttribute("asp-route-", typeof(string).FullName))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
                 .BoundAttributeDescriptor(attribute =>
                     attribute
@@ -87,7 +86,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("a"))
                 .BoundAttributeDescriptor(attribute =>
                     attribute
@@ -122,7 +121,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("input"))
                 .BoundAttributeDescriptor(attribute =>
                     attribute
@@ -156,7 +155,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("*"))
                 .Build()
         ];
@@ -175,7 +174,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .Build()
         ];
@@ -194,7 +193,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> expectedDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("a")
@@ -204,7 +203,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
             expectedDescriptors[0],
-            TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("strong")
@@ -226,14 +225,14 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> expectedDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("strong"))
                 .Build()
         ];
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
             expectedDescriptors[0],
-            TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("thstrong"))
                 .Build()
         ];
@@ -252,7 +251,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> expectedDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("strong")
@@ -262,7 +261,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
             expectedDescriptors[0],
-            TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("strong")
@@ -284,7 +283,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build()
         ];
@@ -303,10 +302,10 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("DivTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("DivTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build(),
-            TagHelperDescriptorBuilder.Create("PTagHelper", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("PTagHelper", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule
                     .RequireTagName("p")
                     .RequireParentTag("body"))
@@ -328,7 +327,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(rule => rule.RequireTagName("div"))
                 .Build()
         ];
@@ -347,7 +346,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         // Arrange
         ImmutableArray<TagHelperDescriptor> expectedDescriptors =
         [
-            TagHelperDescriptorBuilder.Create("TestType", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("p")
@@ -357,7 +356,7 @@ public class TagHelperFactsTest(ITestOutputHelper testOutput) : ToolingTestBase(
         ImmutableArray<TagHelperDescriptor> documentDescriptors =
         [
             expectedDescriptors[0],
-            TagHelperDescriptorBuilder.Create("TestType2", "TestAssembly")
+            TagHelperDescriptorBuilder.CreateTagHelper("TestType2", "TestAssembly")
                 .TagMatchingRuleDescriptor(
                     rule => rule
                         .RequireTagName("strong")

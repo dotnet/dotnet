@@ -1,46 +1,45 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
-using System.Collections.Generic;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
 public static class TestTagHelperDescriptorBuilderExtensions
 {
-    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, string key, string value)
+    extension(TagHelperDescriptorBuilder)
     {
-        if (builder is null)
+        public static TagHelperDescriptorBuilder CreateTagHelper(string name, string assemblyName)
+            => CreateTagHelper(TagHelperKind.ITagHelper, name, assemblyName);
+
+        public static TagHelperDescriptorBuilder CreateTagHelper(TagHelperKind kind, string name, string assemblyName)
         {
-            throw new ArgumentNullException(nameof(builder));
+            var builder = TagHelperDescriptorBuilder.Create(kind, name, assemblyName);
+            builder.RuntimeKind = Language.RuntimeKind.ITagHelper;
+
+            return builder;
         }
 
-        return builder.Metadata(new KeyValuePair<string, string>(key, value));
+        public static TagHelperDescriptorBuilder CreateViewComponent(string name, string assemblyName)
+            => CreateTagHelper(TagHelperKind.ViewComponent, name, assemblyName);
+
+        public static TagHelperDescriptorBuilder CreateComponent(string name, string assemblyName)
+        {
+            var builder = TagHelperDescriptorBuilder.Create(TagHelperKind.Component, name, assemblyName);
+            builder.RuntimeKind = Language.RuntimeKind.IComponent;
+
+            return builder;
+        }
+
+        public static TagHelperDescriptorBuilder CreateEventHandler(string name, string assemblyName)
+            => TagHelperDescriptorBuilder.Create(TagHelperKind.EventHandler, name, assemblyName);
     }
 
-    public static TagHelperDescriptorBuilder Metadata(this TagHelperDescriptorBuilder builder, params KeyValuePair<string, string>[] pairs)
+    public static TagHelperDescriptorBuilder Metadata(
+        this TagHelperDescriptorBuilder builder,
+        MetadataObject metadata)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
-        // We need to be sure to add TagHelperMetadata.Runtime.Name if it doesn't already exist.
-        if (Array.Exists(pairs, static pair => pair.Key == TagHelperMetadata.Runtime.Name))
-        {
-            builder.SetMetadata(pairs);
-        }
-        else
-        {
-            var newPairs = new KeyValuePair<string, string>[pairs.Length + 1];
-            newPairs[0] = RuntimeName(TagHelperConventions.DefaultKind);
-            Array.Copy(pairs, 0, newPairs, 1, pairs.Length);
-
-            builder.SetMetadata(newPairs);
-        }
+        builder.SetMetadata(metadata);
 
         return builder;
     }
@@ -81,6 +80,27 @@ public static class TestTagHelperDescriptorBuilderExtensions
         return builder;
     }
 
+    public static TagHelperDescriptorBuilder RuntimeKind(this TagHelperDescriptorBuilder builder, RuntimeKind runtimeKind)
+    {
+        builder.RuntimeKind = runtimeKind;
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder IsFullyQualifiedNameMatch(this TagHelperDescriptorBuilder builder, bool value)
+    {
+        builder.IsFullyQualifiedNameMatch = value;
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder ClassifyAttributesOnly(this TagHelperDescriptorBuilder builder, bool value)
+    {
+        builder.ClassifyAttributesOnly = value;
+
+        return builder;
+    }
+
     public static TagHelperDescriptorBuilder SetCaseSensitive(this TagHelperDescriptorBuilder builder)
     {
         if (builder == null)
@@ -89,6 +109,17 @@ public static class TestTagHelperDescriptorBuilderExtensions
         }
 
         builder.CaseSensitive = true;
+
+        return builder;
+    }
+
+    public static TagHelperDescriptorBuilder TypeName(
+        this TagHelperDescriptorBuilder builder,
+        string fullName,
+        string? typeNamespace = null,
+        string? typeNameIdentifier = null)
+    {
+        builder.SetTypeName(fullName, typeNamespace, typeNameIdentifier);
 
         return builder;
     }

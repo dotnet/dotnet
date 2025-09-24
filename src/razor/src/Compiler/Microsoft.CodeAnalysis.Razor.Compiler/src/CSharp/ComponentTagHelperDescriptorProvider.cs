@@ -12,17 +12,11 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
 internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    private static readonly SymbolDisplayFormat GloballyQualifiedFullNameTypeDisplayFormat =
-        SymbolDisplayFormat.FullyQualifiedFormat
-            .WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Included)
-            .WithMiscellaneousOptions(SymbolDisplayFormat.FullyQualifiedFormat.MiscellaneousOptions & (~SymbolDisplayMiscellaneousOptions.UseSpecialTypes));
-
     public override void Execute(TagHelperDescriptorProviderContext context)
     {
         ArgHelper.ThrowIfNull(context);
@@ -92,19 +86,16 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             ImmutableArray<(IPropertySymbol property, PropertyKind kind)> properties,
             bool fullyQualified)
         {
-            var typeName = type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
+            var typeName = TypeNameObject.From(type);
             var assemblyName = type.ContainingAssembly.Identity.Name;
 
             using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.Component.TagHelperKind, typeName, assemblyName, out var builder);
+                TagHelperKind.Component, typeName.FullName.AssumeNotNull(), assemblyName, out var builder);
 
-            // This opts out this 'component' tag helper for any processing that's specific to the default
-            // Razor ITagHelper runtime.
-            using var metadata = builder.GetMetadataBuilder(ComponentMetadata.Component.RuntimeName);
+            builder.RuntimeKind = RuntimeKind.IComponent;
+            builder.SetTypeName(typeName);
 
-            metadata.Add(TypeName(typeName));
-            metadata.Add(TypeNamespace(type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat)));
-            metadata.Add(TypeNameIdentifier(type.Name));
+            var metadata = new ComponentMetadata.Builder();
 
             builder.CaseSensitive = true;
 
@@ -112,14 +103,14 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             {
                 var fullName = type.ContainingNamespace.IsGlobalNamespace
                     ? type.Name
-                    : $"{type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat)}.{type.Name}";
+                    : $"{type.ContainingNamespace.GetFullName()}.{type.Name}";
 
                 builder.TagMatchingRule(r =>
                 {
                     r.TagName = fullName;
                 });
 
-                metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
+                builder.IsFullyQualifiedNameMatch = true;
             }
             else
             {
@@ -131,7 +122,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
             if (type.IsGenericType)
             {
-                metadata.Add(MakeTrue(ComponentMetadata.Component.GenericTypedKey));
+                metadata.IsGeneric = true;
 
                 using var cascadeGenericTypeAttributes = new PooledHashSet<string>(StringHashSetPool.Ordinal);
 
@@ -156,7 +147,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
             if (HasRenderModeDirective(type))
             {
-                metadata.Add(MakeTrue(ComponentMetadata.Component.HasRenderModeDirectiveKey));
+                metadata.HasRenderModeDirective = true;
             }
 
             var xml = type.GetDocumentationCommentXml();
@@ -176,7 +167,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
             }
 
             if (builder.BoundAttributes.Any(static a => a.IsParameterizedChildContentProperty()) &&
-                !builder.BoundAttributes.Any(static a => string.Equals(a.Name, ComponentMetadata.ChildContent.ParameterAttributeName, StringComparison.OrdinalIgnoreCase)))
+                !builder.BoundAttributes.Any(static a => string.Equals(a.Name, ComponentHelpers.ChildContent.ParameterAttributeName, StringComparison.OrdinalIgnoreCase)))
             {
                 // If we have any parameterized child content parameters, synthesize a 'Context' parameter to be
                 // able to set the variable name (for all child content). If the developer defined a 'Context' parameter
@@ -196,15 +187,15 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 var builder = new PropertyMetadata.Builder();
 
                 pb.Name = property.Name;
-                pb.ContainingType = containingSymbol.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
-                pb.TypeName = property.Type.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat);
+                pb.ContainingType = containingSymbol.GetFullName();
+                pb.TypeName = property.Type.GetFullName();
                 pb.PropertyName = property.Name;
                 pb.IsEditorRequired = property.GetAttributes().Any(
                     static a => a.HasFullName("Microsoft.AspNetCore.Components.EditorRequiredAttribute"));
 
                 pb.CaseSensitive = false;
 
-                builder.GloballyQualifiedTypeName = property.Type.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat);
+                builder.GloballyQualifiedTypeName = property.Type.GetGloballyQualifiedFullName();
 
                 if (kind == PropertyKind.Enum)
                 {
@@ -431,7 +422,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
                 foreach (var constraintType in typeParameter.ConstraintTypes)
                 {
-                    constraints.Add(constraintType.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                    constraints.Add(constraintType.GetGloballyQualifiedFullName());
                 }
 
                 // CS0401: The new() constraint must be the last constraint specified.
@@ -462,7 +453,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                             withAttributes.Append('[');
                         }
 
-                        withAttributes.Append(attribute.AttributeClass.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                        withAttributes.Append(attribute.AttributeClass.GetGloballyQualifiedFullName());
                         withAttributes.Append('(');
 
                         var first = true;
@@ -480,7 +471,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                             if (arg.Kind == TypedConstantKind.Enum)
                             {
                                 withAttributes.Append("unchecked((");
-                                withAttributes.Append(arg.Type!.ToDisplayString(GloballyQualifiedFullNameTypeDisplayFormat));
+                                withAttributes.Append(arg.Type!.GetGloballyQualifiedFullName());
                                 withAttributes.Append(')');
                                 withAttributes.Append(CSharp.SymbolDisplay.FormatPrimitive(arg.Value!, quoteStrings: true, useHexadecimalNumbers: true));
                                 withAttributes.Append(')');
@@ -549,25 +540,16 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
 
         private static TagHelperDescriptor CreateChildContentDescriptor(TagHelperDescriptor component, BoundAttributeDescriptor attribute)
         {
-            var typeName = component.GetTypeName() + "." + attribute.Name;
+            var typeName = component.TypeName + "." + attribute.Name;
             var assemblyName = component.AssemblyName;
 
             using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.ChildContent.TagHelperKind, typeName, assemblyName,
+                TagHelperKind.ChildContent, typeName, assemblyName,
                 out var builder);
 
-            // This opts out this 'component' tag helper for any processing that's specific to the default
-            // Razor ITagHelper runtime.
-            using var metadata = builder.GetMetadataBuilder(ComponentMetadata.ChildContent.RuntimeName);
-
-            metadata.Add(TypeName(typeName));
-            metadata.Add(TypeNamespace(component.GetTypeNamespace()));
-            metadata.Add(TypeNameIdentifier(component.GetTypeNameIdentifier()));
+            builder.SetTypeName(typeName, component.TypeNamespace, component.TypeNameIdentifier);
 
             builder.CaseSensitive = true;
-
-            // Opt out of processing as a component. We'll process this specially as part of the component's body.
-            metadata.Add(SpecialKind(ComponentMetadata.ChildContent.TagHelperKind));
 
             var xml = attribute.Documentation;
             if (!string.IsNullOrEmpty(xml))
@@ -589,12 +571,10 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
                 CreateContextParameter(builder, attribute.Name);
             }
 
-            if (component.IsComponentFullyQualifiedNameMatch)
+            if (component.IsFullyQualifiedNameMatch)
             {
-                metadata.Add(ComponentMetadata.Component.NameMatchKey, ComponentMetadata.Component.FullyQualifiedNameMatch);
+                builder.IsFullyQualifiedNameMatch = true;
             }
-
-            builder.SetMetadata(metadata.Build());
 
             var descriptor = builder.Build();
 
@@ -605,7 +585,7 @@ internal sealed class ComponentTagHelperDescriptorProvider : TagHelperDescriptor
         {
             builder.BindAttribute(b =>
             {
-                b.Name = ComponentMetadata.ChildContent.ParameterAttributeName;
+                b.Name = ComponentHelpers.ChildContent.ParameterAttributeName;
                 b.TypeName = typeof(string).FullName;
                 b.PropertyName = b.Name;
                 b.SetMetadata(ChildContentParameterMetadata.Default);

@@ -124,12 +124,12 @@ internal class GenerateMethodCodeActionProvider : IRazorCodeActionProvider
                 {
                     // We found the attribute that matches the directive attribute, now we need to check if the
                     // tag helper it's bound to is an event handler. This filters out things like @ref and @rendermode
-                    if (tagHelperDescriptor.IsEventHandlerTagHelper())
+                    if (tagHelperDescriptor.Kind == TagHelperKind.EventHandler)
                     {
                         // An event handler like "@onclick"
                         eventParameterType = tagHelperDescriptor.GetEventArgsType() ?? "";
                     }
-                    else if (tagHelperDescriptor.IsBindTagHelper())
+                    else if (tagHelperDescriptor.Kind == TagHelperKind.Bind)
                     {
                         // A bind tag helper, so either @bind-XX:after or @bind-XX:set, the latter of which has a parameter
                         if (markupTagHelperDirectiveAttribute.TagHelperAttributeInfo.ParameterName == "set" &&

@@ -1,13 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version2_X;
 
@@ -34,13 +31,9 @@ public class ViewComponentTagHelperDescriptorProviderTest
             Engine = RazorProjectEngine.CreateEmpty().Engine,
         };
 
-        var expectedDescriptor = TagHelperDescriptorBuilder.Create(
-            ViewComponentTagHelperConventions.Kind,
-            "__Generated__StringParameterViewComponentTagHelper",
-            TestCompilation.AssemblyName)
-            .Metadata(
-                TypeName("__Generated__StringParameterViewComponentTagHelper"),
-                new(ViewComponentTagHelperMetadata.Name, "StringParameter"))
+        var expectedDescriptor = TagHelperDescriptorBuilder.CreateViewComponent("__Generated__StringParameterViewComponentTagHelper", TestCompilation.AssemblyName)
+            .TypeName("__Generated__StringParameterViewComponentTagHelper")
+            .Metadata(new ViewComponentMetadata("StringParameter", TypeNameObject.From("StringParameter")))
             .DisplayName("StringParameterViewComponentTagHelper")
             .TagMatchingRuleDescriptor(rule =>
                 rule

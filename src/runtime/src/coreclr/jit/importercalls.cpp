@@ -1098,9 +1098,10 @@ DONE:
         }
 
         // For opportunistic tailcalls we allow implicit widening, i.e. tailcalls from int32 -> int16, since the
-        // managed calling convention dictates that the callee widens the value. For explicit tailcalls we don't
-        // want to require this detail of the calling convention to bubble up to the tailcall helpers
-        bool allowWidening = isImplicitTailCall;
+        // managed calling convention dictates that the callee widens the value. For explicit tailcalls or async
+        // functions we don't want to require this detail of the calling convention to bubble up to helper
+        // infrastructure.
+        bool allowWidening = isImplicitTailCall && !call->AsCall()->IsAsync();
         if (canTailCall &&
             !impTailCallRetTypeCompatible(allowWidening, info.compRetType, info.compMethodInfo->args.retTypeClass,
                                           info.compCallConv, callRetTyp, sig->retTypeClass,
@@ -1293,13 +1294,10 @@ DONE:
             compCurBB->SetFlags(BBF_RECURSIVE_TAILCALL);
         }
 
-        // We only do these OSR checks in the root method because:
-        // * If we fail to import the root method entry when importing the root method, we can't go back
-        //    and import it during inlining. So instead of checking just for recursive tail calls we also
-        //    have to check for anything that might introduce a recursive tail call.
-        // * We only instrument root method blocks in OSR methods,
+        // If we might be instrumenting, flag blocks that might be tail call successors
+        // so we can relocate probes before the calls.
         //
-        if ((opts.IsInstrumentedAndOptimized() || opts.IsOSR()) && !compIsForInlining())
+        if (opts.IsInstrumentedAndOptimized() || opts.IsOSR())
         {
             // If a root method tail call candidate block is not a BBJ_RETURN, it should have a unique
             // BBJ_RETURN successor. Mark that successor so we can handle it specially during profile
@@ -1653,7 +1651,7 @@ GenTree* Compiler::impThrowIfNull(GenTreeCall* call)
     // This is Tier0 specific, so we create a raw indir node to access Nullable<T>.hasValue field
     // which is the first field of Nullable<T> struct and is of type 'bool'.
     //
-    static_assert_no_msg(OFFSETOF__CORINFO_NullableOfT__hasValue == 0);
+    static_assert(OFFSETOF__CORINFO_NullableOfT__hasValue == 0);
     GenTree*   hasValueField = gtNewIndir(TYP_UBYTE, gtNewLclvNode(boxedValTmp, boxHelperAddrArg->TypeGet()));
     GenTreeOp* cond          = gtNewOperNode(GT_NE, TYP_INT, hasValueField, gtNewIconNode(0));
 
@@ -3114,12 +3112,12 @@ GenTree* Compiler::impIntrinsic(CORINFO_CLASS_HANDLE    clsHnd,
 
     if (isIntrinsic && (ni > NI_SPECIAL_IMPORT_START) && (ni < NI_PRIMITIVE_END))
     {
-        static_assert_no_msg(NI_SPECIAL_IMPORT_START < NI_SPECIAL_IMPORT_END);
-        static_assert_no_msg(NI_SRCS_UNSAFE_START < NI_SRCS_UNSAFE_END);
-        static_assert_no_msg(NI_PRIMITIVE_START < NI_PRIMITIVE_END);
+        static_assert(NI_SPECIAL_IMPORT_START < NI_SPECIAL_IMPORT_END);
+        static_assert(NI_SRCS_UNSAFE_START < NI_SRCS_UNSAFE_END);
+        static_assert(NI_PRIMITIVE_START < NI_PRIMITIVE_END);
 
-        static_assert_no_msg((NI_SPECIAL_IMPORT_END + 1) == NI_SRCS_UNSAFE_START);
-        static_assert_no_msg((NI_SRCS_UNSAFE_END + 1) == NI_PRIMITIVE_START);
+        static_assert((NI_SPECIAL_IMPORT_END + 1) == NI_SRCS_UNSAFE_START);
+        static_assert((NI_SRCS_UNSAFE_END + 1) == NI_PRIMITIVE_START);
 
         if (ni < NI_SPECIAL_IMPORT_END)
         {
@@ -3249,7 +3247,7 @@ GenTree* Compiler::impIntrinsic(CORINFO_CLASS_HANDLE    clsHnd,
 #ifdef FEATURE_HW_INTRINSICS
     if ((ni > NI_HW_INTRINSIC_START) && (ni < NI_HW_INTRINSIC_END))
     {
-        static_assert_no_msg(NI_HW_INTRINSIC_START < NI_HW_INTRINSIC_END);
+        static_assert(NI_HW_INTRINSIC_START < NI_HW_INTRINSIC_END);
 
         if (!isIntrinsic)
         {
@@ -9297,16 +9295,12 @@ bool Compiler::impConsiderCallProbe(GenTreeCall* call, IL_OFFSET ilOffset)
     // to revisit -- if we can devirtualize we should be able to
     // suppress the probe.
     //
-    // We strip BBINSTR from inlinees currently, so we'll only
-    // do this for the root method calls.
-    //
     if (!opts.jitFlags->IsSet(JitFlags::JIT_FLAG_BBINSTR))
     {
         return false;
     }
 
     assert(opts.OptimizationDisabled() || opts.IsInstrumentedAndOptimized());
-    assert(!compIsForInlining());
 
     // During importation, optionally flag this block as one that
     // contains calls requiring class profiling. Ideally perhaps

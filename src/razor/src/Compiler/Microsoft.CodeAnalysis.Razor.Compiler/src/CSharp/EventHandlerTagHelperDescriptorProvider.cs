@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 using Microsoft.AspNetCore.Razor.PooledObjects;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -45,9 +44,6 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
 
             foreach (var type in types)
             {
-                // Create helper to delay computing display names for this type when we need them.
-                var displayNames = new DisplayNameHelper(type);
-
                 // Not handling duplicates here for now since we're the primary ones extending this.
                 // If we see users adding to the set of event handler constructs we will want to add deduplication
                 // and potentially diagnostics.
@@ -61,7 +57,8 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
                             continue;
                         }
 
-                        var (typeName, namespaceName) = displayNames.GetNames();
+                        var typeName = type.GetDefaultDisplayString();
+                        var namespaceName = type.ContainingNamespace.GetFullName();
                         results.Add(CreateTagHelper(typeName, namespaceName, type.Name, args));
                     }
                 }
@@ -127,23 +124,6 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
             }
         }
 
-        /// <summary>
-        ///  Helper to avoid computing various type-based names until necessary.
-        /// </summary>
-        private ref struct DisplayNameHelper(INamedTypeSymbol type)
-        {
-            private readonly INamedTypeSymbol _type = type;
-            private (string Type, string Namespace)? _names;
-
-            public (string Type, string Namespace) GetNames()
-            {
-                _names ??= (_type.ToDisplayString(),
-                    _type.ContainingNamespace.ToDisplayString(SymbolExtensions.FullNameTypeDisplayFormat));
-
-                return _names.GetValueOrDefault();
-            }
-        }
-
         private static TagHelperDescriptor CreateTagHelper(
             string typeName,
             string typeNamespace,
@@ -153,25 +133,25 @@ internal sealed class EventHandlerTagHelperDescriptorProvider : TagHelperDescrip
             var (attribute, eventArgsType, enableStopPropagation, enablePreventDefault) = args;
 
             var attributeName = "@" + attribute;
-            var eventArgType = eventArgsType.ToDisplayString();
-            _ = TagHelperDescriptorBuilder.GetPooledInstance(
-                ComponentMetadata.EventHandler.TagHelperKind, attribute, ComponentsApi.AssemblyName,
+            var eventArgType = eventArgsType.GetDefaultDisplayString();
+            using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
+                TagHelperKind.EventHandler, attribute, ComponentsApi.AssemblyName,
                 out var builder);
+
+            builder.SetTypeName(typeName, typeNamespace, typeNameIdentifier);
+
             builder.CaseSensitive = true;
+            builder.ClassifyAttributesOnly = true;
             builder.SetDocumentation(
                 DocumentationDescriptor.From(
                     DocumentationId.EventHandlerTagHelper,
                     attributeName,
                     eventArgType));
 
-            builder.SetMetadata(
-                SpecialKind(ComponentMetadata.EventHandler.TagHelperKind),
-                new(ComponentMetadata.EventHandler.EventArgsType, eventArgType),
-                MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-                RuntimeName(ComponentMetadata.EventHandler.RuntimeName),
-                TypeName(typeName),
-                TypeNamespace(typeNamespace),
-                TypeNameIdentifier(typeNameIdentifier));
+            builder.SetMetadata(new EventHandlerMetadata()
+            {
+                EventArgsType = eventArgType
+            });
 
             builder.TagMatchingRule(rule =>
             {

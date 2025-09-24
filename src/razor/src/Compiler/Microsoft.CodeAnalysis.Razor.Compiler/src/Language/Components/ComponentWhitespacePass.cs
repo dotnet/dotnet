@@ -81,7 +81,7 @@ internal class ComponentWhitespacePass : ComponentIntermediateNodePassBase, IRaz
 
         foreach (var preserveWhitespaceDirective in documentNode.FindDirectiveReferences(ComponentPreserveWhitespaceDirective.Directive))
         {
-            var token = ((DirectiveIntermediateNode)preserveWhitespaceDirective.Node).Tokens.FirstOrDefault();
+            var token = preserveWhitespaceDirective.Node.Tokens.FirstOrDefault();
             var shouldPreserveWhitespaceContent = token?.Content;
             if (shouldPreserveWhitespaceContent != null)
             {

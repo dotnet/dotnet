@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using MessagePack;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -36,6 +37,18 @@ internal sealed class MetadataObjectFormatter : ValueFormatter<MetadataObject>
                 reader.ReadNil();
                 return ChildContentParameterMetadata.Default;
 
+            case MetadataKind.Bind:
+                return BindMetadataFormatter.Instance.Deserialize(ref reader, options);
+
+            case MetadataKind.Component:
+                return ComponentMetadataFormatter.Instance.Deserialize(ref reader, options);
+
+            case MetadataKind.EventHandler:
+                return EventHandlerMetadataFormatter.Instance.Deserialize(ref reader, options);
+
+            case MetadataKind.ViewComponent:
+                return ViewComponentMetadataFormatter.Instance.Deserialize(ref reader, options);
+
             default:
                 return Assumed.Unreachable<MetadataObject>();
         }
@@ -65,6 +78,22 @@ internal sealed class MetadataObjectFormatter : ValueFormatter<MetadataObject>
             case MetadataKind.ChildContentParameter:
                 writer.WriteNil();
                 break;
+
+            case MetadataKind.Bind:
+                BindMetadataFormatter.Instance.Serialize(ref writer, (BindMetadata)value.AssumeNotNull(), options);
+                break;
+
+            case MetadataKind.Component:
+                ComponentMetadataFormatter.Instance.Serialize(ref writer, (ComponentMetadata)value.AssumeNotNull(), options);
+                break;
+
+            case MetadataKind.EventHandler:
+                EventHandlerMetadataFormatter.Instance.Serialize(ref writer, (EventHandlerMetadata)value.AssumeNotNull(), options);
+                break;
+
+            case MetadataKind.ViewComponent:
+                ViewComponentMetadataFormatter.Instance.Serialize(ref writer, (ViewComponentMetadata)value.AssumeNotNull(), options);
+                break;
         }
     }
 
@@ -90,6 +119,22 @@ internal sealed class MetadataObjectFormatter : ValueFormatter<MetadataObject>
 
             case MetadataKind.ChildContentParameter:
                 reader.ReadNil();
+                break;
+
+            case MetadataKind.Bind:
+                BindMetadataFormatter.Instance.Skim(ref reader, options);
+                break;
+
+            case MetadataKind.Component:
+                ComponentMetadataFormatter.Instance.Skim(ref reader, options);
+                break;
+
+            case MetadataKind.EventHandler:
+                EventHandlerMetadataFormatter.Instance.Skim(ref reader, options);
+                break;
+
+            case MetadataKind.ViewComponent:
+                ViewComponentMetadataFormatter.Instance.Skim(ref reader, options);
                 break;
 
             default:

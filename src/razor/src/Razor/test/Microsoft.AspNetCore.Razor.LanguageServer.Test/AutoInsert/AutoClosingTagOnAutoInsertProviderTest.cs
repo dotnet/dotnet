@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.CodeAnalysis.Razor.AutoInsert;
 using Xunit;
 using Xunit.Abstractions;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.LanguageServer.AutoInsert;
 
@@ -16,56 +15,56 @@ public class AutoClosingTagOnAutoInsertProviderTest(ITestOutputHelper testOutput
         => new AutoClosingTagOnAutoInsertProvider();
 
     private static readonly TagHelperDescriptor s_catchAllTagHelper =
-        TagHelperDescriptorBuilder.Create("CatchAllTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.CatchAllTagHelper"))
+        TagHelperDescriptorBuilder.CreateTagHelper("CatchAllTagHelper", "TestAssembly")
+            .TypeName("TestNamespace.CatchAllTagHelper")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("*")
                 .RequireTagStructure(TagStructure.Unspecified))
             .Build();
 
     private static readonly TagHelperDescriptor s_unspecifiedInputMirroringTagHelper =
-        TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestTagHelper"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestNamespace.TestTagHelper")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("Input")
                 .RequireTagStructure(TagStructure.Unspecified))
             .Build();
 
     private static readonly TagHelperDescriptor s_unspecifiedTagHelper =
-        TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestTagHelper"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly")
+            .TypeName("TestNamespace.TestTagHelper")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("test")
             .RequireTagStructure(TagStructure.Unspecified))
             .Build();
 
     private static readonly TagHelperDescriptor s_unspecifiedInputTagHelper =
-        TagHelperDescriptorBuilder.Create("TestInputTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestInputTagHelper"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestInputTagHelper", "TestAssembly")
+            .TypeName("TestNamespace.TestInputTagHelper")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("input")
                 .RequireTagStructure(TagStructure.Unspecified))
             .Build();
 
     private static readonly TagHelperDescriptor s_normalOrSelfclosingInputTagHelper =
-        TagHelperDescriptorBuilder.Create("TestInputTagHelper", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestInputTagHelper"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestInputTagHelper", "TestAssembly")
+            .TypeName("TestNamespace.TestInputTagHelper")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("input")
                 .RequireTagStructure(TagStructure.NormalOrSelfClosing))
             .Build();
 
     private static readonly TagHelperDescriptor s_normalOrSelfClosingTagHelper =
-        TagHelperDescriptorBuilder.Create("TestTagHelper2", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestTagHelper2"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper2", "TestAssembly")
+            .TypeName("TestNamespace.TestTagHelper2")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("test")
                 .RequireTagStructure(TagStructure.NormalOrSelfClosing))
             .Build();
 
     private static readonly TagHelperDescriptor s_withoutEndTagTagHelper =
-        TagHelperDescriptorBuilder.Create("TestTagHelper3", "TestAssembly")
-            .Metadata(TypeName("TestNamespace.TestTagHelper3"))
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper3", "TestAssembly")
+            .TypeName("TestNamespace.TestTagHelper3")
             .TagMatchingRuleDescriptor(builder => builder
                 .RequireTagName("test")
                 .RequireTagStructure(TagStructure.WithoutEndTag))

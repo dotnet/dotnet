@@ -106,14 +106,21 @@ void CodeGen::genEmitGSCookieCheck(bool pushReg)
         // we are generating GS cookie check after a GT_RETURN block.
         // Note: On Amd64 System V RDX is an arg register - REG_ARG_2 - as well
         // as return register for two-register-returned structs.
+#ifdef TARGET_X86
+        // Note: ARG_0 can be REG_ASYNC_CONTINUATION_RET
+        // we will check for that later if we end up saving/restoring this.
+        regGSCheck                      = REG_ARG_0;
+        regNumber regGSCheckAlternative = REG_ARG_1;
+#else
+        // these cannot be a part of any kind of return
+        regGSCheck                      = REG_R8;
+        regNumber regGSCheckAlternative = REG_R9;
+#endif
+
         if (compiler->lvaKeepAliveAndReportThis() && compiler->lvaGetDesc(compiler->info.compThisArg)->lvIsInReg() &&
-            (compiler->lvaGetDesc(compiler->info.compThisArg)->GetRegNum() == REG_ARG_0))
+            (compiler->lvaGetDesc(compiler->info.compThisArg)->GetRegNum() == regGSCheck))
         {
-            regGSCheck = REG_ARG_1;
-        }
-        else
-        {
-            regGSCheck = REG_ARG_0;
+            regGSCheck = regGSCheckAlternative;
         }
     }
     else
@@ -157,6 +164,14 @@ void CodeGen::genEmitGSCookieCheck(bool pushReg)
     else
     {
         // AOT case - GS cookie value needs to be accessed through an indirection.
+
+        // if we use the continuation reg, the pop/push requires no-GC
+        // this can happen only when AOT supports async on x86
+        if (compiler->compIsAsync() && (regGSCheck == REG_ASYNC_CONTINUATION_RET))
+        {
+            regMaskGSCheck = RBM_ASYNC_CONTINUATION_RET;
+            GetEmitter()->emitDisableGC();
+        }
 
         pushedRegs = genPushRegs(regMaskGSCheck, &byrefPushedRegs, &norefPushedRegs);
 
@@ -1555,24 +1570,24 @@ instruction CodeGen::JumpKindToCmov(emitJumpKind condition)
         INS_cmova, INS_cmovs, INS_cmovns, INS_cmovp,  INS_cmovnp, INS_cmovl,  INS_cmovge, INS_cmovle, INS_cmovg,
     };
 
-    static_assert_no_msg(s_table[EJ_NONE] == INS_none);
-    static_assert_no_msg(s_table[EJ_jmp] == INS_none);
-    static_assert_no_msg(s_table[EJ_jo] == INS_cmovo);
-    static_assert_no_msg(s_table[EJ_jno] == INS_cmovno);
-    static_assert_no_msg(s_table[EJ_jb] == INS_cmovb);
-    static_assert_no_msg(s_table[EJ_jae] == INS_cmovae);
-    static_assert_no_msg(s_table[EJ_je] == INS_cmove);
-    static_assert_no_msg(s_table[EJ_jne] == INS_cmovne);
-    static_assert_no_msg(s_table[EJ_jbe] == INS_cmovbe);
-    static_assert_no_msg(s_table[EJ_ja] == INS_cmova);
-    static_assert_no_msg(s_table[EJ_js] == INS_cmovs);
-    static_assert_no_msg(s_table[EJ_jns] == INS_cmovns);
-    static_assert_no_msg(s_table[EJ_jp] == INS_cmovp);
-    static_assert_no_msg(s_table[EJ_jnp] == INS_cmovnp);
-    static_assert_no_msg(s_table[EJ_jl] == INS_cmovl);
-    static_assert_no_msg(s_table[EJ_jge] == INS_cmovge);
-    static_assert_no_msg(s_table[EJ_jle] == INS_cmovle);
-    static_assert_no_msg(s_table[EJ_jg] == INS_cmovg);
+    static_assert(s_table[EJ_NONE] == INS_none);
+    static_assert(s_table[EJ_jmp] == INS_none);
+    static_assert(s_table[EJ_jo] == INS_cmovo);
+    static_assert(s_table[EJ_jno] == INS_cmovno);
+    static_assert(s_table[EJ_jb] == INS_cmovb);
+    static_assert(s_table[EJ_jae] == INS_cmovae);
+    static_assert(s_table[EJ_je] == INS_cmove);
+    static_assert(s_table[EJ_jne] == INS_cmovne);
+    static_assert(s_table[EJ_jbe] == INS_cmovbe);
+    static_assert(s_table[EJ_ja] == INS_cmova);
+    static_assert(s_table[EJ_js] == INS_cmovs);
+    static_assert(s_table[EJ_jns] == INS_cmovns);
+    static_assert(s_table[EJ_jp] == INS_cmovp);
+    static_assert(s_table[EJ_jnp] == INS_cmovnp);
+    static_assert(s_table[EJ_jl] == INS_cmovl);
+    static_assert(s_table[EJ_jge] == INS_cmovge);
+    static_assert(s_table[EJ_jle] == INS_cmovle);
+    static_assert(s_table[EJ_jg] == INS_cmovg);
 
     assert((condition >= EJ_NONE) && (condition < EJ_COUNT));
     return s_table[condition];
@@ -1595,24 +1610,24 @@ instruction CodeGen::JumpKindToCcmp(emitJumpKind condition)
         INS_ccmpa, INS_ccmps, INS_ccmpns, INS_none,   INS_none,  INS_ccmpl,  INS_ccmpge, INS_ccmple, INS_ccmpg,
     };
 
-    static_assert_no_msg(s_table[EJ_NONE] == INS_none);
-    static_assert_no_msg(s_table[EJ_jmp] == INS_none);
-    static_assert_no_msg(s_table[EJ_jo] == INS_ccmpo);
-    static_assert_no_msg(s_table[EJ_jno] == INS_ccmpno);
-    static_assert_no_msg(s_table[EJ_jb] == INS_ccmpb);
-    static_assert_no_msg(s_table[EJ_jae] == INS_ccmpae);
-    static_assert_no_msg(s_table[EJ_je] == INS_ccmpe);
-    static_assert_no_msg(s_table[EJ_jne] == INS_ccmpne);
-    static_assert_no_msg(s_table[EJ_jbe] == INS_ccmpbe);
-    static_assert_no_msg(s_table[EJ_ja] == INS_ccmpa);
-    static_assert_no_msg(s_table[EJ_js] == INS_ccmps);
-    static_assert_no_msg(s_table[EJ_jns] == INS_ccmpns);
-    static_assert_no_msg(s_table[EJ_jp] == INS_none);
-    static_assert_no_msg(s_table[EJ_jnp] == INS_none);
-    static_assert_no_msg(s_table[EJ_jl] == INS_ccmpl);
-    static_assert_no_msg(s_table[EJ_jge] == INS_ccmpge);
-    static_assert_no_msg(s_table[EJ_jle] == INS_ccmple);
-    static_assert_no_msg(s_table[EJ_jg] == INS_ccmpg);
+    static_assert(s_table[EJ_NONE] == INS_none);
+    static_assert(s_table[EJ_jmp] == INS_none);
+    static_assert(s_table[EJ_jo] == INS_ccmpo);
+    static_assert(s_table[EJ_jno] == INS_ccmpno);
+    static_assert(s_table[EJ_jb] == INS_ccmpb);
+    static_assert(s_table[EJ_jae] == INS_ccmpae);
+    static_assert(s_table[EJ_je] == INS_ccmpe);
+    static_assert(s_table[EJ_jne] == INS_ccmpne);
+    static_assert(s_table[EJ_jbe] == INS_ccmpbe);
+    static_assert(s_table[EJ_ja] == INS_ccmpa);
+    static_assert(s_table[EJ_js] == INS_ccmps);
+    static_assert(s_table[EJ_jns] == INS_ccmpns);
+    static_assert(s_table[EJ_jp] == INS_none);
+    static_assert(s_table[EJ_jnp] == INS_none);
+    static_assert(s_table[EJ_jl] == INS_ccmpl);
+    static_assert(s_table[EJ_jge] == INS_ccmpge);
+    static_assert(s_table[EJ_jle] == INS_ccmple);
+    static_assert(s_table[EJ_jg] == INS_ccmpg);
 
     assert((condition >= EJ_NONE) && (condition < EJ_COUNT));
     return s_table[condition];
@@ -2557,8 +2572,8 @@ void CodeGen::genAllocLclFrame(unsigned frameSize, regNumber initReg, bool* pIni
             GetEmitter()->emitIns_Mov(INS_mov, EA_PTRSIZE, REG_SPBASE, REG_STACK_PROBE_HELPER_ARG, /* canSkip */ false);
         }
 #else  // !TARGET_X86
-        static_assert_no_msg((RBM_STACK_PROBE_HELPER_ARG & (RBM_SECRET_STUB_PARAM | RBM_DEFAULT_HELPER_CALL_TARGET)) ==
-                             RBM_NONE);
+        static_assert((RBM_STACK_PROBE_HELPER_ARG & (RBM_SECRET_STUB_PARAM | RBM_DEFAULT_HELPER_CALL_TARGET)) ==
+                      RBM_NONE);
 
         GetEmitter()->emitIns_R_AR(INS_lea, EA_PTRSIZE, REG_STACK_PROBE_HELPER_ARG, REG_SPBASE, -(int)frameSize);
         regSet.verifyRegUsed(REG_STACK_PROBE_HELPER_ARG);
@@ -2570,7 +2585,7 @@ void CodeGen::genAllocLclFrame(unsigned frameSize, regNumber initReg, bool* pIni
             *pInitRegZeroed = false;
         }
 
-        static_assert_no_msg((RBM_STACK_PROBE_HELPER_TRASH & RBM_STACK_PROBE_HELPER_ARG) == RBM_NONE);
+        static_assert((RBM_STACK_PROBE_HELPER_TRASH & RBM_STACK_PROBE_HELPER_ARG) == RBM_NONE);
 
         GetEmitter()->emitIns_Mov(INS_mov, EA_PTRSIZE, REG_SPBASE, REG_STACK_PROBE_HELPER_ARG, /* canSkip */ false);
 #endif // !TARGET_X86
@@ -3094,7 +3109,7 @@ void CodeGen::genLclHeap(GenTree* tree)
         BasicBlock* loop = genCreateTempLabel();
         genDefineTempLabel(loop);
 
-        static_assert_no_msg((STACK_ALIGN % REGSIZE_BYTES) == 0);
+        static_assert((STACK_ALIGN % REGSIZE_BYTES) == 0);
         unsigned const count = (STACK_ALIGN / REGSIZE_BYTES);
 
         for (unsigned i = 0; i < count; i++)

@@ -183,11 +183,11 @@ public class LspEditorFeatureDetectorTest(ITestOutputHelper testOutput) : Toolin
         var projectCapabilityResolverMock = new StrictMock<IProjectCapabilityResolver>();
 
         projectCapabilityResolverMock
-            .Setup(x => x.ResolveCapability(WellKnownProjectCapabilities.LegacyRazorEditor, It.IsAny<string>()))
-            .Returns(hasLegacyRazorEditorCapability);
+            .Setup(x => x.CheckCapability(WellKnownProjectCapabilities.LegacyRazorEditor, It.IsAny<string>()))
+            .Returns(new CapabilityCheckResult(IsInProject: true, HasCapability: hasLegacyRazorEditorCapability));
         projectCapabilityResolverMock
-            .Setup(x => x.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, It.IsAny<string>()))
-            .Returns(hasDotNetCoreCSharpCapability);
+            .Setup(x => x.CheckCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, It.IsAny<string>()))
+            .Returns(new CapabilityCheckResult(IsInProject: true, HasCapability: hasDotNetCoreCSharpCapability));
 
         return projectCapabilityResolverMock.Object;
     }

@@ -53,7 +53,7 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
     {
         base.OnDocumentStructureCreated(codeDocument, @namespace, @class, method);
 
-        @namespace.Content = "AspNetCore";
+        @namespace.Name = "AspNetCore";
 
         @class.BaseType = new BaseTypeWithModel("global::Microsoft.AspNetCore.Mvc.RazorPages.Page");
 
@@ -63,21 +63,17 @@ public class RazorPageDocumentClassifierPass : DocumentClassifierPassBase
             // It's possible for a Razor document to not have a file path.
             // Eg. When we try to generate code for an in memory document like default imports.
             var checksum = ChecksumUtilities.BytesToString(codeDocument.Source.Text.GetChecksum());
-            @class.ClassName = $"AspNetCore_{checksum}";
+            @class.Name = $"AspNetCore_{checksum}";
         }
         else
         {
-            @class.ClassName = CSharpIdentifier.GetClassNameFromPath(filePath);
+            @class.Name = CSharpIdentifier.GetClassNameFromPath(filePath);
         }
 
-        @class.Modifiers.Clear();
-        @class.Modifiers.Add("public");
+        @class.Modifiers = CommonModifiers.Public;
 
-        method.MethodName = "ExecuteAsync";
-        method.Modifiers.Clear();
-        method.Modifiers.Add("public");
-        method.Modifiers.Add("async");
-        method.Modifiers.Add("override");
+        method.Name = "ExecuteAsync";
+        method.Modifiers = CommonModifiers.PublicAsyncOverride;
         method.ReturnType = $"global::{typeof(System.Threading.Tasks.Task).FullName}";
 
         var document = codeDocument.GetRequiredDocumentNode();

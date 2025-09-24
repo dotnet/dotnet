@@ -5,5 +5,6 @@ namespace Razor.Diagnostics.Analyzers;
 
 internal static class DiagnosticCategory
 {
+    public const string Performance = nameof(Performance);
     public const string Reliability = nameof(Reliability);
 }

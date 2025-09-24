@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
 #if JSONSERIALIZATION_ENABLETAGHELPERCACHE
@@ -71,14 +72,16 @@ internal static partial class ObjectReaders
         }
 #endif
 
-        var kind = reader.ReadNonNullString(nameof(TagHelperDescriptor.Kind));
+        var flags = (TagHelperFlags)reader.ReadByte(nameof(TagHelperDescriptor.Flags));
+        var kind = (TagHelperKind)reader.ReadByteOrDefault(nameof(TagHelperDescriptor.Kind), defaultValue: (byte)TagHelperKind.Component);
+        var runtimeKind = (RuntimeKind)reader.ReadByteOrDefault(nameof(TagHelperDescriptor.RuntimeKind), defaultValue: (byte)RuntimeKind.IComponent);
         var name = reader.ReadNonNullString(nameof(TagHelperDescriptor.Name));
         var assemblyName = reader.ReadNonNullString(nameof(TagHelperDescriptor.AssemblyName));
 
         var displayName = reader.ReadStringOrNull(nameof(TagHelperDescriptor.DisplayName));
+        var typeNameObject = ReadTypeNameObject(reader, nameof(TagHelperDescriptor.TypeName));
         var documentationObject = ReadDocumentationObject(reader, nameof(TagHelperDescriptor.Documentation));
         var tagOutputHint = reader.ReadStringOrNull(nameof(TagHelperDescriptor.TagOutputHint));
-        var caseSensitive = reader.ReadBooleanOrTrue(nameof(TagHelperDescriptor.CaseSensitive));
 
         var tagMatchingRules = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.TagMatchingRules), ReadTagMatchingRule);
         var boundAttributes = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.BoundAttributes), ReadBoundAttribute);
@@ -88,9 +91,8 @@ internal static partial class ObjectReaders
         var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(TagHelperDescriptor.Diagnostics), ReadDiagnostic);
 
         tagHelper = new TagHelperDescriptor(
-            Cached(kind), Cached(name), Cached(assemblyName),
-            Cached(displayName)!, documentationObject,
-            Cached(tagOutputHint), caseSensitive,
+            flags, kind, runtimeKind, Cached(name), Cached(assemblyName),
+            Cached(displayName)!, typeNameObject, documentationObject, Cached(tagOutputHint),
             tagMatchingRules, boundAttributes, allowedChildTags,
             metadata, diagnostics);
 
@@ -159,25 +161,14 @@ internal static partial class ObjectReaders
                 var containingType = reader.ReadStringOrNull(nameof(BoundAttributeDescriptor.ContainingType));
                 var documentationObject = ReadDocumentationObject(reader, nameof(BoundAttributeDescriptor.Documentation));
                 var parameters = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeDescriptor.Parameters), ReadBoundAttributeParameter);
-
-                var metadataKind = (MetadataKind)reader.ReadByteOrDefault("MetadataKind", defaultValue: (byte)MetadataKind.None);
-
-                var metadataObject = metadataKind switch
-                {
-                    MetadataKind.None => MetadataObject.None,
-                    MetadataKind.TypeParameter => reader.ReadNonNullObject(nameof(BoundAttributeDescriptor.Metadata), ReadTypeParameterMetadata),
-                    MetadataKind.Property => reader.ReadNonNullObject(nameof(BoundAttributeDescriptor.Metadata), ReadPropertyMetadata),
-                    MetadataKind.ChildContentParameter => ChildContentParameterMetadata.Default,
-                    _ => Assumed.Unreachable<MetadataObject>($"Unexpected MetadataKind '{metadataKind}'."),
-                };
-
+                var metadata = ReadMetadata(reader, nameof(BoundAttributeDescriptor.Metadata));
                 var diagnostics = reader.ReadImmutableArrayOrEmpty(nameof(BoundAttributeDescriptor.Diagnostics), ReadDiagnostic);
 
                 return new BoundAttributeDescriptor(
                     flags, Cached(name)!, Cached(propertyName), typeNameObject,
                     Cached(indexerNamePrefix), indexerTypeNameObject,
                     documentationObject, Cached(displayName), Cached(containingType),
-                    parameters, metadataObject, diagnostics);
+                    parameters, metadata, diagnostics);
             }
         }
 
@@ -211,25 +202,6 @@ internal static partial class ObjectReaders
 
                 return new AllowedChildTagDescriptor(Cached(name), Cached(displayName), diagnostics);
             }
-        }
-
-        static TypeNameObject ReadTypeNameObject(JsonDataReader reader, string propertyName)
-        {
-            if (!reader.TryReadPropertyName(propertyName))
-            {
-                return default;
-            }
-
-            if (reader.IsInteger)
-            {
-                var index = reader.ReadByte();
-                return new(index);
-            }
-
-            Debug.Assert(reader.IsString);
-
-            var fullName = reader.ReadNonNullString();
-            return new(Cached(fullName));
         }
 
         static DocumentationObject ReadDocumentationObject(JsonDataReader reader, string propertyName)
@@ -276,24 +248,22 @@ internal static partial class ObjectReaders
             }
         }
 
-        static MetadataCollection ReadMetadata(JsonDataReader reader, string propertyName)
+        static MetadataObject ReadMetadata(JsonDataReader reader, string propertyName)
         {
-            return reader.TryReadPropertyName(propertyName)
-                ? reader.ReadNonNullObject(ReadFromProperties)
-                : MetadataCollection.Empty;
+            var metadataKind = (MetadataKind)reader.ReadByteOrDefault(WellKnownPropertyNames.MetadataKind, defaultValue: (byte)MetadataKind.None);
 
-            static MetadataCollection ReadFromProperties(JsonDataReader reader)
+            return metadataKind switch
             {
-                using var builder = new MetadataBuilder();
-
-                while (reader.TryReadNextPropertyName(out var key))
-                {
-                    var value = reader.ReadString();
-                    builder.Add(Cached(key), Cached(value));
-                }
-
-                return builder.Build();
-            }
+                MetadataKind.None => MetadataObject.None,
+                MetadataKind.TypeParameter => reader.ReadNonNullObjectOrDefault(propertyName, ReadTypeParameterMetadata, defaultValue: TypeParameterMetadata.Default),
+                MetadataKind.Property => reader.ReadNonNullObjectOrDefault(propertyName, ReadPropertyMetadata, defaultValue: PropertyMetadata.Default),
+                MetadataKind.ChildContentParameter => ChildContentParameterMetadata.Default,
+                MetadataKind.Bind => reader.ReadNonNullObjectOrDefault(propertyName, ReadBindMetadata, defaultValue: BindMetadata.Default),
+                MetadataKind.Component => reader.ReadNonNullObjectOrDefault(propertyName, ReadComponentMetadata, defaultValue: ComponentMetadata.Default),
+                MetadataKind.EventHandler => reader.ReadNonNullObject(propertyName, ReadEventHandlerMetadata),
+                MetadataKind.ViewComponent => reader.ReadNonNullObject(propertyName, ReadViewComponentMetadata),
+                _ => Assumed.Unreachable<MetadataObject>($"Unexpected MetadataKind '{metadataKind}'."),
+            };
         }
 
         static TypeParameterMetadata ReadTypeParameterMetadata(JsonDataReader reader)
@@ -323,5 +293,89 @@ internal static partial class ObjectReaders
 
             return builder.Build();
         }
+
+        static BindMetadata ReadBindMetadata(JsonDataReader reader)
+        {
+            var builder = new BindMetadata.Builder
+            {
+                IsFallback = reader.ReadBooleanOrFalse(nameof(BindMetadata.IsFallback)),
+                ValueAttribute = reader.ReadStringOrNull(nameof(BindMetadata.ValueAttribute)),
+                ChangeAttribute = reader.ReadStringOrNull(nameof(BindMetadata.ChangeAttribute)),
+                ExpressionAttribute = reader.ReadStringOrNull(nameof(BindMetadata.ExpressionAttribute)),
+                TypeAttribute = reader.ReadStringOrNull(nameof(BindMetadata.TypeAttribute)),
+                IsInvariantCulture = reader.ReadBooleanOrFalse(nameof(BindMetadata.IsInvariantCulture)),
+                Format = reader.ReadStringOrNull(nameof(BindMetadata.Format))
+            };
+
+            return builder.Build();
+        }
+    }
+
+    static ComponentMetadata ReadComponentMetadata(JsonDataReader reader)
+    {
+        var builder = new ComponentMetadata.Builder
+        {
+            IsGeneric = reader.ReadBooleanOrFalse(nameof(ComponentMetadata.IsGeneric)),
+            HasRenderModeDirective = reader.ReadBooleanOrFalse(nameof(ComponentMetadata.HasRenderModeDirective))
+        };
+
+        return builder.Build();
+    }
+
+    static EventHandlerMetadata ReadEventHandlerMetadata(JsonDataReader reader)
+    {
+        var builder = new EventHandlerMetadata.Builder
+        {
+            EventArgsType = reader.ReadNonNullString(nameof(EventHandlerMetadata.EventArgsType))
+        };
+
+        return builder.Build();
+    }
+
+    static ViewComponentMetadata ReadViewComponentMetadata(JsonDataReader reader)
+    {
+        var builder = new ViewComponentMetadata.Builder
+        {
+            Name = reader.ReadNonNullString(nameof(ViewComponentMetadata.Name)),
+            OriginalTypeNameObject = ReadTypeNameObject(reader, nameof(ViewComponentMetadata.OriginalTypeName))
+        };
+
+        return builder.Build();
+    }
+
+    static TypeNameObject ReadTypeNameObject(JsonDataReader reader, string propertyName)
+    {
+        if (!reader.TryReadPropertyName(propertyName))
+        {
+            return default;
+        }
+
+        if (reader.TryReadNull())
+        {
+            return default;
+        }
+
+        if (reader.IsInteger)
+        {
+            var index = reader.ReadByte();
+            return new(index);
+        }
+
+        if (reader.IsObjectStart)
+        {
+            return reader.ReadNonNullObject(static reader =>
+            {
+                var fullName = reader.ReadNonNullString(nameof(TypeNameObject.FullName));
+                var namespaceName = reader.ReadStringOrNull(nameof(TypeNameObject.Namespace));
+                var name = reader.ReadStringOrNull(nameof(TypeNameObject.Name));
+
+                return TypeNameObject.From(fullName, Cached(namespaceName), Cached(name));
+            });
+        }
+
+        Debug.Assert(reader.IsString);
+
+        var fullName = reader.ReadNonNullString();
+        return new(Cached(fullName));
     }
 }
