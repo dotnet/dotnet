@@ -64,13 +64,13 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/aspnet/AspNetCore -->
-    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.20</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.20</MicrosoftAspNetCoreAppRefPackageVersion>
-    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.20-servicing.25420.2</MicrosoftAspNetCoreAppRefInternalPackageVersion>
-    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.20-servicing.25420.2</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
-    <dotnetdevcertsPackageVersion>8.0.20-servicing.25420.2</dotnetdevcertsPackageVersion>
-    <dotnetuserjwtsPackageVersion>8.0.20-servicing.25420.2</dotnetuserjwtsPackageVersion>
-    <dotnetusersecretsPackageVersion>8.0.20-servicing.25420.2</dotnetusersecretsPackageVersion>
+    <MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>8.0.21</MicrosoftAspNetCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftAspNetCoreAppRefPackageVersion>8.0.21</MicrosoftAspNetCoreAppRefPackageVersion>
+    <MicrosoftAspNetCoreAppRefInternalPackageVersion>8.0.21-servicing.25469.9</MicrosoftAspNetCoreAppRefInternalPackageVersion>
+    <VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>8.0.21-servicing.25469.9</VSRedistCommonAspNetCoreSharedFrameworkx6480PackageVersion>
+    <dotnetdevcertsPackageVersion>8.0.21-servicing.25469.9</dotnetdevcertsPackageVersion>
+    <dotnetuserjwtsPackageVersion>8.0.21-servicing.25469.9</dotnetuserjwtsPackageVersion>
+    <dotnetusersecretsPackageVersion>8.0.21-servicing.25469.9</dotnetusersecretsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <MicroBuildCorePackageVersion>0.2.0</MicroBuildCorePackageVersion>
@@ -78,8 +78,8 @@
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/sdk -->
     <MicrosoftDotNetCommonItemTemplatesPackageVersion>8.0.121</MicrosoftDotNetCommonItemTemplatesPackageVersion>
-    <MicrosoftNETSdkPackageVersion>8.0.121-servicing.25466.7</MicrosoftNETSdkPackageVersion>
-    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.121-servicing.25466.7</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
+    <MicrosoftNETSdkPackageVersion>8.0.121-servicing.25469.25</MicrosoftNETSdkPackageVersion>
+    <MicrosoftDotNetMSBuildSdkResolverPackageVersion>8.0.121-servicing.25469.25</MicrosoftDotNetMSBuildSdkResolverPackageVersion>
     <MicrosoftNETBuildExtensionsPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftNETBuildExtensionsPackageVersion>
     <MicrosoftDotnetToolsetInternalPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetToolsetInternalPackageVersion>
     <MicrosoftDotnetTemplateLocatorPackageVersion>$(MicrosoftNETSdkPackageVersion)</MicrosoftDotnetTemplateLocatorPackageVersion>
@@ -90,16 +90,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/corefx -->
-    <MicrosoftNETCorePlatformsPackageVersion>8.0.20-servicing.25419.14</MicrosoftNETCorePlatformsPackageVersion>
+    <MicrosoftNETCorePlatformsPackageVersion>8.0.21-servicing.25469.8</MicrosoftNETCorePlatformsPackageVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/core-setup -->
-    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.20-servicing.25419.14</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
-    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.20-servicing.25419.14</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
-    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.20</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
-    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.20</MicrosoftNETCoreAppHostwinx64PackageVersion>
-    <MicrosoftNETCoreAppRefPackageVersion>8.0.20</MicrosoftNETCoreAppRefPackageVersion>
-    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.20</MicrosoftNETCoreDotNetHostResolverPackageVersion>
+    <VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>8.0.21-servicing.25469.8</VSRedistCommonNetCoreSharedFrameworkx6480PackageVersion>
+    <VSRedistCommonNetCoreTargetingPackx6480PackageVersion>8.0.21-servicing.25469.8</VSRedistCommonNetCoreTargetingPackx6480PackageVersion>
+    <MicrosoftNETCoreAppRuntimewinx64PackageVersion>8.0.21</MicrosoftNETCoreAppRuntimewinx64PackageVersion>
+    <MicrosoftNETCoreAppHostwinx64PackageVersion>8.0.21</MicrosoftNETCoreAppHostwinx64PackageVersion>
+    <MicrosoftNETCoreAppRefPackageVersion>8.0.21</MicrosoftNETCoreAppRefPackageVersion>
+    <MicrosoftNETCoreDotNetHostResolverPackageVersion>8.0.21</MicrosoftNETCoreDotNetHostResolverPackageVersion>
     <NETStandardLibraryRefPackageVersion>2.1.0</NETStandardLibraryRefPackageVersion>
     <SystemFormatsAsn1PackageVersion>8.0.1</SystemFormatsAsn1PackageVersion>
     <MicrosoftIORedistPackageVersion>6.0.1</MicrosoftIORedistPackageVersion>
@@ -126,7 +126,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <!-- Dependencies from https://github.com/dotnet/msbuild -->
-    <MicrosoftBuildPackageVersion>17.8.42</MicrosoftBuildPackageVersion>
+    <MicrosoftBuildPackageVersion>17.8.43</MicrosoftBuildPackageVersion>
   </PropertyGroup>
   <!-- Dependencies from https://github.com/dotnet/deployment-tools -->
   <PropertyGroup>
@@ -183,7 +183,7 @@
     <XamarinMacOSWorkloadManifestVersion>14.0.8478</XamarinMacOSWorkloadManifestVersion>
     <XamarinTvOSWorkloadManifestVersion>17.0.8478</XamarinTvOSWorkloadManifestVersion>
     <!-- Workloads from dotnet/emsdk -->
-    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100PackageVersion>8.0.20</MicrosoftNETWorkloadEmscriptenCurrentManifest80100PackageVersion>
+    <MicrosoftNETWorkloadEmscriptenCurrentManifest80100PackageVersion>8.0.21</MicrosoftNETWorkloadEmscriptenCurrentManifest80100PackageVersion>
     <EmscriptenWorkloadManifestVersion>$(MicrosoftNETWorkloadEmscriptenCurrentManifest80100PackageVersion)</EmscriptenWorkloadManifestVersion>
     <!-- emsdk workload prerelease version band must match the emsdk feature band -->
     <EmscriptenWorkloadFeatureBand>8.0.100$([System.Text.RegularExpressions.Regex]::Match($(EmscriptenWorkloadManifestVersion), `-rtm|-[A-z]*\.*\d*`))</EmscriptenWorkloadFeatureBand>
