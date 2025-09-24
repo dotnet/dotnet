@@ -1,16 +1,16 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.PooledObjects;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.Razor.Settings;
 using Microsoft.VisualStudio.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
@@ -22,7 +22,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 {
     [Theory]
     [CombinatorialData]
-    public async Task Razor(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
+    public async Task Razor(bool colorBackground, bool miscellaneousFile)
     {
         var input = """
             @page "/"
@@ -63,12 +63,12 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile);
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task Legacy(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
+    public async Task Legacy(bool colorBackground, bool miscellaneousFile)
     {
         var input = """
             @page "/"
@@ -91,12 +91,12 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
     [Theory]
     [CombinatorialData]
-    public async Task Legacy_Compatibility(bool colorBackground, bool supportsVSExtensions, bool miscellaneousFile)
+    public async Task Legacy_Compatibility(bool colorBackground, bool miscellaneousFile)
     {
         // Same test as above, but with only the things that work in FUSE and non-FUSE, to prevent regressions
 
@@ -116,13 +116,12 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             }
             """;
 
-        await VerifySemanticTokensAsync(input, colorBackground, supportsVSExtensions, miscellaneousFile, fileKind: RazorFileKind.Legacy);
+        await VerifySemanticTokensAsync(input, colorBackground, miscellaneousFile, fileKind: RazorFileKind.Legacy);
     }
 
     private async Task VerifySemanticTokensAsync(
         string input,
         bool colorBackground,
-        bool supportsVSExtensions,
         bool miscellaneousFile,
         RazorFileKind? fileKind = null,
         [CallerMemberName] string? testName = null)
@@ -130,21 +129,17 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         var document = CreateProjectAndRazorDocument(input, fileKind, miscellaneousFile: miscellaneousFile);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var legend = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions);
-
         // We need to manually initialize the OOP service so we can get semantic token info later
         UpdateClientLSPInitializationOptions(options =>
         {
-            options.ClientCapabilities.SupportsVisualStudioExtensions = supportsVSExtensions;
-
             return options with
             {
-                TokenTypes = legend.TokenTypes.All,
-                TokenModifiers = legend.TokenModifiers.All,
+                TokenTypes = SemanticTokensLegendService.TokenTypes.All,
+                TokenModifiers = SemanticTokensLegendService.TokenModifiers.All,
             };
         });
 
-        var clientSettingsManager = new ClientSettingsManager([], null, null);
+        var clientSettingsManager = ClientSettingsManager;
         clientSettingsManager.Update(ClientAdvancedSettings.Default with { ColorBackground = colorBackground });
 
         var endpoint = new CohostSemanticTokensRangeEndpoint(IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager, NoOpTelemetryReporter.Instance);
@@ -153,12 +148,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
 
         var result = await endpoint.GetTestAccessor().HandleRequestAsync(document, span, DisposalToken);
 
-        var actualFileContents = GetTestOutput(sourceText, result?.Data, legend);
-
-        if (!supportsVSExtensions)
-        {
-            testName += "_VSCode";
-        }
+        var actualFileContents = GetTestOutput(sourceText, result?.Data, SemanticTokensLegendService);
 
         if (colorBackground)
         {
@@ -188,7 +178,9 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
             return string.Empty;
         }
 
-        return semanticFile.ReadAllText();
+        return semanticFile.ReadAllText()
+            // CI seems to not checkout with auto-crlf, so normalize to Environment.NewLine
+            .Replace("\r\n", Environment.NewLine);
     }
 
     private static void WriteBaselineFile(string fileContents, string baselineFileName)
@@ -198,7 +190,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         File.WriteAllText(baselineFileFullPath, fileContents);
     }
 
-    private static string GetTestOutput(SourceText sourceText, int[]? data, RazorSemanticTokensLegendService legend)
+    private static string GetTestOutput(SourceText sourceText, int[]? data, ISemanticTokensLegendService legend)
     {
         if (data == null)
         {
@@ -239,7 +231,7 @@ public class CohostSemanticTokensRangeEndpointTest(ITestOutputHelper testOutputH
         return builder.ToString();
     }
 
-    private static string GetTokenModifierString(int tokenModifiers, RazorSemanticTokensLegendService legend)
+    private static string GetTokenModifierString(int tokenModifiers, ISemanticTokensLegendService legend)
     {
         var modifiers = legend.TokenModifiers.All;
 
