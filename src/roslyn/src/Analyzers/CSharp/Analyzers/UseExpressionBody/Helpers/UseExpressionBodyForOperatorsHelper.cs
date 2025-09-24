@@ -4,7 +4,6 @@
 
 #nullable disable
 
-using System.Threading;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp.CodeGeneration;
 using Microsoft.CodeAnalysis.CSharp.CodeStyle;
@@ -49,6 +48,6 @@ internal sealed class UseExpressionBodyForOperatorsHelper :
     protected override OperatorDeclarationSyntax WithBody(OperatorDeclarationSyntax declaration, BlockSyntax body)
         => declaration.WithBody(body);
 
-    protected override bool CreateReturnStatementForExpression(SemanticModel semanticModel, OperatorDeclarationSyntax declaration, CancellationToken cancellationToken)
+    protected override bool CreateReturnStatementForExpression(SemanticModel semanticModel, OperatorDeclarationSyntax declaration)
         => true;
 }

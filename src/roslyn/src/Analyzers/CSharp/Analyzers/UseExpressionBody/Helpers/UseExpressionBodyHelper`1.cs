@@ -24,21 +24,31 @@ using static SyntaxFactory;
 /// code refactoring provider.  Those can't share a common base class due to their own inheritance
 /// requirements with <see cref="DiagnosticAnalyzer"/> and "CodeRefactoringProvider".
 /// </summary>
-internal abstract class UseExpressionBodyHelper<TDeclaration>(
-    string diagnosticId,
-    EnforceOnBuild enforceOnBuild,
-    LocalizableString useExpressionBodyTitle,
-    LocalizableString useBlockBodyTitle,
-    Option2<CodeStyleOption2<ExpressionBodyPreference>> option,
-    ImmutableArray<SyntaxKind> syntaxKinds) : UseExpressionBodyHelper
+internal abstract class UseExpressionBodyHelper<TDeclaration> : UseExpressionBodyHelper
     where TDeclaration : SyntaxNode
 {
-    public override Option2<CodeStyleOption2<ExpressionBodyPreference>> Option { get; } = option;
-    public override LocalizableString UseExpressionBodyTitle { get; } = useExpressionBodyTitle;
-    public override LocalizableString UseBlockBodyTitle { get; } = useBlockBodyTitle;
-    public override string DiagnosticId { get; } = diagnosticId;
-    public override EnforceOnBuild EnforceOnBuild { get; } = enforceOnBuild;
-    public override ImmutableArray<SyntaxKind> SyntaxKinds { get; } = syntaxKinds;
+    public override Option2<CodeStyleOption2<ExpressionBodyPreference>> Option { get; }
+    public override LocalizableString UseExpressionBodyTitle { get; }
+    public override LocalizableString UseBlockBodyTitle { get; }
+    public override string DiagnosticId { get; }
+    public override EnforceOnBuild EnforceOnBuild { get; }
+    public override ImmutableArray<SyntaxKind> SyntaxKinds { get; }
+
+    protected UseExpressionBodyHelper(
+        string diagnosticId,
+        EnforceOnBuild enforceOnBuild,
+        LocalizableString useExpressionBodyTitle,
+        LocalizableString useBlockBodyTitle,
+        Option2<CodeStyleOption2<ExpressionBodyPreference>> option,
+        ImmutableArray<SyntaxKind> syntaxKinds)
+    {
+        DiagnosticId = diagnosticId;
+        EnforceOnBuild = enforceOnBuild;
+        Option = option;
+        UseExpressionBodyTitle = useExpressionBodyTitle;
+        UseBlockBodyTitle = useBlockBodyTitle;
+        SyntaxKinds = syntaxKinds;
+    }
 
     protected static AccessorDeclarationSyntax? GetSingleGetAccessor(AccessorListSyntax? accessorList)
     {
@@ -221,8 +231,7 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
         return userPrefersBlockBodies == forAnalyzer || (!forAnalyzer && analyzerDisabled);
     }
 
-    public TDeclaration Update(
-        SemanticModel semanticModel, TDeclaration declaration, bool useExpressionBody, CancellationToken cancellationToken)
+    public TDeclaration Update(SemanticModel semanticModel, TDeclaration declaration, bool useExpressionBody, CancellationToken cancellationToken)
     {
         if (useExpressionBody)
         {
@@ -245,7 +254,7 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
         {
             return WithSemicolonToken(
                 WithExpressionBody(
-                    WithGenerateBody(semanticModel, declaration, cancellationToken),
+                    WithGenerateBody(semanticModel, declaration),
                     expressionBody: null),
                 default);
         }
@@ -279,8 +288,7 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
 
     protected abstract ArrowExpressionClauseSyntax? GetExpressionBody(TDeclaration declaration);
 
-    protected abstract bool CreateReturnStatementForExpression(
-        SemanticModel semanticModel, TDeclaration declaration, CancellationToken cancellationToken);
+    protected abstract bool CreateReturnStatementForExpression(SemanticModel semanticModel, TDeclaration declaration);
 
     protected abstract SyntaxToken GetSemicolonToken(TDeclaration declaration);
 
@@ -288,14 +296,13 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
     protected abstract TDeclaration WithExpressionBody(TDeclaration declaration, ArrowExpressionClauseSyntax? expressionBody);
     protected abstract TDeclaration WithBody(TDeclaration declaration, BlockSyntax? body);
 
-    protected virtual TDeclaration WithGenerateBody(
-        SemanticModel semanticModel, TDeclaration declaration, CancellationToken cancellationToken)
+    protected virtual TDeclaration WithGenerateBody(SemanticModel semanticModel, TDeclaration declaration)
     {
         var expressionBody = GetExpressionBody(declaration);
 
         if (expressionBody.TryConvertToBlock(
                 GetSemicolonToken(declaration),
-                CreateReturnStatementForExpression(semanticModel, declaration, cancellationToken),
+                CreateReturnStatementForExpression(semanticModel, declaration),
                 out var block))
         {
             return WithBody(declaration, block);
@@ -304,8 +311,7 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
         return declaration;
     }
 
-    protected TDeclaration WithAccessorList(
-        SemanticModel semanticModel, TDeclaration declaration, CancellationToken cancellationToken)
+    protected TDeclaration WithAccessorList(SemanticModel semanticModel, TDeclaration declaration)
     {
         var expressionBody = GetExpressionBody(declaration);
         var semicolonToken = GetSemicolonToken(declaration);
@@ -320,7 +326,7 @@ internal abstract class UseExpressionBodyHelper<TDeclaration>(
 
         expressionBody.TryConvertToBlock(
             GetSemicolonToken(declaration),
-            CreateReturnStatementForExpression(semanticModel, declaration, cancellationToken),
+            CreateReturnStatementForExpression(semanticModel, declaration),
             out var block);
 
         var accessor = AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);

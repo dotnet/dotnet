@@ -88,13 +88,13 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
     {
         try
         {
-            var (newProposal, adjustmentResults) = await AdjustProposalAsync(
+            var (newProposal, adjustmentKinds) = await AdjustProposalAsync(
                 solution, proposal, cancellationToken).ConfigureAwait(false);
 
             // Report telemetry if we were or were not able to adjust the proposal.
             Logger.LogBlock(FunctionId.Copilot_AdjustProposal, KeyValueLogMessage.Create(static (d, args) =>
             {
-                var (providerName, before, proposal, newProposal, adjustmentResults, elapsedTime) = args;
+                var (providerName, before, proposal, newProposal, adjustmentKinds, elapsedTime) = args;
 
                 // If we (roslyn) were able to come up with *any* edits we wanted to adjust the proposal with or not.
                 var adjustmentsProposed = newProposal != null;
@@ -113,14 +113,10 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
                 // Record how many new edits were made to the proposal.  Expectation is that this is commonly only 1,
                 // but we want to see how that potentially changes over time, especially as we add more adjusters.
                 d["AdjustmentsCount"] = newProposal.Edits.Count - proposal.Edits.Count;
-                if (adjustmentResults.Length > 0)
-                {
-                    d["AdjustmentKinds"] = string.Join(",", adjustmentResults.Select(static a => a.AdjustmentKind));
-                    d["AdjustmentTimes"] = string.Join(",", adjustmentResults.Select(
-                        static a => FormattableString.Invariant($"{a.AdjustmentKind}_{a.AdjustmentTime.TotalMilliseconds:G17}")));
-                }
+                if (adjustmentKinds.Length > 0)
+                    d["AdjustmentKinds"] = string.Join(",", adjustmentKinds);
             },
-            args: (providerName, before, proposal, newProposal, adjustmentResults, stopwatch.Elapsed)),
+            args: (providerName, before, proposal, newProposal, adjustmentKinds, stopwatch.Elapsed)),
             cancellationToken).Dispose();
 
             return newProposal ?? proposal;
@@ -166,14 +162,14 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
     /// adjusted proposal based on the edits we tried to make.  Note that this does not guarantee that the edits were successfully
     /// applied to the original edits.  The <see cref="Proposal"/> system may reject them based on their own criteria.
     /// </summary>
-    private async Task<(ProposalBase? proposal, ImmutableArray<AdjustmentResult> adjustments)> AdjustProposalAsync(
+    private async Task<(ProposalBase? proposal, ImmutableArray<string> adjustmentKinds)> AdjustProposalAsync(
         Solution solution, ProposalBase proposal, CancellationToken cancellationToken)
     {
         // We're potentially making multiple calls to oop here.  So keep a session alive to avoid
         // resyncing the solution and recomputing compilations.
         using var _1 = await RemoteKeepAliveSession.CreateAsync(solution, cancellationToken).ConfigureAwait(false);
         using var _2 = PooledObjects.ArrayBuilder<ProposedEdit>.GetInstance(out var finalEdits);
-        using var _3 = PooledObjects.ArrayBuilder<AdjustmentResult>.GetInstance(out var collectedAdjustments);
+        using var _3 = PooledObjects.ArrayBuilder<string>.GetInstance(out var adjustmentKinds);
 
         var adjustmentsProposed = false;
         var format = false;
@@ -188,7 +184,7 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
             Contract.ThrowIfNull(document);
 
             var proposalAdjusterService = document.GetLanguageService<ICopilotProposalAdjusterService>();
-            var (proposedEdits, formatGroup, adjustmentResults) = proposalAdjusterService is null
+            var (proposedEdits, formatGroup, changeKinds) = proposalAdjusterService is null
                 ? default
                 : await proposalAdjusterService.TryAdjustProposalAsync(
                     document, CopilotEditorUtilities.TryGetNormalizedTextChanges(editGroup), cancellationToken).ConfigureAwait(false);
@@ -203,7 +199,7 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
                 // Changes were made to the proposal.  Add the new edits.
                 adjustmentsProposed = true;
                 format = format || formatGroup;
-                collectedAdjustments.AddRange(adjustmentResults);
+                adjustmentKinds.AddRange(changeKinds);
 
                 foreach (var proposedEdit in proposedEdits)
                 {
@@ -229,14 +225,7 @@ internal sealed class RoslynProposalAdjusterProvider() : ProposalAdjusterProvide
         if (format && !result.Flags.HasFlag(ProposalFlags.FormatAfterCommit))
             result = new Proposal(result.Description, result.Edits, result.Caret, result.CompletionState, result.Flags | ProposalFlags.FormatAfterCommit, result.CommitAction, result.ProposalId, result.AcceptText, result.PreviewText, result.NextText, result.UndoDescription, result.Scope);
 
-        var totalAdjustments = collectedAdjustments
-            .GroupBy(static a => a.AdjustmentKind)
-            .Select(static grp => new AdjustmentResult(
-                AdjustmentKind: grp.Key,
-                AdjustmentTime: grp.Aggregate(seed: TimeSpan.Zero, static (a, b) => a + b.AdjustmentTime)
-            )).OrderBy(static a => a.AdjustmentKind)
-            .ToImmutableArray();
-
-        return (result, totalAdjustments);
+        adjustmentKinds.SortAndRemoveDuplicates();
+        return (result, adjustmentKinds.ToImmutableAndClear());
     }
 }
