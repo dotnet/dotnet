@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
+using Microsoft.VisualStudio.Razor.Settings;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -92,11 +93,12 @@ public class CohostSignatureHelpEndpointTest(ITestOutputHelper testOutputHelper)
         var document = CreateProjectAndRazorDocument(input);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        ClientSettingsManager.Update(ClientCompletionSettings.Default with { AutoListParams = autoListParams });
+        var clientSettingsManager = new ClientSettingsManager([], null, null);
+        clientSettingsManager.Update(ClientCompletionSettings.Default with { AutoListParams = autoListParams });
 
         var requestInvoker = new TestHtmlRequestInvoker([(Methods.TextDocumentSignatureHelpName, null)]);
 
-        var endpoint = new CohostSignatureHelpEndpoint(IncompatibleProjectService, RemoteServiceInvoker, ClientSettingsManager, requestInvoker);
+        var endpoint = new CohostSignatureHelpEndpoint(IncompatibleProjectService, RemoteServiceInvoker, clientSettingsManager, requestInvoker);
 
         var signatureHelpContext = new SignatureHelpContext()
         {

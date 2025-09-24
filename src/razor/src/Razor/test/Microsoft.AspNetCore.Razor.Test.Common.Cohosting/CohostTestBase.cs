@@ -122,6 +122,7 @@ public abstract class CohostTestBase(ITestOutputHelper testOutputHelper) : Tooli
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
+        bool createSeparateRemoteAndLocalWorkspaces = false,
         bool inGlobalNamespace = false,
         bool miscellaneousFile = false)
     {
