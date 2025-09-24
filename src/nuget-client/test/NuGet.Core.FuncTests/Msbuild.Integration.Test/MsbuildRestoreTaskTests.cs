@@ -2149,5 +2149,70 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
             result.Success.Should().BeTrue(because: result.AllOutput);
             project.AssetsFile.Should().NotBeNull();
         }
+
+        [PlatformTheory(Platform.Windows)]
+        [InlineData(true, true)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(false, false)]
+        public async Task MsbuildRestore_WithProjectJsonProject_Skips(bool useStaticGraphRestore, bool usePackageSpecFactory)
+        {
+            // Arrange
+            using (var pathContext = new SimpleTestPathContext())
+            {
+                // Set up solution, project, and packages
+                var solution = new SimpleTestSolutionContext(pathContext.SolutionRoot);
+
+                var framework = NuGetFramework.Parse("net472");
+
+                var project = new SimpleTestProjectContext("a", ProjectStyle.ProjectJson, pathContext.SolutionRoot);
+                project.Frameworks.Add(new SimpleTestProjectFrameworkContext(framework));
+
+                solution.Projects.Add(project);
+                solution.Create(pathContext.SolutionRoot);
+
+                File.WriteAllText(Path.Combine(Path.GetDirectoryName(project.ProjectPath), "project.json"), @"
+                {
+                    ""dependencies"": {
+                      ""x"": ""1.0.0""
+                    },
+                    ""frameworks"": {
+                      ""net472"": {}
+                    },
+                  ""runtimes"": {
+                    ""win-anycpu"": {},
+                    ""win"": {}
+                  }
+                }");
+
+                var packageX = new SimpleTestPackageContext()
+                {
+                    Id = "x",
+                    Version = "1.0.0"
+                };
+
+                await SimpleTestPackageUtility.CreateFolderFeedV3Async(
+                    pathContext.PackageSource,
+                    packageX);
+
+                var projectOutputPaths = new[]
+                {
+                    project.AssetsFileOutputPath
+                };
+
+                var environmentVariables = new Dictionary<string, string>();
+                environmentVariables.AddRange(_msbuildFixture.DefaultProcessEnvironmentVariables);
+                environmentVariables["NUGET_USE_NEW_PACKAGESPEC_FACTORY"] = usePackageSpecFactory.ToString();
+
+                var result = _msbuildFixture.RunMsBuild(pathContext.WorkingDirectory, $"/t:restore {project.ProjectPath}" + (useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=\"true\"" : string.Empty), ignoreExitCode: true, testOutputHelper: _testOutputHelper, environmentVariables);
+                result.Success.Should().BeTrue(because: result.AllOutput);
+
+                foreach (var asset in projectOutputPaths)
+                {
+                    var fileInfo = new FileInfo(asset);
+                    fileInfo.Exists.Should().BeFalse(because: result.AllOutput);
+                }
+            }
+        }
     }
 }
