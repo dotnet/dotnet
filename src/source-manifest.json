@@ -37,10 +37,10 @@
       "commitSha": "29b752ed624a2796726cbe9891c8627dd580002d"
     },
     {
-      "barId": 283287,
+      "barId": 284212,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "8a9e809d66e46e1a33cb801c3cbfa3334311fe00"
+      "commitSha": "a4f37c552c9cb3485a043783cfd52afd90c24bdf"
     },
     {
       "barId": 283436,
@@ -73,16 +73,16 @@
       "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
     },
     {
-      "barId": 284076,
+      "barId": 284229,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "a01d4a05fe85952de3db03a745fab6f33e1ba12b"
+      "commitSha": "b48cd5e89e69ed8e9a8170d14e5f8acc2231a199"
     },
     {
-      "barId": 283801,
+      "barId": 284232,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "68641b5e00b6e6a81e2ec0f6c6110f8fb2d17a57"
+      "commitSha": "0abfd8727b71f279d5718e753a70c4353afea774"
     },
     {
       "barId": 277711,
