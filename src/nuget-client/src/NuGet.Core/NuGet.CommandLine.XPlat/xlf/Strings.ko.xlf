@@ -97,6 +97,11 @@
         <target state="translated">NuGet Command Line</target>
         <note />
       </trans-unit>
+      <trans-unit id="ArgumentNullOrEmpty">
+        <source>Argument cannot be null or empty.</source>
+        <target state="new">Argument cannot be null or empty.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
         <source>Key '{0}' not found.</source>
         <target state="translated">키 '{0}'을(를) 찾을 수 없습니다.</target>
@@ -279,6 +284,12 @@
         <target state="translated">검색 리소스를 가져오지 못했습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="Error_CannotUpgradeAutoReferencedPackage">
+        <source>{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</source>
+        <target state="new">{0}: Package {1} is implicitly added by the SDK and cannot be upgraded independently</target>
+        <note>{0} - project referencing the package
+{1} - package id</note>
+      </trans-unit>
       <trans-unit id="Error_CentralPackageVersions_AutoreferencedReferencesNotAllowed">
         <source>The packages {0} are implicitly referenced. You do not typically need to reference them from your project or in your central package versions management file. For more information, see https://aka.ms/sdkimplicitrefs</source>
         <target state="translated">{0} 패키지는 암시적으로 참조됩니다. 일반적으로 프로젝트나 중앙 패키지 버전 관리 파일에서 해당 패키지를 참조할 필요가 없습니다. 자세한 내용은 https://aka.ms/sdkimplicitrefs를 참조하세요.</target>
@@ -387,11 +398,10 @@ NuGet에는 HTTPS 원본이 필요합니다. HTTP 원본을 사용하려면 NuGe
         <target state="translated">`{0}` 프로젝트는 NuGet 패키지에 대한 package.config를 사용합니다. 명령은 패키지 참조 프로젝트에서만 작동합니다.</target>
         <note />
       </trans-unit>
-      <trans-unit id="Error_PackageNotReferenced">
-        <source>The package {0} is not referenced by project {1}</source>
-        <target state="translated">프로젝트 {0}에서 패키지 {1}을(를) 참조하지 않습니다.</target>
-        <note>0 - The package ID
-1 - The project path</note>
+      <trans-unit id="Error_PackageSourceMappingNotFound">
+        <source>Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</source>
+        <target state="new">Package source mapping is enabled, but no mapping for package {0} was found. See https://aka.ms/nuget/psm for more information.</target>
+        <note>{0} - package id</note>
       </trans-unit>
       <trans-unit id="Error_PathIsMissingOrInvalid">
         <source>Missing or invalid path '{0}'. Please provide a path to a project, solution file, or directory.</source>
@@ -1073,8 +1083,8 @@ This option should be used when specifying the certificate via --certificate-sub
       <trans-unit id="SignCommandCertificateSubjectNameDescription">
         <source>Subject name of the certificate used to search a local certificate store for the certificate.
 The search is a case-insensitive string comparison using the supplied value, which will find all certificates with the subject name containing that string, regardless of other subject values. The certificate store can be specified by --certificate-store-name and --certificate-store-location options.</source>
-        <target state="translated">인증서에 대한 로컬 인증서 저장소를 검색하는 데 사용되는 인증서의 주체 이름입니다. 
- 
+        <target state="translated">인증서에 대한 로컬 인증서 저장소를 검색하는 데 사용되는 인증서의 주체 이름입니다.
+
 검색은 제공된 값을 사용하는 대소문자를 구분하지 않는 문자열 비교입니다. 이 검색은 다른 주체 값과 관계 없이, 해당 문자열이 포함된 주체 이름을 가진 모든 인증서를 찾습니다. 인증서 저장소는 --certificate-store-name 및 --certificate-store-location 옵션으로 지정할 수 있습니다.</target>
         <note>Please don't localize '--certificate-store-name' and '--certificate-store-location'</note>
       </trans-unit>
@@ -1291,11 +1301,6 @@ The search is a case-insensitive string comparison using the supplied value, whi
       <trans-unit id="TrustedSignerNameToRemove">
         <source>The name of the existing trusted signer to remove.</source>
         <target state="translated">제거할 기존 신뢰할 수 있는 서명자의 이름입니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="Unsupported_PackageSourceMapping">
-        <source>Unsupported: Projects using Package Source Mapping are not yet supported</source>
-        <target state="translated">지원되지 않음: 패키지 원본 매핑을 사용하는 프로젝트는 아직 지원되지 않음</target>
         <note />
       </trans-unit>
       <trans-unit id="Unsupported_UpdatePackageWithDifferentPerTfmVersions">

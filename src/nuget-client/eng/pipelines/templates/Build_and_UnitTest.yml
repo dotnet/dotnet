@@ -239,7 +239,7 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.Core\\Microsoft.VisualStudio.NuGet.Core.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\16.GenerateVSManifestForVSIX.binlog"
+    msbuildArguments: "/property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\16.GenerateVSManifestForVSIX.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 
 - task: MSBuild@1
@@ -247,7 +247,7 @@ steps:
   inputs:
     solution: "setup\\Microsoft.VisualStudio.NuGet.BuildTools\\Microsoft.VisualStudio.NuGet.BuildTools.vsmanproj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.SourcesDirectory)/artifacts /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateVSManifestForToolsVSIX.binlog"
+    msbuildArguments: "/property:IsVsixBuild=false /property:ManifestDirPath=$(Build.ArtifactStagingDirectory)/sbom /binarylogger:$(Build.StagingDirectory)\\binlog\\17.GenerateVSManifestForToolsVSIX.binlog"
   condition: "and(succeeded(),eq(variables['BuildRTM'], 'false'))"
 
 - task: NuGetCommand@2
@@ -267,12 +267,14 @@ steps:
 - task: MicroBuildBuildVSBootstrapper@3
   displayName: 'Build a Visual Studio bootstrapper for tests'
   inputs:
+    azureSubscription: 'VSEng-VSDrop-MI'
     channelName: "$(VsTargetChannelForTests)"
     vsMajorVersion: "$(VsTargetMajorVersion)"
     manifests: '$(Build.Repository.LocalPath)\artifacts\VS15\Microsoft.VisualStudio.NuGet.Core.vsman'
     outputFolder: '$(Build.Repository.LocalPath)\artifacts\VS15'
   condition: "and(succeeded(), eq(variables['BuildRTM'], 'false'))"
-
+  env:
+    SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 - task: PowerShell@1
   displayName: "Set Bootstrapper URL variable for tests"
   name: "vsbootstrapper"

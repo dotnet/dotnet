@@ -13,6 +13,8 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet
         file source=$(ReferenceOutputPath)Newtonsoft.Json.dll
         file source=$(ReferenceOutputPath)NuGet.Build.Tasks.Console.exe
         file source=$(ReferenceOutputPath)NuGet.Build.Tasks.Console.exe.config
+        file source=$(ReferenceOutputPath)NuGet.Build.Tasks.Pack.dll
+        file source=$(ReferenceOutputPath)NuGet.Build.Tasks.Pack.targets
         file source=$(ReferenceOutputPath)NuGet.Build.Tasks.dll
         file source=$(ReferenceOutputPath)NuGet.Commands.dll
         file source=$(ReferenceOutputPath)NuGet.Common.dll
@@ -39,6 +41,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\cs
         file source=$(ReferenceOutputPath)cs\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)cs\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)cs\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)cs\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)cs\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)cs\NuGet.Common.resources.dll
@@ -57,6 +60,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\cs
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\de
         file source=$(ReferenceOutputPath)de\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)de\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)de\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)de\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)de\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)de\NuGet.Common.resources.dll
@@ -75,6 +79,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\de
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\es
         file source=$(ReferenceOutputPath)es\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)es\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)es\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)es\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)es\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)es\NuGet.Common.resources.dll
@@ -93,6 +98,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\es
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\fr
         file source=$(ReferenceOutputPath)fr\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)fr\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)fr\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)fr\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)fr\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)fr\NuGet.Common.resources.dll
@@ -111,6 +117,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\fr
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\it
         file source=$(ReferenceOutputPath)it\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)it\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)it\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)it\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)it\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)it\NuGet.Common.resources.dll
@@ -129,6 +136,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\it
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ja
         file source=$(ReferenceOutputPath)ja\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)ja\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)ja\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)ja\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)ja\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)ja\NuGet.Common.resources.dll
@@ -147,6 +155,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ja
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ko
         file source=$(ReferenceOutputPath)ko\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)ko\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)ko\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)ko\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)ko\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)ko\NuGet.Common.resources.dll
@@ -165,6 +174,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ko
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\pl
         file source=$(ReferenceOutputPath)pl\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)pl\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)pl\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)pl\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)pl\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)pl\NuGet.Common.resources.dll
@@ -183,6 +193,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\pl
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\pt-BR
         file source=$(ReferenceOutputPath)pt-BR\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)pt-BR\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)pt-BR\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)pt-BR\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)pt-BR\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)pt-BR\NuGet.Common.resources.dll
@@ -201,6 +212,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\pt-BR
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ru
         file source=$(ReferenceOutputPath)ru\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)ru\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)ru\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)ru\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)ru\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)ru\NuGet.Common.resources.dll
@@ -219,6 +231,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\ru
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\tr
         file source=$(ReferenceOutputPath)tr\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)tr\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)tr\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)tr\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)tr\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)tr\NuGet.Common.resources.dll
@@ -237,6 +250,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\tr
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\zh-Hans
         file source=$(ReferenceOutputPath)zh-Hans\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)zh-Hans\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)zh-Hans\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)zh-Hans\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)zh-Hans\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)zh-Hans\NuGet.Common.resources.dll
@@ -255,6 +269,7 @@ folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\zh-Hans
 folder InstallDir:\Common7\IDE\CommonExtensions\Microsoft\NuGet\zh-Hant
         file source=$(ReferenceOutputPath)zh-Hant\Microsoft.Build.NuGetSdkResolver.resources.dll
         file source=$(ReferenceOutputPath)zh-Hant\Microsoft.Web.XmlTransform.resources.dll
+        file source=$(ReferenceOutputPath)zh-Hant\NuGet.Build.Tasks.Pack.resources.dll
         file source=$(ReferenceOutputPath)zh-Hant\NuGet.Build.Tasks.resources.dll
         file source=$(ReferenceOutputPath)zh-Hant\NuGet.Commands.resources.dll
         file source=$(ReferenceOutputPath)zh-Hant\NuGet.Common.resources.dll
