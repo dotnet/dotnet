@@ -25,6 +25,8 @@
 
   <Property Id="MSIFASTINSTALL" Value="7" />
 
+  <WixVariable Id="WixUILicenseRtf" Value="$(var.MicrosoftEula)" />
+
   <Property Id="WIXUI_INSTALLDIR" Value="DOTNETHOME"/>
   <ui:WixUI Id="WixUI_InstallDir" />
 

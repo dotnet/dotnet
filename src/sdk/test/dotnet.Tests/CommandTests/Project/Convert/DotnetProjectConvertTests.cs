@@ -1,9 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Security;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.DotNet.Cli.Commands;
 using Microsoft.DotNet.Cli.Commands.Run;
+using Microsoft.DotNet.Cli.Run.Tests;
 using Microsoft.DotNet.Cli.Utils;
 
 namespace Microsoft.DotNet.Cli.Project.Convert.Tests;
@@ -55,9 +58,11 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
         var dotnetProjectConvertProjectText = File.ReadAllText(dotnetProjectConvertProject);
         var dotnetNewConsoleProjectText = File.ReadAllText(dotnetNewConsoleProject);
 
-        // There are some differences: we add PublishAot=true.
+        // There are some differences: we add PublishAot=true and UserSecretsId.
         var patchedDotnetProjectConvertProjectText = dotnetProjectConvertProjectText
             .Replace("    <PublishAot>true</PublishAot>" + Environment.NewLine, string.Empty);
+        patchedDotnetProjectConvertProjectText = Regex.Replace(patchedDotnetProjectConvertProjectText,
+            """    <UserSecretsId>[^<]*<\/UserSecretsId>""" + Environment.NewLine, string.Empty);
 
         patchedDotnetProjectConvertProjectText.Should().Be(dotnetNewConsoleProjectText)
             .And.StartWith("""<Project Sdk="Microsoft.NET.Sdk">""");
@@ -586,7 +591,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             .WithWorkingDirectory(testInstance.Path)
             .Execute()
             .Should().Fail()
-            .And.HaveStdErrContaining(string.Format(CliCommandStrings.UnrecognizedDirective, "invalid", $"{filePath}:1"));
+            .And.HaveStdErrContaining(RunFileTests.DirectiveError(filePath, 1, CliCommandStrings.UnrecognizedDirective, "invalid"));
 
         new DirectoryInfo(Path.Join(testInstance.Path))
             .EnumerateDirectories().Should().BeEmpty();
@@ -647,6 +652,92 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             .Should().Be("Console.WriteLine();");
 
         File.ReadAllText(Path.Join(testInstance.Path, "Program", "Program.csproj"))
+            .Should().Match($"""
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                    <PublishAot>true</PublishAot>
+                    <UserSecretsId>Program-*</UserSecretsId>
+                  </PropertyGroup>
+
+                  <ItemGroup>
+                    <PackageReference Include="Humanizer" Version="2.14.1" />
+                  </ItemGroup>
+
+                </Project>
+
+                """);
+    }
+
+    [Theory, CombinatorialData]
+    public void UserSecretsId_Overridden_ViaDirective(bool hasDirectiveBuildProps)
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            #:property UserSecretsId=MyIdFromDirective
+            Console.WriteLine();
+            """);
+
+        if (hasDirectiveBuildProps)
+        {
+            File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
+                <Project>
+                  <PropertyGroup>
+                    <UserSecretsId>MyIdFromDirBuildProps</UserSecretsId>
+                  </PropertyGroup>
+                </Project>
+                """);
+        }
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        File.ReadAllText(Path.Join(testInstance.Path, "Program", "Program.csproj"))
+            .Should().Be($"""
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                    <PublishAot>true</PublishAot>
+                    <UserSecretsId>MyIdFromDirective</UserSecretsId>
+                  </PropertyGroup>
+
+                </Project>
+
+                """);
+    }
+
+    [Fact]
+    public void UserSecretsId_Overridden_ViaDirectoryBuildProps()
+    {
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), """
+            Console.WriteLine();
+            """);
+        File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), """
+            <Project>
+              <PropertyGroup>
+                <UserSecretsId>MyIdFromDirBuildProps</UserSecretsId>
+              </PropertyGroup>
+            </Project>
+            """);
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        File.ReadAllText(Path.Join(testInstance.Path, "Program", "Program.csproj"))
             .Should().Be($"""
                 <Project Sdk="Microsoft.NET.Sdk">
 
@@ -658,9 +749,50 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                     <PublishAot>true</PublishAot>
                   </PropertyGroup>
 
-                  <ItemGroup>
-                    <PackageReference Include="Humanizer" Version="2.14.1" />
-                  </ItemGroup>
+                </Project>
+
+                """);
+    }
+
+    [Theory, CombinatorialData]
+    public void UserSecretsId_Overridden_SameAsImplicit(bool hasDirective, bool hasDirectiveBuildProps)
+    {
+        const string implicitValue = "$(MSBuildProjectName)-$([MSBuild]::StableStringHash($(MSBuildProjectFullPath.ToLowerInvariant()), 'Sha256'))";
+
+        var testInstance = _testAssetsManager.CreateTestDirectory();
+        File.WriteAllText(Path.Join(testInstance.Path, "Program.cs"), $"""
+            {(hasDirective ? $"#:property UserSecretsId={implicitValue}" : "")}
+            Console.WriteLine();
+            """);
+
+        if (hasDirectiveBuildProps)
+        {
+            File.WriteAllText(Path.Join(testInstance.Path, "Directory.Build.props"), $"""
+                <Project>
+                  <PropertyGroup>
+                    <UserSecretsId>{SecurityElement.Escape(implicitValue)}</UserSecretsId>
+                  </PropertyGroup>
+                </Project>
+                """);
+        }
+
+        new DotnetCommand(Log, "project", "convert", "Program.cs")
+            .WithWorkingDirectory(testInstance.Path)
+            .Execute()
+            .Should().Pass();
+
+        File.ReadAllText(Path.Join(testInstance.Path, "Program", "Program.csproj"))
+            .Should().Match($"""
+                <Project Sdk="Microsoft.NET.Sdk">
+
+                  <PropertyGroup>
+                    <OutputType>Exe</OutputType>
+                    <TargetFramework>{ToolsetInfo.CurrentTargetFramework}</TargetFramework>
+                    <ImplicitUsings>enable</ImplicitUsings>
+                    <Nullable>enable</Nullable>
+                    <PublishAot>true</PublishAot>
+                    <UserSecretsId>{(hasDirective ? SecurityElement.Escape(implicitValue) : "Program-*")}</UserSecretsId>
+                  </PropertyGroup>
 
                 </Project>
 
@@ -862,7 +994,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 #:sdk Test
                 #:{directive} Test
                 """,
-            expectedWildcardPattern: string.Format(CliCommandStrings.UnrecognizedDirective, directive, "/app/Program.cs:2"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 2, CliCommandStrings.UnrecognizedDirective, directive));
     }
 
     [Fact]
@@ -873,7 +1005,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 #:
                 #:sdk Test
                 """,
-            expectedWildcardPattern: string.Format(CliCommandStrings.UnrecognizedDirective, "", "/app/Program.cs:1"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 1, CliCommandStrings.UnrecognizedDirective, ""));
     }
 
     [Theory, CombinatorialData]
@@ -885,7 +1017,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             inputCSharp: $"""
                 #:{directive}{value}
                 """,
-            expectedWildcardPattern: string.Format(CliCommandStrings.MissingDirectiveName, directive, "/app/Program.cs:1"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 1, CliCommandStrings.MissingDirectiveName, directive));
     }
 
     [Fact]
@@ -895,7 +1027,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             inputCSharp: """
                 #:property Test
                 """,
-            expectedWildcardPattern: string.Format(CliCommandStrings.PropertyDirectiveMissingParts, "/app/Program.cs:1"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 1, CliCommandStrings.PropertyDirectiveMissingParts));
     }
 
     [Fact]
@@ -905,7 +1037,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
             inputCSharp: """
                 #:property Name"=Value
                 """,
-            expectedWildcardPattern: string.Format(CliCommandStrings.PropertyDirectiveInvalidName, "/app/Program.cs:1", """
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 1, CliCommandStrings.PropertyDirectiveInvalidName, """
                 The '"' character, hexadecimal value 0x22, cannot be included in a name.
                 """));
     }
@@ -924,7 +1056,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
     {
         VerifyConversionThrows(
             inputCSharp: $"#:{directiveKind} Abc{actualSeparator}Xyz",
-            expectedWildcardPattern: string.Format(CliCommandStrings.InvalidDirectiveName, directiveKind, expectedSeparator, "/app/Program.cs:1"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 1, CliCommandStrings.InvalidDirectiveName, directiveKind, expectedSeparator));
     }
 
     [Fact]
@@ -1056,7 +1188,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         VerifyConversionThrows(
             inputCSharp: source,
-            expectedWildcardPattern: string.Format(CliCommandStrings.CannotConvertDirective, "/app/Program.cs:5"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 5, CliCommandStrings.CannotConvertDirective));
 
         VerifyConversion(
             inputCSharp: source,
@@ -1102,7 +1234,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
 
         VerifyConversionThrows(
             inputCSharp: source,
-            expectedWildcardPattern: string.Format(CliCommandStrings.CannotConvertDirective, "/app/Program.cs:5"));
+            expectedWildcardPattern: RunFileTests.DirectiveError("/app/Program.cs", 5, CliCommandStrings.CannotConvertDirective));
 
         VerifyConversion(
             inputCSharp: source,
@@ -1189,7 +1321,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedErrors:
             [
-                string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop", "/app/Program.cs:2"),
+                (2, string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop")),
             ]);
 
         VerifyDirectiveConversionErrors(
@@ -1201,8 +1333,8 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedErrors:
             [
-                string.Format(CliCommandStrings.DuplicateDirective, "#:sdk Name", "/app/Program.cs:2"),
-                string.Format(CliCommandStrings.DuplicateDirective, "#:sdk Name", "/app/Program.cs:3"),
+                (2, string.Format(CliCommandStrings.DuplicateDirective, "#:sdk Name")),
+                (3, string.Format(CliCommandStrings.DuplicateDirective, "#:sdk Name")),
             ]);
 
         VerifyDirectiveConversionErrors(
@@ -1214,8 +1346,8 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedErrors:
             [
-                string.Format(CliCommandStrings.DuplicateDirective, "#:package Name", "/app/Program.cs:2"),
-                string.Format(CliCommandStrings.DuplicateDirective, "#:package Name", "/app/Program.cs:3"),
+                (2, string.Format(CliCommandStrings.DuplicateDirective, "#:package Name")),
+                (3, string.Format(CliCommandStrings.DuplicateDirective, "#:package Name")),
             ]);
 
         VerifyDirectiveConversionErrors(
@@ -1234,8 +1366,8 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedErrors:
             [
-                string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop", "/app/Program.cs:2"),
-                string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop", "/app/Program.cs:4"),
+                (2, string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop")),
+                (4, string.Format(CliCommandStrings.DuplicateDirective, "#:property Prop")),
             ]);
 
         VerifyDirectiveConversionErrors(
@@ -1245,7 +1377,7 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
                 """,
             expectedErrors:
             [
-                string.Format(CliCommandStrings.DuplicateDirective, "#:property prop", "/app/Program.cs:2"),
+                (2, string.Format(CliCommandStrings.DuplicateDirective, "#:property prop")),
             ]);
     }
 
@@ -1302,10 +1434,12 @@ public sealed class DotnetProjectConvertTests(ITestOutputHelper log) : SdkTest(l
         convert.Should().Throw<GracefulException>().WithMessage(expectedWildcardPattern);
     }
 
-    private static void VerifyDirectiveConversionErrors(string inputCSharp, IEnumerable<string> expectedErrors)
+    private static void VerifyDirectiveConversionErrors(string inputCSharp, IEnumerable<(int LineNumber, string Message)> expectedErrors)
     {
-        var sourceFile = new SourceFile("/app/Program.cs", SourceText.From(inputCSharp, Encoding.UTF8));
+        var programPath = "/app/Program.cs";
+        var sourceFile = new SourceFile(programPath, SourceText.From(inputCSharp, Encoding.UTF8));
         VirtualProjectBuildingCommand.FindDirectives(sourceFile, reportAllErrors: true, DiagnosticBag.Collect(out var diagnostics));
-        diagnostics.Select(e => e.Message).Should().BeEquivalentTo(expectedErrors);
+        Assert.All(diagnostics, d => { Assert.Equal(programPath, d.Location.Path); });
+        diagnostics.Select(d => (d.Location.Span.Start.Line + 1, d.Message)).Should().BeEquivalentTo(expectedErrors);
     }
 }

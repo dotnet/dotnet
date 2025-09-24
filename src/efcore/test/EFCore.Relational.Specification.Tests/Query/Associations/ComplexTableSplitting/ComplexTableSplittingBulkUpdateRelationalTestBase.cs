@@ -16,18 +16,18 @@ public abstract class ComplexTableSplittingBulkUpdateRelationalTestBase<TFixture
     }
 
     // #36678 - ExecuteDelete on complex type
-    public override Task Delete_required_association()
-        => AssertTranslationFailedWithDetails(RelationalStrings.ExecuteDeleteOnNonEntityType, base.Delete_required_association);
+    public override Task Delete_required_associate()
+        => AssertTranslationFailedWithDetails(RelationalStrings.ExecuteDeleteOnNonEntityType, base.Delete_required_associate);
 
     // #36678 - ExecuteDelete on complex type
-    public override Task Delete_optional_association()
-        => Assert.ThrowsAsync<InvalidOperationException>(base.Delete_optional_association);
+    public override Task Delete_optional_associate()
+        => Assert.ThrowsAsync<InvalidOperationException>(base.Delete_optional_associate);
 
     // #36336
-    public override Task Update_property_on_projected_association_with_OrderBy_Skip()
+    public override Task Update_property_on_projected_associate_with_OrderBy_Skip()
         => AssertTranslationFailedWithDetails(
-            RelationalStrings.ExecuteUpdateSubqueryNotSupportedOverComplexTypes("RootEntity.RequiredRelated#RelatedType"),
-            base.Update_property_on_projected_association_with_OrderBy_Skip);
+            RelationalStrings.ExecuteUpdateSubqueryNotSupportedOverComplexTypes("RootEntity.RequiredAssociate#AssociateType"),
+            base.Update_property_on_projected_associate_with_OrderBy_Skip);
 
     #region Update collection
 
@@ -67,6 +67,14 @@ public abstract class ComplexTableSplittingBulkUpdateRelationalTestBase<TFixture
     public override async Task Update_nested_collection_to_another_nested_collection()
     {
         await Assert.ThrowsAsync<InvalidOperationException>(base.Update_nested_collection_to_another_nested_collection);
+
+        AssertExecuteUpdateSql();
+    }
+
+    // Collections are not supported with table splitting, only JSON
+    public override async Task Update_inside_structural_collection()
+    {
+        await Assert.ThrowsAsync<NullReferenceException>(base.Update_inside_structural_collection);
 
         AssertExecuteUpdateSql();
     }
