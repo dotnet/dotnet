@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.Razor.Settings;
 using Microsoft.CodeAnalysis.Remote.Razor.AutoInsert;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServices.Razor.LanguageClient.Cohost;
-using Microsoft.VisualStudio.Razor.Settings;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -216,8 +215,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         var document = CreateProjectAndRazorDocument(input.Text);
         var sourceText = await document.GetTextAsync(DisposalToken);
 
-        var clientSettingsManager = new ClientSettingsManager([], null, null);
-        clientSettingsManager.Update(ClientAdvancedSettings.Default with { FormatOnType = formatOnType, AutoClosingTags = autoClosingTags });
+        ClientSettingsManager.Update(ClientAdvancedSettings.Default with { FormatOnType = formatOnType, AutoClosingTags = autoClosingTags });
 
         IOnAutoInsertTriggerCharacterProvider[] onAutoInsertTriggerCharacterProviders = [
             new RemoteAutoClosingTagOnAutoInsertProvider(),
@@ -240,7 +238,7 @@ public class CohostOnAutoInsertEndpointTest(ITestOutputHelper testOutputHelper) 
         var endpoint = new CohostOnAutoInsertEndpoint(
             IncompatibleProjectService,
             RemoteServiceInvoker,
-            clientSettingsManager,
+            ClientSettingsManager,
             onAutoInsertTriggerCharacterProviders,
             requestInvoker,
             LoggerFactory);
