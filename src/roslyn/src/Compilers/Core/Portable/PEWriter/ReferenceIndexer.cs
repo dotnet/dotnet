@@ -34,7 +34,7 @@ namespace Microsoft.Cci
             Visit(module.GetSourceModuleAttributes());
             Visit(module.GetTopLevelTypeDefinitions(Context));
 
-            foreach (var exportedType in module.GetExportedTypes(Context))
+            foreach (var exportedType in module.GetExportedTypes(Context.Diagnostics))
             {
                 VisitExportedType(exportedType.Type);
             }

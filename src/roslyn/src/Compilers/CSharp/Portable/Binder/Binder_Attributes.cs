@@ -233,11 +233,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    Debug.Assert(!attributeConstructor.GetIsNewExtensionMember());
                     binder.BindDefaultArguments(
                         node,
                         attributeConstructor.Parameters,
-                        extensionReceiver: null,
                         analyzedArguments.ConstructorArguments.Arguments,
                         argumentRefKindsBuilder: null,
                         analyzedArguments.ConstructorArguments.Names,
