@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeStyle;
 using Microsoft.CodeAnalysis.CSharp;
@@ -23,18 +22,7 @@ using VerifyCS = CSharpCodeFixVerifier<
 [Trait(Traits.Feature, Traits.Features.CodeActionsUseExpressionBody)]
 public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
 {
-    private static Task TestMissingWithUseExpressionBody(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string code)
-        => new VerifyCS.Test
-        {
-            TestCode = code,
-            FixedCode = code,
-            Options = { { CSharpCodeStyleOptions.PreferExpressionBodiedLocalFunctions, ExpressionBodyPreference.WhenPossible } }
-        }.RunAsync();
-
-    private static Task TestWithUseExpressionBody(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string code,
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string fixedCode)
+    private static Task TestWithUseExpressionBody(string code, string fixedCode)
         => new VerifyCS.Test
         {
             TestCode = code,
@@ -42,9 +30,7 @@ public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
             Options = { { CSharpCodeStyleOptions.PreferExpressionBodiedLocalFunctions, ExpressionBodyPreference.WhenPossible } }
         }.RunAsync();
 
-    private static Task TestWithUseExpressionBodyWhenOnSingleLine(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string code,
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string fixedCode)
+    private static Task TestWithUseExpressionBodyWhenOnSingleLine(string code, string fixedCode)
         => new VerifyCS.Test
         {
             TestCode = code,
@@ -52,9 +38,7 @@ public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
             Options = { { CSharpCodeStyleOptions.PreferExpressionBodiedLocalFunctions, ExpressionBodyPreference.WhenOnSingleLine } }
         }.RunAsync();
 
-    private static Task TestWithUseBlockBody(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string code,
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string fixedCode, ReferenceAssemblies? referenceAssemblies = null)
+    private static Task TestWithUseBlockBody(string code, string fixedCode, ReferenceAssemblies? referenceAssemblies = null)
         => new VerifyCS.Test
         {
             TestCode = code,
@@ -501,9 +485,9 @@ public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
             }
             """);
 
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/80400")]
+    [Fact]
     public Task TestDirectives1()
-        => TestMissingWithUseExpressionBody("""
+        => TestWithUseExpressionBody("""
             #define DEBUG
             using System;
 
@@ -511,40 +495,33 @@ public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
             {
                 void Method()
                 {
-                    void Bar()
+                    {|IDE0061:void Bar()
                     {
             #if DEBUG
                         Console.WriteLine();
             #endif
-                    }
+                    }|}
+                }
+            }
+            """, """
+            #define DEBUG
+            using System;
+
+            class Program
+            {
+                void Method()
+                {
+                    void Bar() =>
+            #if DEBUG
+                        Console.WriteLine();
+            #endif
+
                 }
             }
             """);
 
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/80400")]
+    [Fact]
     public Task TestDirectives2()
-        => TestMissingWithUseExpressionBody("""
-            #define DEBUG
-            using System;
-
-            class Program
-            {
-                void Method()
-                {
-                    void Bar()
-                    {
-            #if DEBUG
-                        Console.WriteLine();
-            #elif RELEASE
-                        Console.WriteLine();
-            #endif
-                    }
-                }
-            }
-            """);
-
-    [Fact]
-    public Task TestDirectives3()
         => TestWithUseExpressionBody("""
             #define DEBUG
             using System;
@@ -576,49 +553,6 @@ public sealed class UseExpressionBodyForLocalFunctionsAnalyzerTests
                         Console.WriteLine(0);
             #else
                         Console.WriteLine(1);
-            #endif
-
-                }
-            }
-            """);
-
-    [Fact]
-    public Task TestDirectives4()
-        => TestWithUseExpressionBody("""
-            #define DEBUG
-            using System;
-
-            class Program
-            {
-                void Method()
-                {
-                    {|IDE0061:void Bar()
-                    {
-            #if DEBUG
-                        Console.WriteLine(0);
-            #elif RELEASE
-                        Console.WriteLine(1);
-            #else
-                        Console.WriteLine(2);
-            #endif
-                    }|}
-                }
-            }
-            """, """
-            #define DEBUG
-            using System;
-
-            class Program
-            {
-                void Method()
-                {
-                    void Bar() =>
-            #if DEBUG
-                        Console.WriteLine(0);
-            #elif RELEASE
-                        Console.WriteLine(1);
-            #else
-                        Console.WriteLine(2);
             #endif
 
                 }

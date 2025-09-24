@@ -19,26 +19,13 @@ internal static class CopilotUtilities
     public static (SourceText newText, ImmutableArray<TextSpan> newSpans) GetNewTextAndChangedSpans(
         SourceText oldText, ImmutableArray<TextChange> changes)
     {
-        if (changes.IsDefaultOrEmpty)
-        {
-            return (oldText, ImmutableArray<TextSpan>.Empty);
-        }
-
         // Fork the starting document with the changes copilot wants to make.  Keep track of where the edited spans
         // move to in the forked doucment, as that is what we will want to analyze.
         var newText = oldText.WithChanges(changes);
 
-        return (newText, GetTextSpansFromTextChanges(changes));
-    }
-
-    public static ImmutableArray<TextSpan> GetTextSpansFromTextChanges(IEnumerable<TextChange>? changes)
-    {
-        if (changes is null)
-            return ImmutableArray<TextSpan>.Empty;
-
         var totalDelta = 0;
 
-        var newSpans = ImmutableArray.CreateBuilder<TextSpan>();
+        var newSpans = new FixedSizeArrayBuilder<TextSpan>(changes.Length);
         foreach (var change in changes)
         {
             var newTextLength = change.NewText!.Length;
@@ -47,7 +34,7 @@ internal static class CopilotUtilities
             totalDelta += newTextLength - change.Span.Length;
         }
 
-        return newSpans.ToImmutable();
+        return (newText, newSpans.MoveToImmutable());
     }
 
     /// <summary>

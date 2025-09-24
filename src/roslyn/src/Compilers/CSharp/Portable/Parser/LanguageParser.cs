@@ -3900,7 +3900,7 @@ parse_member_name:;
                 if (this.CurrentToken.Kind is SyntaxKind.ImplicitKeyword or SyntaxKind.ExplicitKeyword)
                 {
                     // Grab the offset and width before we consume the invalid keyword and change our position.
-                    (opTokenErrorOffset, opTokenErrorWidth) = this.GetDiagnosticSpanForMissingToken();
+                    GetDiagnosticSpanForMissingToken(out opTokenErrorOffset, out opTokenErrorWidth);
                     opToken = this.ConvertToMissingWithTrailingTrivia(this.EatToken(), SyntaxKind.PlusToken);
                     Debug.Assert(opToken.IsMissing); //Which is why we used GetDiagnosticSpanForMissingToken above.
 
@@ -5367,7 +5367,8 @@ parse_member_name:;
                     var isAfterNewLine = parentType.GetLastToken().TrailingTrivia.Any((int)SyntaxKind.EndOfLineTrivia);
                     if (isAfterNewLine)
                     {
-                        var (offset, width) = this.GetDiagnosticSpanForMissingToken();
+                        int offset, width;
+                        this.GetDiagnosticSpanForMissingToken(out offset, out width);
 
                         this.EatToken();
                         currentTokenKind = this.CurrentToken.Kind;

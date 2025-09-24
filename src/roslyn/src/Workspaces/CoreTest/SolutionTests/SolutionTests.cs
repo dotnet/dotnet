@@ -3387,7 +3387,7 @@ public sealed class SolutionTests : TestBase
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    [Fact]
+    [Fact(Skip = "https://github.com/dotnet/roslyn/issues/19427")]
     public void TestGetRecoveredTextAsync()
     {
         var pid = ProjectId.CreateNewId();
