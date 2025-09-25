@@ -28,7 +28,9 @@ internal sealed class ConstructorSymbolReferenceFinder : AbstractReferenceFinder
     protected override ValueTask<ImmutableArray<ISymbol>> DetermineCascadedSymbolsAsync(IMethodSymbol symbol, Solution solution, FindReferencesSearchOptions options, CancellationToken cancellationToken)
     {
         if (symbol.MethodKind is MethodKind.Constructor)
+        {
             return new(GetOtherPartsOfPartial(symbol));
+        }
 
         return new([]);
     }

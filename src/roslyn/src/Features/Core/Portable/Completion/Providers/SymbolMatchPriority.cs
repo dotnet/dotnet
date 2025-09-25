@@ -14,7 +14,4 @@ internal static class SymbolMatchPriority
     internal static readonly int PreferEventOrMethod = 400;
     internal static readonly int PreferFieldOrProperty = 500;
     internal static readonly int PreferLocalOrParameterOrRangeVariable = 600;
-
-    // For keywords like 'ref' that the language requires at certain locations.
-    internal static readonly int PreferRequiredKeyword = 700;
 }

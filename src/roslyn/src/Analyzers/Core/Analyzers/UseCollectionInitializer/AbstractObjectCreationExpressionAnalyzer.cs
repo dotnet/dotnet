@@ -42,6 +42,7 @@ internal abstract class AbstractObjectCreationExpressionAnalyzer<
     protected UpdateExpressionState<TExpressionSyntax, TStatementSyntax> State;
 
     protected TObjectCreationExpressionSyntax _objectCreationExpression = null!;
+    protected bool _analyzeForCollectionExpression;
 
     protected ISyntaxFacts SyntaxFacts => this.State.SyntaxFacts;
     protected SemanticModel SemanticModel => this.State.SemanticModel;
@@ -64,16 +65,19 @@ internal abstract class AbstractObjectCreationExpressionAnalyzer<
 
     public void Initialize(
         UpdateExpressionState<TExpressionSyntax, TStatementSyntax> state,
-        TObjectCreationExpressionSyntax objectCreationExpression)
+        TObjectCreationExpressionSyntax objectCreationExpression,
+        bool analyzeForCollectionExpression)
     {
         State = state;
         _objectCreationExpression = objectCreationExpression;
+        _analyzeForCollectionExpression = analyzeForCollectionExpression;
     }
 
-    protected virtual void Clear()
+    protected void Clear()
     {
         State = default;
         _objectCreationExpression = null!;
+        _analyzeForCollectionExpression = false;
     }
 
     protected AnalysisResult AnalyzeWorker(CancellationToken cancellationToken)
@@ -89,10 +93,11 @@ internal abstract class AbstractObjectCreationExpressionAnalyzer<
         return new(preMatches.ToImmutableAndClear(), postMatches.ToImmutableAndClear(), mayChangeSemantics);
     }
 
-    protected UpdateExpressionState<TExpressionSyntax, TStatementSyntax> TryInitializeState(
+    protected UpdateExpressionState<TExpressionSyntax, TStatementSyntax>? TryInitializeState(
         SemanticModel semanticModel,
         ISyntaxFacts syntaxFacts,
         TObjectCreationExpressionSyntax rootExpression,
+        bool analyzeForCollectionExpression,
         CancellationToken cancellationToken)
     {
         var statement = rootExpression.FirstAncestorOrSelf<TStatementSyntax>()!;
@@ -102,11 +107,18 @@ internal abstract class AbstractObjectCreationExpressionAnalyzer<
                 TryInitializeVariableDeclarationCase(semanticModel, syntaxFacts, rootExpression, statement, cancellationToken) ??
                 TryInitializeAssignmentCase(semanticModel, syntaxFacts, rootExpression, statement, cancellationToken);
             if (result != null)
-                return result.Value;
+                return result;
         }
 
-        return new UpdateExpressionState<TExpressionSyntax, TStatementSyntax>(
-            semanticModel, syntaxFacts, rootExpression, valuePattern: default, initializedSymbol: null);
+        // Even if the above cases didn't work, we always support converting a `new List<int>()` collection over to
+        // a collection expression.  We just won't analyze later statements.
+        if (analyzeForCollectionExpression)
+        {
+            return new UpdateExpressionState<TExpressionSyntax, TStatementSyntax>(
+                semanticModel, syntaxFacts, rootExpression, valuePattern: default, initializedSymbol: null);
+        }
+
+        return null;
     }
 
     private UpdateExpressionState<TExpressionSyntax, TStatementSyntax>? TryInitializeVariableDeclarationCase(

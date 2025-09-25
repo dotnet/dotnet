@@ -31,7 +31,7 @@ internal abstract class AbstractInvertConditionalCodeRefactoringProvider<TCondit
         context.RegisterRefactoring(
             CodeAction.Create(
                 FeaturesResources.Invert_conditional,
-                cancellationToken => InvertConditionalAsync(document, conditional, cancellationToken),
+                c => InvertConditionalAsync(document, conditional, c),
                 nameof(FeaturesResources.Invert_conditional)),
             conditional.Span);
     }

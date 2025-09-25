@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +11,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis.LanguageService;
 using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.CodeAnalysis.UseCollectionExpression;
+using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.UseCollectionInitializer;
 
@@ -48,8 +50,6 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
         TVariableDeclaratorSyntax,
         TAnalyzer>, new()
 {
-    protected bool _analyzeForCollectionExpression;
-
     protected abstract bool IsComplexElementInitializer(SyntaxNode expression);
     protected abstract bool HasExistingInvalidInitializerForCollection();
     protected abstract bool AnalyzeMatchesAndCollectionConstructorForCollectionExpression(
@@ -60,12 +60,6 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
 
     protected abstract IUpdateExpressionSyntaxHelper<TExpressionSyntax, TStatementSyntax> SyntaxHelper { get; }
 
-    protected override void Clear()
-    {
-        base.Clear();
-        _analyzeForCollectionExpression = false;
-    }
-
     public AnalysisResult Analyze(
         SemanticModel semanticModel,
         ISyntaxFacts syntaxFacts,
@@ -73,16 +67,11 @@ internal abstract class AbstractUseCollectionInitializerAnalyzer<
         bool analyzeForCollectionExpression,
         CancellationToken cancellationToken)
     {
-        _analyzeForCollectionExpression = analyzeForCollectionExpression;
-        var state = TryInitializeState(semanticModel, syntaxFacts, objectCreationExpression, cancellationToken);
-
-        // If we didn't find something we're assigned to, then we normally can't continue.  However, we always support
-        // converting a `new List<int>()` collection over to a collection expression.  We just won't analyze later
-        // statements.  
-        if (state.ValuePattern == default && !analyzeForCollectionExpression)
+        var state = TryInitializeState(semanticModel, syntaxFacts, objectCreationExpression, analyzeForCollectionExpression, cancellationToken);
+        if (state is null)
             return default;
 
-        this.Initialize(state, objectCreationExpression);
+        this.Initialize(state.Value, objectCreationExpression, analyzeForCollectionExpression);
         var (preMatches, postMatches, mayChangeSemantics) = this.AnalyzeWorker(cancellationToken);
 
         // If analysis failed entirely, immediately bail out.

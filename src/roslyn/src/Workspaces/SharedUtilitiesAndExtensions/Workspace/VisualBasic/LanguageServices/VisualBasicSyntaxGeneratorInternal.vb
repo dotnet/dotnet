@@ -101,15 +101,6 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
             Return Parenthesize(expression, addSimplifierAnnotation)
         End Function
 
-        Friend Shared Function ParenthesizeNonSimple(expression As SyntaxNode, Optional addSimplifierAnnotation As Boolean = True) As ExpressionSyntax
-            Dim identifierName = TryCast(expression, IdentifierNameSyntax)
-            If identifierName IsNot Nothing Then
-                Return identifierName
-            End If
-
-            Return Parenthesize(expression, addSimplifierAnnotation)
-        End Function
-
         Friend Shared Function Parenthesize(expression As SyntaxNode, Optional addSimplifierAnnotation As Boolean = True) As ParenthesizedExpressionSyntax
             Return DirectCast(expression, ExpressionSyntax).Parenthesize(addSimplifierAnnotation)
         End Function
@@ -528,7 +519,7 @@ Namespace Microsoft.CodeAnalysis.VisualBasic.CodeGeneration
 #End Region
 
         Public Overrides Function BitwiseOrExpression(left As SyntaxNode, right As SyntaxNode) As SyntaxNode
-            Return SyntaxFactory.OrExpression(ParenthesizeNonSimple(left), ParenthesizeNonSimple(right))
+            Return SyntaxFactory.OrExpression(Parenthesize(left), Parenthesize(right))
         End Function
 
         Public Overrides Function CastExpression(type As SyntaxNode, expression As SyntaxNode) As SyntaxNode

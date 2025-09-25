@@ -85,7 +85,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsShowUpWhenInvokedOnSubmittedText()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsShowUpWhenInvokedOnSubmittedText()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("class Goo { }", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("Goo something = new Goo();", HangMitigatingCancellationToken);
@@ -97,7 +97,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsShowUpOnUnsubmittedText()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsShowUpOnUnsubmittedText()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("class Goo { }", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("Goo something = new Goo();", HangMitigatingCancellationToken);
@@ -109,7 +109,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsShowUpOnTypesWhenInvokedOnSubmittedText()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsShowUpOnTypesWhenInvokedOnSubmittedText()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("class Goo { }", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("Goo a;", HangMitigatingCancellationToken);
@@ -121,7 +121,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsShowUpOnTypesWhenInvokedOnUnsubmittedText()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsShowUpOnTypesWhenInvokedOnUnsubmittedText()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("class Goo { }", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("Goo a;", HangMitigatingCancellationToken);
@@ -133,7 +133,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsGoAwayWhenInvokedOnUnsubmittedText()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsGoAwayWhenInvokedOnUnsubmittedText()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("class Goo { }", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("Goo a;", HangMitigatingCancellationToken);
@@ -145,7 +145,7 @@ public class CSharpReplIdeFeatures : AbstractInteractiveWindowTest
     }
 
     [IdeFact]
-    public async Task HighlightRefsMultipleSubmissionsVerifyRenameTagsOnRedefinedVariable()
+    public async Task HighlightRefsMultipleSubmisionsVerifyRenameTagsOnRedefinedVariable()
     {
         await TestServices.InteractiveWindow.SubmitTextAsync("string abc = null;", HangMitigatingCancellationToken);
         await TestServices.InteractiveWindow.SubmitTextAsync("abc = string.Empty;", HangMitigatingCancellationToken);

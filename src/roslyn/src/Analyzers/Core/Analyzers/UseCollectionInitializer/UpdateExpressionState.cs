@@ -20,12 +20,7 @@ namespace Microsoft.CodeAnalysis.UseCollectionInitializer;
 /// </summary>
 internal readonly struct UpdateExpressionState<
     TExpressionSyntax,
-    TStatementSyntax>(
-    SemanticModel semanticModel,
-    ISyntaxFacts syntaxFacts,
-    TExpressionSyntax startExpression,
-    SyntaxNodeOrToken valuePattern,
-    ISymbol? initializedSymbol)
+    TStatementSyntax>
     where TExpressionSyntax : SyntaxNode
     where TStatementSyntax : SyntaxNode
 {
@@ -36,29 +31,44 @@ internal readonly struct UpdateExpressionState<
         (nameof(Enumerable.Append), isLinq: true),
     ];
 
-    public readonly SemanticModel SemanticModel = semanticModel;
-    public readonly ISyntaxFacts SyntaxFacts = syntaxFacts;
+    public readonly SemanticModel SemanticModel;
+    public readonly ISyntaxFacts SyntaxFacts;
 
     /// <summary>
     /// The original object-creation or collection-builder-creation expression.
     /// </summary>
-    public readonly TExpressionSyntax StartExpression = startExpression;
+    public readonly TExpressionSyntax StartExpression;
 
     /// <summary>
     /// The statement containing <see cref="StartExpression"/>
     /// </summary>
-    public readonly TStatementSyntax? ContainingStatement = startExpression.FirstAncestorOrSelf<TStatementSyntax>()!;
+    public readonly TStatementSyntax? ContainingStatement;
 
     /// <summary>
     /// The name of the value being mutated.  It is whatever the new object-creation or collection-builder is assigned to.
     /// </summary>
-    public readonly SyntaxNodeOrToken ValuePattern = valuePattern;
+    public readonly SyntaxNodeOrToken ValuePattern;
 
     /// <summary>
     /// If a different symbol was initialized (for example, a field rather than a local) this will be that symbol.  This
     /// only applies to the object-creation case.
     /// </summary>
-    public readonly ISymbol? InitializedSymbol = initializedSymbol;
+    public readonly ISymbol? InitializedSymbol;
+
+    public UpdateExpressionState(
+        SemanticModel semanticModel,
+        ISyntaxFacts syntaxFacts,
+        TExpressionSyntax startExpression,
+        SyntaxNodeOrToken valuePattern,
+        ISymbol? initializedSymbol)
+    {
+        SemanticModel = semanticModel;
+        SyntaxFacts = syntaxFacts;
+        StartExpression = startExpression;
+        ContainingStatement = startExpression.FirstAncestorOrSelf<TStatementSyntax>()!;
+        ValuePattern = valuePattern;
+        InitializedSymbol = initializedSymbol;
+    }
 
     public IEnumerable<TStatementSyntax> GetSubsequentStatements()
         => ContainingStatement is null

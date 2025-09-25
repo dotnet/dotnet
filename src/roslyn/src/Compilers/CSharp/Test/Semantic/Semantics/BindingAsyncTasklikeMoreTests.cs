@@ -394,8 +394,10 @@ namespace System.Runtime.CompilerServices { class AsyncMethodBuilderAttribute : 
 using System.Runtime.CompilerServices;
 class C
 {
+#pragma warning disable CS1998
     static async MyTask F() { }
     static async MyTask<int> G() { return 3; }
+#pragma warning restore CS1998
     [AsyncMethodBuilder(typeof(MyTaskMethodBuilder))]
     private class MyTask { }
     [AsyncMethodBuilder(typeof(MyTaskMethodBuilder<>))]
@@ -453,9 +455,11 @@ class C
     static void F(Func<MyTask<string>> f) { }
     static void M()
     {
+#pragma warning disable CS1998
         F(async () => { });
         F(async () => { return 3; });
         F(async () => { return string.Empty; });
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(MyTaskMethodBuilder))]
@@ -529,10 +533,12 @@ class C
 {
     static async void M()
     {
+#pragma warning disable CS1998
         async MyTask F() { }
         async MyTask<T> G<T>(T t) => t;
         await F();
         await G(3);
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(MyTaskMethodBuilder))]
@@ -608,9 +614,11 @@ class C
     static void G(Func<MyTask<dynamic>> f) { }
     static void M(object o)
     {
+#pragma warning disable CS1998
         F(async () => (dynamic)o);
         F(async () => new[] { (dynamic)o });
         G(async () => o);
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(MyTaskMethodBuilder<>))]
@@ -688,8 +696,10 @@ class C
 {
     static async void M()
     {
+#pragma warning disable CS1998
         async MyTask F() { };
         await F();
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(string))]
@@ -708,13 +718,12 @@ namespace System.Runtime.CompilerServices { class AsyncMethodBuilderAttribute : 
 ";
             var compilation = CreateCompilationWithMscorlib461(source);
             compilation.VerifyEmitDiagnostics(
-                // (7,26): error CS0656: Missing compiler required member 'string.Task'
+                // (8,26): error CS0656: Missing compiler required member 'string.Task'
                 //         async MyTask F() { };
-                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "{ }").WithArguments("string", "Task").WithLocation(7, 26),
-                // (7,26): error CS0656: Missing compiler required member 'string.Create'
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "{ }").WithArguments("string", "Task").WithLocation(8, 26),
+                // (8,26): error CS0656: Missing compiler required member 'string.Create'
                 //         async MyTask F() { };
-                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "{ }").WithArguments("string", "Create").WithLocation(7, 26)
-            );
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "{ }").WithArguments("string", "Create").WithLocation(8, 26));
         }
 
         [Fact]
@@ -727,8 +736,10 @@ class C
 {
     static async void M()
     {
+#pragma warning disable CS1998
         async MyTask<T> F<T>(T t) => t;
         await F(3);
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(IEquatable<>))]
@@ -747,13 +758,12 @@ namespace System.Runtime.CompilerServices { class AsyncMethodBuilderAttribute : 
 ";
             var compilation = CreateCompilationWithMscorlib461(source);
             compilation.VerifyEmitDiagnostics(
-                // (7,35): error CS0656: Missing compiler required member 'IEquatable<T>.Task'
+                // (8,35): error CS0656: Missing compiler required member 'IEquatable<T>.Task'
                 //         async MyTask<T> F<T>(T t) => t;
-                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "=> t").WithArguments("System.IEquatable<T>", "Task").WithLocation(7, 35),
-                // (7,35): error CS0656: Missing compiler required member 'IEquatable<T>.Create'
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "=> t").WithArguments("System.IEquatable<T>", "Task").WithLocation(8, 35),
+                // (8,35): error CS0656: Missing compiler required member 'IEquatable<T>.Create'
                 //         async MyTask<T> F<T>(T t) => t;
-                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "=> t").WithArguments("System.IEquatable<T>", "Create").WithLocation(7, 35)
-            );
+                Diagnostic(ErrorCode.ERR_MissingPredefinedMember, "=> t").WithArguments("System.IEquatable<T>", "Create").WithLocation(8, 35));
         }
 
         [Fact]
@@ -766,8 +776,10 @@ class C
 {
     static async void M()
     {
+#pragma warning disable CS1998
         async MyTask F() { };
         await F();
+#pragma warning restore CS1998
     }
 }
 [AsyncMethodBuilder(typeof(object[]))]
@@ -786,9 +798,9 @@ namespace System.Runtime.CompilerServices { class AsyncMethodBuilderAttribute : 
 ";
             var compilation = CreateCompilationWithMscorlib461(source);
             compilation.VerifyEmitDiagnostics(
-                // (7,22): error CS1983: The return type of an async method must be void, Task or Task<T>
+                // (8,22): error CS1983: The return type of an async method must be void, Task or Task<T>
                 //         async MyTask F() { };
-                Diagnostic(ErrorCode.ERR_BadAsyncReturn, "{ }").WithLocation(7, 26));
+                Diagnostic(ErrorCode.ERR_BadAsyncReturn, "{ }").WithLocation(8, 26));
         }
 
         [Fact]

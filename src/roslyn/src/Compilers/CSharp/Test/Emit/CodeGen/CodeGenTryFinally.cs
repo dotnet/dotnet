@@ -4276,6 +4276,9 @@ class C
 
             var expectedDiagnostics = new[]
             {
+                // (6,16): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     async Task M()
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "M").WithLocation(6, 16),
                 // (10,9): warning CS0162: Unreachable code detected
                 //         try
                 Diagnostic(ErrorCode.WRN_UnreachableCode, "try").WithLocation(10, 9)
@@ -4308,7 +4311,11 @@ class C
 }
 """;
 
-            CompileAndVerify(source, options: TestOptions.ReleaseDll).VerifyDiagnostics();
+            CompileAndVerify(source, options: TestOptions.ReleaseDll).VerifyDiagnostics(
+                // (6,16): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     async Task M()
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "M").WithLocation(6, 16)
+                );
         }
     }
 }

@@ -17,7 +17,6 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
-using Roslyn.Test.Utilities;
 using Xunit;
 using IAsyncDisposable = System.IAsyncDisposable;
 
@@ -101,7 +100,7 @@ internal sealed partial class ShellInProcess
         ErrorHandler.ThrowOnFailure(commandService.GetControlDataSourceAsync(
             (uint)__VSCOMMANDTYPES.cCommandTypeButton,
             commandName,
-            timeout: ((int)TestHelpers.HangMitigatingTimeout.TotalMilliseconds),
+            timeout: 0,
             out var dataSourceTask));
 
         Assumes.NotNull(dataSourceTask);

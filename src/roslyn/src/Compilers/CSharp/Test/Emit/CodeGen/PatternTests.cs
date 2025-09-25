@@ -4540,7 +4540,10 @@ public static class Program
 ";
             var expectedOutput = "correct";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                // (7,23): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     static async Task Main()
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "Main").WithLocation(7, 23));
             var compVerifier = CompileAndVerify(compilation, expectedOutput: expectedOutput);
         }
 
@@ -4571,7 +4574,10 @@ public static class Program
 ";
             var expectedOutput = "correct";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                // (7,23): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     static async Task Main()
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "Main").WithLocation(7, 23));
             var compVerifier = CompileAndVerify(compilation, expectedOutput: expectedOutput);
         }
 

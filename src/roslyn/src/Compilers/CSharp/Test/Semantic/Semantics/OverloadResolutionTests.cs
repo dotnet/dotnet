@@ -7704,6 +7704,7 @@ class C
 {
     static void Main()
     {
+#pragma warning disable 1998
         Goo(async () => { return 0; ; });
         Goo(async () => { return 0; });
         Goo(async () => 0);
@@ -7738,6 +7739,7 @@ class C
 {
     static void Main()
     {
+#pragma warning disable 1998
         Goo(() => async () => { return 0; ; });
         Goo(() => async () => { return 0; });
         Goo(() => async () => 0);
@@ -7769,6 +7771,7 @@ class C
 {
     static void Main()
     {
+#pragma warning disable 1998
         Goo(async () => { return () => 0; });
         Goo(async () => { return () => (short)0; });
     }

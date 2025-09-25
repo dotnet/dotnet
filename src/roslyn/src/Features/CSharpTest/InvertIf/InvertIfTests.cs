@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.InvertIf;
@@ -18,8 +17,8 @@ namespace Microsoft.CodeAnalysis.Editor.CSharp.UnitTests.InvertIf;
 public sealed partial class InvertIfTests
 {
     private static Task TestInsideMethodAsync(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string initial,
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string expected)
+        string initial,
+        string expected)
     {
         return TestAsync(CreateTreeText(initial), CreateTreeText(expected));
 
@@ -42,10 +41,7 @@ public sealed partial class InvertIfTests
         }
     }
 
-    private static Task TestAsync(
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string initial,
-        [StringSyntax(PredefinedEmbeddedLanguageNames.CSharpTest)] string expected,
-        LanguageVersion languageVersion = LanguageVersion.Latest)
+    private static Task TestAsync(string initial, string expected, LanguageVersion languageVersion = LanguageVersion.Latest)
         => new CSharpCodeRefactoringVerifier<CSharpInvertIfCodeRefactoringProvider>.Test
         {
             TestCode = initial,
@@ -1477,165 +1473,5 @@ public sealed partial class InvertIfTests
                 string? M(bool b)
                 { if (!b) { return (false); } return (true); }
             }
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective1()
-        => TestAsync("""
-            [||]#if true
-            #else
-            #endif
-            """, """
-            #if false
-            #else
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective2()
-        => TestAsync("""
-            [||]#if true
-            #else
-
-            #endif
-            """, """
-            #if false
-
-            #else
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective3()
-        => TestAsync("""
-            [||]#if true
-
-            #else
-            #endif
-            """, """
-            #if false
-            #else
-
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective4()
-        => TestAsync("""
-            [||]#if true
-            class C
-            {
-            }
-            #else
-            record D();
-            #endif
-            """, """
-            #if false
-            record D();
-            #else
-            class C
-            {
-            }
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective5()
-        => TestAsync("""
-            [||]#if !true
-            class C
-            {
-            }
-            #else
-            record D();
-            #endif
-            """, """
-            #if true
-            record D();
-            #else
-            class C
-            {
-            }
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective6()
-        => TestAsync("""
-            [||]#if NAME
-            class C
-            {
-            }
-            #else
-            record D();
-            #endif
-            """, """
-            #if !NAME
-            record D();
-            #else
-            class C
-            {
-            }
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective7()
-        => TestAsync("""
-            [||]#if A && B
-            class C
-            {
-            }
-            #else
-            record D();
-            #endif
-            """, """
-            #if !(A && B)
-            record D();
-            #else
-            class C
-            {
-            }
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective8()
-        => TestAsync("""
-            [||]#if (true)
-            class C
-            {
-            }
-            #else
-            record D();
-            #endif
-            """, """
-            #if (false)
-            record D();
-            #else
-            class C
-            {
-            }
-            #endif
-            """);
-
-    [Fact, WorkItem("https://github.com/dotnet/roslyn/issues/75438")]
-    public Task TestIfDirective9()
-        => TestAsync("""
-                [||]#if (true)
-                class C
-                {
-                }
-                #else
-                record D();
-                #endif
-            """, """
-                #if (false)
-                record D();
-                #else
-                class C
-                {
-                }
-                #endif
             """);
 }

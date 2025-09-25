@@ -202,7 +202,7 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
             (PatternSyntax)pattern);
 
     public override SyntaxNode AndPattern(SyntaxNode left, SyntaxNode right)
-        => SyntaxFactory.BinaryPattern(SyntaxKind.AndPattern, (PatternSyntax)ParenthesizeNonSimple(left), (PatternSyntax)ParenthesizeNonSimple(right));
+        => SyntaxFactory.BinaryPattern(SyntaxKind.AndPattern, (PatternSyntax)Parenthesize(left), (PatternSyntax)Parenthesize(right));
 
     public override SyntaxNode ConstantPattern(SyntaxNode expression)
         => SyntaxFactory.ConstantPattern((ExpressionSyntax)expression);
@@ -225,10 +225,10 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
         => SyntaxFactory.RelationalPattern(GreaterThanEqualsToken, (ExpressionSyntax)expression);
 
     public override SyntaxNode NotPattern(SyntaxNode pattern)
-        => SyntaxFactory.UnaryPattern(NotKeyword, (PatternSyntax)ParenthesizeNonSimple(pattern));
+        => SyntaxFactory.UnaryPattern(NotKeyword, (PatternSyntax)Parenthesize(pattern));
 
     public override SyntaxNode OrPattern(SyntaxNode left, SyntaxNode right)
-        => SyntaxFactory.BinaryPattern(SyntaxKind.OrPattern, (PatternSyntax)ParenthesizeNonSimple(left), (PatternSyntax)ParenthesizeNonSimple(right));
+        => SyntaxFactory.BinaryPattern(SyntaxKind.OrPattern, (PatternSyntax)Parenthesize(left), (PatternSyntax)Parenthesize(right));
 
     public override SyntaxNode ParenthesizedPattern(SyntaxNode pattern)
         => Parenthesize(pattern);
@@ -237,12 +237,12 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
         => SyntaxFactory.TypePattern((TypeSyntax)type);
 
     public override SyntaxNode UnaryPattern(SyntaxToken operatorToken, SyntaxNode pattern)
-        => SyntaxFactory.UnaryPattern(operatorToken, (PatternSyntax)ParenthesizeNonSimple(pattern));
+        => SyntaxFactory.UnaryPattern(operatorToken, (PatternSyntax)Parenthesize(pattern));
 
     #endregion
 
     public override SyntaxNode CastExpression(SyntaxNode type, SyntaxNode expression)
-        => SyntaxFactory.CastExpression((TypeSyntax)type, (ExpressionSyntax)ParenthesizeNonSimple(expression)).WithAdditionalAnnotations(Simplifier.Annotation);
+        => SyntaxFactory.CastExpression((TypeSyntax)type, (ExpressionSyntax)Parenthesize(expression)).WithAdditionalAnnotations(Simplifier.Annotation);
 
     public override SyntaxNode DefaultExpression(SyntaxNode type)
         => SyntaxFactory.DefaultExpression((TypeSyntax)type).WithAdditionalAnnotations(Simplifier.Annotation);
@@ -329,16 +329,11 @@ internal sealed class CSharpSyntaxGeneratorInternal() : SyntaxGeneratorInternal
         => CreateBinaryExpression(SyntaxKind.BitwiseOrExpression, left, right);
 
     public static SyntaxNode CreateBinaryExpression(SyntaxKind syntaxKind, SyntaxNode left, SyntaxNode right)
-        => SyntaxFactory.BinaryExpression(syntaxKind, (ExpressionSyntax)ParenthesizeNonSimple(left), (ExpressionSyntax)ParenthesizeNonSimple(right));
+        => SyntaxFactory.BinaryExpression(syntaxKind, (ExpressionSyntax)Parenthesize(left), (ExpressionSyntax)Parenthesize(right));
 
     public override SyntaxNode IdentifierName(string identifier)
         => identifier.ToIdentifierName();
 
     public override SyntaxNode ConvertExpression(SyntaxNode type, SyntaxNode expression)
-        => SyntaxFactory.CastExpression((TypeSyntax)type, (ExpressionSyntax)ParenthesizeNonSimple(expression)).WithAdditionalAnnotations(Simplifier.Annotation);
-
-    internal static SyntaxNode ParenthesizeNonSimple(SyntaxNode expression)
-        => expression is IdentifierNameSyntax
-            ? expression
-            : Parenthesize(expression);
+        => SyntaxFactory.CastExpression((TypeSyntax)type, (ExpressionSyntax)Parenthesize(expression)).WithAdditionalAnnotations(Simplifier.Annotation);
 }

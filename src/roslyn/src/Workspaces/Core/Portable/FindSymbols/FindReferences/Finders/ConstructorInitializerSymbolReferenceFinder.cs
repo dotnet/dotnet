@@ -12,48 +12,54 @@ using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Microsoft.CodeAnalysis.FindSymbols.Finders;
 
-/// <summary>
-/// For finding explicit calls to a constructor via "this(...)" or "base(...)".
-/// </summary>
-internal sealed class ExplicitConstructorInitializerSymbolReferenceFinder
-    : ExplicitOrImplicitConstructorInitializerSymbolReferenceFinder
+internal sealed class ConstructorInitializerSymbolReferenceFinder : AbstractReferenceFinder<IMethodSymbol>
 {
-    public static readonly ExplicitConstructorInitializerSymbolReferenceFinder Instance = new();
+    protected override bool CanFind(IMethodSymbol symbol)
+        => symbol.MethodKind == MethodKind.Constructor;
 
-    private ExplicitConstructorInitializerSymbolReferenceFinder()
+    protected override Task DetermineDocumentsToSearchAsync<TData>(
+        IMethodSymbol symbol,
+        HashSet<string>? globalAliases,
+        Project project,
+        IImmutableSet<Document>? documents,
+        Action<Document, TData> processResult,
+        TData processResultData,
+        FindReferencesSearchOptions options,
+        CancellationToken cancellationToken)
     {
-    }
-
-    protected override bool CheckIndex(Document document, string name, SyntaxTreeIndex index)
-    {
-        if (index.ContainsExplicitBaseConstructorInitializer)
+        return FindDocumentsAsync(project, documents, static async (document, name, cancellationToken) =>
         {
-            // if we have `partial class C { ... : base(...) }` we have to assume it might be a match, as the base
-            // type reference might be in a another part of the partial in another file.
-            if (index.ContainsPartialClass)
-                return true;
+            var index = await SyntaxTreeIndex.GetRequiredIndexAsync(document, cancellationToken).ConfigureAwait(false);
 
-            // Otherwise, if it doesn't have any partial types, ensure that the base type name is referenced in the
-            // same file.  e.g. `partial class C : B { ... base(...) }`.   This allows us to greatly filter down the
-            // number of matches, presuming that most inheriting types in a project are not themselves partial.
+            if (index.ContainsBaseConstructorInitializer)
+            {
+                // if we have `partial class C { ... : base(...) }` we have to assume it might be a match, as the base
+                // type reference might be in a another part of the partial in another file.
+                if (index.ContainsPartialClass)
+                    return true;
+
+                // Otherwise, if it doesn't have any partial types, ensure that the base type name is referenced in the
+                // same file.  e.g. `partial class C : B { ... base(...) }`.   This allows us to greatly filter down the
+                // number of matches, presuming that most inheriting types in a project are not themselves partial.
+                if (index.ProbablyContainsIdentifier(name))
+                    return true;
+            }
+
             if (index.ProbablyContainsIdentifier(name))
-                return true;
-        }
-
-        if (index.ProbablyContainsIdentifier(name))
-        {
-            if (index.ContainsThisConstructorInitializer)
             {
-                return true;
+                if (index.ContainsThisConstructorInitializer)
+                {
+                    return true;
+                }
+                else if (document.Project.Language == LanguageNames.VisualBasic && index.ProbablyContainsIdentifier("New"))
+                {
+                    // "New" can be explicitly accessed in xml doc comments to reference a constructor.
+                    return true;
+                }
             }
-            else if (document.Project.Language == LanguageNames.VisualBasic && index.ProbablyContainsIdentifier("New"))
-            {
-                // "New" can be explicitly accessed in xml doc comments to reference a constructor.
-                return true;
-            }
-        }
 
-        return false;
+            return false;
+        }, symbol.ContainingType.Name, processResult, processResultData, cancellationToken);
     }
 
     protected sealed override void FindReferencesInDocument<TData>(

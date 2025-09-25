@@ -462,7 +462,8 @@ internal static partial class SyntaxTokenExtensions
             }
         }
 
-        if (targetToken.Kind() is SyntaxKind.OpenParenToken or SyntaxKind.CommaToken)
+        if (targetToken.Kind() is SyntaxKind.OpenParenToken or
+            SyntaxKind.CommaToken)
         {
             if (targetToken.Parent.IsKind(SyntaxKind.ArgumentList))
             {

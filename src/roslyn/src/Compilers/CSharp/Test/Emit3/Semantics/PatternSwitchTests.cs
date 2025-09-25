@@ -325,7 +325,8 @@ public class X : List<string>
     }
 }";
             var compilation = CreateCompilation(source, options: TestOptions.DebugExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
         }
 
         [Fact]
@@ -646,7 +647,8 @@ null";
     }
 }";
             var compilation = CreateCompilation(source, options: TestOptions.DebugExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
         }
 
         [Fact]
@@ -665,7 +667,8 @@ null";
     }
 }";
             var compilation = CreateCompilation(source, options: TestOptions.DebugExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
         }
 
         [Fact]
@@ -949,7 +952,8 @@ public class X
     }
 }";
             var compilation = CreateCompilation(source, options: TestOptions.DebugExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
         }
 
         [Fact]
@@ -2657,7 +2661,11 @@ class Test
 ";
             // Use a compilation profile that supports Task<T>.
             var compilation = CreateCompilationWithMscorlib461(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                // (12,38): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //     public static async Task<string> SendMessageAsync<T>(object response)
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "SendMessageAsync").WithLocation(12, 38)
+                );
             var comp = CompileAndVerify(compilation, expectedOutput:
 @"T
 default");
@@ -2799,7 +2807,8 @@ class Program
 }
 ";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
             var comp = CompileAndVerify(compilation, expectedOutput: @"pass");
         }
 
@@ -2826,7 +2835,8 @@ class Program
 }
 ";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
             var comp = CompileAndVerify(compilation, expectedOutput: @"pass");
         }
 
@@ -2853,7 +2863,8 @@ class Program
 }
 ";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
             var comp = CompileAndVerify(compilation, expectedOutput: @"1");
         }
 
@@ -2943,7 +2954,8 @@ class Program
 }
 ";
             var compilation = CreateCompilation(source, options: TestOptions.ReleaseExe);
-            compilation.VerifyDiagnostics();
+            compilation.VerifyDiagnostics(
+                );
             var comp = CompileAndVerify(compilation, expectedOutput: @"pass");
         }
 

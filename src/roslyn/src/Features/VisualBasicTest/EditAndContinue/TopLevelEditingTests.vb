@@ -1726,8 +1726,6 @@ End Class
 
             Dim srcA2 = ReloadableAttributeSrc
             Dim srcB2 = "
-Imports System.Runtime.CompilerServices
-
 <CreateNewOnMetadataUpdate>
 Class C
   Sub F()

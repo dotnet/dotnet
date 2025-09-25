@@ -812,7 +812,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             // NOTE: There are no errors in crefs - only warnings.  We accomplish this by wrapping every diagnostic in ErrorCode.WRN_ErrorOverride.
             if (InCref)
             {
-                return base.GetExpectedTokenError(expected, actual);
+                int offset, width;
+                this.GetDiagnosticSpanForMissingToken(out offset, out width);
+
+                return GetExpectedTokenError(expected, actual, offset, width);
             }
 
             switch (expected)

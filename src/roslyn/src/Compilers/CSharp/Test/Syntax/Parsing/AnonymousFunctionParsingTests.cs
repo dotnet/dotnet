@@ -113,8 +113,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (8,26): error CS1004: Duplicate 'async' modifier
                 //         Action v = async async delegate() { };
-                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(8, 26)
-            );
+                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(8, 26),
+                // (8,32): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Action v = async async delegate() { };
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "delegate").WithLocation(8, 32));
         }
 
         [Fact]
@@ -309,8 +311,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (8,20): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Action v = static async delegate() { };
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(8, 20)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(8, 20),
+                // (8,33): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Action v = static async delegate() { };
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "delegate").WithLocation(8, 33));
         }
 
         [Fact]
@@ -408,8 +412,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (8,20): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Action v = static async delegate() { };
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(8, 20)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(8, 20),
+                // (8,33): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Action v = static async delegate() { };
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "delegate").WithLocation(8, 33));
         }
 
         [Fact]
@@ -759,7 +765,10 @@ public class C
             }
             EOF();
 
-            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify();
+            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
+                // (9,46): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async async => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 46));
         }
 
         [Fact]
@@ -2569,8 +2578,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (9,34): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<int, Task<int>> v = static async async => async;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 34)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 34),
+                // (9,53): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = static async async => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 53));
         }
 
         [Fact]
@@ -2715,8 +2726,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (9,40): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<int, Task<int>> v = async static async => async;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40),
+                // (9,53): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async static async => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 53));
         }
 
         [Fact]
@@ -2865,8 +2878,10 @@ public class C
                 Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40),
                 // (9,47): error CS1004: Duplicate 'async' modifier
                 //         Func<int, Task<int>> v = async static async async => async;
-                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(9, 47)
-            );
+                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(9, 47),
+                // (9,59): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async static async async => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 59));
         }
 
         [Fact]
@@ -3122,7 +3137,10 @@ public class C
             }
             EOF();
 
-            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify();
+            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
+                // (9,48): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async (async) => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 48));
         }
 
         [Fact]
@@ -3386,8 +3404,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (9,34): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<int, Task<int>> v = static async (async) => async;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 34)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 34),
+                // (9,55): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = static async (async) => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 55));
         }
 
         [Fact]
@@ -3537,8 +3557,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (9,40): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<int, Task<int>> v = async static (async) => async;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40),
+                // (9,55): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async static (async) => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 55));
         }
 
         [Fact]
@@ -3692,8 +3714,10 @@ public class C
                 Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(9, 40),
                 // (9,47): error CS1004: Duplicate 'async' modifier
                 //         Func<int, Task<int>> v = async static async (async) => async;
-                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(9, 47)
-            );
+                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(9, 47),
+                // (9,61): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<int, Task<int>> v = async static async (async) => async;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(9, 61));
         }
 
         [Fact]
@@ -3967,7 +3991,10 @@ public class C
             }
             EOF();
 
-            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify();
+            CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
+                // (10,38): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<Task<int>> v = async () => a;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(10, 38));
         }
 
         [Fact]
@@ -4249,8 +4276,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (10,29): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<Task<int>> v = static async () => a;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(10, 29)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(10, 29),
+                // (10,45): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<Task<int>> v = static async () => a;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(10, 45));
         }
 
         [Fact]
@@ -4409,8 +4438,10 @@ public class C
             CreateCompilation(test, parseOptions: TestOptions.Regular8).GetDiagnostics().Verify(
                 // (10,35): error CS8400: Feature 'static anonymous function' is not available in C# 8.0. Please use language version 9.0 or greater.
                 //         Func<Task<int>> v = async static () => a;
-                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(10, 35)
-            );
+                Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(10, 35),
+                // (10,45): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<Task<int>> v = async static () => a;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(10, 45));
         }
 
         [Fact]
@@ -4573,8 +4604,10 @@ public class C
                 Diagnostic(ErrorCode.ERR_FeatureNotAvailableInVersion8, "static").WithArguments("static anonymous function", "9.0").WithLocation(10, 35),
                 // (10,42): error CS1004: Duplicate 'async' modifier
                 //         Func<Task<int>> v = async static async () => a;
-                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(10, 42)
-            );
+                Diagnostic(ErrorCode.ERR_DuplicateModifier, "async").WithArguments("async").WithLocation(10, 42),
+                // (10,51): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+                //         Func<Task<int>> v = async static async () => a;
+                Diagnostic(ErrorCode.WRN_AsyncLacksAwaits, "=>").WithLocation(10, 51));
         }
     }
 }

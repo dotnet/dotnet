@@ -107,7 +107,7 @@ public sealed class ResxFile
     public ResxFile AddString(string name, string value)
         => new(FilePath, _changes.SetItem(name, value));
 
-    public string GetContent()
+    internal string GetContent()
     {
         if (_changes.Count == 0)
         {
