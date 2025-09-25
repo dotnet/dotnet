@@ -23,8 +23,6 @@ namespace NuGet.Commands
 
         public string GlobalPackagesFolder { get; set; }
 
-        public bool? IsLowercaseGlobalPackagesFolder { get; set; }
-
         public bool DisableParallel { get; set; }
 
         public bool AllowNoOp { get; set; }
@@ -203,12 +201,6 @@ namespace NuGet.Commands
 
             request.RequestedRuntimes.UnionWith(Runtimes);
             request.FallbackRuntimes.UnionWith(FallbackRuntimes);
-
-            if (IsLowercaseGlobalPackagesFolder.HasValue)
-            {
-                request.IsLowercasePackagesDirectory = IsLowercaseGlobalPackagesFolder.Value;
-            }
-
             request.LockFileVersion = LockFileFormat.Version;
 
             // Run runtime asset checks for project.json, and for other types if enabled.

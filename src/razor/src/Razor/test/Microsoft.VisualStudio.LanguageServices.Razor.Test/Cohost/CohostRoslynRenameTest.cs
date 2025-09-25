@@ -163,7 +163,7 @@ public class CohostRoslynRenameTest(ITestOutputHelper testOutputHelper) : Cohost
         string expectedRazorFile,
         bool useLsp)
     {
-        var razorDocument = CreateProjectAndRazorDocument(razorFile.Text, additionalFiles: [(Path.Combine(TestProjectData.SomeProjectPath, "File.cs"), csharpFile)], createSeparateRemoteAndLocalWorkspaces: true);
+        var razorDocument = CreateProjectAndRazorDocument(razorFile.Text, additionalFiles: [(Path.Combine(TestProjectData.SomeProjectPath, "File.cs"), csharpFile)]);
         var project = razorDocument.Project;
         var csharpDocument = project.Documents.First();
 
