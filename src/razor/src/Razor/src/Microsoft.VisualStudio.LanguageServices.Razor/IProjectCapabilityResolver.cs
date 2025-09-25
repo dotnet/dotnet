@@ -8,5 +8,5 @@ internal interface IProjectCapabilityResolver
     /// <summary>
     /// Determines whether the project associated with the specified document has the given <paramref name="capability"/>.
     /// </summary>
-    bool ResolveCapability(string capability, string documentFilePath);
+    CapabilityCheckResult CheckCapability(string capability, string documentFilePath);
 }

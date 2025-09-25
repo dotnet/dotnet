@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
 public sealed class DefaultTagHelperRuntimeIntermediateNode : ExtensionIntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public override void Accept(IntermediateNodeVisitor visitor)
     {

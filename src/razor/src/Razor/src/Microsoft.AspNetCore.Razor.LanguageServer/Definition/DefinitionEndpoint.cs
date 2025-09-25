@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.Razor.LanguageServer.Definition;
 
 [RazorLanguageServerEndpoint(Methods.TextDocumentDefinitionName)]
 internal sealed class DefinitionEndpoint(
-    IRazorComponentDefinitionService componentDefinitionService,
+    IDefinitionService definitionService,
     IDocumentMappingService documentMappingService,
     ProjectSnapshotManager projectManager,
     LanguageServerFeatureOptions languageServerFeatureOptions,
@@ -38,7 +38,7 @@ internal sealed class DefinitionEndpoint(
         clientConnection,
         loggerFactory.GetOrCreateLogger<DefinitionEndpoint>()), ICapabilitiesProvider
 {
-    private readonly IRazorComponentDefinitionService _componentDefinitionService = componentDefinitionService;
+    private readonly IDefinitionService _definitionService = definitionService;
     private readonly IDocumentMappingService _documentMappingService = documentMappingService;
     private readonly ProjectSnapshotManager _projectManager = projectManager;
 
@@ -68,9 +68,12 @@ internal sealed class DefinitionEndpoint(
         }
 
         // If single server support is on, then we ignore attributes, as they are better handled by delegating to Roslyn
-        return await _componentDefinitionService
-            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, _projectManager.GetQueryOperations(), ignoreAttributes: SingleServerSupport, cancellationToken)
+        var results = await _definitionService
+            .GetDefinitionAsync(documentContext.Snapshot, positionInfo, _projectManager.GetQueryOperations(), ignoreComponentAttributes: SingleServerSupport, includeMvcTagHelpers: false, cancellationToken)
             .ConfigureAwait(false);
+
+        // We know there will only be one result, because without tag helper support there can't be anything else
+        return results?.FirstOrDefault();
     }
 
     protected override Task<IDelegatedParams?> CreateDelegatedParamsAsync(

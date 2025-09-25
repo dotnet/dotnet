@@ -5,6 +5,5 @@ namespace Microsoft.CodeAnalysis.Razor.Cohost;
 
 internal interface IIncompatibleProjectNotifier
 {
-    void NotifyMiscFilesDocument(TextDocument textDocument);
     void NotifyMissingDocument(Project project, string filePath);
 }

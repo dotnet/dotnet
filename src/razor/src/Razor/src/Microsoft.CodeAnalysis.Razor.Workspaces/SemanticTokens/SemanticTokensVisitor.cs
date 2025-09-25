@@ -2,10 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Razor.SemanticTokens;
@@ -14,7 +13,7 @@ using Microsoft.AspNetCore.Razor.Language.Syntax;
 
 internal sealed class SemanticTokensVisitor : SyntaxWalker
 {
-    private readonly ImmutableArray<SemanticRange>.Builder _semanticRanges;
+    private readonly List<SemanticRange> _semanticRanges;
     private readonly RazorCodeDocument _razorCodeDocument;
     private readonly TextSpan _range;
     private readonly ISemanticTokensLegendService _semanticTokensLegend;
@@ -22,7 +21,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
 
     private bool _addRazorCodeModifier;
 
-    private SemanticTokensVisitor(ImmutableArray<SemanticRange>.Builder semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan range, ISemanticTokensLegendService semanticTokensLegend, bool colorCodeBackground)
+    private SemanticTokensVisitor(List<SemanticRange> semanticRanges, RazorCodeDocument razorCodeDocument, TextSpan range, ISemanticTokensLegendService semanticTokensLegend, bool colorCodeBackground)
     {
         _semanticRanges = semanticRanges;
         _razorCodeDocument = razorCodeDocument;
@@ -31,15 +30,11 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
         _colorCodeBackground = colorCodeBackground;
     }
 
-    public static ImmutableArray<SemanticRange> GetSemanticRanges(RazorCodeDocument razorCodeDocument, TextSpan textSpan, ISemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
+    public static void AddSemanticRanges(List<SemanticRange> ranges, RazorCodeDocument razorCodeDocument, TextSpan textSpan, ISemanticTokensLegendService razorSemanticTokensLegendService, bool colorCodeBackground)
     {
-        using var _ = ArrayBuilderPool<SemanticRange>.GetPooledObject(out var builder);
-
-        var visitor = new SemanticTokensVisitor(builder, razorCodeDocument, textSpan, razorSemanticTokensLegendService, colorCodeBackground);
+        var visitor = new SemanticTokensVisitor(ranges, razorCodeDocument, textSpan, razorSemanticTokensLegendService, colorCodeBackground);
 
         visitor.Visit(razorCodeDocument.GetRequiredSyntaxRoot());
-
-        return builder.ToImmutableAndClear();
     }
 
     private void Visit(SyntaxList<RazorSyntaxNode> syntaxNodes)
@@ -495,7 +490,7 @@ internal sealed class SemanticTokensVisitor : SyntaxWalker
     {
         if (node is MarkupTagHelperElementSyntax { TagHelperInfo.BindingResult: var binding })
         {
-            var componentDescriptor = binding.Descriptors.FirstOrDefault(static d => d.IsComponentTagHelper);
+            var componentDescriptor = binding.Descriptors.FirstOrDefault(static d => d.Kind == TagHelperKind.Component);
             return componentDescriptor is not null;
         }
         else if (node is MarkupTagHelperStartTagSyntax startTag)

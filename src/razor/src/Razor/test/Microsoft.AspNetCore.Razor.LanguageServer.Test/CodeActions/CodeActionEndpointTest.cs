@@ -561,7 +561,7 @@ public class CodeActionEndpointTest(ITestOutputHelper testOutput) : LanguageServ
         var sourceDocument = TestRazorSourceDocument.Create(text);
         var projectEngine = RazorProjectEngine.Create(builder => { });
 
-        return projectEngine.ProcessDesignTime(sourceDocument, RazorFileKind.Legacy, importSources: [], tagHelpers: []);
+        return projectEngine.Process(sourceDocument, RazorFileKind.Legacy, importSources: [], tagHelpers: []);
     }
 
     private static IRazorCodeActionProvider CreateEmptyRazorCodeActionProvider()

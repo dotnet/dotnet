@@ -54,16 +54,15 @@ internal class VSCodeRemoteServicesInitializer(
         await service.InitializeAsync(new RemoteClientInitializationOptions
         {
             UseRazorCohostServer = _featureOptions.UseRazorCohostServer,
-            UsePreciseSemanticTokenRanges = _featureOptions.UsePreciseSemanticTokenRanges,
             HtmlVirtualDocumentSuffix = _featureOptions.HtmlVirtualDocumentSuffix,
             ReturnCodeActionAndRenamePathsWithPrefixedSlash = _featureOptions.ReturnCodeActionAndRenamePathsWithPrefixedSlash,
             SupportsFileManipulation = _featureOptions.SupportsFileManipulation,
             ShowAllCSharpCodeActions = _featureOptions.ShowAllCSharpCodeActions,
             SupportsSoftSelectionInCompletion = _featureOptions.SupportsSoftSelectionInCompletion,
-            UseVsCodeCompletionTriggerCharacters = _featureOptions.UseVsCodeCompletionTriggerCharacters,
+            UseVsCodeCompletionCommitCharacters = _featureOptions.UseVsCodeCompletionCommitCharacters,
         }, cancellationToken).ConfigureAwait(false);
 
-        await service.InitializeLSPAsync(new RemoteClientLSPInitializationOptions
+        await service.InitializeLspAsync(new RemoteClientLSPInitializationOptions
         {
             ClientCapabilities = clientCapabilities,
             TokenTypes = _semanticTokensLegendService.TokenTypes.All,

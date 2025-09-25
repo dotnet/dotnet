@@ -7,7 +7,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.AspNetCore.Razor.Language.Extensions;
 
@@ -23,7 +22,7 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         {
             builder => builder
                 .Name("bound")
-                .Metadata(PropertyName("StringProp"))
+                .PropertyName("StringProp")
                 .TypeName("System.String"),
         });
 
@@ -35,7 +34,7 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         {
             builder => builder
                 .Name("bound")
-                .Metadata(PropertyName("IntProp"))
+                .PropertyName("IntProp")
                 .TypeName("System.Int32"),
         });
 
@@ -47,7 +46,7 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         {
             builder => builder
                 .Name("bound")
-                .Metadata(PropertyName("IntIndexer"))
+                .PropertyName("IntIndexer")
                 .TypeName("System.Collections.Generic.Dictionary<System.String, System.Int32>")
                 .AsDictionary("foo-", "System.Int32"),
         });
@@ -61,7 +60,12 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperBodyIntermediateNode()
         {
             Children =
@@ -91,7 +95,12 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperBodyIntermediateNode()
         {
             Children =
@@ -126,7 +135,12 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperCreateIntermediateNode()
         {
             FieldName = "__TestNamespace_MyTagHelper",
@@ -154,7 +168,12 @@ public class DefaultTagHelperTargetExtensionTest : RazorProjectEngineTestBase
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperCreateIntermediateNode()
         {
             FieldName = "__TestNamespace_MyTagHelper",
@@ -183,7 +202,12 @@ __tagHelperExecutionContext.Add(__TestNamespace_MyTagHelper);
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperExecuteIntermediateNode();
         tagHelperNode.Children.Add(node);
         Push(context, tagHelperNode);
@@ -207,7 +231,12 @@ __tagHelperExecutionContext.Add(__TestNamespace_MyTagHelper);
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperExecuteIntermediateNode();
         tagHelperNode.Children.Add(node);
         Push(context, tagHelperNode);
@@ -237,7 +266,12 @@ __tagHelperExecutionContext = __tagHelperScopeManager.End();
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperHtmlAttributeIntermediateNode()
         {
             AttributeName = "name",
@@ -277,7 +311,12 @@ Render Children
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperHtmlAttributeIntermediateNode()
         {
             AttributeName = "name",
@@ -315,7 +354,12 @@ __tagHelperExecutionContext.AddHtmlAttribute(""name"", Html.Raw(__tagHelperStrin
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperHtmlAttributeIntermediateNode()
         {
             AttributeName = "name",
@@ -425,7 +469,12 @@ EndAddHtmlAttributeValues(__tagHelperExecutionContext);
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -434,7 +483,6 @@ EndAddHtmlAttributeValues(__tagHelperExecutionContext);
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "StringProp",
-            TagHelper = StringPropertyTagHelper,
             Children =
             {
                 new HtmlContentIntermediateNode()
@@ -466,7 +514,12 @@ __InputTagHelper.StringProp = ""value"";
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -475,7 +528,6 @@ __InputTagHelper.StringProp = ""value"";
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "StringProp",
-            TagHelper = StringPropertyTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -507,7 +559,12 @@ __InputTagHelper.StringProp = string.Empty;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -516,7 +573,6 @@ __InputTagHelper.StringProp = string.Empty;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Source = Span,
             Children =
             {
@@ -557,7 +613,12 @@ __InputTagHelper.IntProp = 32;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node1 = new DefaultTagHelperPropertyIntermediateNode()
         {
             // We only look at the attribute name here.
@@ -573,7 +634,6 @@ __InputTagHelper.IntProp = 32;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Source = Span,
         };
         tagHelperNode.Children.Add(node1);
@@ -599,7 +659,12 @@ __InputTagHelper.IntProp = 32;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -608,7 +673,6 @@ __InputTagHelper.IntProp = 32;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -639,7 +703,12 @@ __InputTagHelper.IntProp = 32;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "foo-bound",
@@ -648,7 +717,6 @@ __InputTagHelper.IntProp = 32;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Source = Span,
             Children =
             {
@@ -687,7 +755,12 @@ __InputTagHelper.IntIndexer[""bound""] = 32;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateDesignTime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "foo-bound",
@@ -696,7 +769,6 @@ __InputTagHelper.IntIndexer[""bound""] = 32;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -727,7 +799,12 @@ __InputTagHelper.IntIndexer[""bound""] = 32;
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -736,7 +813,6 @@ __InputTagHelper.IntIndexer[""bound""] = 32;
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "StringProp",
-            TagHelper = StringPropertyTagHelper,
             Children =
             {
                 new HtmlContentIntermediateNode()
@@ -773,7 +849,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.St
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -782,7 +863,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.St
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -824,7 +904,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node1 = new DefaultTagHelperPropertyIntermediateNode()
         {
             // We only look at the attribute name here.
@@ -840,7 +925,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Source = Span,
         };
         tagHelperNode.Children.Add(node1);
@@ -866,7 +950,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "bound",
@@ -875,7 +964,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = false,
             PropertyName = "IntProp",
-            TagHelper = IntPropertyTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -907,7 +995,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "foo-bound",
@@ -916,7 +1009,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""bound"", __InputTagHelper.In
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -960,7 +1052,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""foo-bound"", __InputTagHelpe
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node1 = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "foo-first",
@@ -969,7 +1066,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""foo-bound"", __InputTagHelpe
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -986,7 +1082,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""foo-bound"", __InputTagHelpe
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -1027,7 +1122,12 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""foo-bound"", __InputTagHelpe
         var extension = new DefaultTagHelperTargetExtension();
         using var context = TestCodeRenderingContext.CreateRuntime();
 
-        var tagHelperNode = new TagHelperIntermediateNode();
+        var tagHelperNode = new TagHelperIntermediateNode()
+        {
+            TagMode = 0,
+            TagName = "Test"
+        };
+
         var node = new DefaultTagHelperPropertyIntermediateNode()
         {
             AttributeName = "foo-bound",
@@ -1036,7 +1136,6 @@ __tagHelperExecutionContext.AddTagHelperAttribute(""foo-bound"", __InputTagHelpe
             FieldName = "__InputTagHelper",
             IsIndexerNameMatch = true,
             PropertyName = "IntIndexer",
-            TagHelper = IntIndexerTagHelper,
             Children =
             {
                 new CSharpExpressionIntermediateNode()
@@ -1155,8 +1254,8 @@ private global::Microsoft.AspNetCore.Razor.Runtime.TagHelpers.TagHelperScopeMana
         string assemblyName,
         IEnumerable<Action<BoundAttributeDescriptorBuilder>>? attributes = null)
     {
-        var builder = TagHelperDescriptorBuilder.Create(typeName, assemblyName);
-        builder.Metadata(TypeName(typeName));
+        var builder = TagHelperDescriptorBuilder.CreateTagHelper(typeName, assemblyName);
+        builder.SetTypeName(typeName, typeNamespace: null, typeNameIdentifier: null);
 
         if (attributes != null)
         {

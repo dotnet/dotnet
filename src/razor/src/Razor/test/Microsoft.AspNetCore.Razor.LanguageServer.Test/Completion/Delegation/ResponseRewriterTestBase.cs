@@ -19,7 +19,8 @@ public abstract class ResponseRewriterTestBase(ITestOutputHelper testOutput) : C
         var razorCompletionOptions = new RazorCompletionOptions(
             SnippetsSupported: true,
             AutoInsertAttributeQuotes: true,
-            CommitElementsWithSpace: true);
+            CommitElementsWithSpace: true,
+            UseVsCodeCompletionCommitCharacters: false);
 
         return GetRewrittenCompletionListAsync(absoluteIndex, documentContent, initialCompletionList, razorCompletionOptions);
     }

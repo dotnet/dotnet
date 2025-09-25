@@ -67,6 +67,11 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
                 b.SetRootNamespace(rootNamespace);
             }
 
+            b.ConfigureCodeGenerationOptions(builder =>
+            {
+                builder.UseEnhancedLinePragma = true;
+            });
+
             RazorExtensions.Register(b);
 
             b.ConfigureParserOptions(builder =>
@@ -90,7 +95,7 @@ public abstract class LanguageServerTestBase(ITestOutputHelper testOutput) : Too
                 """,
             RazorSourceDocumentProperties.Create(importDocumentName, importDocumentName));
 
-        return projectEngine.ProcessDesignTime(sourceDocument, fileKind, [defaultImportDocument], tagHelpers);
+        return projectEngine.Process(sourceDocument, fileKind, [defaultImportDocument], tagHelpers);
     }
 
     private protected static IDocumentContextFactory CreateDocumentContextFactory(Uri documentPath, string sourceText)

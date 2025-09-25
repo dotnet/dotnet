@@ -342,7 +342,7 @@ internal class TagHelperCompletionService : ITagHelperCompletionService
 
         foreach (var descriptor in possibleChildDescriptors)
         {
-            if (descriptor.IsComponentFullyQualifiedNameMatch)
+            if (descriptor.IsFullyQualifiedNameMatch)
             {
                 fullyQualifiedTagHelpers.Add(descriptor);
             }
