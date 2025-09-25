@@ -414,7 +414,7 @@ jobs:
   - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
       displayName: Download Shared Component Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758
