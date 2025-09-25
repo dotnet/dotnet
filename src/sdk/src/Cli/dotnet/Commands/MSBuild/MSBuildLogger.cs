@@ -168,7 +168,7 @@ public sealed class MSBuildLogger : INodeLogger
             return;
         }
 
-        if (!_aggregatedEvents.TryGetValue(args.EventName, out Dictionary<string, int> eventData))
+        if (!_aggregatedEvents.TryGetValue(args.EventName, out Dictionary<string, int>? eventData))
         {
             eventData = new Dictionary<string, int>();
             _aggregatedEvents[args.EventName] = eventData;
