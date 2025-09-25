@@ -61,35 +61,6 @@ internal static partial class ObjectWriters
             }
         }
 
-        static void WriteTypeNameObject(JsonDataWriter writer, string propertyName, TypeNameObject value)
-        {
-            if (value.IsNull)
-            {
-                // Don't write property if the value is null.
-            }
-            else if (value.Index is byte index)
-            {
-                writer.Write(propertyName, index);
-            }
-            else if (value.Namespace is null && value.Name is null)
-            {
-                // If we only have a full name, write that.
-                writer.Write(propertyName, value.FullName.AssumeNotNull());
-            }
-            else
-            {
-                writer.WriteObject(propertyName, value, static (writer, value) =>
-                {
-                    Debug.Assert(value.Index is null);
-
-                    writer.Write(nameof(value.FullName), value.FullName);
-                    writer.WriteIfNotNull(nameof(value.Namespace), value.Namespace);
-                    writer.WriteIfNotNull(nameof(value.Name), value.Name);
-                });
-
-            }
-        }
-
         static void WriteTagMatchingRule(JsonDataWriter writer, TagMatchingRuleDescriptor value)
         {
             writer.WriteObject(value, static (writer, value) =>
@@ -253,7 +224,37 @@ internal static partial class ObjectWriters
             static void WriteViewComponentMetadata(JsonDataWriter writer, ViewComponentMetadata metadata)
             {
                 writer.Write(nameof(metadata.Name), metadata.Name);
+                WriteTypeNameObject(writer, nameof(metadata.OriginalTypeName), metadata.OriginalTypeNameObject);
             }
+        }
+    }
+
+    static void WriteTypeNameObject(JsonDataWriter writer, string propertyName, TypeNameObject value)
+    {
+        if (value.IsNull)
+        {
+            // Don't write property if the value is null.
+        }
+        else if (value.Index is byte index)
+        {
+            writer.Write(propertyName, index);
+        }
+        else if (value.Namespace is null && value.Name is null)
+        {
+            // If we only have a full name, write that.
+            writer.Write(propertyName, value.FullName.AssumeNotNull());
+        }
+        else
+        {
+            writer.WriteObject(propertyName, value, static (writer, value) =>
+            {
+                Debug.Assert(value.Index is null);
+
+                writer.Write(nameof(value.FullName), value.FullName);
+                writer.WriteIfNotNull(nameof(value.Namespace), value.Namespace);
+                writer.WriteIfNotNull(nameof(value.Name), value.Name);
+            });
+
         }
     }
 }

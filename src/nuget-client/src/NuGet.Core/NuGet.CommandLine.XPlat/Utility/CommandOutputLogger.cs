@@ -146,5 +146,13 @@ namespace NuGet.CommandLine.XPlat
             LogInternal(LogLevel.Minimal, data);
             Console.ForegroundColor = currentColor;
         }
+
+        public void LogInline(string data, ConsoleColor color)
+        {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(data);
+            Console.ForegroundColor = currentColor;
+        }
     }
 }

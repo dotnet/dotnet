@@ -4,12 +4,13 @@
 using MessagePack;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace Microsoft.CodeAnalysis.Razor.Serialization.MessagePack.Formatters.TagHelpers;
 
 internal sealed class ViewComponentMetadataFormatter : ValueFormatter<ViewComponentMetadata>
 {
-    private const int PropertyCount = 1;
+    private const int PropertyCount = 2;
 
     public static readonly ValueFormatter<ViewComponentMetadata> Instance = new ViewComponentMetadataFormatter();
 
@@ -19,7 +20,8 @@ internal sealed class ViewComponentMetadataFormatter : ValueFormatter<ViewCompon
 
         var builder = new ViewComponentMetadata.Builder
         {
-            Name = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull()
+            Name = CachedStringFormatter.Instance.Deserialize(ref reader, options).AssumeNotNull(),
+            OriginalTypeNameObject = reader.Deserialize<TypeNameObject>(options)
         };
 
         return builder.Build();
@@ -30,6 +32,7 @@ internal sealed class ViewComponentMetadataFormatter : ValueFormatter<ViewCompon
         writer.WriteArrayHeader(PropertyCount);
 
         CachedStringFormatter.Instance.Serialize(ref writer, value.Name, options);
+        writer.Serialize(value.OriginalTypeNameObject, options);
     }
 
     public override void Skim(ref MessagePackReader reader, SerializerCachingOptions options)
@@ -37,5 +40,6 @@ internal sealed class ViewComponentMetadataFormatter : ValueFormatter<ViewCompon
         reader.ReadArrayHeaderAndVerify(PropertyCount);
 
         CachedStringFormatter.Instance.Skim(ref reader, options); // Name
+        TypeNameObjectFormatter.Instance.Skim(ref reader, options); // OriginalTypeName
     }
 }

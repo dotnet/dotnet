@@ -406,7 +406,7 @@ namespace NuGet.CommandLine.XPlat
         /// <param name="targetFrameworks">A <see cref="FrameworkPackages"/> per project target framework</param>
         /// <param name="listPackageArgs">List command args</param>
         /// <returns>A dictionary where the key is the package id, and the value is a list of <see cref="IPackageSearchMetadata"/>.</returns>
-        private async Task<Dictionary<string, List<IPackageSearchMetadata>>> GetPackageMetadataAsync(
+        internal async Task<Dictionary<string, List<IPackageSearchMetadata>>> GetPackageMetadataAsync(
             List<FrameworkPackages> targetFrameworks,
             ListPackageArgs listPackageArgs)
         {
@@ -415,7 +415,9 @@ namespace NuGet.CommandLine.XPlat
 
             int maxParallel = listPackageArgs.PackageSources.Any(s => s.IsHttp)
                 ? 8 // Try to be nice to HTTP package sources
-                : (Environment.ProcessorCount / listPackageArgs.PackageSources.Count) + 1;
+                : listPackageArgs.PackageSources.Count == 0
+                    ? Environment.ProcessorCount + 1 // Fallback when no package sources are configured
+                    : (Environment.ProcessorCount / listPackageArgs.PackageSources.Count) + 1;
 
             await ThrottledForEachAsync(allPackages,
                 async (packageId, cancellationToken) => await GetPackageVersionsAsync(packageId, listPackageArgs, cancellationToken),
