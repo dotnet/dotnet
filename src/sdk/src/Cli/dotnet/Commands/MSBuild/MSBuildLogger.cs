@@ -135,7 +135,7 @@ public sealed class MSBuildLogger : INodeLogger
     {
         if (_aggregatedEvents.TryGetValue(TaskFactoryTelemetryAggregatedEventName, out var taskFactoryData))
         {
-            Dictionary<string, string> taskFactoryProperties = ConvertToStringDictionary(taskFactoryData);
+            var taskFactoryProperties = ConvertToStringDictionary(taskFactoryData);
 
             TrackEvent(telemetry, $"msbuild/{TaskFactoryTelemetryAggregatedEventName}", taskFactoryProperties, toBeHashed: [], toBeMeasured: []);
             _aggregatedEvents.Remove(TaskFactoryTelemetryAggregatedEventName);
@@ -143,16 +143,16 @@ public sealed class MSBuildLogger : INodeLogger
 
         if (_aggregatedEvents.TryGetValue(TasksTelemetryAggregatedEventName, out var tasksData))
         {
-            Dictionary<string, string> tasksProperties = ConvertToStringDictionary(tasksData);
+            var tasksProperties = ConvertToStringDictionary(tasksData);
 
             TrackEvent(telemetry, $"msbuild/{TasksTelemetryAggregatedEventName}", tasksProperties, toBeHashed: [], toBeMeasured: []);
             _aggregatedEvents.Remove(TasksTelemetryAggregatedEventName);
         }
     }
 
-    private static Dictionary<string, string> ConvertToStringDictionary(Dictionary<string, int> properties)
+    private static Dictionary<string, string?> ConvertToStringDictionary(Dictionary<string, int> properties)
     {
-        Dictionary<string, string> stringProperties = new();
+        Dictionary<string, string?> stringProperties = new();
         foreach (var kvp in properties)
         {
             stringProperties[kvp.Key] = kvp.Value.ToString(CultureInfo.InvariantCulture);
@@ -163,6 +163,11 @@ public sealed class MSBuildLogger : INodeLogger
 
     internal void AggregateEvent(TelemetryEventArgs args)
     {
+        if (args.EventName == null || args.Properties == null)
+        {
+            return;
+        }
+
         if (!_aggregatedEvents.TryGetValue(args.EventName, out Dictionary<string, int> eventData))
         {
             eventData = new Dictionary<string, int>();
