@@ -61,10 +61,10 @@
       "commitSha": "543d04595ee546f812aa26578c5c99083c752bd9"
     },
     {
-      "barId": 284051,
+      "barId": 284283,
       "path": "nuget-client",
       "remoteUri": "https://github.com/nuget/nuget.client",
-      "commitSha": "c69588acc9bb46f38370c2b8cdedf57aea5ec904"
+      "commitSha": "97c64b5dfcc39b3babf6b3dfa828aa737860c145"
     },
     {
       "barId": 284251,
@@ -139,10 +139,10 @@
       "commitSha": "2b9471644494f912a5ea1f559ed7e2d443a631aa"
     },
     {
-      "barId": 284130,
+      "barId": 284453,
       "path": "wpf",
       "remoteUri": "https://github.com/dotnet/wpf",
-      "commitSha": "f74ad8648cada953c13403d3801203c30ea33bac"
+      "commitSha": "a94c8eb81ba1e5ea9f6e282a717cd52270548589"
     },
     {
       "barId": 278018,
