@@ -1069,7 +1069,6 @@ namespace NuGet.Build.Tasks.Console
                 (ProjectStyle ProjectStyle, string PackagesConfigFilePath) projectStyleResult = BuildTasksUtility.GetProjectRestoreStyle(
                     restoreProjectStyle: projectStyleOrNull,
                     hasPackageReferenceItems: hasPackageReferenceItems,
-                    projectJsonPath: project.GetProperty("_CurrentProjectJsonPath"),
                     projectDirectory: project.Directory,
                     projectName: project.GetProperty("MSBuildProjectName"),
                     log: log);
