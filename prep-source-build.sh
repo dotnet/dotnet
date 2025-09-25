@@ -34,6 +34,7 @@ REPO_ROOT="$( cd -P "$( dirname "$0" )" && pwd )"
 
 # Load common helper functions
 source "$REPO_ROOT/eng/download-source-built-archive.sh"
+source "$REPO_ROOT/eng/source-build-toolset-init.sh"
 
 function print_help () {
     sed -n '/^### /,/^$/p' "$source" | cut -b 5-
@@ -45,7 +46,6 @@ packagesDir="$REPO_ROOT/prereqs/packages"
 defaultArtifactsRid='centos.10-x64'
 
 # Binary Tooling default arguments
-defaultDotnetSdk="$REPO_ROOT/.dotnet"
 defaultPsbDir="$packagesDir/previously-source-built"
 
 # SB prep arguments
@@ -60,7 +60,7 @@ runtime_source_feed='' # IBM requested these to support s390x scenarios
 runtime_source_feed_key='' # IBM requested these to support s390x scenarios
 
 # Binary Tooling arguments
-dotnetSdk=$defaultDotnetSdk
+customSdkDir=''
 psbDir=$defaultPsbDir
 
 artifactsBaseFileName="Private.SourceBuilt.Artifacts"
@@ -112,11 +112,15 @@ while :; do
       removeBinaries=false
       ;;
     --with-sdk)
-      dotnetSdk=$2
+      customSdkDir="$(cd -P "$2" && pwd)"
       shift
       ;;
     --with-packages)
-      psbDir=$2
+      psbDir="$(cd -P "$2" && pwd)"
+      if [ ! -d "$psbDir" ]; then
+          echo "Custom previously built packages directory '$psbDir' does not exist"
+          exit 1
+      fi
       shift
       ;;
     *)
@@ -224,7 +228,7 @@ fi
 if [ "$removeBinaries" == true ]; then
 
   originalPackagesDir=$packagesDir
-  # Create working directory for extracking packages
+  # Create working directory for extracting packages
   workingDir=$(mktemp -d)
 
   # If --with-packages is not passed, unpack PSB artifacts
@@ -244,7 +248,10 @@ if [ "$removeBinaries" == true ]; then
     psbDir=$workingDir
   fi
 
-  "$dotnetSdk/dotnet" build \
+  # Initialize source-only toolset for binary detection (includes custom SDK setup, MSBuild resolver, and source-built resolver)
+  source_only_toolset_init "$customSdkDir" "$psbDir" "true" "" "/p:DotNetBuildSourceOnly=true"
+
+  "$_InitializeBuildTool" build \
     "$REPO_ROOT/eng/init-detect-binaries.proj" \
     "/p:BinariesMode=Clean" \
     "/p:AllowedBinariesFile=$REPO_ROOT/eng/allowed-sb-binaries.txt" \

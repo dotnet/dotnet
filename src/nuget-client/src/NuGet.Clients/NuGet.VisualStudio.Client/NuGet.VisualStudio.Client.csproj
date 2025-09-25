@@ -182,7 +182,7 @@
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
       <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
-      <NgenPriority>1</NgenPriority>
+      <NgenPriority>2</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Protocol\NuGet.Protocol.csproj">
       <Ngen>True</Ngen>
@@ -212,7 +212,7 @@
       <Ngen>True</Ngen>
       <NgenApplication>$(NgenApplicationDefault)</NgenApplication>
       <NgenArchitecture>$(NgenArchitecture)</NgenArchitecture>
-      <NgenPriority>1</NgenPriority>
+      <NgenPriority>2</NgenPriority>
     </ProjectReference>
     <ProjectReference Include="..\..\NuGet.Core\NuGet.Credentials\NuGet.Credentials.csproj">
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bSatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>

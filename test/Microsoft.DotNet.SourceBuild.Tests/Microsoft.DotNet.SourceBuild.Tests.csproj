@@ -22,6 +22,12 @@
   <ItemGroup>
     <ProjectReference Include="$(RepositoryEngineeringDir)extract-sdk-archive.proj" ReferenceOutputAssembly="false" Condition="'$(SkipPrepareSdkArchive)' != 'true'" />
     <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
+    <ProjectReference Include="assets/SdkContentTests/ValidateAssemblies.proj" ReferenceOutputAssembly="false" Condition="'$(MsftSdkTarballPath)' != ''">
+      <Properties>
+        MsftSdkTarballPath=$(MsftSdkTarballPath);
+        SdkTarballPath=$(SdkTarballPath)
+      </Properties>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

@@ -17,10 +17,10 @@ variables:
 - name: 1esWindowsImage
   value: 1es-windows-2022
 - ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-  - name: SignType
+  - name: _SignType
     value: test
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-  - name: SignType
+  - name: _SignType
     value: $[ coalesce(variables.OfficialSignType, 'real') ]
   - group: core-setup-sdl-validation
 resources:
