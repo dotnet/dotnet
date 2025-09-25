@@ -13,10 +13,10 @@
       "commitSha": "5fa9337a84a52e9bd185d04d156eccbdcf592f74"
     },
     {
-      "packageVersion": "9.0.10-servicing.25469.11",
+      "packageVersion": "9.0.10-servicing.25473.3",
       "path": "aspnetcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore",
-      "commitSha": "5a264b22361a2e0457f089ddfed8e4ded6e1bff6"
+      "commitSha": "0994268d77afc07564fc3b6508d252df143a8f35"
     },
     {
       "packageVersion": "0.11.5-alpha.25464.3",
@@ -46,7 +46,7 @@
       "packageVersion": "9.0.10",
       "path": "efcore",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-efcore",
-      "commitSha": "660bcfaf9168bdfee957c40bf4d4821afd7452cf"
+      "commitSha": "07f05aeccc82bfec153831e9b59ebcefa7eb2df2"
     },
     {
       "packageVersion": "9.0.10-servicing.25469.4",
@@ -106,7 +106,7 @@
       "packageVersion": null,
       "path": "sdk",
       "remoteUri": "https://github.com/dotnet/sdk",
-      "commitSha": "860e8e0b24bb0339b6a4b10dc64f270a1b09295c"
+      "commitSha": "b99a3960caf7f4e570d896b7682563d465a31bf3"
     },
     {
       "packageVersion": "9.0.0-alpha.1.25157.1",
@@ -154,19 +154,19 @@
       "packageVersion": "9.0.10",
       "path": "windowsdesktop",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop",
-      "commitSha": "b45a21f3c4df0897de08ae4905f22f4f1ce81365"
+      "commitSha": "9afe781a0b672f06aa744911b6e73442959cd297"
     },
     {
-      "packageVersion": "9.0.10-servicing.25469.2",
+      "packageVersion": "9.0.10-servicing.25474.2",
       "path": "winforms",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-winforms",
-      "commitSha": "1d0a83c137d852a25e7920f4f756dd0804d89068"
+      "commitSha": "eca618625b7feefcc6c2837c10f71ec363f34666"
     },
     {
-      "packageVersion": "9.0.10-rtm.25469.4",
+      "packageVersion": "9.0.10-rtm.25474.6",
       "path": "wpf",
       "remoteUri": "https://dev.azure.com/dnceng/internal/_git/dotnet-wpf",
-      "commitSha": "29f3b130350dbef78a68658201cd953560e192d0"
+      "commitSha": "ddb0212a94c7b3bf4122bfd3fb1eb0d5553ddf41"
     },
     {
       "packageVersion": "10.0.0-preview.24609.2",

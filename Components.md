@@ -12,7 +12,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/aspire`  
 *[dotnet/aspire@5fa9337](https://github.com/dotnet/aspire/tree/5fa9337a84a52e9bd185d04d156eccbdcf592f74)*
 - `src/aspnetcore`  
-*[_git/dotnet-aspnetcore@5a264b2](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC5a264b22361a2e0457f089ddfed8e4ded6e1bff6)*
+*[_git/dotnet-aspnetcore@0994268](https://dev.azure.com/dnceng/internal/_git/dotnet-aspnetcore/?version=GC0994268d77afc07564fc3b6508d252df143a8f35)*
     - `src/aspnetcore/src/submodules/googletest`  
     *[google/googletest@eb2d85e](https://github.com/google/googletest/tree/eb2d85edd0bff7a712b6aff147cd9f789f0d7d0b)*
     - `src/aspnetcore/src/submodules/MessagePack-CSharp`  
@@ -26,7 +26,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/diagnostics`  
 *[dotnet/diagnostics@513150c](https://github.com/dotnet/diagnostics/tree/513150c2f25077b1fcb194407e53c433c975f39b)*
 - `src/efcore`  
-*[_git/dotnet-efcore@660bcfa](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC660bcfaf9168bdfee957c40bf4d4821afd7452cf)*
+*[_git/dotnet-efcore@07f05ae](https://dev.azure.com/dnceng/internal/_git/dotnet-efcore/?version=GC07f05aeccc82bfec153831e9b59ebcefa7eb2df2)*
 - `src/emsdk`  
 *[dotnet/emsdk@f70927a](https://github.com/dotnet/emsdk/tree/f70927a13648c24660c79ff19a6eb2aac100f0ab)*
 - `src/fsharp`  
@@ -48,7 +48,7 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/scenario-tests`  
 *[dotnet/scenario-tests@0898abb](https://github.com/dotnet/scenario-tests/tree/0898abbb5899ef400b8372913c2320295798a687)*
 - `src/sdk`  
-*[dotnet/sdk@860e8e0](https://github.com/dotnet/sdk/tree/860e8e0b24bb0339b6a4b10dc64f270a1b09295c)*
+*[dotnet/sdk@b99a396](https://github.com/dotnet/sdk/tree/b99a3960caf7f4e570d896b7682563d465a31bf3)*
 - `src/source-build-externals`  
 *[dotnet/source-build-externals@71dbdcc](https://github.com/dotnet/source-build-externals/tree/71dbdccd13f28cfd1a35649263b55ebbeab26ee7)*
     - `src/source-build-externals/src/abstractions-xunit`  
@@ -92,11 +92,11 @@ To enable full offline source-building of the VMR, we have no other choice than 
 - `src/vstest`  
 *[microsoft/vstest@bc91613](https://github.com/microsoft/vstest/tree/bc9161306b23641b0364b8f93d546da4d48da1eb)*
 - `src/windowsdesktop`  
-*[_git/dotnet-windowsdesktop@b45a21f](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GCb45a21f3c4df0897de08ae4905f22f4f1ce81365)*
+*[_git/dotnet-windowsdesktop@9afe781](https://dev.azure.com/dnceng/internal/_git/dotnet-windowsdesktop/?version=GC9afe781a0b672f06aa744911b6e73442959cd297)*
 - `src/winforms`  
-*[_git/dotnet-winforms@1d0a83c](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GC1d0a83c137d852a25e7920f4f756dd0804d89068)*
+*[_git/dotnet-winforms@eca6186](https://dev.azure.com/dnceng/internal/_git/dotnet-winforms/?version=GCeca618625b7feefcc6c2837c10f71ec363f34666)*
 - `src/wpf`  
-*[_git/dotnet-wpf@29f3b13](https://dev.azure.com/dnceng/internal/_git/dotnet-wpf/?version=GC29f3b130350dbef78a68658201cd953560e192d0)*
+*[_git/dotnet-wpf@ddb0212](https://dev.azure.com/dnceng/internal/_git/dotnet-wpf/?version=GCddb0212a94c7b3bf4122bfd3fb1eb0d5553ddf41)*
 - `src/xdt`  
 *[dotnet/xdt@63ae811](https://github.com/dotnet/xdt/tree/63ae81154c50a1cf9287cc47d8351d55b4289e6d)*
 - `src/xliff-tasks`  
