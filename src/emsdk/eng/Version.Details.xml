@@ -33,21 +33,21 @@
       <Uri>https://github.com/dotnet/binaryen</Uri>
       <Sha>79a3054700a4ca69a7a90f6eaa8db0aeb8b83ed8</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25461.1">
+    <Dependency Name="runtime.osx-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25466.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>12fc2bebd67b248cee8b773a93d3aa3437b312ed</Sha>
+      <Sha>c77b5e4c9244ad4ceb8164e9477fe28c99b4732a</Sha>
     </Dependency>
-    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25461.1">
+    <Dependency Name="runtime.osx-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25466.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>12fc2bebd67b248cee8b773a93d3aa3437b312ed</Sha>
+      <Sha>c77b5e4c9244ad4ceb8164e9477fe28c99b4732a</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25461.1">
+    <Dependency Name="runtime.win-arm64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25466.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>12fc2bebd67b248cee8b773a93d3aa3437b312ed</Sha>
+      <Sha>c77b5e4c9244ad4ceb8164e9477fe28c99b4732a</Sha>
     </Dependency>
-    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25461.1">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.Runtime.Wasm.Python.Transport" Version="9.0.0-alpha.1.25466.4">
       <Uri>https://github.com/dotnet/cpython</Uri>
-      <Sha>12fc2bebd67b248cee8b773a93d3aa3437b312ed</Sha>
+      <Sha>c77b5e4c9244ad4ceb8164e9477fe28c99b4732a</Sha>
     </Dependency>
     <Dependency Name="runtime.linux-arm64.Microsoft.NETCore.Runtime.Wasm.Node.Transport" Version="9.0.0-alpha.1.25312.1">
       <Uri>https://github.com/dotnet/node</Uri>
@@ -145,9 +145,9 @@
       <Uri>https://github.com/dotnet/llvm-project</Uri>
       <Sha>9ae86175cabaa393cc75bd3e26560a604b2ade7c</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.Runtime.Wasm.Emscripten.Transport" Version="9.0.0-alpha.1.25461.1">
+    <Dependency Name="Microsoft.NETCore.Runtime.Wasm.Emscripten.Transport" Version="9.0.0-alpha.1.25466.4">
       <Uri>https://github.com/dotnet/emscripten</Uri>
-      <Sha>e3ce33ea30265e5cd15a218b7e8e6fda99a28af9</Sha>
+      <Sha>54c943306ddea1bc1f027609b129b76adf34059a</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
