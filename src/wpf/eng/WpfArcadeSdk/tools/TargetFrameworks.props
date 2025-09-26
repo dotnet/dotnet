@@ -1,5 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <DefineConstants Condition="$(TargetFramework.StartsWith('net4'))">$(DefineConstants);NETFX</DefineConstants>
-  </PropertyGroup>
-</Project>

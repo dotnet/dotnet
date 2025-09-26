@@ -5,8 +5,8 @@
 # Get the repository root directory
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Define the path to Versions.props once
 PACKAGE_VERSIONS_PATH="$REPO_ROOT/eng/Versions.props"
+PACKAGE_VERSION_DETAILS_PATH="$REPO_ROOT/eng/Version.Details.props"
 
 # Helper to extract a property value from an XML file
 function GetXmlPropertyValue {
@@ -56,9 +56,16 @@ function DownloadArchive {
   local destinationFilenamePrefix="${6:-}"
 
   local notFoundMessage="No $label found to download..."
+  local sdkVersionProperty="MicrosoftNETSdkPackageVersion"
 
   local archiveVersion
-  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$PACKAGE_VERSIONS_PATH")
+  local versionsPath
+  if [[ "$propertyName" == "$sdkVersionProperty" ]]; then
+    versionsPath="$PACKAGE_VERSION_DETAILS_PATH"
+  else
+    versionsPath="$PACKAGE_VERSIONS_PATH"
+  fi
+  archiveVersion=$(GetXmlPropertyValue "$propertyName" "$versionsPath")
   if [[ -z "$archiveVersion" ]]; then
     if [ "$isRequired" == true ]; then
       echo "  ERROR: $notFoundMessage"
@@ -74,7 +81,7 @@ function DownloadArchive {
   local prebuiltsBaseFileName="Private.SourceBuilt.Prebuilts"
   local defaultArtifactsRid='centos.10-x64'
 
-  if [[ "$propertyName" == "MicrosoftNETSdkVersion" ]]; then
+  if [[ "$propertyName" == "$sdkVersionProperty" ]]; then
     archiveUrl="https://ci.dot.net/public/source-build/$artifactsBaseFileName.$archiveVersion.$artifactsRid.tar.gz"
   elif [[ "$propertyName" == *Prebuilts* ]]; then
     archiveUrl="https://builds.dotnet.microsoft.com/source-built-artifacts/assets/$prebuiltsBaseFileName.$archiveVersion.$defaultArtifactsRid.tar.gz"
