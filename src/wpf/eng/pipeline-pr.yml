@@ -182,7 +182,7 @@ jobs:
         #   When building on a Helix pipeline, only build Release configs
         #   (!_HelixPipeline) ||
         #   (_HelixPipeline && _PublicBuildPipeline && _ContinuousIntegrationTestsEnabled && _BuildConfig == Release)
-        condition: or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true') ,eq(variables['_BuildConfig'], 'Release'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true')))
+        condition: and(succeeded(), or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true') ,eq(variables['_BuildConfig'], 'Release'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true'))))
 
       - script: eng\scripts\ciunittest.cmd
           -configuration $(_BuildConfig)
@@ -195,7 +195,7 @@ jobs:
           /bl:$(Build.SourcesDirectory)\artifacts\log\$(_BuildConfig)\Test.binlog
           /p:Coverage=$(_Coverage)
         displayName: Run xUnit Tests
-        condition: and(or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true'))), eq(variables['_Platform'], 'x64'))
+        condition: and(succeeded(), or(ne(variables['_HelixPipeline'], 'true'), and(eq(variables['_HelixPipeline'], 'true'), eq(variables['_PublicBuildPipeline'], 'true'), eq(variables['_ContinuousIntegrationTestsEnabled'], 'true'))), eq(variables['_Platform'], 'x64'))
 
       - task: PublishTestResults@2
         displayName: Publish XUnit Test Results

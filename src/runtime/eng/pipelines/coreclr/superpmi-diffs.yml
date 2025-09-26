@@ -76,7 +76,7 @@ extends:
                   archiveExtension: $(archiveExtension)
                   artifactName: CheckedJIT_$(osGroup)$(osSubgroup)_$(archType)
                   displayName: JIT and SuperPMI Assets
-            condition: not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true))
+            condition: and(succeeded(), not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true)))
 
       - template: /eng/pipelines/common/platform-matrix.yml
         parameters:
@@ -98,7 +98,7 @@ extends:
                   archiveExtension: $(archiveExtension)
                   artifactName: ReleaseJIT_$(osGroup)$(osSubgroup)_$(archType)
                   displayName: JIT and SuperPMI Assets
-            condition: not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true))
+            condition: and(succeeded(), not(eq(stageDependencies.EvaluatePaths.evaluate_paths.outputs['SetPathVars_jiteeversionguid.containsChange'], true)))
 
       - template: /eng/pipelines/common/platform-matrix.yml
         parameters:
