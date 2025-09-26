@@ -417,5 +417,5 @@ if [[ "$sourceOnly" == "true" ]]; then
   # Initialize source-only toolset (includes custom SDK setup, MSBuild resolver, and source-built resolver)
   source_only_toolset_init "$customSdkDir" "$customPackagesDir" "$binary_log" "$test" "${properties[@]}"
 fi
-
+ 
 Build
