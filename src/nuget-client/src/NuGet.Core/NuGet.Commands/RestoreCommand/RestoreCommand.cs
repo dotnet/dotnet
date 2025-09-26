@@ -64,6 +64,7 @@ namespace NuGet.Commands
         private const string UpdatedAssetsFile = nameof(UpdatedAssetsFile);
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
+        private const string UsesLegacyPackagesDirectory = nameof(UsesLegacyPackagesDirectory);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -380,6 +381,7 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[UsingMicrosoftNETSdk] = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk;
             telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
+            telemetry.TelemetryEvent[UsesLegacyPackagesDirectory] = !_request.IsLowercasePackagesDirectory;
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
