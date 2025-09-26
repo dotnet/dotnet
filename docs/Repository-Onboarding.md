@@ -46,7 +46,12 @@ Validate the assets produced from the build by checking the `/artifacts` directo
 Open a PR which will trigger the PR validation.
 Address any issues that may be surfaced.
 
-#### Step 5a: Handle License and Binary Validation
+#### Step 5a: Resolve Source Build Prebuilts
+
+The source build legs that run as part of PR validation may surface [prebuilts](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md#what-is-a-prebuilt).
+These will need to be [eliminated](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md#eliminating-pre-builts) before the PR can be merged.
+
+#### Step 5b: Handle License and Binary Validation
 
 The VMR has restrictions on allowed licenses and checked in binaries.
 PR and CI validation exists to ensure the policies are satisfied.
