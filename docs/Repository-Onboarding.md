@@ -59,6 +59,10 @@ After your PR has been merged validate the following:
 1. Validate the [CI builds](https://dev.azure.com/dnceng/internal/_build?definitionId=1330) are passing.
 1. Ensure the [code flow](https://maestro.dot.net) works correctly
 
+### Step 7: Enable Repo Level VMR PR Validation
+
+Consider enabling [repo level VMR PR validation](https://github.com/dotnet/arcade/blob/main/Documentation/VmrValidation.md) as either an optional or required check.
+
 ## Getting Help
 
 - Utilize the issue created in [Repository Requirements](#repository-requirements) to discuss any issues encountered.
