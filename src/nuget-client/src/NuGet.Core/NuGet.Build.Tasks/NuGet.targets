@@ -158,7 +158,6 @@ Copyright (c) .NET Foundation. All rights reserved.
   <!-- Tasks -->
   <UsingTask TaskName="NuGet.Build.Tasks.RestoreTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.WriteRestoreGraphTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
-  <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreProjectJsonPathTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestoreProjectReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetRestorePackageReferencesTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
   <UsingTask TaskName="NuGet.Build.Tasks.GetCentralPackageVersionsTask" AssemblyFile="$(RestoreTaskAssemblyFile)" />
@@ -657,29 +656,12 @@ Copyright (c) .NET Foundation. All rights reserved.
 
   <!--
     ============================================================
-    _GetProjectJsonPath
-    Discover the project.json path if one exists for the project.
-    ============================================================
-  -->
-  <Target Name="_GetProjectJsonPath"
-    Returns="$(_CurrentProjectJsonPath)">
-    <!-- Get project.json path -->
-    <!-- Skip this if the project style is already set. -->
-    <GetRestoreProjectJsonPathTask
-      ProjectPath="$(MSBuildProjectFullPath)"
-      Condition=" '$(RestoreProjectStyle)' == 'ProjectJson' OR '$(RestoreProjectStyle)' == '' ">
-      <Output TaskParameter="ProjectJsonPath" PropertyName="_CurrentProjectJsonPath" />
-    </GetRestoreProjectJsonPathTask>
-  </Target>
-
-  <!--
-    ============================================================
     _GetRestoreProjectStyle
     Determine the project restore type.
     ============================================================
   -->
   <Target Name="_GetRestoreProjectStyle"
-    DependsOnTargets="_GetProjectJsonPath;CollectPackageReferences"
+    DependsOnTargets="CollectPackageReferences"
     Returns="$(RestoreProjectStyle);$(PackageReferenceCompatibleProjectStyle)">
 
     <!--
@@ -698,7 +680,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       HasPackageReferenceItems="$(_HasPackageReferenceItems)"
       MSBuildProjectDirectory="$(MSBuildProjectDirectory)"
       MSBuildProjectName="$(MSBuildProjectName)"
-      ProjectJsonPath="$(_CurrentProjectJsonPath)"
       RestoreProjectStyle="$(RestoreProjectStyle)">
       <Output TaskParameter="ProjectStyle" PropertyName="RestoreProjectStyle" />
       <Output TaskParameter="IsPackageReferenceCompatibleProjectStyle" PropertyName="PackageReferenceCompatibleProjectStyle" />
@@ -744,7 +725,6 @@ Copyright (c) .NET Foundation. All rights reserved.
       <_TargetFrameworkToBeUsed Condition=" '$(_TargetFrameworkOverride)' == '' ">$(TargetFrameworks)</_TargetFrameworkToBeUsed>
     </PropertyGroup>
 
-    <!-- For project.json projects target frameworks will be read from project.json. -->
     <GetProjectTargetFrameworksTask
       Condition=" '$(RestoreProjectStyle)' != 'ProjectJson'"
       ProjectPath="$(MSBuildProjectFullPath)"
@@ -978,23 +958,6 @@ Copyright (c) .NET Foundation. All rights reserved.
         <SdkAnalysisLevel>$(SdkAnalysisLevel)</SdkAnalysisLevel>
         <UsingMicrosoftNETSdk>$(UsingMicrosoftNETSdk)</UsingMicrosoftNETSdk>
         <RestoreUseLegacyDependencyResolver>$(RestoreUseLegacyDependencyResolver)</RestoreUseLegacyDependencyResolver>
-      </_RestoreGraphEntry>
-    </ItemGroup>
-
-    <!-- Use project.json -->
-    <ItemGroup Condition=" '$(RestoreProjectStyle)' == 'ProjectJson' ">
-      <_RestoreGraphEntry Include="$([System.Guid]::NewGuid())">
-        <Type>ProjectSpec</Type>
-        <ProjectUniqueName>$(MSBuildProjectFullPath)</ProjectUniqueName>
-        <ProjectPath>$(MSBuildProjectFullPath)</ProjectPath>
-        <ProjectName>$(_RestoreProjectName)</ProjectName>
-        <Sources>$(_OutputSources)</Sources>
-        <OutputPath>$(RestoreOutputAbsolutePath)</OutputPath>
-        <FallbackFolders>$(_OutputFallbackFolders)</FallbackFolders>
-        <PackagesPath>$(_OutputPackagesPath)</PackagesPath>
-        <ProjectJsonPath>$(_CurrentProjectJsonPath)</ProjectJsonPath>
-        <ProjectStyle>$(RestoreProjectStyle)</ProjectStyle>
-        <ConfigFilePaths>$(_OutputConfigFilePaths)</ConfigFilePaths>
       </_RestoreGraphEntry>
     </ItemGroup>
 
