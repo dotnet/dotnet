@@ -17,12 +17,21 @@ using Xunit.Abstractions;
 namespace Microsoft.DotNet.SourceBuild.Tests;
 
 [Trait("Category", "SdkContent")]
-public class SdkContentTests : SdkTests
+public partial class SdkContentTests : SdkTests
 {
     private const string BaselineSubDir = nameof(SdkContentTests);
     private const string MsftSdkType = "msft";
     private const string SourceBuildSdkType = "sb";
     public static bool IncludeSdkContentTests => !string.IsNullOrWhiteSpace(Config.MsftSdkTarballPath) && !string.IsNullOrWhiteSpace(Config.SdkTarballPath);
+
+    [GeneratedRegex(@"(<Left>)/.*?(/msft/)")]
+    private static partial Regex LeftMsftRegex { get; }
+
+    [GeneratedRegex(@"(<Right>)/.*?(/sb/)")]
+    private static partial Regex RightSbRegex { get; }
+
+    [GeneratedRegex(@"(,\s*Version=)(0|[1-9]\d*)(\.\d+){2,3}")]
+    private static partial Regex AssemblyVersionRegex { get; }
 
     public SdkContentTests(ITestOutputHelper outputHelper) : base(outputHelper) { }
 
@@ -84,6 +93,37 @@ public class SdkContentTests : SdkTests
         {
             tempDir.Delete(recursive: true);
         }
+    }
+
+    [ConditionalFact(typeof(SdkContentTests), nameof(IncludeSdkContentTests))]
+    public void CompareMsftToSbAPIs()
+    {
+        DirectoryInfo tempDir = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
+        try
+        {
+            string baselineSuppressionPath = Path.Combine(BaselineHelper.GetAssetsDirectory(), BaselineSubDir, "ApiDiff.suppression");
+            string generatedSuppressionPath = Path.Combine(Config.LogsDirectory, "generated_ApiDiff.suppression");
+
+            Assert.True(File.Exists(generatedSuppressionPath), $"Generated API diff suppression file does not exist at path: {generatedSuppressionPath}");
+
+            string updatedSuppressionPath = Path.Combine(Config.LogsDirectory, "updatedApiDiff.suppression");
+            File.WriteAllText(updatedSuppressionPath, NormalizeApiDiffSuppressionFileContent(File.ReadAllText(generatedSuppressionPath)));
+
+            BaselineHelper.CompareFiles(baselineSuppressionPath, updatedSuppressionPath, OutputHelper);
+        }
+        finally
+        {
+            tempDir.Delete(recursive: true);
+        }
+    }
+
+    private string NormalizeApiDiffSuppressionFileContent(string content)
+    {
+        content = BaselineHelper.RemoveVersions(content);
+        content = LeftMsftRegex.Replace(content, "$1$2");
+        content = RightSbRegex.Replace(content, "$1$2");
+        content = AssemblyVersionRegex.Replace(content, "$1x.y.z");
+        return content;
     }
 
     private void RemoveExcludedAssemblyVersionPaths(Dictionary<string, Version?> sbSdkAssemblyVersions, Dictionary<string, Version?> msftSdkAssemblyVersions)
