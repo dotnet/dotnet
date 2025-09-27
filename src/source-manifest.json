@@ -31,10 +31,10 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 284034,
+      "barId": 284760,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "29b752ed624a2796726cbe9891c8627dd580002d"
+      "commitSha": "ec34165e5c619df74b17974fbd5bbee0f81776b3"
     },
     {
       "barId": 284682,
@@ -79,10 +79,10 @@
       "commitSha": "ff0a209cf1a97eea64c2b32c7e1f7e11b209d789"
     },
     {
-      "barId": 284551,
+      "barId": 284767,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "d8e71a438d384cde979ec3503f89735db8b6991f"
+      "commitSha": "812c6cac1d20250255dcad89522546ca0cdb9fb5"
     },
     {
       "barId": 277711,
