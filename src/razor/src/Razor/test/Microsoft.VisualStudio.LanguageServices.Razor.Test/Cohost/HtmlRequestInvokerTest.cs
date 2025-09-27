@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Razor.Test.Common.VisualStudio;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor;
+using Microsoft.CodeAnalysis.Razor.Protocol.CodeActions;
 using Microsoft.CodeAnalysis.Razor.Remote;
 using Microsoft.CodeAnalysis.Razor.Telemetry;
 using Microsoft.CodeAnalysis.Text;
@@ -74,6 +75,30 @@ public class HtmlRequestInvokerTest(ITestOutputHelper testOutput) : VisualStudio
         await MakeHtmlRequestAsync(document, htmlDocumentUri, requestValidator, Methods.TextDocumentHoverName, hoverRequest);
 
         Assert.Equal(document.CreateDocumentUri(), hoverRequest.TextDocument!.DocumentUri);
+    }
+
+    [Fact]
+    public async Task VSCodeActionParamsRequest_UpdatesUri()
+    {
+        var document = Workspace.CurrentSolution.GetAdditionalDocument(_documentId).AssumeNotNull();
+
+        var htmlDocumentUri = new Uri("file://File.razor.html", UriKind.Absolute);
+        var requestValidator = (object request) =>
+        {
+            var codeActionParams = Assert.IsType<VSCodeActionParams>(request);
+            Assert.Equal(htmlDocumentUri, codeActionParams.TextDocument!.DocumentUri.GetRequiredParsedUri());
+        };
+
+        var codeActionsRequest = new VSCodeActionParams
+        {
+            TextDocument = new VSTextDocumentIdentifier { DocumentUri = document.CreateDocumentUri() },
+            Range = LspFactory.DefaultRange,
+            Context = new VSInternalCodeActionContext()
+        };
+
+        await MakeHtmlRequestAsync(document, htmlDocumentUri, requestValidator, Methods.TextDocumentCodeActionName, codeActionsRequest);
+
+        Assert.Equal(document.CreateDocumentUri(), codeActionsRequest.TextDocument!.DocumentUri);
     }
 
     private async Task MakeHtmlRequestAsync<TRequest>(TextDocument document, Uri htmlDocumentUri, Action<object> requestValidator, string method, TRequest request)
