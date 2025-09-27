@@ -22,7 +22,7 @@ public sealed class ComponentIntermediateNode : IntermediateNode
 
     public IEnumerable<ComponentChildContentIntermediateNode> ChildContents => Children.OfType<ComponentChildContentIntermediateNode>();
 
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
     public TagHelperDescriptor Component { get; set; }
 

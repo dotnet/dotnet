@@ -11,6 +11,8 @@
          Workaround https://github.com/dotnet/source-build/issues/4003 by disabling VSTestUseMSBuildOutput -->
     <VSTestUseMSBuildOutput>false</VSTestUseMSBuildOutput>
     <SetRuntimeConfigOptionsDependsOn Condition="'$(SkipPrepareSdkArchive)' != 'true'"></SetRuntimeConfigOptionsDependsOn>
+    <DotNetSkipTestsRequiringMicrosoftArtifacts Condition="'$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == '' and '$(IsOfficialBuild)' != 'true'">true</DotNetSkipTestsRequiringMicrosoftArtifacts>
+    <DotNetSkipTestsRequiringMicrosoftArtifacts Condition="'$(DotNetSkipTestsRequiringMicrosoftArtifacts)' == ''">false</DotNetSkipTestsRequiringMicrosoftArtifacts>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +22,12 @@
   <ItemGroup>
     <ProjectReference Include="$(RepositoryEngineeringDir)extract-sdk-archive.proj" ReferenceOutputAssembly="false" Condition="'$(SkipPrepareSdkArchive)' != 'true'" />
     <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
+    <ProjectReference Include="assets/SdkContentTests/ValidateAssemblies.proj" ReferenceOutputAssembly="false" Condition="'$(MsftSdkTarballPath)' != ''">
+      <Properties>
+        MsftSdkTarballPath=$(MsftSdkTarballPath);
+        SdkTarballPath=$(SdkTarballPath)
+      </Properties>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -83,6 +91,9 @@
       </RuntimeHostConfigurationOption>
       <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).IsOfficialBuild">
         <Value>$(OfficialBuild)</Value>
+      </RuntimeHostConfigurationOption>
+      <RuntimeHostConfigurationOption Include="$(MSBuildProjectName).SkipTestsRequiringMicrosoftArtifacts">
+        <Value>$(DotNetSkipTestsRequiringMicrosoftArtifacts)</Value>
       </RuntimeHostConfigurationOption>
     </ItemGroup>
   </Target>

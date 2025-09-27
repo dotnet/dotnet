@@ -52,11 +52,3 @@ index ------------
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/
  ./sdk-manifests/x.y.z/microsoft.net.workload.emscripten.current/x.y.z/WorkloadManifest.json
-@@ ------------ @@
- ./sdk/x.y.z/Microsoft.Build.Utilities.Core.dll
- ./sdk/x.y.z/Microsoft.CodeAnalysis.CSharp.dll
- ./sdk/x.y.z/Microsoft.CodeAnalysis.dll
--./sdk/x.y.z/Microsoft.CodeCoverage.IO.dll
- ./sdk/x.y.z/Microsoft.Common.CrossTargeting.targets
- ./sdk/x.y.z/Microsoft.Common.CurrentVersion.targets
- ./sdk/x.y.z/Microsoft.Common.overridetasks

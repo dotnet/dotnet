@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <BuildArgs>$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
+    <BuildArgs Condition="'$(BuildOS)' == 'windows'">$(BuildArgs) $(FlagParameterPrefix)NativeToolsOnMachine</BuildArgs>
 
     <!-- May stabilize. -->
     <AllowDotNetFinalVersionKindOverride>true</AllowDotNetFinalVersionKindOverride>
@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <RepositoryReference Include="arcade" />
-    <RepositoryReference Include="runtime" />
+    <RepositoryReference Include="runtime" Condition="'$(BuildOS)' == 'windows'" />
   </ItemGroup>
 
 </Project>

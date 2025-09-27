@@ -36,9 +36,5 @@ namespace NuGet.Test.Utility
                 _skip = value;
             }
         }
-
-        public CIOnlyTheoryAttribute()
-        {
-        }
     }
 }

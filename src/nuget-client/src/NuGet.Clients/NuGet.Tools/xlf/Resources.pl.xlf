@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">Projekt „{0}” jest nieobsługiwany</target>
+        <target state="translated">Projekt „{0}” nie jest obsługiwany</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
@@ -114,12 +114,12 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">Projekt nie kwalifikuje się do migracji, ponieważ nie jest oparty na project.json.</target>
+        <target state="translated">Projekt nie kwalifikuje się do migracji, ponieważ nie jest oparty na pliku project.json.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Te ustawienia są przechowywane w %NuGet.Config% plikach</target>
+        <target state="translated">Te ustawienia są przechowywane w plikach %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Zezwalaj na niezabezpieczone połączenia</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Wyczyść zasoby lokalne nuGet</target>
+        <target state="translated">Wyczyść zasoby lokalne menedżera pakietów NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

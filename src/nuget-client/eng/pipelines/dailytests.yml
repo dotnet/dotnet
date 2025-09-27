@@ -7,15 +7,6 @@ trigger:
     - dev
 
 parameters:
-# build parameters
-- name: NuGetLocalizationType
-  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
-  type: string
-  default: Full
-  values:
-  - Full
-  - Pseudo
-
 # Dartlab options
 - name: DartLabEnvironment
   displayName: DartLab Environment
@@ -58,8 +49,6 @@ stages:
       name: VSEngSS-MicroBuild2022-1ES
     steps:
     - template: vs-test/build.yml
-      parameters:
-        NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
 
 # Dartlab's template defines this in its own stage
 - template: vs-test/apex.yml

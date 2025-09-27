@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0">
+
+  <!-- Set AssemblyVersion in targets as it is TFM dependent. -->
+  <PropertyGroup Condition="'$(AssemblyVersion)' == '' and '$(SemanticVersion)' != ''">
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">$(SemanticVersion).0</AssemblyVersion>
+  </PropertyGroup>
+
   <!-- Compiler flags -->
   <PropertyGroup>
     <DefineConstants Condition="'$(TargetFramework)' == '$(NETFXTargetFramework)'">$(DefineConstants);IS_DESKTOP</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != '$(NETFXTargetFramework)'">$(DefineConstants);IS_CORECLR</DefineConstants>
-    <!-- Signing is only supported in net5.0+ and netframework. -->
-    <DefineConstants Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' Or ('$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), 5.0)))">$(DefineConstants);IS_SIGNING_SUPPORTED</DefineConstants>
   </PropertyGroup>
 
   <!-- Include shared files for test netcore projects -->
@@ -175,6 +180,7 @@
   <Target Name="GetNetCoreLocalizedFilesInProjectOutputPath" Returns="@(_LocalizedNetCoreDllsWithRelativeTargetPath)" Condition=" '$(PackProject)' == 'true' ">
     <ItemGroup>
       <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(NETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
+      <_LocalizedDllsNetCoreApp Include="$(OutputPath)$(LatestNETCoreTargetFramework)\**\$(AssemblyName).resources.dll"/>
       <_LocalizedDllsNetStandard Include="$(OutputPath)$(NetStandardVersion)\**\$(AssemblyName).resources.dll"/>
 
       <_LocalizedNetCoreDllsWithRelativeTargetPath Include="@(_LocalizedDllsNetCoreApp)" Condition=" '@(_LocalizedDllsNetCoreApp)' != '' ">

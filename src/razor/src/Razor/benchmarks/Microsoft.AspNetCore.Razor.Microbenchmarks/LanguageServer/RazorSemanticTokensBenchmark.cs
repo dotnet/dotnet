@@ -4,18 +4,18 @@
 #nullable disable
 
 using System;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
+using Microsoft.AspNetCore.Razor.Threading;
 using Microsoft.CodeAnalysis.Razor.DocumentMapping;
 using Microsoft.CodeAnalysis.Razor.Logging;
 using Microsoft.CodeAnalysis.Razor.ProjectSystem;
 using Microsoft.CodeAnalysis.Razor.SemanticTokens;
-using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -95,16 +95,16 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
     internal class TestRazorSemanticTokensInfoService : RazorSemanticTokensInfoService
     {
         public TestRazorSemanticTokensInfoService(
-            LanguageServerFeatureOptions languageServerFeatureOptions,
             IDocumentMappingService documentMappingService,
             RazorSemanticTokensLegendService razorSemanticTokensLegendService,
             ILoggerFactory loggerFactory)
-            : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, languageServerFeatureOptions, loggerFactory)
+            : base(documentMappingService, razorSemanticTokensLegendService, csharpSemanticTokensProvider: null!, loggerFactory)
         {
         }
 
-        // We can't get C# responses without significant amounts of extra work, so let's just shim it for now, any non-Null result is fine.
-        protected override Task<ImmutableArray<SemanticRange>?> GetCSharpSemanticRangesAsync(
+        // We can't get C# responses without significant amounts of extra work, so let's just shim it for now and not append any ranges.
+        protected override Task<bool> AddCSharpSemanticRangesAsync(
+            List<SemanticRange> ranges,
             DocumentContext documentContext,
             RazorCodeDocument codeDocument,
             LinePositionSpan razorRange,
@@ -112,7 +112,7 @@ public class RazorSemanticTokensBenchmark : RazorLanguageServerBenchmarkBase
             Guid correlationId,
             CancellationToken cancellationToken)
         {
-            return Task.FromResult<ImmutableArray<SemanticRange>?>(ImmutableArray<SemanticRange>.Empty);
+            return SpecializedTasks.True;
         }
     }
 }

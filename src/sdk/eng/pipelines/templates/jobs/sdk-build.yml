@@ -105,8 +105,9 @@ jobs:
           BuildConfig: $(buildConfiguration)
           TestFullMSBuild: ${{ parameters.testFullMSBuild }}
 
-      - powershell: build/RunTestTemplateTests.ps1
-        displayName: 🟣 Run Test Templates Tests
+      - ${{ if eq(parameters.targetArchitecture, 'x64') }}:
+        - powershell: build/RunTestTemplateTests.ps1
+          displayName: 🟣 Run Test Templates Tests
 
     - ${{ else }}:
       - script: |
@@ -131,6 +132,7 @@ jobs:
         displayName: 🟣 Build
         env:
           BuildConfig: $(buildConfiguration)
+          OPENSSL_ENABLE_SHA1_SIGNATURES: 1
 
     ############### TESTING ###############
     - ${{ if eq(parameters.runTests, true) }}:

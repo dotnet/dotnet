@@ -1,7 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#if IS_SIGNING_SUPPORTED && IS_CORECLR
+#if IS_CORECLR
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
@@ -11,7 +11,7 @@ using NuGet.Common;
 
 namespace NuGet.Packaging.Signing
 {
-#if IS_SIGNING_SUPPORTED && IS_CORECLR
+#if IS_CORECLR
     internal sealed class ManagedCmsWrapper : ICms
     {
         private readonly SignedCms _signedCms;

@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="DTE_ProjectUnsupported">
         <source>The project '{0}' is unsupported</source>
-        <target state="translated">O projeto '{0}' não é compatível</target>
+        <target state="translated">O projeto '{0}' não tem suporte</target>
         <note />
       </trans-unit>
       <trans-unit id="ErrorDialogBoxTitle">
@@ -74,7 +74,7 @@
       </trans-unit>
       <trans-unit id="NuGetStaticResult_DisplayText">
         <source>Search Online for NuGet Packages matching '{0}'</source>
-        <target state="translated">Pesquisa online por pacotes do NuGet com correspondência '{0}'</target>
+        <target state="translated">Pesquisar Online pela correspondência '{0}' dos Pacotes do NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageManagement">
@@ -114,12 +114,12 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">O projeto não está qualificado para migração, pois não é project.json baseada.</target>
+        <target state="translated">O projeto não está qualificado para migração por não ser baseado em project.json.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
         <source>These settings are stored in %NuGet.Config% files</source>
-        <target state="translated">Estas configurações são armazenadas em %NuGet.Config% arquivos</target>
+        <target state="translated">Estas configurações são armazenadas em arquivos %NuGet.Config%</target>
         <note>Do not translate % % or what is between them</note>
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">Permitir Conexões Inseguras</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">
@@ -194,7 +194,7 @@
       </trans-unit>
       <trans-unit id="clearLocalResources">
         <source>Clear NuGet local resources</source>
-        <target state="translated">Limpar recursos locais do NuGet</target>
+        <target state="translated">Limpar recursos locais do NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="defaultPackageManagementFormat">

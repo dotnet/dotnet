@@ -60,7 +60,6 @@ namespace NuGet.Commands
             var restoreSpecs = new HashSet<string>(uniqueNameComparer);
             var validForRestore = new HashSet<string>(uniqueNameComparer);
             var projectPathLookup = new Dictionary<string, string>(uniqueNameComparer);
-            var toolItems = new List<IMSBuildItem>();
 
             // Sort items and add restore specs
             foreach (var item in items)
@@ -724,12 +723,25 @@ namespace NuGet.Commands
                 prunePackageReferences.Add(targetFramework.TargetAlias, new Dictionary<string, PrunePackageReference>(StringComparer.OrdinalIgnoreCase));
             }
 
-            foreach (var item in GetItemByType(items, "TargetFrameworkInformation"))
+            List<IMSBuildItem> targetFrameworkInfos = GetItemByType(items, "TargetFrameworkInformation").ToList();
+            bool isPruningEnabledGlobally = false;
+            foreach (var item in targetFrameworkInfos)
+            {
+                if (IsPropertyTrue(item, "RestorePackagePruningDefault"))
+                {
+                    isPruningEnabledGlobally = true;
+                    break;
+                }
+            }
+
+            foreach (var item in targetFrameworkInfos)
             {
                 var tfm = item.GetProperty("TargetFramework") ?? string.Empty;
 
-                bool enabled = IsPropertyTrue(item, "RestoreEnablePackagePruning");
-                isPruningEnabled[tfm] = enabled;
+                bool? restoreEnablePackagePruning = MSBuildStringUtility.GetBooleanOrNull(item.GetProperty("RestoreEnablePackagePruning"));
+                bool isPackagePruningEnabled = restoreEnablePackagePruning == null ? isPruningEnabledGlobally : restoreEnablePackagePruning == true;
+
+                isPruningEnabled[tfm] = isPackagePruningEnabled;
             }
 
             foreach (var item in GetItemByType(items, "PrunePackageReference"))

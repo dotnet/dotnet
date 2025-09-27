@@ -24,12 +24,6 @@ internal sealed class IncompatibleProjectNotifier(
     private readonly ILogger _logger = loggerFactory.GetOrCreateLogger<IncompatibleProjectNotifier>();
     private readonly ITelemetryReporter _telemetryReporter = telemetryReporter;
 
-    public void NotifyMiscFilesDocument(TextDocument textDocument)
-    {
-        _telemetryReporter.ReportEvent("cohost/miscFilesDocument", Severity.Normal);
-        _logger.Log(LogLevel.Error, $"{WorkspacesSR.FormatIncompatibleProject_MiscFiles(Path.GetFileName(textDocument.FilePath))}");
-    }
-
     public void NotifyMissingDocument(Project project, string filePath)
     {
         _telemetryReporter.ReportEvent("cohost/missingDocument", Severity.Normal);

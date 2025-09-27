@@ -68,8 +68,10 @@ internal static class WorkloadCommandParser
         void WriteUpdateModeAndAnyError(string indent = "")
         {
             var useWorkloadSets = InstallStateContents.FromPath(Path.Combine(WorkloadInstallType.GetInstallStateFolder(workloadInfoHelper._currentSdkFeatureBand, workloadInfoHelper.UserLocalPath), "default.json")).ShouldUseWorkloadSets();
-            var workloadSetsString = useWorkloadSets ? "workload sets" : "loose manifests";
-            reporter.WriteLine(indent + string.Format(CliCommandStrings.WorkloadManifestInstallationConfiguration, workloadSetsString));
+            var configurationMessage = useWorkloadSets
+                ? CliCommandStrings.WorkloadManifestInstallationConfigurationWorkloadSets
+                : CliCommandStrings.WorkloadManifestInstallationConfigurationLooseManifests;
+            reporter.WriteLine(indent + configurationMessage);
 
             if (!versionInfo.IsInstalled)
             {
@@ -172,10 +174,7 @@ internal static class WorkloadCommandParser
 
     private class ShowWorkloadsInfoAction : SynchronousCommandLineAction
     {
-        public ShowWorkloadsInfoAction()
-        {
-            Terminating = true;
-        }
+        public override bool Terminating => true;
 
         public override int Invoke(ParseResult parseResult)
         {
@@ -187,10 +186,7 @@ internal static class WorkloadCommandParser
 
     private class ShowWorkloadsVersionOption : SynchronousCommandLineAction
     {
-        public ShowWorkloadsVersionOption()
-        {
-            Terminating = true;
-        }
+        public override bool Terminating => true;
 
         public override int Invoke(ParseResult parseResult)
         {

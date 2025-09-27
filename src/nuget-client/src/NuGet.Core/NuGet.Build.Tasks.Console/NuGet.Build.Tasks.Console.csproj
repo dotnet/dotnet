@@ -39,6 +39,10 @@
     <None Include="app.manifest" />
   </ItemGroup>
 
+  <ItemGroup Label="NuGet Shared">
+    <Compile Include="$(SharedDirectory)\NoAllocEnumerateExtensions.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="..\NuGet.Build.Tasks\NuGet.RestoreEx.targets">
       <Link>%(Filename)%(Extension)</Link>

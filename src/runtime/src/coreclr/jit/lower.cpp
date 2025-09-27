@@ -1562,8 +1562,6 @@ void Lowering::LowerArg(GenTreeCall* call, CallArg* callArg)
 
     if (varTypeIsLong(arg))
     {
-        assert(callArg->AbiInfo.CountRegsAndStackSlots() == 2);
-
         noway_assert(arg->OperIs(GT_LONG));
         GenTreeFieldList* fieldList = new (comp, GT_FIELD_LIST) GenTreeFieldList();
         fieldList->AddFieldLIR(comp, arg->gtGetOp1(), 0, TYP_INT);
@@ -2032,6 +2030,7 @@ void Lowering::LowerSpecialCopyArgs(GenTreeCall* call)
         // The this parameter is always passed in registers, so we can ignore it.
         unsigned argIndex = call->gtArgs.CountUserArgs() - 1;
         assert(call->gtArgs.CountUserArgs() == comp->info.compILargsCount);
+        bool checkForUnmanagedThisArg = call->GetUnmanagedCallConv() == CorInfoCallConvExtension::Thiscall;
         for (CallArg& arg : call->gtArgs.Args())
         {
             if (!arg.IsUserArg())
@@ -2039,10 +2038,10 @@ void Lowering::LowerSpecialCopyArgs(GenTreeCall* call)
                 continue;
             }
 
-            if (call->GetUnmanagedCallConv() == CorInfoCallConvExtension::Thiscall &&
-                argIndex == call->gtArgs.CountUserArgs() - 1)
+            if (checkForUnmanagedThisArg && argIndex == call->gtArgs.CountUserArgs() - 1)
             {
                 assert(arg.GetNode()->OperIs(GT_PUTARG_REG));
+                checkForUnmanagedThisArg = false;
                 continue;
             }
 
@@ -5177,6 +5176,16 @@ bool Lowering::IsFieldListCompatibleWithRegisters(GenTreeFieldList*   fieldList,
                 return false;
             }
 
+            // int -> float is currently only supported if we can do it as a single bitcast (i.e. without insertions
+            // required)
+            if (varTypeUsesIntReg(use->GetNode()) && varTypeUsesFloatReg(regType) &&
+                (genTypeSize(regType) > TARGET_POINTER_SIZE))
+            {
+                JITDUMP("it is not; field [%06u] requires an insertion into float register %u of size %d\n",
+                        Compiler::dspTreeID(use->GetNode()), i, genTypeSize(regType));
+                return false;
+            }
+
             use = use->GetNext();
         } while (use != nullptr);
     }
@@ -5316,10 +5325,11 @@ void Lowering::LowerFieldListToFieldListOfRegisters(GenTreeFieldList*   fieldLis
         if ((i == numRegs - 1) && varTypeUsesIntReg(regType))
         {
             GenTree* node = regEntry->GetNode();
-            // If this is a cast that affects only bits after the return size
-            // then it can be removed. Those bits are undefined in all our ABIs
-            // for structs.
-            while (node->OperIs(GT_CAST) && !node->gtOverflow() && varTypeUsesIntReg(node->CastToType()) &&
+            // If this is a truncation that affects only bits after the return
+            // size then it can be removed. Those bits are undefined in all our
+            // ABIs for structs.
+            while (node->OperIs(GT_CAST) && !node->gtOverflow() && (genActualType(node->CastFromType()) == TYP_INT) &&
+                   (genActualType(node->CastToType()) == TYP_INT) &&
                    (genTypeSize(regType) <= genTypeSize(node->CastToType())))
             {
                 GenTree* op = node->AsCast()->CastOp();
@@ -11679,6 +11689,40 @@ GenTree* Lowering::InsertNewSimdCreateScalarUnsafeNode(var_types   simdType,
         BlockRange().Remove(op1);
     }
     return result;
+}
+
+//----------------------------------------------------------------------------------------------
+// Lowering::NormalizeIndexToNativeSized:
+//   Prepare to use an index for address calculations by ensuring it is native sized.
+//
+//  Arguments:
+//    index - The index that may be an int32
+//
+// Returns:
+//    The node itself, or a cast added on top of the node to perform normalization.
+//
+// Remarks:
+//    May insert a cast or may bash the node type in place for constants. Does
+//    not replace the use.
+//
+GenTree* Lowering::NormalizeIndexToNativeSized(GenTree* index)
+{
+    if (genActualType(index) == TYP_I_IMPL)
+    {
+        return index;
+    }
+
+    if (index->OperIsConst())
+    {
+        index->gtType = TYP_I_IMPL;
+        return index;
+    }
+    else
+    {
+        GenTree* cast = comp->gtNewCastNode(TYP_I_IMPL, index, true, TYP_I_IMPL);
+        BlockRange().InsertAfter(index, cast);
+        return cast;
+    }
 }
 #endif // FEATURE_HW_INTRINSICS
 

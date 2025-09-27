@@ -2,6 +2,9 @@
 *.nuget.targets
 *.nuget.props
 
+# Backup files
+*.bak
+
 # Project K
 project.lock.json
 artifacts/

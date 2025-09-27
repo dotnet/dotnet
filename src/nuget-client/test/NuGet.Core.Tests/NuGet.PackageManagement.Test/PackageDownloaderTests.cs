@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -621,6 +622,32 @@ namespace NuGet.PackageManagement
                 Assert.Equal(DownloadResourceResultStatus.AvailableWithoutStream, actualResult.Status);
                 Assert.Same(expectedResult, actualResult);
             }
+        }
+
+        [Fact]
+        public async Task GetDownloadResourceResultAsync_InvalidPackageId_Throws()
+        {
+            // Arrange
+            using TestDirectory testDirectory = TestDirectory.Create();
+            using FileSystemBackedV3MockServer server = new FileSystemBackedV3MockServer(testDirectory.Path);
+            server.Start();
+            PackageSource packageSource = new PackageSource(server.ServiceIndexUri, "http-source")
+            {
+                AllowInsecureConnections = true
+            };
+            var repo = Repository.Factory.GetCoreV3(packageSource);
+            var downloadResource = await repo.GetResourceAsync<DownloadResource>(CancellationToken.None);
+            string id = "../contoso";
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<InvalidPackageIdException>(() => downloadResource.GetDownloadResourceResultAsync(
+                new PackageIdentity(id, NuGetVersion.Parse("1.0.0")),
+                new PackageDownloadContext(new SourceCacheContext()),
+                "",
+                NullLogger.Instance,
+                CancellationToken.None));
+            server.Stop();
+            exception.Message.Should().Contain(string.Format("Invalid package id : `{0}`", id));
         }
 
         private static async Task VerifyDirectDownloadSkipsGlobalPackagesFolderAsync(

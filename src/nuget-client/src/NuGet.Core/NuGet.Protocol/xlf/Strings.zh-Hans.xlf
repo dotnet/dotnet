@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">无效的包 ID: `{0}`。</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">访问源“{0}”时，服务器响应为 HTTP“403 禁止访问”。这表明服务器已验证你的身份，但不允许访问你请求的资源。请提供有权查看此资源的凭据。</target>
@@ -487,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">“{0}”是已下载的重复 URL，将导致循环依赖。请送服务器更正。</target>
+        <target state="translated">“{0}”是已下载的重复 url，将导致循环依赖。请从服务器更正。</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

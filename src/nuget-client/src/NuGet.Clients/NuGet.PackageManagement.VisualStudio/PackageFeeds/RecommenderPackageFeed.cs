@@ -37,7 +37,7 @@ namespace NuGet.PackageManagement.VisualStudio
 
         private readonly AsyncLazyNuGetRecommender _nuGetRecommender;
 
-        private IVsNuGetPackageRecommender NuGetRecommender { get; set; }
+        private IVsNuGetPackageRecommender _vsNuGetRecommender;
 
         private const int MaxRecommended = 5;
 
@@ -124,29 +124,29 @@ namespace NuGet.PackageManagement.VisualStudio
             }
 
             // get recommender service and version info
-            if (NuGetRecommender is null && _nuGetRecommender != null)
+            if (_vsNuGetRecommender is null && _nuGetRecommender != null)
             {
                 try
                 {
-                    NuGetRecommender = await _nuGetRecommender.GetValueAsync(cancellationToken);
+                    _vsNuGetRecommender = await _nuGetRecommender.GetValueAsync(cancellationToken);
                 }
                 catch (ServiceUnavailableException)
                 {
                     // if the recommender service is not available, NuGetRecommender remains null and we show only the default package list
                 }
-                if (!(NuGetRecommender is null))
+                if (!(_vsNuGetRecommender is null))
                 {
-                    var VersionDict = NuGetRecommender.GetVersionInfo();
+                    var VersionDict = _vsNuGetRecommender.GetVersionInfo();
                     VersionInfo = (modelVersion: VersionDict.TryGetValue("Model", out var model) ? model : null,
                                     vsixVersion: VersionDict.TryGetValue("Vsix", out var vsix) ? vsix : null);
                 }
             }
 
             List<string> recommendIds = null;
-            if (!(NuGetRecommender is null))
+            if (!(_vsNuGetRecommender is null))
             {
                 // call the recommender to get package recommendations
-                recommendIds = await NuGetRecommender.GetRecommendedPackageIdsAsync(_targetFrameworks, _installedPackages, _transitivePackages, cancellationToken);
+                recommendIds = await _vsNuGetRecommender.GetRecommendedPackageIdsAsync(_targetFrameworks, _installedPackages, _transitivePackages, cancellationToken);
             }
 
             if (recommendIds is null || !recommendIds.Any())

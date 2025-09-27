@@ -4,7 +4,6 @@
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Razor;
 
 namespace Microsoft.CodeAnalysis.Razor.Completion;
 
@@ -22,17 +21,15 @@ internal static class VSInternalCompletionListExtensions
 
         if (clientCapabilities.SupportsAnyCompletionListData())
         {
-            // Ensure there is data at the completion list level, but only if ItemDefaults isn't set by the delegated server,
-            // or if they've set both.
-            var hasDefaultsData = completionList.ItemDefaults?.Data is not null;
-            if (completionList.Data is not null || !hasDefaultsData)
+            if (clientCapabilities.SupportsCompletionListData() || completionList.Data is not null)
             {
                 completionList.Data = CompletionListMerger.MergeData(data, completionList.Data);
             }
 
-            if (hasDefaultsData)
+            if (clientCapabilities.SupportsCompletionListItemDefaultsData() || completionList.ItemDefaults?.Data is not null)
             {
-                completionList.ItemDefaults.AssumeNotNull().Data = CompletionListMerger.MergeData(data, completionList.ItemDefaults.Data);
+                completionList.ItemDefaults ??= new();
+                completionList.ItemDefaults.Data = CompletionListMerger.MergeData(data, completionList.ItemDefaults.Data);
             }
 
             // Merge data for items that won't inherit the default

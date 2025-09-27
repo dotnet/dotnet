@@ -114,7 +114,7 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">프로젝트가 project.json 기반이 아니므로 마이그레이션에 적합하지 않습니다.</target>
+        <target state="translated">프로젝트가 project.json 기반이 아니므로 마이그레이션할 수 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">안전하지 않은 연결 허용</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">

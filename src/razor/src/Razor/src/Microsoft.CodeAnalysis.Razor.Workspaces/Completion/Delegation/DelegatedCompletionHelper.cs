@@ -311,6 +311,7 @@ internal static class DelegatedCompletionHelper
         RazorFormattingOptions options,
         IRazorFormattingService formattingService,
         IDocumentMappingService documentMappingService,
+        bool supportsVisualStudioExtensions,
         ILogger logger,
         CancellationToken cancellationToken)
     {
@@ -359,7 +360,9 @@ internal static class DelegatedCompletionHelper
             Debug.Fail("Unexpected command. Do we need to add something to support a new feature?");
         }
 
-        if (resolvedCompletionItem.TextEdit is not null)
+        if (resolvedCompletionItem.TextEdit is not null &&
+            supportsVisualStudioExtensions &&
+            resolvedCompletionItem.VsResolveTextEditOnCommit)
         {
             if (resolvedCompletionItem.TextEdit.Value.TryGetFirst(out var textEdit))
             {

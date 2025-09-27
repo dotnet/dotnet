@@ -2,7 +2,7 @@
 
 dotnet-mage (previously also known as Mage.NET) is the open-sourced version of the familiar .NET FX tool Mage.
 
-It is available at Nuget.org. Latest version `https://www.nuget.org/packages/Microsoft.DotNet.Mage/8.0.0`
+You can find the latest version of [dotnet-mage on Nuget.org](https://www.nuget.org/packages/Microsoft.DotNet.Mage).
 
 dotnet-mage supports all existing command-line options of the old Mage tool, with few exceptions:
 - no support for partial trust
@@ -20,17 +20,17 @@ Adds Launcher to target directory and sets binary to be launched.
 Example:
 `-AddLauncher myapp.dll -TargetDirectory bin/release`
 
-Launcher is required for all .NET 8, .NET 7, .NET 6, .NET 5 (and .NET Core 3.1) apps in ClickOnce.
+Launcher is required for all modern .NET (including .NET 5+, .NET Core 3.1) apps in ClickOnce.
 
 You can obtain all command-line options by running `dotnet mage` or for verbose help `dotnet mage -help verbose`.
 
 ## Prerequisites for using this tool
 
-* [Install .NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+* [Install .NET SDK](https://dotnet.microsoft.com/download)
 
 * Install dotnet-mage global tool:
 
-`dotnet tool install --global microsoft.dotnet.mage --version 8.0.0`
+`dotnet tool install --global microsoft.dotnet.mage`
 
 dotnet-mage is fully supported on Windows (we are gathering feedback about scenarios for dotnet-mage usage on Linux build agents).
 
@@ -43,7 +43,7 @@ dotnet-mage is fully supported on Windows (we are gathering feedback about scena
 
 ## Example steps
 
-Suppose that we have copied project output to a sub-folder `files` and our .NET 8 application entry point is `myapp.exe`
+Suppose that we have copied project output to a sub-folder `files` and our .NET application entry point is `myapp.exe`
 
 * Add Launcher
 

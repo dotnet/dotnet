@@ -44,7 +44,7 @@
       </trans-unit>
       <trans-unit id="CommandLine_Warning">
         <source>WARNING: {0}</source>
-        <target state="translated">WARNING: {0}</target>
+        <target state="translated">AVISO: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="ConfigCommandKeyNotFound">
@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="ConsoleConfirmMessageAccept">
         <source>y</source>
-        <target state="translated">s</target>
+        <target state="translated">y</target>
         <note />
       </trans-unit>
       <trans-unit id="ConsolePasswordProvider_DisplayFile">
@@ -252,9 +252,9 @@ Do not localize `SDK`, `dotnet pack`, msbuild -t:pack` and 'true'.</note>
         <source>`project.json` pack is disabled in the current NuGet version, and will be permanently removed in a future version.
 Please consider migrating '{0}' to `PackageReference` and using the pack targets.
 You can set the '{1}' environment variable to 'true' to temporarily reenable this functionality.</source>
-        <target state="translated">O pacote 'project.json' está desabilitado na versão atual do NuGet e será removido permanentemente em uma versão futura.
-Considere migrar '{0}' para 'PackageReference' e usar os destinos do pacote.
-Você pode definir a '{1}' de ambiente como 'true' para habilitar temporariamente essa funcionalidade.</target>
+        <target state="translated">O pacote "project.json" está desabilitado na versão atual do NuGet e será removido permanentemente em uma versão futura.
+Considere migrar "{0}" para "PackageReference" e usar os destinos do pacote.
+Você pode definir a variável de ambiente "{1}" como "true" para habilitar temporariamente essa funcionalidade.</target>
         <note>Please do not localize `project.json` pack and `PackageReference`. 0 - path, 1 - env var name</note>
       </trans-unit>
       <trans-unit id="Error_ResponseFileDoesNotExist">
@@ -679,7 +679,7 @@ Você pode definir a '{1}' de ambiente como 'true' para habilitar temporariament
       </trans-unit>
       <trans-unit id="PackageRestoreConsentCheckBoxText">
         <source>&amp;Allow NuGet to download missing packages</source>
-        <target state="translated">&amp;Permitir que o NuGet baixe pacotes ausentes</target>
+        <target state="translated">&amp;Permitir que o NuGet baixe os pacotes ausentes</target>
         <note />
       </trans-unit>
       <trans-unit id="PackagingFilesFromOutputPath">
@@ -751,8 +751,8 @@ Você pode definir a '{1}' de ambiente como 'true' para habilitar temporariament
       <trans-unit id="RestoreCommandPackageRestoreOptOutMessage">
         <source>Restoring NuGet packages...
 To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the NuGet Package Manager node and uncheck '{0}'.</source>
-        <target state="translated">Restaurando pacotes NuGet... 
-Para impedir que o NuGet baixe pacotes durante a compilação, abra a caixa de diálogo Opções do Visual Studio, clique no nó do gerenciador de pacotes do NuGet e desmarque '{0}'.</target>
+        <target state="translated">Restaurando pacotes NuGet...
+Para evitar que o NuGet baixe pacotes durante a compilação, abra a caixa de diálogo Opções do Visual Studio, clique no nó Gerenciador de Pacotes NuGet e desmarque '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="RestoreCommandProjectNotFound">
@@ -792,7 +792,7 @@ Para impedir que o NuGet baixe pacotes durante a compilação, abra a caixa de d
       </trans-unit>
       <trans-unit id="SettingsCredentials_UsingSavedCredentials">
         <source>Using credentials from config. UserName: {0}</source>
-        <target state="translated">Usando credenciais de configuração UserName: {0}</target>
+        <target state="translated">Usando credenciais da configuração. UserName: {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionRestoreCommandNoPackagesConfigOrProjectJson">

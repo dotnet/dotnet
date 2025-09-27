@@ -14,7 +14,8 @@
 
     <Title>MSBuild Locator</Title>
     <Description>Package that assists in locating and using a copy of MSBuild installed as part of Visual Studio 2017 or higher or .NET Core SDK 2.1 or higher.</Description>
-
+	<PackageTags>msbuildlocator;locator;buildlocator</PackageTags>
+	  
     <EnablePackageValidation>true</EnablePackageValidation>
     <PackageValidationBaselineVersion>1.6.1</PackageValidationBaselineVersion>
   </PropertyGroup>
@@ -24,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net46'">
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.7.2175" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.12.2149" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="15.0.36" PrivateAssets="all" />
   </ItemGroup>
 

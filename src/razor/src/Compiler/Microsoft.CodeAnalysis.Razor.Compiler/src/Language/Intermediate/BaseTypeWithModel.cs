@@ -1,41 +1,41 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
+
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
-public sealed class BaseTypeWithModel 
+public sealed class BaseTypeWithModel
 {
-    const string ModelGenericParameter = "<TModel>";
+    private const string ModelGenericParameter = "<TModel>";
+
+    public IntermediateToken BaseType { get; }
+    public IntermediateToken? GreaterThan { get; }
+    public IntermediateToken? ModelType { get; set; }
+    public IntermediateToken? LessThan { get; }
 
     public BaseTypeWithModel(string baseType, SourceSpan? location = null)
     {
-        if (baseType.EndsWith(ModelGenericParameter, System.StringComparison.Ordinal))
+        // If the base type ends with the standard "<TModel>" type parameter list, break it into separate tokens.
+        if (baseType.EndsWith(ModelGenericParameter, StringComparison.Ordinal))
         {
-            BaseType = IntermediateToken.CreateCSharpToken(baseType[0..^ModelGenericParameter.Length]);
-            GreaterThan = IntermediateToken.CreateCSharpToken("<");
-            ModelType = IntermediateToken.CreateCSharpToken("TModel");
-            LessThan = IntermediateToken.CreateCSharpToken(">");
+            BaseType = IntermediateNodeFactory.CSharpToken(baseType[0..^ModelGenericParameter.Length]);
+            GreaterThan = IntermediateNodeFactory.CSharpToken("<");
+            ModelType = IntermediateNodeFactory.CSharpToken("TModel");
+            LessThan = IntermediateNodeFactory.CSharpToken(">");
 
-            if (location.HasValue)
+            if (location is SourceSpan span)
             {
-                var openBracketPosition = baseType.Length - ModelGenericParameter.Length;
-                BaseType.Source = location.Value[..openBracketPosition];
-                GreaterThan.Source = location.Value[openBracketPosition..(openBracketPosition + 1)];
-                ModelType.Source = location.Value[(openBracketPosition + 1)..^1];
-                LessThan.Source = location.Value[^1..];
+                var greaterThanIndex = baseType.Length - ModelGenericParameter.Length;
+                BaseType.Source = span[..greaterThanIndex];
+                GreaterThan.Source = span[greaterThanIndex..(greaterThanIndex + 1)];
+                ModelType.Source = span[(greaterThanIndex + 1)..^1];
+                LessThan.Source = span[^1..];
             }
         }
         else
         {
-            BaseType = IntermediateToken.CreateCSharpToken(baseType, location);  
+            BaseType = IntermediateNodeFactory.CSharpToken(baseType, location);
         }
     }
-
-    public IntermediateToken BaseType { get; set; }
-
-    public IntermediateToken? GreaterThan { get; set; }
-
-    public IntermediateToken? ModelType { get; set; }
-
-    public IntermediateToken? LessThan { get; set; }
 }

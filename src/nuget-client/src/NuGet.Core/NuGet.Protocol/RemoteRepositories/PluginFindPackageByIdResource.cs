@@ -421,8 +421,6 @@ namespace NuGet.Protocol.Core.Types
                     switch (response.ResponseCode)
                     {
                         case MessageResponseCode.Success:
-                            var versions = response.Versions.Select(v => NuGetVersion.Parse(v));
-
                             return ParsePackageVersions(response.Versions, id, uri);
 
                         case MessageResponseCode.Error:

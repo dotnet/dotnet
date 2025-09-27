@@ -59,7 +59,7 @@
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_CategoryShortcut">
         <source>nuget</source>
-        <target state="translated">nuget</target>
+        <target state="translated">NuGet</target>
         <note />
       </trans-unit>
       <trans-unit id="NuGetSearchProvider_Description">
@@ -114,7 +114,7 @@
       </trans-unit>
       <trans-unit id="ProjectMigrateErrorMessage">
         <source>Project is not eligible for migration as it's not project.json based.</source>
-        <target state="translated">專案不符合移轉資格，因為它不是以project.json為基礎。</target>
+        <target state="translated">專案不符合移轉資格，因為它不是以 project.json 為基礎。</target>
         <note />
       </trans-unit>
       <trans-unit id="SettingsStoredInNuGetConfiguration">
@@ -129,7 +129,7 @@
       </trans-unit>
       <trans-unit id="Text_AllowInsecureConnections_Header">
         <source>Allow Insecure Connections</source>
-        <target state="new">Allow Insecure Connections</target>
+        <target state="translated">允許不安全連線</target>
         <note />
       </trans-unit>
       <trans-unit id="Text_ConfigurationFiles_CommonLink">

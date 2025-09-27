@@ -416,6 +416,11 @@ namespace Microsoft.Deployment.MageCLI
         InvalidInstall,
 
         /// <summary>
+        /// The -MapFileExtensions option must be "true", "false", "t", or "f" - "{0}"
+        /// </summary>
+        InvalidMapFileExtensions,
+
+        /// <summary>
         /// Unable to open certificate "{0}"
         /// </summary>
         UnableToOpenCertificate,

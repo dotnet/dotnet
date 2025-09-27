@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
+using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Razor;
@@ -284,9 +285,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             return true;
         }
 
-        private string GetContent(ComponentAttributeIntermediateNode node)
+        private static string GetContent(ComponentAttributeIntermediateNode node)
         {
-            return string.Join(string.Empty, node.FindDescendantNodes<IntermediateToken>().Where(t => t.IsCSharp).Select(t => t.Content));
+            return string.Join(string.Empty, node.FindDescendantNodes<CSharpIntermediateToken>().Select(t => t.Content));
         }
 
         private static bool ValidateTypeArguments(ComponentIntermediateNode node, Dictionary<string, Binding> bindings)
@@ -294,7 +295,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             var missing = new List<BoundAttributeDescriptor>();
             foreach (var (_, binding) in bindings)
             {
-                if (binding.Node == null ||string.IsNullOrWhiteSpace(binding.Content?.Content))
+                if (binding.Node == null || string.IsNullOrWhiteSpace(binding.Content?.Content))
                 {
                     missing.Add(binding.Attribute);
                 }
@@ -347,7 +348,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                     {
                         attribute.HasExplicitTypeName = true;
                     }
-                    else if(attribute.BoundAttribute?.IsEventCallbackProperty() ?? false)
+                    else if (attribute.BoundAttribute?.IsEventCallbackProperty() ?? false)
                     {
                         Debug.Assert(attribute.TypeName is not null);
                         var typeParameters = ParseTypeParameters(attribute.TypeName);
@@ -381,13 +382,9 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             foreach (var capture in node.Captures)
             {
-                if (capture.IsComponentCapture && capture.ComponentCaptureTypeName != null)
+                if (capture.IsComponentCapture)
                 {
-                    capture.ComponentCaptureTypeName = rewriter.Rewrite(capture.ComponentCaptureTypeName);
-                }
-                else if (capture.IsComponentCapture)
-                {
-                    capture.ComponentCaptureTypeName = "System.Object";
+                    capture.UpdateComponentCaptureTypeName(rewriter.Rewrite(capture.ComponentCaptureTypeName));
                 }
             }
 
@@ -413,13 +410,19 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
         private void CreateTypeInferenceMethod(DocumentIntermediateNode documentNode, ComponentIntermediateNode node, List<CascadingGenericTypeParameter>? receivesCascadingGenericTypes)
         {
-            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Content;
+            var @namespace = documentNode.FindPrimaryNamespace().AssumeNotNull().Name;
             @namespace = string.IsNullOrEmpty(@namespace) ? "__Blazor" : "__Blazor." + @namespace;
-            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().ClassName;
+            @namespace += "." + documentNode.FindPrimaryClass().AssumeNotNull().Name;
 
-            var genericTypeConstraints = node.Component.BoundAttributes
-                .Where(t => t.Metadata.ContainsKey(ComponentMetadata.Component.TypeParameterConstraintsKey))
-                .Select(t => t.Metadata[ComponentMetadata.Component.TypeParameterConstraintsKey]);
+            using var genericTypeConstraints = new PooledArrayBuilder<string>();
+
+            foreach (var attribute in node.Component.BoundAttributes)
+            {
+                if (attribute.Metadata is TypeParameterMetadata { Constraints: string constraints })
+                {
+                    genericTypeConstraints.Add(constraints);
+                }
+            }
 
             var typeInferenceNode = new ComponentTypeInferenceMethodIntermediateNode()
             {
@@ -431,7 +434,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
                 FullTypeName = @namespace + ".TypeInference",
 
                 ReceivesCascadingGenericTypes = receivesCascadingGenericTypes,
-                GenericTypeConstraints = genericTypeConstraints
+                GenericTypeConstraints = genericTypeConstraints.ToArrayAndClear()
             };
 
             node.TypeInferenceNode = typeInferenceNode;
@@ -444,7 +447,7 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
             {
                 namespaceNode = new NamespaceDeclarationIntermediateNode()
                 {
-                    Content = @namespace,
+                    Name = @namespace,
                     IsGenericTyped = true,
                 };
 
@@ -453,17 +456,13 @@ internal class ComponentGenericTypePass : ComponentIntermediateNodePassBase, IRa
 
             var classNode = namespaceNode.Children
                 .OfType<ClassDeclarationIntermediateNode>()
-                .FirstOrDefault(n => n.ClassName == "TypeInference");
+                .FirstOrDefault(n => n.Name == "TypeInference");
             if (classNode == null)
             {
                 classNode = new ClassDeclarationIntermediateNode()
                 {
-                    ClassName = "TypeInference",
-                    Modifiers =
-                        {
-                            "internal",
-                            "static",
-                        },
+                    Name = "TypeInference",
+                    Modifiers = CommonModifiers.InternalStatic
                 };
                 namespaceNode.Children.Add(classNode);
             }

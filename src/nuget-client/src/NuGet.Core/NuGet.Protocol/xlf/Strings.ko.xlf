@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">패키지 ID가 잘못되었습니다. '{0}'.</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">'{0}' 원본에 액세스할 때 서버에서 HTTP '403 사용 권한 없음'으로 응답했습니다. 서버에서 ID를 인증했지만 요청된 리소스에 대한 액세스를 허용하지 않았습니다. 이 리소스를 볼 수 있는 권한이 있는 자격 증명을 제공하세요.</target>

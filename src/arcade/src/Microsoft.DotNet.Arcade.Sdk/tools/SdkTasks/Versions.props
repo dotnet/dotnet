@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <MicrosoftDotNetBuildTasksVisualStudioVersion>$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksVisualStudioVersion>
+    <MicrosoftDotNetBaselinesTasksVersion Condition="'$(MicrosoftDotNetBaselinesTasksVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBaselinesTasksVersion>
     <MicrosoftDotNetBuildTasksFeedVersion Condition="'$(MicrosoftDotNetBuildTasksFeedVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetBuildTasksFeedVersion>
     <MicrosoftDotNetSignCheckTaskVersion Condition="'$(MicrosoftDotNetSignCheckTaskVersion)' == ''">$(ArcadeSdkVersion)</MicrosoftDotNetSignCheckTaskVersion>
     <MicrosoftSymbolUploaderBuildTaskVersion>$(MicrosoftSymbolUploaderBuildTaskVersion)</MicrosoftSymbolUploaderBuildTaskVersion>

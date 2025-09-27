@@ -155,7 +155,7 @@ internal class PreallocatedTagHelperAttributeOptimizationPass : IntermediateNode
             var builder = new StringBuilder();
             for (var i = 0; i < node.Children.Count; i++)
             {
-                if (node.Children[i] is IntermediateToken token && token.IsHtml)
+                if (node.Children[i] is HtmlIntermediateToken token)
                 {
                     builder.Append(token.Content);
                 }

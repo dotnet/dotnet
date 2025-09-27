@@ -3,8 +3,6 @@
 
 #nullable enable
 
-#if IS_SIGNING_SUPPORTED
-
 using System;
 using System.IO;
 using System.Linq;
@@ -240,4 +238,3 @@ namespace NuGet.Packaging.FuncTest
         }
     }
 }
-#endif

@@ -145,7 +145,7 @@ namespace NuGet.CommandLine.XPlat
                 // Print column by column
                 for (int column = 0; column < _columns.Count; column++)
                 {
-                    logger.LogMinimal("| ", color);
+                    logger.LogInline("| ", color);
                     string value = values[column];
 
                     // For each column, print character by character with the appropriate color
@@ -167,18 +167,18 @@ namespace NuGet.CommandLine.XPlat
                                 renderedColumns.Add(column);
                             }
 
-                            logger.LogMinimal("".PadRight(_columns[column].Width - i), color);
+                            logger.LogInline("".PadRight(_columns[column].Width - i), color);
                             break;
                         }
 
                         // If the character index is within the length of the value, print the character
                         if (CharacterIndex < value.Length)
                         {
-                            logger.LogMinimal(value[CharacterIndex].ToString(), color);
+                            logger.LogInline(value[CharacterIndex].ToString(), color);
                         }
                         else
                         {
-                            logger.LogMinimal(" ", color);
+                            logger.LogInline(" ", color);
                         }
 
                         // If the character index is the last character in the value, add the column to the list of rendered columns
@@ -194,11 +194,11 @@ namespace NuGet.CommandLine.XPlat
                         color = _consoleColor;
                     }
 
-                    logger.LogMinimal(" ", color);
+                    logger.LogInline(" ", color);
                 }
 
                 // New line for new row
-                logger.LogMinimal("|", color);
+                logger.LogInline("|", color);
                 logger.LogMinimal("");
                 subRow++;
 

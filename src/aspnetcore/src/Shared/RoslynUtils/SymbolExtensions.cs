@@ -67,6 +67,25 @@ internal static class SymbolExtensions
         return attributes.TryGetAttribute(attributeType, out _);
     }
 
+    public static bool HasAttribute(this ITypeSymbol typeSymbol, INamedTypeSymbol attributeSymbol)
+    {
+        var current = typeSymbol;
+
+        while (current is not null)
+        {
+            if (current.GetAttributes().Any(attr =>
+                attr.AttributeClass is not null &&
+                SymbolEqualityComparer.Default.Equals(attr.AttributeClass, attributeSymbol)))
+            {
+                return true;
+            }
+
+            current = current.BaseType;
+        }
+
+        return false;
+    }
+
     public static bool TryGetAttribute(this ImmutableArray<AttributeData> attributes, INamedTypeSymbol attributeType, [NotNullWhen(true)] out AttributeData? matchedAttribute)
     {
         foreach (var attributeData in attributes)
@@ -212,7 +231,7 @@ internal static class SymbolExtensions
             double d when d is double.PositiveInfinity => "double.PositiveInfinity",
             double d when d is double.NaN => "double.NaN",
             decimal d => $"{SymbolDisplay.FormatPrimitive(d, false, false)}M",
-            _ => SymbolDisplay.FormatPrimitive(defaultValue, false, false),
+            _ => SymbolDisplay.FormatPrimitive(defaultValue, false, false)!,
         };
     }
 

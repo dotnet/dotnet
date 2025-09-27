@@ -915,28 +915,23 @@ public class DotnetTestHostManagerTests
     }
 
     [TestMethod]
-    [DataRow("DOTNET_ROOT(x86)", "x86")]
-    [DataRow("DOTNET_ROOT", "x64")]
-    [DataRow("DOTNET_ROOT_WRONG", "")]
-    [TestCategory("Windows")]
-    public void GetTestHostProcessStartInfoShouldForwardDOTNET_ROOTEnvVarsForAppHost(string envVar, string expectedValue)
+    [DataRow("x64")]
+    [DataRow("x86")]
+    [DataRow("arm64")]
+    public void GetTestHostProcessStartInfoShouldForwardDOTNET_ROOTEnvVarsForAppHost(string architecture)
     {
+        var path = @"C:\dotnet";
         _mockFileHelper.Setup(ph => ph.Exists("testhost.exe")).Returns(true);
         _mockEnvironment.Setup(ev => ev.OperatingSystem).Returns(PlatformOperatingSystem.Windows);
         _mockEnvironmentVariable.Reset();
-        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable($"VSTEST_WINAPPHOST_{envVar}")).Returns(expectedValue);
+        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable($"VSTEST_DOTNET_ROOT_PATH")).Returns(path);
+        _mockEnvironmentVariable.Setup(x => x.GetEnvironmentVariable($"VSTEST_DOTNET_ROOT_ARCHITECTURE")).Returns(architecture);
 
         var startInfo = _dotnetHostManager.GetTestHostProcessStartInfo(_testSource, null, _defaultConnectionInfo);
-        if (!string.IsNullOrEmpty(expectedValue))
-        {
-            Assert.AreEqual(1, startInfo.EnvironmentVariables!.Count);
-            Assert.IsNotNull(startInfo.EnvironmentVariables[envVar]);
-            Assert.AreEqual(startInfo.EnvironmentVariables[envVar], expectedValue);
-        }
-        else
-        {
-            Assert.AreEqual(0, startInfo.EnvironmentVariables!.Count);
-        }
+
+        var envVar = $"DOTNET_ROOT_{architecture.ToUpperInvariant()}";
+        Assert.IsNotNull(startInfo.EnvironmentVariables![envVar]);
+        Assert.AreEqual(startInfo.EnvironmentVariables![envVar], path);
     }
 
     [TestMethod]

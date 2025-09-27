@@ -2,20 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-#if IS_SIGNING_SUPPORTED
 using System.Formats.Asn1;
-#endif
 using System.Security.Cryptography;
-#if IS_SIGNING_SUPPORTED
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
-
-#endif
 using Xunit;
 using EssCertId = NuGet.Packaging.Signing.EssCertId;
-#if IS_SIGNING_SUPPORTED
 using TestGeneralName = Microsoft.Internal.NuGet.Testing.SignedPackages.Asn1.GeneralName;
-#endif
 
 namespace NuGet.Packaging.Test
 {
@@ -41,7 +34,6 @@ namespace NuGet.Packaging.Test
                 () => EssCertId.Read(new byte[] { 0x30, 0x0b }));
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public void Read_WithValidInput_ReturnsEssCertId()
         {
@@ -85,6 +77,5 @@ namespace NuGet.Packaging.Test
 
             return writer.Encode();
         }
-#endif
     }
 }

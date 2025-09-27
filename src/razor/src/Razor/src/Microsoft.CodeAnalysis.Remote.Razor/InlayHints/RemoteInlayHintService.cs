@@ -26,6 +26,8 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
             => new RemoteInlayHintService(in args);
     }
 
+    private readonly InlayHintCacheWrapperProvider _cacheWrapperProvider = args.ExportProvider.GetExportedValue<InlayHintCacheWrapperProvider>();
+
     public ValueTask<InlayHint[]?> GetInlayHintsAsync(JsonSerializableRazorPinnedSolutionInfoWrapper solutionInfo, JsonSerializableDocumentId razorDocumentId, InlayHintParams inlayHintParams, bool displayAllOverride, CancellationToken cancellationToken)
         => RunServiceAsync(
             solutionInfo,
@@ -67,8 +69,7 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
         var textDocument = inlayHintParams.TextDocument.WithUri(generatedDocument.CreateUri());
         var range = projectedLinePositionSpan.ToRange();
 
-        var hints = await InlayHints.GetInlayHintsAsync(generatedDocument, textDocument, range, displayAllOverride, cancellationToken).ConfigureAwait(false);
-
+        var hints = await InlayHints.GetInlayHintsAsync(generatedDocument, textDocument, range, displayAllOverride, _cacheWrapperProvider.GetCache(), cancellationToken).ConfigureAwait(false);
         if (hints is null)
         {
             return null;
@@ -130,6 +131,6 @@ internal sealed class RemoteInlayHintService(in ServiceArgs args) : RazorDocumen
             .GetGeneratedDocumentAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, cancellationToken).ConfigureAwait(false);
+        return await InlayHints.ResolveInlayHintAsync(generatedDocument, inlayHint, _cacheWrapperProvider.GetCache(), cancellationToken).ConfigureAwait(false);
     }
 }

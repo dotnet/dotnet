@@ -19,27 +19,27 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThan">
         <source>Value must be greater than {0}.</source>
-        <target state="translated">Değer {0} değerinden büyük olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden büyük olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">Değer {0} değerinden büyük veya buna eşit olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden büyük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThan">
         <source>Value must be less than {0}.</source>
-        <target state="translated">Değer {0} değerinden küçük olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden küçük olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThanOrEqualTo">
         <source>Value must be less than or equal to {0}.</source>
-        <target state="translated">Değer {0} değerinden küçük veya buna eşit olmalıdır.</target>
+        <target state="translated">Değer, {0} değerinden küçük veya buna eşit olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
         <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
-        <target state="translated">Değer boş bir dize olamaz. Değer boş olmayan bir dize veya null olmalıdır.</target>
+        <target state="translated">Değer boş bir dize olamaz. Null veya boş olmayan bir dize olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnsureImportedMessage">

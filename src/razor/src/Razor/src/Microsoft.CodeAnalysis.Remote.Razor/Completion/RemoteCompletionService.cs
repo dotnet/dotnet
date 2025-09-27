@@ -36,6 +36,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
 
     private readonly RazorCompletionListProvider _razorCompletionListProvider = args.ExportProvider.GetExportedValue<RazorCompletionListProvider>();
     private readonly CompletionListCache _completionListCache = args.ExportProvider.GetExportedValue<CompletionListCache>();
+    private readonly CompletionListCacheWrapperProvder _cacheWrapperProvider = args.ExportProvider.GetExportedValue<CompletionListCacheWrapperProvder>();
     private readonly IClientCapabilitiesService _clientCapabilitiesService = args.ExportProvider.GetExportedValue<IClientCapabilitiesService>();
     private readonly CompletionTriggerAndCommitCharacters _triggerAndCommitCharacters = args.ExportProvider.GetExportedValue<CompletionTriggerAndCommitCharacters>();
     private readonly IRazorFormattingService _formattingService = args.ExportProvider.GetExportedValue<IRazorFormattingService>();
@@ -210,6 +211,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 completionContext,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionSetting,
+                _cacheWrapperProvider.GetCache(),
                 cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -333,15 +335,10 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 generatedDocument,
                 clientCapabilities.SupportsVisualStudioExtensions,
                 completionListSetting ?? new(),
+                _cacheWrapperProvider.GetCache(),
                 cancellationToken).ConfigureAwait(false);
 
             var item = JsonHelpers.Convert<CompletionItem, VSInternalCompletionItem>(result).AssumeNotNull();
-
-            if (clientCapabilities.SupportsVisualStudioExtensions && !item.VsResolveTextEditOnCommit)
-            {
-                // Resolve doesn't typically handle text edit resolution; however, in VS cases it does.
-                return item;
-            }
 
             item = await DelegatedCompletionHelper.FormatCSharpCompletionItemAsync(
                 item,
@@ -349,6 +346,7 @@ internal sealed class RemoteCompletionService(in ServiceArgs args) : RazorDocume
                 formattingOptions,
                 _formattingService,
                 _documentMappingService,
+                clientCapabilities.SupportsVisualStudioExtensions,
                 Logger,
                 cancellationToken).ConfigureAwait(false);
 

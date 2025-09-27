@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.DotNet.Build.Tasks.Installers
 {
-    internal sealed partial class RpmHeader<TEntryTag>(List<RpmHeader<TEntryTag>.Entry> entries)
+    public sealed partial class RpmHeader<TEntryTag>(List<RpmHeader<TEntryTag>.Entry> entries)
         where TEntryTag : struct, Enum
     {
 

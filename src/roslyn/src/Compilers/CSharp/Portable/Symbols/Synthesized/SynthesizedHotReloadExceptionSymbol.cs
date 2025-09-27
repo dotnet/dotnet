@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _members =
             [
                 new SynthesizedHotReloadExceptionConstructorSymbol(this, stringType, intType),
-                new SynthesizedFieldSymbol(this, intType, CodeFieldName, isPublic: true, isReadOnly: true, isStatic: false)
+                new SynthesizedFieldSymbol(this, intType, CodeFieldName, DeclarationModifiers.Public, isReadOnly: true, isStatic: false)
             ];
         }
 
@@ -97,8 +97,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public override bool IsStatic => false;
         public override bool IsRefLikeType => false;
 
-        internal override string ExtensionName
-            => throw ExceptionUtilities.Unreachable();
+        internal override string? ExtensionGroupingName => null;
+        internal override string? ExtensionMarkerName => null;
 
         public override bool IsReadOnly => false;
         public override bool IsAbstract => false;

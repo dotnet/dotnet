@@ -1246,7 +1246,7 @@ EndGlobal";
                     child.Save();
                 }
                 projectRoot.Save();
-                var solutionPath = Path.Combine(pathContext.SolutionRoot, "solution.sln");
+                var solutionPath = Path.Combine(pathContext.SolutionRoot, "solution.slnx");
                 _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, $"new sln -n solution", testOutputHelper: _testOutputHelper);
 
                 foreach (var child in projects.Values)
@@ -1455,7 +1455,7 @@ EndGlobal";
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName1}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName2}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName3}", testOutputHelper: _testOutputHelper);
-                var targetPath = Path.Combine(testDirectory, "test.sln");
+                var targetPath = Path.Combine(testDirectory, "test.slnx");
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /nologo /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{standardDgSpecFile}\" {targetPath}", environmentVariables, testOutputHelper: _testOutputHelper);
@@ -1508,7 +1508,7 @@ EndGlobal";
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName1}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName2}", testOutputHelper: _testOutputHelper);
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"sln add {projectName3}", testOutputHelper: _testOutputHelper);
-                var targetPath = Path.Combine(testDirectory, "test.sln");
+                var targetPath = Path.Combine(testDirectory, "test.slnx");
                 var standardDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "standard.dgspec.json");
                 var staticGraphDgSpecFile = Path.Combine(pathContext.WorkingDirectory, "staticGraph.dgspec.json");
                 _dotnetFixture.RunDotnetExpectSuccess(testDirectory, $"msbuild /nologo /t:GenerateRestoreGraphFile /p:RestoreGraphOutputPath=\"{staticGraphDgSpecFile}\" /p:RestoreUseStaticGraphEvaluation={useStaticGraphRestore} {targetPath}", environmentVariables, testOutputHelper: _testOutputHelper);
@@ -1739,7 +1739,7 @@ EndGlobal";
         [InlineData("nunit")]
         [InlineData("web")]
         [InlineData("webapi")]
-        [InlineData("webapiaot")]
+        // [InlineData("webapiaot")] Skipping due to failures: https://github.com/NuGet/Home/issues/14523
         [InlineData("webapp")]
         [InlineData("worker")]
         [InlineData("xunit")]
@@ -2879,6 +2879,63 @@ EndGlobal";
             mockServer.Stop();
         }
 
+        [Theory]
+        [InlineData("../")]
+        [InlineData("../ contoso")]
+        [InlineData("Some.Package/../contoso.json")]
+        public void DotnetRestore_WithInvalidPackageId_Fails(string id)
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            pathContext.Settings.RemoveSource("source");
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
+            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, id);
+            var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
+            File.WriteAllText(csprojPath, csprojContents);
+            mockServer.Start();
+
+            // Act & Assert
+            var result = _dotnetFixture.RunDotnetExpectFailure(pathContext.SolutionRoot, "restore");
+            result.AllOutput.Should().Contain("NU1017");
+            result.AllOutput.Should().Contain(string.Format("Invalid package id : `{0}`", id));
+
+            mockServer.Stop();
+        }
+
+        [Fact]
+        public async Task DotnetRestore_With100CharsPackageID_Succeeds()
+        {
+            // Arrange
+            using var pathContext = new SimpleTestPathContext();
+            using var mockServer = new FileSystemBackedV3MockServer(pathContext.PackageSource);
+            pathContext.Settings.RemoveSource("source");
+            pathContext.Settings.AddSource("source", mockServer.ServiceIndexUri, allowInsecureConnectionsValue: "true");
+            string packageid = new string('a', 200);
+            var packageA1 = new SimpleTestPackageContext()
+            {
+                Id = packageid,
+                Version = "1.0.0"
+            };
+
+            await SimpleTestPackageUtility.CreatePackagesAsync(
+                pathContext.PackageSource,
+                packageA1);
+
+            var targetFramework = Constants.DefaultTargetFramework.GetShortFolderName();
+            string csprojContents = GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, packageid);
+            var csprojPath = Path.Combine(pathContext.SolutionRoot, "test.csproj");
+            File.WriteAllText(csprojPath, csprojContents);
+
+            mockServer.Start();
+
+            // Act & Assert
+            var result = _dotnetFixture.RunDotnetExpectSuccess(pathContext.SolutionRoot, "restore -p:ExpectedRestoreProjectCount=1 -p:ExpectedRestoreSkippedCount=0  -p:ExpectedRestoreProjectsAuditedCount=0");
+
+            mockServer.Stop();
+        }
+
         [Fact]
         public async Task DotnetRestore_WithServerWithoutAuditData_RestoreTaskReturnsCountProperties()
         {
@@ -2911,13 +2968,18 @@ EndGlobal";
 
         private string GetProjectFileForRestoreTaskOutputTests(string targetFramework)
         {
+            return GetProjectFileForRestoreTaskOutputTestsFromPackageId(targetFramework, "packageA");
+        }
+
+        private string GetProjectFileForRestoreTaskOutputTestsFromPackageId(string targetFramework, string packageId)
+        {
             string csprojContents = @$"<Project Sdk=""Microsoft.NET.Sdk"">
     <PropertyGroup>
         <TargetFramework>{targetFramework}</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include=""packageA"" Version=""1.0.0"" />
+        <PackageReference Include=""{packageId}"" Version=""1.0.0"" />
     </ItemGroup>
 
     <Target Name=""AssertRestoreTaskOutputProperties""
@@ -3006,24 +3068,13 @@ EndGlobal";
         }
 
         [Theory]
-        [InlineData("10.0.100", null, "netstandard2.1")]
-        [InlineData("9.0.100", "true", "netstandard2.1")]
-        public async Task DotnetRestore_WithNETStandardFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, string tfm)
-        {
-            await DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(sdkAnalysisLevel, restoreEnablePackagePruning, tfm);
-        }
-
-        [Theory]
-        [InlineData("10.0.100", null)]
-        [InlineData("9.0.100", "true")]
-        public async Task DotnetRestore_WithCoreFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning)
+        [InlineData("10.0.100", null, true)]
+        [InlineData("9.0.100", "true", true)]
+        [InlineData("10.0.100", null, false)]
+        [InlineData("9.0.100", "true", false)]
+        public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, bool useStaticGraphRestore)
         {
             string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
-            await DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(sdkAnalysisLevel, restoreEnablePackagePruning, tfm);
-        }
-
-        private async Task DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_EnablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, string tfm)
-        {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3060,7 +3111,7 @@ EndGlobal";
                 ProjectFileUtils.WriteXmlToFile(xml, stream);
             }
 
-            var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile}", testOutputHelper: _testOutputHelper);
+            var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile} {(useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty)}", testOutputHelper: _testOutputHelper);
             result.AllOutput.Should().NotContain("Warning");
             string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
             LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
@@ -3068,31 +3119,16 @@ EndGlobal";
             assetsFile.PackageSpec.TargetFrameworks.Should().HaveCount(1);
             assetsFile.PackageSpec.TargetFrameworks[0].TargetAlias.Should().Be(tfm);
             assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().NotBeEmpty();
-
-            // netstandard2.1
             assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("X"));
             assetsFile.Targets[0].Libraries.Should().NotContain(e => e.Name.Equals("Y"));
         }
 
         [Theory]
-        [InlineData("9.0.100", null, "netstandard2.1")]
-        [InlineData("10.0.100", "false", "netstandard2.1")]
-        public async Task DotnetRestore_WithNETStandard_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, string tfm)
-        {
-            await DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(sdkAnalysisLevel, restoreEnablePackagePruning, tfm);
-        }
-
-        [Theory]
         [InlineData("9.0.100", null)]
         [InlineData("10.0.100", "false")]
-        public async Task DotnetRestore_WithCoreFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning)
+        public async Task DotnetRestore_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning)
         {
             string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
-            await DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(sdkAnalysisLevel, restoreEnablePackagePruning, tfm);
-        }
-
-        private async Task DotnetRestore_WithFramework_SDKAnalysisLevelAndRestoreEnablePackagePruning_DisablesPruning(string sdkAnalysisLevel, string restoreEnablePackagePruning, string tfm)
-        {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var projectName = "ClassLibrary1";
             var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
@@ -3140,6 +3176,168 @@ EndGlobal";
             assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
             assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("X"));
             assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("Y"));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DotnetRestore_WithMultiTargetedProjectAndSDKAnalysisLevel_EnablesForAllFrameworks(bool useStaticGraphRestore)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            LockFile assetsFile = await DotnetRestore_MultiTargetedProjectWithSDKAnalysisLevel(pathContext, "10.0.100", useStaticGraphRestore);
+
+            assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().NotBeEmpty();
+            assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[0].Libraries.Should().NotContain(e => e.Name.Equals("Y"));
+
+            assetsFile.PackageSpec.TargetFrameworks[1].PackagesToPrune.Should().NotBeEmpty();
+            assetsFile.Targets[1].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[1].Libraries.Should().NotContain(e => e.Name.Equals("Y"));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DotnetRestore_WithMultiTargetedProjectAndSDKAnalysisLevel_DisablesForAllFrameworks(bool useStaticGraphRestore)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            LockFile assetsFile = await DotnetRestore_MultiTargetedProjectWithSDKAnalysisLevel(pathContext, "9.0.100", useStaticGraphRestore);
+
+            assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
+            assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[0].Libraries.Should().Contain(e => e.Name.Equals("Y"));
+
+            assetsFile.PackageSpec.TargetFrameworks[1].PackagesToPrune.Should().BeEmpty();
+            assetsFile.Targets[1].Libraries.Should().Contain(e => e.Name.Equals("X"));
+            assetsFile.Targets[1].Libraries.Should().Contain(e => e.Name.Equals("Y"));
+        }
+
+        private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithSDKAnalysisLevel(SimpleTestPathContext pathContext, string sdkAnalysisLevel, bool useStaticGraphRestore)
+        {
+            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, new SimpleTestPackageContext("X", "1.0.0") { Dependencies = [new SimpleTestPackageContext("Y", "1.0.0")] });
+
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.1", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{tfm};netstandard2.1");
+                ProjectFileUtils.AddProperty(xml, "SdkAnalysisLevel", sdkAnalysisLevel);
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "X",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "1.0.0" } });
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PrunePackageReference",
+                    "Y",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "2.0.0" } });
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile} {(useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty)}", testOutputHelper: _testOutputHelper);
+            result.AllOutput.Should().NotContain("Warning");
+            string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.Targets.Should().HaveCount(2);
+            assetsFile.PackageSpec.TargetFrameworks.Should().HaveCount(2);
+            return assetsFile;
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DotnetRestore_WithMultiTargetedProjectAndRestoreEnablePackagePruning_CanConditionallyDisablePruning(bool useStaticGraphRestore)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            LockFile assetsFile = await DotnetRestore_MultiTargetedProjectWithRestoreEnablePackagePruning(pathContext, "false", "'$(TargetFramework)' == 'netstandard2.1'", useStaticGraphRestore);
+
+            assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().NotBeEmpty();
+            var firstTarget = assetsFile.GetTarget(assetsFile.PackageSpec.TargetFrameworks[0].TargetAlias, string.Empty);
+            firstTarget.Libraries.Should().Contain(e => e.Name.Equals("X"));
+            firstTarget.Libraries.Should().NotContain(e => e.Name.Equals("Y"));
+
+            assetsFile.PackageSpec.TargetFrameworks[1].PackagesToPrune.Should().BeEmpty();
+            var secondTarget = assetsFile.GetTarget(assetsFile.PackageSpec.TargetFrameworks[1].TargetAlias, string.Empty);
+            secondTarget.Libraries.Should().Contain(e => e.Name.Equals("X"));
+            secondTarget.Libraries.Should().Contain(e => e.Name.Equals("Y"));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task DotnetRestore_WithMultiTargetedProjectAndRestoreEnablePackagePruning_CanDisablePruningForAll(bool useStaticGraphRestore)
+        {
+            using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
+            LockFile assetsFile = await DotnetRestore_MultiTargetedProjectWithRestoreEnablePackagePruning(pathContext, "false", null, useStaticGraphRestore);
+
+            assetsFile.PackageSpec.TargetFrameworks[0].PackagesToPrune.Should().BeEmpty();
+            var firstTarget = assetsFile.GetTarget(assetsFile.PackageSpec.TargetFrameworks[0].TargetAlias, string.Empty);
+            firstTarget.Libraries.Should().Contain(e => e.Name.Equals("X"));
+            firstTarget.Libraries.Should().Contain(e => e.Name.Equals("Y"));
+
+            assetsFile.PackageSpec.TargetFrameworks[1].PackagesToPrune.Should().BeEmpty();
+            var secondTarget = assetsFile.GetTarget(assetsFile.PackageSpec.TargetFrameworks[1].TargetAlias, string.Empty);
+            secondTarget.Libraries.Should().Contain(e => e.Name.Equals("X"));
+            secondTarget.Libraries.Should().Contain(e => e.Name.Equals("Y"));
+        }
+
+        private async Task<LockFile> DotnetRestore_MultiTargetedProjectWithRestoreEnablePackagePruning(SimpleTestPathContext pathContext, string restoreEnablePackagePruning, string condition, bool useStaticGraphRestore)
+        {
+            string tfm = Constants.DefaultTargetFramework.GetShortFolderName();
+            var projectName = "ClassLibrary1";
+            var workingDirectory = Path.Combine(pathContext.SolutionRoot, projectName);
+            var projectFile = Path.Combine(workingDirectory, $"{projectName}.csproj");
+            await SimpleTestPackageUtility.CreatePackagesAsync(pathContext.PackageSource, new SimpleTestPackageContext("X", "1.0.0") { Dependencies = [new SimpleTestPackageContext("Y", "1.0.0")] });
+
+            _dotnetFixture.CreateDotnetNewProject(pathContext.SolutionRoot, projectName, "classlib -f netstandard2.1", testOutputHelper: _testOutputHelper);
+
+            using (var stream = File.Open(projectFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                var xml = XDocument.Load(stream);
+                ProjectFileUtils.SetTargetFrameworkForProject(xml, "TargetFrameworks", $"{tfm};netstandard2.1");
+                if (!string.IsNullOrEmpty(restoreEnablePackagePruning))
+                {
+                    ProjectFileUtils.AddProperty(xml, "RestoreEnablePackagePruning", restoreEnablePackagePruning, condition);
+                }
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PackageReference",
+                    "X",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "1.0.0" } });
+
+                ProjectFileUtils.AddItem(
+                    xml,
+                    "PrunePackageReference",
+                    "Y",
+                    string.Empty,
+                    [],
+                    new Dictionary<string, string>() { { "Version", "2.0.0" } });
+
+                ProjectFileUtils.WriteXmlToFile(xml, stream);
+            }
+
+            var result = _dotnetFixture.RunDotnetExpectSuccess(workingDirectory, $"restore {projectFile} {(useStaticGraphRestore ? " /p:RestoreUseStaticGraphEvaluation=true" : string.Empty)}", testOutputHelper: _testOutputHelper);
+            result.AllOutput.Should().NotContain("Warning");
+            string assetsFilePath = Path.Combine(workingDirectory, "obj", LockFileFormat.AssetsFileName);
+            LockFile assetsFile = new LockFileFormat().Read(assetsFilePath);
+            assetsFile.Targets.Should().HaveCount(2);
+            assetsFile.PackageSpec.TargetFrameworks.Should().HaveCount(2);
+            return assetsFile;
         }
 
         [Theory]

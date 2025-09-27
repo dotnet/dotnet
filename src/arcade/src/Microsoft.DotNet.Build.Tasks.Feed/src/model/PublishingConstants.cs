@@ -19,7 +19,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         public static readonly string AzDoNuGetFeedPattern =
             @"https://pkgs.dev.azure.com/(?<account>[a-zA-Z0-9-]+)/(?<visibility>[a-zA-Z0-9-]+/)?_packaging/(?<feed>.+)/nuget/v3/index.json";
 
-        public static readonly TargetFeedContentType[] InstallersAndSymbols = {
+        public static readonly TargetFeedContentType[] InstallersAndSymbols =
+        [
             TargetFeedContentType.OSX,
             TargetFeedContentType.Deb,
             TargetFeedContentType.Rpm,
@@ -31,9 +32,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             TargetFeedContentType.Badge,
             TargetFeedContentType.Symbols,
             TargetFeedContentType.Other
-        };
+        ];
 
-        public static readonly TargetFeedContentType[] InstallersAndChecksums = {
+        public static readonly TargetFeedContentType[] InstallersAndChecksums =
+        [
             TargetFeedContentType.OSX,
             TargetFeedContentType.Deb,
             TargetFeedContentType.Rpm,
@@ -45,15 +47,16 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             TargetFeedContentType.Badge,
             TargetFeedContentType.Checksum,
             TargetFeedContentType.Other
-        };
+        ];
 
-        public static readonly TargetFeedContentType[] Packages = {
+        public static readonly TargetFeedContentType[] Packages =
+        [
             TargetFeedContentType.Package,
             TargetFeedContentType.CorePackage,
             TargetFeedContentType.ToolingPackage,
             TargetFeedContentType.InfrastructurePackage,
             TargetFeedContentType.LibraryPackage,
-        };
+        ];
 
         public enum BuildQuality
         {
@@ -80,7 +83,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         public const string FeedStagingInternalForInstallers = "https://dotnetbuilds.blob.core.windows.net/internal";
         public const string FeedStagingInternalForChecksums = "https://dotnetbuilds.blob.core.windows.net/internal-checksums";
 
-        private const string FeedGeneralTesting = "https://pkgs.dev.azure.com/dnceng/public/_packaging/general-testing/nuget/v3/index.json";
+        public const string FeedDevForInstallers = "https://dotnetbuilds.blob.core.windows.net/dev";
+        public const string FeedDevInternalForInstallers = "https://dotnetbuilds.blob.core.windows.net/dev-internal";
+
+        private const string FeedDev = "https://pkgs.dev.azure.com/dnceng/public/_packaging/general-testing/nuget/v3/index.json";
 
         private const string FeedDotNetExperimental = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json";
 
@@ -125,6 +131,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         private const string FeedDotNet10InternalShipping = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet10-internal/nuget/v3/index.json";
         private const string FeedDotNet10InternalTransport = "https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet10-internal-transport/nuget/v3/index.json";
 
+        private const string FeedDotNet11Shipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11/nuget/v3/index.json";
+        private const string FeedDotNet11Transport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11-transport/nuget/v3/index.json";
+        private const string FeedDotNet11Workloads = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet11-workloads/nuget/v3/index.json";
+
         private const string FeedDotNetLibrariesShipping = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries/nuget/v3/index.json";
         private const string FeedDotNetLibrariesTransport = "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-libraries-transport/nuget/v3/index.json";
 
@@ -145,22 +155,6 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
         {
             (Packages, FeedDotNet6InternalShipping, AssetSelection.ShippingOnly),
             (Packages, FeedDotNet6InternalTransport, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingInternalForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
-        };
-
-        private static TargetFeedSpecification[] DotNet7Feeds =
-        {
-            (Packages, FeedDotNet7Shipping, AssetSelection.ShippingOnly),
-            (Packages, FeedDotNet7Transport, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
-        };
-
-        private static TargetFeedSpecification[] DotNet7InternalFeeds =
-        {
-            (Packages, FeedDotNet7InternalShipping, AssetSelection.ShippingOnly),
-            (Packages, FeedDotNet7InternalTransport, AssetSelection.NonShippingOnly),
             (InstallersAndSymbols, FeedStagingInternalForInstallers),
             (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
         };
@@ -245,6 +239,30 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             (TargetFeedContentType.Checksum, FeedStagingForChecksums),
         };
 
+        private static TargetFeedSpecification[] DotNet11Feeds =
+        {
+            (TargetFeedContentType.Package, FeedDotNet11Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.Package, FeedDotNet11Transport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.InfrastructurePackage, FeedDotNetEng, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.InfrastructurePackage, FeedDotNetEng, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.CorePackage, FeedDotNet11Shipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.CorePackage, FeedDotNet11Transport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.LibraryPackage, FeedDotNetLibrariesShipping, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.LibraryPackage, FeedDotNetLibrariesTransport, AssetSelection.NonShippingOnly),
+            (TargetFeedContentType.ToolingPackage, FeedDotNetTools, AssetSelection.ShippingOnly),
+            (TargetFeedContentType.ToolingPackage, FeedDotNetTools, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
+        private static TargetFeedSpecification[] DotNet11WorkloadFeeds =
+        {
+            (Packages, FeedDotNet11Workloads, AssetSelection.ShippingOnly),
+            (Packages, FeedDotNet11Workloads, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedStagingForInstallers),
+            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+        };
+
         private static TargetFeedSpecification[] DotNetEngFeeds =
         {
             (Packages, FeedDotNetEng, AssetSelection.ShippingOnly),
@@ -303,22 +321,23 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
 
         private static TargetFeedSpecification[] GeneralTestingFeeds =
         {
-            (Packages, FeedGeneralTesting, AssetSelection.ShippingOnly),
-            (Packages, FeedGeneralTesting, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingForChecksums),
+            (Packages, FeedDev, AssetSelection.ShippingOnly),
+            (Packages, FeedDev, AssetSelection.NonShippingOnly),
+            (InstallersAndSymbols, FeedDevForInstallers),
+            (TargetFeedContentType.Checksum, FeedDevForInstallers),
         };
 
         private static TargetFeedSpecification[] GeneralTestingInternalFeeds =
         {
             (Packages, FeedGeneralTestingInternal, AssetSelection.ShippingOnly),
             (Packages, FeedGeneralTestingInternal, AssetSelection.NonShippingOnly),
-            (InstallersAndSymbols, FeedStagingInternalForInstallers),
-            (TargetFeedContentType.Checksum, FeedStagingInternalForChecksums),
+            (InstallersAndSymbols, FeedDevInternalForInstallers),
+            (TargetFeedContentType.Checksum, FeedDevInternalForInstallers),
         };
         #endregion
 
-        public static readonly ImmutableList<Regex> DefaultAkaMSCreateLinkPatterns = [
+        public static readonly ImmutableList<Regex> DefaultAkaMSCreateLinkPatterns =
+        [
             new Regex(@"\.rpm(\.sha512)?$", RegexOptions.IgnoreCase),
             new Regex(@"\.zip(\.sha512)?$", RegexOptions.IgnoreCase),
             new Regex(@"\.version(\.sha512)?$", RegexOptions.IgnoreCase),
@@ -335,17 +354,18 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             new Regex(@"productversion", RegexOptions.IgnoreCase)
         ];
 
-        public static readonly ImmutableList<Regex> DefaultAkaMSDoNotCreateLinkPatterns = [
+        public static readonly ImmutableList<Regex> DefaultAkaMSDoNotCreateLinkPatterns =
+        [
             new Regex(@"wixpack", RegexOptions.IgnoreCase),
         ];
 
-        private static readonly ImmutableList<Regex> DotNet10AkaMSDoNotCreateLinkPatterns = [
+        private static readonly ImmutableList<Regex> UnifiedBuildAkaMSDoNotCreateLinkPatterns =
+        [
             ..DefaultAkaMSDoNotCreateLinkPatterns,
             new Regex(@"productversion", RegexOptions.IgnoreCase)
         ];
 
-        #region Target Channel Configs
-        public static readonly List<TargetChannelConfig> ChannelInfos = new List<TargetChannelConfig>() {
+        public static readonly List<TargetChannelConfig> ChannelInfos = [
 
             // How TO: Adding publishing for a new channel:
             // 1. If not already complete, add desired using `darc add-channel`. Please using follow naming conventions from
@@ -365,6 +385,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
             //      and will be "internal only" (e.g. DotNet7InternalFeeds) for internal channels. Again, please see existing channel setups.
             //    - symbolTargetType: List of symbol targets. Internal channels should use SymbolPublishVisibility.Internal and public channels should use SymbolPublishVisibility.Public
             //    - filenamesToExclude: Usually left as FilenamesToExclude.
+
+            #region .NET 6 Channels
 
             // .NET 6,
             new TargetChannelConfig(
@@ -521,6 +543,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet6InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
+            #endregion
+
+            #region .NET 8 Channels
+
             // .NET 8,
             new TargetChannelConfig(
                 id: 3073,
@@ -676,6 +702,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet8InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
+            #endregion
+
+            #region .NET 9 Channels
+
             // .NET 9,
             new TargetChannelConfig(
                 id: 3883,
@@ -809,6 +839,10 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNet9InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
+            #endregion
+
+            #region .NET 10 Channels
+
             // .NET 10,
             new TargetChannelConfig(
                 id: 5172,
@@ -816,9 +850,32 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 10 Eng,
+            new TargetChannelConfig(
+                id: 8394,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["eng/net10"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 10 Eng - Validation,
+            new TargetChannelConfig(
+                id: 8395,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["eng/net10validation"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNetEngFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public,
+                flatten: false),
 
             // .NET 10 Workload Release,
             new TargetChannelConfig(
@@ -827,7 +884,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: [ "10.0-workloads" ],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10WorkloadFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -838,7 +895,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: [ "10.0.1xx", "10.0" ],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -849,7 +906,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-ub", "10.0-ub"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -860,7 +917,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -871,7 +928,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -882,7 +939,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview3"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -893,7 +950,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview4"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -904,7 +961,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview5"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -926,7 +983,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-preview7"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -937,7 +994,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-rc1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -948,7 +1005,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["internal/10.0-rc1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
@@ -959,7 +1016,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0-rc2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -970,7 +1027,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["internal/10.0-rc2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
@@ -981,7 +1038,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-rc1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -992,7 +1049,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["internal/10.0.1xx-rc1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
@@ -1003,7 +1060,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-rc2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1014,7 +1071,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["internal/10.0.1xx-rc2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10InternalFeeds,
                 symbolTargetType: SymbolPublishVisibility.Internal),
 
@@ -1025,7 +1082,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview1"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1036,7 +1093,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview2"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1047,7 +1104,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview3"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1058,7 +1115,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview4"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1069,7 +1126,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview5"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1080,7 +1137,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview6"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
 
@@ -1091,9 +1148,50 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 publishingInfraVersion: PublishingInfraVersion.Latest,
                 akaMSChannelNames: ["10.0.1xx-preview7"],
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
-                akaMSDoNotCreateLinkPatterns: DotNet10AkaMSDoNotCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: DotNet10Feeds,
                 symbolTargetType: SymbolPublishVisibility.Public),
+
+            #endregion
+
+            #region .NET 11 Channels
+
+            // .NET 11,
+            new TargetChannelConfig(
+                id: 8297,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: ["11.0"],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet11Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 11 Workload Release,
+            new TargetChannelConfig(
+                id: 8299,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "11.0-workloads" ],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet11WorkloadFeeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            // .NET 11.0.1xx SDK,
+            new TargetChannelConfig(
+                id: 8298,
+                isInternal: false,
+                publishingInfraVersion: PublishingInfraVersion.Latest,
+                akaMSChannelNames: [ "11.0.1xx", "11.0" ],
+                akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
+                akaMSDoNotCreateLinkPatterns: UnifiedBuildAkaMSDoNotCreateLinkPatterns,
+                targetFeeds: DotNet10Feeds,
+                symbolTargetType: SymbolPublishVisibility.Public),
+
+            #endregion
+
+            #region Other .NET Channels
 
             // .NET Core Experimental,
             new TargetChannelConfig(
@@ -1305,7 +1403,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: GeneralTestingFeeds,
-                symbolTargetType: SymbolPublishVisibility.Public),
+                symbolTargetType: SymbolPublishVisibility.Public,
+                isProduction: false),
 
             // General Testing Internal,
             new TargetChannelConfig(
@@ -1316,7 +1415,12 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 akaMSCreateLinkPatterns: DefaultAkaMSCreateLinkPatterns,
                 akaMSDoNotCreateLinkPatterns: DefaultAkaMSDoNotCreateLinkPatterns,
                 targetFeeds: GeneralTestingInternalFeeds,
-                symbolTargetType: SymbolPublishVisibility.Internal),
+                symbolTargetType: SymbolPublishVisibility.Internal,
+                isProduction: false),
+
+            #endregion
+
+            #region VS Channels
 
             // VS 16.6,
             new TargetChannelConfig(
@@ -1473,6 +1577,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.7,
             new TargetChannelConfig(
                 id: 3581,
@@ -1484,6 +1589,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.8,
             new TargetChannelConfig(
                 id: 3582,
@@ -1495,6 +1601,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.9,
             new TargetChannelConfig(
                 id: 4015,
@@ -1506,6 +1613,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.10
             new TargetChannelConfig(
                 id: 4165,
@@ -1517,6 +1625,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.11
             new TargetChannelConfig(
                 id: 4544,
@@ -1528,6 +1637,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.12
             new TargetChannelConfig(
                 id: 4906,
@@ -1539,6 +1649,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.13
             new TargetChannelConfig(
                 id: 5288,
@@ -1550,6 +1661,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.14
             new TargetChannelConfig(
                 id: 6136,
@@ -1561,6 +1673,7 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
+            
             // VS 17.15
             new TargetChannelConfig(
                 id: 6989,
@@ -1583,7 +1696,8 @@ namespace Microsoft.DotNet.Build.Tasks.Feed.Model
                 targetFeeds: DotNetToolsFeeds,
                 symbolTargetType: SymbolPublishVisibility.Public,
                 flatten: false),
-        };
-        #endregion
+
+            #endregion
+        ];
     }
 }

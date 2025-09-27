@@ -39,16 +39,11 @@ internal class ViewCssScopePass : IntermediateNodePassBase, IRazorOptimizationPa
         for (var i = 0; i < node.Children.Count; i++)
         {
             var child = node.Children[i];
-            if (child is IntermediateToken token && token.IsHtml)
+            if (child is HtmlIntermediateToken token)
             {
                 if (IsValidElement(token, previousToken))
                 {
-                    node.Children.Insert(i + 1, new IntermediateToken()
-                    {
-                        Content = cssScope,
-                        Kind = TokenKind.Html,
-                        Source = null
-                    });
+                    node.Children.Insert(i + 1, IntermediateNodeFactory.HtmlToken(cssScope));
                     i++;
                 }
 

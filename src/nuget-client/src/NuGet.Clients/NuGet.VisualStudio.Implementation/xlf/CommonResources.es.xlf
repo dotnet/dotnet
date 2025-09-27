@@ -14,32 +14,32 @@
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Enum_Member">
         <source>Value must be a value from the "{0}" enumeration.</source>
-        <target state="translated">El valor debe ser uno de los valores de la enumeración "{0}".</target>
+        <target state="translated">El valor debe ser un valor de la enumeración "{0}".</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThan">
         <source>Value must be greater than {0}.</source>
-        <target state="translated">El valor debe ser mayor que {0}.</target>
+        <target state="translated">El valor debe ser superior a {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_GreaterThanOrEqualTo">
         <source>Value must be greater than or equal to {0}.</source>
-        <target state="translated">El valor debe ser mayor o igual que {0}.</target>
+        <target state="translated">El valor debe ser superior o igual a {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThan">
         <source>Value must be less than {0}.</source>
-        <target state="translated">El valor debe ser menor que {0}.</target>
+        <target state="translated">El valor debe ser inferior a {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_LessThanOrEqualTo">
         <source>Value must be less than or equal to {0}.</source>
-        <target state="translated">El valor debe ser menor o igual que {0}.</target>
+        <target state="translated">El valor debe ser inferior o igual a {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="Argument_Must_Be_Null_Or_Non_Empty">
         <source>Value cannot be an empty string. It must either be null or a non-empty string.</source>
-        <target state="translated">El valor no puede ser una cadena vacía. Debe ser una cadena nula o que no esté vacía.</target>
+        <target state="translated">El valor no puede ser una cadena vacía. Debe ser nulo o una cadena que no esté vacía.</target>
         <note />
       </trans-unit>
       <trans-unit id="EnsureImportedMessage">

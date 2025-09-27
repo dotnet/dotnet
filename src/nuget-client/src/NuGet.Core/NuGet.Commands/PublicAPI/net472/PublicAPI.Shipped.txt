@@ -179,7 +179,6 @@ NuGet.Commands.IRestoreTargetGraph
 ~NuGet.Commands.IRestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.IRestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.IRestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
-~NuGet.Commands.IRestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.IRestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.IRestoreTargetGraph.RuntimeIdentifier.get -> string
@@ -477,12 +476,8 @@ NuGet.Commands.RestoreArgs.HideWarningsAndErrors.get -> bool
 NuGet.Commands.RestoreArgs.HideWarningsAndErrors.set -> void
 ~NuGet.Commands.RestoreArgs.Inputs.get -> System.Collections.Generic.List<string>
 ~NuGet.Commands.RestoreArgs.Inputs.set -> void
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.get -> bool?
-NuGet.Commands.RestoreArgs.IsLowercaseGlobalPackagesFolder.set -> void
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.get -> bool
 NuGet.Commands.RestoreArgs.IsRestoreOriginalAction.set -> void
-NuGet.Commands.RestoreArgs.LockFileVersion.get -> int?
-NuGet.Commands.RestoreArgs.LockFileVersion.set -> void
 ~NuGet.Commands.RestoreArgs.Log.get -> NuGet.Common.ILogger
 ~NuGet.Commands.RestoreArgs.Log.set -> void
 ~NuGet.Commands.RestoreArgs.MachineWideSettings.get -> NuGet.Configuration.IMachineWideSettings
@@ -642,7 +637,6 @@ NuGet.Commands.RestoreTargetGraph
 ~NuGet.Commands.RestoreTargetGraph.Graphs.get -> System.Collections.Generic.IEnumerable<NuGet.DependencyResolver.GraphNode<NuGet.DependencyResolver.RemoteResolveResult>>
 NuGet.Commands.RestoreTargetGraph.InConflict.get -> bool
 ~NuGet.Commands.RestoreTargetGraph.Install.get -> System.Collections.Generic.ISet<NuGet.DependencyResolver.RemoteMatch>
-~NuGet.Commands.RestoreTargetGraph.Name.get -> string
 ~NuGet.Commands.RestoreTargetGraph.ResolvedDependencies.get -> System.Collections.Generic.ISet<NuGet.Commands.ResolvedDependencyKey>
 ~NuGet.Commands.RestoreTargetGraph.RuntimeGraph.get -> NuGet.RuntimeModel.RuntimeGraph
 ~NuGet.Commands.RestoreTargetGraph.RuntimeIdentifier.get -> string

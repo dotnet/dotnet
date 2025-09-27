@@ -104,7 +104,7 @@ namespace NuGet.CommandLine
             }
 
             // update with project file as parameter
-            if (ProjectHelper.SupportedProjectExtensions.Contains(Path.GetExtension(inputFile) ?? string.Empty))
+            if (ProjectHelper.SupportedProjectExtensions.Contains(Path.GetExtension(inputFile)))
             {
                 if (!File.Exists(inputFile))
                 {

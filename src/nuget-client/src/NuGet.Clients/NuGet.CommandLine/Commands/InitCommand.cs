@@ -111,8 +111,6 @@ namespace NuGet.CommandLine
             {
                 foreach (var idDirectory in Directory.EnumerateDirectories(source))
                 {
-                    var packageId = Path.GetFileName(idDirectory);
-
                     foreach (var versionDirectory in Directory.EnumerateDirectories(idDirectory))
                     {
                         var packagesAtVersionDirectory = Directory.EnumerateFiles(versionDirectory, nupkgFilter);

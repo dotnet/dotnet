@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using FluentAssertions;
 using NuGet.Versioning;
 using Xunit;
 
@@ -31,6 +32,20 @@ namespace NuGet.Protocol.Tests
             var actual = resource.GetReportAbuseUrl("TestPackage", NuGetVersion.Parse("1.0.0"));
 
             Assert.Equal(expectedResult, actual.ToString());
+        }
+
+        [Fact]
+        public void GetReportAbuseUrl_InvalidPackageId_Throws()
+        {
+            // Arrange
+            const string uriTemplate = "https://test.nuget.org/ReportAbuse/{id}/{version}";
+            const string id = "../contoso";
+            var resource = new ReportAbuseResourceV3(uriTemplate);
+
+            // Act & Assert
+            var exception = Assert.Throws<Packaging.InvalidPackageIdException>(() => resource.GetReportAbuseUrl(id, NuGetVersion.Parse("1.0.0")));
+
+            exception.Message.Should().Contain(string.Format(Strings.Error_Invalid_package_id, id));
         }
     }
 }

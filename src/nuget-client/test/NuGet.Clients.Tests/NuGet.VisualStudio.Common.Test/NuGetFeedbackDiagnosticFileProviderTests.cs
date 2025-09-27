@@ -11,17 +11,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
-using Newtonsoft.Json.Linq;
 using NuGet.Commands;
+using NuGet.Commands.Test;
 using NuGet.Common;
 using NuGet.Configuration;
 using NuGet.PackageManagement;
-using NuGet.PackageManagement.Test;
 using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
-using NuGet.ProjectManagement.Projects;
 using NuGet.ProjectModel;
-using NuGet.Protocol.Core.Types;
+using NuGet.Test;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
 using NuGet.VisualStudio.Telemetry;
@@ -194,26 +192,19 @@ namespace NuGet.VisualStudio.Common.Test
 
             using (var solutionManager = new TestSolutionManager())
             {
-                var projectFolder = new DirectoryInfo(Path.Combine(solutionManager.SolutionDirectory, projectName));
-                projectFolder.Create();
-                var projectConfig = new FileInfo(Path.Combine(projectFolder.FullName, "project.json"));
-                var msbuildProjectPath = new FileInfo(Path.Combine(projectFolder.FullName, $"{projectName}.csproj"));
                 string extractPath = Path.Combine(solutionManager.SolutionDirectory);
-
-                BuildIntegrationTestUtility.CreateConfigJson(projectConfig.FullName);
-                var json = JObject.Parse(File.ReadAllText(projectConfig.FullName));
-
-                JsonConfigUtility.AddDependency(json, new PackageDependency("nuget.versioning", VersionRange.Parse("1.0.7")));
-
-                using (var writer = new StreamWriter(projectConfig.FullName))
-                {
-                    writer.Write(json.ToString());
-                }
-
-                var sources = new List<SourceRepository> { };
                 var testLogger = new TestLogger();
                 var settings = Settings.LoadSpecificSettings(solutionManager.SolutionDirectory, "NuGet.Config");
-                var project = new ProjectJsonNuGetProject(projectConfig.FullName, msbuildProjectPath.FullName);
+                var packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName, solutionManager.SolutionDirectory);
+                PackageSpecOperations.AddOrUpdateDependency(packageSpec, new PackageDependency("nuget.versioning", VersionRange.Parse("1.0.7")));
+
+                var directory = Path.GetDirectoryName(packageSpec.FilePath);
+                var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(
+                    packageSpec.TargetFrameworks[0].FrameworkName,
+                    new TestNuGetProjectContext(),
+                    directory,
+                    projectName);
+                var project = new TestPackageReferenceNuGetProject(packageSpec, msBuildNuGetProjectSystem);
 
                 solutionManager.NuGetProjects.Add(project);
 
@@ -275,18 +266,20 @@ namespace NuGet.VisualStudio.Common.Test
     </packageSources>
 </configuration>");
 
-                var projectFolder = new DirectoryInfo(Path.Combine(solutionManager.SolutionDirectory, projectName));
-                projectFolder.Create();
-                var projectConfig = new FileInfo(Path.Combine(projectFolder.FullName, "project.json"));
-                var msbuildProjectPath = new FileInfo(Path.Combine(projectFolder.FullName, $"{projectName}.csproj"));
                 string extractPath = Path.Combine(solutionManager.SolutionDirectory);
 
-                BuildIntegrationTestUtility.CreateConfigJson(projectConfig.FullName);
-
-                var sources = new List<SourceRepository> { };
                 var testLogger = new TestLogger();
                 var settings = Settings.LoadSpecificSettings(solutionManager.SolutionDirectory, "NuGet.Config");
-                var project = new ProjectJsonNuGetProject(projectConfig.FullName, msbuildProjectPath.FullName);
+                var packageSpec = ProjectTestHelpers.GetPackageSpec(settings, projectName, solutionManager.SolutionDirectory);
+                PackageSpecOperations.AddOrUpdateDependency(packageSpec, new PackageDependency("nuget.versioning", VersionRange.Parse("1.0.7")));
+
+                var directory = Path.GetDirectoryName(packageSpec.FilePath);
+                var msBuildNuGetProjectSystem = new TestMSBuildNuGetProjectSystem(
+                    packageSpec.TargetFrameworks[0].FrameworkName,
+                    new TestNuGetProjectContext(),
+                    directory,
+                    projectName);
+                var project = new TestPackageReferenceNuGetProject(packageSpec, msBuildNuGetProjectSystem);
 
                 solutionManager.NuGetProjects.Add(project);
 

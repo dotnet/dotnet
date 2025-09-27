@@ -64,6 +64,7 @@ namespace NuGet.Commands
         private const string UpdatedAssetsFile = nameof(UpdatedAssetsFile);
         private const string UpdatedMSBuildFiles = nameof(UpdatedMSBuildFiles);
         private const string IsPackageInstallationTrigger = nameof(IsPackageInstallationTrigger);
+        private const string UsesLegacyPackagesDirectory = nameof(UsesLegacyPackagesDirectory);
 
         // no-op data names
         private const string NoOpDuration = nameof(NoOpDuration);
@@ -135,9 +136,9 @@ namespace NuGet.Commands
         private const string AuditSuppressedAdvisoriesDistinctPackageDownloadAdvisoriesSuppressedCount = "Audit.Vulnerability.PackageDownload.DistinctAdvisoriesSuppressed.Count";
 
         // PackagePruning names
+        private const string PackagePruningDefaultEnabled = "Pruning.DefaultEnabled";
         private const string PackagePruningFrameworksEnabledCount = "Pruning.FrameworksEnabled.Count";
         private const string PackagePruningFrameworksDisabledCount = "Pruning.FrameworksDisabled.Count";
-        private const string PackagePruningFrameworksDefaultDisabledCount = "Pruning.FrameworksDefaultDisabled.Count";
         private const string PackagePruningFrameworksUnsupportedCount = "Pruning.FrameworksUnsupported.Count";
         private const string PackagePruningRemovablePackagesCount = "Pruning.RemovablePackages.Count";
         private const string PackagePruningDirectCount = "Pruning.Pruned.Direct.Count";
@@ -153,10 +154,9 @@ namespace NuGet.Commands
             // Validate the lock file version requested
             if (_request.LockFileVersion < 1 || _request.LockFileVersion > LockFileFormat.Version)
             {
-                Debug.Fail($"Lock file version {_request.LockFileVersion} is not supported.");
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(request),
-                    message: nameof(request.LockFileVersion));
+                    message: $"Lock file version {_request.LockFileVersion} is not supported.");
             }
 
             var collectorLoggerHideWarningsAndErrors = request.Project.RestoreSettings.HideWarningsAndErrors
@@ -381,6 +381,7 @@ namespace NuGet.Commands
             telemetry.TelemetryEvent[UsingMicrosoftNETSdk] = _request.Project.RestoreMetadata.UsingMicrosoftNETSdk;
             telemetry.TelemetryEvent[NETSdkVersion] = _request.Project.RestoreSettings.SdkVersion;
             telemetry.TelemetryEvent[IsPackageInstallationTrigger] = !_request.IsRestoreOriginalAction;
+            telemetry.TelemetryEvent[UsesLegacyPackagesDirectory] = !_request.IsLowercasePackagesDirectory;
             _operationId = telemetry.OperationId;
 
             var isCpvmEnabled = _request.Project.RestoreMetadata?.CentralPackageVersionsEnabled ?? false;
@@ -401,16 +402,22 @@ namespace NuGet.Commands
         {
             int pruningEnabledCount = 0;
             int pruningDisabledCount = 0;
-            int pruningDefaultDisabledCount = 0;
             int pruningNotApplicableCount = 0;
+            bool pruningDefault = false;
 
             foreach (var framework in project.TargetFrameworks.NoAllocEnumerate())
             {
                 bool isPruningEnabled = framework.PackagesToPrune.Count > 0;
-                bool isPruningCompatibleNSFramework = StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetStandard) && framework.FrameworkName.Version.Major >= 2;
                 bool isNetCoreAppFramework = StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetCoreApp);
-                bool isNetCoreAppFrameworkWithPruningByDefault = isNetCoreAppFramework && framework.FrameworkName.Version.Major >= 8;
-                bool isFrameworkPruningEnabledByDefault = isNetCoreAppFrameworkWithPruningByDefault || isPruningCompatibleNSFramework;
+                // All .NETCoreApp, .NET Standard >= 2.0 , and .NET Framework >= 4.6.1 projects are compatible with package pruning.
+                bool isPruningCompatibleFramework = isNetCoreAppFramework ||
+                    (StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.NetStandard) &&
+                        framework.FrameworkName.Version.Major >= 2) ||
+                    (project.RestoreMetadata.UsingMicrosoftNETSdk &&
+                        StringComparer.OrdinalIgnoreCase.Equals(framework.FrameworkName.Framework, FrameworkConstants.FrameworkIdentifiers.Net) &&
+                        framework.FrameworkName.Version >= FrameworkConstants.CommonFrameworks.Net461.Version);
+
+                pruningDefault |= isNetCoreAppFramework && framework.FrameworkName.Version.Major >= 10;
 
                 if (isPruningEnabled)
                 {
@@ -418,13 +425,9 @@ namespace NuGet.Commands
                 }
                 else
                 {
-                    if (isFrameworkPruningEnabledByDefault)
+                    if (isPruningCompatibleFramework)
                     {
                         pruningDisabledCount++;
-                    }
-                    else if (isNetCoreAppFramework && !isNetCoreAppFrameworkWithPruningByDefault)
-                    {
-                        pruningDefaultDisabledCount++;
                     }
                     else
                     {
@@ -432,9 +435,10 @@ namespace NuGet.Commands
                     }
                 }
             }
+
+            telemetryEvent[PackagePruningDefaultEnabled] = pruningDefault;
             telemetryEvent[PackagePruningFrameworksEnabledCount] = pruningEnabledCount;
             telemetryEvent[PackagePruningFrameworksDisabledCount] = pruningDisabledCount;
-            telemetryEvent[PackagePruningFrameworksDefaultDisabledCount] = pruningDefaultDisabledCount;
             telemetryEvent[PackagePruningFrameworksUnsupportedCount] = pruningNotApplicableCount;
         }
 
@@ -841,12 +845,7 @@ namespace NuGet.Commands
 
         internal static void AnalyzePruningResults(PackageSpec project, TelemetryEvent telemetryEvent, ILogger logger)
         {
-            bool enablePruningWarnings =
-                SdkAnalysisLevelMinimums.IsEnabled(
-                    project.RestoreMetadata.SdkAnalysisLevel,
-                    project.RestoreMetadata.UsingMicrosoftNETSdk,
-                    SdkAnalysisLevelMinimums.V10_0_100) &&
-                HasFrameworkNewerThanNET10(project);
+            bool enablePruningWarnings = HasFrameworkNewerThanNET10(project);
 
             Dictionary<string, List<string>> prunedDirectPackages = GetPrunableDirectPackages(project);
 
@@ -1413,11 +1412,7 @@ namespace NuGet.Commands
 
             if (string.IsNullOrEmpty(projectLockFilePath))
             {
-                if (_request.ProjectStyle == ProjectStyle.PackageReference)
-                {
-                    projectLockFilePath = Path.Combine(_request.RestoreOutputPath, LockFileFormat.AssetsFileName);
-                }
-                else if (_request.ProjectStyle == ProjectStyle.DotnetCliTool)
+                if (_request.ProjectStyle == ProjectStyle.DotnetCliTool)
                 {
                     var toolName = ToolRestoreUtility.GetToolIdOrNullFromSpec(_request.Project);
                     var lockFileLibrary = ToolRestoreUtility.GetToolTargetLibrary(lockFile, toolName);
@@ -1435,7 +1430,7 @@ namespace NuGet.Commands
                 }
                 else
                 {
-                    projectLockFilePath = Path.Combine(_request.Project.BaseDirectory, LockFileFormat.LockFileName);
+                    projectLockFilePath = Path.Combine(_request.RestoreOutputPath, LockFileFormat.AssetsFileName);
                 }
             }
 
@@ -1642,7 +1637,7 @@ namespace NuGet.Commands
                     checkResults.Add(res);
                     if (res.Success)
                     {
-                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.Name));
+                        await logger.LogAsync(LogLevel.Verbose, string.Format(CultureInfo.CurrentCulture, Strings.Log_PackagesAndProjectsAreCompatible, graph.TargetGraphName));
                     }
                     else
                     {
@@ -1891,6 +1886,11 @@ namespace NuGet.Commands
                 }
                 catch (FatalProtocolException)
                 {
+                    failed = true;
+                }
+                catch (Packaging.InvalidPackageIdException ex)
+                {
+                    _logger.Log(RestoreLogMessage.CreateError(NuGetLogCode.NU1017, ex.Message));
                     failed = true;
                 }
             }

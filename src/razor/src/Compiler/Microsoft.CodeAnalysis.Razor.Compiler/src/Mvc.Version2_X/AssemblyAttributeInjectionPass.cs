@@ -1,10 +1,9 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -30,15 +29,15 @@ public class AssemblyAttributeInjectionPass : IntermediateNodePassBase, IRazorOp
         }
 
         var @class = documentNode.FindPrimaryClass();
-        if (@class == null || string.IsNullOrEmpty(@class.ClassName))
+        if (@class == null || string.IsNullOrEmpty(@class.Name))
         {
             // No class node or it's incomplete. Skip.
             return;
         }
 
-        var generatedTypeName = string.IsNullOrEmpty(@namespace.Content)
-            ? @class.ClassName
-            : $"{@namespace.Content}.{@class.ClassName}";
+        var generatedTypeName = string.IsNullOrEmpty(@namespace.Name)
+            ? @class.Name
+            : $"{@namespace.Name}.{@class.Name}";
 
         // The MVC attributes require a relative path to be specified so that we can make a view engine path.
         // We can't use a rooted path because we don't know what the project root is.
@@ -67,16 +66,12 @@ public class AssemblyAttributeInjectionPass : IntermediateNodePassBase, IRazorOp
         Debug.Assert(index >= 0);
 
         var pageAttribute = new CSharpCodeIntermediateNode();
-        pageAttribute.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = attribute,
-        });
+        pageAttribute.Children.Add(IntermediateNodeFactory.CSharpToken(attribute));
 
         documentNode.Children.Insert(index, pageAttribute);
     }
 
-    private static string MakeVerbatimStringLiteral(string value)
+    private static string MakeVerbatimStringLiteral(string? value)
     {
         if (value == null)
         {
@@ -87,7 +82,8 @@ public class AssemblyAttributeInjectionPass : IntermediateNodePassBase, IRazorOp
         return $"@\"{value}\"";
     }
 
-    private static string ConvertToViewEnginePath(string relativePath)
+    [return: NotNullIfNotNull(nameof(relativePath))]
+    private static string? ConvertToViewEnginePath(string? relativePath)
     {
         if (string.IsNullOrEmpty(relativePath))
         {

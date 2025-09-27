@@ -436,7 +436,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
     {
         var tagHelperClasses = descriptors.Select(descriptor =>
         {
-            var typeName = descriptor.GetTypeName();
+            var typeName = descriptor.TypeName;
             var namespaceSeparatorIndex = typeName.LastIndexOf('.');
             if (namespaceSeparatorIndex >= 0)
             {
@@ -458,7 +458,7 @@ public class CodeGenerationIntegrationTest : IntegrationTestBase
             static string getTagHelperBody(TagHelperDescriptor descriptor)
             {
                 var attributes = descriptor.BoundAttributes.Select(attribute => $$"""
-                    public {{attribute.TypeName}} {{attribute.GetPropertyName()}}
+                    public {{attribute.TypeName}} {{attribute.PropertyName}}
                     {
                         get => throw new System.NotImplementedException();
                         set { }

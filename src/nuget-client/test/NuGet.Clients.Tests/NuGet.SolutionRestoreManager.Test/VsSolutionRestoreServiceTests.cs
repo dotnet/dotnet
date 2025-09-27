@@ -1787,6 +1787,44 @@ namespace NuGet.SolutionRestoreManager.Test
             result.Message.Should().Contain("PrunePackageReference");
         }
 
+        [Fact]
+        public void ToPackageSpec_WithPrunePackageReference_AccountsForDefaults()
+        {
+            // Arrange
+            ProjectNames projectName = new(@"n:\path\to\current\project.csproj", "project", "project.csproj", "project", Guid.NewGuid().ToString());
+
+            var projectRestoreInfo = new TestProjectRestoreInfoBuilder()
+                .WithTargetFrameworkInfo("netstandard2.0", builder =>
+                {
+                    builder
+                    .WithProperty(ProjectBuildProperties.RestorePackagePruningDefault, "false")
+                    .WithItem(ProjectItems.PrunePackageReference, "PackageA", [new("Version", "1.0.0")]);
+                })
+                .WithTargetFrameworkInfo("net10.0", builder =>
+                {
+                    builder
+                    .WithProperty(ProjectBuildProperties.RestorePackagePruningDefault, "true")
+                    .WithItem(ProjectItems.PrunePackageReference, "PackageB", [new("Version", "1.0.0")]);
+                })
+                .Build();
+
+            // Act
+            var actualRestoreSpec = VsSolutionRestoreService.ToPackageSpec(projectName, projectRestoreInfo);
+
+            // Assert
+            actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Should().HaveCount(1);
+            KeyValuePair<string, PrunePackageReference> result = actualRestoreSpec.TargetFrameworks[0].PackagesToPrune.Single();
+            result.Key.Should().Be("PackageA");
+            result.Value.Name.Should().Be("PackageA");
+            result.Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+
+            actualRestoreSpec.TargetFrameworks[1].PackagesToPrune.Should().HaveCount(1);
+            KeyValuePair<string, PrunePackageReference> resultB = actualRestoreSpec.TargetFrameworks[1].PackagesToPrune.Single();
+            resultB.Key.Should().Be("PackageB");
+            resultB.Value.Name.Should().Be("PackageB");
+            resultB.Value.VersionRange.Should().Be(VersionRange.Parse("(, 1.0.0]"));
+        }
+
         private async Task<DependencyGraphSpec> CaptureNominateResultAsync(
             IVsProjectRestoreInfo3 pri,
             Mock<IProjectSystemCache>? cache = null)

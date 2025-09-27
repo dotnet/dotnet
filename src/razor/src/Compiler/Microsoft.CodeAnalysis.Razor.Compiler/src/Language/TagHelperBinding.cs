@@ -68,8 +68,7 @@ internal sealed class TagHelperBinding
             {
                 foreach (var descriptor in descriptors)
                 {
-                    if (!descriptor.Metadata.TryGetValue(TagHelperMetadata.Common.ClassifyAttributesOnly, out var value) ||
-                        !string.Equals(value, bool.TrueString, StringComparison.OrdinalIgnoreCase))
+                    if (!descriptor.ClassifyAttributesOnly)
                     {
                         return false;
                     }

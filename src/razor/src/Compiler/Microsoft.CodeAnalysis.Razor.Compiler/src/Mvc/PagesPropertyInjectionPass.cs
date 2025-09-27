@@ -29,31 +29,25 @@ public class PagesPropertyInjectionPass : IntermediateNodePassBase, IRazorOptimi
 
         var viewDataType = $"global::Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary<{modelType.Content}>";
         var vddProperty = new CSharpCodeIntermediateNode();
-        vddProperty.Children.Add(new IntermediateToken()
-        {
-            Kind = TokenKind.CSharp,
-            Content = nullableEnable(nullableEnabled, $"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData"),
-        });
+        vddProperty.Children.Add(
+            IntermediateNodeFactory.CSharpToken(nullableEnable(nullableEnabled, $"public {viewDataType} ViewData => ({viewDataType})PageContext?.ViewData")));
         @class.Children.Add(vddProperty);
 
         if (codeDocument.CodeGenerationOptions.DesignTime || !razor9OrHigher)
         {
             var modelProperty = new CSharpCodeIntermediateNode();
-            modelProperty.Children.Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = nullableEnable(nullableEnabled, $"public {modelType.Content} Model => ViewData.Model"),
-            });
+            modelProperty.Children.Add(
+                IntermediateNodeFactory.CSharpToken(nullableEnable(nullableEnabled, $"public {modelType.Content} Model => ViewData.Model")));
             @class.Children.Add(modelProperty);
         }
         else
         {
             @class.Children.Add(new PropertyDeclarationIntermediateNode()
             {
-                Modifiers = { "public" },
-                PropertyName = "Model",
-                PropertyType = modelType,
-                PropertyExpression = "ViewData.Model"
+                Modifiers = CommonModifiers.Public,
+                Name = "Model",
+                Type = modelType,
+                ExpressionBody = "ViewData.Model"
             });
         }
 

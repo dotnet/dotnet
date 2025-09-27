@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.Build.Traversal">
 
+  <PropertyGroup>
+    <TargetFramework>$(NetCurrent)</TargetFramework>
+  </PropertyGroup>
+
   <ItemGroup>
     <!-- Microsoft.WindowsDesktop.App shared framework -->
     <ProjectReference Include="src\windowsdesktop\src\sfx\**\*.sfxproj" />
@@ -8,7 +12,17 @@
 
     <!-- Microsoft.Windows.Compatibility nuget meta package -->
     <ProjectReference Include="src\Microsoft.Windows.Compatibility\src\Microsoft.Windows.Compatibility.csproj" />
+  </ItemGroup>
 
+  <!-- Build the stub windowsdesktop targeting pack on non-Windows as its shipping version number gets used in sdk
+       when generating the BundledSdkVersions.props to download windowsdesktop packs on Unix.
+       Don't do this outside of the product build as this repository is fully buildable on Unix outside of a VMR vertical slice. -->
+  <ItemGroup Condition="'$(OS)' != 'Windows_NT' and '$(DotNetBuild)' == 'true'">
+    <ProjectReference Remove="@(ProjectReference)" />
+    <ProjectReference Include="src\windowsdesktop\src\Microsoft.WindowsDesktop.App.Ref.stub.proj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Internal sentil project for transporting a non-stable version. -->
     <ProjectReference Include="src\Microsoft.WindowsDesktop.App.Internal\Microsoft.WindowsDesktop.App.Internal.proj" />
   </ItemGroup>

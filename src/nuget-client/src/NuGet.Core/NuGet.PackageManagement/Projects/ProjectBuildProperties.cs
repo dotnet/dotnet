@@ -63,5 +63,6 @@ namespace NuGet.ProjectManagement
         public const string UsingMicrosoftNETSdk = nameof(UsingMicrosoftNETSdk);
         public const string RestoreUseLegacyDependencyResolver = nameof(RestoreUseLegacyDependencyResolver);
         public const string RestoreEnablePackagePruning = nameof(RestoreEnablePackagePruning);
+        public const string RestorePackagePruningDefault = nameof(RestorePackagePruningDefault);
     }
 }

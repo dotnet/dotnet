@@ -46,6 +46,7 @@
     <SourceBuiltArtifactsTarballName>Private.SourceBuilt.Artifacts</SourceBuiltArtifactsTarballName>
     <SourceBuiltSharedComponentsTarballName>Private.SourceBuilt.SharedComponents</SourceBuiltSharedComponentsTarballName>
     <SourceBuiltPrebuiltsTarballName>Private.SourceBuilt.Prebuilts</SourceBuiltPrebuiltsTarballName>
+    <SourceBuiltSourceArtifactName>dotnet-source</SourceBuiltSourceArtifactName>
     <SourceBuiltSymbolsAllTarballName>dotnet-symbols-all</SourceBuiltSymbolsAllTarballName>
     <SourceBuiltSymbolsSdkTarballName>dotnet-symbols-sdk</SourceBuiltSymbolsSdkTarballName>
 
@@ -65,12 +66,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EnablePoison)' == 'true'">
-    <PrebuiltPoisonMarkerFile>.prebuilt.xml</PrebuiltPoisonMarkerFile>
-    <PrebuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-prebuilt-catalog.xml</PrebuiltPoisonReportDataFile>
-    <PreviouslySourceBuiltPoisonMarkerFile>.previously-source-built.xml</PreviouslySourceBuiltPoisonMarkerFile>
-    <PreviouslySourceBuiltPoisonReportDataFile>$(ArtifactsLogDir)poison-previously-source-built-catalog.xml</PreviouslySourceBuiltPoisonReportDataFile>
-    <SharedComponentPoisonMarkerFile>.shared-component.xml</SharedComponentPoisonMarkerFile>
-    <SharedComponentPoisonReportDataFile>$(ArtifactsLogDir)poison-shared-component-catalog.xml</SharedComponentPoisonReportDataFile>
+    <PoisonMarkerFile>.prebuilt.xml</PoisonMarkerFile>
+    <PoisonReportDataFile>$(ArtifactsLogDir)poison-catalog.xml</PoisonReportDataFile>
     <PoisonedReportFile>$(ArtifactsLogDir)poisoned.txt</PoisonedReportFile>
     <PoisonUsageReportFile>$(ArtifactsLogDir)poison-usage.xml</PoisonUsageReportFile>
   </PropertyGroup>

@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 using Xunit;
 
@@ -19,12 +17,7 @@ public class LiteralRuntimeNodeWriterTest
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3),
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++", new SourceSpan("test.cshtml", 0, 0, 0, 3, 0, 3)));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -55,24 +48,9 @@ i++
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++;",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 0, 0, 0, 4, 0, 4),
-        });
-        builder.Add(new IntermediateToken()
-        {
-            Content = "j++;",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 5, 0, 5, 4, 0, 9),
-        });
-        builder.Add(new IntermediateToken()
-        {
-            Content = "k++;",
-            Kind = TokenKind.CSharp,
-            Source = new SourceSpan("test.cshtml", 10, 0, 10, 4, 0, 14),
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++;", new SourceSpan("test.cshtml", 0, 0, 0, 4, 0, 4)));
+        builder.Add(IntermediateNodeFactory.CSharpToken("j++;", new SourceSpan("test.cshtml", 5, 0, 5, 4, 0, 9)));
+        builder.Add(IntermediateNodeFactory.CSharpToken("k++;", new SourceSpan("test.cshtml", 10, 0, 10, 4, 0, 14)));
 
         // Act
         writer.WriteCSharpExpression(context, node);

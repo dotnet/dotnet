@@ -189,7 +189,7 @@ internal static partial class Extensions
             return null;
         }
 
-        var projects = solution.Projects.Where(project => project.FilePath == projectIdentifier.DocumentUri.ParsedUri.LocalPath).ToImmutableArray();
+        var projects = solution.Projects.WhereAsArray(project => project.FilePath == projectIdentifier.DocumentUri.ParsedUri.LocalPath);
         return !projects.Any()
             ? null
             : FindItemInProjectContext(projects, projectIdentifier, projectIdGetter: (item) => item.Id, defaultGetter: () => projects[0]);
@@ -260,7 +260,7 @@ internal static partial class Extensions
     }
 
     public static ClassifiedTextElement GetClassifiedText(this DefinitionItem definition)
-        => new ClassifiedTextElement(definition.DisplayParts.Select(part => new ClassifiedTextRun(part.Tag.ToClassificationTypeName(), part.Text)));
+        => new(definition.DisplayParts.Select(part => new ClassifiedTextRun(part.Tag.ToClassificationTypeName(), part.Text)));
 
     private static bool TryGetVSCompletionListSetting(ClientCapabilities clientCapabilities, [NotNullWhen(returnValue: true)] out VSInternalCompletionListSetting? completionListSetting)
     {

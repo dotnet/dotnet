@@ -104,8 +104,8 @@ namespace NuGet.Commands.Restore.Utility
                 GetCentralPackageManagementSettings(outerBuild, projectStyle);
 
             RestoreAuditProperties? auditProperties = GetRestoreAuditProperties(project);
-
-            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(project, isCentralPackageManagementEnabled);
+            bool isPruningEnabledGlobally = GetPackagePruningDefault(project);
+            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(project, isCentralPackageManagementEnabled, isPruningEnabledGlobally);
 
             ProjectRestoreMetadata restoreMetadata;
 
@@ -174,7 +174,6 @@ namespace NuGet.Commands.Restore.Utility
                     GetProjectRestoreStyle(
                         restoreProjectStyle: projectStyleOrNull,
                         hasPackageReferenceItems: hasPackageReferenceItems,
-                        projectJsonPath: project.OuterBuild.GetProperty("_CurrentProjectJsonPath"),
                         projectDirectory: project.Directory,
                         projectName: project.OuterBuild.GetProperty("MSBuildProjectName"));
 
@@ -187,8 +186,9 @@ namespace NuGet.Commands.Restore.Utility
         /// </summary>
         /// <param name="project">An <see cref="IReadOnlyDictionary{NuGetFramework,ProjectInstance} "/> containing the projects by their target framework.</param>
         /// <param name="isCpvmEnabled">A flag that is true if the Central Package Management was enabled.</param>
+        /// <param name="isPruningEnabledGlobally">A flag that tells us the default for pruning, if the pruning property is not set.</param>
         /// <returns>A <see cref="List{TargetFrameworkInformation}" /> containing the target framework information for the specified project.</returns>
-        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IProject project, bool isCpvmEnabled)
+        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IProject project, bool isCpvmEnabled, bool isPruningEnabledGlobally)
         {
             var targetFrameworkInfos = new List<TargetFrameworkInformation>(project.TargetFrameworks.Count);
 
@@ -220,7 +220,11 @@ namespace NuGet.Commands.Restore.Utility
                 }
 
                 var dependencies = GetPackageReferences(msBuildProjectInstance, isCpvmEnabled, centralPackageVersions);
-                var prunedReferences = msBuildProjectInstance.IsPropertyTrue("RestoreEnablePackagePruning") ? GetPrunePackageReferences(msBuildProjectInstance) : [];
+
+                bool? restoreEnablePackagePruning = MSBuildStringUtility.GetBooleanOrNull(msBuildProjectInstance.GetProperty("RestoreEnablePackagePruning"));
+                bool isPackagePruningEnabled = restoreEnablePackagePruning == null ? isPruningEnabledGlobally : restoreEnablePackagePruning == true;
+
+                var prunedReferences = isPackagePruningEnabled ? GetPrunePackageReferences(msBuildProjectInstance) : [];
 
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {
@@ -241,6 +245,18 @@ namespace NuGet.Commands.Restore.Utility
             }
 
             return targetFrameworkInfos;
+        }
+
+        private static bool GetPackagePruningDefault(IProject project)
+        {
+            foreach (var item in project.TargetFrameworks.NoAllocEnumerate())
+            {
+                if (item.Value.IsPropertyTrue("RestorePackagePruningDefault"))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static RestoreAuditProperties? GetRestoreAuditProperties(IProject project)
@@ -300,13 +316,12 @@ namespace NuGet.Commands.Restore.Utility
         /// </summary>
         /// <param name="restoreProjectStyle">An optional user supplied restore style.</param>
         /// <param name="hasPackageReferenceItems">A <see cref="bool"/> indicating whether or not the project has any PackageReference items.</param>
-        /// <param name="projectJsonPath">An optional path to the project's project.json file.</param>
         /// <param name="projectDirectory">The full path to the project directory.</param>
         /// <param name="projectName">The name of the project file.</param>
         /// <returns>A <see cref="Tuple{ProjectStyle, Boolean}"/> containing the project style and a value indicating if the project is using a style that is compatible with PackageReference.
         /// If the value of <paramref name="restoreProjectStyle"/> is not empty and could not be parsed, <code>null</code> is returned.</returns>
         private static (ProjectStyle ProjectStyle, string? PackagesConfigFilePath)
-            GetProjectRestoreStyle(ProjectStyle? restoreProjectStyle, bool hasPackageReferenceItems, string projectJsonPath, string projectDirectory, string projectName)
+            GetProjectRestoreStyle(ProjectStyle? restoreProjectStyle, bool hasPackageReferenceItems, string projectDirectory, string projectName)
         {
             ProjectStyle projectStyle;
             string? packagesConfigFilePath = null;
@@ -320,11 +335,6 @@ namespace NuGet.Commands.Restore.Utility
             {
                 // If any PackageReferences exist treat it as PackageReference. This has priority over project.json.
                 projectStyle = ProjectStyle.PackageReference;
-            }
-            else if (!string.IsNullOrWhiteSpace(projectJsonPath))
-            {
-                // If this is not a PackageReference project check if project.json or projectName.project.json exists.
-                projectStyle = ProjectStyle.ProjectJson;
             }
             else if (ProjectHasPackagesConfigFile(projectDirectory, projectName, out packagesConfigFilePath))
             {

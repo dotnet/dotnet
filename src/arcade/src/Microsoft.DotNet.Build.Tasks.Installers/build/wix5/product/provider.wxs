@@ -1,0 +1,11 @@
+﻿<Wix 
+  xmlns="http://wixtoolset.org/schemas/v4/wxs" 
+  xmlns:dep="http://wixtoolset.org/schemas/v4/wxs/dependency">
+
+  <?include "..\variables.wxi" ?>
+  <Fragment>
+    <Component Id="$(var.DependencyKeyId)" Directory="TARGETDIR" Bitness="always32">
+      <Provides Key="$(var.DependencyKey)" dep:Check="yes" />
+    </Component>
+  </Fragment>
+</Wix>

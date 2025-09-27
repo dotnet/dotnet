@@ -9,15 +9,20 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
+    <!-- This needs to be executed first as subsequent projects may introduce binaries into the repo
+         which should not be considered as part of the binary scan. -->
+    <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
+                      Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'" />
+    
+    <ProjectReference Include="$(RepositoryEngineeringDir)clean-shared-components.proj"
+                      Condition="'$(DotNetBuildSourceOnly)' == 'true'" />
+    
     <!-- Pre-build: Init tools-->
     <ProjectReference Include="$(RepositoryEngineeringDir)init-cross-build.proj"
                       Condition="'$(BuildOS)' != 'windows' and '$(CrossBuild)' == 'true' and '$(ROOTFS_DIR)' == ''"
                       BuildInParallel="true" />
     <ProjectReference Include="$(RepositoryEngineeringDir)init-poison.proj"
                       Condition="'$(EnablePoison)' == 'true'"
-                      BuildInParallel="true" />
-    <ProjectReference Include="$(RepositoryEngineeringDir)init-detect-binaries.proj"
-                      Condition="'$(BuildOS)' != 'windows' and '$(SkipDetectBinaries)' != 'true'"
                       BuildInParallel="true" />
 
     <ProjectReference Include="$(RepoProjectsDir)dotnet.proj" />

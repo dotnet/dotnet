@@ -45,7 +45,7 @@
       </trans-unit>
       <trans-unit id="NothingToRestore">
         <source>All packages are already installed and there is nothing to restore.</source>
-        <target state="translated">Všechny balíčky jsou již nainstalovány a nejsou k dispozici žádné položky k obnovení.</target>
+        <target state="translated">Všechny balíčky jsou už nainstalované a nejsou k dispozici žádné položky k obnovení.</target>
         <note />
       </trans-unit>
       <trans-unit id="Operation_Finished">
@@ -84,7 +84,7 @@ Chybějící balíčky: {0}</target>
       </trans-unit>
       <trans-unit id="PackageRestoreFinished">
         <source>NuGet package restore finished.</source>
-        <target state="translated">Obnovení balíčku NuGet bylo dokončeno.</target>
+        <target state="translated">Obnovení balíčku NuGet se dokončilo.</target>
         <note />
       </trans-unit>
       <trans-unit id="PackageRestoreFinishedForProject">
@@ -121,7 +121,7 @@ Když nechcete, aby aplikace NuGet obnovovala balíčky během vytváření sest
       </trans-unit>
       <trans-unit id="RestoringPackages">
         <source>Restoring NuGet packages...</source>
-        <target state="translated">Obnovování balíčků NuGet...</target>
+        <target state="translated">Obnovují se balíčky NuGet...</target>
         <note />
       </trans-unit>
       <trans-unit id="SolutionIsNotSaved">

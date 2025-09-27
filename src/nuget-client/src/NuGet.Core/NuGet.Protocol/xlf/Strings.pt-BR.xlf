@@ -74,6 +74,11 @@
         <note>0 - NuGet Package source url
 1- resource endpoint url</note>
       </trans-unit>
+      <trans-unit id="Error_Invalid_package_id">
+        <source>Invalid package id : `{0}`.</source>
+        <target state="translated">ID de pacote inválido: `{0}`.</target>
+        <note>0 - package id.</note>
+      </trans-unit>
       <trans-unit id="Http_CredentialsForForbidden">
         <source>The server responded with HTTP '403 Forbidden' when accessing the source '{0}'. This suggests that the server has authenticated your identity but has not permitted you to access the requested resource. Provide credentials that have permissions to view this resource.</source>
         <target state="translated">O servidor respondeu com HTTP '403 Proibido' ao acessar a origem '{0}'. Isso sugere que o servidor autenticou sua identidade, mas não permitiu que você acessasse o recurso solicitado. Forneça credenciais que tenham permissões para exibir esse recurso.</target>
@@ -487,7 +492,7 @@ The "ms" should be localized to the abbreviation for milliseconds.</note>
       </trans-unit>
       <trans-unit id="Protocol_duplicateUri">
         <source>'{0}' is a duplicate url which has already been downloaded and will lead to a cyclic dependency. Please correct from server.</source>
-        <target state="translated">'{0}' é uma URL duplicada que já foi baixada e levará a uma dependência cíclica. Corrija-a do servidor.</target>
+        <target state="translated">'{0}' é uma url duplicada que já foi baixada e levará a uma dependência cíclica. Corrija-a do servidor.</target>
         <note />
       </trans-unit>
       <trans-unit id="PushCommandPackagePushed">

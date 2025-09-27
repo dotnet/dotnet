@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+#nullable enable
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -1662,7 +1663,7 @@ namespace NuGet.CommandLine.Test
         [InlineData("Highest", "2.0.0")]
         [InlineData("HighestMinor", "1.2.0")]
         [InlineData("HighestPatch", "1.0.1")]
-        public async Task UpdateCommand_DependencyResolution_Success(string dependencyVersion, string expectedVersion)
+        public async Task UpdateCommand_DependencyResolution_Success(string? dependencyVersion, string expectedVersion)
         {
             using (var pathContext = new SimpleTestPathContext())
             {
@@ -1713,7 +1714,7 @@ namespace NuGet.CommandLine.Test
                         testNuGetProjectContext,
                         CancellationToken.None);
                 }
-                string[] args;
+                string?[] args;
                 //Test the case where the code is not provided to ensure it works as expected. (Highest by default)
                 if (string.IsNullOrEmpty(dependencyVersion))
                 {

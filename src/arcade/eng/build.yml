@@ -1,0 +1,73 @@
+parameters:
+- name: oneLocEnabled
+  default: false
+  type: boolean
+- name: microbuildUseESRP
+  default: false
+  type: boolean
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - ${{ if eq(parameters.oneLocEnabled, true) }}:
+    - template: /eng/common/templates-official/job/onelocbuild.yml@self
+      parameters:
+        MirrorRepo: arcade
+        LclSource: lclFilesFromPackage
+        LclPackageId: 'LCL-JUNO-PROD-ARCADE'
+  - template: /eng/common/templates-official/jobs/jobs.yml@self
+    parameters:
+      artifacts:
+        publish:
+          artifacts: true
+          logs: true
+          manifests: true
+      enableMicrobuild: true
+      microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+      enableSourceIndex: true
+      enableSourceBuild: true
+      workspace:
+        clean: all
+      jobs:
+      - job: Windows_NT
+        timeoutInMinutes: 90
+        strategy:
+          matrix:
+            Build_Release:
+              _BuildConfig: Release
+        preSteps:
+        - checkout: self
+          fetchDepth: 0
+          clean: true
+        steps:
+        - script: eng\common\cibuild.cmd
+            -configuration $(_BuildConfig)
+            -prepareMachine
+            $(_InternalBuildArgs)
+            /p:Test=false
+          displayName: Windows Build / Publish
+
+- stage: ValidateSdk
+  displayName: Validate Arcade SDK
+  dependsOn: build
+  jobs:
+  - template: /eng/validate-sdk.yml@self
+    parameters:
+      microbuildUseESRP: ${{ parameters.microbuildUseESRP }}
+      buildArgs: -configuration $(_BuildConfig)
+        -prepareMachine
+        $(_InternalBuildArgs)
+        /p:Test=false
+
+- template: /eng/common/templates-official/post-build/post-build.yml@self
+  parameters:
+    publishingInfraVersion: 3
+    # signing validation will not run, even if the below value is 'true', if the 'PostBuildSign' variable is set to 'true'
+    enableSigningValidation: false
+    # Sourcelink validation isn't passing for Arcade due to some regressions. This should be
+    # enabled back once this issue is resolved: https://github.com/dotnet/arcade/issues/2912
+    enableSourceLinkValidation: false
+    publishDependsOn:
+    - Validate
+    - ValidateSdk

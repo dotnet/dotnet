@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NuGet.Commands.Restore;
 using NuGet.Commands.Restore.Utility;
@@ -40,7 +41,7 @@ public class TestPackageSpecFactory
         _fullPath = string.IsNullOrWhiteSpace(fullPath) ? throw new ArgumentException("Must not be null or whitespace", nameof(fullPath)) : fullPath;
         _directory = string.IsNullOrWhiteSpace(directory) ? throw new ArgumentNullException("Must not be null or whitespace", nameof(directory)) : directory;
 
-        var tfBuilder = new TargetFrameworkBuilder();
+        var tfBuilder = new TargetFrameworkBuilder(_directory);
         builder(tfBuilder);
 
         TestTargetFramework outerBuild = tfBuilder.ToTargetFramework();
@@ -78,7 +79,7 @@ public class TestPackageSpecFactory
             throw new ArgumentNullException(nameof(builder));
         }
 
-        var tfBuilder = new TargetFrameworkBuilder();
+        var tfBuilder = new TargetFrameworkBuilder(_directory);
         builder(tfBuilder);
 
         ITargetFramework innerBuild = tfBuilder.ToTargetFramework(_outerBuild);
@@ -179,7 +180,13 @@ public class TestPackageSpecFactory
     public record TargetFrameworkBuilder
     {
         private readonly Dictionary<string, string> _properties = new(StringComparer.OrdinalIgnoreCase);
+        private readonly string _projectDirectory;
         private Dictionary<string, List<IItem>>? _items;
+
+        public TargetFrameworkBuilder(string projectDirectory)
+        {
+            _projectDirectory = projectDirectory;
+        }
 
         public TargetFrameworkBuilder WithProperty(string name, string value)
         {
@@ -207,10 +214,22 @@ public class TestPackageSpecFactory
             if (string.IsNullOrWhiteSpace(itemType)) { throw new ArgumentNullException(nameof(itemType)); }
             if (string.IsNullOrWhiteSpace(identity)) { throw new ArgumentNullException(nameof(identity)); }
 
+            Dictionary<string, string> itemMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kvp in metadata ?? [])
+            {
+                itemMetadata[kvp.Key] = kvp.Value;
+            }
+
+            if (itemType.Equals(ProjectItems.ProjectReference, StringComparison.OrdinalIgnoreCase))
+            {
+                string fullPath = Path.GetFullPath(Path.Combine(_projectDirectory, identity));
+                TryAdd(itemMetadata, "FullPath", fullPath);
+            }
+
             TestItem item = new TestItem
             {
                 Identity = identity,
-                Metadata = metadata?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, StringComparer.OrdinalIgnoreCase) ?? []
+                Metadata = itemMetadata
             };
 
             if (_items is null)
@@ -226,6 +245,14 @@ public class TestPackageSpecFactory
             itemList.Add(item);
 
             return this;
+
+            void TryAdd(Dictionary<string, string> dictionary, string key, string value)
+            {
+                if (!dictionary.ContainsKey(key))
+                {
+                    dictionary[key] = value;
+                }
+            }
         }
 
         internal TestTargetFramework ToTargetFramework(TestTargetFramework outerBuild)

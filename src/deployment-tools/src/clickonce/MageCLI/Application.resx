@@ -156,6 +156,7 @@ Options
   -IncludeProviderURL &lt;true|false&gt;  -ip
   -Install &lt;true|false&gt;             -i 
   -KeyContainer &lt;name&gt;              -kc
+  -MapFileExtensions &lt;true|false&gt;   -mfe
   -MinVersion &lt;version #|none&gt;      -mv
   -Name &lt;name&gt;		            -n
   -Password &lt;password&gt;	            -pwd
@@ -280,6 +281,13 @@ Options:
       Example:
         -KeyContainer name -CryptoProvider "Microsoft Enhanced Cryptographic Provider v1.0"
 
+  -MapFileExtensions &lt;true|false&gt; -mfe
+      Specifies whether or not the ".deploy" file extension mapping is used.
+      If this flag is true then every application file is published with a
+      ".deploy" file extension. This option is useful for web server security
+      to limit the number of file extensions that need to be unblocked to
+      enable ClickOnce application deployment. The default is false.
+
   -MinVersion &lt;version #|none&gt;   -mv
       Specifies whether the manifest being generated specifies a minimum version.
       Must be of the form "0.0.0.0".  Specifying "none" removes this from the manifest.
@@ -403,6 +411,9 @@ Options:
   </data>
   <data name="InvalidInstall" xml:space="preserve">
     <value>The -Install option must be "true", "false", "t", or "f" - "{0}"</value>
+  </data>
+  <data name="InvalidMapFileExtensions" xml:space="preserve">
+    <value>The -MapFileExtensions option must be "true", "false", "t", or "f" - "{0}"</value>
   </data>
   <data name="InvalidKeyFile" xml:space="preserve">
     <value>Key file is not of proper format - "{0}"</value>
