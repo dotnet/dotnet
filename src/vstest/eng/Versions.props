@@ -54,7 +54,7 @@
       Make sure you are taking a version from a release branch (rel/d*) in VS. Otherwise there won't be symbols for the dlls in package,
       a and it will create a symcheck bug on re-insertion into VS.
     -->
-    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>18.0.0-preview-1-10811-208</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
+    <MicrosoftVisualStudioDiagnosticsUtilitiesVersion>18.0.0-preview-1-10830-229</MicrosoftVisualStudioDiagnosticsUtilitiesVersion>
     <MicrosoftVisualStudioEnterpriseAspNetHelper>$(MicrosoftVisualStudioDiagnosticsUtilitiesVersion)</MicrosoftVisualStudioEnterpriseAspNetHelper>
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
