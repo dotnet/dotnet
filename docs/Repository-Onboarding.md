@@ -1,15 +1,14 @@
 # VMR Repository Onboarding Guide
 
-This document provides a step-by-step guide for onboarding new repositories into the VMR (Virtual Monolithic Repository).
+This document provides a step-by-step guide for onboarding repositories into the VMR (Virtual Monolithic Repository).
 For background on VMR concepts and architecture, see [VMR Design and Operation](./VMR-Design-And-Operation.md).
 
 ## Prerequisites
 
 Before onboarding a repository to the VMR, ensure the following are met:
 
-
 - Repository is a dependency of the .NET product (e.g. a dependency of the SDK)
-- Repository is onboarded to the [Arcade SDK](https://github.com/dotnet/arcade/blob/main/Documentation/StartHere.md)
+- Repository is onboarded to the [Arcade SDK](https://github.com/dotnet/arcade/blob/main/Documentation/StartHere.md) and its builds are registered in [BAR](https://github.com/dotnet/arcade-services/blob/main/docs/Darc.md#locating-the-bar-build-id-for-a-build).
   - If not, see if it can be added via an [external source-build-reference-package](https://github.com/dotnet/source-build-reference-packages/blob/main/README.md#external)
 - Repository is compatible with [source build](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/README.md)
 - Open an [issue](https://github.com/dotnet/dotnet/issues/new/choose) tracking this work and mention [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction)
@@ -69,5 +68,5 @@ Consider enabling [repo level VMR PR validation](https://github.com/dotnet/arcad
 
 ## Getting Help
 
-- Utilize the issue created in [Repository Requirements](#repository-requirements) to discuss any issues encountered.
+- Utilize the issue created in [Repository Requirements](#prerequisites) to discuss any issues encountered.
 - For source build specific issues mention [@dotnet/source-build](https://github.com/orgs/dotnet/teams/source-build) in your issue.
