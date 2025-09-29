@@ -37,7 +37,7 @@ If the code flow PR is green, the repo complies with the binary policy.
 #### Step 2b: Validate OSS Compliant Licenses
 
 The VMR has restrictions on allowed licenses.
-Before the code flow PR is merged, queue a run of the [license scan pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1301&_a=summary) (internal Microsoft link) to validate the repo complies with the [license policy](./VMR-Permissible-Sources.md#license-policy).
+Before the code flow PR is merged, queue a run of the [license scan pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1490) (internal Microsoft link) to validate the repo complies with the [license policy](./VMR-Permissible-Sources.md#license-policy).
 
 ### Step 3: Create Repository Project File
 
