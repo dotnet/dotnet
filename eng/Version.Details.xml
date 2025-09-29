@@ -14,9 +14,9 @@
       <Uri>https://github.com/dotnet/arcade-services</Uri>
       <Sha>4aa8e8c35aaf3cbdfc387d28af3366fcd9125bc8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.100-rc.2.25475.109">
+    <Dependency Name="Microsoft.NET.Sdk" Version="10.0.100-rc.2.25474.113">
       <Uri>https://github.com/dotnet/dotnet</Uri>
-      <Sha>195fc667648537b4d2d20690568ba8d790599bf7</Sha>
+      <Sha>8d0fbcbf4ab05899f3f39bc9ffc8369d67b7c0a1</Sha>
     </Dependency>
   </ToolsetDependencies>
 </Dependencies>
