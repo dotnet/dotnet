@@ -24,7 +24,7 @@ For detailed configuration options, see [Repository Source Mappings](./VMR-Full-
 ### Step 2: Define the Darc Code Flow Subscriptions
 
 Define the appropriate Darc [code flow subscriptions](./Codeflow-PRs.md).
-After defined manually trigger the backflow subscription via [Maestro](https://maestro.dot.net)
+After defined manually trigger the forward flow subscription via `darc` or [Maestro](https://maestro.dot.net/subscriptions).
 
 ### Step 3: Create Repository Project File
 
