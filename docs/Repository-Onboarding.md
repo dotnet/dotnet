@@ -7,7 +7,6 @@ For background on VMR concepts and architecture, see [VMR Design and Operation](
 
 Before onboarding a repository to the VMR, ensure the following are met:
 
-### Repository Requirements
 
 - Repository is a dependency of the .NET product (e.g. a dependency of the SDK)
 - Repository is onboarded to the [Arcade SDK](https://github.com/dotnet/arcade/blob/main/Documentation/StartHere.md)
