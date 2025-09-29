@@ -10,7 +10,7 @@ Before onboarding a repository to the VMR, ensure the following are met:
 ### Repository Requirements
 
 - Repository is a dependency of the .NET product (e.g. a dependency of the SDK)
-- Repository is onboard to the [Arcade SDK](https://github.com/dotnet/arcade/blob/master/Documentation/StartHere.md)
+- Repository is onboarded to the [Arcade SDK](https://github.com/dotnet/arcade/blob/main/Documentation/StartHere.md)
   - If not, see if it can be added via an [external source-build-reference-package](https://github.com/dotnet/source-build-reference-packages/blob/main/README.md#external)
 - Repository is compatible with [source build](https://github.com/dotnet/source-build/blob/main/Documentation/sourcebuild-in-repos/README.md)
 - Open an [issue](https://github.com/dotnet/dotnet/issues/new/choose) tracking this work and mention [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction)
