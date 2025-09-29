@@ -24,6 +24,20 @@ For detailed configuration options, see [Repository Source Mappings](./VMR-Full-
 
 Define the appropriate Darc [code flow subscriptions](./Codeflow-PRs.md).
 After defined manually trigger the forward flow subscription via `darc` or [Maestro](https://maestro.dot.net/subscriptions).
+This will open a [VMR PR](https://github.com/dotnet/dotnet/pulls?q=is%3Apr+is%3Aopen+%22Source+code+updates%22) that brings in the repo's source code.
+
+Before merging, ensure the binary and license policies are satisfied:
+
+#### Step 2a: Ensure no Checked in Binaries
+
+The VMR has restrictions on checked-in binaries.
+PR and CI validation exists to ensure the [binary policy](./VMR-Permissible-Sources.md#binary-policy) is satisfied.
+If the code flow PR is green, the repo complies with the binary policy.
+
+#### Step 2b: Validate OSS Compliant Licenses
+
+The VMR has restrictions on allowed licenses.
+Before the code flow PR is merged, queue a run of the [license scan pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1301&_a=summary) (internal Microsoft link) to validate the repo complies with the [license policy](./VMR-Permissible-Sources.md#license-policy).
 
 ### Step 3: Create Repository Project File
 
@@ -43,17 +57,6 @@ Validate the assets produced from the build by checking the `/artifacts` directo
 
 Open a PR which will trigger the PR validation.
 Address any issues that may be surfaced.
-
-#### Step 5a: Resolve Source Build Prebuilts
-
-The source build legs that run as part of PR validation may surface [prebuilts](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md#what-is-a-prebuilt).
-These will need to be [eliminated](https://github.com/dotnet/source-build/blob/main/Documentation/eliminating-pre-builts.md#eliminating-pre-builts) before the PR can be merged.
-
-#### Step 5b: Handle License and Binary Validation
-
-The VMR has restrictions on allowed licenses and checked-in binaries.
-PR and CI validation exists to ensure the policies are satisfied.
-For policy details, see [VMR Permissible Sources](./VMR-Permissible-Sources.md).
 
 ### Step 6: Validate
 
