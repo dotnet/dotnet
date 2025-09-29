@@ -22,8 +22,7 @@ internal static class NodeAssert
         var actual = new StringBuilder();
         for (var i = 0; i < attributeValueNode.Children.Count; i++)
         {
-            var token = Assert.IsAssignableFrom<IntermediateToken>(attributeValueNode.Children[i]);
-            Assert.Equal(TokenKind.Html, token.Kind);
+            var token = Assert.IsAssignableFrom<HtmlIntermediateToken>(attributeValueNode.Children[i]);
             actual.Append(token.Content);
         }
 
@@ -47,8 +46,7 @@ internal static class NodeAssert
         var actual = new StringBuilder();
         for (var i = 0; i < contentNode.Children.Count; i++)
         {
-            var token = Assert.IsAssignableFrom<IntermediateToken>(contentNode.Children[i]);
-            Assert.Equal(TokenKind.Html, token.Kind);
+            var token = Assert.IsAssignableFrom<HtmlIntermediateToken>(contentNode.Children[i]);
             actual.Append(token.Content);
         }
 
@@ -73,8 +71,7 @@ internal static class NodeAssert
         var actual = new StringBuilder();
         for (var i = 0; i < attributeValueNode.Children.Count; i++)
         {
-            var token = Assert.IsAssignableFrom<IntermediateToken>(attributeValueNode.Children[i]);
-            Assert.Equal(TokenKind.CSharp, token.Kind);
+            var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(attributeValueNode.Children[i]);
             actual.Append(token.Content);
         }
 
@@ -111,8 +108,7 @@ internal static class NodeAssert
         var contentNode = Assert.IsType<HtmlContentIntermediateNode>(node);
         for (var i = 0; i < contentNode.Children.Count; i++)
         {
-            var token = Assert.IsAssignableFrom<IntermediateToken>(contentNode.Children[i]);
-            Assert.Equal(TokenKind.Html, token.Kind);
+            var token = Assert.IsAssignableFrom<HtmlIntermediateToken>(contentNode.Children[i]);
             Assert.True(string.IsNullOrWhiteSpace(token.Content));
         }
 

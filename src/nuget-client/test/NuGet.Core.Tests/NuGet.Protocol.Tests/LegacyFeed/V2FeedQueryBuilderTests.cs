@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using FluentAssertions;
+using NuGet.Packaging;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
 using NuGet.Versioning;
@@ -217,16 +219,14 @@ namespace NuGet.Protocol.Tests
         }
 
         [Fact]
-        public void BuildFindPackagesByIdUri_EscapesId()
+        public void BuildFindPackagesByIdUri_InvalidPackageId_ThrowsAnException()
         {
             // Arrange
             var target = new V2FeedQueryBuilder();
 
-            // Act
-            var actual = target.BuildFindPackagesByIdUri("foo! bar/ baz?");
-
-            // Assert
-            Assert.Equal("/FindPackagesById()?id='foo%21%20bar%2F%20baz%3F'&semVerLevel=2.0.0", actual);
+            // Act & Assert
+            var exception = Assert.Throws<InvalidPackageIdException>(() => target.BuildFindPackagesByIdUri("../contoso"));
+            exception.Message.Should().Contain(string.Format(Strings.Error_Invalid_package_id, "../contoso"));
         }
 
         [Fact]
@@ -264,6 +264,18 @@ namespace NuGet.Protocol.Tests
 
             // Assert
             Assert.Equal("/Packages(Id='Newtonsoft.Json',Version='9.0.1-BETA2')", actual);
+        }
+
+        [Fact]
+        public void BuildGetPackageUri_InvalidPackageId_Throws()
+        {
+            // Arrange
+            var target = new V2FeedQueryBuilder();
+            var package = new PackageIdentity("../contoso", NuGetVersion.Parse("9.0.01-BETA2"));
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidPackageIdException>(() => target.BuildGetPackageUri(package));
+            exception.Message.Should().Contain("Invalid package id : `../contoso`");
         }
 
         [Fact]

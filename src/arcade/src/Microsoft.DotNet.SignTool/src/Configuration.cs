@@ -308,6 +308,9 @@ namespace Microsoft.DotNet.SignTool
             PEInfo peInfo = null;
             SignedFileContentKey signedFileContentKey = new SignedFileContentKey(file.ContentHash, file.FileName);
 
+            // Detect executable type for matching FileSignInfo entries
+            ExecutableType executableType = ContentUtil.GetExecutableType(file.FullPath);
+
             // First check for zero length files. These occasionally occur in python and
             // cannot be signed.
             if (file.ContentHash == ContentUtil.EmptyFileContentHash)
@@ -417,6 +420,7 @@ namespace Microsoft.DotNet.SignTool
                 matchedNameTokenFramework = _fileSignInfo.TryGetValue(
                     new ExplicitCertificateKey(file.FileName, peInfo.PublicKeyToken, peInfo.TargetFramework, _hashToCollisionIdMap[signedFileContentKey]),
                     out explicitCertificateName);
+                
                 matchedNameToken = !matchedNameTokenFramework && _fileSignInfo.TryGetValue(
                     new ExplicitCertificateKey(file.FileName, peInfo.PublicKeyToken, collisionPriorityId: _hashToCollisionIdMap[signedFileContentKey]),
                     out explicitCertificateName);
@@ -452,8 +456,20 @@ namespace Microsoft.DotNet.SignTool
             // We didn't find any specific information for PE files using PKT + TargetFramework
             if (explicitCertificateName == null)
             {
-                matchedName = _fileSignInfo.TryGetValue(new ExplicitCertificateKey(file.FileName,
-                    collisionPriorityId: _hashToCollisionIdMap[signedFileContentKey]), out explicitCertificateName);
+                // First try with ExecutableType
+                var matchedNameAndExecutableType = _fileSignInfo.TryGetValue(new ExplicitCertificateKey(file.FileName,
+                    collisionPriorityId: _hashToCollisionIdMap[signedFileContentKey], executableType: executableType), out explicitCertificateName);
+                
+                // If no match with ExecutableType, try without it for backward compatibility
+                if (!matchedNameAndExecutableType)
+                {
+                    matchedName = _fileSignInfo.TryGetValue(new ExplicitCertificateKey(file.FileName,
+                        collisionPriorityId: _hashToCollisionIdMap[signedFileContentKey]), out explicitCertificateName);
+                }
+                else
+                {
+                    matchedName = matchedNameAndExecutableType;
+                }
             }
 
             // If has overriding info, is it for ignoring the file?

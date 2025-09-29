@@ -95,7 +95,7 @@ internal class DirectiveAttributeParameterCompletionItemProvider : DirectiveAttr
                             attributeCompletions[parameterDescriptor.Name] = attributeDescriptions;
                         }
 
-                        var tagHelperTypeName = descriptor.GetTypeName();
+                        var tagHelperTypeName = descriptor.TypeName;
                         var descriptionInfo = BoundAttributeDescriptionInfo.From(parameterDescriptor, tagHelperTypeName);
                         attributeDescriptions.Add(descriptionInfo);
                     }

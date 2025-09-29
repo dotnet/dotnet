@@ -152,6 +152,12 @@ namespace Microsoft.DotNet.SignTool
 
         public override SigningStatus VerifySignedNuGet(string filePath)
         {
+            // The package won't verify by design when doing test signing, but pretend it is.
+            if (TestSign)
+            {
+                return SigningStatus.Signed;
+            }
+
             return VerifySignatures.IsSignedNupkg(filePath);
         }
 

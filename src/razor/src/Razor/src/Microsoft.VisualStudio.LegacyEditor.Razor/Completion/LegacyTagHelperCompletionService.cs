@@ -329,7 +329,7 @@ internal sealed class LegacyTagHelperCompletionService : ITagHelperCompletionSer
 
         foreach (var descriptor in possibleChildDescriptors)
         {
-            if (descriptor.IsComponentFullyQualifiedNameMatch)
+            if (descriptor.IsFullyQualifiedNameMatch)
             {
                 fullyQualifiedTagHelpers.Add(descriptor);
             }

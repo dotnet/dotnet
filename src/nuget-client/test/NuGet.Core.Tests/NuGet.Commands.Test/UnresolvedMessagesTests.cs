@@ -371,12 +371,6 @@ namespace NuGet.Commands.Test
         }
 
         [Fact]
-        public void GivenANullRangeVerifyIsPrereleaseAllowedFalse()
-        {
-            UnresolvedMessages.IsPrereleaseAllowed(null).Should().BeFalse();
-        }
-
-        [Fact]
         public void GivenAPreRelRangeAndAPreRelVersionInRangeVerifyHasPrereleaseVersionsOnlyTrue()
         {
             var range = VersionRange.Parse("( , 2.0.0-alpha)");

@@ -25,7 +25,7 @@ stages:
         azureSubscription: "Darc: Maestro Production"
         scriptType: ps
         scriptLocation: scriptPath
-        scriptPath: $(Build.SourcesDirectory)/eng/publishing/v3/validate-and-locate-build.ps1
+        scriptPath: $(System.DefaultWorkingDirectory)/eng/publishing/v3/validate-and-locate-build.ps1
         arguments: >
           -BuildId ${{ parameters.BARBuildId }}
           -PromoteToChannelIds ${{ parameters.PromoteToChannelIds }}
@@ -102,7 +102,7 @@ stages:
     - task: PowerShell@2
       displayName: Enable cross-org publishing
       inputs:
-        filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1
+        filePath: $(System.DefaultWorkingDirectory)/eng/common/enable-cross-org-publishing.ps1
         arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw)
 
     - task: AzureCLI@2
@@ -136,9 +136,9 @@ stages:
         azureSubscription: maestro-build-promotion
         scriptType: ps
         scriptLocation: scriptPath
-        scriptPath: $(Build.SourcesDirectory)/eng/common/sdk-task.ps1
+        scriptPath: $(System.DefaultWorkingDirectory)/eng/common/sdk-task.ps1
         arguments: >
-          -task PublishArtifactsInManifest -restore -msbuildEngine dotnet
+          -task PublishArtifactsInManifest -restore -msbuildEngine dotnet -noWarnAsError
           /p:PublishingInfraVersion=3
           /p:BARBuildId=${{ parameters.BARBuildId }}
           /p:TargetChannels='${{ parameters.PromoteToChannelIds }}'

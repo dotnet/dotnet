@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Razor.Language.Intermediate;
 
@@ -37,36 +35,17 @@ internal class DesignTimeDirectivePass : IntermediateNodePassBase, IRazorDirecti
         {
             node.Children.Insert(0, new CSharpCodeIntermediateNode()
             {
-                Children =
-                    {
-                        new IntermediateToken()
-                        {
-                            Kind = TokenKind.CSharp,
-                            Content = "#pragma warning disable 0414",
-                        }
-                    }
+                Children = { IntermediateNodeFactory.CSharpToken("#pragma warning disable 0414") }
             });
+
             node.Children.Insert(1, new CSharpCodeIntermediateNode()
             {
-                Children =
-                    {
-                        new IntermediateToken()
-                        {
-                            Kind = TokenKind.CSharp,
-                            Content = $"private static object {DesignTimeVariable} = null;",
-                        }
-                    }
+                Children = { IntermediateNodeFactory.CSharpToken($"private static object {DesignTimeVariable} = null;") }
             });
+
             node.Children.Insert(2, new CSharpCodeIntermediateNode()
             {
-                Children =
-                    {
-                        new IntermediateToken()
-                        {
-                            Kind = TokenKind.CSharp,
-                            Content = "#pragma warning restore 0414",
-                        }
-                    }
+                Children = { IntermediateNodeFactory.CSharpToken("#pragma warning restore 0414") }
             });
 
             _directiveNodes.Push(new DesignTimeDirectiveIntermediateNode());

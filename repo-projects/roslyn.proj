@@ -10,9 +10,8 @@
     <BuildActions Condition="'$(BuildOS)' == 'windows'">$(BuildActions) $(FlagParameterPrefix)publish</BuildActions>
     <BuildActions Condition="'$(BuildOS)' == 'windows' and '$(DotNetBuildSign)' == 'true'">$(BuildActions) $(FlagParameterPrefix)sign</BuildActions>
 
+    <!-- TODO: Remove warnaserror=false, https://github.com/dotnet/dotnet/issues/1848 -->
     <BuildArgs>$(BuildArgs) /p:TreatWarningsAsErrors=false</BuildArgs>
-    <!-- TODO: Re-enable when roslyn fixed all NU1510 errors. -->
-    <BuildArgs>$(BuildArgs) /p:RestoreEnablePackagePruning=false</BuildArgs>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BuildOS)' == 'windows' and '$(OfficialBuildId)' != ''">
@@ -34,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <RepositoryReference Include="roslyn-analyzers" />
     <RepositoryReference Include="runtime" />
     <RepositoryReference Include="source-build-reference-packages" />
     <RepositoryReference Include="symreader" />

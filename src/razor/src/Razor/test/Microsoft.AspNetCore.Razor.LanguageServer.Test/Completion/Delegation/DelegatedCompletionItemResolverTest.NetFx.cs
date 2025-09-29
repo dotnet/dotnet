@@ -42,10 +42,26 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         }
     };
 
+    private static readonly VSInternalClientCapabilities s_vsClientCapabilities = new()
+    {
+        SupportsVisualStudioExtensions = true,
+        TextDocument = new()
+        {
+            Completion = new VSInternalCompletionSetting()
+            {
+                CompletionList = new()
+                {
+                    Data = true,
+                }
+            }
+        }
+    };
+
     private static readonly RazorCompletionOptions s_defaultRazorCompletionOptions = new(
         SnippetsSupported: true,
         AutoInsertAttributeQuotes: true,
-        CommitElementsWithSpace: true);
+        CommitElementsWithSpace: true,
+        UseVsCodeCompletionCommitCharacters: false);
 
     private readonly DelegatedCompletionParams _csharpCompletionParams;
     private readonly DelegatedCompletionParams _htmlCompletionParams;
@@ -356,7 +372,7 @@ public class DelegatedCompletionItemResolverTest : CompletionTestBase
         }
 
         var resolvedItem = await resolver.ResolveAsync(
-            item, containingCompletionList, originalRequestContext, s_clientCapabilities, _componentAvailabilityService, cancellationToken);
+            item, containingCompletionList, originalRequestContext, supportsVisualStudioExtensions ? s_vsClientCapabilities : s_clientCapabilities, _componentAvailabilityService, cancellationToken);
 
         return resolvedItem;
     }

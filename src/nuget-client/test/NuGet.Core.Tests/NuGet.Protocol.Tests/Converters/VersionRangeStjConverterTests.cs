@@ -6,6 +6,7 @@
 using System;
 using System.Text.Json;
 using FluentAssertions;
+using NuGet.Protocol.Utility;
 using NuGet.Versioning;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace NuGet.Protocol.Tests.Converters
             const string json = $"\"{range}\"";
 
             // Act
-            var actual = JsonSerializer.Deserialize<VersionRange>(json, JsonExtensions.JsonSerializerOptions);
+            VersionRange? actual = JsonSerializer.Deserialize(json, JsonContext.Default.VersionRange);
 
             // Assert
             actual.Should().NotBeNull();
@@ -31,14 +32,14 @@ namespace NuGet.Protocol.Tests.Converters
         [Fact]
         public void Deserialize_InvalidString_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() => JsonSerializer.Deserialize<VersionRange>("\"not a range\"", JsonExtensions.JsonSerializerOptions));
+            Assert.Throws<ArgumentException>(() => JsonSerializer.Deserialize<VersionRange>("\"not a range\"", JsonContext.Default.VersionRange));
         }
 
         [Fact]
         public void Deserialize_Null_ReturnsNull()
         {
             // Act
-            var actual = JsonSerializer.Deserialize<VersionRange>("null", JsonExtensions.JsonSerializerOptions);
+            var actual = JsonSerializer.Deserialize<VersionRange>("null");
 
             // Assert
             actual.Should().BeNull();
@@ -52,7 +53,7 @@ namespace NuGet.Protocol.Tests.Converters
             var range = VersionRange.Parse(rangeString);
 
             // Act
-            var actual = JsonSerializer.Serialize(range, JsonExtensions.JsonSerializerOptions);
+            var actual = JsonSerializer.Serialize(range, JsonContext.Default.VersionRange);
 
             // Assert
             const string expected = $"\"{rangeString}\"";
@@ -66,8 +67,8 @@ namespace NuGet.Protocol.Tests.Converters
             var range = VersionRange.Parse("[1.0.0, 2.0.0)");
 
             // Act
-            var json = JsonSerializer.Serialize(range, JsonExtensions.JsonSerializerOptions);
-            var actual = JsonSerializer.Deserialize<VersionRange>(json, JsonExtensions.JsonSerializerOptions);
+            var json = JsonSerializer.Serialize(range, JsonContext.Default.VersionRange);
+            var actual = JsonSerializer.Deserialize<VersionRange>(json, JsonContext.Default.VersionRange);
 
             // Assert
             actual.Should().BeEquivalentTo(range);
@@ -80,8 +81,9 @@ namespace NuGet.Protocol.Tests.Converters
             var json = "\"[1.0.0, 2.0.0)\"";
 
             // Act
-            var versionRange = JsonSerializer.Deserialize<VersionRange>(json, JsonExtensions.JsonSerializerOptions);
-            var actual = JsonSerializer.Serialize(versionRange, JsonExtensions.JsonSerializerOptions);
+            var versionRange = JsonSerializer.Deserialize<VersionRange>(json, JsonContext.Default.VersionRange);
+            versionRange.Should().NotBeNull();
+            var actual = JsonSerializer.Serialize(versionRange, JsonContext.Default.VersionRange);
 
             // Assert
             actual.Should().Be(json);

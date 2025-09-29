@@ -125,11 +125,7 @@ using System;
 
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -157,11 +153,7 @@ using System;
 
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -192,19 +184,11 @@ __o = i++;
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -232,19 +216,11 @@ __o = i++;
         };
 
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i"));
 
         builder.Add(new MyExtensionIntermediateNode());
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("++"));
 
         // Act
         writer.WriteCSharpExpression(context, node);
@@ -279,11 +255,7 @@ __o = i++;
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    "
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    "));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -313,11 +285,7 @@ __o = i++;
 
         var node = new CSharpCodeIntermediateNode();
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }"
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -344,11 +312,7 @@ __o = i++;
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -382,11 +346,7 @@ if (true) { }
         };
 
         IntermediateNodeBuilder.Create(node)
-            .Add(new IntermediateToken()
-            {
-                Kind = TokenKind.CSharp,
-                Content = "    if (true) { }",
-            });
+            .Add(IntermediateNodeFactory.CSharpToken("    if (true) { }"));
 
         // Act
         writer.WriteCSharpCode(context, node);
@@ -535,11 +495,7 @@ Render Children
         };
 
         var builder = IntermediateNodeBuilder.Create(node);
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp
-        });
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++"));
 
         writer.WriteCSharpExpression(context, node);
 
@@ -581,13 +537,8 @@ Render Children
         var node = new CSharpExpressionIntermediateNode();
         var builder = IntermediateNodeBuilder.Create(node);
 
-        builder.Add(new IntermediateToken()
-        {
-            Content = "i++",
-            Kind = TokenKind.CSharp,
-            // Create a fake source span, so we can check it correctly maps in the #line below
-            Source = new SourceSpan(fileName, 0, 2, 3, 6, 1, 2)
-        });
+        // Create a fake source span, so we can check it correctly maps in the #line below
+        builder.Add(IntermediateNodeFactory.CSharpToken("i++", new SourceSpan(fileName, 0, 2, 3, 6, 1, 2)));
 
         writer.WriteCSharpExpression(context, node);
 

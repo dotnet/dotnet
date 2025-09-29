@@ -5,14 +5,10 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-#if IS_SIGNING_SUPPORTED
 using System.Text;
-#endif
 using System.Threading;
 using System.Threading.Tasks;
-#if IS_SIGNING_SUPPORTED
 using Microsoft.Internal.NuGet.Testing.SignedPackages;
-#endif
 using Moq;
 using NuGet.Common;
 using NuGet.Frameworks;
@@ -20,9 +16,7 @@ using NuGet.Packaging.Core;
 using NuGet.Packaging.Signing;
 using NuGet.Test.Utility;
 using NuGet.Versioning;
-#if IS_SIGNING_SUPPORTED
 using Test.Utility.Signing;
-#endif
 using Xunit;
 
 namespace NuGet.Packaging.Test
@@ -1631,10 +1625,8 @@ namespace NuGet.Packaging.Test
 
                 // Assert is just that no exception was thrown.
             }
-
         }
 
-#if IS_SIGNING_SUPPORTED
         [Fact]
         public async Task ValidateIntegrityAsync_WhenSignatureContentNull_Throws()
         {
@@ -1872,7 +1864,6 @@ namespace NuGet.Packaging.Test
             }
         }
 
-#if IS_SIGNING_SUPPORTED
         [CIOnlyFact]
         public async Task GetContentHash_IsSameForUnsignedAndSignedPackageAsync()
         {
@@ -1914,7 +1905,6 @@ namespace NuGet.Packaging.Test
                 }
             }
         }
-#endif
 
         private static Zip CreateZipWithNestedStoredZipArchives()
         {
@@ -1981,7 +1971,6 @@ namespace NuGet.Packaging.Test
                 return stream.ToArray();
             }
         }
-#endif
 
         [Fact]
         public void CanVerifySignedPackages_Always_ReturnsValueBasedOnOperatingSystemAndFramework()
@@ -2030,13 +2019,8 @@ namespace NuGet.Packaging.Test
                 bool result = packageArchiveReader.CanVerifySignedPackages(null);
 
                 // Assert
-#if IS_SIGNING_SUPPORTED
                 // Verify package signature when signing is supported
                 Assert.True(result);
-#else
-                // Cannot verify package signature when signing is not supported
-                Assert.False(result);
-#endif
             }
         }
 
@@ -2075,13 +2059,8 @@ namespace NuGet.Packaging.Test
                 // Act
                 bool result = packageArchiveReader.CanVerifySignedPackages(null);
                 // Assert
-#if IS_SIGNING_SUPPORTED
                 // Verify package signature when signing is supported
                 Assert.True(result);
-#else
-                // Cannot verify package signature when signing is not supported
-                Assert.False(result);
-#endif
             }
         }
 
@@ -2109,13 +2088,8 @@ namespace NuGet.Packaging.Test
 
         private static bool CanVerifySignedPackages(IEnvironmentVariableReader environmentVariableReader = null)
         {
-            return (RuntimeEnvironmentHelper.IsWindows ||
-                IsVerificationEnabledByEnvironmentVariable(environmentVariableReader)) &&
-#if IS_SIGNING_SUPPORTED
-                true;
-#else
-                false;
-#endif
+            return RuntimeEnvironmentHelper.IsWindows ||
+                IsVerificationEnabledByEnvironmentVariable(environmentVariableReader);
         }
 
         private static bool IsVerificationEnabledByEnvironmentVariable(

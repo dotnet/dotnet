@@ -6325,7 +6325,7 @@ namespace ClassLibrary
         }
 
         [PlatformFact(Platform.Windows)]
-        public async Task DotnetPack_WithMultiTargetedProject_WhenDirectPackageIsPartiallyPrunable_DoesNotIncludeAsADependency()
+        public async Task DotnetPack_WithMultiTargetedProject_WhenDirectPackageIsPartiallyPrunable_IncludesAsADependency()
         {
             using SimpleTestPathContext pathContext = _dotnetFixture.CreateSimpleTestPathContext();
             var tfm = "net472;netstandard2.1";
@@ -6389,8 +6389,9 @@ namespace ClassLibrary
             dependencyGroups[0].TargetFramework.Should().Be(NuGetFramework.Parse("net472"));
             dependencyGroups[0].Packages.Should().HaveCount(1);
             dependencyGroups[0].Packages.Single().Id.Should().Be("Z");
-            dependencyGroups[1].Packages.Should().HaveCount(1);
-            dependencyGroups[1].Packages.Single().Id.Should().Be("Z");
+            dependencyGroups[1].Packages.Should().HaveCount(2);
+            dependencyGroups[1].Packages.First().Id.Should().Be("X");
+            dependencyGroups[1].Packages.Last().Id.Should().Be("Z");
         }
     }
 }

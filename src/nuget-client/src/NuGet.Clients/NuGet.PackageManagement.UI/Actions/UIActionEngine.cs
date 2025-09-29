@@ -1052,7 +1052,7 @@ namespace NuGet.PackageManagement.UI
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 string projectName;
-                if (projectMetadata is null || string.IsNullOrEmpty(projectMetadata.UniqueName))
+                if (string.IsNullOrEmpty(projectMetadata.UniqueName))
                 {
                     projectName = Resources.Preview_UnknownProject;
                 }

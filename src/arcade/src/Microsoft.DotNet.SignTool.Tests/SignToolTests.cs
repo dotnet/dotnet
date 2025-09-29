@@ -2912,6 +2912,82 @@ $@"
             });
         }
 
+        [Fact]
+        public void ExecutableTypeFileSignInfos()
+        {
+            // Create test executables with different formats
+            var peFile = GetResourcePath("windows-exe.exe");
+            var elfFile = GetResourcePath("linux-elf");
+            var machoFile = GetResourcePath("macos-macho");
+
+            // List of files to be considered for signing
+            var itemsToSign = new List<ItemToSign>()
+            {
+                new ItemToSign(peFile, "123"),
+                new ItemToSign(elfFile, "123"),
+                new ItemToSign(machoFile, "123")
+            };
+
+            var strongNameSignInfo = new Dictionary<string, List<SignInfo>>();
+
+            // File-specific signing information with ExecutableType
+            var fileSignInfo = new Dictionary<ExplicitCertificateKey, string>()
+            {
+                { new ExplicitCertificateKey("windows-exe.exe", executableType: ExecutableType.PE, collisionPriorityId: "123"), "WindowsCertificate" },
+                { new ExplicitCertificateKey("linux-elf", executableType: ExecutableType.ELF, collisionPriorityId: "123"), "LinuxCertificate" },
+                { new ExplicitCertificateKey("macos-macho", executableType: ExecutableType.MachO, collisionPriorityId: "123"), "MacDeveloperHarden" },
+            };
+
+            ValidateFileSignInfos(itemsToSign, strongNameSignInfo, fileSignInfo, s_fileExtensionSignInfo, new[]
+            {
+                "File 'windows-exe.exe' Certificate='WindowsCertificate'",
+                "File 'linux-elf' Certificate='LinuxCertificate'",
+                "File 'macos-macho' Certificate='MacDeveloperHarden'",
+            });
+        }
+
+        [Fact]
+        public void GetExecutableType_DetectsCorrectFormats()
+        {
+            // Test PE file format
+            var peFile = GetResourcePath("windows-exe.exe");
+
+            Assert.Equal(ExecutableType.PE, ContentUtil.GetExecutableType(peFile));
+
+            var elfFile = GetResourcePath("linux-elf");
+            
+            Assert.Equal(ExecutableType.ELF, ContentUtil.GetExecutableType(elfFile));
+
+            // Test Mach-O file format (32-bit)
+            var machoFile = GetResourcePath("macos-macho");
+            
+            Assert.Equal(ExecutableType.MachO, ContentUtil.GetExecutableType(machoFile));
+
+            // Test unknown format
+            var unknownFile = CreateTestResource("test_unknown");
+            File.WriteAllBytes(unknownFile, new byte[] { 0x12, 0x34, 0x56, 0x78 });
+            
+            Assert.Equal(ExecutableType.None, ContentUtil.GetExecutableType(unknownFile));
+
+            // Test empty file
+            var emptyFile = CreateTestResource("test_empty");
+            File.WriteAllBytes(emptyFile, new byte[0]);
+            
+            Assert.Equal(ExecutableType.None, ContentUtil.GetExecutableType(emptyFile));
+
+            // Test a PE file is just the DOS header
+            var smallPeFile = CreateTestResource("test_small_pe");
+            File.WriteAllBytes(smallPeFile, new byte[] { 0x4D, 0x5A }); // Just the DOS header
+
+            Assert.Equal(ExecutableType.None, ContentUtil.GetExecutableType(smallPeFile));
+
+            // Test a PE file that doesn't have a full PE header (no offset)
+            var incompletePeFile = CreateTestResource("test_incomplete_pe");
+            File.WriteAllBytes(incompletePeFile, new byte[] { 0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00 }); // DOS header with no PE header
+
+            Assert.Equal(ExecutableType.None, ContentUtil.GetExecutableType(incompletePeFile));
+        }
+
         [Theory]
         [MemberData(nameof(GetSignableExtensions))]
         public void MissingCertificateName(string extension)
@@ -3276,6 +3352,102 @@ $@"
                 Action shouldFail = () => StrongNameHelper.Sign(inputStream, GetResourcePath("OpenSignedCorrespondingKey.snk"));
                 shouldFail.Should().Throw<InvalidOperationException>();
             }
+        }
+
+        [Fact]
+        public void ExecutableTypeValidation()
+        {
+            // Test valid ExecutableType values
+            var task = new SignToolTask
+            {
+                BuildEngine = new FakeBuildEngine(),
+                ItemsToSign = Array.Empty<ITaskItem>(),
+                StrongNameSignInfo = Array.Empty<ITaskItem>(),
+                FileSignInfo = new ITaskItem[]
+                {
+                    new TaskItem("dotnet.exe", new Dictionary<string, string>()
+                    {
+                        { "ExecutableType", "PE"},
+                        { "CertificateName", "TestCert" }
+                    }),
+                    new TaskItem("dotnet", new Dictionary<string, string>()
+                    {
+                        { "ExecutableType", "ELF"},
+                        { "CertificateName", "TestCert" }
+                    }),
+                    new TaskItem("dotnet", new Dictionary<string, string>()
+                    {
+                        { "ExecutableType", "MachO"},
+                        { "CertificateName", "TestCert" }
+                    })
+                },
+                LogDir = "LogDir",
+                TempDir = "TempDir",
+                DryRun = true,
+                TestSign = true,
+                DotNetPath = CreateTestResource("dotnet.fake"),
+                AllowEmptySignList = true
+            };
+            
+            task.Execute().Should().BeTrue();
+            task.Log.HasLoggedErrors.Should().BeFalse();
+
+            // Test invalid ExecutableType value
+            task = new SignToolTask
+            {
+                BuildEngine = new FakeBuildEngine(),
+                ItemsToSign = Array.Empty<ITaskItem>(),
+                StrongNameSignInfo = Array.Empty<ITaskItem>(),
+                FileSignInfo = new ITaskItem[]
+                {
+                    new TaskItem("test.exe", new Dictionary<string, string>()
+                    {
+                        { "ExecutableType", "INVALID" },
+                        { "CertificateName", "TestCert" }
+                    })
+                },
+                LogDir = "LogDir",
+                TempDir = "TempDir", 
+                DryRun = true,
+                TestSign = true,
+                DotNetPath = CreateTestResource("dotnet.fake"),
+                AllowEmptySignList = true
+            };
+            
+            task.Execute().Should().BeFalse();
+            task.Log.HasLoggedErrors.Should().BeTrue();
+        }
+
+        [Fact]
+        public void TestSignShouldNotValidateNuGetSignatures()
+        {
+            // Create SignToolArgs for test signing
+            var testSignArgs = new SignToolArgs(
+                tempPath: _tmpDir,
+                microBuildCorePath: "MockPath",
+                testSign: true,  // This is the key - TestSign should be true
+                dotnetPath: "MockDotNetPath",
+                msbuildVerbosity: "quiet",
+                logDir: "MockLogDir",
+                enclosingDir: "MockEnclosingDir",
+                snBinaryPath: "MockSnPath",
+                wix3ToolsPath: null,
+                wixToolsPath: null,
+                tarToolPath: null,
+                pkgToolPath: null,
+                dotnetTimeout: 300000);
+
+            var fakeBuildEngine = new FakeBuildEngine(_output);
+            var fakeLog = new TaskLoggingHelper(fakeBuildEngine, "TestLog");
+
+            var testSignTool = new RealSignTool(testSignArgs, fakeLog);
+
+            // Use any nupkg file from the test resources (doesn't matter if it's actually signed or not)
+            string nupkgPath = GetResourcePath("Simple.nupkg");
+
+            // When TestSign is true, VerifySignedNuGet should return Signed without actually validating
+            var testSignResult = testSignTool.VerifySignedNuGet(nupkgPath);
+            testSignResult.Should().Be(SigningStatus.Signed, "TestSign mode should return Signed without validation");
         }
     }
 }

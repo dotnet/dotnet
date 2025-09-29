@@ -1,7 +1,3 @@
-parameters:
-- name: NuGetLocalizationType
-  type: string
-
 steps:
 - task: MicroBuildLocalizationPlugin@4
   displayName: "Install Localization Plugin"
@@ -135,7 +131,7 @@ steps:
   inputs:
     solution: "build\\sign.proj"
     configuration: "$(BuildConfiguration)"
-    msbuildArguments: "/restore /p:DryRunSigning=false /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignPackages.binlog"
+    msbuildArguments: "/restore /p:DryRunSigning=false /p:DotNetSignType=test /binarylogger:$(Build.StagingDirectory)\\binlog\\09.SignPackages.binlog"
 
 - task: MicroBuildCodesignVerify@3
   displayName: Verify Assembly Signatures and StrongName for the VSIX & exes

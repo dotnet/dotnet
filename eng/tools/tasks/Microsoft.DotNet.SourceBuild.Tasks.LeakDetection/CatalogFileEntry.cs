@@ -15,12 +15,10 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
         const string ElementName = "File";
 
         internal string Path { get; set; }
-        internal byte[] OriginalHash { get; set; }
         internal byte[] PoisonedHash { get; set; }
 
         public XElement ToXml() => new XElement(ElementName,
             new XAttribute(nameof(Path), Path),
-            new XAttribute(nameof(OriginalHash), OriginalHash.ToHexString()),
             PoisonedHash == null ? null : new XAttribute(nameof(PoisonedHash), PoisonedHash.ToHexString())
         );
     }

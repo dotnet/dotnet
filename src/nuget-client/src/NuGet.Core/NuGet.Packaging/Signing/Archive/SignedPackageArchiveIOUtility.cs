@@ -234,7 +234,6 @@ namespace NuGet.Packaging.Signing
             };
 
             var endOfCentralDirectoryRecord = EndOfCentralDirectoryRecord.Read(reader);
-            var endOfCentralDirectoryRecordPosition = endOfCentralDirectoryRecord.OffsetFromStart;
 
             reader.BaseStream.Seek(endOfCentralDirectoryRecord.OffsetOfStartOfCentralDirectory, SeekOrigin.Begin);
 
@@ -285,7 +284,6 @@ namespace NuGet.Packaging.Signing
             }
 
             var lastCentralDirectoryRecord = centralDirectoryRecords.Last();
-            var endOfCentralDirectoryPosition = lastCentralDirectoryRecord.Position + lastCentralDirectoryRecord.HeaderSize;
             var endOfLocalFileHeadersPosition = centralDirectoryRecords.Min(record => record.Position);
 
             UpdateLocalFileHeadersTotalSize(centralDirectoryRecords, endOfLocalFileHeadersPosition);
@@ -342,7 +340,6 @@ namespace NuGet.Packaging.Signing
             }
 
             var endOfCentralDirectoryRecord = EndOfCentralDirectoryRecord.Read(reader);
-            var endOfCentralDirectoryRecordPosition = endOfCentralDirectoryRecord.OffsetFromStart;
 
             reader.BaseStream.Seek(endOfCentralDirectoryRecord.OffsetOfStartOfCentralDirectory, SeekOrigin.Begin);
 
@@ -510,7 +507,7 @@ namespace NuGet.Packaging.Signing
 
         /// <summary>
         /// Writes the signature data into the zip using the writer.
-        /// The reader is used to read the exisiting zip. 
+        /// The reader is used to read the exisiting zip.
         /// </summary>
         /// <param name="signatureStream">MemoryStream of the signature to be inserted into the zip.</param>
         /// <param name="reader">BinaryReader to be used to read the existing zip data.</param>

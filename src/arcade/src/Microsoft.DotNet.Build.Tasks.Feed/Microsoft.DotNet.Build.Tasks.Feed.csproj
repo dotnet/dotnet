@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
+    <SignAssembly>true</SignAssembly>
     <DefineConstants>$(DefineConstants);DOTNET_BUILD_SOURCE_ONLY</DefineConstants>
   </PropertyGroup>
 
@@ -54,44 +55,11 @@
     <Compile Include="..\Common\Internal\EnumExtensions.cs" />
   </ItemGroup>
 
-  <!-- Task is not supported on Framework -->
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-    <Compile Remove="src\PublishBuildToMaestro.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
-    <Compile Remove="src\AssetPublisherFactory.cs" />
-    <Compile Remove="src\AzureDevOpsArtifactFeed.cs" />
-    <Compile Remove="src\AzureDevOpsFeedPermission.cs" />
-    <Compile Remove="src\AzureDevOpsNugetFeedAssetPublisher.cs" />
-    <Compile Remove="src\AzureStorageAssetPublisher.cs" />
-    <Compile Remove="src\AzureStorageContainerAssetTokenCredentialPublisher.cs" />
-    <Compile Remove="src\AzureStorageExtensions.cs" />
-    <Compile Remove="src\BlobFeedAction.cs" />
-    <Compile Remove="src\IAssetPublisher.cs" />
-    <Compile Remove="src\common\AssetComparer.cs" />
-    <Compile Remove="src\common\AzureConnectionStringBuildTask.cs" />
-    <Compile Remove="src\common\AzureStorageUtils.cs" />
-    <Compile Remove="src\common\CreateAzureContainer.cs" />
-    <Compile Remove="src\common\CreateAzureContainerIfNotExists.cs" />
-    <Compile Remove="src\common\CreateNewAzureContainer.cs" />
-    <Compile Remove="src\common\LatestLinksManager.cs" />
-    <Compile Remove="src\common\UploadToAzure.cs" />
-    <Compile Remove="src\CreateAzureDevOpsFeed.cs" />
-    <Compile Remove="src\model\PublishingConstants.cs" />
-    <Compile Remove="src\model\SetupTargetFeedConfigBase.cs" />
-    <Compile Remove="src\model\SetupTargetFeedConfigV3.cs" />
-    <Compile Remove="src\model\SetupTargetFeedConfigV4.cs" />
-    <Compile Remove="src\model\TargetChannelConfig.cs" />
-    <Compile Remove="src\model\TargetFeedConfig.cs" />
-    <Compile Remove="src\PATCredential.cs" />
-    <Compile Remove="src\PublishArtifactsInManifest.cs" />
-    <Compile Remove="src\PublishArtifactsInManifestBase.cs" />
-    <Compile Remove="src\PublishArtifactsInManifestV3.cs" />
-    <Compile Remove="src\PublishArtifactsInManifestV4.cs" />
-    <Compile Remove="src\PublishSignedAssets.cs" />
-    <Compile Remove="src\PublishBuildToMaestro.cs" />
-    <Compile Remove="src\TaskTracer.cs" />
+  <!-- Most tasks are not supported on NETFramework or source build. Add only those that we need -->
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' or '$(DotNetBuildSourceOnly)' == 'true'">
+    <Compile Remove="@(Compile)" />
+    <Compile Include="src\PushToBuildStorage.cs" />
+    <Compile Include="src\common\NativeMethods.cs" />
   </ItemGroup>
 
 </Project>

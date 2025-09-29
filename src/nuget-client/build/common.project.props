@@ -11,25 +11,22 @@
     <NETFXTargetFrameworkVersion>v4.7.2</NETFXTargetFrameworkVersion>
     <NETFXTargetFramework>net472</NETFXTargetFramework>
     <NetStandardVersion>netstandard2.0</NetStandardVersion>
-    <NETCoreTargetFramework>net9.0</NETCoreTargetFramework>
+    <NETCoreTargetFramework>net8.0</NETCoreTargetFramework>
     <NETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</NETCoreTargetFramework>
-    <NETCoreLegacyTargetFrameworkForSigning>net8.0</NETCoreLegacyTargetFrameworkForSigning>
+    <LatestNETCoreTargetFramework>net9.0</LatestNETCoreTargetFramework>
+    <LatestNETCoreTargetFramework Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(DotNetBuildFromVMR)' == 'true'">net10.0</LatestNETCoreTargetFramework>
 
     <!-- Target frameworks for class libraries-->
-    <TargetFrameworksLibrary>$(NetStandardVersion)</TargetFrameworksLibrary>
-    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(NETCoreTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary>$(NETCoreTargetFramework)</TargetFrameworksLibrary>
+    <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' == 'true'">$(LatestNETCoreTargetFramework)</TargetFrameworksLibrary>
     <TargetFrameworksLibrary Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksLibrary)</TargetFrameworksLibrary>
 
-    <!-- Target frameworks for class libraries which require signing APIs which need to target NET 5.0 -->
-    <TargetFrameworksLibraryForSigning>$(TargetFrameworksLibrary)</TargetFrameworksLibraryForSigning>
-    <TargetFrameworksLibraryForSigning Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(TargetFrameworksLibraryForSigning);$(NETCoreLegacyTargetFrameworkForSigning)</TargetFrameworksLibraryForSigning>
-
     <!-- Target framework for runnable apps -->
-    <TargetFrameworksExe>$(NETCoreTargetFramework)</TargetFrameworksExe>
+    <TargetFrameworksExe>$(LatestNETCoreTargetFramework)</TargetFrameworksExe>
     <TargetFrameworksExe Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksExe)</TargetFrameworksExe>
 
     <!-- Target frameworks for unit tests -->
-    <TargetFrameworksUnitTest>$(NETCoreTargetFramework)</TargetFrameworksUnitTest>
+    <TargetFrameworksUnitTest>$(LatestNETCoreTargetFramework)</TargetFrameworksUnitTest>
     <TargetFrameworksUnitTest Condition="'$(DotNetBuildSourceOnly)' != 'true'">$(NETFXTargetFramework);$(TargetFrameworksUnitTest)</TargetFrameworksUnitTest>
   </PropertyGroup>
 
@@ -147,8 +144,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Assembly attributes for net core projects -->
-    <AssemblyVersion>$(SemanticVersion).$(PreReleaseVersion)</AssemblyVersion>
     <FileVersion>$(SemanticVersion).$(PreReleaseVersion)</FileVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' == ''">$(SemanticVersion)$(PreReleaseInformationVersion)</InformationalVersion>
     <InformationalVersion Condition="'$(BUILD_SOURCEVERSION)' != ''">$(SemanticVersion)$(PreReleaseInformationVersion)+$(BUILD_SOURCEVERSION)</InformationalVersion>

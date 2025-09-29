@@ -1,0 +1,51 @@
+<Project>
+  <PropertyGroup>
+    <_MicrosoftDotNetBaselinesTasksDir>$(MSBuildThisFileDirectory)../tools/netframework/</_MicrosoftDotNetBaselinesTasksDir>
+    <_MicrosoftDotNetBaselinesTasksDir Condition="'$(MSBuildRuntimeType)' == 'Core'">$(MSBuildThisFileDirectory)../tools/net/</_MicrosoftDotNetBaselinesTasksDir>
+  </PropertyGroup>
+
+  <UsingTask TaskName="CreateUpdatePR" AssemblyFile="$(_MicrosoftDotNetBaselinesTasksDir)Microsoft.DotNet.Baselines.Tasks.dll"/>
+
+  <Target Name="CreateUpdatePR">
+    <!--
+      Required variables:
+        GitHubOrg                                       The GitHub organization to use.
+        GitHubRepo                                      The GitHub repository to use.
+        TargetDirectory                                 The directory where the PR will be created.
+        UpdatedBaselineFile/UpdatedBaselineDirectory    The updated baseline files or the directory containing the updated files.
+        BuildId                                         The build ID that produced the updated files.
+
+      Optional variables:
+        GitHubToken                                     The GitHub token to use for publishing the PR.
+                                                        Defaults to the environment variable GH_TOKEN.
+        Title                                           The title of the PR.
+                                                        Defaults to 'Update Test Baselines and Exclusions'.
+        TargetBranch                                    The target branch for the PR.
+                                                        Defaults to 'main'.
+        DefaultBaselineContent                          The content of baselines that shouldn't be included in the PR.
+                                                        Ignored if not specified.
+        UnionExclusionsBaselines                        If true, exclusions baselines with the same basename
+                                                        will be combined using a union operation. Otherwise,
+                                                        they will be combined using an intersection operation.
+                                                        Defaults to false.
+    -->
+
+    <ItemGroup>
+      <UpdatedBaselineFile Include="$(UpdatedBaselineFile)" />
+      <UpdatedBaselineFile Condition="Exists('$(UpdatedBaselineDirectory)') and '$(UpdatedBaselineFile)' == ''"
+                           Include="$(UpdatedBaselineDirectory)/**" />
+    </ItemGroup>
+
+    <CreateUpdatePR GitHubToken="$(GitHubToken)"
+                    GitHubOrg="$(GitHubOrg)"
+                    GitHubRepo="$(GitHubRepo)"
+                    Title="$(Title)"
+                    TargetBranch="$(TargetBranch)"
+                    TargetDirectory="$(TargetDirectory)"
+                    UpdatedFiles="@(UpdatedBaselineFile)"
+                    BuildId="$(BuildId)"
+                    DefaultBaselineContent="$(DefaultBaselineContent)"
+                    UnionExclusionsBaselines="$(UnionExclusionsBaselines)" />
+  </Target>
+
+</Project>

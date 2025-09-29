@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -21,7 +22,6 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.CodeAnalysis.Razor.Diagnostics;
 
 using RazorDiagnosticFactory = AspNetCore.Razor.Language.RazorDiagnosticFactory;
-using RazorSyntaxNodeOrToken = AspNetCore.Razor.Language.Syntax.SyntaxNodeOrToken;
 using SyntaxNode = AspNetCore.Razor.Language.Syntax.SyntaxNode;
 
 /// <summary>
@@ -98,7 +98,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         var syntaxTree = codeDocument.GetRequiredSyntaxTree();
         var sourceText = codeDocument.Source.Text;
 
-        var processedAttributes = new Dictionary<TextSpan, bool>();
+        using var _ = DictionaryPool<TextSpan, bool>.GetPooledObject(out var processedAttributes);
 
         var filteredDiagnostics = unmappedDiagnostics
             .Where(d =>
@@ -112,7 +112,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
         return filteredDiagnostics;
     }
 
-    private LspDiagnostic[] MapDiagnostics(
+    internal LspDiagnostic[] MapDiagnostics(
         RazorLanguageKind languageKind,
         LspDiagnostic[] diagnostics,
         IDocumentSnapshot documentSnapshot,
@@ -243,6 +243,7 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             CSSErrorCodes.MissingOpeningBrace or
             CSSErrorCodes.MissingClassNameAfterDot or
             CSSErrorCodes.MissingSelectorAfterCombinator or
+            CSSErrorCodes.MissingPropertyName or
             CSSErrorCodes.MissingPropertyValue or
             CSSErrorCodes.MissingSelectorBeforeCombinatorCode => IsAtCSharpTransitionInStyleBlock(diagnostic, sourceText, syntaxTree),
             HtmlErrorCodes.UnexpectedEndTagErrorCode => IsHtmlWithBangAndMatchingTags(diagnostic, sourceText, syntaxTree),
@@ -427,17 +428,16 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
             return false;
         }
 
-        var markupAttributeNode = owner.FirstAncestorOrSelf<RazorSyntaxNode>(static n =>
-            n is MarkupAttributeBlockSyntax ||
-            n is MarkupTagHelperAttributeSyntax ||
-            n is MarkupMiscAttributeContentSyntax);
+        var markupAttributeValue = owner.FirstAncestorOrSelf<RazorSyntaxNode>(static n =>
+            (n.Parent is MarkupAttributeBlockSyntax block && n == block.Value) ||
+            n is MarkupTagHelperAttributeValueSyntax or MarkupMiscAttributeContentSyntax);
 
-        if (markupAttributeNode is not null)
+        if (markupAttributeValue is not null)
         {
-            if (!processedAttributes.TryGetValue(markupAttributeNode.Span, out var doesAttributeContainNonMarkup))
+            if (!processedAttributes.TryGetValue(markupAttributeValue.Span, out var doesAttributeContainNonMarkup))
             {
-                doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeNode);
-                processedAttributes.Add(markupAttributeNode.Span, doesAttributeContainNonMarkup);
+                doesAttributeContainNonMarkup = CheckIfAttributeContainsNonMarkupNodes(markupAttributeValue);
+                processedAttributes.Add(markupAttributeValue.Span, doesAttributeContainNonMarkup);
             }
 
             return doesAttributeContainNonMarkup;
@@ -447,16 +447,16 @@ internal class RazorTranslateDiagnosticsService(IDocumentMappingService document
 
         static bool CheckIfAttributeContainsNonMarkupNodes(RazorSyntaxNode attributeNode)
         {
-            // Only allow markup, generic & (non-razor comment) token nodes
-            var containsNonMarkupNodes = attributeNode.DescendantNodesAndTokens().Any(IsNotMarkupNodeOrCommentToken);
-
-            return containsNonMarkupNodes;
+            return attributeNode.DescendantNodes().Any(IsNotMarkupOrCommentNode);
         }
 
-        static bool IsNotMarkupNodeOrCommentToken(RazorSyntaxNodeOrToken nodeOrToken)
+        static bool IsNotMarkupOrCommentNode(SyntaxNode node)
         {
-            return !(nodeOrToken.IsToken && nodeOrToken.AsToken().Kind == SyntaxKind.RazorCommentTransition) &&
-                   !(nodeOrToken.IsNode && nodeOrToken.AsNode() is MarkupBlockSyntax or MarkupSyntaxNode or GenericBlockSyntax);
+            return !(node is
+                MarkupBlockSyntax or
+                MarkupSyntaxNode or
+                GenericBlockSyntax or
+                RazorCommentBlockSyntax);
         }
     }
 

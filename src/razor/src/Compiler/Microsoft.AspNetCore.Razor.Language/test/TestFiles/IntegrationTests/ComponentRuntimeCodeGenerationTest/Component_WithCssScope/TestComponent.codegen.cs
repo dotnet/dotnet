@@ -57,7 +57,7 @@ myComponentReference
 #line default
 #line hidden
 #nullable disable
-                 = (Test.TemplatedComponent)__value;
+                 = (global::Test.TemplatedComponent)__value;
             }
             );
             __builder.CloseComponent();

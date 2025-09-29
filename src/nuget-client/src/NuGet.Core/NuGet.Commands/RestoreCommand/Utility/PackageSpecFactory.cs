@@ -104,8 +104,8 @@ namespace NuGet.Commands.Restore.Utility
                 GetCentralPackageManagementSettings(outerBuild, projectStyle);
 
             RestoreAuditProperties? auditProperties = GetRestoreAuditProperties(project);
-
-            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(project, isCentralPackageManagementEnabled);
+            bool isPruningEnabledGlobally = GetPackagePruningDefault(project);
+            List<TargetFrameworkInformation> targetFrameworkInfos = GetTargetFrameworkInfos(project, isCentralPackageManagementEnabled, isPruningEnabledGlobally);
 
             ProjectRestoreMetadata restoreMetadata;
 
@@ -187,8 +187,9 @@ namespace NuGet.Commands.Restore.Utility
         /// </summary>
         /// <param name="project">An <see cref="IReadOnlyDictionary{NuGetFramework,ProjectInstance} "/> containing the projects by their target framework.</param>
         /// <param name="isCpvmEnabled">A flag that is true if the Central Package Management was enabled.</param>
+        /// <param name="isPruningEnabledGlobally">A flag that tells us the default for pruning, if the pruning property is not set.</param>
         /// <returns>A <see cref="List{TargetFrameworkInformation}" /> containing the target framework information for the specified project.</returns>
-        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IProject project, bool isCpvmEnabled)
+        internal static List<TargetFrameworkInformation> GetTargetFrameworkInfos(IProject project, bool isCpvmEnabled, bool isPruningEnabledGlobally)
         {
             var targetFrameworkInfos = new List<TargetFrameworkInformation>(project.TargetFrameworks.Count);
 
@@ -220,7 +221,11 @@ namespace NuGet.Commands.Restore.Utility
                 }
 
                 var dependencies = GetPackageReferences(msBuildProjectInstance, isCpvmEnabled, centralPackageVersions);
-                var prunedReferences = msBuildProjectInstance.IsPropertyTrue("RestoreEnablePackagePruning") ? GetPrunePackageReferences(msBuildProjectInstance) : [];
+
+                bool? restoreEnablePackagePruning = MSBuildStringUtility.GetBooleanOrNull(msBuildProjectInstance.GetProperty("RestoreEnablePackagePruning"));
+                bool isPackagePruningEnabled = restoreEnablePackagePruning == null ? isPruningEnabledGlobally : restoreEnablePackagePruning == true;
+
+                var prunedReferences = isPackagePruningEnabled ? GetPrunePackageReferences(msBuildProjectInstance) : [];
 
                 var targetFrameworkInformation = new TargetFrameworkInformation()
                 {
@@ -241,6 +246,18 @@ namespace NuGet.Commands.Restore.Utility
             }
 
             return targetFrameworkInfos;
+        }
+
+        private static bool GetPackagePruningDefault(IProject project)
+        {
+            foreach (var item in project.TargetFrameworks.NoAllocEnumerate())
+            {
+                if (item.Value.IsPropertyTrue("_RestorePackagePruningDefault"))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static RestoreAuditProperties? GetRestoreAuditProperties(IProject project)

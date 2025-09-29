@@ -35,7 +35,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode()
         {
-            Content = string.Empty,
+            Name = string.Empty,
             IsPrimaryNamespace = true,
         };
 
@@ -57,7 +57,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var documentNode = new DocumentIntermediateNode() { Options = codeDocument.CodeGenerationOptions };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
-        var @namespace = new NamespaceDeclarationIntermediateNode() { Content = "SomeNamespace" };
+        var @namespace = new NamespaceDeclarationIntermediateNode() { Name = "SomeNamespace" };
         builder.Push(@namespace);
 
         // Act
@@ -79,7 +79,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @namespace = new NamespaceDeclarationIntermediateNode()
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
 
@@ -110,12 +110,12 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         };
 
         var builder = IntermediateNodeBuilder.Create(documentNode);
-        var @namespace = new NamespaceDeclarationIntermediateNode() { Content = "SomeNamespace" };
+        var @namespace = new NamespaceDeclarationIntermediateNode() { Name = "SomeNamespace" };
         builder.Push(@namespace);
 
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -145,7 +145,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
         var builder = IntermediateNodeBuilder.Create(documentNode);
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
 
@@ -153,7 +153,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -186,14 +186,14 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
 
         builder.Push(@namespace);
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -207,8 +207,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
             node =>
             {
                 var csharpCode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-                var token = Assert.IsAssignableFrom<IntermediateToken>(Assert.Single(csharpCode.Children));
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(Assert.Single(csharpCode.Children));
                 Assert.Equal(expectedAttribute, token.Content);
             },
             node => Assert.Same(@namespace, node));
@@ -233,7 +232,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
 
@@ -241,7 +240,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -255,8 +254,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
             node =>
             {
                 var csharpCode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-                var token = Assert.IsAssignableFrom<IntermediateToken>(Assert.Single(csharpCode.Children));
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(Assert.Single(csharpCode.Children));
                 Assert.Equal(expectedAttribute, token.Content);
             },
             node => Assert.Same(@namespace, node));
@@ -288,7 +286,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
 
@@ -296,7 +294,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -311,8 +309,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
             node =>
             {
                 var csharpCode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-                var token = Assert.IsAssignableFrom<IntermediateToken>(Assert.Single(csharpCode.Children));
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(Assert.Single(csharpCode.Children));
                 Assert.Equal(expectedAttribute, token.Content);
             },
             node => Assert.Same(@namespace, node));
@@ -337,14 +334,14 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
 
         var @namespace = new NamespaceDeclarationIntermediateNode
         {
-            Content = "SomeNamespace",
+            Name = "SomeNamespace",
             IsPrimaryNamespace = true,
         };
         builder.Push(@namespace);
 
         var @class = new ClassDeclarationIntermediateNode
         {
-            ClassName = "SomeName",
+            Name = "SomeName",
             IsPrimaryClass = true,
         };
 
@@ -358,8 +355,7 @@ public class AssemblyAttributeInjectionPassTest : RazorProjectEngineTestBase
             node =>
             {
                 var csharpCode = Assert.IsType<CSharpCodeIntermediateNode>(node);
-                var token = Assert.IsAssignableFrom<IntermediateToken>(Assert.Single(csharpCode.Children));
-                Assert.Equal(TokenKind.CSharp, token.Kind);
+                var token = Assert.IsAssignableFrom<CSharpIntermediateToken>(Assert.Single(csharpCode.Children));
                 Assert.Equal(expectedAttribute, token.Content);
             },
             node => Assert.Same(@namespace, node));

@@ -1,28 +1,28 @@
-From c74b360ba5a3290cdd99e7dac203a6a2de750a3c Mon Sep 17 00:00:00 2001
-From: Rainer Sigwald <raines@microsoft.com>
-Date: Fri, 8 Sep 2023 19:41:06 +0000
-Subject: [PATCH 1/2] Eliminate prebuilts
+From d001cf459e85799dc324c99670974ff4f747dcfc Mon Sep 17 00:00:00 2001
+From: Tanner Gooding <tagoo@outlook.com>
+Date: Mon, 11 Aug 2025 10:11:29 -0700
+Subject: [PATCH] Eliminate prebuilts
 
 ---
  Directory.Build.props | 5 -----
  1 file changed, 5 deletions(-)
 
 diff --git a/Directory.Build.props b/Directory.Build.props
-index b7aa431..f075a6a 100644
+index a58f4b5..f075a6a 100644
 --- a/Directory.Build.props
 +++ b/Directory.Build.props
 @@ -27,11 +27,6 @@
      <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
    </PropertyGroup>
- 
+
 -  <ItemGroup>
--    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
--    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" PrivateAssets="all" />
+-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115" PrivateAssets="all" />
 -  </ItemGroup>
 -
    <ItemGroup>
      <None Include="$(MSBuildThisFileDirectory)\branding\MSBuild-NuGet-Icon.png"
            Pack="true"
--- 
-2.42.0
+--
+2.50.1.windows.1
 

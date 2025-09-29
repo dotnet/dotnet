@@ -138,6 +138,9 @@ namespace Microsoft.Deployment.MageCLI
         [CommandLineArgument(LongName = "Install", ShortName = "i")]
         public string installString = null;
 
+        [CommandLineArgument(LongName = "MapFileExtensions", ShortName = "mfe")]
+        public string mapFileExtensionsString = null;
+
         [CommandLineArgument(LongName = "IncludeProviderURL", ShortName = "ip")]
         public string includeDeploymentProviderUrlString = null;
 
@@ -200,6 +203,11 @@ namespace Microsoft.Deployment.MageCLI
         /// Install, in boolean form, parsed from the installString member
         /// </summary>
         private TriStateBool install = TriStateBool.Undefined;
+
+        /// <summary>
+        /// MapFileExtensions, in boolean form, parsed from the mapFileExtensionsString member
+        /// </summary>
+        private TriStateBool mapFileExtensions = TriStateBool.Undefined;
 
         /// <summary>
         /// IncludeProviderURL, in boolean form, parsed from the includeDeploymentProviderUrlString member
@@ -728,6 +736,28 @@ namespace Microsoft.Deployment.MageCLI
                 }
             }
 
+            // Validate the MapFileExtensions option, if given
+            if (mapFileExtensionsString != null)
+            {
+                switch (mapFileExtensionsString.ToLower(CultureInfo.InvariantCulture))
+                {
+                    case "true":
+                    case "t":
+                        mapFileExtensions = TriStateBool.True;
+                        break;
+
+                    case "false":
+                    case "f":
+                        mapFileExtensions = TriStateBool.False;
+                        break;
+
+                    default:
+                        result = false;
+                        Application.PrintErrorMessage(ErrorMessages.InvalidMapFileExtensions, mapFileExtensionsString);
+                        break;
+                }
+            }
+
             // Validate the IncludeProviderURL option, if given
             if (includeDeploymentProviderUrlString != null)
             {
@@ -868,6 +898,7 @@ namespace Microsoft.Deployment.MageCLI
                 errors += CheckForFileTypeSpecificOption("Deployment", "AppProviderUrl", applicationProviderUrl);
                 errors += CheckForFileTypeSpecificOption("Deployment", "RequiredUpdate", isRequiredUpdateString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "Install", installString);
+                errors += CheckForFileTypeSpecificOption("Deployment", "MapFileExtensions", mapFileExtensionsString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "IncludeProviderUrl", includeDeploymentProviderUrlString);
                 errors += CheckForFileTypeSpecificOption("Deployment", "TrustUrlParameters", trustUrlParametersString);
             }
@@ -1324,7 +1355,7 @@ namespace Microsoft.Deployment.MageCLI
             else if (Requested(Operations.GenerateDeploymentManifest))
             {
                 applicationName += ".app";
-                manifest = Mage.GenerateDeploymentManifest(outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                manifest = Mage.GenerateDeploymentManifest(outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
             }
 
             // Update operations
@@ -1335,7 +1366,7 @@ namespace Microsoft.Deployment.MageCLI
             }
             else if (Requested(Operations.UpdateDeploymentManifest))
             {
-                Mage.UpdateDeploymentManifest(cachedDepManifest, outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
+                Mage.UpdateDeploymentManifest(cachedDepManifest, outputPath, applicationName, applicationVersion, processor, cachedAppManifest, applicationManifestPath, applicationCodeBase, applicationProviderUrl, minVersion, install, mapFileExtensions, includeDeploymentProviderUrl, publisherName, supportUrl, targetFrameworkVersion, trustUrlParameters);
                 manifest = cachedDepManifest;
             }
 

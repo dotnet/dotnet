@@ -31,7 +31,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             new XAttribute(nameof(Path), Path),
             new XElement(nameof(Hash), Hash.ToHexString()),
             new XElement(nameof(Type), Type.ToString()),
-            Matches.Select(m => m.ToXml())
+            // Order matches to ensure the output is deterministic across runs
+            Matches
+                .OrderBy(m => m.Package)
+                .ThenBy(m => m.File)
+                .Select(m => m.ToXml())
         );
     }
 }

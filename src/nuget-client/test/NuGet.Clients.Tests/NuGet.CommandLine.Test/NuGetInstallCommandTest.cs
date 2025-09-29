@@ -1,5 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -189,6 +191,7 @@ namespace NuGet.CommandLine.Test
                 r1.Success.Should().BeTrue();
                 r2.Success.Should().BeTrue();
                 File.Exists(nupkgPath).Should().BeTrue();
+                Assert.NotNull(installDir);
                 File.Exists(Path.Combine(installDir, "data", "1.txt")).Should().BeFalse("this package was uninstalled");
                 File.Exists(Path.Combine(installDir, "data", "2.txt")).Should().BeTrue("this package was installed");
 
@@ -659,7 +662,7 @@ namespace NuGet.CommandLine.Test
                     repositoryPath };
 
                 // Act
-                var envVars = new Dictionary<string, string>()
+                var envVars = new Dictionary<string, string?>()
                 {
                     { "PATH", null }
                 };
@@ -1472,7 +1475,7 @@ namespace NuGet.CommandLine.Test
         [InlineData("Highest", null, "2.0.0")]
         [InlineData("HighestMinor", "1.1", "1.2.0")]
         [InlineData("HighestPatch", "1.1", "1.1.1")]
-        public void InstallCommand_DependencyResolution(string dependencyType, string requestedVersion, string expectedVersion)
+        public void InstallCommand_DependencyResolution(string? dependencyType, string? requestedVersion, string expectedVersion)
         {
             var nugetexe = Util.GetNuGetExePath();
             using (var pathContext = new SimpleTestPathContext())
@@ -2069,7 +2072,7 @@ namespace NuGet.CommandLine.Test
             solution.Projects.Add(projectA);
             solution.Create(pathContext.SolutionRoot);
 
-            var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath), "packages.config");
+            var config = Path.Combine(Path.GetDirectoryName(projectA.ProjectPath)!, "packages.config");
             var args = new string[]
             {
                 "-OutputDirectory",
@@ -2115,7 +2118,7 @@ namespace NuGet.CommandLine.Test
             solution.Projects.Add(projectB);
             solution.Create(pathContext.SolutionRoot);
 
-            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config");
+            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]
             {
                 "-OutputDirectory",
@@ -2164,7 +2167,7 @@ namespace NuGet.CommandLine.Test
             solution.Projects.Add(projectB);
             solution.Create(pathContext.SolutionRoot);
 
-            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath), "packages.config");
+            var config = Path.Combine(Path.GetDirectoryName(projectB.ProjectPath)!, "packages.config");
             var args = new string[]
             {
                 "-OutputDirectory",

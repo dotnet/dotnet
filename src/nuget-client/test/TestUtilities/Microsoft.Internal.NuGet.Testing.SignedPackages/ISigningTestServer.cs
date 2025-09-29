@@ -11,8 +11,6 @@ namespace Microsoft.Internal.NuGet.Testing.SignedPackages
     {
         Uri Url { get; }
 
-#if IS_SIGNING_SUPPORTED
         IDisposable RegisterResponder(IHttpResponder responder);
-#endif
     }
 }

@@ -41,14 +41,14 @@
   </PropertyGroup>
 
  <PropertyGroup Condition=" '$(PreReleaseVersion)' == '' ">
-    <PreReleaseVersion>32767</PreReleaseVersion>
+    <!-- This number is chosen to be higher than the assembly versions that the VMR-built NuGet uses, so that a dev build of NuGet can be patched over
+         the VMR build. -->
+    <PreReleaseVersion>65534</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the Pre-release/Build meta-data from CI if Version is set-->
   <PropertyGroup Condition="'$(BuildNumber)' != ''">
     <PreReleaseVersion>$(BuildNumber)</PreReleaseVersion>
-    <!-- Add 500 to the revision number to avoid clashing with the existing msft official build. -->
-    <PreReleaseVersion Condition="'$(DotNetBuildFromVMR)' == 'true'">$([MSBuild]::Add($(BuildNumber), 500))</PreReleaseVersion>
   </PropertyGroup>
 
   <!--Setting the product information for Beta builds-->

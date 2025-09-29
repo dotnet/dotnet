@@ -85,9 +85,16 @@ namespace NuGet.PackageManagement.UI.Test
             mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
             mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
 
+            var mockMetadataInfo = new Mock<IProjectMetadataContextInfo>();
+            mockMetadataInfo.Setup(_ => _.UniqueName).Returns("");
+            var mockNuGetProjectManager = new Mock<INuGetProjectManagerService>();
+            mockNuGetProjectManager
+                .Setup(_ => _.GetMetadataAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IProjectMetadataContextInfo>(mockMetadataInfo.Object));
+
             UIActionEngine uiActionEngine = CreateUIActionEngine();
             IReadOnlyList<PreviewResult> previewResults = await uiActionEngine.GetPreviewResultsAsync(
-                Mock.Of<INuGetProjectManagerService>(),
+                mockNuGetProjectManager.Object,
                 projectActions: new[] { uninstallAction, installAction },
                 userAction: null,
                 mockUIController.Object,
@@ -143,10 +150,17 @@ namespace NuGet.PackageManagement.UI.Test
             var mockUIContext = new Mock<INuGetUIContext>();
             mockUIContext.Setup(uiContext => uiContext.PackageSourceMapping).Returns((PackageSourceMapping)null);
             mockUIController.Setup(uiController => uiController.UIContext).Returns(mockUIContext.Object);
+            var mockMetadataInfo = new Mock<IProjectMetadataContextInfo>();
+            mockMetadataInfo.Setup(_ => _.UniqueName).Returns("");
+            var mockNuGetProjectManager = new Mock<INuGetProjectManagerService>();
+            mockNuGetProjectManager
+                .Setup(_ => _.GetMetadataAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Returns(new ValueTask<IProjectMetadataContextInfo>(mockMetadataInfo.Object));
 
             UIActionEngine uiActionEngine = CreateUIActionEngine();
+
             IReadOnlyList<PreviewResult> previewResults = await uiActionEngine.GetPreviewResultsAsync(
-                Mock.Of<INuGetProjectManagerService>(),
+                mockNuGetProjectManager.Object,
                 projectActions: new[] { installAction },
                 userAction: null,
                 mockUIController.Object,

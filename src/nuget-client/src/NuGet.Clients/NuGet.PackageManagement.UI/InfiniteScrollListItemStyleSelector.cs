@@ -8,20 +8,20 @@ namespace NuGet.PackageManagement.UI
 {
     public class InfiniteScrollListItemStyleSelector : StyleSelector
     {
-        private Style PackageItemStyle { get; set; }
-        private Style LoadingStatusIndicatorStyle { get; set; }
+        private Style _packageItemStyle;
+        private Style _loadingStatusIndicatorStyle;
 
         private void Init(ItemsControl infiniteScrollList)
         {
-            if (PackageItemStyle == null && LoadingStatusIndicatorStyle == null)
+            if (_packageItemStyle == null && _loadingStatusIndicatorStyle == null)
             {
-                PackageItemStyle = (Style)infiniteScrollList.FindResource("packageItemStyle");
-                LoadingStatusIndicatorStyle = (Style)infiniteScrollList.FindResource("loadingStatusIndicatorStyle");
+                _packageItemStyle = (Style)infiniteScrollList.FindResource("packageItemStyle");
+                _loadingStatusIndicatorStyle = (Style)infiniteScrollList.FindResource("loadingStatusIndicatorStyle");
 
-                if (PackageItemStyle.Setters.Count == 0)
+                if (_packageItemStyle.Setters.Count == 0)
                 {
-                    PackageItemStyle.Setters.Add(new Setter(InfiniteScrollList.FocusVisualStyleProperty, infiniteScrollList.FindResource("MarginFocusVisualStyle")));
-                    PackageItemStyle.Setters.Add(new Setter(InfiniteScrollList.TemplateProperty, infiniteScrollList.FindResource("ListBoxItemTemplate")));
+                    _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.FocusVisualStyleProperty, infiniteScrollList.FindResource("MarginFocusVisualStyle")));
+                    _packageItemStyle.Setters.Add(new Setter(InfiniteScrollList.TemplateProperty, infiniteScrollList.FindResource("ListBoxItemTemplate")));
                 }
             }
         }
@@ -32,10 +32,10 @@ namespace NuGet.PackageManagement.UI
 
             if (item is LoadingStatusIndicator)
             {
-                return LoadingStatusIndicatorStyle;
+                return _loadingStatusIndicatorStyle;
             }
 
-            return PackageItemStyle;
+            return _packageItemStyle;
         }
     }
 }

@@ -28,7 +28,11 @@ internal sealed class RemoteSolutionSnapshot(Solution solution, RemoteSnapshotMa
     {
         if (project.Solution != _solution)
         {
-            throw new ArgumentException(SR.Project_does_not_belong_to_this_solution, nameof(project));
+            // It might look like we don't know about this project, but we might have actually seen it before but been forced
+            // to retry running source generators in it, so we handle that specific case here.
+            project = _solution.GetProject(project.Id) is { } retryProject && retryProject.IsRetryProject()
+                    ? retryProject
+                    : throw new ArgumentException(SR.Project_does_not_belong_to_this_solution, nameof(project));
         }
 
         if (!project.ContainsRazorDocuments())

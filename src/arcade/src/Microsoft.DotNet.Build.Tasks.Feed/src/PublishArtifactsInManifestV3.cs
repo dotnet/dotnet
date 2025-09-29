@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Build.Framework;
 using Microsoft.DotNet.Build.Tasks.Feed.Model;
-#if !NET472_OR_GREATER
 using Microsoft.DotNet.ProductConstructionService.Client;
 using Microsoft.DotNet.ProductConstructionService.Client.Models;
 using Microsoft.DotNet.Build.Manifest;
@@ -126,6 +125,13 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
                         return false;
                     }
 
+                    // Validate that the channel can be be used for this build
+                    if (!await ValidateTargetChannelAsync(buildInformation, targetChannelConfig))
+                    {
+                        Log.LogError($"Channel with ID '{targetChannelId}' is not valid for this build.");
+                        return false;
+                    }
+
                     Log.LogMessage(MessageImportance.High, $"Publishing to this target channel: {targetChannelConfig}");
 
                     List<string> shortLinkUrls = new List<string>();
@@ -229,9 +235,3 @@ namespace Microsoft.DotNet.Build.Tasks.Feed
         }
     }
 }
-#else
-public class PublishArtifactsInManifestV3 : Microsoft.Build.Utilities.Task
-{
-    public override bool Execute() => throw new NotSupportedException("PublishArtifactsInManifestV3 depends on ProductConstructionService.Client, which has discontinued support for desktop frameworks.");
-}
-#endif

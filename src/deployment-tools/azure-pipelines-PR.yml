@@ -15,7 +15,7 @@ name: $(Date:yyyyMMdd)$(Rev:.r)
 variables:
   - name: TeamName
     value: dotnet-core-acquisition
-  - name: SignType
+  - name: _SignType
     value: test
 
 stages:

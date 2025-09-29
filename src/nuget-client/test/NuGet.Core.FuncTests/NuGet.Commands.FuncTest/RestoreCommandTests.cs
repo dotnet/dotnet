@@ -4176,7 +4176,7 @@ namespace NuGet.Commands.FuncTest
         }
 
         [Fact]
-        public async Task Restore_WithHttpsSourceIndexJsonReturningHttpResources_LogsNU1303()
+        public async Task Restore_WithHttpsSourceIndexJsonReturningHttpResources_LogsNU1302()
         {
             // Arrange
             using var pathContext = new SimpleTestPathContext();
@@ -4199,9 +4199,8 @@ namespace NuGet.Commands.FuncTest
             var result = await command.ExecuteAsync();
 
             // Assert
-            server.StopServer();
             result.Success.Should().BeFalse(because: logger.ShowMessages());
-            result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains("http://"));
+            result.LockFile.LogMessages.Should().ContainSingle(m => m.Code == NuGetLogCode.NU1302 && m.Message.Contains(httpsSource));
         }
 
         private static void CreateFakeProjectFile(PackageSpec project2spec)

@@ -17,7 +17,8 @@ namespace Microsoft.CodeAnalysis.Razor.ProjectSystem;
 public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBase(testOutput)
 {
     private static readonly HostProject s_hostProject = TestProjectData.SomeProject with { Configuration = FallbackRazorConfiguration.MVC_2_0 };
-    private static readonly ProjectWorkspaceState s_projectWorkspaceState = ProjectWorkspaceState.Create([TagHelperDescriptorBuilder.Create("TestTagHelper", "TestAssembly").Build()]);
+    private static readonly ProjectWorkspaceState s_projectWorkspaceState = ProjectWorkspaceState.Create([
+        TagHelperDescriptorBuilder.CreateTagHelper("TestTagHelper", "TestAssembly").Build()]);
 
     private static readonly HostDocument[] s_documents =
     [
@@ -37,7 +38,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     public void ProjectSnapshot_CachesDocumentSnapshots()
     {
         // Arrange
-        var state = ProjectState.Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+        var state = ProjectState.Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0])
             .AddEmptyDocument(s_documents[1])
@@ -61,7 +62,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     {
         // Arrange
         var state = ProjectState
-            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0]);
 
@@ -79,7 +80,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
     {
         // Arrange
         var state = ProjectState
-            .Create(s_hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(s_hostProject, ProjectEngineFactoryProvider)
             .WithProjectWorkspaceState(s_projectWorkspaceState)
             .AddEmptyDocument(s_documents[0])
             .AddEmptyDocument(s_documents[1])
@@ -112,7 +113,7 @@ public class ProjectSnapshotTest(ITestOutputHelper testOutput) : WorkspaceTestBa
             Path.Combine(basePath, "Products", "Index.cshtml"));
 
         var state = ProjectState
-            .Create(hostProject, CompilerOptions, ProjectEngineFactoryProvider)
+            .Create(hostProject, ProjectEngineFactoryProvider)
             .AddEmptyDocument(importHostDocument)
             .AddEmptyDocument(hostDocument);
 

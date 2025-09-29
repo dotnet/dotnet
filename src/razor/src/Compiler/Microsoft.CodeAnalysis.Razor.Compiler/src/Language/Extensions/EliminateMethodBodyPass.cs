@@ -42,28 +42,16 @@ internal sealed class EliminateMethodBodyPass : IntermediateNodePassBase, IRazor
         documentNode.Children.Insert(documentNode.Children.IndexOf(documentNode.FindPrimaryNamespace()), new CSharpCodeIntermediateNode()
         {
             Children =
-                {
-                    // Field is assigned but never used
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0414" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
+            {
+                // Field is assigned but never used
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0414" + Environment.NewLine),
 
-                    // Field is never assigned
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0649" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
+                // Field is never assigned
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0649" + Environment.NewLine),
 
-                    // Field is never used
-                    new IntermediateToken()
-                    {
-                        Content = "#pragma warning disable 0169" + Environment.NewLine,
-                        Kind = TokenKind.CSharp,
-                    },
-                },
+                // Field is never used
+                IntermediateNodeFactory.CSharpToken("#pragma warning disable 0169" + Environment.NewLine)
+            }
         });
     }
 }

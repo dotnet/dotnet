@@ -49,7 +49,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.3.1" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageVersion Include="Microsoft.DataAI.NuGetRecommender.Contracts" Version="2.1.0" />
-    <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Feed" Version="6.0.0-beta.20528.5" />
+    <PackageVersion Include="Microsoft.DotNet.Build.Tasks.Feed" Version="10.0.0-beta.25401.1" />
     <PackageVersion Include="Microsoft.DotNet.Maestro.Tasks" Version="1.1.0-beta.24415.2" />
     <PackageVersion Include="Microsoft.DotNet.XliffTasks" Version="$(MicrosoftDotNetXliffTasksVersion)" />
     <PackageVersion Include="Microsoft.DotNet.SignTool" Version="10.0.0-beta.25367.5" />
@@ -72,6 +72,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.SDK" Version="18.0.2345-preview.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Sdk.TestFramework.Xunit" Version="17.11.8" />
     <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.4.2244" />
+    <PackageVersion Include="Microsoft.VisualStudio.Shell.Styles" Version="18.0.2345-preview.1" />
     <PackageVersion Include="Microsoft.VisualStudio.TemplateWizardInterface" Version="17.10.40170" />
     <PackageVersion Include="Microsoft.VSSDK.BuildTools" Version="17.14.2094" />
     <PackageVersion Include="Microsoft.Web.Xdt" Version="$(MicrosoftWebXdtPackageVersion)" />
@@ -128,7 +129,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.ComponentModelHost" Version="17.10.191" />
     <PackageVersion Update="Microsoft.VisualStudio.SDK" Version="" />
     <!-- Microsoft.VisualStudio.Shell.15.0 has vulnerable dependencies System.Text.Json. When it's upgraded, try removing the pinned packages -->
-    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.13.40008" />
+    <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="18.0.2345-preview.1" />
   </ItemGroup>
 
   <ItemGroup>

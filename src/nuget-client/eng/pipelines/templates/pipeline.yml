@@ -2,13 +2,10 @@ parameters:
 - name: isOfficialBuild
   type: boolean
   default: false
-- name: NuGetLocalizationType
-  displayName: Whether to do production-ready localization (Full), or pseudo-localization, aka PLOC, (Pseudo) for testing.
-  type: string
-  default: Full
-  values:
-  - Full
-  - Pseudo
+- name: RunOneLocBuild
+  displayName: Run OneLocBuild
+  type: boolean
+  default: false
 - name: RunBuildForPublishing
   displayName: Build bits for publishing
   type: boolean
@@ -77,6 +74,18 @@ stages:
       os: windows
     steps:
     - template: /eng/pipelines/templates/Initialize_Build.yml@self
+
+- ${{ if eq(parameters.RunOneLocBuild, true) }}:
+  - stage: RunOneLocBuild
+    displayName: Run OneLocBuild
+    jobs:
+    - template: /eng/common/templates-official/job/onelocbuild.yml
+      parameters:
+        LclSource: lclFilesfromPackage
+        LclPackageId: 'LCL-JUNO-PROD-NuGetClient'
+        MirrorRepo: 'NuGet.Client'
+        MirrorBranch: ${{ variables['Build.SourceBranchName'] }}
+        GitHubOrg: 'NuGet'
 
 - stage: StaticSourceAnalysis
   displayName: Static Source Analysis
@@ -229,7 +238,6 @@ stages:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
       parameters:
         BuildRTM: false
-        NuGetLocalizationType: ${{ parameters.NuGetLocalizationType }}
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
         SigningType: ${{ parameters.SigningType }}
 
@@ -293,7 +301,6 @@ stages:
     - template: /eng/pipelines/templates/Build_and_UnitTest.yml@self
       parameters:
         BuildRTM: true
-        NuGetLocalizationType: Full
         RunUnitTests: ${{ parameters.RunUnitTestsOnWindows }}
         SigningType: ${{ parameters.SigningType }}
 

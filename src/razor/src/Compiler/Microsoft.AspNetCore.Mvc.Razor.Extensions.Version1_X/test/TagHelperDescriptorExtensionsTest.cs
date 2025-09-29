@@ -17,7 +17,7 @@ public class TagHelperDescriptorExtensionsTest
         var tagHelper = CreateTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.IsViewComponentKind();
+        var result = tagHelper.IsViewComponentKind;
 
         // Assert
         Assert.False(result);
@@ -30,33 +30,33 @@ public class TagHelperDescriptorExtensionsTest
         var tagHelper = CreateViewComponentTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.IsViewComponentKind();
+        var result = tagHelper.IsViewComponentKind;
 
         // Assert
         Assert.True(result);
     }
 
     [Fact]
-    public void GetViewComponentName_ReturnsNull_ForNonVCTHDescriptor()
+    public void ViewComponentName_ReturnsNull_ForNonVCTHDescriptor()
     {
         //Arrange
         var tagHelper = CreateTagHelperDescriptor();
 
         // Act
-        var result = tagHelper.GetViewComponentName();
+        var result = tagHelper.ViewComponentName;
 
         // Assert
         Assert.Null(result);
     }
 
     [Fact]
-    public void GetViewComponentName_ReturnsName_ForVCTHDescriptor()
+    public void ViewComponentName_ReturnsName_ForVCTHDescriptor()
     {
         // Arrange
         var tagHelper = CreateViewComponentTagHelperDescriptor("ViewComponentName");
 
         // Act
-        var result = tagHelper.GetViewComponentName();
+        var result = tagHelper.ViewComponentName;
 
         // Assert
         Assert.Equal("ViewComponentName", result);
@@ -64,7 +64,7 @@ public class TagHelperDescriptorExtensionsTest
 
     private static TagHelperDescriptor CreateTagHelperDescriptor()
     {
-        var tagHelper = TagHelperDescriptorBuilder.Create("TypeName", "AssemblyName")
+        var tagHelper = TagHelperDescriptorBuilder.CreateTagHelper("TypeName", "AssemblyName")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tag-name"))
             .Build();
 
@@ -73,9 +73,9 @@ public class TagHelperDescriptorExtensionsTest
 
     private static TagHelperDescriptor CreateViewComponentTagHelperDescriptor(string name = "ViewComponentName")
     {
-        var tagHelper = TagHelperDescriptorBuilder.Create(ViewComponentTagHelperConventions.Kind, "TypeName", "AssemblyName")
+        var tagHelper = TagHelperDescriptorBuilder.CreateViewComponent("TypeName", "AssemblyName")
             .TagMatchingRuleDescriptor(rule => rule.RequireTagName("tag-name"))
-            .Metadata(ViewComponentTagHelperMetadata.Name, name)
+            .Metadata(new ViewComponentMetadata(name, TypeNameObject.From(name)))
             .Build();
 
         return tagHelper;

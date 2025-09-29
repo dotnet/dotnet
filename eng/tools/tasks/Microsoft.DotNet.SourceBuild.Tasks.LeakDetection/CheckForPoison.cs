@@ -86,66 +86,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             ".tar.gz",
         };
 
-        private static readonly string[] FileNamesToSkip =
-        {
-            "_._",
-            "-.-",
-            ".bowerrc",
-            ".gitignore",
-            ".gitkeep",
-            ".rels",
-            "LICENSE",
-            "prefercliruntime",
-            "RunCsc",
-            "RunVbc",
-        };
-
-        private static readonly string[] FileExtensionsToSkip =
-        {
-            ".config",
-            ".cs",
-            ".cshtml",
-            ".csproj",
-            ".css",
-            ".db",
-            ".editorconfig",
-            ".eot",
-            ".fs",
-            ".fsproj",
-            ".h",
-            ".html",
-            ".ico",
-            ".js",
-            ".json",
-            ".map",
-            ".md",
-            ".nuspec",
-            ".otf",
-            ".png",
-            ".props",
-            ".proto",
-            ".proj",
-            ".psmdcp",
-            ".pubxml",
-            ".razor",
-            ".rtf",
-            ".scss",
-            ".sln",
-            ".svg",
-            ".targets",
-            ".transform",
-            ".ts",
-            ".ttf",
-            ".txt",
-            ".vb",
-            ".vbproj",
-            ".win32manifest",
-            ".woff",
-            ".woff2",
-            ".xaml",
-            ".xml",
-        };
-
         private const string PoisonMarker = "POISONED";
 
         private const string SbrpAttributeType = "System.Reflection.AssemblyMetadataAttribute";
@@ -232,18 +172,11 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
             return poisons;
         }
 
-        private static PoisonedFileEntry CheckSingleFile(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate)
+        private PoisonedFileEntry CheckSingleFile(IEnumerable<CatalogPackageEntry> catalogedPackages, CandidateFileEntry candidate)
         {
             // skip some common files that get copied verbatim from nupkgs - LICENSE, _._, etc as well as
             // file types that we never care about - text files, .gitconfig, etc.
             var fileToCheck = candidate.ExtractedPath;
-
-            if (FileNamesToSkip.Any(f => Path.GetFileName(fileToCheck).ToLowerInvariant() == f.ToLowerInvariant()) ||
-                FileExtensionsToSkip.Any(e => Path.GetExtension(fileToCheck).ToLowerInvariant() == e.ToLowerInvariant()) ||
-                (new FileInfo(fileToCheck).Length == 0))
-            {
-                return null;
-            }
 
             var poisonEntry = new PoisonedFileEntry();
             poisonEntry.Path = candidate.DisplayPath;
@@ -264,15 +197,13 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
 
             foreach (var p in catalogedPackages)
             {
-                // This hash can match either the original hash (we couldn't poison the file, or redownloaded it) or
-                // the poisoned hash (the obvious failure case of a poisoned file leaked).
-                foreach (var matchingCatalogedFile in p.Files.Where(f => f.OriginalHash.SequenceEqual(poisonEntry.Hash) || (f.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false)))
+                foreach (var matchingCatalogedFile in p.Files.Where(f => f.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
                 {
                     poisonEntry.Type |= PoisonType.Hash;
                     var match = new PoisonMatch
                     {
                         File = matchingCatalogedFile.Path,
-                        Package = p.Path,
+                        Package = Utility.MakeRelativePath(p.Path, ProjectDirPath),
                         PackageId = p.Id,
                         PackageVersion = p.Version,
                     };
@@ -385,10 +316,8 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 poisonEntry.Hash = sha.ComputeHash(stream);
             }
 
-            // first check for a matching poisoned or non-poisoned hash match:
-            // - non-poisoned is a potential error where the package was redownloaded.
-            // - poisoned is a use of a local package we were not expecting.
-            foreach (var matchingCatalogedPackage in catalogedPackages.Where(c => c.OriginalHash.SequenceEqual(poisonEntry.Hash) || (c.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false)))
+            // first check for a matching hash match
+            foreach (var matchingCatalogedPackage in catalogedPackages.Where(c => c.PoisonedHash?.SequenceEqual(poisonEntry.Hash) ?? false))
             {
                 poisonEntry.Type |= PoisonType.Hash;
                 var match = new PoisonMatch
@@ -458,7 +387,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 {
                     Id = p.Attributes["Id"].Value,
                     Version = p.Attributes["Version"].Value,
-                    OriginalHash = p.Attributes["OriginalHash"].Value.ToBytes(),
                     PoisonedHash = p.Attributes["PoisonedHash"]?.Value?.ToBytes(),
                     Path = p.Attributes["Path"].Value,
                 };
@@ -467,7 +395,6 @@ namespace Microsoft.DotNet.SourceBuild.Tasks.LeakDetection
                 {
                     var fEntry = new CatalogFileEntry
                     {
-                        OriginalHash = f.Attributes["OriginalHash"].Value.ToBytes(),
                         PoisonedHash = f.Attributes["PoisonedHash"]?.Value?.ToBytes(),
                         Path = f.Attributes["Path"].Value,
                     };

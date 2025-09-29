@@ -326,7 +326,7 @@ namespace NuGet.Protocol.Tests
             // Each attempt to access a private feed initially receives a 401 Unauthorized response.
             // Following the 401 response, NuGet attempts to acquire the necessary credentials.
             // These credentials are then used for subsequent requests to the feed.
-            // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as 
+            // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as
             // credentials would be sent preemptively with the initial request.
             int retryCount = 0;
 
@@ -363,10 +363,10 @@ namespace NuGet.Protocol.Tests
             await SendAsync(client, 5);
 
             // Assert
-            // In this test, although we are explicitly making 5 requests to the feed, 
+            // In this test, although we are explicitly making 5 requests to the feed,
             // internally a total of 10 requests are made due to the authentication behavior described near 'retryCount' variable.
             // For each request to the private feed, the first attempt results in a 401 Unauthorized response,
-            // followed by a second attempt with the acquired credentials. This effectively doubles the number of 
+            // followed by a second attempt with the acquired credentials. This effectively doubles the number of
             // actual HTTP requests sent during the test.
             Assert.Equal(10, retryCount);
 
@@ -403,7 +403,7 @@ namespace NuGet.Protocol.Tests
             // Each attempt to access a private feed initially receives a 401 Unauthorized response.
             // Following the 401 response, NuGet attempts to acquire the necessary credentials.
             // These credentials are then used for subsequent requests to the feed.
-            // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as 
+            // Note: If 'HttpClientHandler.PreAuthenticate' is set to true, this behavior might differ as
             // credentials would be sent preemptively with the initial request.
             int retryCount = 0;
 
@@ -452,10 +452,10 @@ namespace NuGet.Protocol.Tests
             await SendAsync(client, 2);
 
             // Assert
-            // In this test, although we are explicitly making 5 requests to the feed, 
+            // In this test, although we are explicitly making 5 requests to the feed,
             // internally a total of 10 requests are made due to the authentication behavior described near 'retryCount' variable.
             // For each request to the private feed, the first attempt results in a 401 Unauthorized response,
-            // followed by a second attempt with the acquired credentials. This effectively doubles the number of 
+            // followed by a second attempt with the acquired credentials. This effectively doubles the number of
             // actual HTTP requests sent during the test.
             // We made one additional request to the feed because cached credentials expired after 3 requests.
             Assert.Equal(11, retryCount);
@@ -835,22 +835,22 @@ namespace NuGet.Protocol.Tests
 
             var workTasks = new Task[]
             {
-                new Task(async () => { try { await SendAsync(handler1); } catch { throw; } }),
-                new Task(async () => { try { await SendAsync(handler2); } catch { throw; } }),
-                new Task(async () => { try { await SendAsync(handler3); } catch { throw; } }),
+                new Task(async () => { await SendAsync(handler1); }),
+                new Task(async () => { await SendAsync(handler2); }),
+                new Task(async () => { await SendAsync(handler3); }),
             };
 
             var disposeTasks = new Task[]
             {
-                new Task(() => { try { handler1.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler2.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler3.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler1.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler2.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler3.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler1.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler2.Dispose(); } catch { throw; } }),
-                new Task(() => { try { handler3.Dispose(); } catch { throw; } }),
+                new Task(() => { handler1.Dispose(); }),
+                new Task(() => { handler2.Dispose(); }),
+                new Task(() => { handler3.Dispose(); }),
+                new Task(() => { handler1.Dispose(); }),
+                new Task(() => { handler2.Dispose(); }),
+                new Task(() => { handler3.Dispose(); }),
+                new Task(() => { handler1.Dispose(); }),
+                new Task(() => { handler2.Dispose(); }),
+                new Task(() => { handler3.Dispose(); }),
             };
 
             StartTasks(workTasks);

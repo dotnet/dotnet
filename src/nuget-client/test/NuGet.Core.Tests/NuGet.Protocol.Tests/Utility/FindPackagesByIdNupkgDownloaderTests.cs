@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.Protocol.Core.Types;
@@ -301,6 +302,30 @@ namespace NuGet.Protocol.Tests
                 Assert.Equal(0, tc.RequestCount);
                 Assert.Equal(1, tc.HttpSource.CacheHits);
                 Assert.Equal(0, tc.HttpSource.CacheMisses);
+            }
+        }
+
+        [Fact]
+        public async Task GetNuspecReaderFromNupkgAsync_InvalidPackageId_Throws()
+        {
+            // Arrange
+            using (var testDirectory = TestDirectory.Create())
+            using (var cacheContext = new SourceCacheContext())
+            {
+                var tc = await TestContext.CreateAsync(testDirectory);
+                PackageIdentity id = new PackageIdentity("../contoso", NuGetVersion.Parse("1.0.0"));
+                cacheContext.DirectDownload = true;
+
+                // Act
+                var exception = await Assert.ThrowsAsync<Packaging.InvalidPackageIdException>(() => tc.Target.GetNuspecReaderFromNupkgAsync(
+                    id,
+                    tc.NupkgUrl,
+                    cacheContext,
+                    tc.Logger,
+                    CancellationToken.None));
+
+                // Assert
+                exception.Message.Should().Contain(string.Format(Protocol.Strings.Error_Invalid_package_id, id.Id));
             }
         }
 

@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -47,19 +46,19 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
     private static TagHelperDescriptor CreateFormNameTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            kind: ComponentMetadata.FormName.TagHelperKind,
+            kind: TagHelperKind.FormName,
             name: "FormName",
             assemblyName: ComponentsApi.AssemblyName,
             builder: out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.FormNameTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.FormName",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "FormName");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.FormName.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.FormName.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.FormName"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.FormNameTagHelper);
 
         builder.TagMatchingRule(rule =>
         {
@@ -77,9 +76,8 @@ internal sealed class FormNameTagHelperDescriptorProvider() : TagHelperDescripto
             attribute.Name = "@formname";
 
             attribute.TypeName = typeof(string).FullName;
-            attribute.SetMetadata(
-                PropertyName("FormName"),
-                IsDirectiveAttribute);
+            attribute.IsDirectiveAttribute = true;
+            attribute.PropertyName = "FormName";
         });
 
         return builder.Build();

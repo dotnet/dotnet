@@ -14,7 +14,8 @@
     </PropertyGroup>
   </Target>
 
-  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)wix/wix.targets" Condition="'$(UseWix5)' == ''" />
+  <Import Project="$(MSBuildThisFileDirectory)wix5/wix.targets" Condition="'$(UseWix5)' != ''" />
 
   <Target Name="GenerateBundles" DependsOnTargets="GetBundleGenerationFlags" Condition="'$(SkipInstallerBuild)' != 'true'">
     <MakeDir Directories="$(PackageOutputPath)" />
@@ -95,6 +96,29 @@
     <MSBuild Projects="@(BundleComponentReference)" Targets="%(Targets)" RemoveProperties="%(RemoveProperties)">
       <Output TaskParameter="TargetOutputs" ItemName="_BundledComponents" />
     </MSBuild>
+
+    <PropertyGroup>
+      <_BundledComponentsPackageGroupWxsPath>$(IntermediateOutputPath)dotnetPackageGroup.wxs</_BundledComponentsPackageGroupWxsPath>
+      <DotNetPackageGroupWxsContent>
+<![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed to the .NET Foundation under one or more agreements. The .NET Foundation licenses this file to you under the MIT license. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <PackageGroup Id="PG_DotNet">
+            @(_BundledComponents->'<MsiPackage SourceFile="%(Identity)" />', '
+            ')
+        </PackageGroup>
+    </Fragment>
+</Wix>
+]]>
+      </DotNetPackageGroupWxsContent>
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_BundledComponentsPackageGroupWxsPath)"
+                      Lines="$(DotNetPackageGroupWxsContent)"
+                      WriteOnlyWhenDifferent="true"
+                      Overwrite="true" />
   </Target>
 
   <!--

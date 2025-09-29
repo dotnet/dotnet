@@ -1054,33 +1054,26 @@ namespace NuGet.Packaging
             {
                 using (Stream stream = file.GetStream())
                 {
-                    try
-                    {
-                        CreatePart(
-                            package,
-                            file.Path,
-                            stream,
-                            lastWriteTime: _deterministic ? ZipFormatMinDate : file.LastWriteTime,
-                            warningMessage);
-                        var fileExtension = Path.GetExtension(file.Path);
+                    CreatePart(
+                        package,
+                        file.Path,
+                        stream,
+                        lastWriteTime: _deterministic ? ZipFormatMinDate : file.LastWriteTime,
+                        warningMessage);
+                    var fileExtension = Path.GetExtension(file.Path);
 
-                        // We have files without extension (e.g. the executables for Nix)
-                        if (!string.IsNullOrEmpty(fileExtension))
-                        {
-                            extensions.Add(fileExtension.Substring(1));
-                        }
-                        else
-                        {
-#if NETCOREAPP
-                            filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/", StringComparison.Ordinal)}");
-#else
-                            filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/")}");
-#endif
-                        }
-                    }
-                    catch
+                    // We have files without extension (e.g. the executables for Nix)
+                    if (!string.IsNullOrEmpty(fileExtension))
                     {
-                        throw;
+                        extensions.Add(fileExtension.Substring(1));
+                    }
+                    else
+                    {
+#if NETCOREAPP
+                        filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/", StringComparison.Ordinal)}");
+#else
+                        filesWithoutExtensions.Add($"/{file.Path.Replace("\\", "/")}");
+#endif
                     }
                 }
             }

@@ -79,6 +79,18 @@ namespace Test.Utility
             var sourceRepositoryProvider = new SourceRepositoryProvider(packageSourceProvider, thisUtility.ResourceProviders);
             return sourceRepositoryProvider;
         }
+
+        public static ISettings PopulateSettingsWithSources(SourceRepositoryProvider sourceRepositoryProvider, TestDirectory settingsDirectory)
+        {
+            var settings = new Settings(settingsDirectory);
+
+            foreach (var source in sourceRepositoryProvider.GetRepositories())
+            {
+                settings.AddOrUpdate(ConfigurationConstants.PackageSources, source.PackageSource.AsSourceItem());
+            }
+
+            return settings;
+        }
     }
 
     /// <summary>
@@ -86,14 +98,14 @@ namespace Test.Utility
     /// </summary>
     public class TestPackageSourceProvider : IPackageSourceProvider
     {
-        private IEnumerable<PackageSource> PackageSources { get; set; }
+        private IEnumerable<PackageSource> _packageSources;
 
         public TestPackageSourceProvider(IEnumerable<PackageSource> packageSources)
         {
-            PackageSources = packageSources;
+            _packageSources = packageSources;
         }
 
-        public IEnumerable<PackageSource> LoadPackageSources() => PackageSources;
+        public IEnumerable<PackageSource> LoadPackageSources() => _packageSources;
 
         public IReadOnlyList<PackageSource> LoadAuditSources() => Array.Empty<PackageSource>();
 
@@ -101,7 +113,7 @@ namespace Test.Utility
 
         public void SavePackageSources(IEnumerable<PackageSource> sources)
         {
-            PackageSources = sources;
+            _packageSources = sources;
             PackageSourcesChanged?.Invoke(this, null);
         }
 
@@ -111,7 +123,7 @@ namespace Test.Utility
 
         public void SaveActivePackageSource(PackageSource source) => throw new NotImplementedException();
 
-        public PackageSource GetPackageSource(string name) => PackageSources.FirstOrDefault(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
+        public PackageSource GetPackageSource(string name) => _packageSources.FirstOrDefault(s => string.Equals(s.Name, name, StringComparison.OrdinalIgnoreCase));
 
         public void RemovePackageSource(string name) => throw new NotImplementedException();
 

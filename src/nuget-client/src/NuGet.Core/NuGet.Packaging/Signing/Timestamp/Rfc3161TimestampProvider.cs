@@ -5,15 +5,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NuGet.Common;
-
-#if IS_SIGNING_SUPPORTED
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
-#endif
 
 namespace NuGet.Packaging.Signing
 {
@@ -25,12 +22,10 @@ namespace NuGet.Packaging.Signing
     {
         // Url to an RFC 3161 timestamp server
         private readonly Uri _timestamperUrl;
-#if IS_SIGNING_SUPPORTED
         private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(10);
-#endif
+
         public Rfc3161TimestampProvider(Uri timeStampServerUrl)
         {
-#if IS_SIGNING_SUPPORTED
             // Uri.UriSchemeHttp and Uri.UriSchemeHttps are not available in netstandard 1.3
             if (!string.Equals(timeStampServerUrl.Scheme, Uri.UriSchemeHttp, StringComparison.Ordinal) &&
                 !string.Equals(timeStampServerUrl.Scheme, Uri.UriSchemeHttps, StringComparison.Ordinal))
@@ -42,11 +37,9 @@ namespace NuGet.Packaging.Signing
                     nameof(Uri.UriSchemeHttp),
                     nameof(Uri.UriSchemeHttps)));
             }
-#endif
             _timestamperUrl = timeStampServerUrl ?? throw new ArgumentNullException(nameof(timeStampServerUrl));
         }
 
-#if IS_SIGNING_SUPPORTED
 
         /// <summary>
         /// Timestamps data present in the TimestampRequest.
@@ -269,15 +262,6 @@ namespace NuGet.Packaging.Signing
 #endif
         }
 
-#else
 
-        /// <summary>
-        /// Timestamp a signature.
-        /// </summary>
-        public Task<PrimarySignature> TimestampSignatureAsync(PrimarySignature primarySignature, TimestampRequest timestampRequest, ILogger logger, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-#endif
     }
 }
