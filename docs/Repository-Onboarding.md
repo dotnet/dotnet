@@ -47,8 +47,8 @@ Ensure the correct dependencies are defined within the new and existing projects
 ### Step 6: Build and Validate
 
 [Build](./README.md#building) the VMR with the new repo.
-Resolve any build issues that arise.
 Push changes to the PR to get complete valdation.
+Resolve any build issues that arise.
 This may require adjusting the [repository project file](#step-5-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
 
 Validate the assets produced from the build by checking the `/artifacts` directory contents.
