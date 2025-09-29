@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": ".editorconfig",
+      "detected_license_expression": "apache-2.0 AND unknown-license-reference"
+    },
+    {
+      "path": "scripts/utils/UpdateNuGetLicenseSPDXList.ps1",
+      "detected_license_expression": "json"
+    },
+    {
+      "path": "src/NuGet.Clients/NuGet.PackageManagement.UI/Resources.resx",
+      "detected_license_expression": "unknown-license-reference"
+    },
+    {
+      "path": "test/NuGet.Core.Tests/NuGet.Packaging.Test/NuspecReaderTests.cs",
+      "detected_license_expression": "apache-2.0 AND mit AND ((mit OR apache-2.0) AND apache-2.0) AND unknown-license-reference AND (mit OR apache-2.0)"
+    }
+  ]
+}

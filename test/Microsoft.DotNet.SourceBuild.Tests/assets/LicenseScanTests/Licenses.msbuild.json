@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/Tasks/XamlRules/ProjectItemsSchema.xaml",
+      "detected_license_expression": "unknown-license-reference"
+    }
+  ]
+}

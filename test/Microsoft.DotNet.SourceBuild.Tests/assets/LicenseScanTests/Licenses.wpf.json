@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "path": "src/Microsoft.DotNet.Wpf/src/WindowsBase/MS/Internal/IO/Packaging/CompoundFile/UserUseLicenseDictionaryLoader.cs",
+      "detected_license_expression": "mit AND proprietary-license"
+    }
+  ]
+}
