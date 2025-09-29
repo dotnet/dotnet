@@ -25,45 +25,45 @@ For detailed configuration options, see [Repository Source Mappings](./VMR-Full-
 Define the appropriate Darc [code flow subscriptions](./Codeflow-PRs.md).
 After defined manually trigger the forward flow subscription via `darc` or [Maestro](https://maestro.dot.net/subscriptions).
 This will open a [VMR PR](https://github.com/dotnet/dotnet/pulls?q=is%3Apr+is%3Aopen+%22Source+code+updates%22) that brings in the repo's source code.
+Add the `NO-MERGE` label to the PR while completing the next steps necessary to integrate the repo into the VMR.
 
-Before merging, ensure the binary and license policies are satisfied:
-
-#### Step 2a: Ensure no Checked in Binaries
+#### Step 3: Ensure no Checked in Binaries
 
 The VMR has restrictions on checked-in binaries.
 PR and CI validation exists to ensure the [binary policy](./VMR-Permissible-Sources.md#binary-policy) is satisfied.
 If the code flow PR is green, the repo complies with the binary policy.
 
-#### Step 2b: Validate OSS Compliant Licenses
+#### Step 4: Validate OSS Compliant Licenses
 
 The VMR has restrictions on allowed licenses.
 Before the code flow PR is merged, queue a run of the [license scan pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1490) (internal Microsoft link) to validate the repo complies with the [license policy](./VMR-Permissible-Sources.md#license-policy).
 
-### Step 3: Create Repository Project File
+### Step 5: Create Repository Project File
 
-Once the code flows into the VMR, create `/repo-projects/<your-repo-name>.proj` to define build behavior.
+Create a `/repo-projects/<your-repo-name>.proj` that integrates the repo's build into to the VMR's build.
 Browse the existing [`repo-projects`](https://github.com/dotnet/dotnet/tree/main/repo-projects) for examples.
 Ensure the correct dependencies are defined within the new and existing projects.
 
-### Step 4: Build and Validate
+### Step 6: Build and Validate
 
 [Build](./README.md#building) the VMR with the new repo.
 Resolve any build issues that arise.
-This may require adjusting the [repository project file](#step-3-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
+Push changes to the PR to get complete valdation.
+This may require adjusting the [repository project file](#step-5-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
 
 Validate the assets produced from the build by checking the `/artifacts` directory contents.
 
-### Step 5: Open a PR
+### Step 5: Merge PR
 
-Open a PR which will trigger the PR validation.
-Address any issues that may be surfaced.
+Once your PR is green and the artifacts have been validated, remove the `NO-MERGE` label from the PR.
+Get approval from the repo experts and [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction) before merging the PR.
 
-### Step 6: Validate
+### Step 6: Post Merge Validation
 
 After your PR has been merged validate the following:
 
 1. Validate the [CI builds](https://dev.azure.com/dnceng/internal/_build?definitionId=1330) are passing.
-1. Ensure the [code flow](https://maestro.dot.net) works correctly
+1. Ensure the [forward and back code flows](https://maestro.dot.net) work correctly
 
 ### Step 7: Enable Repo Level VMR PR Validation
 
