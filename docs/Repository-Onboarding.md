@@ -53,7 +53,7 @@ These will need to be [eliminated](https://github.com/dotnet/source-build/blob/m
 
 #### Step 5b: Handle License and Binary Validation
 
-The VMR has restrictions on allowed licenses and checked in binaries.
+The VMR has restrictions on allowed licenses and checked-in binaries.
 PR and CI validation exists to ensure the policies are satisfied.
 For policy details, see [VMR Permissible Sources](./VMR-Permissible-Sources.md).
 
