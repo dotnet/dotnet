@@ -29,7 +29,7 @@ After defined manually trigger the forward flow subscription via `darc` or [Maes
 ### Step 3: Create Repository Project File
 
 Once the code flows into the VMR, create `/repo-projects/<your-repo-name>.proj` to define build behavior.
-Browse the existing [repo-project](https://github.com/dotnet/dotnet/tree/main/repo-projects) for examples.
+Browse the existing [`repo-projects`](https://github.com/dotnet/dotnet/tree/main/repo-projects) for examples.
 Ensure the correct dependencies are defined within the new and existing projects.
 
 ### Step 4: Build and Validate
