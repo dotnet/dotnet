@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal.SqlExpressions;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 using Microsoft.VisualBasic;
 
 namespace Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
@@ -443,8 +445,8 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
             // JSON_VALUE within JSON_VALUE.
             var (json, path) = jsonArrayColumn is JsonScalarExpression innerJsonScalarExpression
                 ? (innerJsonScalarExpression.Json,
-                    innerJsonScalarExpression.Path.Append(new PathSegment(translatedIndex)).ToArray())
-                : (jsonArrayColumn, new PathSegment[] { new(translatedIndex) });
+                    innerJsonScalarExpression.Path.Append(new(translatedIndex)).ToArray())
+                : (jsonArrayColumn, [new(translatedIndex)]);
 
             var translation = new JsonScalarExpression(
                 json,
@@ -541,11 +543,10 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
 #pragma warning disable EF1001 // Internal EF Core API usage.
-    protected override bool TryTranslateSetters(
+    protected override IReadOnlyList<ColumnValueSetter> TranslateSetters(
         ShapedQueryExpression source,
         IReadOnlyList<ExecuteUpdateSetter> setters,
-        [NotNullWhen(true)] out IReadOnlyList<ColumnValueSetter>? columnSetters,
-        [NotNullWhen(true)] out TableExpressionBase? targetTable)
+        out TableExpressionBase targetTable)
     {
         // SQL Server 2025 introduced the modify method (https://learn.microsoft.com/sql/t-sql/data-types/json-data-type#modify-method),
         // which works only with the JSON data type introduced in that same version.
@@ -555,20 +556,75 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
         // retranslate, using the less efficient JSON_MODIFY() instead for those columns.
         _columnsWithMultipleSetters = new();
 
-        if (!base.TryTranslateSetters(source, setters, out columnSetters, out targetTable))
-        {
-            return false;
-        }
+        var translatedSetters = base.TranslateSetters(source, setters, out targetTable);
 
-        _columnsWithMultipleSetters = new(columnSetters.GroupBy(s => s.Column).Where(g => g.Count() > 1).Select(g => g.Key));
+        _columnsWithMultipleSetters = new(translatedSetters.GroupBy(s => s.Column).Where(g => g.Count() > 1).Select(g => g.Key));
         if (_columnsWithMultipleSetters.Count > 0)
         {
-            return base.TryTranslateSetters(source, setters, out columnSetters, out targetTable);
+            translatedSetters = base.TranslateSetters(source, setters, out targetTable);
         }
 
-        return true;
+        return translatedSetters;
     }
 #pragma warning restore EF1001 // Internal EF Core API usage.
+
+    /// <summary>
+    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+    ///     any release. You should only use it directly in your code with extreme caution and knowing that
+    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
+    /// </summary>
+    protected override bool TrySerializeScalarToJson(
+        JsonScalarExpression target,
+        SqlExpression value,
+        [NotNullWhen(true)] out SqlExpression? jsonValue)
+    {
+#pragma warning disable EF9002 // TrySerializeScalarToJson is experimental
+        // The base implementation handles the types natively supported in JSON (int, string, bool), as well
+        // as constants/parameters.
+        if (base.TrySerializeScalarToJson(target, value, out jsonValue))
+        {
+            return true;
+        }
+#pragma warning restore EF9002
+
+        // geometry/geography are "user-defined types" and therefore not supported by JSON_OBJECT(), which we
+        // use below for serializing arbitrary relational expressions to JSON. Special-case them and serialize
+        // as WKT.
+        if (value.TypeMapping?.StoreType is "geometry" or "geography")
+        {
+            jsonValue = _sqlExpressionFactory.Function(
+                instance: value,
+                "STAsText",
+                arguments: [],
+                nullable: true,
+                instancePropagatesNullability: true,
+                argumentsPropagateNullability: [],
+                typeof(string),
+                _typeMappingSource.FindMapping("nvarchar(max)"));
+            return true;
+        }
+
+        // We have some arbitrary relational expression that isn't an int/string/bool; it needs to be converted
+        // to JSON. Do this by generating JSON_VALUE(JSON_OBJECT('v': foo), '$.v') (supported since SQL Server 2022)
+        if (_sqlServerSingletonOptions.SupportsJsonObjectArray)
+        {
+            jsonValue = new JsonScalarExpression(
+                new SqlServerJsonObjectExpression(
+                    propertyNames: ["v"],
+                    propertyValues: [value],
+                    SqlServerStructuralJsonTypeMapping.NvarcharMaxDefault),
+                [new("v")],
+                typeof(string),
+                _typeMappingSource.FindMapping("nvarchar(max)"),
+                nullable: value is ColumnExpression column ? column.IsNullable : true);
+            return true;
+        }
+        else
+        {
+            throw new InvalidOperationException(SqlServerStrings.ExecuteUpdateCannotSetJsonPropertyOnOldSqlServer);
+        }
+    }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -581,10 +637,11 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
         SqlExpression value,
         ref SqlExpression? existingSetterValue)
     {
-        var (jsonColumn, path) = target switch
+        var (jsonColumn, path, isJsonScalar) = target switch
         {
-            JsonScalarExpression j => ((ColumnExpression)j.Json, j.Path),
-            JsonQueryExpression j => (j.JsonColumn, j.Path),
+            JsonScalarExpression { TypeMapping.ElementTypeMapping: null } j => ((ColumnExpression)j.Json, j.Path, true),
+            JsonScalarExpression { TypeMapping.ElementTypeMapping: not null } j => ((ColumnExpression)j.Json, j.Path, false),
+            JsonQueryExpression j => (j.JsonColumn, j.Path, false),
 
             _ => throw new UnreachableException(),
         };
@@ -612,14 +669,14 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                     // as a constant argument; it will be unpacked and handled in SQL generation.
                     _sqlExpressionFactory.Constant(path, RelationalTypeMapping.NullMapping),
 
-                // If an inline JSON object (complex type) is being assigned, it would be rendered here as a simple string:
-                // [column].modify('$.foo', '{ "x": 8 }')
-                // Since it's untyped, modify would treat is as a string rather than a JSON object, and insert it as such into
-                // the enclosing object, escaping all the special JSON characters - that's not what we want.
-                // We add a cast to JSON to have it interpreted as a JSON object.
-                value is SqlConstantExpression { TypeMapping.StoreType: "json" }
-                    ? _sqlExpressionFactory.Convert(value, value.Type, _typeMappingSource.FindMapping("json")!)
-                    : value
+                    // If an inline JSON object (complex type) is being assigned, it would be rendered here as a simple string:
+                    // [column].modify('$.foo', '{ "x": 8 }')
+                    // Since it's untyped, modify would treat is as a string rather than a JSON object, and insert it as such into
+                    // the enclosing object, escaping all the special JSON characters - that's not what we want.
+                    // We add a cast to JSON to have it interpreted as a JSON object.
+                    value is SqlConstantExpression { TypeMapping.StoreType: "json" }
+                        ? _sqlExpressionFactory.Convert(value, value.Type, _typeMappingSource.FindMapping("json")!)
+                        : value
                 ],
                 nullable: true,
                 instancePropagatesNullability: true,
@@ -642,11 +699,12 @@ public class SqlServerQueryableMethodTranslatingExpressionVisitor : RelationalQu
                 // as a constant argument; it will be unpacked and handled in SQL generation.
                 _sqlExpressionFactory.Constant(path, RelationalTypeMapping.NullMapping),
                 // JSON_MODIFY by default assumes nvarchar(max) is text and escapes it.
-                // In order to set a JSON fragment (for nested JSON objects), we need to wrap the JSON text with JSON_QUERY(), which makes
-                // JSON_MODIFY understand that it's JSON content and prevents escaping.
-                target is JsonQueryExpression && value is not JsonScalarExpression
-                    ? _sqlExpressionFactory.Function("JSON_QUERY", [value], nullable: true, argumentsPropagateNullability: [true], typeof(string), value.TypeMapping)
-                    : value
+                // In order to set a JSON fragment (for nested JSON objects, primitive collections), we need to wrap the JSON text with
+                // JSON_QUERY(), which makes JSON_MODIFY understand that it's JSON content and prevents escaping.
+                // If the value expression happens to be JsonScalarExpression (i.e. another JSON property), we don't need to do this.
+                isJsonScalar || value is JsonScalarExpression
+                    ? value
+                    : _sqlExpressionFactory.Function("JSON_QUERY", [value], nullable: true, argumentsPropagateNullability: [true], typeof(string), value.TypeMapping)
             ],
             nullable: true,
             argumentsPropagateNullability: [true, true, true],
