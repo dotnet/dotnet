@@ -1,0 +1,28 @@
+From 16c668784eabbf5a10d8faa32bff9f9efd6baedf Mon Sep 17 00:00:00 2001
+From: Tom Deseyn <tom.deseyn@gmail.com>
+Date: Mon, 29 Sep 2025 12:03:26 +0200
+Subject: [PATCH] Fix hostfxr_get_available_sdks_result_fn array size type.
+ (#340)
+
+This changes the array size type to 'int' so it matches the 'int32_t' native type.
+
+This was typed as an enum.
+The enum type is accepted by CoreCLR.
+Mono throws a MarshalDirectiveException because it requires the array size to be an integral type.
+---
+ src/MSBuildLocator/NativeMethods.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/MSBuildLocator/NativeMethods.cs b/src/MSBuildLocator/NativeMethods.cs
+index 3a2b2371..6f1f3dcc 100644
+--- a/src/MSBuildLocator/NativeMethods.cs
++++ b/src/MSBuildLocator/NativeMethods.cs
+@@ -28,7 +28,7 @@ internal delegate void hostfxr_resolve_sdk2_result_fn(
+ 
+         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Auto)]
+         internal delegate void hostfxr_get_available_sdks_result_fn(
+-                hostfxr_resolve_sdk2_result_key_t key,
++                int sdk_count,
+                 [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]
+                 string[] value);
+ 
