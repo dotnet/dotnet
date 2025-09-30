@@ -39,6 +39,7 @@
     <SharedComponentsArtifactsPath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'shared-components'))</SharedComponentsArtifactsPath>
     <SharedComponentsArtifactsPath Condition="'$(CustomSharedComponentsArtifactsPath)' != ''">$([MSBuild]::EnsureTrailingSlash('$(CustomSharedComponentsArtifactsPath)'))</SharedComponentsArtifactsPath>
     <SharedComponentAssetManifests>$(SharedComponentsArtifactsPath)VerticalManifest.xml</SharedComponentAssetManifests>
+    <ExtraTestDependenciesRestoreSourcePath>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'extra-test-dependencies'))</ExtraTestDependenciesRestoreSourcePath>
 
     <SbrpRepoSrcDir>$([MSBuild]::NormalizeDirectory('$(SrcDir)', 'source-build-reference-packages', 'src'))</SbrpRepoSrcDir>
     <ReferencePackagesDir>$([MSBuild]::NormalizeDirectory('$(PrereqsPackagesDir)', 'reference'))</ReferencePackagesDir>
