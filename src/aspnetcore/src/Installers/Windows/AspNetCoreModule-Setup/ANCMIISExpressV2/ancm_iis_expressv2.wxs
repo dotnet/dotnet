@@ -192,7 +192,7 @@
 
           <!-- WOW64 Support -->
           <?if $(InstallerPlatform) != "x86" ?>
-          <StandardDirectory Id="ProgramFilesFolder">
+          <Directory Id="ProgramFilesFolder">
             <Directory Id="INSTALLDIR32" Name="IIS Express">
               <Directory Id="INSTALLLOCATION32" ShortName="ANCM" Name="$(ProductName)">
                 <Directory Id="VersionDir32" Name="$(ProductVersionString)">
@@ -221,7 +221,7 @@
                 </Directory>
               </Directory>
             </Directory>
-          </StandardDirectory>
+          </Directory>
           <?endif?>
         </DirectoryRef>
 
