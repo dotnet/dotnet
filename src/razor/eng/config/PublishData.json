@@ -108,14 +108,14 @@
       "insertionCreateDraftPR": false,
       "insertionTitlePrefix": "[d17.14 P3]"
     },
-    "release/dev-next": {
+    "release/dev18.0": {
       "nugetKind": [
         "Shipping",
         "NonShipping"
       ],
-      "vsBranch": "main",
-      "insertionCreateDraftPR": true,
-      "insertionTitlePrefix": "[Validation]"
+      "vsBranch": "rel/d18.0",
+      "insertionCreateDraftPR": false,
+      "insertionTitlePrefix": "[d18.0]"
     }
   }
 }

@@ -52,7 +52,7 @@ public class ProjectSnapshotManagerTest : VisualStudioWorkspaceTestBase
         : base(testOutput)
     {
         var someTagHelpers = ImmutableArray.Create(
-            TagHelperDescriptorBuilder.Create("Test1", "TestAssembly").Build());
+            TagHelperDescriptorBuilder.CreateTagHelper("Test1", "TestAssembly").Build());
 
         _projectManager = CreateProjectSnapshotManager();
 

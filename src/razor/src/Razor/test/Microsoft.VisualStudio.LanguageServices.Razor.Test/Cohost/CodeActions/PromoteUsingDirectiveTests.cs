@@ -99,8 +99,9 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                     Hello World
                 </div>
                 """,
+            documentFilePath: FilePath(@"My\Deeply\Nested\File.razor"),
             additionalFiles: [
-                (FilePath(@"..\_Imports.razor"), """
+                (FilePath(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                     """)],
@@ -112,7 +113,7 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                 """,
             codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
             additionalExpectedFiles: [
-                (FileUri(@"..\_Imports.razor"), """
+                (FileUri(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                     @using System
@@ -130,8 +131,9 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                     Hello World
                 </div>
                 """,
+            documentFilePath: FilePath(@"My\Deeply\Nested\File.razor"),
             additionalFiles: [
-                (FilePath(@"..\_Imports.razor"), """
+                (FilePath(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                     
@@ -144,7 +146,7 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                 """,
             codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
             additionalExpectedFiles: [
-                (FileUri(@"..\_Imports.razor"), """
+                (FileUri(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                     @using System
@@ -162,8 +164,9 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                     Hello World
                 </div>
                 """,
+            documentFilePath: FilePath(@"My\Deeply\Nested\File.razor"),
             additionalFiles: [
-                (FilePath(@"..\_Imports.razor"), """
+                (FilePath(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                         
@@ -176,7 +179,7 @@ public class PromoteUsingDirectiveTests(ITestOutputHelper testOutputHelper) : Co
                 """,
             codeActionName: LanguageServerConstants.CodeActions.PromoteUsingDirective,
             additionalExpectedFiles: [
-                (FileUri(@"..\_Imports.razor"), """
+                (FileUri(@"My\Deeply\_Imports.razor"), """
                     @using System.Text
                     @using Foo.Bar
                     @using System    

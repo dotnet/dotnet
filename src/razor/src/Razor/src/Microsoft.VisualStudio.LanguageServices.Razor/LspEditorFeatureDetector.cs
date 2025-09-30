@@ -72,7 +72,6 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
         return false;
     }
 
-    /// <inheritdoc/>
     public bool IsLspEditorEnabled()
     {
         // This method is first called by our IFilePathToContentTypeProvider.TryGetContentTypeForFilePath(...) implementations.
@@ -89,21 +88,20 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
         return !_lazyLegacyEditorEnabled.GetValue(_disposeTokenSource.Token);
     }
 
-    /// <inheritdoc/>
     public bool IsLspEditorSupported(string documentFilePath)
     {
         // Regardless of whether the LSP is enabled via tools/options, the document's project
         // might not support it. For example, .NET Framework projects don't support the LSP Razor editor.
 
-        var useLegacyEditor = _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.LegacyRazorEditor, documentFilePath);
+        var useLegacyEditor = _projectCapabilityResolver.CheckCapability(WellKnownProjectCapabilities.LegacyRazorEditor, documentFilePath);
 
-        if (useLegacyEditor)
+        if (useLegacyEditor.HasCapability)
         {
             _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is associated with the '{WellKnownProjectCapabilities.LegacyRazorEditor}' capability.");
             return false;
         }
 
-        if (!IsDotNetCoreProject(documentFilePath))
+        if (!IsDotNetCoreProject(documentFilePath).HasCapability)
         {
             _activityLog.LogInfo($"'{documentFilePath}' does not support the LSP editor because it is not associated with the '{WellKnownProjectCapabilities.DotNetCoreCSharp}' capability.");
             return false;
@@ -113,8 +111,8 @@ internal sealed class LspEditorFeatureDetector : ILspEditorFeatureDetector, IDis
         return true;
     }
 
-    public bool IsDotNetCoreProject(string documentFilePath)
-        => _projectCapabilityResolver.ResolveCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
+    public CapabilityCheckResult IsDotNetCoreProject(string documentFilePath)
+        => _projectCapabilityResolver.CheckCapability(WellKnownProjectCapabilities.DotNetCoreCSharp, documentFilePath);
 
     public bool IsRemoteClient()
         => _uiContextService.IsActive(Guids.LiveShareGuestUIContextGuid) ||

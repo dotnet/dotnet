@@ -67,7 +67,7 @@ internal class MetadataAttributeTargetExtension : IMetadataAttributeTargetExtens
                 context.CodeWriter.Write("// language=");
                 context.CodeWriter.WriteLine(node.ValueStringSyntax);
             }
-            using (context.CodeWriter.BuildEnhancedLinePragma(node.Source, context))
+            using (context.BuildEnhancedLinePragma(node.Source))
             {
                 context.AddSourceMappingFor(node);
                 context.CodeWriter.WriteStringLiteral(node.Value);

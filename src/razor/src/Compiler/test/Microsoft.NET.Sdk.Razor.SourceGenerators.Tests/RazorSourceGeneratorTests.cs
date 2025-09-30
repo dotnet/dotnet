@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.Language.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Test.Utilities;
@@ -2615,6 +2616,9 @@ namespace AspNetCoreGeneratedDocument
             // start with the generator suppressed (this is the default state in VS)
             driver = SetSuppressionState(true);
 
+            // Disable co-hosting, this test only applies to non-cohosting scenarios
+            RazorCohostingOptions.UseRazorCohostServer = false;
+
             // results should be empty, and no recorded steps should have run
             using var eventListener = new RazorEventListener();
             var result = RunGenerator(compilation!, ref driver).VerifyPageOutput();
@@ -3457,6 +3461,7 @@ namespace MyApp
                 ["Component.Razor"] = "<h1>Hello world</h1>",
             });
             var compilation = await project.GetCompilationAsync();
+            RazorCohostingOptions.UseRazorCohostServer = false;
 
             // Start with the generator suppressed
             var (driver, additionalTexts, optionsProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project, configureGlobalOptions: (o) =>
@@ -3507,6 +3512,96 @@ namespace MyApp
 }
 #pragma warning restore 1591
 ");
+        }
+
+        [Fact]
+        public async Task IncrementalCompilation_RerunsGenerator_When_AdditionalFileRenamed()
+        {
+            // Arrange
+            using var eventListener = new RazorEventListener();
+            var project = CreateTestProject(new()
+            {
+                ["Pages/Index.razor"] = "<h1>Hello world</h1>",
+                ["Pages/Counter.razor"] = "<h1>Counter</h1>",
+            });
+            var compilation = await project.GetCompilationAsync();
+            var (driver, additionalTexts, analyzerConfigOptionProvider) = await GetDriverWithAdditionalTextAndProviderAsync(project);
+
+            var result = RunGenerator(compilation!, ref driver);
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            eventListener.Clear();
+
+            // Verify no changes when re-running
+            result = RunGenerator(compilation!, ref driver)
+                        .VerifyOutputsMatch(result);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+            Assert.Empty(eventListener.Events);
+
+            // Rename Counter.razor to NewCounter.razor by removing and re-adding with same content
+            var counterText = additionalTexts.First(f => f.Path.EndsWith("Counter.razor", StringComparison.OrdinalIgnoreCase));
+            var renamedText = new TestAdditionalText("Pages/NewCounter.razor", counterText.GetText()!);
+            driver = driver.RemoveAdditionalTexts([counterText])
+                          .AddAdditionalTexts([renamedText]);
+
+            // Update the analyzer config options with the new target path
+            analyzerConfigOptionProvider.AdditionalTextOptions[renamedText.Path] = new TestAnalyzerConfigOptions
+            {
+                ["build_metadata.AdditionalFiles.TargetPath"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(renamedText.Path))
+            };
+            driver = driver.WithUpdatedAnalyzerConfigOptions(analyzerConfigOptionProvider);
+
+            result = RunGenerator(compilation!, ref driver);
+
+            Assert.Empty(result.Diagnostics);
+            Assert.Equal(2, result.GeneratedSources.Length);
+
+            // Verify the new file was processed
+            Assert.Collection(eventListener.Events,
+                    e => e.AssertSingleItem("ParseRazorDocumentStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("ParseRazorDocumentStop", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("GenerateDeclarationCodeStart", "/Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("GenerateDeclarationCodeStop", "/Pages/NewCounter.razor"),
+                    e => Assert.Equal("DiscoverTagHelpersFromCompilationStart", e.EventName),
+                    e => Assert.Equal("DiscoverTagHelpersFromCompilationStop", e.EventName),
+                    e => e.AssertSingleItem("RewriteTagHelpersStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("RewriteTagHelpersStop", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/Index.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/Index.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStart", "Pages/NewCounter.razor"),
+                    e => e.AssertSingleItem("CheckAndRewriteTagHelpersStop", "Pages/NewCounter.razor"),
+                    e => e.AssertPair("RazorCodeGenerateStart", "Pages/Index.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStop", "Pages/Index.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStart", "Pages/NewCounter.razor", "Runtime"),
+                    e => e.AssertPair("RazorCodeGenerateStop", "Pages/NewCounter.razor", "Runtime"),
+                    e => e.AssertSingleItem("AddSyntaxTrees", "Pages_NewCounter_razor.g.cs")
+            );
+
+            // Verify the generated source has the correct namespace and class name
+            var newCounterSource = result.GeneratedSources.FirstOrDefault(s => s.HintName.Contains("NewCounter"));
+            Assert.Contains("namespace MyApp.Pages", newCounterSource.SourceText.ToString());
+            Assert.Contains("public partial class NewCounter", newCounterSource.SourceText.ToString());
+
+            // Do a case-only rename and make sure we update the generated class name still
+            // as component names are case sensitive even on Windows.
+            var renamedText2 = new TestAdditionalText("Pages/NewCouNter.razor", counterText.GetText()!);
+            driver = driver.RemoveAdditionalTexts([renamedText])
+                          .AddAdditionalTexts([renamedText2]);
+
+            // Update the analyzer config options with the new target path
+            analyzerConfigOptionProvider.AdditionalTextOptions[renamedText2.Path] = new TestAnalyzerConfigOptions
+            {
+                ["build_metadata.AdditionalFiles.TargetPath"] = Convert.ToBase64String(Encoding.UTF8.GetBytes(renamedText2.Path))
+            };
+            driver = driver.WithUpdatedAnalyzerConfigOptions(analyzerConfigOptionProvider);
+
+            result = RunGenerator(compilation!, ref driver);
+
+            var newCouNterSource = result.GeneratedSources.FirstOrDefault(s => s.HintName.Contains("NewCouNter"));
+            Assert.Contains("public partial class NewCouNter", newCouNterSource.SourceText.ToString());
         }
     }
 }
