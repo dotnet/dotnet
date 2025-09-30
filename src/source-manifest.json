@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 283940,
+      "barId": 284841,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "6275af47ebda0d394d4a5a401b77bc6f2304204a"
+      "commitSha": "a4c9a07d978c070ef5c19d2ec9f811d6a5b20914"
     },
     {
       "barId": 284639,
@@ -31,10 +31,10 @@
       "commitSha": "c0c52874069a4dc0fe1e880014e6a5f316e9d3b8"
     },
     {
-      "barId": 284760,
+      "barId": 284990,
       "path": "diagnostics",
       "remoteUri": "https://github.com/dotnet/diagnostics",
-      "commitSha": "ec34165e5c619df74b17974fbd5bbee0f81776b3"
+      "commitSha": "46eddddffcb272342504d143b46cba130783e75b"
     },
     {
       "barId": 284682,
@@ -49,10 +49,10 @@
       "commitSha": "36bb70920a16cdfe30540412069796113d9f3e5c"
     },
     {
-      "barId": 284692,
+      "barId": 284860,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "605486e79ca5e6c1dd4c3194c03809b906d7ccfe"
+      "commitSha": "8d12fd301c5a52649b09f2e31dba2ae0cf757419"
     },
     {
       "barId": 284523,
@@ -67,22 +67,22 @@
       "commitSha": "28eeb0947095a716b98b5c34454625708cb3ac76"
     },
     {
-      "barId": 284251,
+      "barId": 285013,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "295eeb41b97a2920eed34684b2a687f05f302c3b"
+      "commitSha": "909624c615247ce1bc4b81cd76c67f0011ce018e"
     },
     {
-      "barId": 284435,
+      "barId": 284599,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ff0a209cf1a97eea64c2b32c7e1f7e11b209d789"
+      "commitSha": "7831533f68b1c1520c0bbad5292b28e11dfd7e58"
     },
     {
-      "barId": 284767,
+      "barId": 284921,
       "path": "runtime",
       "remoteUri": "https://github.com/dotnet/runtime",
-      "commitSha": "812c6cac1d20250255dcad89522546ca0cdb9fb5"
+      "commitSha": "e04af3c706cb4ea3775e9689f510944d4da5382c"
     },
     {
       "barId": 277711,
@@ -109,10 +109,10 @@
       "commitSha": "9b949eeb2d5dba635c06ae936b50d2141b0aabe2"
     },
     {
-      "barId": 277806,
+      "barId": 284900,
       "path": "symreader",
       "remoteUri": "https://github.com/dotnet/symreader",
-      "commitSha": "9994998c0b0fab5efd5cbe2e13a3ea74f4e8e6e1"
+      "commitSha": "26c6c313a35f020dc9fa8c7270a012bcd75fc81b"
     },
     {
       "barId": 279652,
