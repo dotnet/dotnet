@@ -414,8 +414,13 @@ jobs:
   - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        
+        # Download the 1xx shared component artifacts to get the runtime dependencies.
         DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
-      displayName: Download Shared Component Artifacts
+
+        # Download the 1xx source-built SDK
+        DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
+      displayName: Download 1xx Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758
   # After a re-boostrap:
@@ -504,8 +509,8 @@ jobs:
           customPrepArgs=""
           prepSdk=true
 
-          if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]]; then
-            # Using previous SDK implies we do not want to bootstrap.
+          if [[ '${{ parameters.withPreviousSDK }}' == 'True' ]] || [[ '${{ parameters.excludeRuntimeDependentJobs }}' == 'True' ]]; then
+            # Using source-built SDK implies we do not want to bootstrap.
             customPrepArgs="${customPrepArgs} --no-sdk --no-bootstrap"
             prepSdk=false
           elif [[ '${{ length(parameters.reuseBuildArtifactsFrom) }}' -gt '0' ]]; then
