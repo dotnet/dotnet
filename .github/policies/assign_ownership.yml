@@ -103,7 +103,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: nuget-team
     - description: 
       if:
       - payloadType: Pull_Request
