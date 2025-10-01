@@ -6,22 +6,25 @@ using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Razor.Language;
 
-public sealed class TagHelperDescriptorProviderContext(Compilation compilation, ISymbol? targetSymbol, ICollection<TagHelperDescriptor> results)
+public sealed class TagHelperDescriptorProviderContext(
+    Compilation compilation,
+    IAssemblySymbol? targetAssembly,
+    ICollection<TagHelperDescriptor> results)
 {
     public Compilation Compilation { get; } = compilation;
-    public ISymbol? TargetSymbol { get; } = targetSymbol;
+    public IAssemblySymbol? TargetAssembly { get; } = targetAssembly;
     public ICollection<TagHelperDescriptor> Results { get; } = results;
 
     public bool ExcludeHidden { get; init; }
     public bool IncludeDocumentation { get; init; }
 
-    public TagHelperDescriptorProviderContext(Compilation compilation, ISymbol? targetSymbol = null)
-        : this(compilation, targetSymbol, results: [])
+    public TagHelperDescriptorProviderContext(Compilation compilation, IAssemblySymbol? targetAssembly = null)
+        : this(compilation, targetAssembly, results: [])
     {
     }
 
     public TagHelperDescriptorProviderContext(Compilation compilation, ICollection<TagHelperDescriptor> results)
-        : this(compilation, targetSymbol: null, results)
+        : this(compilation, targetAssembly: null, results)
     {
     }
 }
