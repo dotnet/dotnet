@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>$(NetToolCurrent);$(NetFrameworkToolCurrent)</TargetFrameworks>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SourceLink.AzureRepos.Git\Microsoft.SourceLink.AzureRepos.Git.csproj" />
-    <ProjectReference Include="..\TestUtilities\TestUtilities.csproj" />
-  </ItemGroup>
-</Project>

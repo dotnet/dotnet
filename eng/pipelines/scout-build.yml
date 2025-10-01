@@ -32,3 +32,7 @@ stages:
 - template: /eng/pipelines/templates/stages/vmr-build.yml
   parameters:
     scope: scout
+    # Exclude runtime dependent jobs for any branch not producing a 1xx version since runtime-related repos aren't built in that context
+    # Will exclude runtime-dependent jobs when the branch is not main and does not contain '.1xx' but does end with 'xx'.
+    ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/main'), not(contains(variables['Build.SourceBranch'], '.1xx')), endsWith(variables['Build.SourceBranch'], 'xx')) }}:
+      excludeRuntimeDependentJobs: true
