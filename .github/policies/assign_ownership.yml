@@ -49,7 +49,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: deployment-tools-admins
     - description: 
       if:
       - payloadType: Pull_Request
