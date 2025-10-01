@@ -85,7 +85,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: fsharp
     - description: 
       if:
       - payloadType: Pull_Request
@@ -94,7 +94,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: msbuild
     - description: 
       if:
       - payloadType: Pull_Request
@@ -112,7 +112,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: roslyn-infrastructure-current-swat
     - description: 
       if:
       - payloadType: Pull_Request
@@ -121,7 +121,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: roslyn-infrastructure-current-swat
     - description: 
       if:
       - payloadType: Pull_Request
@@ -148,7 +148,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: dotnet-cli
     - description: 
       if:
       - payloadType: Pull_Request
@@ -184,7 +184,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: templating-engine-maintainers
     - description: 
       if:
       - payloadType: Pull_Request
@@ -193,7 +193,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: testing-admin
     - description: 
       if:
       - payloadType: Pull_Request
@@ -221,12 +221,3 @@ configuration:
       then:
       - requestReview:
           teamReviewer: wpf-developers
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/xdt/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
