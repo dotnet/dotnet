@@ -40,7 +40,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: system-commandline
     - description: 
       if:
       - payloadType: Pull_Request
