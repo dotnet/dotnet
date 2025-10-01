@@ -411,16 +411,18 @@ jobs:
         DownloadArchive "source-built SDK" "PrivateSourceBuiltSdkVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/"
       displayName: Download Previously Source-Built SDK
 
-  - ${{ if eq(parameters.excludeRuntimeDependentJobs, 'true') }}:
+  - ${{ if and(parameters.excludeRuntimeDependentJobs, eq(parameters.reuseBuildArtifactsFrom, ''), not(parameters.withPreviousSDK)) }}:
     - script: |
         source "$(sourcesPath)/eng/download-source-built-archive.sh"
-        
-        # Download the 1xx shared component artifacts to get the runtime dependencies.
-        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
-
         # Download the 1xx source-built SDK
         DownloadArchive "1xx source-built SDK" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "" "dotnet-sdk"
-      displayName: Download 1xx Artifacts
+      displayName: Download 1xx SDK
+
+  - ${{ if parameters.excludeRuntimeDependentJobs }}:
+    - script: |
+        source "$(sourcesPath)/eng/download-source-built-archive.sh"
+        DownloadArchive "shared component artifacts" "MicrosoftNETSdkPackageVersion" false "${{ parameters.artifactsRid }}" "$(sourcesPath)/prereqs/packages/archive/" "Private.SourceBuilt.SharedComponents"
+      displayName: Download Shared Component Artifacts
 
   # https://github.com/dotnet/dotnet/issues/1758
   # After a re-boostrap:
