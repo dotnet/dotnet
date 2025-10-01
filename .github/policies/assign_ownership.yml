@@ -22,7 +22,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: aspnet-build
     - description: 
       if:
       - payloadType: Pull_Request
@@ -76,7 +76,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: dnr-codeflow
     - description: 
       if:
       - payloadType: Pull_Request
@@ -130,7 +130,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: dnr-codeflow
     - description: 
       if:
       - payloadType: Pull_Request
@@ -202,7 +202,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: wpf-developers
     - description: 
       if:
       - payloadType: Pull_Request
@@ -220,7 +220,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: wpf-developers
     - description: 
       if:
       - payloadType: Pull_Request
