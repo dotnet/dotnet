@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 using System.Linq;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -23,20 +21,20 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         provider.Execute(context);
 
         // Assert
-        var matches = context.Results.Where(result => result.IsRefTagHelper());
+        var matches = context.Results.Where(static result => result.Kind == TagHelperKind.Ref);
         var item = Assert.Single(matches);
 
         Assert.Empty(item.AllowedChildTags);
         Assert.Null(item.TagOutputHint);
         Assert.Empty(item.Diagnostics);
         Assert.False(item.HasErrors);
-        Assert.Equal(ComponentMetadata.Ref.TagHelperKind, item.Kind);
-        Assert.Equal(bool.TrueString, item.Metadata[TagHelperMetadata.Common.ClassifyAttributesOnly]);
-        Assert.Equal(ComponentMetadata.Ref.RuntimeName, item.Metadata[TagHelperMetadata.Runtime.Name]);
+        Assert.Equal(TagHelperKind.Ref, item.Kind);
+        Assert.Equal(RuntimeKind.None, item.RuntimeKind);
         Assert.False(item.IsDefaultKind());
         Assert.False(item.KindUsesDefaultTagHelperRuntime());
-        Assert.False(item.IsComponentOrChildContentTagHelper);
+        Assert.False(item.IsComponentOrChildContentTagHelper());
         Assert.True(item.CaseSensitive);
+        Assert.True(item.ClassifyAttributesOnly);
 
         Assert.Equal(
             "Populates the specified field or property with a reference to the element or component.",
@@ -45,7 +43,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         Assert.Equal("Microsoft.AspNetCore.Components", item.AssemblyName);
         Assert.Equal("Ref", item.Name);
         Assert.Equal("Microsoft.AspNetCore.Components.Ref", item.DisplayName);
-        Assert.Equal("Microsoft.AspNetCore.Components.Ref", item.GetTypeName());
+        Assert.Equal("Microsoft.AspNetCore.Components.Ref", item.TypeName);
 
         // The tag matching rule for a ref is just the attribute name "ref"
         var rule = Assert.Single(item.TagMatchingRules);
@@ -66,7 +64,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
         var attribute = Assert.Single(item.BoundAttributes);
         Assert.Empty(attribute.Diagnostics);
         Assert.False(attribute.HasErrors);
-        Assert.Equal(ComponentMetadata.Ref.TagHelperKind, attribute.Parent.Kind);
+        Assert.Equal(TagHelperKind.Ref, attribute.Parent.Kind);
         Assert.False(attribute.IsDefaultKind());
         Assert.False(attribute.HasIndexer);
         Assert.Null(attribute.IndexerNamePrefix);
@@ -79,7 +77,7 @@ public class RefTagHelperDescriptorProviderTest : TagHelperDescriptorProviderTes
             attribute.Documentation);
 
         Assert.Equal("@ref", attribute.Name);
-        Assert.Equal("Ref", attribute.GetPropertyName());
+        Assert.Equal("Ref", attribute.PropertyName);
         Assert.Equal("object Microsoft.AspNetCore.Components.Ref.Ref", attribute.DisplayName);
         Assert.Equal("System.Object", attribute.TypeName);
         Assert.False(attribute.IsStringProperty);

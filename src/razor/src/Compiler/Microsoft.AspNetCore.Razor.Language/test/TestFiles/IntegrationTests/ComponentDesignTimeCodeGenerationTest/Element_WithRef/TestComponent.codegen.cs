@@ -26,7 +26,7 @@ namespace Test
         {
 #nullable restore
 #line 1 "x:\dir\subdir\Test\TestComponent.cshtml"
-                                     myElem = default(Microsoft.AspNetCore.Components.ElementReference)!;
+                                     myElem = default(global::Microsoft.AspNetCore.Components.ElementReference)!;
 
 #line default
 #line hidden

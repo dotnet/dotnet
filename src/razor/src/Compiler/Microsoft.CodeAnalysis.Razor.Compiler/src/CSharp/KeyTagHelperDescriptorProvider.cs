@@ -5,7 +5,6 @@ using System;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
-using static Microsoft.AspNetCore.Razor.Language.CommonMetadata;
 
 namespace Microsoft.CodeAnalysis.Razor;
 
@@ -39,17 +38,17 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
     private static TagHelperDescriptor CreateKeyTagHelper()
     {
         using var _ = TagHelperDescriptorBuilder.GetPooledInstance(
-            ComponentMetadata.Key.TagHelperKind, "Key", ComponentsApi.AssemblyName,
+            TagHelperKind.Key, "Key", ComponentsApi.AssemblyName,
             out var builder);
 
-        builder.CaseSensitive = true;
-        builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
+        builder.SetTypeName(
+            fullName: "Microsoft.AspNetCore.Components.Key",
+            typeNamespace: "Microsoft.AspNetCore.Components",
+            typeNameIdentifier: "Key");
 
-        builder.SetMetadata(
-            SpecialKind(ComponentMetadata.Key.TagHelperKind),
-            MakeTrue(TagHelperMetadata.Common.ClassifyAttributesOnly),
-            RuntimeName(ComponentMetadata.Key.RuntimeName),
-            TypeName("Microsoft.AspNetCore.Components.Key"));
+        builder.CaseSensitive = true;
+        builder.ClassifyAttributesOnly = true;
+        builder.SetDocumentation(DocumentationDescriptor.KeyTagHelper);
 
         builder.TagMatchingRule(rule =>
         {
@@ -67,9 +66,8 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
             attribute.Name = "@key";
 
             attribute.TypeName = typeof(object).FullName;
-            attribute.SetMetadata(
-                PropertyName("Key"),
-                IsDirectiveAttribute);
+            attribute.IsDirectiveAttribute = true;
+            attribute.PropertyName = "Key";
         });
 
         return builder.Build();

@@ -23,7 +23,7 @@ internal class ComponentLayoutDirectivePass : IntermediateNodePassBase, IRazorDi
             return;
         }
 
-        var token = ((DirectiveIntermediateNode)directives[0].Node).Tokens.FirstOrDefault();
+        var token = directives[0].Node.Tokens.FirstOrDefault();
         if (token == null)
         {
             return;

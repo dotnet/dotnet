@@ -5,17 +5,11 @@ namespace Microsoft.AspNetCore.Razor.Language.Components;
 
 internal static class TagHelperBoundAttributeDescriptorExtensions
 {
-    private static bool IsTrue(this BoundAttributeDescriptor attribute, string key)
-        => attribute.Metadata.TryGetValue(key, out var value) && value == bool.TrueString;
-
-    private static bool IsTrue(this BoundAttributeDescriptorBuilder builder, string key)
-        => builder.TryGetMetadataValue(key, out var value) && value == bool.TrueString;
-
     public static bool IsDelegateProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.DelegateSignatureKey);
+        => attribute.Metadata is PropertyMetadata { IsDelegateSignature: true };
 
     public static bool IsDelegateWithAwaitableResult(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.DelegateWithAwaitableResultKey);
+        => attribute.Metadata is PropertyMetadata { IsDelegateWithAwaitableResult: true };
 
     /// <summary>
     /// Gets a value indicating whether the attribute is of type <c>EventCallback</c> or
@@ -24,19 +18,16 @@ internal static class TagHelperBoundAttributeDescriptorExtensions
     /// <param name="attribute">The <see cref="BoundAttributeDescriptor"/>.</param>
     /// <returns><c>true</c> if the attribute is an event callback, otherwise <c>false</c>.</returns>
     public static bool IsEventCallbackProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.EventCallbackKey);
+        => attribute.Metadata is PropertyMetadata { IsEventCallback: true };
 
     public static bool IsGenericTypedProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.GenericTypedKey);
+        => attribute.Metadata is PropertyMetadata { IsGenericTyped: true };
 
     public static bool IsTypeParameterProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.TypeParameterKey);
+        => attribute.Metadata.Kind == MetadataKind.TypeParameter;
 
     public static bool IsCascadingTypeParameterProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.TypeParameterIsCascadingKey);
-
-    public static bool IsWeaklyTyped(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.WeaklyTypedKey);
+        => attribute.Metadata is TypeParameterMetadata { IsCascading: true };
 
     /// <summary>
     /// Gets a value that indicates whether the property is a child content property. Properties are
@@ -45,7 +36,7 @@ internal static class TagHelperBoundAttributeDescriptorExtensions
     /// <param name="attribute">The <see cref="BoundAttributeDescriptor"/>.</param>
     /// <returns>Returns <c>true</c> if the property is child content, otherwise <c>false</c>.</returns>
     public static bool IsChildContentProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.ChildContentKey);
+        => attribute.Metadata is PropertyMetadata { IsChildContent: true };
 
     /// <summary>
     /// Gets a value that indicates whether the property is a child content property. Properties are
@@ -54,7 +45,7 @@ internal static class TagHelperBoundAttributeDescriptorExtensions
     /// <param name="builder">The <see cref="BoundAttributeDescriptorBuilder"/>.</param>
     /// <returns>Returns <c>true</c> if the property is child content, otherwise <c>false</c>.</returns>
     public static bool IsChildContentProperty(this BoundAttributeDescriptorBuilder builder)
-        => builder.IsTrue(ComponentMetadata.Component.ChildContentKey);
+        => builder.MetadataObject is PropertyMetadata { IsChildContent: true };
 
     /// <summary>
     /// Gets a value that indicates whether the property is a parameterized child content property. Properties are
@@ -86,5 +77,5 @@ internal static class TagHelperBoundAttributeDescriptorExtensions
     /// otherwise <c>false</c>.
     /// </returns>
     public static bool IsChildContentParameterNameProperty(this BoundAttributeDescriptor attribute)
-        => attribute.IsTrue(ComponentMetadata.Component.ChildContentParameterNameKey);
+        => attribute.Metadata is ChildContentParameterMetadata;
 }

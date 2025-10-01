@@ -29,7 +29,6 @@ internal sealed class PreallocatedTagHelperPropertyIntermediateNode : ExtensionI
         IsIndexerNameMatch = propertyNode.IsIndexerNameMatch;
         PropertyName = propertyNode.PropertyName;
         Source = propertyNode.Source;
-        TagHelper = propertyNode.TagHelper;
     }
 
     public override IntermediateNodeCollection Children => IntermediateNodeCollection.ReadOnly;
@@ -46,7 +45,7 @@ internal sealed class PreallocatedTagHelperPropertyIntermediateNode : ExtensionI
 
     public string PropertyName { get; set; }
 
-    public TagHelperDescriptor TagHelper { get; set; }
+    public TagHelperDescriptor TagHelper => BoundAttribute.Parent;
 
     public string VariableName { get; set; }
 

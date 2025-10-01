@@ -1,37 +1,31 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System;
-
 namespace Microsoft.AspNetCore.Razor.Language.Intermediate;
 
 public sealed class TagHelperPropertyIntermediateNode : IntermediateNode
 {
-    public override IntermediateNodeCollection Children { get; } = new IntermediateNodeCollection();
+    private readonly TagHelperAttributeMatch _match;
 
-    public string AttributeName { get; set; }
+    public required string AttributeName { get; init; }
+    public required AttributeStructure AttributeStructure { get; init; }
 
-    public AttributeStructure AttributeStructure { get; set; }
+    public SourceSpan? OriginalAttributeSpan { get; init; }
 
-    public BoundAttributeDescriptor BoundAttribute { get; set; }
+    public bool IsIndexerNameMatch => _match.IsIndexerMatch;
 
-    public TagHelperDescriptor TagHelper { get; set; }
+    public BoundAttributeDescriptor BoundAttribute => _match.Attribute;
+    public TagHelperDescriptor TagHelper => BoundAttribute.Parent;
 
-    public bool IsIndexerNameMatch { get; set; }
+    public override IntermediateNodeCollection Children { get => field ??= []; }
 
-    public SourceSpan? OriginalAttributeSpan { get; set; }
+    internal TagHelperPropertyIntermediateNode(TagHelperAttributeMatch match)
+    {
+        _match = match;
+    }
 
     public override void Accept(IntermediateNodeVisitor visitor)
-    {
-        if (visitor == null)
-        {
-            throw new ArgumentNullException(nameof(visitor));
-        }
-
-        visitor.VisitTagHelperProperty(this);
-    }
+        => visitor.VisitTagHelperProperty(this);
 
     public override void FormatNode(IntermediateNodeFormatter formatter)
     {
@@ -39,8 +33,8 @@ public sealed class TagHelperPropertyIntermediateNode : IntermediateNode
 
         formatter.WriteProperty(nameof(AttributeName), AttributeName);
         formatter.WriteProperty(nameof(AttributeStructure), AttributeStructure.ToString());
-        formatter.WriteProperty(nameof(BoundAttribute), BoundAttribute?.DisplayName);
+        formatter.WriteProperty(nameof(BoundAttribute), BoundAttribute.DisplayName);
         formatter.WriteProperty(nameof(IsIndexerNameMatch), IsIndexerNameMatch.ToString());
-        formatter.WriteProperty(nameof(TagHelper), TagHelper?.DisplayName);
+        formatter.WriteProperty(nameof(TagHelper), TagHelper.DisplayName);
     }
 }

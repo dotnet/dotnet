@@ -59,9 +59,27 @@ internal static class CSharpIdentifier
             builder.SetCapacityIfLarger(builder.Length + inputName.Length);
         }
 
-        foreach (var ch in inputName)
+        for (int i = 0; i < inputName.Length; i++)
         {
-            builder.Append(SyntaxFacts.IsIdentifierPartCharacter(ch) ? ch : '_');
+            var ch = inputName[i];
+            if (SyntaxFacts.IsIdentifierPartCharacter(ch))
+            {
+                builder.Append(ch);
+            }
+            else
+            {
+                // Not a valid identifier part, replace with underscore
+                builder.Append('_');
+
+                // If this is a high surrogate, skip the low surrogate as well
+                // since a surrogate pair represents a single Unicode character
+                // and we need to match the identifier mangling in the template
+                // engine / VS
+                if (char.IsHighSurrogate(ch) && i + 1 < inputName.Length && char.IsLowSurrogate(inputName[i + 1]))
+                {
+                    i++; // Skip the low surrogate
+                }
+            }
         }
     }
 }
