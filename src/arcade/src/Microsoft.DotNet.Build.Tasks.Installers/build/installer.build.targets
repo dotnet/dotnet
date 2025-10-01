@@ -354,7 +354,7 @@
 
   <Target Name="_BuildNewKeyLinuxPackage"
           AfterTargets="GenerateRpm;GenerateDeb"
-          Condition="'$(PackageTargetOS)' != 'azl'">
+          Condition="!$(PackageTargetOS.Contains('azl'))">
     <!-- Packages to be signed with the new key -->
     <PropertyGroup>
       <_NewKeyVersionSuffix>newkey</_NewKeyVersionSuffix>
