@@ -192,20 +192,42 @@
   </Target>
 
   <Target Name="DiscoverSourceBuiltArtifacts"
-          AfterTargets="DiscoverArtifacts">
+          AfterTargets="DiscoverArtifacts"
+          DependsOnTargets="DetermineSourceBuiltSdkNonStableVersion">
 
-     <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
+    <PropertyGroup>
+      <SdkFileNamePrefix>dotnet-sdk-</SdkFileNamePrefix>
+    </PropertyGroup>
+
+     <ItemGroup>
+      <SdkRepoSdkTarball Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')"
+                         Condition="$([System.String]::new('%(ProducedAsset.Filename)').StartsWith('$(SdkFileNamePrefix)')) and $([System.String]::new('%(ProducedAsset.Identity)').EndsWith('$(ArchiveExtension)'))" />
+    </ItemGroup>
+
+    <!-- COMPAT: Our Source-Build partners expect the sdk tarball at the root of the ArtifactsAssetsDir in addition to publishing output
+         This tarball should be versioned in the filename the same as the output of the sdk repo. -->
+    <Copy SourceFiles="@(SdkRepoSdkTarball)"
+          DestinationFolder="$(ArtifactsAssetsDir)"
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+
+    <MakeDir Directories="$(SourceBuiltPublishAssetsDir)" />
+    <PropertyGroup>
+      <SdkNonStableVersionedTarballPath>$(SourceBuiltPublishAssetsDir)/$(SdkFileNamePrefix)$(SourceBuiltSdkNonStableVersion)-$(TargetRid)$(ArchiveExtension)</SdkNonStableVersionedTarballPath>
+    </PropertyGroup>
+
+    <!-- We need a separate copy of the SDK for darc publishing whose filename contains the non-stable version for uniqueness. -->
+    <Copy SourceFiles="@(SdkRepoSdkTarball)"
+          DestinationFiles="$(SdkNonStableVersionedTarballPath)"
+          SkipUnchangedFiles="true"
+          UseHardlinksIfPossible="true" />
+
+    <ItemGroup Condition="'$(IsPublishPass2)' != 'true'">
       <!-- Copy SDK archive to assets root as source-only build partners expect the file to be there. -->
-      <SdkTarball Include="@(ProducedAsset->'$(ArtifactsAssetsDir)%(Identity)')" Condition="$([System.String]::new('%(ProducedAsset.Filename)').StartsWith('dotnet-sdk-'))">
+      <SdkTarball Include="$(SdkNonStableVersionedTarballPath)">
         <Kind>Blob</Kind>
         <IsShipping>true</IsShipping>
       </SdkTarball>
-      <!-- COMPAT: Our Source-Build partners expect the sdk tarball at the root of the ArtifactsAssetsDir in addition to publishing output -->
-      <Copy SourceFiles="@(SdkTarball)"
-            DestinationFolder="$(ArtifactsAssetsDir)"
-            SkipUnchangedFiles="true"
-            UseHardlinksIfPossible="true" />
-
       <!-- Add the symbols archives to the publishing output. -->
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)dotnet-symbols-*$(ArchiveExtension)">
         <Kind>Blob</Kind>
@@ -230,7 +252,7 @@
 
     <ItemGroup Condition="'$(IsPublishPass2)' == 'true'">
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltArtifactsTarballName).*$(ArchiveExtension)" />
-      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/**/dotnet-sdk-*$(ArchiveExtension)" />
+      <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/dotnet-sdk-*$(ArchiveExtension)" />
       <SourceBuildArtifact Include="$(ArtifactsAssetsDir)/$(SourceBuiltSourceArtifactName)-*" />
       <Artifact Include="@(SourceBuildArtifact)">
         <IsShipping>true</IsShipping>
