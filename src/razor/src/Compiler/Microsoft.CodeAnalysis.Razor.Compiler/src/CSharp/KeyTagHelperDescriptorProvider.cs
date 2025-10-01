@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.Language.Components;
@@ -13,7 +14,7 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
 {
     private static readonly Lazy<TagHelperDescriptor> s_keyTagHelper = new(CreateKeyTagHelper);
 
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -27,7 +28,8 @@ internal sealed class KeyTagHelperDescriptorProvider() : TagHelperDescriptorProv
             return;
         }
 
-        if (context.TargetSymbol is { } targetSymbol && !SymbolEqualityComparer.Default.Equals(targetSymbol, renderTreeBuilderType.ContainingAssembly))
+        if (context.TargetAssembly is { } targetAssembly &&
+            !SymbolEqualityComparer.Default.Equals(targetAssembly, renderTreeBuilderType.ContainingAssembly))
         {
             return;
         }

@@ -122,7 +122,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
             var tagHelpersFromCompilation = declCompilation
                 .Combine(razorSourceGeneratorOptions)
                 .SuppressIfNeeded(isGeneratorSuppressed)
-                .Select(static (pair, _) =>
+                .Select(static (pair, cancellationToken) =>
                 {
                     var ((compilation, razorSourceGeneratorOptions), isGeneratorSuppressed) = pair;
                     var results = new List<TagHelperDescriptor>();
@@ -135,7 +135,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromCompilationStart();
                     var tagHelperFeature = GetStaticTagHelperFeature(compilation);
 
-                    tagHelperFeature.CollectDescriptors(compilation.Assembly, results);
+                    tagHelperFeature.CollectDescriptors(compilation.Assembly, results, cancellationToken);
 
                     RazorSourceGeneratorEventSource.Log.DiscoverTagHelpersFromCompilationStop();
 
@@ -195,7 +195,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
 
                     return hasRazorFilesA == hasRazorFilesB;
                 })
-                .Select(static (pair, _) =>
+                .Select(static (pair, cancellationToken) =>
                 {
                     var ((compilation, razorSourceGeneratorOptions), hasRazorFiles) = pair;
                     if (!hasRazorFiles)
@@ -215,7 +215,7 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
                     {
                         if (compilation.GetAssemblyOrModuleSymbol(reference) is IAssemblySymbol assembly)
                         {
-                            tagHelperFeature.CollectDescriptors(assembly, results);
+                            tagHelperFeature.CollectDescriptors(assembly, results, cancellationToken);
                         }
                     }
 
