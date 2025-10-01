@@ -8,4 +8,15 @@
     <TargetFileName>$(TargetName)$(TargetExt)</TargetFileName>
     <TargetPath>$(TargetDir)$(TargetFileName)</TargetPath>
   </PropertyGroup>
+
+  <!--
+    VS requires the generated vsman files to contain the path to an SBOM file, but this isn't validated until VS insertion.
+    So, check here that the file exists and fail our build, so we get early notice of build errors.
+  -->
+  <Target Name="_ensureSbomExists" BeforeTargets="AddSBOM" Condition=" '$(IsVsixBuild)' != 'true' AND '$(MSBuildProjectExtension)' == '.vsmanproj' ">
+    <Error Condition="!Exists($(SBOMFileLocation)) AND '$(SBOMFileLocation)' != ''"
+      Text="SBOM file '$(SBOMFileLocation)' does not exist" />
+    <Error Condition="'$(SBOMFileLocation)' == ''"
+      Text="Property 'SBOMFileLocation' is not defined" />
+  </Target>
 </Project>
