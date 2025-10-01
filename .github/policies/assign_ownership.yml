@@ -157,7 +157,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: source-build
     - description: 
       if:
       - payloadType: Pull_Request
