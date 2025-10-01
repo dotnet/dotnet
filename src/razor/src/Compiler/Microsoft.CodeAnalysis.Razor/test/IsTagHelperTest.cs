@@ -1,19 +1,18 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Razor.Language;
 using Xunit;
 
 namespace Microsoft.CodeAnalysis.Razor.Workspaces;
 
-public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
+public class IsTagHelperTest : TagHelperDescriptorProviderTestBase
 {
-    public TagHelperTypeVisitorTest() : base(AdditionalCode)
+    public IsTagHelperTest() : base(AdditionalCode)
     {
         Compilation = BaseCompilation;
-        ITagHelperSymbol = Compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper);
+        ITagHelperSymbol = Compilation.GetTypeByMetadataName(TagHelperTypes.ITagHelper).AssumeNotNull();
     }
 
     private Compilation Compilation { get; }
@@ -24,11 +23,11 @@ public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
     public void IsTagHelper_PlainTagHelper_ReturnsTrue()
     {
         // Arrange
-        var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
         var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Valid_PlainTagHelper");
+        Assert.NotNull(tagHelperSymbol);
 
         // Act
-        var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
+        var isTagHelper = tagHelperSymbol.IsTagHelper(ITagHelperSymbol);
 
         // Assert
         Assert.True(isTagHelper);
@@ -38,11 +37,11 @@ public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
     public void IsTagHelper_InheritedTagHelper_ReturnsTrue()
     {
         // Arrange
-        var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
         var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Valid_InheritedTagHelper");
+        Assert.NotNull(tagHelperSymbol);
 
         // Act
-        var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
+        var isTagHelper = tagHelperSymbol.IsTagHelper(ITagHelperSymbol);
 
         // Assert
         Assert.True(isTagHelper);
@@ -52,11 +51,11 @@ public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
     public void IsTagHelper_AbstractTagHelper_ReturnsFalse()
     {
         // Arrange
-        var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
         var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_AbstractTagHelper");
+        Assert.NotNull(tagHelperSymbol);
 
         // Act
-        var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
+        var isTagHelper = tagHelperSymbol.IsTagHelper(ITagHelperSymbol);
 
         // Assert
         Assert.False(isTagHelper);
@@ -66,11 +65,11 @@ public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
     public void IsTagHelper_GenericTagHelper_ReturnsFalse()
     {
         // Arrange
-        var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
         var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_GenericTagHelper`1");
+        Assert.NotNull(tagHelperSymbol);
 
         // Act
-        var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
+        var isTagHelper = tagHelperSymbol.IsTagHelper(ITagHelperSymbol);
 
         // Assert
         Assert.False(isTagHelper);
@@ -80,11 +79,11 @@ public class TagHelperTypeVisitorTest : TagHelperDescriptorProviderTestBase
     public void IsTagHelper_InternalTagHelper_ReturnsFalse()
     {
         // Arrange
-        var testVisitor = new TagHelperTypeVisitor(ITagHelperSymbol, new List<INamedTypeSymbol>());
         var tagHelperSymbol = Compilation.GetTypeByMetadataName("TestNamespace.Invalid_InternalTagHelper");
+        Assert.NotNull(tagHelperSymbol);
 
         // Act
-        var isTagHelper = testVisitor.IsTagHelper(tagHelperSymbol);
+        var isTagHelper = tagHelperSymbol.IsTagHelper(ITagHelperSymbol);
 
         // Assert
         Assert.False(isTagHelper);
