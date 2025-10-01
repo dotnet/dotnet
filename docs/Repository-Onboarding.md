@@ -40,7 +40,7 @@ Before the code flow PR is merged, queue a run of the [license scan pipeline](ht
 
 ### Step 5: Update Ownership Assignment Policy
 
-Consider adding an entry in `/.github/policies/assign_ownership.yml` to automatically assign reviewers when changes are detected in your repository's source directory.
+Add an entry in `/.github/policies/assign_ownership.yml` to automatically assign reviewers when changes are detected in your repository's source directory.
 Add an event responder task that matches the pattern `src/<your-repo-name>/.*` and specifies an appropriate GitHub team as the `teamReviewer`.
 This helps ensure that the right team is notified when changes are made to your repository within the VMR.
 
