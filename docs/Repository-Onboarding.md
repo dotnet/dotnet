@@ -38,42 +38,42 @@ If the code flow PR is green, the repo complies with the binary policy.
 The VMR has restrictions on allowed licenses.
 Before the code flow PR is merged, queue a run of the [license scan pipeline](https://dev.azure.com/dnceng/internal/_build?definitionId=1490) (internal Microsoft link) to validate the repo complies with the [license policy](./VMR-Permissible-Sources.md#license-policy).
 
-### Step 5: Create Repository Project File
+### Step 5: Update Ownership Assignment Policy
+
+Consider adding an entry in `/.github/policies/assign_ownership.yml` to automatically assign reviewers when changes are detected in your repository's source directory.
+Add an event responder task that matches the pattern `src/<your-repo-name>/.*` and specifies an appropriate GitHub team as the `teamReviewer`.
+This helps ensure that the right team is notified when changes are made to your repository within the VMR.
+
+### Step 6: Create Repository Project File
 
 Create a `/repo-projects/<your-repo-name>.proj` that integrates the repo's build into to the VMR's build.
 Browse the existing [`repo-projects`](https://github.com/dotnet/dotnet/tree/main/repo-projects) for examples.
 Ensure the correct dependencies are defined within the new and existing projects.
 
-### Step 6: Build and Validate
+### Step 7: Build and Validate
 
 [Build](./README.md#building) the VMR with the new repo.
 Push changes to the PR to get complete valdation.
 Resolve any build issues that arise.
-This may require adjusting the [repository project file](#step-5-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
+This may require adjusting the [repository project file](#step-6-create-repository-project-file) and utilizing the [VMR controls](./VMR-Controls.md) to adjust how the repo is built within the VMR.
 
 Validate the assets produced from the build by checking the `/artifacts` directory contents.
 
-### Step 5: Merge PR
+### Step 8: Merge PR
 
 Once your PR is green and the artifacts have been validated, remove the `NO-MERGE` label from the PR.
 Get approval from the repo experts and [@dotnet/product-construction](https://github.com/orgs/dotnet/teams/product-construction) before merging the PR.
 
-### Step 6: Post Merge Validation
+### Step 9: Post Merge Validation
 
 After your PR has been merged validate the following:
 
 1. Validate the [CI builds](https://dev.azure.com/dnceng/internal/_build?definitionId=1330) are passing.
 1. Ensure the [forward and back code flows](https://maestro.dot.net) work correctly
 
-### Step 7: Enable Repo Level VMR PR Validation
+### Step 10: Enable Repo Level VMR PR Validation
 
 Consider enabling [repo level VMR PR validation](https://github.com/dotnet/arcade/blob/main/Documentation/VmrValidation.md) as either an optional or required check.
-
-### Step 8: Update Ownership Assignment Policy
-
-Consider adding an entry in `/.github/policies/assign_ownership.yml` to automatically assign reviewers when changes are detected in your repository's source directory.
-Add an event responder task that matches the pattern `src/<your-repo-name>/.*` and specifies an appropriate GitHub team as the `teamReviewer`.
-This helps ensure that the right team is notified when changes are made to your repository within the VMR.
 
 ## Getting Help
 
