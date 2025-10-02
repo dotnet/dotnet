@@ -112,6 +112,7 @@
 
     <Copy SourceFiles="@(SdkOutputFile)"
           DestinationFiles="@(SdkOutputFile -> '$(IntermediateSdkInstallerOutputPath)sdk\$(Version)\%(RecursiveDir)%(Filename)%(Extension)')"
+          UseHardLinksIfPossible="true"
           SkipUnchangedFiles="true" />
 
     <!-- Copy dnx script to root dotnet folder (which will map to DOTNETHOME) -->
