@@ -83,10 +83,10 @@ namespace TestAssembly
         var compilation = BaseCompilation.AddSyntaxTrees(Parse(csharp));
         var descriptorProvider = new DefaultTagHelperDescriptorProvider();
 
-        var targetSymbol = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
+        var targetAssembly = (IAssemblySymbol)compilation.GetAssemblyOrModuleSymbol(
             compilation.References.First(static r => r.Display.Contains("Microsoft.CodeAnalysis.Razor.Test")));
 
-        var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol);
+        var context = new TagHelperDescriptorProviderContext(compilation, targetAssembly);
 
         // Act
         descriptorProvider.Execute(context);
