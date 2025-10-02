@@ -81,6 +81,10 @@ public partial class LinuxInstallerTests : IDisposable
     [GeneratedRegex(@"\s*\([^)]*\)", RegexOptions.CultureInvariant)]
     private static partial Regex RemoveVersionConstraintRegex { get; }
 
+    // Remove version numbers from package names: "dotnet-runtime-10.0.0-rc.1.25480.112-x64.rpm" -> "dotnet-runtime-*-x64.rpm"
+    [GeneratedRegex(@"\d+\.\d+\.\d+(?:-(?:rc\.\d+(?:\.\d+)*|rtm|preview\.\d+(?:\.\d+)*))?", RegexOptions.CultureInvariant)]
+    private static partial Regex RemoveVersionFromPackageNameRegex { get; }
+
     private const string RuntimeDepsRepo = "mcr.microsoft.com/dotnet/runtime-deps";
     private const string RuntimeDepsVersion = "10.0-preview";
     private const string DotnetRuntimeDepsPrefix = "dotnet-runtime-deps-";
@@ -168,6 +172,18 @@ public partial class LinuxInstallerTests : IDisposable
         await InitializeContextAsync(PackageType.Deb, initializeSharedContext: false);
 
         ValidatePackageMetadata($"{repo}:{tag}", PackageType.Deb);
+    }
+
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeRpmTests))]
+    public void ValidateRpmPackageList()
+    {
+        ValidatePackageList(PackageType.Rpm);
+    }
+
+    [ConditionalFact(typeof(LinuxInstallerTests), nameof(IncludeDebTests))]
+    public void ValidateDebPackageList()
+    {
+        ValidatePackageList(PackageType.Deb);
     }
 
     private async Task InitializeContextAsync(PackageType packageType, bool initializeSharedContext = true)
@@ -711,5 +727,122 @@ public partial class LinuxInstallerTests : IDisposable
         }
 
         return results;
+    }
+
+    private void ValidatePackageList(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? "*.rpm" : "*.deb";
+        string[] expectedPatterns = GetExpectedPackagePatterns(packageType);
+
+        // Find all packages of the specified type
+        List<string> actualPackages = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
+            .Select(Path.GetFileName)
+            .Where(name => name != null)
+            .Cast<string>()
+            .ToList();
+
+        // Normalize package names by removing version numbers
+        List<string> normalizedActual = actualPackages
+            .Select(name => RemoveVersionFromPackageNameRegex.Replace(name, "*"))
+            .Distinct()
+            .OrderBy(name => name)
+            .ToList();
+
+        List<string> expectedPatterns_sorted = expectedPatterns.OrderBy(p => p).ToList();
+
+        _outputHelper.WriteLine($"Expected {packageType} packages:");
+        foreach (string pattern in expectedPatterns_sorted)
+        {
+            _outputHelper.WriteLine($"  {pattern}");
+        }
+
+        _outputHelper.WriteLine($"\nActual {packageType} packages (normalized):");
+        foreach (string package in normalizedActual)
+        {
+            _outputHelper.WriteLine($"  {package}");
+        }
+
+        // Compare the lists
+        var missing = expectedPatterns_sorted.Except(normalizedActual).ToList();
+        var extra = normalizedActual.Except(expectedPatterns_sorted).ToList();
+
+        if (missing.Any() || extra.Any())
+        {
+            var errorMessage = new StringBuilder();
+            errorMessage.AppendLine($"Package list validation failed for {packageType}:");
+
+            if (missing.Any())
+            {
+                errorMessage.AppendLine("Missing packages:");
+                foreach (string pkg in missing)
+                {
+                    errorMessage.AppendLine($"  - {pkg}");
+                }
+            }
+
+            if (extra.Any())
+            {
+                errorMessage.AppendLine("Unexpected packages:");
+                foreach (string pkg in extra)
+                {
+                    errorMessage.AppendLine($"  + {pkg}");
+                }
+            }
+
+            Assert.Fail(errorMessage.ToString());
+        }
+    }
+
+    private string[] GetExpectedPackagePatterns(PackageType packageType)
+    {
+        string extension = packageType == PackageType.Rpm ? ".rpm" : ".deb";
+        string arch = Config.Architecture == Architecture.X64 ? "x64" :
+                     (packageType == PackageType.Rpm ? "aarch64" : "arm64");
+
+        var patterns = new List<string>();
+
+        // Base package prefixes (common to both RPM and DEB)
+        var basePackages = new List<string>
+        {
+            "aspnetcore-runtime", "aspnetcore-targeting-pack", "dotnet-apphost-pack",
+            "dotnet-host", "dotnet-hostfxr", "dotnet-runtime", "dotnet-sdk", "dotnet-targeting-pack"
+        };
+
+        // Add runtime-deps for DEB only (RPM only has distro-specific variants)
+        if (packageType == PackageType.Deb)
+        {
+            basePackages.Add("dotnet-runtime-deps");
+        }
+
+        // Standard variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-{arch}{extension}");
+        }
+
+        // New key variants
+        foreach (string package in basePackages)
+        {
+            patterns.Add($"{package}-*-newkey-{arch}{extension}");
+        }
+
+        if (packageType == PackageType.Rpm)
+        {
+            // Azure Linux variants
+            foreach (string package in basePackages)
+            {
+                patterns.Add($"{package}-*-azl-{arch}{extension}");
+            }
+
+            // Runtime deps distro variants (RPM only)
+            string[] distros = new[] { "azl.3", "opensuse.15", "sles.15" };
+            foreach (string distro in distros)
+            {
+                patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
+                patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+            }
+        }
+
+        return patterns.ToArray();
     }
 }
