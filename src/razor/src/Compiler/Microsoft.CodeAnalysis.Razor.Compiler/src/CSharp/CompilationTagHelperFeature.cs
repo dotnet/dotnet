@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis.CSharp;
 
@@ -14,7 +15,7 @@ public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHe
     private ImmutableArray<ITagHelperDescriptorProvider> _providers;
     private IMetadataReferenceFeature? _referenceFeature;
 
-    public IReadOnlyList<TagHelperDescriptor> GetDescriptors()
+    public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
     {
         var compilation = CSharpCompilation.Create("__TagHelpers", references: _referenceFeature?.References);
         if (!IsValidCompilation(compilation))
@@ -25,9 +26,9 @@ public sealed class CompilationTagHelperFeature : RazorEngineFeatureBase, ITagHe
         var results = new List<TagHelperDescriptor>();
         var context = new TagHelperDescriptorProviderContext(compilation, results);
 
-        for (var i = 0; i < _providers.Length; i++)
+        foreach (var provider in _providers)
         {
-            _providers[i].Execute(context);
+            provider.Execute(context, cancellationToken);
         }
 
         return results;

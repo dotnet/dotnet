@@ -30,7 +30,7 @@ internal sealed partial class DefaultRazorTagHelperContextDiscoveryPhase : Razor
                 return;
             }
 
-            tagHelpers = tagHelperFeature.GetDescriptors();
+            tagHelpers = tagHelperFeature.GetDescriptors(cancellationToken);
         }
 
         using var _ = GetPooledVisitor(codeDocument, tagHelpers, out var visitor);

@@ -75,7 +75,7 @@ public abstract class CohostCodeActionsEndpointTestBase(ITestOutputHelper testOu
             return options;
         });
 
-        return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, createSeparateRemoteAndLocalWorkspaces: true, additionalFiles: additionalFiles);
+        return CreateProjectAndRazorDocument(input.Text, fileKind, documentFilePath, additionalFiles: additionalFiles);
     }
 
     private async Task<CodeAction?> VerifyCodeActionRequestAsync(TextDocument document, TestCode input, string codeActionName, int childActionIndex, bool expectOffer)
