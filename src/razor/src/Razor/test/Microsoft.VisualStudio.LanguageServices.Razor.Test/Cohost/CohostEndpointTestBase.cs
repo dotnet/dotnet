@@ -6,10 +6,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.AspNetCore.Razor.LanguageServer.Semantic;
 using Microsoft.AspNetCore.Razor.Test.Common.Mef;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Razor.Remote;
+using Microsoft.CodeAnalysis.Razor.SemanticTokens;
 using Microsoft.CodeAnalysis.Razor.Workspaces;
 using Microsoft.CodeAnalysis.Razor.Workspaces.Settings;
 using Microsoft.VisualStudio.Composition;
@@ -24,11 +26,13 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
     private TestRemoteServiceInvoker? _remoteServiceInvoker;
     private IClientSettingsManager? _clientSettingsManager;
     private IFilePathService? _filePathService;
+    private ISemanticTokensLegendService? _semanticTokensLegendService;
 
     private protected override IRemoteServiceInvoker RemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected TestRemoteServiceInvoker TestRemoteServiceInvoker => _remoteServiceInvoker.AssumeNotNull();
     private protected override IClientSettingsManager ClientSettingsManager => _clientSettingsManager.AssumeNotNull();
     private protected override IFilePathService FilePathService => _filePathService.AssumeNotNull();
+    private protected ISemanticTokensLegendService SemanticTokensLegendService => _semanticTokensLegendService.AssumeNotNull();
 
     /// <summary>
     /// The export provider for Roslyn "devenv" services, if tests opt-in to using them
@@ -45,6 +49,8 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         _clientSettingsManager = new ClientSettingsManager([], null, null);
 
         _filePathService = new VisualStudioFilePathService(FeatureOptions);
+
+        _semanticTokensLegendService = TestRazorSemanticTokensLegendService.GetInstance(supportsVSExtensions: true);
     }
 
     private protected override RemoteClientLSPInitializationOptions GetRemoteClientLSPInitializationOptions()
@@ -86,34 +92,24 @@ public abstract class CohostEndpointTestBase(ITestOutputHelper testOutputHelper)
         RazorFileKind? fileKind = null,
         string? documentFilePath = null,
         (string fileName, string contents)[]? additionalFiles = null,
-        bool createSeparateRemoteAndLocalWorkspaces = false,
         bool inGlobalNamespace = false,
         bool miscellaneousFile = false)
     {
-        var remoteDocument = base.CreateProjectAndRazorDocument(contents, fileKind, documentFilePath, additionalFiles, createSeparateRemoteAndLocalWorkspaces, inGlobalNamespace, miscellaneousFile);
+        var remoteDocument = base.CreateProjectAndRazorDocument(contents, fileKind, documentFilePath, additionalFiles, inGlobalNamespace, miscellaneousFile);
 
-        if (createSeparateRemoteAndLocalWorkspaces)
-        {
-            // Usually its fine to just use the remote workspace, but sometimes we need to also have things available in the
-            // "devenv" side of Roslyn, which is a different workspace with a different set of services. We don't have any
-            // actual solution syncing set up for testing, and don't really use a service broker, but since we also would
-            // expect to never make changes to a workspace, it should be fine to simply create duplicated solutions as part
-            // of test setup.
-            return CreateLocalProjectAndRazorDocument(
-                remoteDocument.Project.Solution,
-                remoteDocument.Id.ProjectId,
-                miscellaneousFile,
-                remoteDocument.Id,
-                remoteDocument.FilePath.AssumeNotNull(),
-                contents,
-                additionalFiles,
-                inGlobalNamespace);
-        }
-
-        // If we're just creating one workspace, then its the remote one and we just return the remote document
-        // and assume that the endpoint under test doesn't need to do anything on the devenv side. This makes it
-        // easier for tests to mutate solutions
-        return remoteDocument;
+        // In this project we simulate remote services running OOP by creating a different workspace with a different
+        // set of services to represent the devenv Roslyn side of things. We don't have any actual solution syncing set
+        // up for testing, and don't really use a service broker, but since we also would expect to never make changes
+        // to a workspace, it should be fine to simply create duplicated solutions.
+        return CreateLocalProjectAndRazorDocument(
+            remoteDocument.Project.Solution,
+            remoteDocument.Id.ProjectId,
+            miscellaneousFile,
+            remoteDocument.Id,
+            remoteDocument.FilePath.AssumeNotNull(),
+            contents,
+            additionalFiles,
+            inGlobalNamespace);
     }
 
     private TextDocument CreateLocalProjectAndRazorDocument(

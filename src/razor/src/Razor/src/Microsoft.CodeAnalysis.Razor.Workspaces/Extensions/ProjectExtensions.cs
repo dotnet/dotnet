@@ -63,7 +63,7 @@ internal static class ProjectExtensions
         foreach (var provider in providers)
         {
             watch.Restart();
-            provider.Execute(context);
+            provider.Execute(context, cancellationToken);
             watch.Stop();
 
             writeProperties[0] = new(provider.GetType().Name + PropertySuffix, watch.ElapsedMilliseconds);

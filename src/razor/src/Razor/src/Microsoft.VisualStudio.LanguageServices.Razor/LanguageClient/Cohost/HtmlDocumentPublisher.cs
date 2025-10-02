@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Razor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Logging;
+using Microsoft.CodeAnalysis.Razor.TextDifferencing;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.LanguageServer.ContainedLanguage;
 using Microsoft.VisualStudio.Threading;
 
@@ -44,7 +47,7 @@ internal sealed class HtmlDocumentPublisher(
             return;
         }
 
-        _logger.LogDebug($"The html document for {document.FilePath} is {uri}");
+        _logger.LogDebug($"The html document for {document.FilePath} is {htmlDocument.Uri}");
 
         await _joinableTaskContext.Factory.SwitchToMainThreadAsync(cancellationToken);
 
@@ -53,9 +56,15 @@ internal sealed class HtmlDocumentPublisher(
             return;
         }
 
-        VisualStudioTextChange[] changes = [new(0, htmlDocument.Snapshot.Length, htmlText)];
+        // We have a string for the Html text here, so its tempting to just overwrite the whole buffer, but that causes issues with
+        // the editors span tracking, which is used by the Html server to map diagnostic ranges. Updating with minimal changes helps
+        // the editor understand what is actually happening to the virtual buffer.
+        var currentHtmlSourceText = htmlDocument.Snapshot.AsText();
+        var newHtmlSourceText = SourceText.From(htmlText, currentHtmlSourceText.Encoding, currentHtmlSourceText.ChecksumAlgorithm);
+        var textChanges = SourceTextDiffer.GetMinimalTextChanges(currentHtmlSourceText, newHtmlSourceText);
+        var changes = textChanges.SelectAsArray(c => new VisualStudioTextChange(c.Span.Start, c.Span.Length, c.NewText.AssumeNotNull()));
         _documentManager.UpdateVirtualDocument<HtmlVirtualDocument>(uri, changes, documentSnapshot.Version, state: synchronizationResult.Checksum);
 
-        _logger.LogDebug($"Finished Html document generation for {document.FilePath} (into {uri})");
+        _logger.LogDebug($"Finished Html document generation for {document.FilePath} (into {htmlDocument.Uri})");
     }
 }

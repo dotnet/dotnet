@@ -2,16 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Razor;
 using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.Mvc.Razor.Extensions.Version1_X;
 
 public sealed class ViewComponentTagHelperDescriptorProvider : TagHelperDescriptorProviderBase
 {
-    public override void Execute(TagHelperDescriptorProviderContext context)
+    public override void Execute(TagHelperDescriptorProviderContext context, CancellationToken cancellationToken = default)
     {
         ArgHelper.ThrowIfNull(context);
 
@@ -28,7 +28,7 @@ public sealed class ViewComponentTagHelperDescriptorProvider : TagHelperDescript
         var factory = new ViewComponentTagHelperDescriptorFactory(compilation);
         var collector = new Collector(compilation, factory, vcAttribute, nonVCAttribute);
 
-        collector.Collect(context);
+        collector.Collect(context, cancellationToken);
     }
 
     private class Collector(
@@ -36,27 +36,27 @@ public sealed class ViewComponentTagHelperDescriptorProvider : TagHelperDescript
         ViewComponentTagHelperDescriptorFactory factory,
         INamedTypeSymbol vcAttribute,
         INamedTypeSymbol? nonVCAttribute)
-        : TagHelperCollector<Collector>(compilation, targetSymbol: null)
+        : TagHelperCollector<Collector>(compilation, targetAssembly: null)
     {
         private readonly ViewComponentTagHelperDescriptorFactory _factory = factory;
         private readonly INamedTypeSymbol _vcAttribute = vcAttribute;
         private readonly INamedTypeSymbol? _nonVCAttribute = nonVCAttribute;
 
-        protected override void Collect(ISymbol symbol, ICollection<TagHelperDescriptor> results)
+        protected override bool IncludeNestedTypes => true;
+
+        protected override bool IsCandidateType(INamedTypeSymbol type)
+            => type.IsViewComponent(_vcAttribute, _nonVCAttribute);
+
+        protected override void Collect(
+            INamedTypeSymbol type,
+            ICollection<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            using var _ = ListPool<INamedTypeSymbol>.GetPooledObject(out var types);
-            var visitor = new ViewComponentTypeVisitor(_vcAttribute, _nonVCAttribute, types);
+            var descriptor = _factory.CreateDescriptor(type);
 
-            visitor.Visit(symbol);
-
-            foreach (var type in types)
+            if (descriptor != null)
             {
-                var descriptor = _factory.CreateDescriptor(type);
-
-                if (descriptor != null)
-                {
-                    results.Add(descriptor);
-                }
+                results.Add(descriptor);
             }
         }
     }
