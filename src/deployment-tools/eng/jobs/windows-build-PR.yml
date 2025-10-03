@@ -40,7 +40,7 @@ jobs:
   - ${{ if ne(variables['System.TeamProject'], 'public') }}:
     - task: PowerShell@2
       displayName: Setup Private Feeds Credentials
-      condition: eq(variables['Agent.OS'], 'Windows_NT')
+      condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/common/SetupNugetSources.ps1
         arguments: -ConfigFile $(Build.SourcesDirectory)/NuGet.config -Password $Env:Token
