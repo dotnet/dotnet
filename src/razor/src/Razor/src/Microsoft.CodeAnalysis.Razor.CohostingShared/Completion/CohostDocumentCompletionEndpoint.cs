@@ -46,7 +46,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
     CompletionListCache completionListCache,
     ITelemetryReporter telemetryReporter,
     ILoggerFactory loggerFactory)
-    : AbstractCohostDocumentEndpoint<CompletionParams, RazorVSInternalCompletionList?>(incompatibleProjectService), IDynamicRegistrationProvider
+    : AbstractCohostDocumentEndpoint<RazorVSInternalCompletionParams, RazorVSInternalCompletionList?>(incompatibleProjectService), IDynamicRegistrationProvider
 {
     private readonly IRemoteServiceInvoker _remoteServiceInvoker = remoteServiceInvoker;
     private readonly IClientSettingsManager _clientSettingsManager = clientSettingsManager;
@@ -82,13 +82,12 @@ internal sealed class CohostDocumentCompletionEndpoint(
         return [];
     }
 
-    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(CompletionParams request)
+    protected override RazorTextDocumentIdentifier? GetRazorTextDocumentIdentifier(RazorVSInternalCompletionParams request)
         => request.TextDocument?.ToRazorTextDocumentIdentifier();
 
-    protected override async Task<RazorVSInternalCompletionList?> HandleRequestAsync(CompletionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
+    protected override async Task<RazorVSInternalCompletionList?> HandleRequestAsync(RazorVSInternalCompletionParams request, TextDocument razorDocument, CancellationToken cancellationToken)
     {
-        if (request.Context is null ||
-            JsonHelpers.Convert<CompletionContext, VSInternalCompletionContext>(request.Context) is not { } completionContext)
+        if (request.Context is not { } completionContext)
         {
             _logger.LogError("Completion request context is null");
             return null;
@@ -218,23 +217,23 @@ internal sealed class CohostDocumentCompletionEndpoint(
     }
 
     private async Task<RazorVSInternalCompletionList?> GetHtmlCompletionListAsync(
-        CompletionParams request,
+        RazorVSInternalCompletionParams completionParams,
         TextDocument razorDocument,
         RazorCompletionOptions razorCompletionOptions,
         Guid correlationId,
         CancellationToken cancellationToken)
     {
-        var result = await _requestInvoker.MakeHtmlLspRequestAsync<CompletionParams, RazorVSInternalCompletionList>(
+        var result = await _requestInvoker.MakeHtmlLspRequestAsync<RazorVSInternalCompletionParams, RazorVSInternalCompletionList>(
             razorDocument,
             Methods.TextDocumentCompletionName,
-            request,
+            completionParams,
             TelemetryThresholds.CompletionSubLSPTelemetryThreshold,
             correlationId,
             cancellationToken).ConfigureAwait(false);
 
         var rewrittenResponse = DelegatedCompletionHelper.RewriteHtmlResponse(result, razorCompletionOptions);
 
-        var razorDocumentIdentifier = new TextDocumentIdentifierAndVersion(request.TextDocument, Version: 0);
+        var razorDocumentIdentifier = new TextDocumentIdentifierAndVersion(completionParams.TextDocument, Version: 0);
         var resolutionContext = new DelegatedCompletionResolutionContext(razorDocumentIdentifier, RazorLanguageKind.Html, rewrittenResponse.Data ?? rewrittenResponse.ItemDefaults?.Data);
         var resultId = _completionListCache.Add(rewrittenResponse, resolutionContext);
         rewrittenResponse.SetResultId(resultId, _clientCapabilitiesService.ClientCapabilities);
@@ -285,7 +284,7 @@ internal sealed class CohostDocumentCompletionEndpoint(
     internal readonly struct TestAccessor(CohostDocumentCompletionEndpoint instance)
     {
         public Task<RazorVSInternalCompletionList?> HandleRequestAsync(
-            CompletionParams request,
+            RazorVSInternalCompletionParams request,
             TextDocument razorDocument,
             CancellationToken cancellationToken)
                 => instance.HandleRequestAsync(request, razorDocument, cancellationToken);

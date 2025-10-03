@@ -1,6 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.AspNetCore.Razor.PooledObjects;
 using Microsoft.AspNetCore.Razor.Test.Common;
 using Microsoft.AspNetCore.Razor.Test.Common.Workspaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.ExternalAccess.Razor;
 using Microsoft.CodeAnalysis.Razor.Completion;
 using Microsoft.CodeAnalysis.Razor.Protocol;
@@ -344,6 +346,23 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             expectedItemLabels: ["div", "h1", "LayoutView", "EditForm", "ValidationMessage"],
             htmlItemLabels: ["div", "h1"],
             unexpectedItemLabels: ["snippet1", "snippet2"]);
+    }
+
+    [Fact]
+    public async Task HtmlElementNamesCompletion_UsesRazorVSInternalCompletionParams()
+    {
+        await VerifyCompletionListParamsTypeAsync(
+            input: """
+                This is a Razor document.
+
+                <$$1
+                """,
+            completionContext: new VSInternalCompletionContext()
+            {
+                InvokeKind = VSInternalCompletionInvokeKind.Typing,
+                TriggerCharacter = "<",
+                TriggerKind = CompletionTriggerKind.TriggerCharacter
+            });
     }
 
     [Fact]
@@ -792,7 +811,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
             NoOpTelemetryReporter.Instance,
             LoggerFactory);
 
-        var request = new CompletionParams()
+        var request = new RazorVSInternalCompletionParams()
         {
             TextDocument = new TextDocumentIdentifier()
             {
@@ -826,7 +845,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
 
         if (!commitElementsWithSpace)
         {
-            Assert.False(result.Items.Any(item => item.CommitCharacters?.First().Contains(" ") ?? false));
+            Assert.False(result.Items.Any(item => item.CommitCharacters?.First().Contains(' ') ?? false));
         }
 
         if (!autoInsertAttributeQuotes)
@@ -853,6 +872,51 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         }
 
         return result;
+    }
+
+    private async Task VerifyCompletionListParamsTypeAsync(
+        TestCode input,
+        VSInternalCompletionContext completionContext,
+        RazorFileKind? fileKind = null)
+    {
+        var document = CreateProjectAndRazorDocument(input.Text, fileKind);
+        var sourceText = await document.GetTextAsync(DisposalToken);
+
+        // Assert the request invoker is passed a RazorVSInternalCompletionParams
+        var requestInvoker = new TestHtmlRequestInvoker((Methods.TextDocumentCompletionName, ValidateArgType));
+
+        var languageServerFeatureOptions = new TestLanguageServerFeatureOptions();
+
+        var completionListCache = new CompletionListCache();
+        var endpoint = new CohostDocumentCompletionEndpoint(
+            IncompatibleProjectService,
+            RemoteServiceInvoker,
+            ClientSettingsManager,
+            ClientCapabilitiesService,
+            snippetCompletionItemProvider: null,
+            languageServerFeatureOptions,
+            requestInvoker,
+            completionListCache,
+            NoOpTelemetryReporter.Instance,
+            LoggerFactory);
+
+        var request = new RazorVSInternalCompletionParams()
+        {
+            TextDocument = new TextDocumentIdentifier()
+            {
+                DocumentUri = document.CreateDocumentUri()
+            },
+            Position = sourceText.GetPosition(input.Position),
+            Context = completionContext
+        };
+
+        await endpoint.GetTestAccessor().HandleRequestAsync(request, document, DisposalToken);
+
+        static RazorVSInternalCompletionList? ValidateArgType(object arg)
+        {
+            Assert.Equal(typeof(RazorVSInternalCompletionParams), arg.GetType());
+            return default;
+        }
     }
 
     private async Task VerifyCompletionResolveAsync(CodeAnalysis.TextDocument document, CompletionListCache completionListCache, VSInternalCompletionItem item, string? expected, string expectedResolvedItemDescription)
@@ -917,7 +981,7 @@ public class CohostDocumentCompletionEndpointTest(ITestOutputHelper testOutputHe
         }
     }
 
-    private string? FlattenDescription(ClassifiedTextElement? description)
+    private static string? FlattenDescription(ClassifiedTextElement? description)
     {
         if (description is null)
         {

@@ -57,5 +57,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)RazorCohostDynamicRegistrationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RazorLSPConstants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WellKnownStartupOrder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GeneratedDocumentContents\CohostGeneratedDocumentContentsEndpoint.cs" />
   </ItemGroup>
 </Project>
