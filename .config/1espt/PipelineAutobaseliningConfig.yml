@@ -18,9 +18,10 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-03-25
         binskim:
-          lastModifiedDate: 2025-01-23
+          lastModifiedDate: 2025-10-03
         spotbugs:
           lastModifiedDate: 2024-03-25
+    usedBinskimScanAllExtensions: true
   1299:
     retail:
       source:
