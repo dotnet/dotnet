@@ -732,7 +732,7 @@ public partial class LinuxInstallerTests : IDisposable
     private void ValidatePackageList(PackageType packageType)
     {
         string extension = packageType == PackageType.Rpm ? "*.rpm" : "*.deb";
-        string[] expectedPatterns = GetExpectedPackagePatterns(packageType);
+        List<string> expectedPatterns = GetExpectedPackagePatterns(packageType).OrderBy(p => p).ToList();
 
         // Find all packages of the specified type and normalize by removing version numbers
         List<string> normalizedActual = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
@@ -741,26 +741,24 @@ public partial class LinuxInstallerTests : IDisposable
             .OrderBy(name => name)
             .ToList();
 
-        List<string> expectedPatterns_sorted = expectedPatterns.OrderBy(p => p).ToList();
-
-        _outputHelper.WriteLine($"Expected {packageType} packages:");
-        foreach (string pattern in expectedPatterns_sorted)
-        {
-            _outputHelper.WriteLine($"  {pattern}");
-        }
-
-        _outputHelper.WriteLine($"\nActual {packageType} packages (normalized):");
-        foreach (string package in normalizedActual)
-        {
-            _outputHelper.WriteLine($"  {package}");
-        }
-
         // Compare the lists
-        var missing = expectedPatterns_sorted.Except(normalizedActual).ToList();
-        var extra = normalizedActual.Except(expectedPatterns_sorted).ToList();
+        var missing = expectedPatterns.Except(normalizedActual).ToList();
+        var extra = normalizedActual.Except(expectedPatterns).ToList();
 
         if (missing.Any() || extra.Any())
         {
+            _outputHelper.WriteLine($"Expected {packageType} packages:");
+            foreach (string pattern in expectedPatterns)
+            {
+                _outputHelper.WriteLine($"  {pattern}");
+            }
+
+            _outputHelper.WriteLine($"\nActual {packageType} packages (normalized):");
+            foreach (string package in normalizedActual)
+            {
+                _outputHelper.WriteLine($"  {package}");
+            }
+
             var errorMessage = new StringBuilder();
             errorMessage.AppendLine($"Package list validation failed for {packageType}:");
 
@@ -786,7 +784,7 @@ public partial class LinuxInstallerTests : IDisposable
         }
     }
 
-    private string[] GetExpectedPackagePatterns(PackageType packageType)
+    private List<string> GetExpectedPackagePatterns(PackageType packageType)
     {
         string extension = packageType == PackageType.Rpm ? ".rpm" : ".deb";
         string arch = Config.Architecture == Architecture.X64 ? "x64" :
@@ -836,6 +834,6 @@ public partial class LinuxInstallerTests : IDisposable
             }
         }
 
-        return patterns.ToArray();
+        return patterns;
     }
 }
