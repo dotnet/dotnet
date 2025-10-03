@@ -71,6 +71,8 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
         [Required]
         public ITaskItem[] SourceFiles { get; set; }
 
+        public string[] SuppressSpecificWarnings { get; set; }
+
         [Required]
         public string WixpackWorkingDir { get; set; }
 
@@ -334,6 +336,15 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
             }
 
+            // Add each Warning from SuppressSpecificWarnings array
+            if (SuppressSpecificWarnings != null && SuppressSpecificWarnings.Length > 0)
+            {
+                foreach (var warning in SuppressSpecificWarnings)
+                {
+                    commandLineArgs.Add($"-sw{warning}");
+                }
+            }
+
             // Add all define constants from dictionary
             if (_defineConstantsDictionary != null && _defineConstantsDictionary.Count > 0)
             {
@@ -408,7 +419,11 @@ namespace Microsoft.DotNet.Build.Tasks.Installers
                 }
             }
 
-            string commandLine = "wix.exe build " + string.Join(" ", commandLineArgs);
+            // The command lines can be quite long, and cmd would reject them. Wix does support
+            // response files, so create a response file (create.rsp) to package alongside.
+            File.WriteAllText(Path.Combine(WixpackWorkingDir, "create.rsp"), string.Join(System.Environment.NewLine, commandLineArgs)); 
+
+            string commandLine = "wix.exe build @create.rsp";
 
             StringBuilder createCmdFileContents = new();
             createCmdFileContents.AppendLine("@echo off");

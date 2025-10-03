@@ -590,9 +590,9 @@ internal class VisualStudioRazorParser : IVisualStudioRazorParser, IDisposable
             _tagHelpers = tagHelpers;
         }
 
-        public IReadOnlyList<TagHelperDescriptor>? GetDescriptors()
+        public IReadOnlyList<TagHelperDescriptor> GetDescriptors(CancellationToken cancellationToken = default)
         {
-            return _tagHelpers;
+            return _tagHelpers ?? [];
         }
     }
 
