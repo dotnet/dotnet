@@ -15,7 +15,7 @@
     -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <VersionPrefix>18.0.0</VersionPrefix>
-    <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>release</PreReleaseVersionLabel>
   </PropertyGroup>
   <PropertyGroup Label="Arcade settings">
     <!-- Ensure we use xliff task tool - true is the default but we make it explicit here -->
@@ -59,7 +59,7 @@
     <MicrosoftVisualStudioInteropVersion>17.13.39960</MicrosoftVisualStudioInteropVersion>
     <MicrosoftVSTelemetryVersion>17.13.24</MicrosoftVSTelemetryVersion>
     <MicrosoftVSUtilitiesInternalVersion>16.3.90</MicrosoftVSUtilitiesInternalVersion>
-    <MicrosoftVSSDKBuildToolsVersion>17.14.2117</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.14.2119</MicrosoftVSSDKBuildToolsVersion>
     <MicrosoftWin32RegistryVersion>5.0.0</MicrosoftWin32RegistryVersion>
     <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
     <SystemCollectionsImmutableVersion>8.0.0</SystemCollectionsImmutableVersion>
@@ -67,7 +67,7 @@
     <SystemReflectionMetadataVersion>8.0.0</SystemReflectionMetadataVersion>
     <TestPlatformExternalsVersion>18.0.0-preview-1-10911-061</TestPlatformExternalsVersion>
     <MicrosoftInternalTestPlatformExtensions>18.0.0-preview-1-10911-061</MicrosoftInternalTestPlatformExtensions>
-    <TestPlatformMSDiaVersion>17.12.35519.223</TestPlatformMSDiaVersion>
+    <TestPlatformMSDiaVersion>18.0.11024.295</TestPlatformMSDiaVersion>
     <SystemSecurityPrincipalWindowsVersion>5.0.0</SystemSecurityPrincipalWindowsVersion>
     <SystemRuntimeCompilerServicesUnsafeVersion>6.1.0</SystemRuntimeCompilerServicesUnsafeVersion>
   </PropertyGroup>
