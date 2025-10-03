@@ -1,8 +1,51 @@
 <Project>
-
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
+    <!-- WiX v5 Configuration -->
+    <UseWix5>true</UseWix5>
+    
+    <!-- WiX v5 PDB Type Fix -->
+    <WixToolsetCompilerPdbType>full</WixToolsetCompilerPdbType>
+    <WixToolsetLinkerPdbType>full</WixToolsetLinkerPdbType>
+    
+    <!-- Force sequential builds to prevent file locking issues -->
+    <!-- Override MSBuild's default /m flag behavior -->
+    <BuildInParallel>false</BuildInParallel>
+    <MaxCpuCount>1</MaxCpuCount>
+    
+    <!-- Additional sequential build enforcement -->
+    <MSBuildDisableNodeReuse>true</MSBuildDisableNodeReuse>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    
+    <!-- Ensure Wixpack generation is enabled for all build types -->
+    <WixCreateWixPackOutput Condition="'$(OutputType)' == 'Bundle'">true</WixCreateWixPackOutput>
+  
+    <!-- Ensure Wixpack targets run in CI/PR builds and local builds -->
+    <RunWixpackTargets Condition="'$(TF_BUILD)' == 'true' OR '$(CI)' == 'true' OR '$(ContinuousIntegrationBuild)' == 'true'">true</RunWixpackTargets>
+    <RunWixpackTargets Condition="'$(RunWixpackTargets)' == ''">true</RunWixpackTargets>
+    
+    <!-- Project-level parallelism controls -->
+    <BuildProjectReferences>true</BuildProjectReferences>
+    <BuildInParallel Condition="'$(BuildingInstallers)' == 'true'">false</BuildInParallel>
+    <MaxCpuCount Condition="'$(BuildingInstallers)' == 'true'">1</MaxCpuCount>
+    <MaxCpuCount Condition="'$(PlatformPackageType)' == 'RuntimePack'">1</MaxCpuCount>
+    
+    <!-- CI build stability measures -->
+    <BuildInParallel Condition="'$(TF_BUILD)' == 'true' OR '$(CI)' == 'true'">false</BuildInParallel>
+    <MaxCpuCount Condition="'$(TF_BUILD)' == 'true' OR '$(CI)' == 'true'">1</MaxCpuCount>
+    
+    <!-- WindowsDesktop uses transport packages with pre-compiled R2R assemblies -->
+    <!-- Local CrossGen2 compilation settings removed - rely on transport packages -->
+    
+    <!-- Disable parallel builds entirely for RuntimePack to prevent all file conflicts -->
+    <ContinueOnError Condition="'$(PlatformPackageType)' == 'RuntimePack'">false</ContinueOnError>
+    
+    <!-- Process timeout settings to prevent hanging builds -->
+    <MSBuildNodeAndChildProcessTimeout>600000</MSBuildNodeAndChildProcessTimeout>
+    <MSBuildProcessTimeout>600000</MSBuildProcessTimeout>
+    <TaskTimeout>600</TaskTimeout>
+    
     <!-- Packaging properties -->
     <RepositoryUrl>https://github.com/dotnet/windowsdesktop</RepositoryUrl>
     <PackageProjectUrl>https://dot.net</PackageProjectUrl>
@@ -15,12 +58,16 @@
     <PackageThirdPartyNoticesFile>$(MSBuildThisFileDirectory)THIRD-PARTY-NOTICES.TXT</PackageThirdPartyNoticesFile>
     <PackageReleaseNotes>https://go.microsoft.com/fwlink/?LinkID=799421</PackageReleaseNotes>
 
+
+
     <!-- Set up handling of build warnings -->
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     <!-- Platform detection -->
-    <TargetArchitecture  Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
+    <!-- Map Platform property to TargetArchitecture, but skip AnyCPU which is not valid for WiX -->
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == '' AND '$(Platform)' != '' AND '$(Platform)' != 'AnyCPU'">$(Platform)</TargetArchitecture>
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
 
     <!-- Only upgrade NuGetAudit warnings to errors for official builds. -->
     <WarningsNotAsErrors Condition="'$(OfficialBuild)' != 'true'">$(WarningsNotAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
@@ -28,5 +75,37 @@
     <!-- Builds are portable by default -->
     <PortableBuild Condition="'$(PortableBuild)' != 'false'">true</PortableBuild>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <OfficialBaseURL>https://builds.dotnet.microsoft.com/dotnet/</OfficialBaseURL>
+    <!-- Allow overriding the public base URL for Unified Build scenarios to pull assets from a local build. -->
+    <PublicBaseURL Condition="'$(PublicBaseURL)' == ''">https://ci.dot.net/public/</PublicBaseURL>
+    <InternalBaseURL>https://ci.dot.net/internal/</InternalBaseURL>
+    <!-- Allow overriding where installers are pulled in from previously completed jobs in Unified Build scenarios. -->
+    <AddVersionToCrossArchitectureInstallerBasePath Condition="'$(CrossArchitectureInstallerBasePath)' != ''">true</AddVersionToCrossArchitectureInstallerBasePath>
+    <CrossArchitectureInstallerBasePath Condition="'$(CrossArchitectureInstallerBasePath)' == ''">$(ArtifactsShippingPackagesDir)</CrossArchitectureInstallerBasePath>
+  </PropertyGroup>
+
+  <!-- Try various places to find the runtime. It's either released (use official version),
+        public but un-released (use dotnetbuilds/public), or internal and unreleased (use dotnetbuilds/internal) -->
+  <ItemGroup Condition="'$(DotNetBuild)' != 'true'">
+    <RemoteAssetBaseURL Include="$(OfficialBaseURL)" />
+    <RemoteAssetBaseURL Include="$(PublicBaseURL)" />
+    <!-- Include the token here as we'll generate the URLs to download based on this item group. -->
+    <RemoteAssetBaseURL Include="$(InternalBaseURL)"
+                        Condition=" '$(DotnetRuntimeSourceFeedKey)' != '' ">
+      <token>$(DotnetRuntimeSourceFeedKey)</token>
+    </RemoteAssetBaseURL>
+  </ItemGroup>
+
+  <!--
+    Only try downloading from the "public" base URL when doing a vertical build.
+    In a vertical build, the public URL will be overwritten to point to local build artifacts.
+  -->
+  <ItemGroup Condition="'$(DotNetBuild)' == 'true'">
+    <!-- MSBuild removes the '//' slashes when passing PublicBaseURL from the outer to the inner build. -->
+    <RemoteAssetBaseURL Condition="$(PublicBaseURL.StartsWith('file:')) and '$(OS)' != 'Windows_NT'" Include="$([System.Text.RegularExpressions.Regex]::Replace('$(PublicBaseURL)', '%28file:\/{1,}%29%28.+%29', 'file:///%242'))" />
+    <RemoteAssetBaseURL Condition="!$(PublicBaseURL.StartsWith('file:')) or '$(OS)' == 'Windows_NT'" Include="$(PublicBaseURL)" />
+  </ItemGroup>
 
 </Project>

@@ -1,0 +1,100 @@
+<Project>
+  <PropertyGroup>
+    <DotNetDarkOutputPath>$(IntermediateOutputPath)d\</DotNetDarkOutputPath>
+    <DepsPath>$(BaseIntermediateOutputPath)</DepsPath>
+    <DefineConstants>$(DefineConstants);DepsPath=$(DepsPath)</DefineConstants>
+    <DefineConstants>$(DefineConstants);InstallersOutputPath=$(InstallersOutputPath)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetArchitecture)' == 'x86'">
+    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
+      <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
+      <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-x86.msi">
+      <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetArchitecture)' == 'x64'">
+    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
+      <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
+      <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-x64.msi">
+      <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetArchitecture)' == 'arm64'">
+    <RuntimeInstallers Include="$(DepsPath)dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
+      <BundleNameProperty>DotNetRedistLtsInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
+      <BundleNameProperty>DotNetRedistHostInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+    <RuntimeInstallers Include="$(DepsPath)dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-arm64.msi">
+      <BundleNameProperty>DotNetRedistHostfxrInstaller</BundleNameProperty>
+    </RuntimeInstallers>
+  </ItemGroup>
+
+  <!--
+    Runs before FetchDependencies but can't be depended up because this sets up the item group that target
+    uses for batching.
+  -->
+  <Target Name="CollectDependencies" BeforeTargets="Restore;CollectPackageReferences">
+    <!-- Use the BrowserDebugHost as a sentinel for the nonshipping version for NETCoreApp. -->
+    <ItemGroup>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+        <TargetFileName>dotnet-runtime-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
+  <StageFilename>dotnet-runtime-win-$(TargetArchitecture).msi</StageFilename>
+      </RemoteAsset>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+        <TargetFileName>dotnet-host-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
+  <StageFilename>dotnet-host-win-$(TargetArchitecture).msi</StageFilename>
+      </RemoteAsset>
+      <RemoteAsset Include="$(MicrosoftInternalRuntimeWindowsDesktopTransportPackageVersion)/dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi">
+        <TargetFileName>dotnet-hostfxr-$(MicrosoftNETCoreAppRefVersion)-win-$(TargetArchitecture).msi</TargetFileName>
+  <StageFilename>dotnet-hostfxr-win-$(TargetArchitecture).msi</StageFilename>
+      </RemoteAsset>
+    </ItemGroup>
+
+    <MakeDir Directories="$(DepsPath)" />
+  </Target>
+
+  <UsingTask TaskName="DownloadFile" AssemblyFile="$(ArcadeSdkBuildTasksAssembly)" />
+
+  <Target Name="FetchDependencies" BeforeTargets="Restore;CollectPackageReferences"
+      Outputs="$(DepsPath)%(RemoteAsset.TargetFilename)">
+    <PropertyGroup>
+      <_CurrentRemoteAsset>%(RemoteAsset.Identity)</_CurrentRemoteAsset>
+    </PropertyGroup>
+    <ItemGroup>
+      <UrisToDownload Remove="@(UrisToDownload)" />
+      <UrisToDownload Include="@(RemoteAssetBaseURL->'%(Identity)Runtime/$(_CurrentRemoteAsset)')" />
+    </ItemGroup>
+
+    <DownloadFile Condition=" ! Exists('$(DepsPath)%(RemoteAsset.TargetFilename)') "
+                  Uris="@(UrisToDownload)"
+                  DestinationPath="$(DepsPath)%(RemoteAsset.TargetFilename)" />
+  </Target>
+
+  <Target Name="ExtractPropertiesFromDotNetMsi" DependsOnTargets="CollectDependencies;FetchDependencies" BeforeTargets="BeforeBuild">
+    <!-- Create properties that holds the executable name. These are passed to the bundles so we can reference them as variables
+             from inside the ExePackage authoring. -->
+    <CreateProperty Value="%(RuntimeInstallers.Filename)%(Extension)">
+      <Output TaskParameter="Value" PropertyName="%(RuntimeInstallers.BundleNameProperty)"/>
+    </CreateProperty>
+
+    <PropertyGroup>
+      <DefineConstants>$(DefineConstants);DotNetRedistLtsInstaller=$(DepsPath)$(DotNetRedistLtsInstaller)</DefineConstants>
+      <DefineConstants>$(DefineConstants);DotNetRedistHostInstaller=$(DepsPath)$(DotNetRedistHostInstaller)</DefineConstants>
+      <DefineConstants>$(DefineConstants);DotNetRedistHostfxrInstaller=$(DepsPath)$(DotNetRedistHostfxrInstaller)</DefineConstants>
+      <IncludeRuntimeMSIs Condition="'$(IncludeRuntimeMSIs)'==''">true</IncludeRuntimeMSIs>
+    </PropertyGroup>
+  </Target>
+</Project>
