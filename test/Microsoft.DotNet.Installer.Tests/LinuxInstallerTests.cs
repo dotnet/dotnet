@@ -741,47 +741,10 @@ public partial class LinuxInstallerTests : IDisposable
             .OrderBy(name => name)
             .ToList();
 
-        // Compare the lists
-        var missing = expectedPatterns.Except(normalizedActual).ToList();
-        var extra = normalizedActual.Except(expectedPatterns).ToList();
-
-        if (missing.Any() || extra.Any())
-        {
-            _outputHelper.WriteLine($"Expected {packageType} packages:");
-            foreach (string pattern in expectedPatterns)
-            {
-                _outputHelper.WriteLine($"  {pattern}");
-            }
-
-            _outputHelper.WriteLine($"\nActual {packageType} packages (normalized):");
-            foreach (string package in normalizedActual)
-            {
-                _outputHelper.WriteLine($"  {package}");
-            }
-
-            var errorMessage = new StringBuilder();
-            errorMessage.AppendLine($"Package list validation failed for {packageType}:");
-
-            if (missing.Any())
-            {
-                errorMessage.AppendLine("Missing packages:");
-                foreach (string pkg in missing)
-                {
-                    errorMessage.AppendLine($"  - {pkg}");
-                }
-            }
-
-            if (extra.Any())
-            {
-                errorMessage.AppendLine("Unexpected packages:");
-                foreach (string pkg in extra)
-                {
-                    errorMessage.AppendLine($"  + {pkg}");
-                }
-            }
-
-            Assert.Fail(errorMessage.ToString());
-        }
+        Assert.True(
+            expectedPatterns.SequenceEqual(normalizedActual),
+            $"Package list validation failed for {packageType}:\nExpected:\n{string.Join("\n", expectedPatterns)}\nActual:\n{string.Join("\n", normalizedActual)}"
+        );
     }
 
     private List<string> GetExpectedPackagePatterns(PackageType packageType)
