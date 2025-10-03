@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Threading;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 
@@ -14,25 +14,28 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
     {
         private ImmutableArray<ITagHelperDescriptorProvider> _providers;
 
-        public void CollectDescriptors(ISymbol? targetSymbol, List<TagHelperDescriptor> results)
+        public void CollectDescriptors(
+            IAssemblySymbol? targetAssembly,
+            List<TagHelperDescriptor> results,
+            CancellationToken cancellationToken)
         {
-            if (_providers.IsDefault)
+            if (_providers.IsDefaultOrEmpty)
             {
                 return;
             }
 
-            var context = new TagHelperDescriptorProviderContext(compilation, targetSymbol, results);
+            var context = new TagHelperDescriptorProviderContext(compilation, targetAssembly, results);
 
             foreach (var provider in _providers)
             {
-                provider.Execute(context);
+                provider.Execute(context, cancellationToken);
             }
         }
 
-        IReadOnlyList<TagHelperDescriptor> ITagHelperFeature.GetDescriptors()
+        IReadOnlyList<TagHelperDescriptor> ITagHelperFeature.GetDescriptors(CancellationToken cancellationToken)
         {
             var results = new List<TagHelperDescriptor>();
-            CollectDescriptors(targetSymbol: null, results);
+            CollectDescriptors(targetAssembly: null, results, cancellationToken);
 
             return results;
         }
