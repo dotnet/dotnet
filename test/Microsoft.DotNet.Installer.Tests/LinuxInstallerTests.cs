@@ -793,7 +793,12 @@ public partial class LinuxInstallerTests : IDisposable
             foreach (string distro in distros)
             {
                 patterns.Add($"dotnet-runtime-deps-*-{distro}-{arch}{extension}");
-                patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+
+                // `azl` deps packages do not have a -newkey- variant
+                if (distro != "azl.3")
+                {
+                    patterns.Add($"dotnet-runtime-deps-*-{distro}-newkey-{arch}{extension}");
+                }
             }
         }
 
