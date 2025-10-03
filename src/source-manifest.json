@@ -1,10 +1,10 @@
 {
   "repositories": [
     {
-      "barId": 284980,
+      "barId": 285331,
       "path": "arcade",
       "remoteUri": "https://github.com/dotnet/arcade",
-      "commitSha": "e19df003785d0b81e2e3e1bf6e588bf8d913e95e"
+      "commitSha": "b31d1d57a46eceefe28423353bd0cf299b7f478e"
     },
     {
       "barId": 285573,
@@ -37,10 +37,10 @@
       "commitSha": "29b752ed624a2796726cbe9891c8627dd580002d"
     },
     {
-      "barId": 284681,
+      "barId": 285276,
       "path": "efcore",
       "remoteUri": "https://github.com/dotnet/efcore",
-      "commitSha": "2e7145d3160461dfa6fe0e7262854a845731ca10"
+      "commitSha": "12c62ad3f88b811fcaaa4d3de249ff4ef7ec1da5"
     },
     {
       "barId": 280647,
@@ -49,10 +49,10 @@
       "commitSha": "8414d1e1025bbfaca0829a595d2654836fd0034b"
     },
     {
-      "barId": 284860,
+      "barId": 285239,
       "path": "fsharp",
       "remoteUri": "https://github.com/dotnet/fsharp",
-      "commitSha": "8d12fd301c5a52649b09f2e31dba2ae0cf757419"
+      "commitSha": "694c51269c26ec52042449614428b8a92f0cbd91"
     },
     {
       "barId": 284523,
@@ -70,13 +70,13 @@
       "barId": 284027,
       "path": "razor",
       "remoteUri": "https://github.com/dotnet/razor",
-      "commitSha": "5557fc99abe067640cbdd2f8ade2058e06a87290"
+      "commitSha": "64fdc2c3d168168a2fa28da45084145eb2be0f4d"
     },
     {
       "barId": 284435,
       "path": "roslyn",
       "remoteUri": "https://github.com/dotnet/roslyn",
-      "commitSha": "ff0a209cf1a97eea64c2b32c7e1f7e11b209d789"
+      "commitSha": "393c7af44e888e988c8bfd93f5ba527fd8fcded1"
     },
     {
       "barId": 284614,
@@ -97,10 +97,10 @@
       "commitSha": "dfa14d786e4d5ca238cbd72600bc7afc477e48a4"
     },
     {
-      "barId": 282653,
+      "barId": 285327,
       "path": "source-build-reference-packages",
       "remoteUri": "https://github.com/dotnet/source-build-reference-packages",
-      "commitSha": "812ed9d675ecd84d10972fcbaf4515de6658085d"
+      "commitSha": "e6ae81a48df0569bea8f2e5d67a37c768904e33f"
     },
     {
       "barId": 277912,
@@ -127,10 +127,10 @@
       "commitSha": "9cbffb03835ba1e99643da46f2fc2678a0c1b5f7"
     },
     {
-      "barId": 284184,
+      "barId": 285071,
       "path": "windowsdesktop",
       "remoteUri": "https://github.com/dotnet/windowsdesktop",
-      "commitSha": "348a9506b4e6447b90ef7cb6f6b6cc72edf6bc33"
+      "commitSha": "95ab55fea8097df56df2372de30cf306ba75c0fc"
     },
     {
       "barId": 284925,

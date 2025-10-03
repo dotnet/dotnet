@@ -104,6 +104,10 @@
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl-*.rpm" />
     <AzureLinuxRPM Include="$(ArtifactsPackagesDir)**/*-azl.*-*.rpm" />
     <FileSignInfo Include="@(AzureLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSignMariner" />
+
+    <!-- Explicitly use the "new" LinuxSign cert. TODO: Update the cert name to the actual name in MicroBuild once it's added. -->
+    <NewKeyLinuxRPM Include="$(ArtifactsPackagesDir)**/*-newkey-*.rpm" />
+    <FileSignInfo Include="@(NewKeyLinuxRPM->'%(Filename)%(Extension)')" CertificateName="LinuxSign500207PGP" />
   </ItemGroup>
 
   <!-- The name of the .NET specific certificate, which is a general replacement for Microsoft400

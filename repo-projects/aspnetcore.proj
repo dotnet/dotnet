@@ -56,6 +56,9 @@
     <RepositoryReference Include="efcore" />
   </ItemGroup>
 
+  <!-- Temporarily use N-1 version for Roslyn across both official and non-official builds.
+       See https://github.com/dotnet/source-build/issues/5355 -->
+
   <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' == 'true'">
     <!--
       From aspnetcore Versions.props:
@@ -64,9 +67,9 @@
       In source-build these don't need to be pinned and can use the source-built versions since it doesn't
       need to support VS 2019.
     -->
-    <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpVersion)" />
+    <!-- <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesVersion)" />
-    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" />
+    <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonVersion)" /> -->
   </ItemGroup>
 
   <!-- For non-official builds, use the Roslyn version contained in the N-1 build because ASP.NET Core needs to build and execute
@@ -78,7 +81,8 @@
       By not lifting the M.CA version to the current version and instead using the N-1 version, we guarantee that it will match the version
       containing in the executed SDK and avoiding this error.
   -->
-  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'">
+  <!-- <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true' and '$(OfficialBuild)' != 'true'"> -->
+  <ItemGroup Condition="'$(DotNetBuildSourceOnly)' == 'true'">
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpVersion" Version="%24(MicrosoftCodeAnalysisCSharpPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="Analyzer_MicrosoftCodeAnalysisCSharpWorkspacesVersion" Version="%24(MicrosoftCodeAnalysisCSharpWorkspacesPreviousVersion)" />
     <ExtraPackageVersionPropsPackageInfo Include="MicrosoftCodeAnalysisVersion_LatestVS" Version="%24(MicrosoftCodeAnalysisCommonPreviousVersion)" />

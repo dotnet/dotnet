@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="cmdIdClearStackTraceExplorer|CommandName">
         <source>ClearStackTraceExplorerCommandName</source>
-        <target state="new">ClearStackTraceExplorerCommandName</target>
+        <target state="needs-review-translation">CleearStackTraceExplorerCommandName</target>
         <note />
       </trans-unit>
       <trans-unit id="cmdIdClearStackTraceExplorer|LocCanonicalName">
