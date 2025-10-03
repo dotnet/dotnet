@@ -363,11 +363,11 @@
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7ac1ca67bb1fb8a381c1c94a9f82a97725f0ccf3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.10.0" Version="10.0.0-rc.2.25427.104">
+    <Dependency Name="Microsoft.DotNet.Web.ItemTemplates.11.0" Version="10.0.0-rc.1.25414.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7ac1ca67bb1fb8a381c1c94a9f82a97725f0ccf3</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.10.0" Version="10.0.0-rc.2.25427.104">
+    <Dependency Name="Microsoft.DotNet.Web.ProjectTemplates.11.0" Version="10.0.0-rc.1.25414.103">
       <Uri>https://github.com/dotnet/dotnet</Uri>
       <Sha>7ac1ca67bb1fb8a381c1c94a9f82a97725f0ccf3</Sha>
     </Dependency>
