@@ -734,16 +734,9 @@ public partial class LinuxInstallerTests : IDisposable
         string extension = packageType == PackageType.Rpm ? "*.rpm" : "*.deb";
         string[] expectedPatterns = GetExpectedPackagePatterns(packageType);
 
-        // Find all packages of the specified type
-        List<string> actualPackages = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
-            .Select(Path.GetFileName)
-            .Where(name => name != null)
-            .Cast<string>()
-            .ToList();
-
-        // Normalize package names by removing version numbers
-        List<string> normalizedActual = actualPackages
-            .Select(name => RemoveVersionFromPackageNameRegex.Replace(name, "*"))
+        // Find all packages of the specified type and normalize by removing version numbers
+        List<string> normalizedActual = Directory.GetFiles(Config.AssetsDirectory, extension, SearchOption.AllDirectories)
+            .Select(path => RemoveVersionFromPackageNameRegex.Replace(Path.GetFileName(path), "*"))
             .Distinct()
             .OrderBy(name => name)
             .ToList();
