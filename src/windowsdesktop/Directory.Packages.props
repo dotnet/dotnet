@@ -71,6 +71,15 @@
     <!-- WPF dependencies-->
     <PackageVersion Include="Microsoft.DotNet.Wpf.GitHub" Version="$(MicrosoftDotNetWpfGitHubVersion)" />
     <PackageVersion Include="Microsoft.Internal.Runtime.WindowsDesktop.Transport" Version="$(MicrosoftInternalRuntimeWindowsDesktopTransportVersion)" />
+
+    <!-- WiX dependencies -->
+    <PackageVersion Include="Microsoft.Wix" Version="$(MicrosoftWixVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Bal.wixext" Version="$(MicrosoftWixToolsetBalWixextVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Dependency.wixext" Version="$(MicrosoftWixToolsetDependencyWixextVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Heat" Version="$(MicrosoftWixToolsetHeatVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.UI.wixext" Version="$(MicrosoftWixToolsetUIWixextVersion)" />
+    <PackageVersion Include="Microsoft.WixToolset.Util.wixext" Version="$(MicrosoftWixToolsetUtilWixextVersion)" />
+    
   </ItemGroup>
 
 </Project>

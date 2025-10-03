@@ -1,0 +1,107 @@
+<Project Sdk="Microsoft.WixToolset.Sdk">
+
+  <Import Project="Wix.props" />
+
+  <PropertyGroup>
+    <!-- OutputType determines the extension, .msi, .wixlib, .exe, etc. -->
+    <OutputType>Bundle</OutputType>
+    
+    <!-- Enable WiX v5 features (following reference repo pattern) -->
+    <UseWix5>true</UseWix5>
+    
+    <!-- WiX v5 build configuration -->
+    <WixBuildExecutablesFolder>$(PkgMicrosoft_Wix)\tools\net6.0\</WixBuildExecutablesFolder>
+    <WixExtensionDirectory>$(PkgMicrosoft_Wix)\tools\net6.0\</WixExtensionDirectory>
+    
+    <!-- MSBuild parallelism settings to prevent WiX file locking issues -->
+    <BuildInParallel>false</BuildInParallel>
+    <MaxCpuCount>1</MaxCpuCount>
+    
+    <!-- Enable Wixpack generation for all build types (PR, CI, local) -->
+    <WixCreateWixPackOutput>true</WixCreateWixPackOutput>
+    
+    <!-- Bundle platform configuration -->
+    <BundlePlatform Condition="'$(TargetArchitecture)' == 'x86'">x86</BundlePlatform>
+    <BundlePlatform Condition="'$(TargetArchitecture)' == 'x64'">x64</BundlePlatform>
+    <BundlePlatform Condition="'$(TargetArchitecture)' == 'arm64'">arm64</BundlePlatform>
+    
+    <!-- For bundles InstallerPlatform should always be set to x86. -->
+    <InstallerPlatform>x86</InstallerPlatform>
+    
+    <!-- Version information for the bundle executable -->
+    <AssemblyTitle>Microsoft Windows Desktop Runtime Installer</AssemblyTitle>
+    <AssemblyDescription>Microsoft Windows Desktop Runtime $(Version) Installer</AssemblyDescription>
+    <AssemblyCompany>Microsoft Corporation</AssemblyCompany>
+    <AssemblyProduct>Microsoft Windows Desktop Runtime</AssemblyProduct>
+    <AssemblyCopyright>© Microsoft Corporation. All rights reserved.</AssemblyCopyright>
+    <AssemblyInformationalVersion>$(Version)</AssemblyInformationalVersion>
+    <AssemblyFileVersion>$(Version)</AssemblyFileVersion>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    
+    <!-- WiX v5 PDB configuration - bundles don't publish PDBs -->
+    <WixToolsetCompilerPdbType>full</WixToolsetCompilerPdbType>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
+    <NoWarn>$(NoWarn);WIX1098</NoWarn>
+
+    <!-- Globbing will automatically find any .wxl relative to the project file. Since we're simshipping localized content for
+         the bundle UI, we either need to exclude the .wxl files or place them in a directory outside of the project. For simshipping
+         we only need to ensure the files are pulled in as additional payloads into the UX container. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);LCID\**\*;theme\**\*</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <Import Project="Product.targets" />
+
+  <ItemGroup>
+    <!-- Use the working wix5 path - the new wix path has namespace issues -->
+    <Compile Include="$(PkgMicrosoft_DotNet_Build_Tasks_Installers)\build\wix5\bundle\upgradePolicies.wxs" />
+    <Compile Include="dotnet-packages.wxs" />
+
+    <!-- Workload manifests will be included only if the source fragment was generated. -->
+    <Compile Include="$(WorkloadManifestsWxsPath)" Condition="'$(WorkloadManifestsWxsPath)' != '' AND Exists('$(WorkloadManifestsWxsPath)')" />
+  </ItemGroup>
+
+  <Target Name="BuildDependentProject" BeforeTargets="Build">
+    <!-- Ensure the Windows Desktop Runtime is built before this bundle -->
+    <MSBuild Projects="..\sfx\Microsoft.WindowsDesktop.App.Runtime.sfxproj"
+             Targets="Build" />
+  </Target>
+
+  <!-- Import extracted WiX build targets -->
+  <Import Project="Wix.targets" />
+
+</Project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

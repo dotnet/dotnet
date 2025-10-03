@@ -17,14 +17,14 @@ jobs:
         name: NetCore1ESPool-Internal
         demands: ImageOverride -equals windows.vs2019.amd64
     strategy:
-      matrix: 
+      matrix:
         Debug:
           _BuildConfig: Debug
         Release:
           _BuildConfig: Release
     workspace:
       clean: all
-    variables: 
+    variables:
       - name: CommonMSBuildArgs
         value: >-
           -c $(_BuildConfig)
@@ -41,6 +41,13 @@ jobs:
 
     steps:
     - template: /eng/common/templates/steps/enable-internal-sources.yml
+
+    - pwsh: >-
+        $(Build.SourcesDirectory)\eng\scripts\runtime-prereqs\restore-runtime-prereqs.ps1
+        -Architectures $(TargetArchitecture)
+        -CI
+      displayName: Restore runtime prerequisite MSIs
+      condition: ne(variables['TargetArchitecture'], '')
 
     - ${{ if ne(variables['System.TeamProject'], 'public') }}:
       - task: MicroBuildSigningPlugin@4
