@@ -1,0 +1,24 @@
+{
+  "tool": "Credential Scanner",
+  "suppressions": [
+    {
+      "file": [
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA1.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned1024_SHA256.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA256_2.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA384.pfx",
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Certs/SelfSigned2048_SHA512.pfx",
+        "src/externalPackages/src/humanizer/src/Humanizer.Tests.Uwp.Runner/Humanizer.Tests.Uwp.Runner_TemporaryKey.pfx",
+        "src/externalPackages/src/humanizer/src/Humanizer.Tests.Uwp/Humanizer.Tests.Uwp_TemporaryKey.pfx"
+      ],
+      "_justification": "Files contain private keys used by test code."
+    },
+    {
+      "file": [
+        "src/externalPackages/src/azure-activedirectory-identitymodel-extensions-for-dotnet/test/Microsoft.IdentityModel.TestUtils/KeyingMaterial.cs"
+      ],
+      "_justification": "File uses a test-only credential."
+    }
+  ]
+}
