@@ -50,7 +50,7 @@ For the latest information about Source-Build support for new .NET versions, ple
 
 ## Code flow
 
-The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](src/arcade/Documentation/UnifiedBuild/Codeflow-PRs.md).
+The VMR's code flow operates in two directions. Individual repositories flow source changes into the VMR upon promotion of their local official builds (forward flow). The VMR changes are checked in, an official build happens, and then source changes + packages flows backward into the constituent repositories (back flow). For more details on code flow and code flow pull requests, please see this information on [Code Flow PRs](docs/Codeflow-PRs.md).
 
 ## Contribution
 
