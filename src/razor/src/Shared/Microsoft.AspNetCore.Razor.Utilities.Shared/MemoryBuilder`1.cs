@@ -18,8 +18,9 @@ internal ref struct MemoryBuilder<T>
     private Memory<T> _memory;
     private T[]? _arrayFromPool;
     private int _length;
+    private bool _clearArray;
 
-    public MemoryBuilder(int initialCapacity = 0)
+    public MemoryBuilder(int initialCapacity = 0, bool clearArray = false)
     {
         ArgHelper.ThrowIfNegative(initialCapacity);
 
@@ -28,6 +29,8 @@ internal ref struct MemoryBuilder<T>
             _arrayFromPool = ArrayPool<T>.Shared.Rent(initialCapacity);
             _memory = _arrayFromPool;
         }
+
+        _clearArray = clearArray;
     }
 
     public void Dispose()
@@ -35,21 +38,34 @@ internal ref struct MemoryBuilder<T>
         var toReturn = _arrayFromPool;
         if (toReturn is not null)
         {
+            ArrayPool<T>.Shared.Return(toReturn, _clearArray);
+
             _memory = default;
             _arrayFromPool = null;
-            ArrayPool<T>.Shared.Return(toReturn);
+            _length = 0;
+            _clearArray = false;
         }
     }
 
     public int Length
     {
-        get => _length;
+        readonly get => _length;
         set
         {
             Debug.Assert(value >= 0);
             Debug.Assert(value <= _memory.Length);
 
             _length = value;
+        }
+    }
+
+    public ref T this[int index]
+    {
+        get
+        {
+            Debug.Assert(index >= 0 && index < _length);
+
+            return ref _memory.Span[index];
         }
     }
 
@@ -148,7 +164,7 @@ internal ref struct MemoryBuilder<T>
 
         if (toReturn != null)
         {
-            ArrayPool<T>.Shared.Return(toReturn);
+            ArrayPool<T>.Shared.Return(toReturn, _clearArray);
         }
     }
 }
