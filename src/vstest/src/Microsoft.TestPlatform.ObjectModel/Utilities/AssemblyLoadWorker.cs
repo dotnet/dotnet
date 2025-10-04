@@ -267,6 +267,7 @@ internal class AssemblyLoadWorker : MarshalByRefObject
         const int imageFileMachineArm = 0x01c0;  // ARM Little-Endian
         const int imageFileMachineThumb = 0x01c2;  // ARM Thumb/Thumb-2 Little-Endian
         const int imageFileMachineArmnt = 0x01c4; // ARM Thumb-2 Little-Endian
+        const int imageFileMachineArm64 = 0xAA64; // ARM64 Little-Endian
 
         try
         {
@@ -332,6 +333,10 @@ internal class AssemblyLoadWorker : MarshalByRefObject
                         case imageFileMachineThumb:
                         case imageFileMachineArmnt:
                             archType = "ARM";
+                            break;
+
+                        case imageFileMachineArm64:
+                            archType = "ARM64";
                             break;
                     }
                 }
