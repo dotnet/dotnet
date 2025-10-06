@@ -23,15 +23,15 @@ configuration:
       then:
       - requestReview:
           teamReviewer: aspnet-build
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/cecil/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/cecil/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
@@ -50,15 +50,15 @@ configuration:
       then:
       - requestReview:
           teamReviewer: deployment-tools-admins
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/diagnostics/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/diagnostics/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
@@ -131,15 +131,15 @@ configuration:
       then:
       - requestReview:
           teamReviewer: dnr-codeflow
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/scenario-tests/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/scenario-tests/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
@@ -158,24 +158,24 @@ configuration:
       then:
       - requestReview:
           teamReviewer: source-build
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/sourcelink/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
-    - description: 
-      if:
-      - payloadType: Pull_Request
-      - filesMatchPattern:
-          pattern: 'src/symreader/.*'
-          matchAny: true
-      then:
-      - requestReview:
-          teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/sourcelink/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
+    # - description: 
+    #   if:
+    #   - payloadType: Pull_Request
+    #   - filesMatchPattern:
+    #       pattern: 'src/symreader/.*'
+    #       matchAny: true
+    #   then:
+    #   - requestReview:
+    #       teamReviewer: PLACEHOLDER
     - description: 
       if:
       - payloadType: Pull_Request
