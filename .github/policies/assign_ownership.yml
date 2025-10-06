@@ -67,7 +67,7 @@ configuration:
           matchAny: true
       then:
       - requestReview:
-          teamReviewer: PLACEHOLDER
+          teamReviewer: efteam
     - description: 
       if:
       - payloadType: Pull_Request
